@@ -1,4 +1,4 @@
-import './ajax-processing-data'
+import { ajaxProcessing, processWithConfirmation, processModalForm } from './ajax-processing-data'
 import './bootstrap'
 import './image'
 import './modal'
@@ -34,4 +34,8 @@ import './youtube'
     imagePreview('logo', 'preview');
     imagePreview('add_logo', 'opponentTeamPreview');
     imagePreview('add_logoTeam', 'teamPreview');
+
+    window.ajaxProcessing = ajaxProcessing;
+    window.processWithConfirmation = processWithConfirmation;
+    window.processModalForm = processModalForm;
 })()
