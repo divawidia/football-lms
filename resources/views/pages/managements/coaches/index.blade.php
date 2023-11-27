@@ -93,8 +93,7 @@
     </div>
 @endsection
 @push('addon-script')
-    <script type="module">
-        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+    <script>
         $(document).ready(function () {
 
             function coachsTable(certification = null, specializations = null, team = null, status = null) {
