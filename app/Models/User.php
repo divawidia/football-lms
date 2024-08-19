@@ -60,6 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Admin::class, 'userId');
     }
-
+    public function player()
+    {
+        return $this->hasOne(Player::class, 'userId');
+    }
 
 }
