@@ -64,5 +64,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(Player::class, 'userId');
     }
-
+    public function coach()
+    {
+        return $this->hasOne(Coach::class, 'userId');
+    }
+    public function academy()
+    {
+        return $this->belongsTo(Academy::class, 'academyId');
+    }
 }
