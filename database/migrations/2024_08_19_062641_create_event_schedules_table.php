@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('teamId')->constrained('teams')->cascadeOnDelete();
             $table->foreignId('userId')->constrained('users')->nullOnDelete();
+            $table->foreignId('coachId')->constrained('coaches')->nullOnDelete();
             $table->foreignId('opponentTeamsId')->constrained('opponent_teams')->nullOnDelete();
             $table->unsignedBigInteger('opponentTeamsId')->nullable();
             $table->enum('eventType', ['training', 'match']);
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->enum('status', [1,0]);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
