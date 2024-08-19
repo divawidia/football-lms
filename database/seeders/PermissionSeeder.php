@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Faker\Factory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
@@ -17,6 +18,8 @@ class PermissionSeeder extends Seeder
     {
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+        $faker = Factory::create('id_ID');
 
         // create permissions
         Permission::create(['name' => 'edit players']);
@@ -45,34 +48,64 @@ class PermissionSeeder extends Seeder
         $user = \App\Models\User::factory()->create([
             'name' => 'player',
             'email' => 'player@example.com',
-            'dob',
-            'gender',
-            'address',
-            'state',
-            'city',
-            'country',
-            'zipCode',
-            'phoneNumber',
-            'status',
-            'academyId'
+            'dob' => $faker->date,
+            'gender' => 'male',
+            'address' => $faker->address,
+            'state' => 'DKI Jakarta',
+            'city' => 'Jakarta Selatan',
+            'country' => 'Indonesia',
+            'zipCode' => '80361',
+            'phoneNumber' => $faker->phoneNumber,
+            'status' => '1',
+            'academyId' => 1,
         ]);
         $user->assignRole($role1);
 
         $user = \App\Models\User::factory()->create([
             'name' => 'admin',
             'email' => 'admin@example.com',
+            'dob' => $faker->date,
+            'gender' => 'male',
+            'address' => $faker->address,
+            'state' => 'DKI Jakarta',
+            'city' => 'Jakarta Selatan',
+            'country' => 'Indonesia',
+            'zipCode' => '80361',
+            'phoneNumber' => $faker->phoneNumber,
+            'status' => '1',
+            'academyId' => 1,
         ]);
         $user->assignRole($role2);
 
         $user = \App\Models\User::factory()->create([
             'name' => 'Super-Admin',
             'email' => 'superadmin@example.com',
+            'dob' => $faker->date,
+            'gender' => 'male',
+            'address' => $faker->address,
+            'state' => 'DKI Jakarta',
+            'city' => 'Jakarta Selatan',
+            'country' => 'Indonesia',
+            'zipCode' => '80361',
+            'phoneNumber' => $faker->phoneNumber,
+            'status' => '1',
+            'academyId' => 1,
         ]);
         $user->assignRole($role3);
 
         $user = \App\Models\User::factory()->create([
             'name' => 'coach',
             'email' => 'coach@example.com',
+            'dob' => $faker->date,
+            'gender' => 'male',
+            'address' => $faker->address,
+            'state' => 'DKI Jakarta',
+            'city' => 'Jakarta Selatan',
+            'country' => 'Indonesia',
+            'zipCode' => '80361',
+            'phoneNumber' => $faker->phoneNumber,
+            'status' => '1',
+            'academyId' => 1,
         ]);
         $user->assignRole($role4);
     }
