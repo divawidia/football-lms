@@ -48,6 +48,7 @@ class PermissionSeeder extends Seeder
         $user = \App\Models\User::factory()->create([
             'name' => 'player',
             'email' => 'player@example.com',
+            'password' => bcrypt('player12345'),
             'dob' => $faker->date,
             'gender' => 'male',
             'address' => $faker->address,
@@ -64,6 +65,7 @@ class PermissionSeeder extends Seeder
         $user = \App\Models\User::factory()->create([
             'name' => 'admin',
             'email' => 'admin@example.com',
+            'password' => bcrypt('admin12345'),
             'dob' => $faker->date,
             'gender' => 'male',
             'address' => $faker->address,
@@ -80,6 +82,7 @@ class PermissionSeeder extends Seeder
         $user = \App\Models\User::factory()->create([
             'name' => 'Super-Admin',
             'email' => 'superadmin@example.com',
+            'password' => bcrypt('superadmin12345'),
             'dob' => $faker->date,
             'gender' => 'male',
             'address' => $faker->address,
@@ -96,6 +99,7 @@ class PermissionSeeder extends Seeder
         $user = \App\Models\User::factory()->create([
             'name' => 'coach',
             'email' => 'coach@example.com',
+            'password' => bcrypt('coach12345'),
             'dob' => $faker->date,
             'gender' => 'male',
             'address' => $faker->address,
