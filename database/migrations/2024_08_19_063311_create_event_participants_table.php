@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('event_participants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('eventId')->constrained('event_schedules')->cascadeOnDelete();
-            $table->foreignId('participantId')->constrained('players')->nullOnDelete();
+            $table->foreignId('participantId')->nullable()->constrained('players')->nullOnDelete();
             $table->enum('attendanceStatus', ['attended', 'illness', 'injured', 'others']);
             $table->text('note')->nullable();
             $table->timestamps();

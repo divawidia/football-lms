@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('player_skills_stats', function (Blueprint $table) {
             $table->id();
             $table->foreignId('playerId')->constrained('players')->cascadeOnDelete();
-            $table->foreignId('coachId')->constrained('coaches')->nullOnDelete();
-            $table->foreignId('eventId')->constrained('event_schedules')->nullOnDelete();
+            $table->foreignId('coachId')->nullable()->constrained('coaches')->nullOnDelete();
+            $table->foreignId('eventId')->nullable()->constrained('event_schedules')->nullOnDelete();
             $table->integer('controlling');
             $table->integer('recieving');
             $table->integer('dribbling');

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('training_video_players', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('playerId')->constrained('players')->nullOnDelete();
-            $table->foreignId('trainingVideoId')->constrained('training_videos')->nullOnDelete();
+            $table->foreignId('playerId')->nullable()->constrained('players')->nullOnDelete();
+            $table->foreignId('trainingVideoId')->nullable()->constrained('training_videos')->nullOnDelete();
             $table->integer('progress');
             $table->enum('status', ['completed', 'onProgress']);
             $table->timestamps();

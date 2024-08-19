@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('player_match_stats', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('playerId')->constrained('players')->nullOnDelete();
+            $table->foreignId('playerId')->nullable()->constrained('players')->nullOnDelete();
             $table->foreignId('eventId')->constrained('event_schedules')->cascadeOnDelete();
             $table->integer('minutesPlayed');
             $table->integer('goals');

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('invoice_subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('invoiceId')->constrained('invoices')->nullOnDelete();
-            $table->foreignId('subscriptionId')->constrained('subscriptions')->nullOnDelete();
+            $table->foreignId('invoiceId')->nullable()->constrained('invoices')->nullOnDelete();
+            $table->foreignId('subscriptionId')->nullable()->constrained('subscriptions')->nullOnDelete();
             $table->timestamps();
         });
     }

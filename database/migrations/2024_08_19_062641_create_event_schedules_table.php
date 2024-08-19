@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('event_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('teamId')->constrained('teams')->cascadeOnDelete();
-            $table->foreignId('userId')->constrained('users')->nullOnDelete();
-            $table->foreignId('coachId')->constrained('coaches')->nullOnDelete();
-            $table->foreignId('opponentTeamsId')->constrained('opponent_teams')->nullOnDelete();
-            $table->unsignedBigInteger('opponentTeamsId')->nullable();
+            $table->foreignId('userId')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('coachId')->nullable()->constrained('coaches')->nullOnDelete();
+            $table->foreignId('opponentTeamsId')->nullable()->constrained('opponent_teams')->nullOnDelete();
             $table->enum('eventType', ['training', 'match']);
             $table->enum('matchType', ['friendlyMatch', 'cup', 'league'])->nullable();
             $table->string('eventName');

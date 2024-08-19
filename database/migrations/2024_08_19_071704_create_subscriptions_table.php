@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('playerId')->constrained('players')->nullOnDelete();
+            $table->foreignId('playerId')->nullable()->constrained('players')->nullOnDelete();
             $table->enum('cycle', ['monthly', 'quarterly', 'semianually', 'anually']);
             $table->date('startDate');
             $table->date('nextDueDate');

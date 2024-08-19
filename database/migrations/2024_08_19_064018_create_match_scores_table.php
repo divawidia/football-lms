@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('match_scores', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('playerId')->constrained('players')->nullOnDelete();
-            $table->foreignId('assistPlayerId')->constrained('payers')->nullOnDelete();
-            $table->foreignId('eventId')->constrained('evenet_schedules')->cascadeOnDelete();
+            $table->foreignId('playerId')->nullable()->constrained('players')->nullOnDelete();
+            $table->foreignId('assistPlayerId')->nullable()->constrained('players')->nullOnDelete();
+            $table->foreignId('eventId')->constrained('event_schedules')->cascadeOnDelete();
             $table->integer('minuteScored');
             $table->timestamps();
             $table->softDeletes();

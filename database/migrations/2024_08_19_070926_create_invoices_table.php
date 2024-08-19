@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('playerId')->constrained('players')->nullOnDelete();
-            $table->foreignId('adminId')->constrained('admins')->nullOnDelete();
+            $table->foreignId('playerId')->nullable()->constrained('players')->nullOnDelete();
+            $table->foreignId('adminId')->nullable()->constrained('admins')->nullOnDelete();
             $table->foreignId('academyId')->constrained('academies')->cascadeOnDelete();
-            $table->foreignId('taxId')->constrained('taxes')->nullOnDelete();
+            $table->foreignId('taxId')->nullable()->constrained('taxes')->nullOnDelete();
             $table->string('invoiceNumber')->unique();
             $table->dateTime('dueDate');
             $table->integer('ammountDue');

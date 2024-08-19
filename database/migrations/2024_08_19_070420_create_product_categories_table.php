@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('product_categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('adminId')->constrained('admins')->nullOnDelete();
+            $table->foreignId('adminId')->nullable()->constrained('admins')->nullOnDelete();
             $table->string('categoryName');
             $table->text('description')->nullable();
             $table->enum('status', [1,0]);
