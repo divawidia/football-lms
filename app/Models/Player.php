@@ -55,4 +55,8 @@ class Player extends Model
     {
         return $this->belongsToMany(Team::class, 'player_teams', 'playerId', 'teamId')->withTimestamps();
     }
+    public function invoice()
+    {
+        return $this->hasMany(Invoice::class, 'playerId', 'id');
+    }
 }

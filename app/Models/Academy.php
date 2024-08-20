@@ -32,4 +32,8 @@ class Academy extends Model
     {
         return $this->hasMany(Team::class, 'academyId', 'id');
     }
+    public function invoice()
+    {
+        return $this->hasMany(Invoice::class, 'academyId', 'id');
+    }
 }
