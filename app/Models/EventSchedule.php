@@ -45,4 +45,12 @@ class EventSchedule extends Model
     {
         return $this->hasMany(MatchScore::class, 'eventId');
     }
+    public function participant()
+    {
+        return $this->belongsToMany(Player::class, 'event_participants', 'eventId', 'participantId')
+            ->withPivot(
+                'attendanceStatus',
+                'note'
+            )->withTimestamps();
+    }
 }

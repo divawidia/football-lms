@@ -31,4 +31,12 @@ class Player extends Model
     {
         return $this->hasMany(PlayerParrent::class, 'playerId');
     }
+    public function event()
+    {
+        return $this->belongsToMany(EventSchedule::class, 'event_participants', 'participantId', 'eventId')
+            ->withPivot(
+                'attendanceStatus',
+                'note'
+            )->withTimestamps();
+    }
 }
