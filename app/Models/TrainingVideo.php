@@ -33,4 +33,8 @@ class TrainingVideo extends Model
     {
         return $this->belongsTo(User::class, 'userId', 'id');
     }
+    public function lessons()
+    {
+        return $this->hasMany(TrainingVideoLesson::class, 'trainingLessonId', 'id');
+    }
 }
