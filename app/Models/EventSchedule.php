@@ -53,4 +53,8 @@ class EventSchedule extends Model
                 'note'
             )->withTimestamps();
     }
+    public function teamMatchStats()
+    {
+        return $this->hasMany(TeamMatchStats::class, 'eventId');
+    }
 }

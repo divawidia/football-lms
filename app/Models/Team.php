@@ -28,4 +28,8 @@ class Team extends Model
     {
         return $this->belongsTo(Academy::class, 'academyId');
     }
+    public function teamMatchStats()
+    {
+        return $this->hasMany(TeamMatchStats::class, 'teamId');
+    }
 }
