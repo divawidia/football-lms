@@ -27,4 +27,9 @@ class Academy extends Model
     {
         return $this->hasMany(User::class, 'academyId', 'id');
     }
+
+    public function teams()
+    {
+        return $this->hasMany(Team::class, 'academyId', 'id');
+    }
 }
