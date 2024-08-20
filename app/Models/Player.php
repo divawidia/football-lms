@@ -27,4 +27,8 @@ class Player extends Model
     {
         return $this->belongsTo(User::class, 'userId');
     }
+    public function parrents()
+    {
+        return $this->hasMany(PlayerParrent::class, 'playerId');
+    }
 }
