@@ -41,4 +41,14 @@ class Invoice extends Model
     {
         return $this->belongsTo(Tax::class, 'taxId');
     }
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_invoices', 'invoiceId', 'productId')
+            ->withPivot('qty', 'ammount')->withTimestamps();
+    }
+    public function subscriptions()
+    {
+        return $this->belongsToMany(Subscription::class, 'invoice_subscriptions', 'invoiceId', 'subscriptionId')
+            ->withTimestamps();
+    }
 }
