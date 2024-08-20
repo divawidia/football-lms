@@ -41,4 +41,8 @@ class EventSchedule extends Model
     {
         return $this->belongsTo(OpponentTeam::class, 'opponentTeamsId');
     }
+    public function matchScore()
+    {
+        return $this->hasMany(MatchScore::class, 'eventId');
+    }
 }
