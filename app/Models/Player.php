@@ -31,6 +31,10 @@ class Player extends Model
     {
         return $this->hasMany(PlayerParrent::class, 'playerId');
     }
+    public function playerMatchStats()
+    {
+        return $this->hasMany(PlayerMatchStats::class, 'playerId');
+    }
     public function event()
     {
         return $this->belongsToMany(EventSchedule::class, 'event_participants', 'participantId', 'eventId')
