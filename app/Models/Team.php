@@ -32,4 +32,8 @@ class Team extends Model
     {
         return $this->hasMany(TeamMatchStats::class, 'teamId');
     }
+    public function player()
+    {
+        return $this->belongsToMany(Player::class, 'player_teams', 'teamId', 'playerId')->withTimestamps();
+    }
 }

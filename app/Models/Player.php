@@ -51,4 +51,8 @@ class Player extends Model
                 'note'
             )->withTimestamps();
     }
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class, 'player_teams', 'playerId', 'teamId')->withTimestamps();
+    }
 }
