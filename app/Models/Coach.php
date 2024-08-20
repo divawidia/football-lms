@@ -32,5 +32,9 @@ class Coach extends Model
     {
         return $this->hasMany(Team::class, 'coachId');
     }
+    public function playerSkillStats()
+    {
+        return $this->hasMany(PlayerSkillStats::class, 'coachId');
+    }
 
 }

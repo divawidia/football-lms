@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class PlayerSkillStats extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'playerId',
+        'coachId',
+        'eventId',
+        'controlling',
+        'recieving',
+        'dribbling',
+        'passing',
+        'shooting',
+        'crossing',
+        'turning',
+        'ballHandling',
+        'powerKicking',
+        'goalKeeping',
+        'offensivePlay',
+        'defensivePlay'
+    ];
+
+    public function player()
+    {
+        return $this->belongsTo(Player::class, 'playerId', 'id');
+    }
+    public function coach()
+    {
+        return $this->belongsTo(Coach::class, 'coachId', 'id');
+    }
+    public function event()
+    {
+        return $this->belongsTo(EventSchedule::class, 'eventId', 'id');
+    }
+}

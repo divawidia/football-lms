@@ -57,4 +57,8 @@ class EventSchedule extends Model
     {
         return $this->hasMany(TeamMatchStats::class, 'eventId');
     }
+    public function playerSkillStats()
+    {
+        return $this->hasMany(PlayerSkillStats::class, 'eventId');
+    }
 }
