@@ -34717,7 +34717,8 @@ label {
 
 [dir] .navbar {
     padding-top: 0;
-    padding-bottom: 0
+    padding-bottom: 0;
+    background: white;
 }
 
 [dir] .navbar-shadow {
