@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,17 +16,35 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('auth.login');
+    return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    return view('pages.admins.dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('prevent.back.history')->group(function (){
+    Auth::routes();
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+//    Route::group(['middleware' => ['auth', 'web']], function () {
+//        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+//
+//        Route::group(['prefix' => 'akun', 'as' => 'profile.'], function () {
+//            Route::get('/profile', [ProfileController::class, 'index'])->name('index');
+//            Route::post('/update-photo', [ProfileController::class, 'updatePhoto'])->name('update.photo');
+//            Route::put('/update-password', [ProfileController::class, 'updatePassword'])->name('update.password');
+//            Route::put('/delete-photo', [ProfileController::class, 'deletePhoto'])->name('delete.photo');
+//        });
+//    });
 });
 
-require __DIR__.'/auth.php';
+//Route::get('/dashboard', function () {
+//    return view('pages.admins.dashboard');
+//})->middleware(['auth', 'verified'])->name('dashboard');
+//
+//Route::middleware('auth')->group(function () {
+//    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+//});
+//
+//require __DIR__.'/auth.php';
+Route::group(['middleware' => ['role:admin,web']], function () {
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+});
