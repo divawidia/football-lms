@@ -44,8 +44,10 @@
                 <div class="dropdown-header"><strong>Account</strong></div>
                 <a class="dropdown-item"
                    href="edit-account.html">Edit Account</a>
-                <a class="dropdown-item"
-                   href="login.html">Logout</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="dropdown-item" type="button">Logout</button>
+                </form>
             </div>
         </div>
     </div>
