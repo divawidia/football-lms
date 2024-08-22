@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class LoginController extends Controller
 {
@@ -50,7 +51,7 @@ class LoginController extends Controller
 
         Cache::put('user-is-online-' . $user->id, true, Carbon::now()->addMinutes(10));
 
-        if (Auth::user()->hasRole('admin') {
+        if (Auth::user()->hasRole('admin')) {
             Alert::toast('Selamat datang ' . Auth::user()->name, 'success');
             return redirect()->route('admin.dashboard');
         } else if (Auth::user()->hasRole('coach')) {
