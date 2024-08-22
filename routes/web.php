@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -48,3 +49,9 @@ Route::middleware('prevent.back.history')->group(function (){
 Route::group(['middleware' => ['role:admin,web']], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 });
+//Route::group(['middleware' => ['role:coach,web']], function () {
+//    Route::get('dashboard', [DashboardController::class, 'index'])->name('coach.dashboard');
+//});
+//Route::group(['middleware' => ['role:player,web']], function () {
+//    Route::get('dashboard', [DashboardController::class, 'index'])->name('player.dashboard');
+//});

@@ -11,7 +11,7 @@
                 </form>
             </div>
 
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ route('admin.dashboard') }}"
                class="sidebar-brand my-3">
                 <span class="avatar avatar-xl sidebar-brand-icon h-auto">
                     <span class="avatar-title rounded bg-primary">
