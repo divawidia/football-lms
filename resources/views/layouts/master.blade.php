@@ -8,6 +8,7 @@
     <!-- Prevent the demo from appearing in search engines -->
     <meta name="robots" content="noindex">
     @include('includes.style')
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-1.13.8/datatables.min.css" rel="stylesheet">
 </head>
 
 <body class="layout-app ">
@@ -36,6 +37,6 @@
 
 @include('includes.scripts')
 @include('sweetalert::alert')
-
+<script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-1.13.8/datatables.min.js"></script>
 </body>
 </html>
