@@ -33,33 +33,35 @@
                     </a>
                 </li>
             </ul>
+
             <div class="sidebar-heading">Management</div>
+
             <ul class="sidebar-menu">
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-dashboard.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">admins_management</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">person</span>
                         <span class="sidebar-menu-text">Admins Management</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-courses.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">players_management</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">person</span>
                         <span class="sidebar-menu-text">Players Management</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-quizzes.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">coaches_management</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">person</span>
                         <span class="sidebar-menu-text">Coaches Management</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-earnings.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">teams_management</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">group</span>
                         <span class="sidebar-menu-text">Teams Management</span>
                     </a>
                 </li>
@@ -68,10 +70,9 @@
             <div class="sidebar-heading">Academy</div>
             <ul class="sidebar-menu">
                 <li class="sidebar-menu-item">
-                    <a class="sidebar-menu-button js-sidebar-collapse"
-                       data-toggle="collapse"
+                    <a class="sidebar-menu-button js-sidebar-collapse" data-toggle="collapse"
                        href="#enterprise_menu">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">schedule</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">event</span>
                         Schedule
                         <span class="ml-auto sidebar-menu-toggle-icon"></span>
                     </a>
@@ -95,7 +96,7 @@
                     <a class="sidebar-menu-button"
                        data-toggle="collapse"
                        href="#productivity_menu">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">reports</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">description</span>
                         Reports
                         <span class="ml-auto sidebar-menu-toggle-icon"></span>
                     </a>
@@ -124,14 +125,14 @@
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-dashboard.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">leaderboards</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">bar_chart</span>
                         <span class="sidebar-menu-text">Leaderboards</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-dashboard.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">training_video</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">video_library</span>
                         <span class="sidebar-menu-text">Training Video</span>
                     </a>
                 </li>
@@ -142,21 +143,21 @@
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-dashboard.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">products</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">inventory</span>
                         <span class="sidebar-menu-text">Products</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-dashboard.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">invoices</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">receipt</span>
                         <span class="sidebar-menu-text">Invoices</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-dashboard.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">subscriptons</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">card_membership</span>
                         <span class="sidebar-menu-text">Subscriptions</span>
                     </a>
                 </li>
