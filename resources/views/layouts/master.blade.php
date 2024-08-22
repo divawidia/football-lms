@@ -35,5 +35,7 @@
 </div>
 
 @include('includes.scripts')
+@include('sweetalert::alert')
+
 </body>
 </html>
