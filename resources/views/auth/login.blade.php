@@ -1,47 +1,63 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@extends('layouts.master-without-nav')
+@section('title')
+    Login
+@endsection
+@section('page-title')
+    Login
+@endsection
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+@section('content')
+    <div class="layout-login-centered-boxed__form card">
+        <div class="d-flex flex-column justify-content-center align-items-center mt-2 mb-5 navbar-light">
+            <a href=""
+               class="navbar-brand flex-column mb-2 align-items-center mr-0"
+               style="min-width: 0">
+                LOGO
+            </a>
+            <p class="m-0">Login to access your Account </p>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+            <div class="form-group">
+                <label class="text-label" for="email_2">Email Address:</label>
+                <div class="input-group input-group-merge">
+                    <input id="email_2" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" class="form-control form-control-prepended @error('email') is-invalid @enderror" placeholder="Input your email">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <span class="far fa-envelope"></span>
+                        </div>
+                    </div>
+                </div>
+                @error('email')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label class="text-label" for="password_2">Password:</label>
+                <div class="input-group input-group-merge">
+                    <input id="password_2" type="password" name="password" value="{{ old('password') }}" required autofocus autocomplete="current-password" class="form-control form-control-prepended @error('password') is-invalid @enderror" placeholder="Enter your password">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <span class="fa fa-key"></span>
+                        </div>
+                    </div>
+                </div>
+                @error('password')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+            <div class="form-group">
+                <button class="btn btn-block btn-primary" type="submit">Login</button>
+            </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+            <div class="form-group text-center">
+                <a href="{{ route('password.request') }}">Forgot password?</a>
+            </div>
+        </form>
+    </div>
+@endsection
