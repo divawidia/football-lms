@@ -26,9 +26,26 @@
 
     <!-- // END Navbar Brand -->
 
+    <div class="flex"></div>
+
     <!-- Navbar Menu -->
 
     <div class="nav navbar-nav flex-nowrap d-flex mr-16pt">
+        <!-- Notifications dropdown -->
+        <div class="nav-item ml-16pt dropdown dropdown-notifications dropdown-xs-down-full"
+             data-toggle="tooltip"
+             data-title="Notifications"
+             data-placement="bottom"
+             data-boundary="window">
+            <button class="nav-link btn-flush dropdown-toggle"
+                    type="button"
+                    data-toggle="dropdown"
+                    data-caret="false">
+                <i class="material-icons">notifications_none</i>
+                <span class="badge badge-notifications badge-accent">2</span>
+            </button>
+        </div>
+        <!-- // END Notifications dropdown -->
         <div class="nav-item dropdown">
             <a href="#"
                class="nav-link d-flex align-items-center dropdown-toggle"
@@ -46,7 +63,7 @@
                    href="edit-account.html">Edit Account</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button class="dropdown-item" type="button">Logout</button>
+                    <button class="dropdown-item" type="submit">Logout</button>
                 </form>
             </div>
         </div>
