@@ -31,9 +31,8 @@
                 @include('includes.footer')
 
             </div>
+            @include('includes.navigation')
         </div>
-
-        @include('includes.navigation')
 
         @include('includes.scripts')
     </body>
