@@ -12,7 +12,7 @@
             </div>
 
             <a href="{{ route('dashboard') }}"
-               class="sidebar-brand my-3">
+               class="sidebar-brand ">
                 <span class="avatar avatar-xl sidebar-brand-icon h-auto">
                     <span class="avatar-title rounded bg-primary">
 {{--                        <img src="../../public/images/illustration/student/128/white.svg"--}}
@@ -27,48 +27,23 @@
             <ul class="sidebar-menu">
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
-                       href="index.html">
+                       href="{{ route('dashboard') }}">
                         <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">dashboard</span>
                         <span class="sidebar-menu-text">Dashboard</span>
                     </a>
                 </li>
             </ul>
 
-            <div class="sidebar-heading">Management</div>
+            <div class="sidebar-heading">Academy</div>
 
             <ul class="sidebar-menu">
-                <li class="sidebar-menu-item">
-                    <a class="sidebar-menu-button"
-                       href="instructor-dashboard.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">person</span>
-                        <span class="sidebar-menu-text">Admins Management</span>
-                    </a>
-                </li>
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-courses.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">person</span>
-                        <span class="sidebar-menu-text">Players Management</span>
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">tune</span>
+                        <span class="sidebar-menu-text">Skill Assesments</span>
                     </a>
                 </li>
-                <li class="sidebar-menu-item">
-                    <a class="sidebar-menu-button"
-                       href="instructor-quizzes.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">person</span>
-                        <span class="sidebar-menu-text">Coaches Management</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a class="sidebar-menu-button"
-                       href="instructor-earnings.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">group</span>
-                        <span class="sidebar-menu-text">Teams Management</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="sidebar-heading">Academy</div>
-            <ul class="sidebar-menu">
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button js-sidebar-collapse" data-toggle="collapse"
                        href="#enterprise_menu">
@@ -136,29 +111,11 @@
                         <span class="sidebar-menu-text">Training Video</span>
                     </a>
                 </li>
-            </ul>
-
-            <div class="sidebar-heading">Payments</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-menu-item">
-                    <a class="sidebar-menu-button"
-                       href="instructor-dashboard.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">inventory</span>
-                        <span class="sidebar-menu-text">Products</span>
-                    </a>
-                </li>
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
                        href="instructor-dashboard.html">
                         <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">receipt</span>
-                        <span class="sidebar-menu-text">Invoices</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a class="sidebar-menu-button"
-                       href="instructor-dashboard.html">
-                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">card_membership</span>
-                        <span class="sidebar-menu-text">Subscriptions</span>
+                        <span class="sidebar-menu-text">Billing & Payments</span>
                     </a>
                 </li>
             </ul>
