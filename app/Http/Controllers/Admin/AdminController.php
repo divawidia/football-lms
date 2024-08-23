@@ -24,16 +24,16 @@ class AdminController extends Controller
                 ->addColumn('action', function ($item) {
                     return '
                         <div class="dropdown">
-                          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons-outlined">
+                          <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="material-icons">
                                 more_vert
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#"><span class="material-icons-outlined">edit</span> Edit Admin</a>
-                            <form action="' . route('admin-management.destroy', $item->id) . '" method="POST"
+                            <a class="dropdown-item" href="#"><span class="material-icons">edit</span> Edit Admin</a>
+                            <form action="' . route('admin-managements.destroy', $item->id) . '" method="POST"
                                 <button type="submit" class="dropdown-item">
-                                    <span class="material-icons-outlined">delete</span> Delete Admin
+                                    <span class="material-icons">delete</span> Delete Admin
                                 </button>
                             </form>
                           </div>
@@ -59,9 +59,9 @@ class AdminController extends Controller
                 })
                 ->editColumn('status', function ($item){
                     if ($item->user->status == '1') {
-                        return '<span class="badge bg-success">Aktif</span>';
+                        return '<span class="badge badge-pill badge-success">Aktif</span>';
                     }elseif ($item->user->status == '0'){
-                        return '<span class="badge bg-danger">Non Aktif</span>';
+                        return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
                     }
                 })
                 ->editColumn('age', function ($item){

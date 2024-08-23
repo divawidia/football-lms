@@ -35,7 +35,6 @@
                         <table class="table table-hover mb-0" id="table">
                             <thead>
                             <tr>
-                                <th>#</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone Number</th>
@@ -66,7 +65,6 @@
                     url: '{!! url()->current() !!}',
                 },
                 columns: [
-                    {data: 'DT_RowIndex',name: 'DT_RowIndex',orderable: false,searchable: false},
                     { data: 'name', name: 'name' },
                     { data: 'user.email', name: 'user.email'},
                     { data: 'user.phoneNumber', name: 'user.phoneNumber' },
