@@ -95,6 +95,7 @@ class PermissionSeeder extends Seeder
         $user2->assignRole($role2);
         $admin = Admin::factory()->create([
             'position' => 'staff',
+            'hireDate' => Carbon::now(),
             'userId' => $user2->id
         ]);
 
@@ -139,7 +140,7 @@ class PermissionSeeder extends Seeder
             'height' => 175,
             'weight' => 60,
             'hireDate' => Carbon::now(),
-            'userId' => $user->id
+            'userId' => $user4->id
         ]);
     }
 }

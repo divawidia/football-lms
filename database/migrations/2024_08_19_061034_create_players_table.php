@@ -14,15 +14,12 @@ return new class extends Migration
         Schema::create('players', function (Blueprint $table) {
             $table->id();
             $table->foreignId('userId')->constrained('users')->cascadeOnDelete();
-            $table->string('firstName');
-            $table->string('lastName');
             $table->string('position');
             $table->string('skill');
             $table->enum('strongFoot', ['left', 'right']);
             $table->integer('height');
             $table->integer('weight');
             $table->date('joinDate');
-            $table->enum('status', [0, 1]);
             $table->timestamps();
         });
     }

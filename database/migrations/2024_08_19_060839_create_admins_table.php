@@ -14,10 +14,8 @@ return new class extends Migration
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
             $table->foreignId('userId')->constrained('users')->cascadeOnDelete();
-            $table->string('firstName');
-            $table->string('lastName');
             $table->string('position');
-            $table->enum('status', [0, 1]);
+            $table->date('hireDate');
             $table->timestamps();
         });
     }

@@ -14,14 +14,11 @@ return new class extends Migration
         Schema::create('coaches', function (Blueprint $table) {
             $table->id();
             $table->foreignId('userId')->constrained('users')->cascadeOnDelete();
-            $table->string('firstName');
-            $table->string('lastName');
             $table->string('certificationLevel');
             $table->string('specialization');
             $table->integer('height');
             $table->integer('weight');
             $table->date('hireDate');
-            $table->enum('status', [0, 1]);
             $table->timestamps();
         });
     }
