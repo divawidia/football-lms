@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\User;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -62,10 +64,16 @@ class AdminController extends Controller
                         return '<span class="badge bg-danger">Non Aktif</span>';
                     }
                 })
-                ->rawColumns(['action', 'name','status'])
+                ->editColumn('age', function ($item){
+                    $dob = new DateTime($item->user->dob);
+                    $today   = new DateTime('today');
+                    $age = $dob->diff($today)->y;
+                    return $age;
+                })
+                ->rawColumns(['action', 'name','status', 'age'])
                 ->make();
         }
-        return view('pages.admin.kelola-pengguna.instruktur.index');
+        return view('pages.admins.managements.admins.index');
     }
 
     /**

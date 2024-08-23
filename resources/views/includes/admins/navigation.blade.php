@@ -39,7 +39,7 @@
             <ul class="sidebar-menu">
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
-                       href="instructor-dashboard.html">
+                       href="{{ route('admin-managements.index') }}">
                         <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">person</span>
                         <span class="sidebar-menu-text">Admins Management</span>
                     </a>

@@ -1,4 +1,4 @@
-@extends('layouts.admin.master')
+@extends('layouts.master')
 @section('title')
     Admins Management
 @endsection
@@ -23,35 +23,33 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <a href="{{  route('admin-managements.create') }}" class="btn btn-primary mb-3">
-                            + Add New Admin
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="table">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone Number</th>
-                                    <th>Date of Birth</th>
-                                    <th>Age</th>
-                                    <th>Gender</th>
-                                    <th>Address</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+        <div class="container page__container page-section">
+            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                <div class="card-header">
+                    <a href="{{  route('admin-managements.create') }}" class="btn btn-primary">
+                        + Add New Admin
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Date of Birth</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Address</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -76,7 +74,7 @@
                     { data: 'age', name: 'age' },
                     { data: 'user.gender', name: 'user.gender' },
                     { data: 'user.address', name: 'user.address' },
-                    { data: 'user.status', name: 'user.status' },
+                    { data: 'status', name: 'status' },
                     {
                         data: 'action',
                         name: 'action',
