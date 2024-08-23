@@ -11,15 +11,12 @@ class Player extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'firstName',
-        'lastName',
         'position',
         'skill',
         'strongFoot',
         'height',
         'weight',
         'joinDate',
-        'status',
         'userId'
     ];
 
