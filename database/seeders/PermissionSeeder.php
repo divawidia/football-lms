@@ -49,7 +49,7 @@ class PermissionSeeder extends Seeder
         // gets all permissions via Gate::before rule; see AuthServiceProvider
 
         // create demo users
-        $user = \App\Models\User::factory()->create([
+        $user = \App\Models\User::factory()->has(Player::factory(), 'player')->create([
             'firstName' => $faker->firstName,
             'lastName' => $faker->lastName,
             'email' => 'player@example.com',
@@ -66,17 +66,8 @@ class PermissionSeeder extends Seeder
             'academyId' => 1,
         ]);
         $user->assignRole($role1);
-        $player = Player::factory()->create([
-            'position' => 'Center Back',
-            'skill' => 'intermediate',
-            'strongFoot' => 'right',
-            'height' => 175,
-            'weight' => 60,
-            'joinDate' => Carbon::now(),
-            'userId' => $user->id
-        ]);
 
-        $user2 = \App\Models\User::factory()->create([
+        $user2 = \App\Models\User::factory()->has(Admin::factory(), 'admin')->create([
             'firstName' => $faker->firstName,
             'lastName' => $faker->lastName,
             'email' => 'admin@example.com',
@@ -93,13 +84,8 @@ class PermissionSeeder extends Seeder
             'academyId' => 1,
         ]);
         $user2->assignRole($role2);
-        $admin = Admin::factory()->create([
-            'position' => 'staff',
-            'hireDate' => Carbon::now(),
-            'userId' => $user2->id
-        ]);
 
-        $user3 = \App\Models\User::factory()->create([
+        $user3 = \App\Models\User::factory()->has(Admin::factory(), 'admin')->create([
             'firstName' => $faker->firstName,
             'lastName' => $faker->lastName,
             'email' => 'superadmin@example.com',
@@ -117,7 +103,7 @@ class PermissionSeeder extends Seeder
         ]);
         $user3->assignRole($role3);
 
-        $user4 = \App\Models\User::factory()->create([
+        $user4 = \App\Models\User::factory()->has(Coach::factory(), 'coach')->create([
             'firstName' => $faker->firstName,
             'lastName' => $faker->lastName,
             'email' => 'coach@example.com',
@@ -134,13 +120,5 @@ class PermissionSeeder extends Seeder
             'academyId' => 1,
         ]);
         $user4->assignRole($role4);
-        $coach = Coach::factory()->create([
-            'certificationLevel' => 'UEFA Pro',
-            'specialization' => 'tactic',
-            'height' => 175,
-            'weight' => 60,
-            'hireDate' => Carbon::now(),
-            'userId' => $user4->id
-        ]);
     }
 }
