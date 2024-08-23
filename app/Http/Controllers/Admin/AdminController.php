@@ -29,7 +29,7 @@ class AdminController extends Controller
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="#"><span class="material-icons-outlined">edit</span> Edit Admin</a>
-                            <form action="' . route('admin.destroy', $item->id) . '" method="POST"
+                            <form action="' . route('admin-management.destroy', $item->id) . '" method="POST"
                                 <button type="submit" class="dropdown-item">
                                     <span class="material-icons-outlined">delete</span> Delete Admin
                                 </button>
@@ -37,8 +37,23 @@ class AdminController extends Controller
                           </div>
                         </div>';
                 })
-                ->editColumn('foto', function ($item) {
-                    return $item->user->foto ? '<img class="rounded-circle header-profile-user" src="' . Storage::url($item->user->foto) . '"/>' : '';
+                ->editColumn('name', function ($item) {
+                    return '
+                        <div class="media flex-nowrap align-items-center"
+                             style="white-space: nowrap;">
+                            <div class="avatar avatar-sm mr-8pt">
+                                <img class="rounded-circle header-profile-user" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
+                            </div>
+                            <div class="media-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex d-flex flex-column">
+                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->firstName .' '. $item->lastName .'</strong></p>
+                                        <small class="js-lists-values-email text-50">' . $item->position . '</small>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>';
                 })
                 ->editColumn('status', function ($item){
                     if ($item->user->status == '1') {
@@ -47,7 +62,7 @@ class AdminController extends Controller
                         return '<span class="badge bg-danger">Non Aktif</span>';
                     }
                 })
-                ->rawColumns(['action', 'foto','status'])
+                ->rawColumns(['action', 'name','status'])
                 ->make();
         }
         return view('pages.admin.kelola-pengguna.instruktur.index');
