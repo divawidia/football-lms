@@ -11,14 +11,11 @@ class Coach extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'firstName',
-        'lastName',
         'certificationLevel',
         'specialization',
         'height',
         'weight',
         'joinDate',
-        'status',
         'hireDate',
         'userId'
     ];
