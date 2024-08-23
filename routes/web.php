@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
@@ -48,6 +49,8 @@ Route::middleware('prevent.back.history')->group(function (){
 //require __DIR__.'/auth.php';
 Route::group(['middleware' => ['role:admin,web']], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+    Route::resource('admin-managements', AdminController::class);
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
 //    Route::get('dashboard', [DashboardController::class, 'index'])->name('coach.dashboard');

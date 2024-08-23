@@ -27,7 +27,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <a href="{{  route('admin.create') }}" class="btn btn-primary mb-3">
+                        <a href="{{  route('admin-managements.create') }}" class="btn btn-primary mb-3">
                             + Add New Admin
                         </a>
                     </div>
@@ -68,12 +68,15 @@
                     url: '{!! url()->current() !!}',
                 },
                 columns: [
-                    { data: 'id', name: 'id' },
-                    { data: 'foto', name: 'foto' },
+                    {data: 'DT_RowIndex',name: 'DT_RowIndex',orderable: false,searchable: false},
                     { data: 'name', name: 'name' },
-                    { data: 'email', name: 'email'},
-                    { data: 'created_at', name: 'created_at' },
-                    { data: 'status', name: 'status' },
+                    { data: 'user.email', name: 'user.email'},
+                    { data: 'user.phoneNumber', name: 'user.phoneNumber' },
+                    { data: 'user.dob', name: 'user.dob' },
+                    { data: 'age', name: 'age' },
+                    { data: 'user.gender', name: 'user.gender' },
+                    { data: 'user.address', name: 'user.address' },
+                    { data: 'user.status', name: 'user.status' },
                     {
                         data: 'action',
                         name: 'action',
