@@ -15,10 +15,8 @@ class Admin extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
-        'firstName',
-        'lastName',
         'position',
-        'status',
+        'hireDate',
         'userId'
     ];
 
