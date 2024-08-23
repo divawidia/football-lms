@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('weight');
             $table->date('joinDate');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

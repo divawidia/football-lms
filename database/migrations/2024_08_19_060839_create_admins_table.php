@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('position');
             $table->date('hireDate');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

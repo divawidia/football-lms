@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('weight');
             $table->date('hireDate');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

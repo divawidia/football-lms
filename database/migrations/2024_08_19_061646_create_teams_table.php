@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->enum('status', [1,0]);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
