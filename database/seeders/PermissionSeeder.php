@@ -2,6 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Admin;
+use App\Models\Coach;
+use App\Models\Player;
+use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -46,7 +50,8 @@ class PermissionSeeder extends Seeder
 
         // create demo users
         $user = \App\Models\User::factory()->create([
-            'name' => 'player',
+            'firstName' => $faker->firstName,
+            'lastName' => $faker->lastName,
             'email' => 'player@example.com',
             'password' => bcrypt('player12345'),
             'dob' => $faker->date,
@@ -61,9 +66,19 @@ class PermissionSeeder extends Seeder
             'academyId' => 1,
         ]);
         $user->assignRole($role1);
+        $player = Player::factory()->create([
+            'position' => 'Center Back',
+            'skill' => 'intermediate',
+            'strongFoot' => 'right',
+            'height' => 175,
+            'weight' => 60,
+            'joinDate' => Carbon::now(),
+            'userId' => $user->id
+        ]);
 
-        $user = \App\Models\User::factory()->create([
-            'name' => 'admin',
+        $user2 = \App\Models\User::factory()->create([
+            'firstName' => $faker->firstName,
+            'lastName' => $faker->lastName,
             'email' => 'admin@example.com',
             'password' => bcrypt('admin12345'),
             'dob' => $faker->date,
@@ -77,10 +92,15 @@ class PermissionSeeder extends Seeder
             'status' => '1',
             'academyId' => 1,
         ]);
-        $user->assignRole($role2);
+        $user2->assignRole($role2);
+        $admin = Admin::factory()->create([
+            'position' => 'staff',
+            'userId' => $user2->id
+        ]);
 
-        $user = \App\Models\User::factory()->create([
-            'name' => 'Super-Admin',
+        $user3 = \App\Models\User::factory()->create([
+            'firstName' => $faker->firstName,
+            'lastName' => $faker->lastName,
             'email' => 'superadmin@example.com',
             'password' => bcrypt('superadmin12345'),
             'dob' => $faker->date,
@@ -94,10 +114,11 @@ class PermissionSeeder extends Seeder
             'status' => '1',
             'academyId' => 1,
         ]);
-        $user->assignRole($role3);
+        $user3->assignRole($role3);
 
-        $user = \App\Models\User::factory()->create([
-            'name' => 'coach',
+        $user4 = \App\Models\User::factory()->create([
+            'firstName' => $faker->firstName,
+            'lastName' => $faker->lastName,
             'email' => 'coach@example.com',
             'password' => bcrypt('coach12345'),
             'dob' => $faker->date,
@@ -111,6 +132,14 @@ class PermissionSeeder extends Seeder
             'status' => '1',
             'academyId' => 1,
         ]);
-        $user->assignRole($role4);
+        $user4->assignRole($role4);
+        $coach = Coach::factory()->create([
+            'certificationLevel' => 'UEFA Pro',
+            'specialization' => 'tactic',
+            'height' => 175,
+            'weight' => 60,
+            'hireDate' => Carbon::now(),
+            'userId' => $user->id
+        ]);
     }
 }
