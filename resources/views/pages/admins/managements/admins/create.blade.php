@@ -117,12 +117,20 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label">Address</label>
+                                        <label class="form-label" for="address">Address</label>
                                         <input type="text"
                                                class="form-control"
                                                name="address"
+                                               id="address"
                                                placeholder="Input account's address ...">
                                     </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="country">Country</label>
+                                        <select class="form-control form-select @error('country') is-invalid @enderror" id="country" name="country" required>
+                                            @foreach($countries as $country)
+                                                <option value="{{ $country['name'] }}">{{ $country['name'] }}</option>
+                                            @endforeach
+                                        </select>
                                     <div class="form-group">
                                         <label class="form-label">State</label>
                                         <input type="text"
@@ -130,12 +138,6 @@
                                                value="Alexander"
                                                placeholder="Your first name ...">
                                     </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Country</label>
-                                        <input type="text"
-                                               class="form-control"
-                                               value="Watson"
-                                               placeholder="Your last name ...">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Phone Number</label>

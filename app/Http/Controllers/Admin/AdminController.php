@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
+use Nnjeim\World\World;
 
 class AdminController extends Controller
 {
@@ -81,7 +82,13 @@ class AdminController extends Controller
      */
     public function create()
     {
-        return view('pages.admins.managements.admins.create');
+        $action =  World::countries();
+        if ($action->success) {
+            $countries = $action->data;
+        }
+        return view('pages.admins.managements.admins.create', [
+            'countries' => $countries
+        ]);
     }
 
     /**
