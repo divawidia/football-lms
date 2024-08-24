@@ -81,7 +81,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        return view('pages.admin.kelola-pengguna.instruktur.create');
+        return view('pages.admins.managements.admins.create');
     }
 
     /**

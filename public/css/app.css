@@ -10856,7 +10856,7 @@ a.close.disabled {
 }
 
 [dir] a.bg-primary:focus, [dir] a.bg-primary:hover, [dir] button.bg-primary:focus, [dir] button.bg-primary:hover {
-    background-color: #2239ff !important
+    background-color: var(--accent-1) !important
 }
 
 [dir] a.bg-secondary:focus, [dir] a.bg-secondary:hover, [dir] button.bg-secondary:focus, [dir] button.bg-secondary:hover {
