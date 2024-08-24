@@ -19,3 +19,6 @@
 
 <!-- Preloader -->
 <script src="{{ URL::asset('js/preloader.js') }}"></script>
+
+<script src="{{ URL::asset('vendor/select2/select2.min.js') }}"></script>
+<script src="{{ URL::asset('js/select2.js') }}"></script>
