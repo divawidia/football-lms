@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdminRequest;
 use App\Models\Admin;
 use App\Models\User;
 use Carbon\Carbon;
@@ -102,7 +103,7 @@ class AdminController extends Controller
         if ($request->hasFile('foto')){
             $data['foto'] = $request->file('foto')->store('assets/user-profile', 'public');
         }else{
-            $data['foto'] = 'assets/user-profile/avatar.png';
+            $data['foto'] = 'images/undefined-user.png';
         }
         $data['status'] = '1';
 
@@ -110,17 +111,15 @@ class AdminController extends Controller
         $user->assignRole('admin');
 
         Admin::create([
-            'firstName' => $data['firstName'],
-            'lastName' => $data['lastName'],
             'position' => $data['position'],
-            'status' => $data['status'],
+            'hireDate' => $data['hireDate'],
             'user_id' => $user->id,
         ]);
 
         $text = 'Data admin berhasil ditambahkan!';
 
         Alert::success($text);
-        return redirect()->route('admin.index')->with('status', $text);
+        return redirect()->route('admin.index');
     }
 
     /**
