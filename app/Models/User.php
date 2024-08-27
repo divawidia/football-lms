@@ -31,9 +31,9 @@ class User extends Authenticatable
         'dob',
         'gender',
         'address',
-        'state',
-        'city',
-        'country',
+        'state_id',
+        'city_id',
+        'country_id',
         'zipCode',
         'phoneNumber',
         'status',
@@ -78,14 +78,14 @@ class User extends Authenticatable
     }
     public function country()
     {
-        return $this->belongsTo(Country::class, 'country');
+        return $this->belongsTo(Country::class, 'country_id');
     }
     public function state()
     {
-        return $this->belongsTo(State::class, 'state');
+        return $this->belongsTo(State::class, 'state_id');
     }
     public function city()
     {
-        return $this->belongsTo(City::class, 'city');
+        return $this->belongsTo(City::class, 'city_id');
     }
 }

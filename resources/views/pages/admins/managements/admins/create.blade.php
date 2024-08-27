@@ -251,11 +251,11 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group mb-3">
-                                        <label class="form-label" for="country">Country</label>
-                                        <select class="form-control form-select country-form @error('country') is-invalid @enderror" id="country" name="country" required>
+                                        <label class="form-label" for="country_id">Country</label>
+                                        <select class="form-control form-select country-form @error('country_id') is-invalid @enderror" id="country_id" name="country_id" required>
                                             <option selected disabled>Select Country</option>
                                             @foreach($countries as $country)
-                                                <option value="{{ $country['id'] }}" @selected(old('country') == $country['id'])>{{ $country['name'] }}</option>
+                                                <option value="{{ $country['id'] }}" @selected(old('country_id') == $country['id'])>{{ $country['name'] }}</option>
                                             @endforeach
                                         </select>
                                         @error('country')
@@ -265,22 +265,22 @@
                                         @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label" for="state">State</label>
-                                        <select class="form-control form-select @error('state') is-invalid @enderror" id="state" name="state" required>
+                                        <label class="form-label" for="state_id">State</label>
+                                        <select class="form-control form-select @error('state_id') is-invalid @enderror" id="state_id" name="state_id" required>
                                             <option disabled selected>Select State</option>
                                         </select>
-                                        @error('state')
+                                        @error('state_id')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label" for="city">City</label>
-                                        <select class="form-control form-select @error('city') is-invalid @enderror" id="city" name="city" required>
+                                        <label class="form-label" for="city_id">City</label>
+                                        <select class="form-control form-select @error('city_id') is-invalid @enderror" id="city_id" name="city_id" required>
                                             <option disabled selected>Select State</option>
                                         </select>
-                                        @error('city')
+                                        @error('city_id')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -299,7 +299,6 @@
             $(document).ready(function () {
                 $('.country-form').on('change', function (){
                     const idCountry = this.value;
-                    $('#state').html('');
                     $.ajax({
                         url: "{{url('api/states')}}",
                         data: {
@@ -309,16 +308,15 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function (result){
-                            $('#state').html('<option disabled selected>Select State</option>');
+                            $('#state_id').html('<option disabled selected>Select State</option>');
                             $.each(result.data, function (key, value){
-                                $('#state').append('<option value="'+value.id+'">'+value.name+'</option>');
+                                $('#state_id').append('<option value="'+value.id+'">'+value.name+'</option>');
                             });
                         }
                     });
                 });
-                $('#state').on('change', function (){
+                $('#state_id').on('change', function (){
                     var idState = this.value;
-                    $('#city').html('');
                     $.ajax({
                         url: "{{url('api/cities')}}",
                         data: {
@@ -327,9 +325,9 @@
                         },
                         dataType: 'json',
                         success: function (result){
-                            $('#city').html('<option disabled selected>Select City</option>');
+                            $('#city_id').html('<option disabled selected>Select City</option>');
                             $.each(result.data, function (key, value){
-                                $('#city').append('<option value="'+value.id+'">'+value.name+'</option>');
+                                $('#city_id').append('<option value="'+value.id+'">'+value.name+'</option>');
                             });
                         }
                     });

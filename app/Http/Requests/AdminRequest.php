@@ -34,10 +34,10 @@ class AdminRequest extends FormRequest
             'phoneNumber' => ['required', 'string'],
             'zipCode' => ['required', 'numeric'],
             'foto' => ['image', 'nullable'],
-            'country' => ['required'],
+            'country_id' => ['required'],
             'status' => [Rule::in('1'), 'nullable'],
-            'state' => ['required'],
-            'city' => ['required'],
+            'state_id' => ['required'],
+            'city_id' => ['required'],
             'hireDate' => ['required', 'date'],
             'position' => ['required', 'string']
         ];
