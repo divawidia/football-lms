@@ -132,7 +132,19 @@ class AdminController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $admin = Admin::with('user')->findOrFail($id);
+
+        return view('pages.admin.kelola-pengguna.instruktur.detail', [
+            'admin' => $admin
+        ]);
+    }
+
+    public function changePassword(string $id){
+        $admin = Admin::with('user')->findOrFail($id);
+
+        return view('pages.admin.kelola-pengguna.instruktur.edit-password',[
+            'admin' => $admin
+        ]);
     }
 
     /**
@@ -140,10 +152,10 @@ class AdminController extends Controller
      */
     public function edit(string $id)
     {
-        $instruktur = Admin::findOrFail($id);
+        $admin = Admin::with('user')->findOrFail($id);
 
         return view('pages.admin.kelola-pengguna.instruktur.edit',[
-            'instruktur' => $instruktur
+            'admin' => $admin
         ]);
     }
 
@@ -186,7 +198,27 @@ class AdminController extends Controller
         ]);
 
         Alert::success('Data instruktur berhasil diupdate!');
-        return redirect()->route('instruktur.index')->with('status', 'Data instruktur berhasil diupdate!');
+        return redirect()->route('admin-managements.index')->with('status', 'Data instruktur berhasil diupdate!');
+    }
+
+    public function deactivate(string $id){
+        $admin = Admin::with('user')->findOrFail($id);
+        $user = User::findOrFail($admin->user_id);
+        $user->update([
+            'status' => '0'
+        ]);
+        Alert::success('Admin status successfully deactivated!');
+        return redirect()->route('admin-managements.index');
+    }
+
+    public function activate(string $id){
+        $admin = Admin::with('user')->findOrFail($id);
+        $user = User::findOrFail($admin->user_id);
+        $user->update([
+            'status' => '1'
+        ]);
+        Alert::success('Admin status successfully activated!');
+        return redirect()->route('admin-managements.index');
     }
 
     /**
@@ -205,6 +237,6 @@ class AdminController extends Controller
         $admin->user->delete();
 
         Alert::success('Data instruktur berhasil dihapus!');
-        return redirect()->route('instruktur.index')->with('status', 'Data instruktur berhasil dihapus!');
+        return redirect()->route('admin-managements.index')->with('status', 'Data instruktur berhasil dihapus!');
     }
 }
