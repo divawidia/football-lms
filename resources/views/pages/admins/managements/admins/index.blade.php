@@ -41,7 +41,6 @@
                                 <th>Date of Birth</th>
                                 <th>Age</th>
                                 <th>Gender</th>
-                                <th>Address</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -71,7 +70,6 @@
                     { data: 'user.dob', name: 'user.dob' },
                     { data: 'age', name: 'age' },
                     { data: 'user.gender', name: 'user.gender' },
-                    { data: 'user.address', name: 'user.address' },
                     { data: 'status', name: 'status' },
                     {
                         data: 'action',

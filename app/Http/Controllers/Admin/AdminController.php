@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -46,12 +47,12 @@ class AdminController extends Controller
                         <div class="media flex-nowrap align-items-center"
                              style="white-space: nowrap;">
                             <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
+                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
                             </div>
                             <div class="media-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->firstName .' '. $item->lastName .'</strong></p>
+                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
                                         <small class="js-lists-values-email text-50">' . $item->position . '</small>
                                     </div>
                                 </div>
@@ -106,6 +107,7 @@ class AdminController extends Controller
             $data['foto'] = 'images/undefined-user.png';
         }
         $data['status'] = '1';
+        $data['academyId'] = Auth::user()->academyId;
 
         $user = User::create($data);
         $user->assignRole('admin');
@@ -113,13 +115,13 @@ class AdminController extends Controller
         Admin::create([
             'position' => $data['position'],
             'hireDate' => $data['hireDate'],
-            'user_id' => $user->id,
+            'userId' => $user->id,
         ]);
 
         $text = 'Data admin berhasil ditambahkan!';
 
         Alert::success($text);
-        return redirect()->route('admin.index');
+        return redirect()->route('admin-managements.index');
     }
 
     /**

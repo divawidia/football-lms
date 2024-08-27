@@ -10855,6 +10855,10 @@ a.close.disabled {
     vertical-align: text-top !important
 }
 
+.img-object-fit-cover {
+    object-fit: cover;
+}
+
 [dir] a.bg-primary:focus, [dir] a.bg-primary:hover, [dir] button.bg-primary:focus, [dir] button.bg-primary:hover {
     background-color: var(--accent-1) !important
 }

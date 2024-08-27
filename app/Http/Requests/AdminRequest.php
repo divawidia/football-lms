@@ -26,7 +26,7 @@ class AdminRequest extends FormRequest
         return [
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
-            'email' => ['required', 'email', Rule::unique('admins', 'email')->ignore($this->admin)],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->admin)],
             'password' => ['string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols(), 'nullable'],
             'gender' => ['required', 'string', Rule::in('male', 'female')],
             'dob' => ['required', 'date'],
@@ -37,7 +37,9 @@ class AdminRequest extends FormRequest
             'country' => ['required'],
             'status' => [Rule::in('1'), 'nullable'],
             'state' => ['required'],
-            'city' => ['required']
+            'city' => ['required'],
+            'hireDate' => ['required', 'date'],
+            'position' => ['required', 'string']
         ];
     }
 }
