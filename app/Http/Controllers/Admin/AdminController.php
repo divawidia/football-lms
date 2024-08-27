@@ -34,7 +34,7 @@ class AdminController extends Controller
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="#"><span class="material-icons">edit</span> Edit Admin</a>
-                            <a class="dropdown-item" href="#"><span class="material-icons">visibility</span> View Admin</a>
+                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Admin</a>
                             <a class="dropdown-item" href="#"><span class="material-icons">block</span> Deactivate Admin</a>
                             <a class="dropdown-item" href="#"><span class="material-icons">lock</span> Change Admin Password</a>
                             <form action="' . route('admin-managements.destroy', $item->id) . '" method="POST"
@@ -133,9 +133,11 @@ class AdminController extends Controller
     public function show(string $id)
     {
         $admin = Admin::with('user')->findOrFail($id);
+        $fullName = $admin->user->firstName . ' ' . $admin->user->lastName;
 
-        return view('pages.admin.kelola-pengguna.instruktur.detail', [
-            'admin' => $admin
+        return view('pages.admins.managements.admins.detail', [
+            'admin' => $admin,
+            'fullName' => $fullName
         ]);
     }
 

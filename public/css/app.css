@@ -24181,7 +24181,7 @@ a.text-primary-pickled-bluewood:focus, a.text-primary-pickled-bluewood:hover {
 }
 
 [dir] .bg-primary {
-    background-color: #5567ff !important
+    background-color: var(--accent-1) !important
 }
 
 [dir] .bg-secondary {
