@@ -34,6 +34,9 @@ class AdminController extends Controller
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="#"><span class="material-icons">edit</span> Edit Admin</a>
+                            <a class="dropdown-item" href="#"><span class="material-icons">visibility</span> View Admin</a>
+                            <a class="dropdown-item" href="#"><span class="material-icons">block</span> Deactivate Admin</a>
+                            <a class="dropdown-item" href="#"><span class="material-icons">lock</span> Change Admin Password</a>
                             <form action="' . route('admin-managements.destroy', $item->id) . '" method="POST"
                                 <button type="submit" class="dropdown-item">
                                     <span class="material-icons">delete</span> Delete Admin
