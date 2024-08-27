@@ -81,15 +81,15 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Country :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $admin->user->country }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ $admin->user->country->name }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">State :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $admin->user->state }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ $admin->user->state->name }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">City :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $admin->user->city }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ $admin->user->city->name }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Zip Code :</p></div>
