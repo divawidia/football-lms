@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Nnjeim\World\Models\City;
+use Nnjeim\World\Models\Country;
+use Nnjeim\World\Models\State;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -72,5 +75,17 @@ class User extends Authenticatable
     public function academy()
     {
         return $this->belongsTo(Academy::class, 'academyId');
+    }
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'country');
+    }
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'state');
+    }
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city');
     }
 }
