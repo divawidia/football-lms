@@ -33,11 +33,11 @@ class AdminController extends Controller
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#"><span class="material-icons">edit</span> Edit Admin</a>
-                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Admin</a>
+                            <a class="dropdown-item" href="' . route('admin-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Admin</a>
+                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Admin</a>
                             <a class="dropdown-item" href="#"><span class="material-icons">block</span> Deactivate Admin</a>
                             <a class="dropdown-item" href="#"><span class="material-icons">lock</span> Change Admin Password</a>
-                            <form action="' . route('admin-managements.destroy', $item->id) . '" method="POST"
+                            <form action="' . route('admin-managements.destroy', $item->userId) . '" method="POST"
                                 <button type="submit" class="dropdown-item">
                                     <span class="material-icons">delete</span> Delete Admin
                                 </button>
@@ -121,7 +121,7 @@ class AdminController extends Controller
             'userId' => $user->id,
         ]);
 
-        $text = 'Data admin berhasil ditambahkan!';
+        $text = 'Admin account successfully added!';
 
         Alert::success($text);
         return redirect()->route('admin-managements.index');
@@ -132,8 +132,8 @@ class AdminController extends Controller
      */
     public function show(string $id)
     {
-        $admin = Admin::with('user.country', 'user.state', 'user.city')->findOrFail($id);
-        $fullName = $admin->user->firstName . ' ' . $admin->user->lastName;
+        $admin = User::with('country', 'state', 'city', 'admin')->findOrFail($id);
+        $fullName = $admin->firstName . ' ' . $admin->lastName;
 
         return view('pages.admins.managements.admins.detail', [
             'admin' => $admin,
@@ -154,53 +154,50 @@ class AdminController extends Controller
      */
     public function edit(string $id)
     {
-        $admin = Admin::with('user')->findOrFail($id);
+        $user = User::with('admin')->findOrFail($id);
+        $fullName = $user->firstName . ' ' . $user->lastName;
+        $action =  World::countries();
+        if ($action->success) {
+            $countries = $action->data;
+        }
 
-        return view('pages.admin.kelola-pengguna.instruktur.edit',[
-            'admin' => $admin
+        return view('pages.admins.managements.admins.edit',[
+            'user' => $user,
+            'fullName' => $fullName,
+            'countries' => $countries
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(AdminRequest $request, Admin $admin)
+    public function update(AdminRequest $request, User $admin_management)
     {
         $data = $request->validated();
-        $user = User::findOrFail($admin->user_id);
-        $admin = Admin::findOrFail($admin->id);
+        $user = User::findOrFail($admin_management->id);
+        $admin = Admin::findOrFail($admin_management->admin->id);
 
-        if ($request->password != null){
-            $data['password'] = bcrypt($data['password']);
-        }else{
-            $data['password'] = $user->password;
-        }
+//        if ($request->password != null){
+//            $data['password'] = bcrypt($data['password']);
+//        }else{
+//            $data['password'] = $user->password;
+//        }
 
-        if ($request->status == null){
-            $data['status'] = '0';
-        }
+//        if ($request->status == null){
+//            $data['status'] = '0';
+//        }
 
         if ($request->hasFile('foto')){
             $data['foto'] = $data['foto']->store('assets/user-profile', 'public');
         }
 
-        $user->update([
-            'name' => $data['nama'],
-            'email' => $data['email'],
-            'status' => $data['status'],
-            'password' => $data['password']
-        ]);
+        $user->update($data);
 
-        $admin->update([
-            'firstName' => $data['firstName'],
-            'lastName' => $data['lastName'],
-            'position' => $data['position'],
-            'status' => $data['status'],
-            'user_id' => $user->id,
-        ]);
+        $admin->update($data);
+        $text = 'Admin account successfully updated!';
 
-        Alert::success('Data instruktur berhasil diupdate!');
-        return redirect()->route('admin-managements.index')->with('status', 'Data instruktur berhasil diupdate!');
+        Alert::success($text);
+        return redirect()->route('admin-managements.index');
     }
 
     public function deactivate(string $id){
