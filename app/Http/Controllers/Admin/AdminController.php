@@ -138,7 +138,7 @@ class AdminController extends Controller
             'userId' => $user->id,
         ]);
 
-        $text = 'Admin account successfully added!';
+        $text = $data['firstName'].' account successfully added!';
 
         Alert::success($text);
         return redirect()->route('admin-managements.index');
@@ -159,10 +159,12 @@ class AdminController extends Controller
     }
 
     public function changePassword(string $id){
-        $admin = Admin::with('user')->findOrFail($id);
+        $user = User::findOrFail($id);
+        $fullName = $user->firstName . ' ' . $user->lastName;
 
         return view('pages.admin.kelola-pengguna.instruktur.edit-password',[
-            'admin' => $admin
+            'user' => $user,
+            'fullName' => $fullName
         ]);
     }
 
@@ -194,16 +196,6 @@ class AdminController extends Controller
         $user = User::findOrFail($admin_management->id);
         $admin = Admin::findOrFail($admin_management->admin->id);
 
-//        if ($request->password != null){
-//            $data['password'] = bcrypt($data['password']);
-//        }else{
-//            $data['password'] = $user->password;
-//        }
-
-//        if ($request->status == null){
-//            $data['status'] = '0';
-//        }
-
         if ($request->hasFile('foto')){
             $data['foto'] = $data['foto']->store('assets/user-profile', 'public');
         }
@@ -211,7 +203,7 @@ class AdminController extends Controller
         $user->update($data);
 
         $admin->update($data);
-        $text = 'Admin account successfully updated!';
+        $text = $user->firstName.' account successfully updated!';
 
         Alert::success($text);
         return redirect()->route('admin-managements.index');
