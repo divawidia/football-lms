@@ -25,6 +25,23 @@ class AdminController extends Controller
             $query = Admin::with('user')->get();
             return Datatables::of($query)
                 ->addColumn('action', function ($item) {
+                    if ($item->user->status == '1'){
+                        $statusButton = '<form action="' . route('deactivate-admin', $item->userId) . '" method="POST">
+                                            '.method_field("PATCH").'
+                                            '.csrf_field().'
+                                            <button type="submit" class="dropdown-item">
+                                                <span class="material-icons">block</span> Deactivate Admin</a>
+                                            </button>
+                                        </form>';
+                    }else{
+                        $statusButton = '<form action="' . route('activate-admin', $item->userId) . '" method="POST">
+                                            '.method_field("PATCH").'
+                                            '.csrf_field().'
+                                            <button type="submit" class="dropdown-item">
+                                                <span class="material-icons">check_circle</span> Activate Admin</a>
+                                            </button>
+                                        </form>';
+                    }
                     return '
                         <div class="dropdown">
                           <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -35,9 +52,9 @@ class AdminController extends Controller
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="' . route('admin-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Admin</a>
                             <a class="dropdown-item" href="' . route('admin-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Admin</a>
-                            <a class="dropdown-item" href="#"><span class="material-icons">block</span> Deactivate Admin</a>
+                            '. $statusButton .'
                             <a class="dropdown-item" href="#"><span class="material-icons">lock</span> Change Admin Password</a>
-                            <form action="' . route('admin-managements.destroy', $item->userId) . '" method="POST"
+                            <form action="' . route('admin-managements.destroy', $item->userId) . '" method="POST">
                                 <button type="submit" class="dropdown-item">
                                     <span class="material-icons">delete</span> Delete Admin
                                 </button>
@@ -205,17 +222,16 @@ class AdminController extends Controller
         $user->update([
             'status' => '0'
         ]);
-        Alert::success('Admin account status successfully deactivated!');
+        Alert::success($user->firstName.' account status successfully deactivated!');
         return redirect()->route('admin-managements.index');
     }
 
     public function activate(string $id){
-        $admin = Admin::with('user')->findOrFail($id);
-        $user = User::findOrFail($admin->user_id);
+        $user = User::findOrFail($id);
         $user->update([
             'status' => '1'
         ]);
-        Alert::success('Admin status successfully activated!');
+        Alert::success($user->firstName.' account status successfully activated!');
         return redirect()->route('admin-managements.index');
     }
 

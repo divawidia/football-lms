@@ -51,7 +51,10 @@ Route::group(['middleware' => ['role:admin,web']], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::resource('admin-managements', AdminController::class);
-    Route::patch('admin-managements/{admin}/deactivate', [AdminController::class, 'deactivate'])->name('deactivate-admin');
+    Route::prefix('admin-managements/{admin}')->group(function (){
+        Route::patch('deactivate', [AdminController::class, 'deactivate'])->name('deactivate-admin');
+        Route::patch('activate', [AdminController::class, 'activate'])->name('activate-admin');
+    });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
 //    Route::get('dashboard', [DashboardController::class, 'index'])->name('coach.dashboard');
