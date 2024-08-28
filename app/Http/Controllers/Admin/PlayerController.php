@@ -7,6 +7,7 @@ use App\Http\Requests\PlayerRequest;
 use App\Models\Admin;
 use App\Models\Player;
 use App\Models\PlayerParrent;
+use App\Models\PlayerPosition;
 use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
@@ -121,8 +122,12 @@ class PlayerController extends Controller
         if ($action->success) {
             $countries = $action->data;
         }
+
+        $positions = PlayerPosition::all();
+
         return view('pages.admins.managements.players.create', [
-            'countries' => $countries
+            'countries' => $countries,
+            'positions' => $positions
         ]);
     }
 
