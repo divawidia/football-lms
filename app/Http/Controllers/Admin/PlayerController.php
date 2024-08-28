@@ -8,6 +8,7 @@ use App\Models\Player;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Nnjeim\World\World;
 use Yajra\DataTables\Facades\DataTables;
 use function PHPUnit\Framework\isEmpty;
 
@@ -111,7 +112,13 @@ class PlayerController extends Controller
      */
     public function create()
     {
-        //
+        $action =  World::countries();
+        if ($action->success) {
+            $countries = $action->data;
+        }
+        return view('pages.admins.managements.players.create', [
+            'countries' => $countries
+        ]);
     }
 
     /**
