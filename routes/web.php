@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +57,14 @@ Route::group(['middleware' => ['role:admin,web']], function () {
         Route::patch('activate', [AdminController::class, 'activate'])->name('activate-admin');
         Route::get('change-password', [AdminController::class, 'changePasswordPage'])->name('admin-managements.change-password-page');
         Route::patch('change-password', [AdminController::class, 'changePassword'])->name('admin-managements.change-password');
+    });
+
+    Route::resource('player-managements', PlayerController::class);
+    Route::prefix('player-managements/{player}')->group(function (){
+        Route::patch('deactivate', [PlayerController::class, 'deactivate'])->name('deactivate-player');
+        Route::patch('activate', [PlayerController::class, 'activate'])->name('activate-player');
+        Route::get('change-password', [PlayerController::class, 'changePasswordPage'])->name('player-managements.change-password-page');
+        Route::patch('change-password', [PlayerController::class, 'changePassword'])->name('player-managements.change-password');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
