@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Player Management
+    Players Management
 @endsection
 @section('page-title')
     @yield('title')
