@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
 use App\Models\Admin;
+use App\Models\Player;
 use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
@@ -24,23 +25,23 @@ class AdminController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Admin::with('user')->get();
+            $query = Player::with('user')->get();
             return Datatables::of($query)
                 ->addColumn('action', function ($item) {
                     if ($item->user->status == '1'){
-                        $statusButton = '<form action="' . route('deactivate-admin', $item->userId) . '" method="POST">
+                        $statusButton = '<form action="' . route('deactivate-player', $item->userId) . '" method="POST">
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">block</span> Deactivate Admin</a>
+                                                <span class="material-icons">block</span> Deactivate Player</a>
                                             </button>
                                         </form>';
                     }else{
-                        $statusButton = '<form action="' . route('activate-admin', $item->userId) . '" method="POST">
+                        $statusButton = '<form action="' . route('activate-player', $item->userId) . '" method="POST">
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">check_circle</span> Activate Admin</a>
+                                                <span class="material-icons">check_circle</span> Activate Player</a>
                                             </button>
                                         </form>';
                     }
@@ -52,15 +53,15 @@ class AdminController extends Controller
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('admin-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Admin</a>
-                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Admin</a>
+                            <a class="dropdown-item" href="' . route('player-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Player</a>
+                            <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Player</a>
                             '. $statusButton .'
-                            <a class="dropdown-item" href="' . route('admin-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Admin Password</a>
-                            <form action="' . route('admin-managements.destroy', $item->userId) . '" method="POST" id="delete-'.$item->userId.'">
+                            <a class="dropdown-item" href="' . route('player-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Player Password</a>
+                            <form action="' . route('player-managements.destroy', $item->userId) . '" method="POST" id="delete-'.$item->userId.'">
                                 '.method_field("DELETE").'
                                 '.csrf_field().'
                                 <button type="submit" class="dropdown-item delete-user" id="'.$item->userId.'">
-                                    <span class="material-icons">delete</span> Delete Admin
+                                    <span class="material-icons">delete</span> Delete Player
                                 </button>
                             </form>
                           </div>
@@ -100,7 +101,7 @@ class AdminController extends Controller
                 ->rawColumns(['action', 'name','status', 'age'])
                 ->make();
         }
-        return view('pages.admins.managements.admins.index');
+        return view('pages.admins.managements.players.index');
     }
 
     /**
