@@ -11,7 +11,7 @@ class Player extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'position',
+        'positionId',
         'skill',
         'strongFoot',
         'height',
@@ -23,6 +23,10 @@ class Player extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'userId');
+    }
+    public function position()
+    {
+        return $this->belongsTo(PlayerPosition::class, 'positionId');
     }
     public function parrents()
     {
