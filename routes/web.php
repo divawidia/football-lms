@@ -54,6 +54,8 @@ Route::group(['middleware' => ['role:admin,web']], function () {
     Route::prefix('admin-managements/{admin}')->group(function (){
         Route::patch('deactivate', [AdminController::class, 'deactivate'])->name('deactivate-admin');
         Route::patch('activate', [AdminController::class, 'activate'])->name('activate-admin');
+        Route::get('change-password', [AdminController::class, 'changePasswordPage'])->name('admin-managements.change-password-page');
+        Route::patch('change-password', [AdminController::class, 'changePassword'])->name('admin-managements.change-password');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {

@@ -22,3 +22,5 @@
 
 <script src="{{ URL::asset('vendor/select2/select2.min.js') }}"></script>
 <script src="{{ URL::asset('js/select2.js') }}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 use RealRashid\SweetAlert\Facades\Alert;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
@@ -53,9 +55,11 @@ class AdminController extends Controller
                             <a class="dropdown-item" href="' . route('admin-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Admin</a>
                             <a class="dropdown-item" href="' . route('admin-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Admin</a>
                             '. $statusButton .'
-                            <a class="dropdown-item" href="#"><span class="material-icons">lock</span> Change Admin Password</a>
-                            <form action="' . route('admin-managements.destroy', $item->userId) . '" method="POST">
-                                <button type="submit" class="dropdown-item">
+                            <a class="dropdown-item" href="' . route('admin-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Admin Password</a>
+                            <form action="' . route('admin-managements.destroy', $item->userId) . '" method="POST" id="delete-'.$item->userId.'">
+                                '.method_field("DELETE").'
+                                '.csrf_field().'
+                                <button type="submit" class="dropdown-item delete-user" id="'.$item->userId.'">
                                     <span class="material-icons">delete</span> Delete Admin
                                 </button>
                             </form>
@@ -158,14 +162,32 @@ class AdminController extends Controller
         ]);
     }
 
-    public function changePassword(string $id){
+    public function changePasswordPage(string $id){
         $user = User::findOrFail($id);
         $fullName = $user->firstName . ' ' . $user->lastName;
 
-        return view('pages.admin.kelola-pengguna.instruktur.edit-password',[
+        return view('pages.admins.managements.admins.change-password',[
             'user' => $user,
             'fullName' => $fullName
         ]);
+    }
+
+    public function changePassword(Request $request, string $id){
+        $validator = Validator::make($request->all(), [
+            'password' => ['required', 'string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols()]
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $user = User::findOrFail($id);
+
+        $user->update([
+            'password' => bcrypt($validator->getData()['password'])
+        ]);
+        Alert::success($user->firstName.' account password successfully updated!');
+        return redirect()->route('admin-managements.index');
     }
 
     /**
@@ -230,19 +252,18 @@ class AdminController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Admin $admin)
+    public function destroy(string $id)
     {
-        $admin = Admin::with('user')->findOrFail($admin->id);
+        $user = User::with('admin')->findOrFail($id);
 
-        if (File::exists($admin->user->foto) && $admin->user->foto != 'assets/user-profile/avatar.png'){
-            File::delete($admin->user->foto);
+        if (File::exists($user->foto) && $user->foto != 'assets/user-profile/avatar.png'){
+            File::delete($user->foto);
         }
+        $user->admin->delete();
+        $user->delete();
+        $user->roles()->detach();
 
-        $admin->delete();
-        $admin->user->roles()->detach();
-        $admin->user->delete();
-
-        Alert::success('Data instruktur berhasil dihapus!');
-        return redirect()->route('admin-managements.index')->with('status', 'Data instruktur berhasil dihapus!');
+        Alert::success($user->firstName.' account successfully deleted!');
+        return redirect()->route('admin-managements.index');
     }
 }

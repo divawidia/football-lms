@@ -26,7 +26,7 @@
         <div class="container page__container page-section">
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-header">
-                    <a href="{{  route('admin-managements.create') }}" class="btn btn-primary">
+                    <a href="{{  route('admin-managements.create') }}" class="btn btn-primary" id="add-new">
                         + Add New Admin
                     </a>
                 </div>
@@ -38,7 +38,6 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone Number</th>
-                                <th>Date of Birth</th>
                                 <th>Age</th>
                                 <th>Gender</th>
                                 <th>Status</th>
@@ -67,7 +66,6 @@
                     { data: 'name', name: 'name' },
                     { data: 'user.email', name: 'user.email'},
                     { data: 'user.phoneNumber', name: 'user.phoneNumber' },
-                    { data: 'user.dob', name: 'user.dob' },
                     { data: 'age', name: 'age' },
                     { data: 'user.gender', name: 'user.gender' },
                     { data: 'status', name: 'status' },
@@ -80,5 +78,20 @@
                     },
                 ]
             });
+
+            // $('.delete-user').on('click', function () {
+            //     const id = $(this).attr('id');
+            //     Swal.fire({
+            //         title: "Are you sure?",
+            //         text: "You won't be able to revert this!",
+            //         icon: "warning",
+            //         showCancelButton: true,
+            //         confirmButtonText: "Yes, delete it!"
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             $(document).find('#delete-'+id).submit();
+            //         }
+            //     });
+            // });
         </script>
     @endpush

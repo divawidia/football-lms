@@ -20,3 +20,5 @@
 
 <link type="text/css" href="{{ URL::asset('vendor/select2/select2.min.css') }}" rel="stylesheet">
 <link type="text/css" href="{{ URL::asset('css/select2.css') }}" rel="stylesheet">
+
+<link type="text/css" href="{{ URL::asset('css/sweetalert.css') }}" rel="stylesheet">
