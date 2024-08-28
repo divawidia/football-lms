@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Player;
+use App\Models\PlayerPosition;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -40,7 +41,7 @@ class PlayerPositionSeeder extends Seeder
         ];
 
         foreach ($positions as $name => $category){
-            Player::create([
+            PlayerPosition::create([
                 'name' => $name,
                 'category' => $category,
             ]);
