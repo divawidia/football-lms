@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Admin;
+use App\Models\PlayerPosition;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -40,16 +41,16 @@ class PlayerRequest extends FormRequest
             'state_id' => ['required'],
             'city_id' => ['required'],
             'joinDate' => ['required', 'date'],
-            'position' => ['required', 'string'],
+            'positionId' => ['required'],
             'skill' => ['required', 'string'],
             'strongFoot' => ['required', 'string', Rule::in('left', 'right')],
             'height' => ['required', 'numeric'],
             'weight' => ['required', 'numeric'],
-            'firstNameParent' => ['required', 'string'],
-            'lastNameParent' => ['required', 'string'],
-            'emailParent' => ['required', 'email', Rule::unique('player_parrents', 'email')],
-            'phoneNumberParent' => ['required', 'string'],
-            'relationsParent' => ['required', 'string'],
+//            'firstName2' => ['required', 'string'],
+//            'lastName2' => ['required', 'string'],
+//            'email2' => ['required', 'email', Rule::unique('player_parrents', 'email')],
+//            'phoneNumber2' => ['required', 'string'],
+//            'relations' => ['required', 'string'],
         ];
     }
 }

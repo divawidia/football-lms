@@ -26,7 +26,7 @@ class PlayerController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Player::with('user', 'teams')->get();
+            $query = Player::with('user', 'teams', 'position')->get();
             return Datatables::of($query)
                 ->addColumn('action', function ($item) {
                     if ($item->user->status == '1'){
@@ -87,7 +87,7 @@ class PlayerController extends Controller
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
                                         <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
-                                        <small class="js-lists-values-email text-50">' . $item->position . '</small>
+                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
                                     </div>
                                 </div>
 
@@ -154,16 +154,7 @@ class PlayerController extends Controller
 
         $data['userId'] = $user->id;
 
-        $player = Player::create($data);
-
-        $parent = PlayerParrent::create([
-            'playerId' => $player->id,
-            'firstName' => $data['firstNameParent'],
-            'lastName' => $data['lastNameParent'],
-            'email' => $data['emailParent'],
-            'phoneNumber' => $data['phoneNumberParent'],
-            'relations' => $data['relationsParent']
-        ]);
+        Player::create($data);
 
         $text = $data['firstName'].' account successfully added!';
 
