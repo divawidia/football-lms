@@ -132,11 +132,11 @@ class AdminController extends Controller
      */
     public function show(string $id)
     {
-        $admin = User::with('country', 'state', 'city', 'admin')->findOrFail($id);
-        $fullName = $admin->firstName . ' ' . $admin->lastName;
+        $user = User::with('country', 'state', 'city', 'admin')->findOrFail($id);
+        $fullName = $user->firstName . ' ' . $user->lastName;
 
         return view('pages.admins.managements.admins.detail', [
-            'admin' => $admin,
+            'user' => $user,
             'fullName' => $fullName
         ]);
     }
