@@ -371,15 +371,15 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label" for="firstName">First name</label>
+                                        <label class="form-label" for="firstNameParent">First name</label>
                                         <input type="text"
-                                               class="form-control @error('firstName') is-invalid @enderror"
-                                               id="firstName"
-                                               name="firstName"
+                                               class="form-control @error('firstNameParent') is-invalid @enderror"
+                                               id="firstNameParent"
+                                               name="firstNameParent"
                                                required
-                                               value="{{ old('firstName') }}"
+                                               value="{{ old('firstNameParent') }}"
                                                placeholder="Input parent/guardian's first name ...">
-                                        @error('firstName')
+                                        @error('firstNameParent')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -388,15 +388,15 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label" for="lastName">Last name</label>
+                                        <label class="form-label" for="lastNameParent">Last name</label>
                                         <input type="text"
-                                               class="form-control @error('lastName') is-invalid @enderror"
-                                               id="lastName"
-                                               name="lastName"
+                                               class="form-control @error('lastNameParent') is-invalid @enderror"
+                                               id="lastNameParent"
+                                               name="lastNameParent"
                                                required
-                                               value="{{ old('lastName') }}"
+                                               value="{{ old('lastNameParent') }}"
                                                placeholder="Input parent/guardian's last name ...">
-                                        @error('lastName')
+                                        @error('lastNameParent')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -407,15 +407,15 @@
                             <div class="row">
                                 <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label class="form-label" for="lastName">Phone Number</label>
+                                        <label class="form-label" for="phoneNumberParent">Phone Number</label>
                                         <input type="text"
-                                               class="form-control @error('phoneNumber') is-invalid @enderror"
-                                               id="phoneNumber"
-                                               name="phoneNumber"
+                                               class="form-control @error('phoneNumberParent') is-invalid @enderror"
+                                               id="phoneNumberParent"
+                                               name="phoneNumberParent"
                                                required
-                                               value="{{ old('phoneNumber') }}"
+                                               value="{{ old('phoneNumberParent') }}"
                                                placeholder="Input parent/guardian's phone number ...">
-                                        @error('phoneNumber')
+                                        @error('phoneNumberParent')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -424,15 +424,15 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label class="form-label" for="email">Email</label>
+                                        <label class="form-label" for="emailParent">Email</label>
                                         <input type="email"
-                                               class="form-control @error('email') is-invalid @enderror"
-                                               id="email"
-                                               name="email"
+                                               class="form-control @error('emailParent') is-invalid @enderror"
+                                               id="emailParent"
+                                               name="emailParent"
                                                required
-                                               value="{{ old('email') }}"
+                                               value="{{ old('emailParent') }}"
                                                placeholder="Input parent/guardian's email ...">
-                                        @error('email')
+                                        @error('emailParent')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -441,14 +441,14 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label class="form-label" for="relations">Relation to Player</label>
-                                        <select class="form-control form-select @error('relations') is-invalid @enderror" id="relations" name="relations" required>
+                                        <label class="form-label" for="relationsParent">Relation to Player</label>
+                                        <select class="form-control form-select @error('relationsParent') is-invalid @enderror" id="relationsParent" name="relationsParent" required>
                                             <option disabled selected>Select relation to player</option>
                                             @foreach(['Father', 'Mother', 'Brother', 'Sister', 'Others'] AS $relation)
-                                                <option value="{{ $relation }}" @selected(old('relations') == $relation)>{{ $relation }}</option>
+                                                <option value="{{ $relation }}" @selected(old('relationsParent') == $relation)>{{ $relation }}</option>
                                             @endforeach
                                         </select>
-                                        @error('relations')
+                                        @error('relationsParent')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
