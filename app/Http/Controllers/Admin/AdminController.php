@@ -201,12 +201,11 @@ class AdminController extends Controller
     }
 
     public function deactivate(string $id){
-        $admin = Admin::with('user')->findOrFail($id);
-        $user = User::findOrFail($admin->user_id);
+        $user = User::findOrFail($id);
         $user->update([
             'status' => '0'
         ]);
-        Alert::success('Admin status successfully deactivated!');
+        Alert::success('Admin account status successfully deactivated!');
         return redirect()->route('admin-managements.index');
     }
 
