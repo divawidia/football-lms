@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PlayerRequest;
 use App\Models\Admin;
 use App\Models\Player;
+use App\Models\PlayerParrent;
+use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Nnjeim\World\World;
+use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 use function PHPUnit\Framework\isEmpty;
 
@@ -124,9 +129,41 @@ class PlayerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PlayerRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        $data['password'] = bcrypt($data['password']);
+
+        if ($request->hasFile('foto')){
+            $data['foto'] = $request->file('foto')->store('assets/user-profile', 'public');
+        }else{
+            $data['foto'] = 'images/undefined-user.png';
+        }
+
+        $data['status'] = '1';
+        $data['academyId'] = Auth::user()->academyId;
+
+        $user = User::create($data);
+        $user->assignRole('player');
+
+        $data['userId'] = $user->id;
+
+        $player = Player::create($data);
+
+        $parent = PlayerParrent::create([
+            'playerId' => $player->id,
+            'firstName' => $data['firstNameParent'],
+            'lastName' => $data['lastNameParent'],
+            'email' => $data['emailParent'],
+            'phoneNumber' => $data['phoneNumberParent'],
+            'relations' => $data['relationsParent']
+        ]);
+
+        $text = $data['firstName'].' account successfully added!';
+
+        Alert::success($text);
+        return redirect()->route('player-managements.index');
     }
 
     /**
