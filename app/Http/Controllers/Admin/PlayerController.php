@@ -16,7 +16,7 @@ class PlayerController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Admin::with('user')->get();
+            $query = Admin::with('user', 'teams')->get();
             return Datatables::of($query)
                 ->addColumn('action', function ($item) {
                     if ($item->user->status == '1'){
