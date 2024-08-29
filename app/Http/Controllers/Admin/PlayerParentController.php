@@ -4,11 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerParentRequest;
-use App\Http\Requests\PlayerRequest;
 use App\Models\PlayerParrent;
 use App\Models\User;
-use http\Env\Request;
-use Illuminate\Validation\ValidationException;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -89,7 +86,7 @@ class PlayerParentController extends Controller
         $parent->update($data);
 
         $text = $parent->firstName.' successfully updated!';
-
         Alert::success($text);
         return redirect()->route('admin-managements.show', $player->id);
     }
+}
