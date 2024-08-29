@@ -10,8 +10,16 @@
         <div class="pt-32pt">
             <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
                 <div class="flex d-flex flex-column flex-sm-row align-items-center mb-24pt mb-md-0">
-                    <div class="mb-24pt mb-sm-0 mr-sm-24pt">
-                        <h2 class="mb-0">@yield('title')</h2>
+                    <div class="mb-24pt mb-sm-0 w-100">
+                        <div class="d-flex flex-row">
+                            <h2 class="mb-0">@yield('title')</h2>
+                            <a href="{{  route('player-managements.create') }}" class="btn btn-primary ml-auto" id="add-new">
+                                <span class="material-icons mr-2">
+                                    add
+                                </span>
+                                Add New Player
+                            </a>
+                        </div>
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                             <li class="breadcrumb-item active">
@@ -25,11 +33,6 @@
 
         <div class="container page__container page-section">
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                <div class="card-header">
-                    <a href="{{  route('player-managements.create') }}" class="btn btn-primary" id="add-new">
-                        + Add New Player
-                    </a>
-                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="table">

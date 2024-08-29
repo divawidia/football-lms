@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('', function () {
     return redirect()->route('login');
 });
 
@@ -67,7 +67,8 @@ Route::group(['middleware' => ['role:admin,web']], function () {
         Route::get('change-password', [PlayerController::class, 'changePasswordPage'])->name('player-managements.change-password-page');
         Route::patch('change-password', [PlayerController::class, 'changePassword'])->name('player-managements.change-password');
 
-        Route::resource('parents', PlayerParentController::class);
+        Route::get('parents', [PlayerParentController::class, 'index'])->name('player-parents.index');
+        Route::post('parents/store', [PlayerParentController::class, 'store'])->name('player-parents.store');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {

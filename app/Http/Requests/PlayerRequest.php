@@ -41,16 +41,17 @@ class PlayerRequest extends FormRequest
             'state_id' => ['required'],
             'city_id' => ['required'],
             'joinDate' => ['required', 'date'],
-            'positionId' => ['required'],
+            'positionId' => ['required', Rule::exists('player_positions', 'id')],
             'skill' => ['required', 'string'],
             'strongFoot' => ['required', 'string', Rule::in('left', 'right')],
             'height' => ['required', 'numeric'],
             'weight' => ['required', 'numeric'],
-//            'firstName2' => ['required', 'string'],
-//            'lastName2' => ['required', 'string'],
-//            'email2' => ['required', 'email', Rule::unique('player_parrents', 'email')],
-//            'phoneNumber2' => ['required', 'string'],
-//            'relations' => ['required', 'string'],
+            'firstName2' => ['required', 'string'],
+            'lastName2' => ['required', 'string'],
+            'email2' => ['required', 'email', Rule::unique('player_parrents', 'email')],
+            'phoneNumber2' => ['required', 'string'],
+            'relations' => ['required', 'string'],
+            'team' => ['nullable', Rule::exists('teams')]
         ];
     }
 }

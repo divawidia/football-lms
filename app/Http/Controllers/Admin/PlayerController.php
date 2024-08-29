@@ -8,6 +8,7 @@ use App\Models\Admin;
 use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
+use App\Models\Team;
 use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
@@ -119,10 +120,12 @@ class PlayerController extends Controller
         }
 
         $positions = PlayerPosition::all();
+        $teams = Team::all();
 
         return view('pages.admins.managements.players.create', [
             'countries' => $countries,
-            'positions' => $positions
+            'positions' => $positions,
+            'teams' => $teams
         ]);
     }
 
@@ -149,10 +152,22 @@ class PlayerController extends Controller
 
         $data['userId'] = $user->id;
 
-        Player::create($data);
+        $player = Player::create($data);
+
+        if ($request->team != null){
+            $player->teams()->attach($request->team);
+        }
+
+        PlayerParrent::create([
+            'firstName' => $data['firstName'],
+            'lastName' => $data['lastName'],
+            'relations' => $data['relations'],
+            'email' => $data['email'],
+            'phoneNumber' => $data['phoneNumber'],
+            'playerId' => $player->id,
+        ]);
 
         $text = $data['firstName'].' account successfully added!';
-
         Alert::success($text);
         return redirect()->route('player-managements.index');
     }

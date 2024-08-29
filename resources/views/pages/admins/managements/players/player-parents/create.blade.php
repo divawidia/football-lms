@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Create Player Account
+    Create Player Parent/Guardian
 @endsection
 @section('page-title')
     @yield('title')
@@ -17,6 +17,7 @@
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('player-managements.index') }}">Players Management</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('player-managements.detail', $user->id) }}">{{ $fullname }}</a></li>
                             <li class="breadcrumb-item active">
                                 @yield('title')
                             </li>
@@ -42,7 +43,6 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <label class="form-label">Profile photo</label>
-                                    <small class="text-black-100">(Optional)</small>
                                     <div class="media align-items-center mb-2">
                                             <img src="{{ Storage::url('images/undefined-user.png') }}"
                                                  alt="people"
@@ -67,7 +67,6 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="firstName">First name</label>
-                                        <small class="text-danger">*</small>
                                         <input type="text"
                                                class="form-control @error('firstName') is-invalid @enderror"
                                                id="firstName"
@@ -83,7 +82,6 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="lastName">Last name</label>
-                                        <small class="text-danger">*</small>
                                         <input type="text"
                                                class="form-control @error('lastName') is-invalid @enderror"
                                                id="lastName"
@@ -99,7 +97,6 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="dob">Date of Birth</label>
-                                        <small class="text-danger">*</small>
                                         <input type="date"
                                                class="form-control @error('dob') is-invalid @enderror"
                                                id="dob"
@@ -113,43 +110,10 @@
                                         </span>
                                         @enderror
                                     </div>
-                                    <div class="form-group mb-3">
-                                        <label class="form-label" for="team">Team</label>
-                                        <small class="text-black-100">(Optional)</small>
-                                        @if(count($teams) == 0)
-                                            <div class="alert alert-light border-1 border-left-4 border-left-accent"
-                                                 role="alert">
-                                                <div class="d-flex flex-wrap align-items-center">
-                                                    <i class="material-icons mr-8pt">error_outline</i>
-                                                    <div class="media-body"
-                                                         style="min-width: 180px">
-                                                        <small class="text-black-100">Curently you haven't create any team in your academy, please create your team</small>
-                                                    </div>
-                                                    <div class="ml-8pt mt-2 mt-sm-0">
-                                                        <a href="#"
-                                                           class="btn btn-link btn-sm">Create Now</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <select class="form-control form-select @error('team') is-invalid @enderror" id="team" name="team">
-                                                <option selected disabled>Select Team</option>
-                                                @foreach($teams as $team)
-                                                    <option value="{{ $team->id }}" @selected(old('team') == $team->id)>{{ $team->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        @endif
-                                        @error('team')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group mb-4">
                                         <label class="form-label" for="email">Email address</label>
-                                        <small class="text-danger">*</small>
                                         <input type="email"
                                                id="email"
                                                name="email"
@@ -165,7 +129,6 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="password">Password</label>
-                                        <small class="text-danger">*</small>
                                         <input type="password"
                                                class="form-control @error('password') is-invalid @enderror"
                                                name="password"
@@ -181,7 +144,6 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="password-confirm">Confirm Password</label>
-                                        <small class="text-danger">*</small>
                                         <input type="password"
                                                class="form-control @error('password') is-invalid @enderror"
                                                name="password_confirmation" required id="password-confirm"
@@ -194,7 +156,6 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="gender">Gender</label>
-                                        <small class="text-danger">*</small>
                                         <select class="form-control form-select @error('gender') is-invalid @enderror" id="gender" name="gender" required>
                                             <option disabled selected>Select player's gender</option>
                                             @foreach(['male' => 'Male', 'female' => 'Female', 'others' => 'Others'] AS $jenisKelamin => $jenisKelaminLabel)
@@ -207,9 +168,12 @@
                                         </span>
                                         @enderror
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label class="form-label" for="joinDate">Join Date</label>
-                                        <small class="text-danger">*</small>
                                         <input type="date"
                                                id="joinDate"
                                                name="joinDate"
@@ -219,8 +183,8 @@
                                                placeholder="Input player's join date ...">
                                         @error('joinDate')
                                         <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                            <strong>{{ $message }}</strong>
+                                        </span>
                                         @enderror
                                     </div>
                                 </div>
@@ -232,7 +196,6 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label class="form-label" for="address">Address</label>
-                                        <small class="text-danger">*</small>
                                         <textarea
                                             class="form-control @error('address') is-invalid @enderror"
                                             name="address"
@@ -247,7 +210,6 @@
                                     </div>
                                     <div class="form-group mb-4">
                                         <label class="form-label" for="phoneNumber">Phone Number</label>
-                                        <small class="text-danger">*</small>
                                         <input type="text"
                                                id="phoneNumber"
                                                name="phoneNumber"
@@ -263,7 +225,6 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="zipCode">Zip Code</label>
-                                        <small class="text-danger">*</small>
                                         <input type="number"
                                                id="zipCode"
                                                name="zipCode"
@@ -281,7 +242,6 @@
                                 <div class="col-lg-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label" for="country_id">Country</label>
-                                        <small class="text-danger">*</small>
                                         <select class="form-control form-select country-form @error('country_id') is-invalid @enderror" id="country_id" name="country_id" required>
                                             <option selected disabled>Select Country</option>
                                             @foreach($countries as $country)
@@ -296,7 +256,6 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="state_id">State</label>
-                                        <small class="text-danger">*</small>
                                         <select class="form-control form-select @error('state_id') is-invalid @enderror" id="state_id" name="state_id" required>
                                             <option disabled selected>Select State</option>
                                         </select>
@@ -308,7 +267,6 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="city_id">City</label>
-                                        <small class="text-danger">*</small>
                                         <select class="form-control form-select @error('city_id') is-invalid @enderror" id="city_id" name="city_id" required>
                                             <option disabled selected>Select City</option>
                                         </select>
@@ -327,7 +285,6 @@
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="form-label" for="positionId">Position</label>
-                                        <small class="text-danger">*</small>
                                         <select class="form-control form-select @error('position') is-invalid @enderror" id="positionId" name="positionId" required>
                                             <option disabled selected>Select player's position</option>
                                             @foreach($positions AS $position)
@@ -344,7 +301,6 @@
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="form-label" for="skill">Skills</label>
-                                        <small class="text-danger">*</small>
                                         <select class="form-control form-select @error('skill') is-invalid @enderror" id="skill" name="skill" required>
                                             <option disabled selected>Select player's skill</option>
                                             @foreach(['Beginner', 'Intermediate', 'Advance'] AS $skill)
@@ -361,7 +317,6 @@
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="form-label" for="strongFoot">Strong Foot</label>
-                                        <small class="text-danger">*</small>
                                         <select class="form-control form-select @error('strongFoot') is-invalid @enderror" id="strongFoot" name="strongFoot" required>
                                             <option disabled selected>Select player's strong foot</option>
                                             @foreach(['left' => 'Left', 'right' => 'Right'] AS $foot => $footLabel)
@@ -383,7 +338,6 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label class="form-label" for="height">Height</label>
-                                        <small class="text-danger">*</small>
                                         <input type="number"
                                                class="form-control @error('height') is-invalid @enderror"
                                                id="height"
@@ -401,7 +355,6 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label class="form-label" for="weight">Weight</label>
-                                        <small class="text-danger">*</small>
                                         <input type="number"
                                                class="form-control @error('weight') is-invalid @enderror"
                                                id="weight"
@@ -417,102 +370,97 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="page-separator mt-3">
-                                <div class="page-separator__text">Parrents/Guardians</div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="firstName2">First name</label>
-                                        <small class="text-danger">*</small>
-                                        <input type="text"
-                                               class="form-control @error('firstName2') is-invalid @enderror"
-                                               id="firstName2"
-                                               name="firstName2"
-                                               required
-                                               value="{{ old('firstName2') }}"
-                                               placeholder="Input parent/guardian's first name ...">
-                                        @error('firstName2')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="lastName2">Last name</label>
-                                        <small class="text-danger">*</small>
-                                        <input type="text"
-                                               class="form-control @error('lastName2') is-invalid @enderror"
-                                               id="lastName2"
-                                               name="lastName2"
-                                               required
-                                               value="{{ old('lastName2') }}"
-                                               placeholder="Input parent/guardian's last name ...">
-                                        @error('lastName2')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label class="form-label" for="phoneNumber2">Phone Number</label>
-                                        <small class="text-danger">*</small>
-                                        <input type="text"
-                                               class="form-control @error('phoneNumber2') is-invalid @enderror"
-                                               id="phoneNumber2"
-                                               name="phoneNumber2"
-                                               required
-                                               value="{{ old('phoneNumber2') }}"
-                                               placeholder="Input parent/guardian's phone number ...">
-                                        @error('phoneNumber2')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label class="form-label" for="email2">Email</label>
-                                        <small class="text-danger">*</small>
-                                        <input type="email"
-                                               class="form-control @error('email2') is-invalid @enderror"
-                                               id="email2"
-                                               name="email2"
-                                               required
-                                               value="{{ old('email2') }}"
-                                               placeholder="Input parent/guardian's email ...">
-                                        @error('email2')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label class="form-label" for="relations">Relation to Player</label>
-                                        <small class="text-danger">*</small>
-                                        <select class="form-control form-select @error('relations') is-invalid @enderror" id="relations" name="relations" required>
-                                            <option disabled selected>Select relation to player</option>
-                                            @foreach(['Father', 'Mother', 'Brother', 'Sister', 'Others'] AS $relation)
-                                                <option value="{{ $relation }}" @selected(old('relations') == $relation)>{{ $relation }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('relations')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
+{{--                            <div class="page-separator mt-3">--}}
+{{--                                <div class="page-separator__text">Parrents/Guardians</div>--}}
+{{--                            </div>--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-lg-6">--}}
+{{--                                    <div class="form-group">--}}
+{{--                                        <label class="form-label" for="firstName2">First name</label>--}}
+{{--                                        <input type="text"--}}
+{{--                                               class="form-control @error('firstName2') is-invalid @enderror"--}}
+{{--                                               id="firstName2"--}}
+{{--                                               name="firstName2"--}}
+{{--                                               required--}}
+{{--                                               value="{{ old('firstName2') }}"--}}
+{{--                                               placeholder="Input parent/guardian's first name ...">--}}
+{{--                                        @error('firstName2')--}}
+{{--                                        <span class="invalid-feedback" role="alert">--}}
+{{--                                            <strong>{{ $message }}</strong>--}}
+{{--                                        </span>--}}
+{{--                                        @enderror--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-lg-6">--}}
+{{--                                    <div class="form-group">--}}
+{{--                                        <label class="form-label" for="lastName2">Last name</label>--}}
+{{--                                        <input type="text"--}}
+{{--                                               class="form-control @error('lastName2') is-invalid @enderror"--}}
+{{--                                               id="lastName2"--}}
+{{--                                               name="lastName2"--}}
+{{--                                               required--}}
+{{--                                               value="{{ old('lastName2') }}"--}}
+{{--                                               placeholder="Input parent/guardian's last name ...">--}}
+{{--                                        @error('lastName2')--}}
+{{--                                        <span class="invalid-feedback" role="alert">--}}
+{{--                                            <strong>{{ $message }}</strong>--}}
+{{--                                        </span>--}}
+{{--                                        @enderror--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-lg-4">--}}
+{{--                                    <div class="form-group">--}}
+{{--                                        <label class="form-label" for="phoneNumber2">Phone Number</label>--}}
+{{--                                        <input type="text"--}}
+{{--                                               class="form-control @error('phoneNumber2') is-invalid @enderror"--}}
+{{--                                               id="phoneNumber2"--}}
+{{--                                               name="phoneNumber2"--}}
+{{--                                               required--}}
+{{--                                               value="{{ old('phoneNumber2') }}"--}}
+{{--                                               placeholder="Input parent/guardian's phone number ...">--}}
+{{--                                        @error('phoneNumber2')--}}
+{{--                                        <span class="invalid-feedback" role="alert">--}}
+{{--                                            <strong>{{ $message }}</strong>--}}
+{{--                                        </span>--}}
+{{--                                        @enderror--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-lg-4">--}}
+{{--                                    <div class="form-group">--}}
+{{--                                        <label class="form-label" for="email2">Email</label>--}}
+{{--                                        <input type="email"--}}
+{{--                                               class="form-control @error('email2') is-invalid @enderror"--}}
+{{--                                               id="email2"--}}
+{{--                                               name="email2"--}}
+{{--                                               required--}}
+{{--                                               value="{{ old('email2') }}"--}}
+{{--                                               placeholder="Input parent/guardian's email ...">--}}
+{{--                                        @error('email2')--}}
+{{--                                        <span class="invalid-feedback" role="alert">--}}
+{{--                                            <strong>{{ $message }}</strong>--}}
+{{--                                        </span>--}}
+{{--                                        @enderror--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-lg-4">--}}
+{{--                                    <div class="form-group">--}}
+{{--                                        <label class="form-label" for="relations">Relation to Player</label>--}}
+{{--                                        <select class="form-control form-select @error('relations') is-invalid @enderror" id="relations" name="relations" required>--}}
+{{--                                            <option disabled selected>Select relation to player</option>--}}
+{{--                                            @foreach(['Father', 'Mother', 'Brother', 'Sister', 'Others'] AS $relation)--}}
+{{--                                                <option value="{{ $relation }}" @selected(old('relations') == $relation)>{{ $relation }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select>--}}
+{{--                                        @error('relations')--}}
+{{--                                        <span class="invalid-feedback" role="alert">--}}
+{{--                                            <strong>{{ $message }}</strong>--}}
+{{--                                        </span>--}}
+{{--                                        @enderror--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
                         </div>
                     </div>
                 </form>

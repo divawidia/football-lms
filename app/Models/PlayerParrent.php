@@ -10,17 +10,13 @@ class PlayerParrent extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = [
-        'player_parrents'
-    ];
-
     protected $fillable = [
         'firstName',
         'lastName',
         'email',
         'phoneNumber',
         'relations',
-        'playerId'
+        'playerId',
     ];
 
     public function player()
