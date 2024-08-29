@@ -166,67 +166,6 @@
         <div class="row card-group-row">
             <div class="col-sm-6 card-group-row__col flex-column">
                 <div class="page-separator">
-                    <div class="page-separator__text">Profile</div>
-                </div>
-                <div class="card card-sm card-group-row__card">
-                    <div class="card-body flex-column">
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
-                            @if($user->status == '1')
-                                <span class="ml-auto p-2 badge badge-pill badge-success">Aktif</span>
-                            @elseif($user->status == '0')
-                                <span class="ml-auto p-2 badge badge-pill badge-danger">Non Aktif</span>
-                            @endif
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Player Skill :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $user->player->skill }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Strong Foot :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $user->player->strongFoot }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Height :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $user->player->height }} CM</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Weight :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $user->player->weight }} KG</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Date of Birth :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y', strtotime($user->dob)) }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Age :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $age }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Gender :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $user->gender }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Join Date :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y', strtotime($user->player->joinDate)) }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->created_at)) }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->updated_at)) }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Last Seen :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->lastSeen)) }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 card-group-row__col flex-column">
-                <div class="page-separator">
                     <div class="page-separator__text">Teams</div>
                     <a href="#" class="btn btn-primary ml-auto" id="add-parent" data-toggle="modal" data-target="#exampleModal">
                 <span class="material-icons mr-2">
@@ -284,6 +223,67 @@
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Zip Code :</p></div>
                             <div class="ml-auto p-2 text-muted">{{ $user->zipCode }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 card-group-row__col flex-column">
+                <div class="page-separator">
+                    <div class="page-separator__text">Profile</div>
+                </div>
+                <div class="card card-sm card-group-row__card">
+                    <div class="card-body flex-column">
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
+                            @if($user->status == '1')
+                                <span class="ml-auto p-2 badge badge-pill badge-success">Aktif</span>
+                            @elseif($user->status == '0')
+                                <span class="ml-auto p-2 badge badge-pill badge-danger">Non Aktif</span>
+                            @endif
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Player Skill :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $user->player->skill }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Strong Foot :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $user->player->strongFoot }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Height :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $user->player->height }} CM</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Weight :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $user->player->weight }} KG</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Date of Birth :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y', strtotime($user->dob)) }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Age :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $age }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Gender :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $user->gender }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Join Date :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y', strtotime($user->player->joinDate)) }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->created_at)) }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->updated_at)) }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Last Seen :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->lastSeen)) }}</div>
                         </div>
                     </div>
                 </div>
