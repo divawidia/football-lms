@@ -198,9 +198,13 @@ class PlayerController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $player_management)
     {
-        //
+        $fullname = $player_management->firstName . ' ' . $player_management->lastName;
+        return view('pages.admins.managements.players.edit',[
+            'player' => $player_management,
+            'fullname' => $fullname
+        ]);
     }
 
     /**
