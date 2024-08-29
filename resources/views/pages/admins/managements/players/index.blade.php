@@ -56,7 +56,7 @@
     @push('addon-script')
         <script>
             $(document).ready(function() {
-                var datatable = $('#table').DataTable({
+                const datatable = $('#table').DataTable({
                     processing: true,
                     serverSide: true,
                     ordering: true,
