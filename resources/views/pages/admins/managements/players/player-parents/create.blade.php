@@ -29,7 +29,7 @@
 
         <div class="container page__container page-section">
             <div class="list-group">
-                <form action="{{ route('player-parents.store') }}" method="post">
+                <form action="{{ route('player-parents.store', $user->id) }}" method="post">
                     @csrf
                     <div class="list-group-item d-flex justify-content-end">
                         <a class="btn btn-secondary mx-2" href="{{ route('player-managements.detail', $user->id) }}"><span class="material-icons mr-2">close</span> Cancel</a>
