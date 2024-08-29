@@ -17,7 +17,7 @@
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('player-managements.index') }}">Players Management</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('player-managements.detail', $user->id) }}">{{ $fullname }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('player-managements.show', $user->id) }}">{{ $fullname }}</a></li>
                             <li class="breadcrumb-item active">
                                 @yield('title')
                             </li>
@@ -32,7 +32,7 @@
                 <form action="{{ route('player-parents.store', $user->id) }}" method="post">
                     @csrf
                     <div class="list-group-item d-flex justify-content-end">
-                        <a class="btn btn-secondary mx-2" href="{{ route('player-managements.detail', $user->id) }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <a class="btn btn-secondary mx-2" href="{{ route('player-managements.show', $user->id) }}"><span class="material-icons mr-2">close</span> Cancel</a>
                         <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                     </div>
                     <div class="list-group-item">
@@ -47,12 +47,28 @@
                                         <small class="text-danger">*</small>
                                         <input type="text"
                                                class="form-control @error('firstName') is-invalid @enderror"
-                                               id="firstName2"
-                                               name="firstName2"
+                                               id="firstName"
+                                               name="firstName"
                                                required
                                                value="{{ old('firstName') }}"
                                                placeholder="Input parent/guardian's first name ...">
-                                        @error('firstName2')
+                                        @error('firstName')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="email">Email</label>
+                                        <small class="text-danger">*</small>
+                                        <input type="email"
+                                               class="form-control @error('email') is-invalid @enderror"
+                                               id="email"
+                                               name="email"
+                                               required
+                                               value="{{ old('email') }}"
+                                               placeholder="Input parent/guardian's email ...">
+                                        @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -76,10 +92,6 @@
                                         </span>
                                         @enderror
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="form-label" for="phoneNumber">Phone Number</label>
                                         <small class="text-danger">*</small>
@@ -97,25 +109,9 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label class="form-label" for="email">Email</label>
-                                        <small class="text-danger">*</small>
-                                        <input type="email"
-                                               class="form-control @error('email') is-invalid @enderror"
-                                               id="email"
-                                               name="email"
-                                               required
-                                               value="{{ old('email') }}"
-                                               placeholder="Input parent/guardian's email ...">
-                                        @error('email')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
                                     <div class="form-group">
                                         <label class="form-label" for="relations">Relation to Player</label>
                                         <small class="text-danger">*</small>

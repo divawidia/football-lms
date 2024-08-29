@@ -48,21 +48,24 @@ class PlayerParentController extends Controller
     public function create(string $id)
     {
         $user = User::findOrFail($id);
+        $fullname = $user->firstName . ' ' . $user->lastName;
         return view('pages.admins.managements.players.player-parents.create',[
-            'user' => $user
+            'user' => $user,
+            'fullname' => $fullname
         ]);
     }
 
     public function store(PlayerParentRequest $request, string $id)
     {
+        $user = User::with('player')->findOrFail($id);
         $data = $request->validated();
-        $data['playerId'] = $id;
+        $data['playerId'] = $user->player->id;
 
         PlayerParrent::create($data);
 
         $text = "Player's parent/guardian successfully added!";
         Alert::success($text);
 
-        return redirect()->route('player-managements.detail', $id);
+        return redirect()->route('player-managements.show', $id);
     }
 }

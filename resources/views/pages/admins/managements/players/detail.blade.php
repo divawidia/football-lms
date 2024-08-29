@@ -261,7 +261,7 @@
         </div>
         <div class="page-separator">
             <div class="page-separator__text">Parents/Guardians</div>
-            <a href="{{ route('player-parents.create', $user->id) }}" class="btn btn-primary ml-auto" id="add-parent" data-toggle="modal" data-target="#exampleModal">
+            <a href="{{ route('player-parents.create', $user->id) }}" class="btn btn-primary ml-auto">
                 <span class="material-icons mr-2">
                     add
                 </span>
