@@ -66,9 +66,11 @@ class PlayerParentController extends Controller
     public function edit(User $player, PlayerParrent $parent)
     {
         $parent = PlayerParrent::findOrFail($parent->id);
-
-        return view('pages.admins.managements.admins.player-parents.edit',[
+        $fullname = $player->firstName . ' ' . $player->lastName;
+        return view('pages.admins.managements.players.player-parents.edit',[
             'parent' => $parent,
+            'player' => $player,
+            'fullname' => $fullname
         ]);
     }
 
@@ -84,7 +86,7 @@ class PlayerParentController extends Controller
 
         $text = $parent->firstName.' successfully updated!';
         Alert::success($text);
-        return redirect()->route('admin-managements.show', $player->id);
+        return redirect()->route('player-managements.show', $player->id);
     }
 
     public function destroy(PlayerParrent $parent)

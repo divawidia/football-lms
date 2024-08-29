@@ -61,6 +61,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
     });
 
     Route::resource('player-managements', PlayerController::class);
+    Route::delete('parents/{parent}/destroy', [PlayerParentController::class, 'destroy'])->name('player-parents.destroy');
     Route::prefix('player-managements/{player}')->group(function (){
         Route::patch('deactivate', [PlayerController::class, 'deactivate'])->name('deactivate-player');
         Route::patch('activate', [PlayerController::class, 'activate'])->name('activate-player');
@@ -72,7 +73,6 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::post('parents/store', [PlayerParentController::class, 'store'])->name('player-parents.store');
         Route::get('parents/{parent}/edit', [PlayerParentController::class, 'edit'])->name('player-parents.edit');
         Route::put('parents/{parent}/update', [PlayerParentController::class, 'update'])->name('player-parents.update');
-        Route::delete('parents/{parent}/destroy', [PlayerParentController::class, 'destroy'])->name('player-parents.destroy');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {

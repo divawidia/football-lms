@@ -341,7 +341,7 @@
                                     icon: "success",
                                     title: "Player's parent/guardian successfully deleted!",
                                 });
-                                datatable.ajax.reload();
+                                parentsTable.ajax.reload();
                             },
                             error: function(error) {
                                 Swal.fire({
