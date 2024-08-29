@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('', function () {
+Route::get('/', function () {
     return redirect()->route('login');
 });
 
@@ -49,7 +49,7 @@ Route::middleware('prevent.back.history')->group(function (){
 //});
 //
 //require __DIR__.'/auth.php';
-Route::group(['middleware' => ['role:admin,web']], function () {
+Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::resource('admin-managements', AdminController::class);
