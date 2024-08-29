@@ -68,4 +68,28 @@ class PlayerParentController extends Controller
 
         return redirect()->route('player-managements.show', $id);
     }
-}
+
+    public function edit(User $player, PlayerParrent $parent)
+    {
+        $parent = PlayerParrent::findOrFail($parent->id);
+
+        return view('pages.admins.managements.admins.player-parents.edit',[
+            'parent' => $parent,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(PlayerParentRequest $request, User $player, PlayerParrent $parent)
+    {
+        $data = $request->validated();
+        $parent = PlayerParrent::findOrFail($parent->id);
+
+        $parent->update($data);
+
+        $text = $parent->firstName.' successfully updated!';
+
+        Alert::success($text);
+        return redirect()->route('admin-managements.show', $player->id);
+    }
