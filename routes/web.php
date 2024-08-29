@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PlayerController;
+use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -65,6 +66,8 @@ Route::group(['middleware' => ['role:admin,web']], function () {
         Route::patch('activate', [PlayerController::class, 'activate'])->name('activate-player');
         Route::get('change-password', [PlayerController::class, 'changePasswordPage'])->name('player-managements.change-password-page');
         Route::patch('change-password', [PlayerController::class, 'changePassword'])->name('player-managements.change-password');
+
+        Route::resource('parents', PlayerParentController::class);
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
