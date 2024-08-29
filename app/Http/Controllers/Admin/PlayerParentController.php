@@ -17,7 +17,7 @@ class PlayerParentController extends Controller
         if (request()->ajax()) {
             $query = PlayerParrent::where('playerId', $player->player->id);
             return Datatables::of($query)
-                ->addColumn('action', function ($item) {
+                ->addColumn('action', function ($item) use ($player) {
                     return '
                         <div class="dropdown">
                           <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,16 +26,13 @@ class PlayerParentController extends Controller
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('player-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Parent/Guardian</a>
-                            <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
+                            <a class="dropdown-item" href="' . route('player-parents.edit', ['player'=>$player->id,'parent'=>$item->id]) . '"><span class="material-icons">edit</span> Edit Parent/Guardian</a>
+                            <button type="button" class="dropdown-item delete-parent" id="' . $item->id . '">
                                 <span class="material-icons">delete</span> Delete Parent/Guardian
                             </button>
                           </div>
                         </div>';
                 })
-//                ->editColumn('name', function ($item) {
-//                    return '<p class="mb-0"><strong class="js-lists-values-lead">'. $item->firstName .' '. $item->lastName .'</strong></p>';
-//                })
                 ->rawColumns(['action'])
                 ->make();
         }
@@ -90,13 +87,12 @@ class PlayerParentController extends Controller
         return redirect()->route('admin-managements.show', $player->id);
     }
 
-    public function destroy(User $player, PlayerParrent $parent)
+    public function destroy(PlayerParrent $parent)
     {
-        $parent = PlayerParrent::findOrFail($parent->id);
+        $parent = PlayerParrent::with('player')->findOrFail($parent->id);
 
         $parent->delete();
 
-        Alert::success($parent->firstName.' successfully deleted!');
-        return redirect()->route('admin-managements.show', $player->id);
+        return response()->json(['success' => true]);
     }
 }
