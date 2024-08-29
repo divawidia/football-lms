@@ -42,6 +42,14 @@ class PlayerParentController extends Controller
         return view('pages.admins.managements.players.detail');
     }
 
+    public function create(string $id)
+    {
+        $user = User::findOrFail($id);
+        return view('pages.admins.managements.players.player-parents.create',[
+            'user' => $user
+        ]);
+    }
+
 //    public function store(Request $request)
 //    {
 //        try {
