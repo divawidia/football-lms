@@ -197,9 +197,7 @@ class PlayerController extends Controller
         $user->player->delete();
         $user->delete();
         $user->roles()->detach();
-//
-//        Alert::success($user->firstName.' account successfully deleted!');
-//        return redirect()->route('player-managements.index');
+
         return response()->json(['success' => true]);
     }
 }
