@@ -21,6 +21,7 @@ use function PHPUnit\Framework\isEmpty;
 
 class PlayerController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
@@ -66,12 +67,12 @@ class PlayerController extends Controller
                         </div>';
                 })
                 ->editColumn('teams.name', function ($item) {
-                        if(count($item->teams) === 0){
-                            $team = 'No Team';
-                        }else{
-                            $team = $item->teams->name;
-                        }
-                        return $team;
+                    if(count($item->teams) === 0){
+                        $team = 'No Team';
+                    }else{
+                        $team = $item->teams->name;
+                    }
+                    return $team;
                 })
                 ->editColumn('name', function ($item) {
                     return '
@@ -161,14 +162,21 @@ class PlayerController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::with('country', 'state', 'city', 'admin')->findOrFail($id);
+        $user = User::with('country', 'state', 'city', 'player')->findOrFail($id);
         $fullName = $user->firstName . ' ' . $user->lastName;
         $age = $this->getAge($user->dob);
+
+        if(count($user->player->teams) === 0){
+            $team = 'No Team';
+        }else{
+            $team = $user->player->teams->name;
+        }
 
         return view('pages.admins.managements.players.detail', [
             'user' => $user,
             'fullName' => $fullName,
-            'age' => $age
+            'age' => $age,
+            'team' => $team
         ]);
     }
 
