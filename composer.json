@@ -14,7 +14,7 @@
         "nnjeim/world": "^1.1",
         "realrashid/sweet-alert": "^7.2",
         "spatie/laravel-permission": "^6.9",
-        "yajra/laravel-datatables-oracle": "10.*"
+        "yajra/laravel-datatables-oracle": "10.*",
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
