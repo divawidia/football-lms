@@ -99,10 +99,7 @@ class PlayerController extends Controller
                     }
                 })
                 ->editColumn('age', function ($item){
-                    $dob = new DateTime($item->user->dob);
-                    $today   = new DateTime('today');
-                    $age = $dob->diff($today)->y;
-                    return $age;
+                    return $this->getAge($item->user->dob);
                 })
                 ->rawColumns(['action', 'name','status', 'age', 'teams.name'])
                 ->make();
@@ -164,7 +161,15 @@ class PlayerController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::with('country', 'state', 'city', 'admin')->findOrFail($id);
+        $fullName = $user->firstName . ' ' . $user->lastName;
+        $age = $this->getAge($user->dob);
+
+        return view('pages.admins.managements.players.detail', [
+            'user' => $user,
+            'fullName' => $fullName,
+            'age' => $age
+        ]);
     }
 
     /**
