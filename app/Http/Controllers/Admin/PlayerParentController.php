@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PlayerParentRequest;
+use App\Http\Requests\PlayerRequest;
 use App\Models\PlayerParrent;
 use App\Models\User;
 use http\Env\Request;
 use Illuminate\Validation\ValidationException;
+use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
 class PlayerParentController extends Controller
@@ -50,21 +53,16 @@ class PlayerParentController extends Controller
         ]);
     }
 
-//    public function store(Request $request)
-//    {
-//        try {
-//            $request->validate([
-//                'firstName' => 'required|string',
-//                'lastName' => 'required|string',
-//                'email' => 'required|email|unique:player_parents',
-//                'phoneNumber' => 'required|string',
-//                'relations' => 'nullable|string',
-//            ]);
-//
-//            $playerParent = PlayerParrent::create($request->all());
-//            return response()->json($playerParent, 201);
-//        } catch (ValidationException $e) {
-//            return response()->json(['errors' => $e->errors()], 422);
-//        }
-//    }
+    public function store(PlayerParentRequest $request, string $id)
+    {
+        $data = $request->validated();
+        $data['playerId'] = $id;
+
+        PlayerParrent::create($data);
+
+        $text = "Player's parent/guardian successfully added!";
+        Alert::success($text);
+
+        return redirect()->route('player-managements.detail', $id);
+    }
 }
