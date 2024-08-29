@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 use Nnjeim\World\World;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
@@ -201,34 +203,94 @@ class PlayerController extends Controller
     public function edit(User $player_management)
     {
         $fullname = $player_management->firstName . ' ' . $player_management->lastName;
+        $positions = PlayerPosition::all();
+        $teams = Team::all();
+        $action =  World::countries();
+        if ($action->success) {
+            $countries = $action->data;
+        }
         return view('pages.admins.managements.players.edit',[
             'player' => $player_management,
-            'fullname' => $fullname
+            'fullname' => $fullname,
+            'positions' => $positions,
+            'teams' => $teams,
+            'countries' => $countries
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(PlayerRequest $request, User $player_management)
     {
-        //
+        $data = $request->validated();
+
+        if ($request->hasFile('foto')){
+            $data['foto'] = $request->file('foto')->store('assets/user-profile', 'public');
+        }else{
+            $data['foto'] = $player_management->foto;
+        }
+
+        $player_management->update($data);
+        $player_management->player->update($data);
+
+        $text = $player_management->firstName.' successfully updated!';
+        Alert::success($text);
+        return redirect()->route('player-managements.show', $player_management->id);
+    }
+
+    public function deactivate(User $player){
+        $player->update([
+            'status' => '0'
+        ]);
+        Alert::success($player->firstName.' account status successfully deactivated!');
+        return redirect()->route('player-managements.index');
+    }
+
+    public function activate(User $player){
+        $player->update([
+            'status' => '1'
+        ]);
+        Alert::success($player->firstName.' account status successfully activated!');
+        return redirect()->route('player-managements.index');
+    }
+
+    public function changePasswordPage(User $player){
+        $fullName = $player->firstName . ' ' . $player->lastName;
+
+        return view('pages.admins.managements.players.change-password',[
+            'user' => $player,
+            'fullName' => $fullName
+        ]);
+    }
+
+    public function changePassword(Request $request, User $player){
+        $validator = Validator::make($request->all(), [
+            'password' => ['required', 'string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols()]
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $player->update([
+            'password' => bcrypt($validator->getData()['password'])
+        ]);
+        Alert::success($player->firstName.' account password successfully updated!');
+        return redirect()->route('player-managements.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $player_management)
     {
-        $user = User::with('player')->findOrFail($id);
-
-        if (File::exists($user->foto) && $user->foto != 'assets/user-profile/avatar.png'){
-            File::delete($user->foto);
+        if (File::exists($player_management->foto) && $player_management->foto != 'assets/user-profile/avatar.png'){
+            File::delete($player_management->foto);
         }
 
-        $user->player->delete();
-        $user->delete();
-        $user->roles()->detach();
+        $player_management->player->delete();
+        $player_management->delete();
 
         return response()->json(['success' => true]);
     }

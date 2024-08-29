@@ -46,11 +46,11 @@ class PlayerRequest extends FormRequest
             'strongFoot' => ['required', 'string', Rule::in('left', 'right')],
             'height' => ['required', 'numeric'],
             'weight' => ['required', 'numeric'],
-            'firstName2' => ['required', 'string'],
-            'lastName2' => ['required', 'string'],
-            'email2' => ['required', 'email', Rule::unique('player_parrents', 'email')],
-            'phoneNumber2' => ['required', 'string'],
-            'relations' => ['required', 'string'],
+            'firstName2' => ['string'],
+            'lastName2' => ['string'],
+            'email2' => ['email', Rule::unique('player_parrents', 'email')],
+            'phoneNumber2' => ['string'],
+            'relations' => ['string'],
             'team' => ['nullable', Rule::exists('teams')]
         ];
     }

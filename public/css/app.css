@@ -32469,10 +32469,6 @@ label {
     font-size: inherit
 }
 
-[dir] .input-group.input-group-merge .form-control {
-    box-shadow: none
-}
-
 .input-group.input-group-merge .form-control:focus ~ [class*=input-group] .input-group-text {
     color: #272c33
 }
