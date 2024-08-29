@@ -89,4 +89,14 @@ class PlayerParentController extends Controller
         Alert::success($text);
         return redirect()->route('admin-managements.show', $player->id);
     }
+
+    public function destroy(User $player, PlayerParrent $parent)
+    {
+        $parent = PlayerParrent::findOrFail($parent->id);
+
+        $parent->delete();
+
+        Alert::success($parent->firstName.' successfully deleted!');
+        return redirect()->route('admin-managements.show', $player->id);
+    }
 }
