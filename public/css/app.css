@@ -267,9 +267,9 @@ button, input, optgroup, select, textarea {
     line-height: inherit
 }
 
-[dir] button, [dir] input, [dir] optgroup, [dir] select, [dir] textarea {
-    margin: 0
-}
+/*[dir] button, [dir] input, [dir] optgroup, [dir] select, [dir] textarea {*/
+/*    margin: 0*/
+/*}*/
 
 button, input {
     overflow: visible

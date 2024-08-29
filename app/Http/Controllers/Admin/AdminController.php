@@ -260,6 +260,7 @@ class AdminController extends Controller
         if (File::exists($user->foto) && $user->foto != 'assets/user-profile/avatar.png'){
             File::delete($user->foto);
         }
+
         $user->admin->delete();
         $user->delete();
         $user->roles()->detach();

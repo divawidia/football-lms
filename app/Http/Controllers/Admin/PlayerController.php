@@ -12,6 +12,7 @@ use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Nnjeim\World\World;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -58,13 +59,9 @@ class PlayerController extends Controller
                             <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Player</a>
                             '. $statusButton .'
                             <a class="dropdown-item" href="' . route('player-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Player Password</a>
-                            <form action="' . route('admin-managements.destroy', $item->userId) . '" method="POST" id="delete-'.$item->userId.'">
-                                '.method_field("DELETE").'
-                                '.csrf_field().'
-                                <button type="submit" class="dropdown-item delete-user" id="'.$item->userId.'">
-                                    <span class="material-icons">delete</span> Delete Player
-                                </button>
-                            </form>
+                            <button type="button" class="dropdown-item delete-user" id="' . $item->userId . '">
+                                <span class="material-icons">delete</span> Delete Player
+                            </button>
                           </div>
                         </div>';
                 })
@@ -191,6 +188,18 @@ class PlayerController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::with('player')->findOrFail($id);
+
+        if (File::exists($user->foto) && $user->foto != 'assets/user-profile/avatar.png'){
+            File::delete($user->foto);
+        }
+
+        $user->player->delete();
+        $user->delete();
+        $user->roles()->detach();
+//
+//        Alert::success($user->firstName.' account successfully deleted!');
+//        return redirect()->route('player-managements.index');
+        return response()->json(['success' => true]);
     }
 }

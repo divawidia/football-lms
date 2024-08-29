@@ -52,48 +52,97 @@
                 </div>
             </div>
         </div>
+
+{{--        modal confirmation delete--}}
+        <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="" method="POST" id="formPlayerDelete">
+                        @csrf
+                        @method('DELETE')
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input id="del_id" type="hidden" name="id">
+                            Are you sure you want to delete this player?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger" id="confirmDelete">Confirm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     @endsection
     @push('addon-script')
         <script>
-            // AJAX DataTable
-            var datatable = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! url()->current() !!}',
-                },
-                columns: [
-                    { data: 'name', name: 'name' },
-                    { data: 'teams.name', name: 'teams.name' },
-                    { data: 'user.email', name: 'user.email'},
-                    { data: 'user.phoneNumber', name: 'user.phoneNumber' },
-                    { data: 'age', name: 'age' },
-                    { data: 'user.gender', name: 'user.gender' },
-                    { data: 'status', name: 'status' },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
+            $(document).ready(function() {
+                var datatable = $('#table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{!! url()->current() !!}',
                     },
-                ]
-            });
+                    columns: [
+                        { data: 'name', name: 'name' },
+                        { data: 'teams.name', name: 'teams.name' },
+                        { data: 'user.email', name: 'user.email'},
+                        { data: 'user.phoneNumber', name: 'user.phoneNumber' },
+                        { data: 'age', name: 'age' },
+                        { data: 'user.gender', name: 'user.gender' },
+                        { data: 'status', name: 'status' },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            width: '15%'
+                        },
+                    ]
+                });
+                $('body').on('click', '.delete-user', function() {
+                    let id = $(this).attr('id');
 
-            // $('.delete-user').on('click', function () {
-            //     const id = $(this).attr('id');
-            //     Swal.fire({
-            //         title: "Are you sure?",
-            //         text: "You won't be able to revert this!",
-            //         icon: "warning",
-            //         showCancelButton: true,
-            //         confirmButtonText: "Yes, delete it!"
-            //     }).then((result) => {
-            //         if (result.isConfirmed) {
-            //             $(document).find('#delete-'+id).submit();
-            //         }
-            //     });
-            // });
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#1ac2a1",
+                        cancelButtonColor: "#E52534",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('player-managements.destroy', ['player_management' => ':id']) }}".replace(':id', id),
+                                type: 'DELETE',
+                                data: {
+                                    _token: "{{ csrf_token() }}"
+                                },
+                                success: function(response) {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Player's account successfully deleted!",
+                                    });
+                                    datatable.ajax.reload();
+                                },
+                                error: function(error) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Oops...",
+                                        text: "Something went wrong when deleting data!",
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+            });
         </script>
     @endpush
