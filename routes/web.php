@@ -68,6 +68,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::patch('change-password', [PlayerController::class, 'changePassword'])->name('player-managements.change-password');
 
         Route::get('parents', [PlayerParentController::class, 'index'])->name('player-parents.index');
+        Route::get('parents/create', [PlayerParentController::class, 'create'])->name('player-parents.create');
         Route::post('parents/store', [PlayerParentController::class, 'store'])->name('player-parents.store');
     });
 });
