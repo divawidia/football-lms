@@ -18,8 +18,38 @@
                 <h2 class="text-white mb-0">{{ $fullName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $user->player->position->name }} - {{ $team }}</p>
             </div>
-            <a href="{{ route('player-managements.edit', $user->id) }}"
-               class="btn btn-outline-white">Edit Profile</a>
+            <div class="dropdown">
+                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Action
+                            <span class="material-icons ml-3">
+                                keyboard_arrow_down
+                            </span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="{{ route('player-managements.edit', $user->id) }}"><span class="material-icons">edit</span> Edit Player</a>
+                    @if($user->status == '1')
+                        <form action="{{ route('deactivate-player', $user->id) }}" method="POST">
+                            @method("PATCH")
+                            @csrf
+                            <button type="submit" class="dropdown-item">
+                                <span class="material-icons">block</span> Deactivate Player
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('activate-player', $user->id) }}" method="POST">
+                            @method("PATCH")
+                            @csrf
+                            <button type="submit" class="dropdown-item">
+                                <span class="material-icons">check_circle</span> Activate Player
+                            </button>
+                        </form>
+                    @endif
+                    <a class="dropdown-item" href="{{ route('player-managements.change-password-page', $user->id) }}"><span class="material-icons">lock</span> Change Player Password</a>
+                    <button type="button" class="dropdown-item delete-user" id="{{$user->id}}">
+                        <span class="material-icons">delete</span> Delete Player
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -315,6 +345,44 @@
                         width: '15%'
                     },
                 ]
+            });
+
+            $('.delete-user').on('click', function() {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('player-managements.destroy', ['player_management' => ':id']) }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Player's account successfully deleted!",
+                                });
+                                datatable.ajax.reload();
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "Something went wrong when deleting data!",
+                                });
+                            }
+                        });
+                    }
+                });
             });
 
             $('body').on('click', '.delete-parent', function() {

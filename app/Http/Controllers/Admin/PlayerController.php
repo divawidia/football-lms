@@ -39,7 +39,7 @@ class PlayerController extends Controller
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">block</span> Deactivate Player</a>
+                                                <span class="material-icons">block</span> Deactivate Player
                                             </button>
                                         </form>';
                     }else{
@@ -47,7 +47,7 @@ class PlayerController extends Controller
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">check_circle</span> Activate Player</a>
+                                                <span class="material-icons">check_circle</span> Activate Player
                                             </button>
                                         </form>';
                     }
