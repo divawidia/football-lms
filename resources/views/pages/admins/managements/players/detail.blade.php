@@ -133,7 +133,7 @@
                 </div>
             </div>
         </div>
-        <div class="row card-group-row mb-4">
+        <div class="row card-group-row">
             <div class="col-sm-6 card-group-row__col flex-column">
                 <div class="page-separator">
                     <div class="page-separator__text">Profile</div>
@@ -230,6 +230,34 @@
                             <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->lastSeen)) }}</div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">
+            <div class="page-separator__text">Parents/Guardians</div>
+            <a href="{{  route('player-managements.create') }}" class="btn btn-primary ml-auto" id="add-new">
+                <span class="material-icons icon-24pt mr-2">
+                    add
+                </span>
+                Add New
+            </a>
+        </div>
+        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Relation</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
