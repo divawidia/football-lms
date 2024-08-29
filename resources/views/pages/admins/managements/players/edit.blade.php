@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Edit {{ $fullname }} Account
+    Edit Account
 @endsection
 @section('page-title')
     @yield('title')
@@ -17,6 +17,7 @@
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('player-managements.index') }}">Players Management</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('player-managements.show', $player->id) }}">{{ $fullname }}</a></li>
                             <li class="breadcrumb-item active">
                                 @yield('title')
                             </li>

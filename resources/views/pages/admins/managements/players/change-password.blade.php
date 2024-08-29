@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Change {{ $fullName }} Account's Password
+    Change Account's Password
 @endsection
 @section('page-title')
     @yield('title')
@@ -16,7 +16,8 @@
                         </h2>
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('admin-managements.index') }}">Admins Management</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('player-managements.index') }}">Players Management</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('player-managements.show', $user->id) }}">{{ $fullName }}</a></li>
                             <li class="breadcrumb-item active">
                                 @yield('title')
                             </li>
@@ -28,11 +29,11 @@
 
         <div class="container page__container page-section">
             <div class="list-group">
-                <form action="{{ route('admin-managements.change-password', ['admin' => $user->id]) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('player-managements.change-password', ['player' => $user->id]) }}" method="POST">
                     @method('PATCH')
                     @csrf
                     <div class="list-group-item d-flex justify-content-end">
-                        <a class="btn btn-secondary mx-2" href="{{ route('admin-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
                         <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">save</span> Save</button>
                     </div>
                     <div class="list-group-item">
