@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CoachRequest;
 use App\Models\Coach;
 use App\Models\PlayerPosition;
 use App\Models\Team;
@@ -123,7 +124,7 @@ class CoachController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CoachRequest $request)
     {
         $data = $request->validated();
 
@@ -153,19 +154,19 @@ class CoachController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $coach_management)
+    public function show(User $coach)
     {
-        $fullName = $coach_management->firstName . ' ' . $coach_management->lastName;
-        $age = $this->getAge($coach_management->dob);
+        $fullName = $coach->firstName . ' ' . $coach->lastName;
+        $age = $this->getAge($coach->dob);
 
-        if(count($coach_management->coach->teams) == 0){
+        if(count($coach->coach->teams) == 0){
             $team = 'No Team';
         }else{
-            $team = $coach_management->coach->teams->name;
+            $team = $coach->coach->teams->name;
         }
 
         return view('pages.admins.managements.coaches.detail', [
-            'user' => $coach_management,
+            'user' => $coach,
             'fullName' => $fullName,
             'age' => $age,
             'team' => $team
@@ -175,16 +176,16 @@ class CoachController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $coach_management)
+    public function edit(User $coach)
     {
-        $fullname = $coach_management->firstName . ' ' . $coach_management->lastName;
+        $fullname = $coach->firstName . ' ' . $coach->lastName;
         $positions = PlayerPosition::all();
         $action =  World::countries();
         if ($action->success) {
             $countries = $action->data;
         }
         return view('pages.admins.managements.coaches.edit',[
-            'coach' => $coach_management,
+            'coach' => $coach,
             'fullname' => $fullname,
             'positions' => $positions,
             'countries' => $countries
@@ -194,22 +195,22 @@ class CoachController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $coach_management)
+    public function update(CoachRequest $request, User $coach)
     {
         $data = $request->validated();
 
         if ($request->hasFile('foto')){
             $data['foto'] = $request->file('foto')->store('assets/user-profile', 'public');
         }else{
-            $data['foto'] = $coach_management->foto;
+            $data['foto'] = $coach->foto;
         }
 
-        $coach_management->update($data);
-        $coach_management->player->update($data);
+        $coach->update($data);
+        $coach->player->update($data);
 
-        $text = 'Coach '.$coach_management->firstName.' '.$coach_management->lastName.' successfully updated!';
+        $text = 'Coach '.$coach->firstName.' '.$coach->lastName.' successfully updated!';
         Alert::success($text);
-        return redirect()->route('coach-managements.show', $coach_management->id);
+        return redirect()->route('coach-managements.show', $coach->id);
     }
 
     public function deactivate(User $coach){
@@ -256,14 +257,14 @@ class CoachController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $coach_management)
+    public function destroy(User $coach)
     {
-        if (File::exists($coach_management->foto) && $coach_management->foto != 'assets/user-profile/avatar.png'){
-            File::delete($coach_management->foto);
+        if (File::exists($coach->foto) && $coach->foto != 'assets/user-profile/avatar.png'){
+            File::delete($coach->foto);
         }
 
-        $coach_management->coach->delete();
-        $coach_management->delete();
+        $coach->coach->delete();
+        $coach->delete();
 
         return response()->json(['success' => true]);
     }

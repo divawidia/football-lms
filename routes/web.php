@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\CoachController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
@@ -73,6 +74,21 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::post('parents/store', [PlayerParentController::class, 'store'])->name('player-parents.store');
         Route::get('parents/{parent}/edit', [PlayerParentController::class, 'edit'])->name('player-parents.edit');
         Route::put('parents/{parent}/update', [PlayerParentController::class, 'update'])->name('player-parents.update');
+    });
+
+    Route::prefix('coach-managements')->group(function (){
+       Route::get('', [CoachController::class, 'index'])->name('coach-managements.index');
+        Route::get('create', [CoachController::class, 'create'])->name('coach-managements.create');
+        Route::post('store', [CoachController::class, 'store'])->name('coach-managements.store');
+        Route::prefix('{coach}')->group(function () {
+            Route::get('edit', [CoachController::class, 'edit'])->name('coach-managements.edit');
+            Route::put('update', [CoachController::class, 'update'])->name('coach-managements.update');
+            Route::delete('destroy', [CoachController::class, 'destroy'])->name('coach-managements.destroy');
+            Route::patch('deactivate', [PlayerController::class, 'deactivate'])->name('deactivate-coach');
+            Route::patch('activate', [PlayerController::class, 'activate'])->name('activate-coach');
+            Route::get('change-password', [PlayerController::class, 'changePasswordPage'])->name('coach-managements.change-password-page');
+            Route::patch('change-password', [PlayerController::class, 'changePassword'])->name('coach-managements.change-password');
+        });
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
