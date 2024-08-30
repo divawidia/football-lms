@@ -150,20 +150,19 @@ class CoachController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $coach_management)
     {
-        $user = User::with('country', 'state', 'city', 'coach.teams')->findOrFail($id);
-        $fullName = $user->firstName . ' ' . $user->lastName;
-        $age = $this->getAge($user->dob);
+        $fullName = $coach_management->firstName . ' ' . $coach_management->lastName;
+        $age = $this->getAge($coach_management->dob);
 
-        if(count($user->coach->teams) == 0){
+        if(count($coach_management->coach->teams) == 0){
             $team = 'No Team';
         }else{
-            $team = $user->coach->teams->name;
+            $team = $coach_management->coach->teams->name;
         }
 
         return view('pages.admins.managements.coaches.detail', [
-            'user' => $user,
+            'user' => $coach_management,
             'fullName' => $fullName,
             'age' => $age,
             'team' => $team
@@ -173,9 +172,20 @@ class CoachController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $coach_management)
     {
-        //
+        $fullname = $coach_management->firstName . ' ' . $coach_management->lastName;
+        $positions = PlayerPosition::all();
+        $action =  World::countries();
+        if ($action->success) {
+            $countries = $action->data;
+        }
+        return view('pages.admins.managements.coaches.edit',[
+            'coach' => $coach_management,
+            'fullname' => $fullname,
+            'positions' => $positions,
+            'countries' => $countries
+        ]);
     }
 
     /**
