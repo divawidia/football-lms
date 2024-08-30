@@ -9,6 +9,7 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
@@ -255,8 +256,15 @@ class CoachController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $coach_management)
     {
-        //
+        if (File::exists($coach_management->foto) && $coach_management->foto != 'assets/user-profile/avatar.png'){
+            File::delete($coach_management->foto);
+        }
+
+        $coach_management->coach->delete();
+        $coach_management->delete();
+
+        return response()->json(['success' => true]);
     }
 }
