@@ -367,13 +367,20 @@
                                     <div class="form-group">
                                         <label class="form-label" for="height">Height</label>
                                         <small class="text-danger">*</small>
-                                        <input type="number"
-                                               class="form-control @error('height') is-invalid @enderror"
-                                               id="height"
-                                               name="height"
-                                               required
-                                               value="{{ old('height') }}"
-                                               placeholder="Input player's height ...">
+                                        <div class="input-group input-group-merge">
+                                            <input type="number"
+                                                   class="form-control @error('height') is-invalid @enderror"
+                                                   id="height"
+                                                   name="height"
+                                                   required
+                                                   value="{{ old('height') }}"
+                                                   placeholder="Input player's height ...">
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    CM
+                                                </div>
+                                            </div>
+                                        </div>
                                         @error('height')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -385,13 +392,20 @@
                                     <div class="form-group">
                                         <label class="form-label" for="weight">Weight</label>
                                         <small class="text-danger">*</small>
-                                        <input type="number"
-                                               class="form-control @error('weight') is-invalid @enderror"
-                                               id="weight"
-                                               name="weight"
-                                               required
-                                               value="{{ old('weight') }}"
-                                               placeholder="Input player's weight ...">
+                                        <div class="input-group input-group-merge">
+                                            <input type="number"
+                                                   class="form-control @error('weight') is-invalid @enderror"
+                                                   id="weight"
+                                                   name="weight"
+                                                   required
+                                                   value="{{ old('weight') }}"
+                                                   placeholder="Input player's weight ...">
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    KG
+                                                </div>
+                                            </div>
+                                        </div>
                                         @error('weight')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
