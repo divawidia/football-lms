@@ -190,15 +190,17 @@ class CoachController extends Controller
     public function edit(User $coach)
     {
         $fullname = $coach->firstName . ' ' . $coach->lastName;
-        $positions = PlayerPosition::all();
         $action =  World::countries();
+        $certifications = CoachCertification::all();
+        $specializations = CoachSpecialization::all();
         if ($action->success) {
             $countries = $action->data;
         }
         return view('pages.admins.managements.coaches.edit',[
             'coach' => $coach,
             'fullname' => $fullname,
-            'positions' => $positions,
+            'certifications' => $certifications,
+            'specializations' => $specializations,
             'countries' => $countries
         ]);
     }

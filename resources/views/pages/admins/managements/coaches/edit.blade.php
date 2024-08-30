@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Edit Account
+    Edit Coach {{ $fullname }} Profile
 @endsection
 @section('page-title')
     @yield('title')
@@ -16,8 +16,8 @@
                         </h2>
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('player-managements.index') }}">Players Management</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('player-managements.show', $player->id) }}">{{ $fullname }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('coach-managements.index') }}">Coaches Management</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('coach-managements.show', $coach->id) }}">{{ $fullname }}</a></li>
                             <li class="breadcrumb-item active">
                                 @yield('title')
                             </li>
@@ -29,7 +29,7 @@
 
         <div class="container page__container page-section">
             <div class="list-group">
-                <form action="{{ route('player-managements.update', ['player_management' => $player]) }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('coach-managements.update', ['coach' => $coach]) }}" method="post" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
                     <div class="list-group-item d-flex justify-content-end">
@@ -46,7 +46,7 @@
                                     <label class="form-label">Profile photo</label>
                                     <small class="text-black-100">(Optional)</small>
                                     <div class="media align-items-center mb-2">
-                                            <img src="{{ Storage::url($player->foto) }}"
+                                            <img src="{{ Storage::url($coach->foto) }}"
                                                  alt="people"
                                                  width="54"
                                                  height="54"
@@ -75,7 +75,7 @@
                                                id="firstName"
                                                name="firstName"
                                                required
-                                               value="{{ old('firstName', $player->firstName) }}"
+                                               value="{{ old('firstName', $coach->firstName) }}"
                                                placeholder="Input player's first name ...">
                                         @error('firstName')
                                         <span class="invalid-feedback" role="alert">
@@ -91,7 +91,7 @@
                                                id="lastName"
                                                name="lastName"
                                                required
-                                               value="{{ old('lastName', $player->lastName) }}"
+                                               value="{{ old('lastName', $coach->lastName) }}"
                                                placeholder="Input player's last name ...">
                                         @error('lastName')
                                         <span class="invalid-feedback" role="alert">
@@ -107,7 +107,7 @@
                                                id="dob"
                                                name="dob"
                                                required
-                                               value="{{ old('dob', $player->dob) }}"
+                                               value="{{ old('dob', $coach->dob) }}"
                                                placeholder="Input player's date of birth">
                                         @error('dob')
                                         <span class="invalid-feedback" role="alert">
@@ -124,7 +124,7 @@
                                                id="email"
                                                name="email"
                                                required
-                                               value="{{ old('email', $player->email) }}"
+                                               value="{{ old('email', $coach->email) }}"
                                                class="form-control @error('email') is-invalid @enderror"
                                                placeholder="Input player account's email address ...">
                                         @error('email')
@@ -139,7 +139,7 @@
                                         <select class="form-control form-select @error('gender') is-invalid @enderror" id="gender" name="gender" required>
                                             <option disabled selected>Select player's gender</option>
                                             @foreach(['male' => 'Male', 'female' => 'Female', 'others' => 'Others'] AS $jenisKelamin => $jenisKelaminLabel)
-                                                <option value="{{ $jenisKelamin }}" @selected(old('gender', $player->gender) == $jenisKelamin)>{{ $jenisKelaminLabel }}</option>
+                                                <option value="{{ $jenisKelamin }}" @selected(old('gender', $coach->gender) == $jenisKelamin)>{{ $jenisKelaminLabel }}</option>
                                             @endforeach
                                         </select>
                                         @error('gender')
@@ -149,16 +149,16 @@
                                         @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label" for="joinDate">Join Date</label>
+                                        <label class="form-label" for="hireDate">Hired Date</label>
                                         <small class="text-danger">*</small>
                                         <input type="date"
-                                               id="joinDate"
-                                               name="joinDate"
+                                               id="hireDate"
+                                               name="hireDate"
                                                required
-                                               value="{{ old('joinDate', $player->player->joinDate) }}"
-                                               class="form-control @error('joinDate') is-invalid @enderror"
+                                               value="{{ old('hireDate', $coach->coach->hireDate) }}"
+                                               class="form-control @error('hireDate') is-invalid @enderror"
                                                placeholder="Input player's join date ...">
-                                        @error('joinDate')
+                                        @error('hireDate')
                                         <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
@@ -179,7 +179,7 @@
                                             name="address"
                                             id="address"
                                             required
-                                            placeholder="Input account's address ...">{{old('address', $player->address)}}</textarea>
+                                            placeholder="Input account's address ...">{{old('address', $coach->address)}}</textarea>
                                         @error('address')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -193,7 +193,7 @@
                                                id="phoneNumber"
                                                name="phoneNumber"
                                                required
-                                               value="{{ old('phoneNumber', $player->phoneNumber) }}"
+                                               value="{{ old('phoneNumber', $coach->phoneNumber) }}"
                                                class="form-control @error('phoneNumber') is-invalid @enderror"
                                                placeholder="Input account's phone number ...">
                                         @error('phoneNumber')
@@ -209,7 +209,7 @@
                                                id="zipCode"
                                                name="zipCode"
                                                required
-                                               value="{{ old('zipCode', $player->zipCode) }}"
+                                               value="{{ old('zipCode', $coach->zipCode) }}"
                                                class="form-control @error('zipCode') is-invalid @enderror"
                                                placeholder="Input address zip code ...">
                                         @error('zipCode')
@@ -226,7 +226,7 @@
                                         <select class="form-control form-select country-form @error('country_id') is-invalid @enderror" id="country_id" name="country_id" required>
                                             <option selected disabled>Select Country</option>
                                             @foreach($countries as $country)
-                                                <option value="{{ $country['id'] }}" @selected(old('country_id', $player->country_id) == $country['id'])>{{ $country['name'] }}</option>
+                                                <option value="{{ $country['id'] }}" @selected(old('country_id', $coach->country_id) == $country['id'])>{{ $country['name'] }}</option>
                                             @endforeach
                                         </select>
                                         @error('country')
@@ -262,54 +262,37 @@
                                 </div>
                             </div>
                             <div class="page-separator mt-3">
-                                <div class="page-separator__text">Skills Information</div>
+                                <div class="page-separator__text">Coaching Information</div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label" for="positionId">Position</label>
+                                        <label class="form-label" for="specialization">Specialization</label>
                                         <small class="text-danger">*</small>
-                                        <select class="form-control form-select @error('position') is-invalid @enderror" id="positionId" name="positionId" required>
-                                            <option disabled selected>Select player's position</option>
-                                            @foreach($positions AS $position)
-                                                <option value="{{ $position->id }}" @selected(old('positionId', $player->player->positionId) == $position->id)>{{ $position->name }}</option>
+                                        <select class="form-control form-select @error('specialization') is-invalid @enderror" id="specialization" name="specialization" required>
+                                            <option disabled selected>Select coach's specialization</option>
+                                            @foreach($specializations AS $specialization)
+                                                <option value="{{ $specialization->id }}" @selected(old('specialization', $coach->coach->specialization) == $specialization->id)>{{ $specialization->name }}</option>
                                             @endforeach
                                         </select>
-                                        @error('positionId')
+                                        @error('specialization')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label" for="skill">Skills</label>
+                                        <label class="form-label" for="certificationLevel">Certification</label>
                                         <small class="text-danger">*</small>
-                                        <select class="form-control form-select @error('skill') is-invalid @enderror" id="skill" name="skill" required>
-                                            <option disabled selected>Select player's skill</option>
-                                            @foreach(['Beginner', 'Intermediate', 'Advance'] AS $skill)
-                                                <option value="{{ $skill }}" @selected(old('skill', $player->player->skill) == $skill)>{{ $skill }}</option>
+                                        <select class="form-control form-select @error('certificationLevel') is-invalid @enderror" id="certificationLevel" name="certificationLevel" required>
+                                            <option disabled selected>Select coach's skill</option>
+                                            @foreach($certifications AS $certification)
+                                                <option value="{{ $certification->id }}" @selected(old('certificationLevel', $coach->coach->certificationLevel) == $certification->id)>{{ $certification->name }}</option>
                                             @endforeach
                                         </select>
-                                        @error('skill')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label class="form-label" for="strongFoot">Strong Foot</label>
-                                        <small class="text-danger">*</small>
-                                        <select class="form-control form-select @error('strongFoot') is-invalid @enderror" id="strongFoot" name="strongFoot" required>
-                                            <option disabled selected>Select player's strong foot</option>
-                                            @foreach(['left' => 'Left', 'right' => 'Right'] AS $foot => $footLabel)
-                                                <option value="{{ $foot }}" @selected(old('strongFoot', $player->player->strongFoot) == $foot)>{{ $footLabel }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('strongFoot')
+                                        @error('certificationLevel')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -331,7 +314,7 @@
                                                    id="height"
                                                    name="height"
                                                    required
-                                                   value="{{ old('height', $player->player->height) }}"
+                                                   value="{{ old('height', $coach->coach->height) }}"
                                                    placeholder="Input player's height ...">
                                             <div class="input-group-append">
                                                 <div class="input-group-text">
@@ -356,7 +339,7 @@
                                                    id="weight"
                                                    name="weight"
                                                    required
-                                                   value="{{ old('weight', $player->player->weight) }}"
+                                                   value="{{ old('weight', $coach->coach->weight) }}"
                                                    placeholder="Input player's weight ...">
                                             <div class="input-group-append">
                                                 <div class="input-group-text">
@@ -382,8 +365,8 @@
         <script>
             $(document).ready(function () {
                 const idCountry = $('.country-form option:selected').val();
-                const idState = {{ $player->state_id }};
-                const idCity = {{ $player->city_id }};
+                const idState = {{ $coach->state_id }};
+                const idCity = {{ $coach->city_id }};
                 $.ajax({
                     url: "{{url('api/states')}}",
                     data: {
