@@ -81,6 +81,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::get('create', [CoachController::class, 'create'])->name('coach-managements.create');
         Route::post('store', [CoachController::class, 'store'])->name('coach-managements.store');
         Route::prefix('{coach}')->group(function () {
+            Route::get('', [CoachController::class, 'show'])->name('coach-managements.show');
             Route::get('edit', [CoachController::class, 'edit'])->name('coach-managements.edit');
             Route::put('update', [CoachController::class, 'update'])->name('coach-managements.update');
             Route::delete('destroy', [CoachController::class, 'destroy'])->name('coach-managements.destroy');

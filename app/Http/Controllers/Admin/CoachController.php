@@ -27,8 +27,7 @@ class CoachController extends Controller
     {
         if (request()->ajax()) {
             $query = Coach::with('user', 'teams')->get();
-            return Datatables::of($query)
-                ->addColumn('action', function ($item) {
+            return Datatables::of($query)->addColumn('action', function ($item) {
                     if ($item->user->status == '1') {
                         $statusButton = '<form action="' . route('deactivate-coach', $item->userId) . '" method="POST">
                                                 ' . method_field("PATCH") . '
@@ -64,11 +63,14 @@ class CoachController extends Controller
                               </div>
                             </div>';
                 })
-                ->editColumn('teams.name', function ($item) {
+                ->editColumn('teams', function ($item) {
                     if (count($item->teams) === 0) {
                         $team = 'No Team';
                     } else {
-                        $team = $item->teams->name;
+                        $team = '';
+                        foreach ($item->teams as $team){
+                            $team =+ '<span class="badge badge-pill badge-success">'.$team->name.'</span>';
+                        }
                     }
                     return $team;
                 })
@@ -83,7 +85,7 @@ class CoachController extends Controller
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
                                             <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
+                                            <small class="js-lists-values-email text-50">' . $item->specializations->name . ' - '.$item->certification->name.'</small>
                                         </div>
                                     </div>
 
@@ -100,7 +102,7 @@ class CoachController extends Controller
                 ->editColumn('age', function ($item) {
                     return $this->getAge($item->user->dob);
                 })
-                ->rawColumns(['action', 'name', 'status', 'age', 'teams.name'])
+                ->rawColumns(['action', 'name', 'status', 'age', 'teams'])
                 ->make();
         }
         return view('pages.admins.managements.coaches.index');

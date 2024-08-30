@@ -53,7 +53,7 @@
                 </li>
                 <li class="sidebar-menu-item">
                     <a class="sidebar-menu-button"
-                       href="instructor-quizzes.html">
+                       href="{{ route('coach-managements.index') }}">
                         <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">person</span>
                         <span class="sidebar-menu-text">Coaches Management</span>
                     </a>
