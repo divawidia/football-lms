@@ -142,7 +142,7 @@ class CoachController extends Controller
 
         Coach::create($data);
 
-        $text = $data['firstName'].' '.$data['lastName'].' account successfully added!';
+        $text = 'Coach '.$data['firstName'].' '.$data['lastName'].' account successfully added!';
         Alert::success($text);
         return redirect()->route('coach-managements.index');
     }
@@ -191,9 +191,22 @@ class CoachController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $coach_management)
     {
-        //
+        $data = $request->validated();
+
+        if ($request->hasFile('foto')){
+            $data['foto'] = $request->file('foto')->store('assets/user-profile', 'public');
+        }else{
+            $data['foto'] = $coach_management->foto;
+        }
+
+        $coach_management->update($data);
+        $coach_management->player->update($data);
+
+        $text = 'Coach '.$coach_management->firstName.' '.$coach_management->lastName.' successfully updated!';
+        Alert::success($text);
+        return redirect()->route('coach-managements.show', $coach_management->id);
     }
 
     /**
