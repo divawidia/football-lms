@@ -9,6 +9,8 @@
 <!-- Perfect Scrollbar -->
 <link type="text/css" href="{{ URL::asset('vendor/perfect-scrollbar.css') }}" rel="stylesheet">
 
+{{--<link rel="stylesheet" href="{{  node_modules/material-design-kit/dist/material-design-kit.css}}">--}}
+
 <!-- Material Design Icons -->
 <link type="text/css" href="{{ URL::asset('css/material-icons.css') }}" rel="stylesheet">
 
