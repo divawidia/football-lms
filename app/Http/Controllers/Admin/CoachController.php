@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CoachRequest;
 use App\Models\Coach;
+use App\Models\CoachCertification;
+use App\Models\CoachSpecialization;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
@@ -118,8 +120,15 @@ class CoachController extends Controller
             $countries = $action->data;
         }
 
+        $certifications = CoachCertification::all();
+        $specializations = CoachSpecialization::all();
+        $teams = Team::all();
+
         return view('pages.admins.managements.coaches.create', [
             'countries' => $countries,
+            'certifications' => $certifications,
+            'specializations' => $specializations,
+            'teams' => $teams
         ]);
     }
 
@@ -148,7 +157,7 @@ class CoachController extends Controller
 
         Coach::create($data);
 
-        $text = 'Coach '.$data['firstName'].' '.$data['lastName'].' account successfully added!';
+        $text = 'Coach '.$data['firstName'].' '.$data['lastName'].' successfully added!';
         Alert::success($text);
         return redirect()->route('coach-managements.index');
     }
@@ -219,7 +228,7 @@ class CoachController extends Controller
         $coach->update([
             'status' => '0'
         ]);
-        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' account status successfully deactivated!');
+        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' status successfully deactivated!');
         return redirect()->route('coach-managements.index');
     }
 
@@ -227,7 +236,7 @@ class CoachController extends Controller
         $coach->update([
             'status' => '1'
         ]);
-        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' account status successfully activated!');
+        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' status successfully activated!');
         return redirect()->route('coach-managements.index');
     }
 
@@ -252,7 +261,7 @@ class CoachController extends Controller
         $coach->update([
             'password' => bcrypt($validator->getData()['password'])
         ]);
-        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' account password successfully updated!');
+        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' password successfully updated!');
         return redirect()->route('coach-managements.index');
     }
 

@@ -24,25 +24,26 @@ class CoachRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'foto' => ['image', 'nullable'],
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->coach_management)],
+            'dob' => ['required', 'date'],
+            'team' => [Rule::exists('teams'), 'nullable'],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->coach)],
             'password' => ['string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols(), 'nullable'],
             'gender' => ['required', 'string', Rule::in('male', 'female')],
-            'dob' => ['required', 'date'],
+            'hireDate' => ['required', 'date'],
             'address' => ['required', 'string'],
             'phoneNumber' => ['required', 'string'],
             'zipCode' => ['required', 'numeric'],
-            'foto' => ['image', 'nullable'],
             'country_id' => ['required'],
-            'status' => [Rule::in('1', '0'), 'nullable'],
             'state_id' => ['required'],
             'city_id' => ['required'],
-            'hireDate' => ['required', 'date'],
-            'certificationLevel' => ['required', 'string'],
-            'specialization' => ['required', 'string'],
+            'certificationLevel' => ['required', Rule::exists('coach_certifications', 'id')],
+            'specialization' => ['required', Rule::exists('coach_specializations', 'id')],
             'height' => ['required', 'numeric'],
             'weight' => ['required', 'numeric'],
+            'status' => [Rule::in('1', '0'), 'nullable'],
         ];
     }
 }
