@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Coach;
+use App\Models\PlayerPosition;
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Nnjeim\World\World;
 use Yajra\DataTables\Facades\DataTables;
 
 class CoachController extends Controller
@@ -101,7 +104,17 @@ class CoachController extends Controller
      */
     public function create()
     {
-        //
+        $action =  World::countries();
+        if ($action->success) {
+            $countries = $action->data;
+        }
+
+        $teams = Team::all();
+
+        return view('pages.admins.managements.coaches.create', [
+            'countries' => $countries,
+            'teams' => $teams
+        ]);
     }
 
     /**
