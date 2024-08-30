@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Change Account's Password
+    Change Player {{ $fullname }} Account's Password
 @endsection
 @section('page-title')
     @yield('title')

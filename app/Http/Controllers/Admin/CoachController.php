@@ -219,7 +219,7 @@ class CoachController extends Controller
         }
 
         $coach->update($data);
-        $coach->player->update($data);
+        $coach->coach->update($data);
 
         $text = 'Coach '.$coach->firstName.' '.$coach->lastName.' successfully updated!';
         Alert::success($text);

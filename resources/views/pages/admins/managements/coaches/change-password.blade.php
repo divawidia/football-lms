@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Change Account's Password
+    Change Coach {{ $fullname }} Account's Password
 @endsection
 @section('page-title')
     @yield('title')
@@ -16,8 +16,8 @@
                         </h2>
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('player-managements.index') }}">Players Management</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('player-managements.show', $user->id) }}">{{ $fullName }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('coach-managements.index') }}">Coaches Management</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('coach-managements.show', $user->id) }}">{{ $fullName }}</a></li>
                             <li class="breadcrumb-item active">
                                 @yield('title')
                             </li>
@@ -29,7 +29,7 @@
 
         <div class="container page__container page-section">
             <div class="list-group">
-                <form action="{{ route('player-managements.change-password', ['player' => $user->id]) }}" method="POST">
+                <form action="{{ route('coach-managements.change-password', ['coach' => $user->id]) }}" method="POST">
                     @method('PATCH')
                     @csrf
                     <div class="list-group-item d-flex justify-content-end">
