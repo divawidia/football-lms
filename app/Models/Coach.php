@@ -38,4 +38,13 @@ class Coach extends Model
         return $this->hasMany(PlayerPerformanceReview::class, 'coachId');
     }
 
+    public function certification()
+    {
+        return $this->belongsTo(CoachCertification::class, 'certificationLevel');
+    }
+    public function specializations()
+    {
+        return $this->belongsTo(CoachSpecialization::class, 'specialization');
+    }
+
 }
