@@ -55,7 +55,7 @@ class CoachController extends Controller
                                 </span>
                               </button>
                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('coach-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Coach</a>
+                                <a class="dropdown-item" href="' . route('coach-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Coach Profile</a>
                                 <a class="dropdown-item" href="' . route('coach-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Coach</a>
                                 ' . $statusButton . '
                                 <a class="dropdown-item" href="' . route('coach-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Coach Password</a>
