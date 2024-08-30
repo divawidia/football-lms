@@ -10,6 +10,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 use Nnjeim\World\World;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
@@ -207,6 +209,47 @@ class CoachController extends Controller
         $text = 'Coach '.$coach_management->firstName.' '.$coach_management->lastName.' successfully updated!';
         Alert::success($text);
         return redirect()->route('coach-managements.show', $coach_management->id);
+    }
+
+    public function deactivate(User $coach){
+        $coach->update([
+            'status' => '0'
+        ]);
+        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' account status successfully deactivated!');
+        return redirect()->route('coach-managements.index');
+    }
+
+    public function activate(User $coach){
+        $coach->update([
+            'status' => '1'
+        ]);
+        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' account status successfully activated!');
+        return redirect()->route('coach-managements.index');
+    }
+
+    public function changePasswordPage(User $coach){
+        $fullName = $coach->firstName . ' ' . $coach->lastName;
+
+        return view('pages.admins.managements.coaches.change-password',[
+            'user' => $coach,
+            'fullName' => $fullName
+        ]);
+    }
+
+    public function changePassword(Request $request, User $coach){
+        $validator = Validator::make($request->all(), [
+            'password' => ['required', 'string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols()]
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $coach->update([
+            'password' => bcrypt($validator->getData()['password'])
+        ]);
+        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' account password successfully updated!');
+        return redirect()->route('coach-managements.index');
     }
 
     /**
