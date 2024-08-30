@@ -112,11 +112,8 @@ class CoachController extends Controller
             $countries = $action->data;
         }
 
-        $teams = Team::all();
-
         return view('pages.admins.managements.coaches.create', [
             'countries' => $countries,
-            'teams' => $teams
         ]);
     }
 
@@ -143,11 +140,7 @@ class CoachController extends Controller
 
         $data['userId'] = $user->id;
 
-        $player = Coach::create($data);
-
-        if ($request->team != null){
-            $player->teams()->attach($request->team);
-        }
+        Coach::create($data);
 
         $text = $data['firstName'].' '.$data['lastName'].' account successfully added!';
         Alert::success($text);
@@ -159,7 +152,22 @@ class CoachController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::with('country', 'state', 'city', 'coach.teams')->findOrFail($id);
+        $fullName = $user->firstName . ' ' . $user->lastName;
+        $age = $this->getAge($user->dob);
+
+        if(count($user->coach->teams) == 0){
+            $team = 'No Team';
+        }else{
+            $team = $user->coach->teams->name;
+        }
+
+        return view('pages.admins.managements.coaches.detail', [
+            'user' => $user,
+            'fullName' => $fullName,
+            'age' => $age,
+            'team' => $team
+        ]);
     }
 
     /**
