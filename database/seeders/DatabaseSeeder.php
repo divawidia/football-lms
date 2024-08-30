@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Player;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,6 +17,8 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             WorldSeeder::class,
             PlayerPositionSeeder::class,
+            CoachSpecializationSeeder::class,
+            CoachCertificationSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 
