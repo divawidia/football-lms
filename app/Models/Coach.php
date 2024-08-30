@@ -27,7 +27,7 @@ class Coach extends Model
 
     public function teams()
     {
-        return $this->hasMany(Team::class, 'coachId');
+        return $this->belongsToMany(Team::class, 'coach_team', 'coachId', 'teamId')->withTimestamps();
     }
     public function playerSkillStats()
     {
