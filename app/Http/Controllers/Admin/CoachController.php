@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Coach;
 use App\Models\PlayerPosition;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Nnjeim\World\World;
+use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
 class CoachController extends Controller
@@ -122,7 +125,33 @@ class CoachController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validated();
+
+        $data['password'] = bcrypt($data['password']);
+
+        if ($request->hasFile('foto')){
+            $data['foto'] = $request->file('foto')->store('assets/user-profile', 'public');
+        }else{
+            $data['foto'] = 'images/undefined-user.png';
+        }
+
+        $data['status'] = '1';
+        $data['academyId'] = Auth::user()->academyId;
+
+        $user = User::create($data);
+        $user->assignRole('coach');
+
+        $data['userId'] = $user->id;
+
+        $player = Coach::create($data);
+
+        if ($request->team != null){
+            $player->teams()->attach($request->team);
+        }
+
+        $text = $data['firstName'].' '.$data['lastName'].' account successfully added!';
+        Alert::success($text);
+        return redirect()->route('coach-managements.index');
     }
 
     /**
