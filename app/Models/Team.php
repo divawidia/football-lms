@@ -20,10 +20,6 @@ class Team extends Model
         'coachId'
     ];
 
-    public function coach()
-    {
-        return $this->belongsTo(Coach::class, 'coachId');
-    }
     public function academy()
     {
         return $this->belongsTo(Academy::class, 'academyId');
@@ -32,7 +28,7 @@ class Team extends Model
     {
         return $this->hasMany(TeamMatchStats::class, 'teamId');
     }
-    public function player()
+    public function players()
     {
         return $this->belongsToMany(Player::class, 'player_teams', 'teamId', 'playerId')->withTimestamps();
     }
