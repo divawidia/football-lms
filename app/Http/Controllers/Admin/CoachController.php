@@ -66,15 +66,15 @@ class CoachController extends Controller
                             </div>';
                 })
                 ->editColumn('teams', function ($item) {
-                    if (count($item->teams) === 0) {
-                        $team = 'No Team';
-                    } else {
-                        $team = '';
+                    $coachTeam = '';
+                    if(count($item->teams) === 0){
+                        $coachTeam = 'No Team';
+                    }else{
                         foreach ($item->teams as $team){
-                            $team =+ '<span class="badge badge-pill badge-success">'.$team->name.'</span>';
+                            $coachTeam .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
                         }
                     }
-                    return $team;
+                    return $coachTeam;
                 })
                 ->editColumn('name', function ($item) {
                     return '
