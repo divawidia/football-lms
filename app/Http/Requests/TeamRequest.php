@@ -24,9 +24,9 @@ class TeamRequest extends FormRequest
     {
         return [
             'logo' => ['image', 'nullable'],
-            'teamName' => ['required', 'string', Rule::unique('teams', 'teamName')],
+            'teamName' => ['required', 'string', Rule::unique('teams', 'teamName')->ignore($this->team)],
             'ageGroup' => ['required', 'string'],
-            'division' => ['required', 'date'],
+            'division' => ['required', 'string'],
             'players' => ['nullable', Rule::exists('players', 'id')],
             'coaches' => ['nullable', Rule::exists('coaches', 'id')],
         ];
