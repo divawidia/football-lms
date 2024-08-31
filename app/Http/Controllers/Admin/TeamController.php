@@ -151,9 +151,28 @@ class TeamController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Team $team)
     {
-        //
+        $players = Player::all();
+        $coaches = Coach::all();
+        $player_id = [];
+        $coach_id = [];
+
+        foreach ($team->players as $player){
+            $player_id[] = $player->id;
+        }
+
+        foreach ($team->coaches as $coach){
+            $coach_id[] = $coach->id;
+        }
+
+        return view('pages.admins.managements.teams.edit',[
+            'team' => $team,
+            'players' => $players,
+            'coaches' => $coaches,
+            'player_id' => $player_id,
+            'coach_id' => $coach_id
+        ]);
     }
 
     /**
