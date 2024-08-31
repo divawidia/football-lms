@@ -299,7 +299,7 @@
         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="parentsTable">
+                    <table class="table table-hover mb-0" id="coachesTable">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -350,6 +350,27 @@
                     { data: 'goals', name: 'goals' },
                     { data: 'assists', name: 'assists' },
                     { data: 'cleanSheets', name: 'cleanSheets' },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ]
+            });
+            const coachesTable = $('#coachesTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! route('team-managements.teamCoaches', $team->id) !!}',
+                },
+                columns: [
+                    { data: 'name', name: 'name' },
+                    { data: 'age', name: 'age' },
+                    { data: 'gender', name: 'gender' },
+                    { data: 'joinedDate', name: 'joinedDate'},
                     {
                         data: 'action',
                         name: 'action',

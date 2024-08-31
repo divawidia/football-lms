@@ -198,7 +198,10 @@ class TeamController extends Controller
                 ->editColumn('joinedDate', function ($item) {
                     return date('l, M d, Y. h:i A', strtotime($item->pivot->created_at));
                 })
-                ->rawColumns(['action', 'name', 'age', 'joinedDate'])
+                ->editColumn('gender', function ($item) {
+                    return $item->user->gender;
+                })
+                ->rawColumns(['action', 'name', 'age', 'gender','joinedDate'])
                 ->make();
         }
     }
