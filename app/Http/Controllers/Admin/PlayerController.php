@@ -70,12 +70,15 @@ class PlayerController extends Controller
                         </div>';
                 })
                 ->editColumn('teams.name', function ($item) {
+                    $playerTeam = '';
                     if(count($item->teams) === 0){
-                        $team = 'No Team';
+                        $playerTeam = 'No Team';
                     }else{
-                        $team = $item->teams->name;
+                        foreach ($item->teams as $team){
+                            $playerTeam .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
+                        }
                     }
-                    return $team;
+                    return $playerTeam;
                 })
                 ->editColumn('name', function ($item) {
                     return '
