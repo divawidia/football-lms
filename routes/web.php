@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CoachController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
+use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -89,6 +90,20 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('activate', [CoachController::class, 'activate'])->name('activate-coach');
             Route::get('change-password', [CoachController::class, 'changePasswordPage'])->name('coach-managements.change-password-page');
             Route::patch('change-password', [CoachController::class, 'changePassword'])->name('coach-managements.change-password');
+        });
+    });
+
+    Route::prefix('team-managements')->group(function (){
+        Route::get('', [TeamController::class, 'index'])->name('team-managements.index');
+        Route::get('create', [TeamController::class, 'create'])->name('team-managements.create');
+        Route::post('store', [TeamController::class, 'store'])->name('team-managements.store');
+        Route::prefix('{team}')->group(function () {
+            Route::get('', [TeamController::class, 'show'])->name('team-managements.show');
+            Route::get('edit', [TeamController::class, 'edit'])->name('team-managements.edit');
+            Route::put('update', [TeamController::class, 'update'])->name('team-managements.update');
+            Route::delete('destroy', [TeamController::class, 'destroy'])->name('team-managements.destroy');
+            Route::patch('deactivate', [TeamController::class, 'deactivate'])->name('deactivate-team');
+            Route::patch('activate', [TeamController::class, 'activate'])->name('activate-team');
         });
     });
 });
