@@ -17,7 +17,6 @@ class Team extends Model
         'logo',
         'status',
         'academyId',
-        'coachId'
     ];
 
     public function academy()
