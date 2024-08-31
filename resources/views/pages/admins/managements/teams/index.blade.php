@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Coaches Management
+    Teams Management
 @endsection
 @section('page-title')
     @yield('title')
@@ -13,11 +13,11 @@
                     <div class="mb-24pt mb-sm-0 w-100">
                         <div class="d-flex flex-row">
                             <h2 class="mb-0 text-left">@yield('title')</h2>
-                            <a href="{{  route('coach-managements.create') }}" class="btn btn-sm btn-primary ml-auto" id="add-new">
+                            <a href="{{  route('team-managements.create') }}" class="btn btn-sm btn-primary ml-auto" id="add-new">
                                 <span class="material-icons mr-2">
                                     add
                                 </span>
-                                Add New Coach
+                                Add New Team
                             </a>
                         </div>
                         <ol class="breadcrumb p-0 m-0">
@@ -39,11 +39,8 @@
                             <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Team</th>
-                                <th>Email</th>
-                                <th>Phone Number</th>
-                                <th>Age</th>
-                                <th>Gender</th>
+                                <th>Players</th>
+                                <th>Coaches/Staffs</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -68,11 +65,8 @@
                     },
                     columns: [
                         { data: 'name', name: 'name' },
-                        { data: 'teams', name: 'teams' },
-                        { data: 'user.email', name: 'user.email'},
-                        { data: 'user.phoneNumber', name: 'user.phoneNumber' },
-                        { data: 'age', name: 'age' },
-                        { data: 'user.gender', name: 'user.gender' },
+                        { data: 'players', name: 'players' },
+                        { data: 'coaches', name: 'coaches'},
                         { data: 'status', name: 'status' },
                         {
                             data: 'action',
@@ -97,7 +91,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: "{{ route('coach-managements.destroy', ['coach' => ':id']) }}".replace(':id', id),
+                                url: "{{ route('team-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
                                 type: 'DELETE',
                                 data: {
                                     _token: "{{ csrf_token() }}"
@@ -105,7 +99,7 @@
                                 success: function(response) {
                                     Swal.fire({
                                         icon: "success",
-                                        title: "Coach's account successfully deleted!",
+                                        title: "Team successfully deleted!",
                                     });
                                     datatable.ajax.reload();
                                 },
