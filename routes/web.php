@@ -104,6 +104,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::delete('destroy', [TeamController::class, 'destroy'])->name('team-managements.destroy');
             Route::patch('deactivate', [TeamController::class, 'deactivate'])->name('deactivate-team');
             Route::patch('activate', [TeamController::class, 'activate'])->name('activate-team');
+            Route::get('players', [TeamController::class, 'teamPlayers'])->name('team-managements.teamPlayers');
         });
     });
 });
