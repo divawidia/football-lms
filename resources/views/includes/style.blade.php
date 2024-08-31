@@ -23,6 +23,34 @@
 <!-- App CSS -->
 <link type="text/css" href="{{ URL::asset('css/app.css') }}" rel="stylesheet">
 
+<!-- Flatpickr -->
+<link
+    type="text/css"
+    href="{{ URL::asset('css/flatpickr.css') }}"
+    rel="stylesheet"
+/>
+<link
+    type="text/css"
+    href="{{ URL::asset('css/flatpickr-airbnb.css') }}"
+    rel="stylesheet"
+/>
+
+<!-- DateRangePicker -->
+<link
+    type="text/css"
+    href="{{ URL::asset('vendor/daterangepicker.css') }}"
+    rel="stylesheet"
+/>
+
+<!-- Quill Theme -->
+<link type="text/css" href="{{ URL::asset('css/quill.css') }}" rel="stylesheet" />
+
+<!-- Touchspin -->
+<link
+    type="text/css"
+    href="{{ URL::asset('css/bootstrap-touchspin.css') }}"
+    rel="stylesheet"
+/>
 
 <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-1.13.8/datatables.min.css" rel="stylesheet">
 

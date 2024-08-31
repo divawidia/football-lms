@@ -68,8 +68,8 @@
                                     <div class="form-group">
                                         <label class="form-label" for="ageGroup">Age Group</label>
                                         <small class="text-danger">*</small>
-                                        <select class="form-control form-select @error('ageGroup') is-invalid @enderror" id="ageGroup" name="ageGroup" required>
-                                            <option disabled selected>Select player's ageGroup</option>
+                                        <select class="form-control form-select @error('ageGroup') is-invalid @enderror" id="ageGroup" name="ageGroup" required data-toggle="select">
+                                            <option disabled selected>Select player's age group</option>
                                             @foreach(['U-6', 'U-7', 'U-8', 'U-9', 'U-10', 'U-11', 'U-12', 'U-13', 'U-14', 'U-15', 'U-16', 'U-17', 'U-18', 'U-19', 'U-20', 'U-21'] AS $ageGroup)
                                                 <option value="{{ $ageGroup }}" @selected(old('ageGroup') == $ageGroup)>{{ $ageGroup }}</option>
                                             @endforeach
@@ -100,9 +100,18 @@
                                             </div>
                                         @else
                                             <select class="form-control form-select @error('players') is-invalid @enderror" id="players" name="players[]" data-toggle="select" multiple>
-                                                <option selected disabled>Select players to play in this team</option>
+                                                <option disabled>Select players to play in this team</option>
                                                 @foreach($players as $player)
-                                                    <option value="{{ $player->id }}" @selected(old('players') == $player->id)>{{ $player->user->firstName }} {{ $player->user->lastName }}</option>
+                                                    <option value="{{ $player->id }}" @selected(old('players') == $player->id) data-avatar-src="{{ Storage::url($player->user->foto) }}">
+                                                        {{ $player->user->firstName }} {{ $player->user->lastName }} - {{ $player->position->name }} -
+                                                        @if(count($player->teams) == 0)
+                                                            No Team
+                                                        @else
+                                                            @foreach($player->teams as $team)
+                                                                <span class="badge badge-pill badge-danger mr-1">{{ $team->teamName }}</span>
+                                                            @endforeach
+                                                        @endif
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         @endif
@@ -150,9 +159,18 @@
                                             </div>
                                         @else
                                             <select class="form-control form-select @error('coaches') is-invalid @enderror" id="coaches" name="coaches[]" data-toggle="select" multiple>
-                                                <option selected disabled>Select coaches to manage this team</option>
+                                                <option disabled>Select coaches to manage this team</option>
                                                 @foreach($coaches as $coach)
-                                                    <option value="{{ $coach->id }}" @selected(old('coaches') == $coach->id)>{{ $coach->user->firstName }} {{ $coach->user->lastName }}</option>
+                                                    <option value="{{ $coach->id }}" @selected(old('players') == $coach->id) data-avatar-src="{{ Storage::url($coach->user->foto) }}">
+                                                        {{ $coach->user->firstName }} {{ $coach->user->lastName }} - {{ $coach->specializations->name }} -
+                                                        @if(count($coach->teams) == 0)
+                                                            No Team
+                                                        @else
+                                                            @foreach($coach->teams as $team)
+                                                                <span class="badge badge-pill badge-danger mr-1">{{ $team->teamName }}</span>
+                                                            @endforeach
+                                                        @endif
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         @endif

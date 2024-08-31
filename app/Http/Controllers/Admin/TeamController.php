@@ -103,7 +103,7 @@ class TeamController extends Controller
         $players = Player::all();
         $coaches = Coach::all();
 
-        return view('pages.admins.managements.coaches.create', [
+        return view('pages.admins.managements.teams.create', [
             'players' => $players,
             'coaches' => $coaches
         ]);

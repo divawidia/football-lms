@@ -27,3 +27,30 @@
 <script src="{{ URL::asset('js/preloader.js') }}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Preloader -->
+<script src="{{ URL::asset('js/preloader.js') }}"></script>
+
+<!-- Touchspin -->
+<script src="{{ URL::asset('vendor/jquery.bootstrap-touchspin.js') }}"></script>
+<script src="{{ URL::asset('js/touchspin.js') }}"></script>
+
+<!-- Flatpickr -->
+<script src="{{ URL::asset('vendor/flatpickr/flatpickr.min.js') }}"></script>
+<script src="{{ URL::asset('js/flatpickr.js') }}"></script>
+
+<!-- DateRangePicker -->
+<script src="{{ URL::asset('vendor/moment.min.js') }}"></script>
+<script src="{{ URL::asset('vendor/daterangepicker.js') }}"></script>
+<script src="{{ URL::asset('js/daterangepicker.js') }}"></script>
+
+<!-- jQuery Mask Plugin -->
+<script src="{{ URL::asset('vendor/jquery.mask.min.js') }}"></script>
+
+<!-- Quill -->
+<script src="{{ URL::asset('vendor/quill.min.js') }}"></script>
+<script src="{{ URL::asset('js/quill.js') }}"></script>
+
+<!-- Select2 -->
+<script src="{{ URL::asset('vendor/select2/select2.min.js') }}"></script>
+<script src="{{ URL::asset('js/select2.js') }}"></script>
