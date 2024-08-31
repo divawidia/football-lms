@@ -256,68 +256,62 @@
                 </div>
             </div>
         </div>
-        <div class="row card-group-row">
-            <div class="col-sm-6 card-group-row__col flex-column">
-                <div class="page-separator">
-                    <div class="page-separator__text">Players</div>
-                    <a href="{{ route('player-parents.create', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
-                        <span class="material-icons mr-2">
-                            add
-                        </span>
-                        Add New
-                    </a>
-                </div>
-                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="parentsTable">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Strong Foot</th>
-                                    <th>Age</th>
-                                    <th>Appearances</th>
-                                    <th>Goals</th>
-                                    <th>Assists</th>
-                                    <th>Clean Sheets</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+        <div class="page-separator">
+            <div class="page-separator__text">Players</div>
+            <a href="{{ route('player-parents.create', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
+                <span class="material-icons mr-2">
+                    add
+                </span>
+                Add New
+            </a>
+        </div>
+        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="playersTable">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Strong Foot</th>
+                            <th>Age</th>
+                            <th>Appearances</th>
+                            <th>Goals</th>
+                            <th>Assists</th>
+                            <th>Clean Sheets</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="col-sm-6 card-group-row__col flex-column">
-                <div class="page-separator">
-                    <div class="page-separator__text">Coaches/Staffs</div>
-                    <a href="{{ route('player-parents.create', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
-                        <span class="material-icons mr-2">
-                            add
-                        </span>
-                        Add New
-                    </a>
-                </div>
-                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="parentsTable">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Age</th>
-                                    <th>Gender</th>
-                                    <th>Joined Date</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+        </div>
+        <div class="page-separator">
+            <div class="page-separator__text">Coaches/Staffs</div>
+            <a href="{{ route('player-parents.create', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
+                <span class="material-icons mr-2">
+                    add
+                </span>
+                Add New
+            </a>
+        </div>
+        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="parentsTable">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>Joined Date</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -336,12 +330,36 @@
         <div class="page-separator">
             <div class="page-separator__text">Training History</div>
         </div>
-    </div>
 
 @endsection
 @push('addon-script')
     <script>
         $(document).ready(function() {
+            const playersTable = $('#playersTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! route('team-managements.teamPlayers', $team->id) !!}',
+                },
+                columns: [
+                    { data: 'name', name: 'name' },
+                    { data: 'strongFoot', name: 'strongFoot' },
+                    { data: 'age', name: 'age'},
+                    { data: 'appearance', name: 'appearance' },
+                    { data: 'goals', name: 'goals' },
+                    { data: 'assists', name: 'assists' },
+                    { data: 'cleanSheets', name: 'cleanSheets' },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ]
+            });
+
             $('.delete-team').on('click', function() {
                 let id = $(this).attr('id');
 

@@ -109,9 +109,9 @@ class TeamController extends Controller
                                     </span>
                                   </button>
                                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Player</a>
-                                    <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Player</a>
-                                    <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
+                                    <a class="dropdown-item" href="' . route('player-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Player</a>
+                                    <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Player</a>
+                                    <button type="button" class="dropdown-item delete-user" id="' . $item->userId . '">
                                         <span class="material-icons">delete</span> Remove Player From Team
                                     </button>
                                   </div>
@@ -125,13 +125,13 @@ class TeamController extends Controller
                             <div class="media flex-nowrap align-items-center"
                                  style="white-space: nowrap;">
                                 <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
                                 </div>
                                 <div class="media-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->division . ' - '.$item->ageGroup.'</small>
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' '.$item->user->lastName.'</strong></p>
+                                            <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
                                         </div>
                                     </div>
                                 </div>
@@ -143,10 +143,13 @@ class TeamController extends Controller
                 ->editColumn('goals', function ($item) {
                     return 0;
                 })
+                ->editColumn('assists', function ($item) {
+                    return 0;
+                })
                 ->editColumn('cleanSheets', function ($item) {
                     return 0;
                 })
-                ->rawColumns(['action', 'name', 'age', 'appearance', 'goals', 'cleanSheets'])
+                ->rawColumns(['action', 'name', 'age', 'appearance', 'goals', 'assists','cleanSheets'])
                 ->make();
         }
     }
