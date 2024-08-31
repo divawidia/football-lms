@@ -178,9 +178,23 @@ class TeamController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Team $team)
     {
-        //
+        $data = $request->validated();
+
+        if ($request->hasFile('logo')){
+            $data['logo'] = $request->file('logo')->store('assets/team-logo', 'public');
+        }else{
+            $data['logo'] = $team->logo;
+        }
+
+        $team->update($data);
+        $team->players()->sync($request->players);
+        $team->coaches()->sync($request->coaches);
+
+        $text = 'Team '.$team->teamName.' successfully updated!';
+        Alert::success($text);
+        return redirect()->route('team-managements.show', $team->id);
     }
 
     /**
