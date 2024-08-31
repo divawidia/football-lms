@@ -105,6 +105,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('deactivate', [TeamController::class, 'deactivate'])->name('deactivate-team');
             Route::patch('activate', [TeamController::class, 'activate'])->name('activate-team');
             Route::get('players', [TeamController::class, 'teamPlayers'])->name('team-managements.teamPlayers');
+            Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('team-managements.teamCoaches');
         });
     });
 });
