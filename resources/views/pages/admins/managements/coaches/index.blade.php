@@ -13,7 +13,7 @@
                     <div class="mb-24pt mb-sm-0 w-100">
                         <div class="d-flex flex-row">
                             <h2 class="mb-0 text-left">@yield('title')</h2>
-                            <a href="{{  route('coach-managements.create') }}" class="btn btn-primary ml-auto" id="add-new">
+                            <a href="{{  route('coach-managements.create') }}" class="btn btn-sm btn-primary ml-auto" id="add-new">
                                 <span class="material-icons mr-2">
                                     add
                                 </span>

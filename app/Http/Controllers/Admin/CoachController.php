@@ -49,7 +49,7 @@ class CoachController extends Controller
                     }
                     return '
                             <div class="dropdown">
-                              <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="material-icons">
                                     more_vert
                                 </span>
