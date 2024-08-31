@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Nnjeim\World\World;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
@@ -111,7 +114,7 @@ class TeamController extends Controller
                                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <a class="dropdown-item" href="' . route('player-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Player</a>
                                     <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Player</a>
-                                    <button type="button" class="dropdown-item delete-user" id="' . $item->userId . '">
+                                    <button type="button" class="dropdown-item remove-player" id="' . $item->id . '">
                                         <span class="material-icons">delete</span> Remove Player From Team
                                     </button>
                                   </div>
@@ -169,7 +172,7 @@ class TeamController extends Controller
                                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <a class="dropdown-item" href="' . route('coach-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Coach</a>
                                     <a class="dropdown-item" href="' . route('coach-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Coach</a>
-                                    <button type="button" class="dropdown-item delete-user" id="' . $item->userId . '">
+                                    <button type="button" class="dropdown-item remove-coach" id="' . $item->id . '">
                                         <span class="material-icons">delete</span> Remove Coach From Team
                                     </button>
                                   </div>
@@ -323,6 +326,84 @@ class TeamController extends Controller
         ]);
         Alert::success('Team '.$team->teamName.' status successfully activated!');
         return redirect()->route('team-managements.index');
+    }
+
+    public function editPlayerTeam(Team $team)
+    {
+        $players = Player::all();
+        $player_id = [];
+
+        foreach ($team->players as $player){
+            $player_id[] = $player->id;
+        }
+
+        return view('pages.admins.managements.teams.editPlayer',[
+            'team' => $team,
+            'players' => $players,
+            'player_id' => $player_id,
+        ]);
+    }
+
+    public function updatePlayerTeam(Request $request, Team $team)
+    {
+        $validator = Validator::make($request->all(), [
+            'players' => ['required', Rule::exists('players', 'id')]
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $team->players()->sync($request->players);
+
+        $text = 'Team '.$team->teamName.' Players successfully updated!';
+        Alert::success($text);
+        return redirect()->route('team-managements.show', $team->id);
+    }
+
+    public function editCoachesTeam(Team $team)
+    {
+        $coaches = Coach::all();
+        $coach_id = [];
+
+        foreach ($team->coaches as $coach){
+            $coach_id[] = $coach->id;
+        }
+
+        return view('pages.admins.managements.teams.editCoach',[
+            'team' => $team,
+            'coaches' => $coaches,
+            'coach_id' => $coach_id,
+        ]);
+    }
+
+    public function updateCoachTeam(Request $request, Team $team)
+    {
+        $validator = Validator::make($request->all(), [
+            'coaches' => ['required', Rule::exists('coaches', 'id')]
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $team->coaches()->sync($request->coaches);
+
+        $text = 'Team '.$team->teamName.' Coaches successfully updated!';
+        Alert::success($text);
+        return redirect()->route('team-managements.show', $team->id);
+    }
+
+    public function removePlayer(Team $team, Player $player)
+    {
+        $team->players()->detach($player->id);
+        return response()->json(['success' => true]);
+    }
+
+    public function removeCoach(Team $team, Coach $coach)
+    {
+        $team->coaches()->detach($coach->id);
+        return response()->json(['success' => true]);
     }
 
     /**

@@ -258,7 +258,7 @@
         </div>
         <div class="page-separator">
             <div class="page-separator__text">Players</div>
-            <a href="{{ route('player-parents.create', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
+            <a href="{{ route('team-managements.editPlayerTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
                 <span class="material-icons mr-2">
                     add
                 </span>
@@ -289,7 +289,7 @@
         </div>
         <div class="page-separator">
             <div class="page-separator__text">Coaches/Staffs</div>
-            <a href="{{ route('player-parents.create', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
+            <a href="{{ route('team-managements.editCoachesTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
                 <span class="material-icons mr-2">
                     add
                 </span>
@@ -405,7 +405,83 @@
                                     icon: "success",
                                     title: "Team successfully deleted!",
                                 });
+                                playersTable.ajax.reload();
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "Something went wrong when deleting data!",
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('body').on('click', '.remove-player', function() {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, remove it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('team-managements.removePlayer', ['team' => $team->id, 'player' => ':id']) }}".replace(':id', id),
+                            type: 'PUT',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Player successfully removed!",
+                                });
                                 datatable.ajax.reload();
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "Something went wrong when deleting data!",
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('body').on('click', '.remove-coach', function() {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, remove it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('team-managements.removeCoach', ['team' => $team->id, 'coach' => ':id']) }}".replace(':id', id),
+                            type: 'PUT',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Coach successfully removed!",
+                                });
+                                coachesTable.ajax.reload();
                             },
                             error: function(error) {
                                 Swal.fire({
