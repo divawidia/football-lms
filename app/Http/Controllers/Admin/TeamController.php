@@ -26,12 +26,12 @@ class TeamController extends Controller
         if (request()->ajax()) {
             $query = Team::with('coaches', 'players')->get();
             return Datatables::of($query)->addColumn('action', function ($item) {
-                if ($item->user->status == '1') {
+                if ($item->status == '1') {
                     $statusButton = '<form action="' . route('deactivate-coach', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">block</span> Deactivate Coach
+                                                    <span class="material-icons">block</span> Deactivate Team
                                                 </button>
                                             </form>';
                 } else {
@@ -39,7 +39,7 @@ class TeamController extends Controller
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">check_circle</span> Activate Coach
+                                                    <span class="material-icons">check_circle</span> Activate Team
                                                 </button>
                                             </form>';
                 }
@@ -61,10 +61,10 @@ class TeamController extends Controller
                             </div>';
             })
                 ->editColumn('players', function ($item) {
-                    return count($item->players);
+                    return count($item->players).' Player(s)';
                 })
                 ->editColumn('coaches', function ($item) {
-                    return count($item->coaches);
+                    return count($item->coaches).' Coach(es)';
                 })
                 ->editColumn('name', function ($item) {
                     return '
@@ -84,9 +84,9 @@ class TeamController extends Controller
                             </div>';
                 })
                 ->editColumn('status', function ($item) {
-                    if ($item->user->status == '1') {
+                    if ($item->status == '1') {
                         return '<span class="badge badge-pill badge-success">Aktif</span>';
-                    } elseif ($item->user->status == '0') {
+                    } elseif ($item->status == '0') {
                         return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
                     }
                 })

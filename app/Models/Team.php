@@ -13,7 +13,6 @@ class Team extends Model
     protected $fillable = [
         'teamName',
         'ageGroup',
-        'division',
         'logo',
         'status',
         'academyId',
