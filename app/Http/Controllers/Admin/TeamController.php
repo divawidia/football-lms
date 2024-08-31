@@ -9,6 +9,7 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Nnjeim\World\World;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -197,11 +198,35 @@ class TeamController extends Controller
         return redirect()->route('team-managements.show', $team->id);
     }
 
+    public function deactivate(Team $team){
+        $team->update([
+            'status' => '0'
+        ]);
+        Alert::success('Team '.$team->teamName.' status successfully deactivated!');
+        return redirect()->route('team-managements.index');
+    }
+
+    public function activate(Team $team){
+        $team->update([
+            'status' => '1'
+        ]);
+        Alert::success('Team '.$team->teamName.' status successfully activated!');
+        return redirect()->route('team-managements.index');
+    }
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Team $team)
     {
-        //
+        if (File::exists($team->logo) && $team->logo != 'images/undefined-user.png'){
+            File::delete($team->logo);
+        }
+
+        $team->coaches()->detach();
+        $team->players()->detach();
+        $team->delete();
+
+        return response()->json(['success' => true]);
     }
 }
