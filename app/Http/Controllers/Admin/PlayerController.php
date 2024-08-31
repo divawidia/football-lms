@@ -285,7 +285,7 @@ class PlayerController extends Controller
      */
     public function destroy(User $player_management)
     {
-        if (File::exists($player_management->foto) && $player_management->foto != 'assets/user-profile/avatar.png'){
+        if (File::exists($player_management->foto) && $player_management->foto != 'images/undefined-user.png'){
             File::delete($player_management->foto);
         }
 

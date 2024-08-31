@@ -257,7 +257,7 @@ class AdminController extends Controller
     {
         $user = User::with('admin')->findOrFail($id);
 
-        if (File::exists($user->foto) && $user->foto != 'assets/user-profile/avatar.png'){
+        if (File::exists($user->foto) && $user->foto != 'images/undefined-user.png'){
             File::delete($user->foto);
         }
 

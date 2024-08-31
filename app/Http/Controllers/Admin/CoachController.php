@@ -272,7 +272,7 @@ class CoachController extends Controller
      */
     public function destroy(User $coach)
     {
-        if (File::exists($coach->foto) && $coach->foto != 'assets/user-profile/avatar.png'){
+        if (File::exists($coach->foto) && $coach->foto != 'images/undefined-user.png'){
             File::delete($coach->foto);
         }
 
