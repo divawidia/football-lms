@@ -7,7 +7,9 @@ use App\Models\Competition;
 use App\Models\OpponentTeam;
 use App\Models\Team;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
 class CompetitionController extends Controller
@@ -99,15 +101,36 @@ class CompetitionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validated();
+
+        if ($request->hasFile('logo')){
+            $data['logo'] = $request->file('logo')->store('assets/competition-logo', 'public');
+        }else{
+            $data['logo'] = 'images/undefined-user.png';
+        }
+
+        $competition = Competition::create($data);
+
+        if ($request->has('teams')){
+            $competition->teams()->attach($request->teams);
+        }
+        if ($request->has('opponentTeams')){
+            $competition->opponentTeams()->attach($request->opponentTeams);
+        }
+
+        $text = 'Competition '.$data['name'].' successfully added!';
+        Alert::success($text);
+        return redirect()->route('competition-managements.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Competition $competition)
     {
-        //
+        return view('pages.admins.managements.competition.detail', [
+            'competition' => $competition,
+        ]);
     }
 
     /**
