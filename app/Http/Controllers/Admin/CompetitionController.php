@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Competition;
+use App\Models\OpponentTeam;
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -83,7 +85,13 @@ class CompetitionController extends Controller
      */
     public function create()
     {
-        //
+        $teams = Team::all();
+        $opponentTeams = OpponentTeam::all();
+
+        return view('pages.admins.managements.teams.create', [
+            'teams' => $teams,
+            'opponentTeams' => $opponentTeams
+        ]);
     }
 
     /**
