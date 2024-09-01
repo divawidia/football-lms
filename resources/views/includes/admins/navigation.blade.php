@@ -65,6 +65,13 @@
                         <span class="sidebar-menu-text">Teams Management</span>
                     </a>
                 </li>
+                <li class="sidebar-menu-item">
+                    <a class="sidebar-menu-button"
+                       href="{{ route('competition-managements.index') }}">
+                        <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">emoji_events</span>
+                        <span class="sidebar-menu-text">Competitions Management</span>
+                    </a>
+                </li>
             </ul>
 
             <div class="sidebar-heading">Academy</div>

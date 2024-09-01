@@ -330,6 +330,7 @@
         <div class="page-separator">
             <div class="page-separator__text">Training History</div>
         </div>
+    </div>
 
 @endsection
 @push('addon-script')
