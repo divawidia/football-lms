@@ -77,7 +77,15 @@ class CompetitionController extends Controller
                                 </div>
                             </div>';
                 })
-                ->rawColumns(['action', 'name', 'teams', 'opponentTeams'])
+                ->editColumn('date', function ($item) {
+                    $startDate = date('M d, Y', strtotime($item->startDate));
+                    $endDate = date('M d, Y', strtotime($item->endDate));
+                    return $startDate.' '.$endDate;
+                })
+                ->editColumn('contact', function ($item) {
+                    return $item->contactName. ' ('.$item->contactPhone.')';
+                })
+                ->rawColumns(['action', 'name', 'teams', 'opponentTeams', 'date', 'contact'])
                 ->make();
         }
         return view('pages.admins.managements.competitions.index');
