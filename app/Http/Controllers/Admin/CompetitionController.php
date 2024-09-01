@@ -136,17 +136,50 @@ class CompetitionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Competition $competition)
     {
-        //
+        $teams = Team::all();
+        $opponentTeams = OpponentTeam::all();
+        $teams_id = [];
+        $opponentTeams_id = [];
+
+        foreach ($competition->teams as $team){
+            $teams_id[] = $team->id;
+        }
+
+        foreach ($competition->opponentTeams as $opponentTeam){
+            $opponentTeams_id[] = $opponentTeam->id;
+        }
+
+        return view('pages.admins.managements.competition.edit',[
+            'competition' => $competition,
+            'teams' => $teams,
+            'opponentTeams' => $opponentTeams,
+            'teams_id' => $teams_id,
+            'opponentTeams_id' => $opponentTeams_id
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Competition $competition)
     {
-        //
+        $data = $request->validated();
+
+        if ($request->hasFile('logo')){
+            $data['logo'] = $request->file('logo')->store('assets/competition-logo', 'public');
+        }else{
+            $data['logo'] = $team->logo;
+        }
+
+        $competition->update($data);
+        $competition->teams()->sync($request->teams);
+        $competition->opponentTeams()->sync($request->opponentTeams);
+
+        $text = 'Competition '.$competition->name.' successfully updated!';
+        Alert::success($text);
+        return redirect()->route('competition-managements.show', $competition->id);
     }
 
     /**
