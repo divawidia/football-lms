@@ -8,6 +8,7 @@ use App\Models\OpponentTeam;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
@@ -185,8 +186,16 @@ class CompetitionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Competition $competition)
     {
-        //
+        if (File::exists($competition->logo) && $competition->logo != 'images/undefined-user.png'){
+            File::delete($competition->logo);
+        }
+
+        $competition->teams()->detach();
+        $competition->opponentTeams()->detach();
+        $competition->delete();
+
+        return response()->json(['success' => true]);
     }
 }
