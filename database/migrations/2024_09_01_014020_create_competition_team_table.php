@@ -15,15 +15,18 @@ return new class extends Migration
             $table->id();
             $table->foreignId('teamId')->constrained('teams')->cascadeOnDelete();
             $table->foreignId('competitionId')->constrained('competitions')->cascadeOnDelete();
-            $table->integer('matchPlayed');
-            $table->integer('won');
-            $table->integer('drawn');
-            $table->integer('lost');
-            $table->integer('goalsFor');
-            $table->integer('goalsAgaints');
-            $table->integer('goalsDifference');
-            $table->integer('points');
-            $table->integer('competitionResult');
+            $table->integer('matchPlayed')->default(0);
+            $table->integer('won')->default(0);
+            $table->integer('drawn')->default(0);
+            $table->integer('lost')->default(0);
+            $table->integer('goalsFor')->default(0);
+            $table->integer('goalsAgaints')->default(0);
+            $table->integer('goalsDifference')->default(0);
+            $table->integer('points')->default(0);
+            $table->integer('redCards')->default(0);
+            $table->integer('yellowCards')->default(0);
+            $table->string('groupDivision')->nullable();
+            $table->string('competitionResult')->nullable();
             $table->timestamps();
         });
     }
