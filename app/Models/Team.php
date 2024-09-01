@@ -34,4 +34,24 @@ class Team extends Model
     {
         return $this->belongsToMany(Coach::class, 'coach_team', 'teamId', 'coachId')->withTimestamps();
     }
+
+    public function competitions()
+    {
+        return $this->belongsToMany(Competition::class, 'competition_team', 'teamId', 'competitionId')
+            ->withPivot(
+                'matchPlayed',
+                'won',
+                'drawn',
+                'lost',
+                'goalsFor',
+                'goalsAgaints',
+                'goalsDifference',
+                'points',
+                'redCards',
+                'yellowCards',
+                'groupDivision',
+                'competitionResult'
+            )
+            ->withTimestamps;
+    }
 }

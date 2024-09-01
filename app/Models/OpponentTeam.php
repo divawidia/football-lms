@@ -24,4 +24,24 @@ class OpponentTeam extends Model
     {
         return $this->hasMany(EventSchedule::class, 'opponentTeamId');
     }
+
+    public function competitions()
+    {
+        return $this->belongsToMany(Competition::class, 'competition_team', 'teamId', 'competitionId')
+            ->withPivot(
+                'matchPlayed',
+                'won',
+                'drawn',
+                'lost',
+                'goalsFor',
+                'goalsAgaints',
+                'goalsDifference',
+                'points',
+                'redCards',
+                'yellowCards',
+                'groupDivision',
+                'competitionResult'
+            )
+            ->withTimestamps;
+    }
 }
