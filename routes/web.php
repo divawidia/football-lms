@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CoachController;
+use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
@@ -112,6 +113,26 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::put('updateCoaches', [TeamController::class, 'updateCoachTeam'])->name('team-managements.updateCoachTeam');
             Route::put('remove-player/{player}', [TeamController::class, 'removePlayer'])->name('team-managements.removePlayer');
             Route::put('remove-coach/{coach}', [TeamController::class, 'removeCoach'])->name('team-managements.removeCoach');
+        });
+    });
+
+    Route::prefix('competition-managements')->group(function (){
+        Route::get('', [CompetitionController::class, 'index'])->name('competition-managements.index');
+        Route::get('create', [CompetitionController::class, 'create'])->name('competition-managements.create');
+        Route::post('store', [CompetitionController::class, 'store'])->name('competition-managements.store');
+        Route::prefix('{competition}')->group(function () {
+            Route::get('', [CompetitionController::class, 'show'])->name('competition-managements.show');
+            Route::get('edit', [CompetitionController::class, 'edit'])->name('competition-managements.edit');
+            Route::put('update', [CompetitionController::class, 'update'])->name('competition-managements.update');
+            Route::delete('destroy', [CompetitionController::class, 'destroy'])->name('competition-managements.destroy');
+//            Route::get('players', [CompetitionController::class, 'competitionPlayers'])->name('competition-managements.competitionPlayers');
+//            Route::get('coaches', [CompetitionController::class, 'competitionCoaches'])->name('competition-managements.competitionCoaches');
+//            Route::get('editPlayers', [CompetitionController::class, 'editPlayercompetition'])->name('competition-managements.editPlayercompetition');
+//            Route::put('updatePlayers', [CompetitionController::class, 'updatePlayercompetition'])->name('competition-managements.updatePlayercompetition');
+//            Route::get('editCoaches', [CompetitionController::class, 'editCoachescompetition'])->name('competition-managements.editCoachescompetition');
+//            Route::put('updateCoaches', [CompetitionController::class, 'updateCoachcompetition'])->name('competition-managements.updateCoachcompetition');
+//            Route::put('remove-team/{team}', [CompetitionController::class, 'removePlayer'])->name('competition-managements.removePlayer');
+//            Route::put('remove-opponent-team/{team}', [CompetitionController::class, 'removeCoach'])->name('competition-managements.removeCoach');
         });
     });
 });
