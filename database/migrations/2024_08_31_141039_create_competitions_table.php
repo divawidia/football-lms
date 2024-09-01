@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('competitions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('logo');
             $table->enum('type', ['League', 'Tournament']);
             $table->date('startDate');
             $table->date('endDate');
