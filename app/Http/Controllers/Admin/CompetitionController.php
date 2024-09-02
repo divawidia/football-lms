@@ -99,7 +99,7 @@ class CompetitionController extends Controller
         $teams = Team::all();
         $opponentTeams = OpponentTeam::all();
 
-        return view('pages.admins.managements.teams.create', [
+        return view('pages.admins.managements.competitions.create', [
             'teams' => $teams,
             'opponentTeams' => $opponentTeams
         ]);
