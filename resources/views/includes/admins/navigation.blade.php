@@ -69,7 +69,7 @@
                     <a class="sidebar-menu-button"
                        href="{{ route('competition-managements.index') }}">
                         <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">emoji_events</span>
-                        <span class="sidebar-menu-text">Competitions Management</span>
+                        <span class="sidebar-menu-text">Competitions</span>
                     </a>
                 </li>
             </ul>

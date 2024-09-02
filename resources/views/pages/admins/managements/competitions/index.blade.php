@@ -17,7 +17,7 @@
                                 <span class="material-icons mr-2">
                                     add
                                 </span>
-                                Add New Competition
+                                Add New
                             </a>
                         </div>
                         <ol class="breadcrumb p-0 m-0">
