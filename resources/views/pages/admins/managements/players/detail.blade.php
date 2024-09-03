@@ -371,7 +371,7 @@
                                     icon: "success",
                                     title: "Player's account successfully deleted!",
                                 });
-                                datatable.ajax.reload();
+                                window.location.href = "{{ route('player-managements.index') }}";
                             },
                             error: function(error) {
                                 Swal.fire({
