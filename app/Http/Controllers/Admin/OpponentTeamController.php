@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OpponentTeamRequest;
 use App\Http\Requests\TeamRequest;
 use App\Models\Coach;
 use App\Models\OpponentTeam;
@@ -52,7 +53,7 @@ class OpponentTeamController extends Controller
                                 <a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
                                 <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
                                 ' . $statusButton . '
-                                <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
+                                <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
                                     <span class="material-icons">delete</span> Delete Team
                                 </button>
                               </div>
@@ -85,7 +86,7 @@ class OpponentTeamController extends Controller
                 ->rawColumns(['action', 'name', 'status'])
                 ->make();
         }
-        return view('pages.admins.managements.teams.index');
+        return view('pages.admins.managements.opponentTeams.index');
     }
 
     /**
@@ -99,7 +100,7 @@ class OpponentTeamController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(TeamRequest $request)
+    public function store(OpponentTeamRequest $request)
     {
         $data = $request->validated();
 
@@ -110,9 +111,8 @@ class OpponentTeamController extends Controller
         }
 
         $data['status'] = '1';
-        $data['academyId'] = Auth::user()->academyId;
 
-        Team::create($data);
+        OpponentTeam::create($data);
 
         $text = 'Team '.$data['teamName'].' successfully added!';
         Alert::success($text);
@@ -132,7 +132,7 @@ class OpponentTeamController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(OpponentOpponentTeam $team)
+    public function edit(OpponentTeam $team)
     {
         return view('pages.admins.managements.opponentTeams.edit',[
             'team' => $team,
@@ -142,7 +142,7 @@ class OpponentTeamController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, OpponentOpponentTeam $team)
+    public function update(OpponentTeamRequest $request, OpponentTeam $team)
     {
         $data = $request->validated();
 

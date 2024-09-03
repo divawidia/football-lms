@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CoachController;
 use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\OpponentTeamController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\TeamController;
@@ -113,6 +114,20 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::put('updateCoaches', [TeamController::class, 'updateCoachTeam'])->name('team-managements.updateCoachTeam');
             Route::put('remove-player/{player}', [TeamController::class, 'removePlayer'])->name('team-managements.removePlayer');
             Route::put('remove-coach/{coach}', [TeamController::class, 'removeCoach'])->name('team-managements.removeCoach');
+        });
+    });
+
+    Route::prefix('opponent-team-managements')->group(function (){
+        Route::get('', [OpponentTeamController::class, 'index'])->name('opponentTeam-managements.index');
+        Route::get('create', [OpponentTeamController::class, 'create'])->name('opponentTeam-managements.create');
+        Route::post('store', [OpponentTeamController::class, 'store'])->name('opponentTeam-managements.store');
+        Route::prefix('{team}')->group(function () {
+            Route::get('', [OpponentTeamController::class, 'show'])->name('opponentTeam-managements.show');
+            Route::get('edit', [OpponentTeamController::class, 'edit'])->name('opponentTeam-managements.edit');
+            Route::put('update', [OpponentTeamController::class, 'update'])->name('opponentTeam-managements.update');
+            Route::delete('destroy', [OpponentTeamController::class, 'destroy'])->name('opponentTeam-managements.destroy');
+            Route::patch('deactivate', [OpponentTeamController::class, 'deactivate'])->name('deactivate-opponentTeam');
+            Route::patch('activate', [OpponentTeamController::class, 'activate'])->name('activate-opponentTeam');
         });
     });
 
