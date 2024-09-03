@@ -147,7 +147,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group ">
-                                    <label class="form-label" for="totalPlayers">Total      Players</label>
+                                    <label class="form-label" for="totalPlayers">Total Players</label>
                                     <small class="text-black-100">(Optional)</small>
                                     <div class="input-group input-group-merge">
                                         <input type="number"

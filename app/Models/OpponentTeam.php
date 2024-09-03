@@ -16,6 +16,7 @@ class OpponentTeam extends Model
         'logo',
         'status',
         'coachName',
+        'directorName',
         'academyName',
         'totalPlayers'
     ];
