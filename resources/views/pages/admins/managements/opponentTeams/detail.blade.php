@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    {{ $team->teamName  }} Profile
+    Team {{ $team->teamName  }} Profile
 @endsection
 @section('page-title')
     @yield('title')
@@ -21,14 +21,14 @@
             <div class="dropdown">
                 <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Action
-                            <span class="material-icons ml-3">
-                                keyboard_arrow_down
-                            </span>
+                    <span class="material-icons ml-3">
+                        keyboard_arrow_down
+                    </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('team-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
+                    <a class="dropdown-item" href="{{ route('opponentTeam-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
                     @if($team->status == '1')
-                        <form action="{{ route('deactivate-team', $team->id) }}" method="POST">
+                        <form action="{{ route('deactivate-opponentTeam', $team->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
@@ -36,7 +36,7 @@
                             </button>
                         </form>
                     @else
-                        <form action="{{ route('activate-team', $team->id) }}" method="POST">
+                        <form action="{{ route('activate-opponentTeam', $team->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
@@ -228,11 +228,19 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Total Players :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ count($team->players) }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ $team->totalPlayers }}</div>
                         </div>
                         <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Total Staffs/Coaches :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ count($team->coaches) }}</div>
+                            <div class="p-2"><p class="card-title mb-4pt">Coach :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $team->coachName }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Director :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $team->directorName }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Academy :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $team->academyName }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
@@ -257,65 +265,6 @@
             </div>
         </div>
         <div class="page-separator">
-            <div class="page-separator__text">Players</div>
-            <a href="{{ route('team-managements.editPlayerTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
-                <span class="material-icons mr-2">
-                    add
-                </span>
-                Add New
-            </a>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="playersTable">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Strong Foot</th>
-                            <th>Age</th>
-                            <th>Appearances</th>
-                            <th>Goals</th>
-                            <th>Assists</th>
-                            <th>Clean Sheets</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Coaches/Staffs</div>
-            <a href="{{ route('team-managements.editCoachesTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
-                <span class="material-icons mr-2">
-                    add
-                </span>
-                Add New
-            </a>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="coachesTable">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Age</th>
-                            <th>Gender</th>
-                            <th>Joined Date</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="page-separator">
             <div class="page-separator__text">Competitions/Events</div>
         </div>
         <div class="page-separator">
@@ -324,64 +273,12 @@
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Training</div>
         </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Match History</div>
-        </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Training History</div>
-        </div>
     </div>
 
 @endsection
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            const playersTable = $('#playersTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! route('team-managements.teamPlayers', $team->id) !!}',
-                },
-                columns: [
-                    { data: 'name', name: 'name' },
-                    { data: 'strongFoot', name: 'strongFoot' },
-                    { data: 'age', name: 'age'},
-                    { data: 'appearance', name: 'appearance' },
-                    { data: 'goals', name: 'goals' },
-                    { data: 'assists', name: 'assists' },
-                    { data: 'cleanSheets', name: 'cleanSheets' },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
-                ]
-            });
-            const coachesTable = $('#coachesTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! route('team-managements.teamCoaches', $team->id) !!}',
-                },
-                columns: [
-                    { data: 'name', name: 'name' },
-                    { data: 'age', name: 'age' },
-                    { data: 'gender', name: 'gender' },
-                    { data: 'joinedDate', name: 'joinedDate'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
-                ]
-            });
-
             $('.delete-team').on('click', function() {
                 let id = $(this).attr('id');
 
@@ -396,7 +293,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('team-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
+                            url: "{{ route('opponentTeam-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"
@@ -406,83 +303,7 @@
                                     icon: "success",
                                     title: "Team successfully deleted!",
                                 });
-                                playersTable.ajax.reload();
-                            },
-                            error: function(error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Oops...",
-                                    text: "Something went wrong when deleting data!",
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            $('body').on('click', '.remove-player', function() {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, remove it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('team-managements.removePlayer', ['team' => $team->id, 'player' => ':id']) }}".replace(':id', id),
-                            type: 'PUT',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function(response) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Player successfully removed!",
-                                });
-                                datatable.ajax.reload();
-                            },
-                            error: function(error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Oops...",
-                                    text: "Something went wrong when deleting data!",
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            $('body').on('click', '.remove-coach', function() {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, remove it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('team-managements.removeCoach', ['team' => $team->id, 'coach' => ':id']) }}".replace(':id', id),
-                            type: 'PUT',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function(response) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Coach successfully removed!",
-                                });
-                                coachesTable.ajax.reload();
+                                window.location.href = "{{ route('opponentTeam-managements.index') }}";
                             },
                             error: function(error) {
                                 Swal.fire({
