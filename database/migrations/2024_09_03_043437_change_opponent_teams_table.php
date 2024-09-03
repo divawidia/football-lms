@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('opponent_teams', function (Blueprint $table){
             $table->dropColumn('division');
             $table->integer('totalPlayers')->nullable();
+            $table->string('academyName')->nullable();
             $table->string('coachName')->nullable()->change();
             $table->integer('directorName')->nullable()->change();
         });
@@ -27,6 +28,7 @@ return new class extends Migration
         Schema::table('opponent_teams', function (Blueprint $table){
             $table->string('division');
             $table->dropColumn('totalPlayers');
+            $table->dropColumn('academyName');
             $table->string('coachName')->change();
             $table->integer('directorName')->change();
         });

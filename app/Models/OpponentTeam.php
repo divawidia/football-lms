@@ -13,11 +13,11 @@ class OpponentTeam extends Model
     protected $fillable = [
         'teamName',
         'ageGroup',
-        'division',
         'logo',
         'status',
         'coachName',
-        'academyName'
+        'academyName',
+        'totalPlayers'
     ];
 
     public function event()
@@ -34,7 +34,7 @@ class OpponentTeam extends Model
                 'drawn',
                 'lost',
                 'goalsFor',
-                'goalsAgaints',
+                'goalsAgainsts',
                 'goalsDifference',
                 'points',
                 'redCards',
