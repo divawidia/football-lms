@@ -50,8 +50,8 @@ class OpponentTeamController extends Controller
                                 </span>
                               </button>
                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
-                                <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
+                                <a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
+                                <a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
                                 ' . $statusButton . '
                                 <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
                                     <span class="material-icons">delete</span> Delete Team
@@ -159,7 +159,7 @@ class OpponentTeamController extends Controller
 
         $text = 'Team '.$team->teamName.' successfully updated!';
         Alert::success($text);
-        return redirect()->route('team-managements.show', $team->id);
+        return redirect()->route('opponentTeam-managements.show', $team->id);
     }
 
     public function deactivate(OpponentTeam $team){
@@ -167,7 +167,7 @@ class OpponentTeamController extends Controller
             'status' => '0'
         ]);
         Alert::success('Team '.$team->teamName.' status successfully deactivated!');
-        return redirect()->route('team-managements.index');
+        return redirect()->route('opponentTeam-managements.index');
     }
 
     public function activate(OpponentTeam $team){
@@ -175,7 +175,7 @@ class OpponentTeamController extends Controller
             'status' => '1'
         ]);
         Alert::success('Team '.$team->teamName.' status successfully activated!');
-        return redirect()->route('team-managements.index');
+        return redirect()->route('opponentTeam-managements.index');
     }
 
     /**

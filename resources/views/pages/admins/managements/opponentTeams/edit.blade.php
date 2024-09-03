@@ -16,8 +16,8 @@
                         </h2>
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('team-managements.index') }}">Teams Management</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('team-managements.show', $team->id) }}">{{ $team->teamName }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('opponentTeam-managements.index') }}">Opponent Teams Management</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('opponentTeam-managements.show', $team->id) }}">{{ $team->teamName }}</a></li>
                             <li class="breadcrumb-item active">
                                 @yield('title')
                             </li>
@@ -29,7 +29,7 @@
 
         <div class="container page__container page-section">
             <div class="list-group">
-                <form action="{{ route('team-managements.update', ['team' => $team]) }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('opponentTeam-managements.update', ['team' => $team]) }}" method="post" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
                     <div class="list-group-item d-flex justify-content-end">
@@ -67,64 +67,6 @@
                                         </span>
                                         @enderror
                                     </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="ageGroup">Age Group</label>
-                                        <small class="text-danger">*</small>
-                                        <select class="form-control form-select @error('ageGroup') is-invalid @enderror" id="ageGroup" name="ageGroup" required data-toggle="select">
-                                            <option disabled selected>Select player's age group</option>
-                                            @foreach(['U-6', 'U-7', 'U-8', 'U-9', 'U-10', 'U-11', 'U-12', 'U-13', 'U-14', 'U-15', 'U-16', 'U-17', 'U-18', 'U-19', 'U-20', 'U-21'] AS $ageGroup)
-                                                <option value="{{ $ageGroup }}" @selected(old('ageGroup', $team->ageGroup) == $ageGroup)>{{ $ageGroup }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('ageGroup')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label class="form-label" for="players">Players</label>
-                                        <small class="text-black-100">(Optional)</small>
-                                        @if(count($players) == 0)
-                                            <div class="alert alert-light border-1 border-left-4 border-left-accent"
-                                                 role="alert">
-                                                <div class="d-flex flex-wrap align-items-center">
-                                                    <i class="material-icons mr-8pt">error_outline</i>
-                                                    <div class="media-body"
-                                                         style="min-width: 180px">
-                                                        <small class="text-black-100">Curently you haven't create any player in your academy, please create your team</small>
-                                                    </div>
-                                                    <div class="ml-8pt mt-2 mt-sm-0">
-                                                        <a href="{{ route('team-managements.create') }}"
-                                                           class="btn btn-link btn-sm">Create Now</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <select class="form-control form-select @error('players') is-invalid @enderror" id="players" name="players[]" data-toggle="select" multiple>
-                                                <option disabled>Select players to play in this team</option>
-                                                @foreach($players as $player)
-                                                    <option value="{{ $player->id }}" @selected(old('players') == in_array($player->id, $player_id)) data-avatar-src="{{ Storage::url($player->user->foto) }}">
-                                                        {{ $player->user->firstName }} {{ $player->user->lastName }} - {{ $player->position->name }} -
-                                                        @if(count($player->teams) == 0)
-                                                            No Team
-                                                        @else
-                                                            @foreach($player->teams as $team)
-                                                                <span class="badge badge-pill badge-danger mr-1">{{ $team->teamName }}</span>
-                                                            @endforeach
-                                                        @endif
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        @endif
-                                        @error('team')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
                                     <div class="form-group mb-4">
                                         <label class="form-label" for="teamName">Team Name</label>
                                         <small class="text-danger">*</small>
@@ -141,42 +83,89 @@
                                         </span>
                                         @enderror
                                     </div>
+                                    <div class="form-group mb-4">
+                                        <label class="form-label" for="academyName">Academy Name</label>
+                                        <small class="text-danger">*</small>
+                                        <input type="text"
+                                               id="academyName"
+                                               name="academyName"
+                                               required
+                                               value="{{ old('academyName', $team->academyName) }}"
+                                               class="form-control @error('academyName') is-invalid @enderror"
+                                               placeholder="Input team's name ...">
+                                        @error('academyName')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="form-label" for="coachName">Coach Name</label>
+                                        <small class="text-danger">*</small>
+                                        <input type="text"
+                                               id="coachName"
+                                               name="coachName"
+                                               required
+                                               value="{{ old('coachName', $team->coachName) }}"
+                                               class="form-control @error('coachName') is-invalid @enderror"
+                                               placeholder="Input team's name ...">
+                                        @error('coachName')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group mb-4">
+                                        <label class="form-label" for="directorName">Director Name</label>
+                                        <small class="text-danger">*</small>
+                                        <input type="text"
+                                               id="directorName"
+                                               name="directorName"
+                                               required
+                                               value="{{ old('directorName', $team->directorName) }}"
+                                               class="form-control @error('directorName') is-invalid @enderror"
+                                               placeholder="Input team's name ...">
+                                        @error('directorName')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="ageGroup">Age Group</label>
+                                        <small class="text-danger">*</small>
+                                        <select class="form-control form-select @error('ageGroup') is-invalid @enderror" id="ageGroup" name="ageGroup" required data-toggle="select">
+                                            <option disabled selected>Select player's age group</option>
+                                            @foreach(['U-6', 'U-7', 'U-8', 'U-9', 'U-10', 'U-11', 'U-12', 'U-13', 'U-14', 'U-15', 'U-16', 'U-17', 'U-18', 'U-19', 'U-20', 'U-21'] AS $ageGroup)
+                                                <option value="{{ $ageGroup }}" @selected(old('ageGroup', $team->ageGroup) == $ageGroup)>{{ $ageGroup }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('ageGroup')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
                                     <div class="form-group mb-3">
-                                        <label class="form-label" for="coaches">Coaches</label>
+                                        <label class="form-label" for="totalPlayers">Players</label>
                                         <small class="text-black-100">(Optional)</small>
-                                        @if(count($coaches) == 0)
-                                            <div class="alert alert-light border-1 border-left-4 border-left-accent"
-                                                 role="alert">
-                                                <div class="d-flex flex-wrap align-items-center">
-                                                    <i class="material-icons mr-8pt">error_outline</i>
-                                                    <div class="media-body"
-                                                         style="min-width: 180px">
-                                                        <small class="text-black-100">Curently you haven't create any coach in your academy, please create your team</small>
-                                                    </div>
-                                                    <div class="ml-8pt mt-2 mt-sm-0">
-                                                        <a href="{{ route('coach.managements.create') }}"
-                                                           class="btn btn-link btn-sm">Create Now</a>
-                                                    </div>
+                                        <div class="input-group input-group-merge">
+                                            <input type="number"
+                                                   id="totalPlayers"
+                                                   name="totalPlayers"
+                                                   required
+                                                   value="{{ old('totalPlayers', $team->totalPlayers) }}"
+                                                   class="form-control @error('totalPlayers') is-invalid @enderror"
+                                                   placeholder="Input team's total player ...">
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    Player(s)
                                                 </div>
                                             </div>
-                                        @else
-                                            <select class="form-control form-select @error('coaches') is-invalid @enderror" id="coaches" name="coaches[]" data-toggle="select" multiple>
-                                                <option disabled>Select coaches to manage this team</option>
-                                                @foreach($coaches as $coach)
-                                                    <option value="{{ $coach->id }}" @selected(old('coaches') == in_array($coach->id, $coach_id)) data-avatar-src="{{ Storage::url($coach->user->foto) }}">
-                                                        {{ $coach->user->firstName }} {{ $coach->user->lastName }} - {{ $coach->specializations->name }} -
-                                                        @if(count($coach->teams) == 0)
-                                                            No Team
-                                                        @else
-                                                            @foreach($coach->teams as $team)
-                                                                <span class="badge badge-pill badge-danger mr-1">{{ $team->teamName }}</span>
-                                                            @endforeach
-                                                        @endif
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        @endif
-                                        @error('team')
+                                        </div>
+                                        @error('totalPlayers')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -193,38 +182,6 @@
     @push('addon-script')
         <script>
             $(document).ready(function () {
-                const idCountry = $('.country-form option:selected').val();
-                const idState = {{ $coach->state_id }};
-                const idCity = {{ $coach->city_id }};
-                $.ajax({
-                    url: "{{url('api/states')}}",
-                    data: {
-                        fields: 'states',
-                        "filters[country_id]": idCountry,
-                    },
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (result){
-                        $.each(result.data, function (key, value){
-                            $('#state_id').append('<option value="'+value.id+'">'+value.name+'</option>');
-                        });
-                        $('#state_id option[value="' + idState + '"]').attr('selected', 'selected');
-                    }
-                });
-                $.ajax({
-                    url: "{{url('api/cities')}}",
-                    data: {
-                        fields: 'cities',
-                        "filters[state_id]": idState,
-                    },
-                    dataType: 'json',
-                    success: function (result){
-                        $.each(result.data, function (key, value){
-                            $('#city_id').append('<option value="'+value.id+'">'+value.name+'</option>');
-                        });
-                        $('#city_id option[value="' + idCity + '"]').attr('selected', 'selected');
-                    }
-                });
                 foto.onchange = evt => {
                     preview = document.getElementById('preview');
                     preview.style.display = 'block';
