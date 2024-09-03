@@ -1,5 +1,7 @@
 <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CRoboto:400,500%7CExo+2:600&display=swap" rel="stylesheet">
 
+@vite(['resources/js/app.js'])
+
 <!-- Preloader -->
 <link type="text/css" href="{{ URL::asset('vendor/spinkit.css') }}" rel="stylesheet">
 
