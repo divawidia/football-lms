@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('totalPlayers')->nullable();
             $table->string('academyName')->nullable();
             $table->string('coachName')->nullable()->change();
-            $table->integer('directorName')->nullable()->change();
+            $table->string('directorName')->nullable()->change();
         });
     }
 
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->dropColumn('totalPlayers');
             $table->dropColumn('academyName');
             $table->string('coachName')->change();
-            $table->integer('directorName')->change();
+            $table->string('directorName')->change();
         });
     }
 };

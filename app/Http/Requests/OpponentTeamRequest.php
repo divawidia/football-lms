@@ -26,6 +26,10 @@ class OpponentTeamRequest extends FormRequest
             'logo' => ['image', 'nullable'],
             'teamName' => ['required', 'string', Rule::unique('opponent_teams', 'teamName')->ignore($this->team)],
             'ageGroup' => ['required', 'string'],
+            'coachName' => ['string'],
+            'directorName' => ['string'],
+            'totalPlayers' => ['numeric'],
+            'academyName' => ['string']
         ];
     }
 }
