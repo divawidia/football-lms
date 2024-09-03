@@ -83,7 +83,10 @@ class OpponentTeamController extends Controller
                         return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
                     }
                 })
-                ->rawColumns(['action', 'name', 'status'])
+                ->editColumn('players', function ($item) {
+                    return $item->totalPlayers . ' Player(s)';
+                })
+                ->rawColumns(['action', 'name', 'status', 'players'])
                 ->make();
         }
         return view('pages.admins.managements.opponentTeams.index');
