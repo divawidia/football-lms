@@ -25,10 +25,10 @@ class OpponentTeamRequest extends FormRequest
         return [
             'logo' => ['image', 'nullable'],
             'teamName' => ['required', 'string', Rule::unique('opponent_teams', 'teamName')->ignore($this->team)],
-            'ageGroup' => ['required', 'string'],
+            'ageGroup' => ['required', 'string', Rule::in(['U-6', 'U-7', 'U-8', 'U-9', 'U-10', 'U-11', 'U-12', 'U-13', 'U-14', 'U-15', 'U-16', 'U-17', 'U-18', 'U-19', 'U-20', 'U-21'])],
             'coachName' => ['string'],
             'directorName' => ['string'],
-            'totalPlayers' => ['numeric'],
+            'totalPlayers' => ['numeric', 'min:0'],
             'academyName' => ['string']
         ];
     }
