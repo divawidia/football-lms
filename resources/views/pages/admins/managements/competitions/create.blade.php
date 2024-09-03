@@ -197,6 +197,102 @@
                             </div>
                             <div class="page-separator">
                                 <div class="page-separator__text">Division</div>
+{{--                                <a href="#" class="btn btn-primary ml-auto btn-sm" id="add-division">--}}
+{{--                                    <span class="material-icons mr-2">--}}
+{{--                                        add--}}
+{{--                                    </span>--}}
+{{--                                    Add Another Division--}}
+{{--                                </a>--}}
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group mb-4">
+                                        <label class="form-label" for="division">Division Name</label>
+                                        <small class="text-danger">*</small>
+                                        <input type="text"
+                                               id="division"
+                                               name="division"
+                                               required
+                                               value="{{ old('division') }}"
+                                               class="form-control @error('division') is-invalid @enderror"
+                                               placeholder="Ex: U-16 Group A ...">
+                                        @error('division')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="teams">Our Team</label>
+                                        <small class="text-danger">*</small>
+                                        @if(count($teams) == 0)
+                                            <div class="alert alert-light border-1 border-left-4 border-left-accent"
+                                                 role="alert">
+                                                <div class="d-flex flex-wrap align-items-center">
+                                                    <i class="material-icons mr-8pt">error_outline</i>
+                                                    <div class="media-body"
+                                                         style="min-width: 180px">
+                                                        <small class="text-black-100">Curently you haven't create any team in your academy, please create your team</small>
+                                                    </div>
+                                                    <div class="ml-8pt mt-2 mt-sm-0">
+                                                        <a href="{{ route('team-managements.create') }}"
+                                                           class="btn btn-link btn-sm">Create Now</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <select class="form-control form-select @error('teams') is-invalid @enderror" id="teams" name="teams" data-toggle="select">
+                                                <option selected disabled>Select team to play in this division</option>
+                                                @foreach($teams as $team)
+                                                    <option value="{{ $team->id }}" @selected(old('teams') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
+                                                        {{ $team->teamName }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        @endif
+                                        @error('team')
+                                        <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="opponentTeams">Opponent Teams</label>
+                                        <small class="text-danger">*</small>
+                                        @if(count($opponentTeams) == 0)
+                                            <div class="alert alert-light border-1 border-left-4 border-left-accent"
+                                                 role="alert">
+                                                <div class="d-flex flex-wrap align-items-center">
+                                                    <i class="material-icons mr-8pt">error_outline</i>
+                                                    <div class="media-body"
+                                                         style="min-width: 180px">
+                                                        <small class="text-black-100">Curently you haven't create any opponent team, please create your opponent team</small>
+                                                    </div>
+                                                    <div class="ml-8pt mt-2 mt-sm-0">
+                                                        <a href="{{ route('team-managements.create') }}"
+                                                           class="btn btn-link btn-sm">Create Now</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <select class="form-control form-select @error('opponentTeams') is-invalid @enderror" id="opponentTeams" name="opponentTeams" data-toggle="select">
+                                                <option disabled>Select your opponent team who play in this division</option>
+                                                @foreach($opponentTeams as $team)
+                                                    <option value="{{ $team->id }}" @selected(old('opponentTeams') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
+                                                        {{ $team->teamName }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        @endif
+                                        @error('team')
+                                        <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -215,6 +311,18 @@
                         preview.src = URL.createObjectURL(file)
                     }
                 }
+
+                // var i=1;
+                // $('#add').click(function(){
+                //     i++;
+                //     $('#dynamic_field').append(' <div class="row pt-3" id="row'+i+'"><div class="col-10"><input type="text" name="features[]" placeholder="Masukan fitur" class="form-control features_list" /></div><div class="col-auto"><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn_remove"><i class="bx bx-x"></i></button></div></div>');
+                // });
+                //
+                // $(document).on('click', '.btn_remove', function(){
+                //     var button_id = $(this).attr("id");
+                //     $('#row'+button_id+'').remove();
+                // });
+
             });
         </script>
     @endpush
