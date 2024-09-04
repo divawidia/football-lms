@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OpponentTeamRequest;
 use App\Models\OpponentTeam;
+use App\Service\OpponentTeamService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -95,22 +96,15 @@ class OpponentTeamController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(OpponentTeamRequest $request)
+    public function store(OpponentTeamRequest $request, OpponentTeamService $opponentTeamService)
     {
         $data = $request->validated();
 
-        if ($request->hasFile('logo')){
-            $data['logo'] = $request->file('logo')->store('assets/team-logo', 'public');
-        }else{
-            $data['logo'] = 'images/undefined-user.png';
-        }
-
-        $data['status'] = '1';
-
-        OpponentTeam::create($data);
+        $opponentTeamService->store($data);
 
         $text = 'Team '.$data['teamName'].' successfully added!';
         Alert::success($text);
+        return redirect()->route('opponentTeam-managements.index');
     }
 
     /**
@@ -136,17 +130,11 @@ class OpponentTeamController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(OpponentTeamRequest $request, OpponentTeam $team)
+    public function update(OpponentTeamRequest $request, OpponentTeam $team, OpponentTeamService $opponentTeamService)
     {
         $data = $request->validated();
 
-        if ($request->hasFile('logo')){
-            $data['logo'] = $request->file('logo')->store('assets/team-logo', 'public');
-        }else{
-            $data['logo'] = $team->logo;
-        }
-
-        $team->update($data);
+        $opponentTeamService->update($data, $team);
 
         $text = 'Team '.$team->teamName.' successfully updated!';
         Alert::success($text);

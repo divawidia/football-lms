@@ -7,7 +7,6 @@ use App\Models\Competition;
 use App\Models\OpponentTeam;
 use App\Models\Team;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;

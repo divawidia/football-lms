@@ -182,10 +182,10 @@
     @push('addon-script')
         <script>
             $(document).ready(function () {
-                foto.onchange = evt => {
+                logo.onchange = evt => {
                     preview = document.getElementById('preview');
                     preview.style.display = 'block';
-                    const [file] = foto.files
+                    const [file] = logo.files
                     if (file) {
                         preview.src = URL.createObjectURL(file)
                     }
