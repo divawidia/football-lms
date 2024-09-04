@@ -8,6 +8,9 @@ use App\Models\Coach;
 use App\Models\Player;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\OpponentTeamService;
+use App\Services\TeamService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -24,77 +27,19 @@ class TeamController extends Controller
     /**
      * Display a listing of the resource.
      */
+    private TeamService $teamService;
+    private $academyId;
+
+    public function __construct(TeamService $teamService)
+    {
+        $this->teamService = $teamService;
+        $this->academyId = Auth::user()->academyId;
+    }
+
     public function index()
     {
         if (request()->ajax()) {
-            $query = Team::with('coaches', 'players')->get();
-            return Datatables::of($query)->addColumn('action', function ($item) {
-                if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('deactivate-coach', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">block</span> Deactivate Team
-                                                </button>
-                                            </form>';
-                } else {
-                    $statusButton = '<form action="' . route('activate-coach', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">check_circle</span> Activate Team
-                                                </button>
-                                            </form>';
-                }
-                return '
-                            <div class="dropdown">
-                              <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="material-icons">
-                                    more_vert
-                                </span>
-                              </button>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
-                                <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
-                                ' . $statusButton . '
-                                <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
-                                    <span class="material-icons">delete</span> Delete Team
-                                </button>
-                              </div>
-                            </div>';
-            })
-                ->editColumn('players', function ($item) {
-                    return count($item->players).' Player(s)';
-                })
-                ->editColumn('coaches', function ($item) {
-                    return count($item->coaches).' Coach(es)';
-                })
-                ->editColumn('name', function ($item) {
-                    return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->division . ' - '.$item->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-                })
-                ->editColumn('status', function ($item) {
-                    if ($item->status == '1') {
-                        return '<span class="badge badge-pill badge-success">Aktif</span>';
-                    } elseif ($item->status == '0') {
-                        return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
-                    }
-                })
-                ->rawColumns(['action', 'name', 'status', 'players', 'coaches'])
-                ->make();
+            return $this->teamService->index();
         }
         return view('pages.admins.managements.teams.index');
     }
@@ -230,27 +175,24 @@ class TeamController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('logo')){
-            $data['logo'] = $request->file('logo')->store('assets/team-logo', 'public');
-        }else{
-            $data['logo'] = 'images/undefined-user.png';
-        }
-
-        $data['status'] = '1';
-        $data['academyId'] = Auth::user()->academyId;
-
-        $team = Team::create($data);
-
-        if ($request->has('players')){
-            $team->players()->attach($request->players);
-        }
-        if ($request->has('coaches')){
-            $team->coaches()->attach($request->coaches);
-        }
+        $this->teamService->store($data, $this->academyId);
 
         $text = 'Team '.$data['teamName'].' successfully added!';
         Alert::success($text);
         return redirect()->route('team-managements.index');
+    }
+
+    public function apiStore(TeamRequest $request): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+
+            $team = $this->teamService->store($data, $this->academyId);
+
+            return response()->json($team, 201);
+        }catch (\Illuminate\Validation\ValidationException $e){
+            return response()->json($e->errors(), 422);
+        }
     }
 
     /**
@@ -297,15 +239,7 @@ class TeamController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('logo')){
-            $data['logo'] = $request->file('logo')->store('assets/team-logo', 'public');
-        }else{
-            $data['logo'] = $team->logo;
-        }
-
-        $team->update($data);
-        $team->players()->sync($request->players);
-        $team->coaches()->sync($request->coaches);
+        $this->teamService->update($data, $team);
 
         $text = 'Team '.$team->teamName.' successfully updated!';
         Alert::success($text);
@@ -313,17 +247,15 @@ class TeamController extends Controller
     }
 
     public function deactivate(Team $team){
-        $team->update([
-            'status' => '0'
-        ]);
+        $this->teamService->deactivate($team);
+
         Alert::success('Team '.$team->teamName.' status successfully deactivated!');
         return redirect()->route('team-managements.index');
     }
 
     public function activate(Team $team){
-        $team->update([
-            'status' => '1'
-        ]);
+        $this->teamService->activate($team);
+
         Alert::success('Team '.$team->teamName.' status successfully activated!');
         return redirect()->route('team-managements.index');
     }
@@ -354,7 +286,7 @@ class TeamController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
-        $team->players()->sync($request->players);
+        $this->teamService->updatePlayerTeam((array)$validator, $team);
 
         $text = 'Team '.$team->teamName.' Players successfully updated!';
         Alert::success($text);
@@ -387,7 +319,7 @@ class TeamController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
-        $team->coaches()->sync($request->coaches);
+        $this->teamService->updateCoachTeam((array)$validator, $team);
 
         $text = 'Team '.$team->teamName.' Coaches successfully updated!';
         Alert::success($text);
@@ -396,13 +328,14 @@ class TeamController extends Controller
 
     public function removePlayer(Team $team, Player $player)
     {
-        $team->players()->detach($player->id);
+        $this->teamService->removePlayer($team, $player);
+
         return response()->json(['success' => true]);
     }
 
     public function removeCoach(Team $team, Coach $coach)
     {
-        $team->coaches()->detach($coach->id);
+        $this->teamService->removeCoach($team, $coach);
         return response()->json(['success' => true]);
     }
 
@@ -411,13 +344,7 @@ class TeamController extends Controller
      */
     public function destroy(Team $team)
     {
-        if (File::exists($team->logo) && $team->logo != 'images/undefined-user.png'){
-            File::delete($team->logo);
-        }
-
-        $team->coaches()->detach();
-        $team->players()->detach();
-        $team->delete();
+       $this->teamService->destroy($team);
 
         return response()->json(['success' => true]);
     }

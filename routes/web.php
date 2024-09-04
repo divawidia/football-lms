@@ -99,6 +99,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::get('', [TeamController::class, 'index'])->name('team-managements.index');
         Route::get('create', [TeamController::class, 'create'])->name('team-managements.create');
         Route::post('store', [TeamController::class, 'store'])->name('team-managements.store');
+        Route::post('api/store', [TeamController::class, 'apiStore'])->name('team-managements.apiStore');
         Route::prefix('{team}')->group(function () {
             Route::get('', [TeamController::class, 'show'])->name('team-managements.show');
             Route::get('edit', [TeamController::class, 'edit'])->name('team-managements.edit');
