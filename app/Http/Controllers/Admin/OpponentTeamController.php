@@ -13,6 +13,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class OpponentTeamController extends Controller
 {
+    private OpponentTeamService $opponentTeamService;
+
+    public function __construct(OpponentTeamService $opponentTeamService)
+    {
+        $this->opponentTeamService = $opponentTeamService;
+    }
+
     public function index()
     {
         if (request()->ajax()) {
@@ -96,11 +103,11 @@ class OpponentTeamController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(OpponentTeamRequest $request, OpponentTeamService $opponentTeamService)
+    public function store(OpponentTeamRequest $request)
     {
         $data = $request->validated();
 
-        $opponentTeamService->store($data);
+        $this->opponentTeamService->store($data);
 
         $text = 'Team '.$data['teamName'].' successfully added!';
         Alert::success($text);
@@ -134,7 +141,7 @@ class OpponentTeamController extends Controller
     {
         $data = $request->validated();
 
-        $opponentTeamService->update($data, $team);
+        $this->opponentTeamService->update($data, $team);
 
         $text = 'Team '.$team->teamName.' successfully updated!';
         Alert::success($text);
@@ -142,17 +149,15 @@ class OpponentTeamController extends Controller
     }
 
     public function deactivate(OpponentTeam $team){
-        $team->update([
-            'status' => '0'
-        ]);
+        $this->opponentTeamService->deactivate($team);
+
         Alert::success('Team '.$team->teamName.' status successfully deactivated!');
         return redirect()->route('opponentTeam-managements.index');
     }
 
     public function activate(OpponentTeam $team){
-        $team->update([
-            'status' => '1'
-        ]);
+        $this->opponentTeamService->activate($team);
+
         Alert::success('Team '.$team->teamName.' status successfully activated!');
         return redirect()->route('opponentTeam-managements.index');
     }
@@ -162,10 +167,7 @@ class OpponentTeamController extends Controller
      */
     public function destroy(OpponentTeam $team)
     {
-        if (File::exists($team->logo) && $team->logo != 'images/undefined-user.png') {
-            File::delete($team->logo);
-        }
-        $team->delete();
+        $this->opponentTeamService->destroy($team);
 
         return response()->json(['success' => true]);
     }
