@@ -403,10 +403,17 @@
                             },
                             success: function(response) {
                                 Swal.fire({
-                                    icon: "success",
-                                    title: "Team successfully deleted!",
+                                    title: 'Team successfully deleted!',
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "{{ route('team-managements.index') }}";
+                                    }
                                 });
-                                window.location.href = "{{ route('team-managements.index') }}";
                             },
                             error: function(error) {
                                 Swal.fire({
