@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Service;
+namespace App\Services;
 
-use App\Http\Requests\OpponentTeamRequest;
-use App\Models\Competition;
 use App\Models\OpponentTeam;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class OpponentTeamService

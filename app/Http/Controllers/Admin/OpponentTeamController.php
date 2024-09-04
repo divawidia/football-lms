@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OpponentTeamRequest;
 use App\Models\OpponentTeam;
-use App\Service\OpponentTeamService;
+use App\Services\OpponentTeamService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
