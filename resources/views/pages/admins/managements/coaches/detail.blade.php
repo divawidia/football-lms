@@ -316,10 +316,17 @@
                             },
                             success: function(response) {
                                 Swal.fire({
-                                    icon: "success",
                                     title: "Coach's account successfully deleted!",
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "{{ route('coach-managements.index') }}";
+                                    }
                                 });
-                                datatable.ajax.reload();
                             },
                             error: function(error) {
                                 Swal.fire({
