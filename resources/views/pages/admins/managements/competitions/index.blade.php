@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Competitions Management
+    Competitions
 @endsection
 @section('page-title')
     @yield('title')
@@ -9,14 +9,16 @@
     @section('content')
         <div class="pt-32pt">
             <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-                <div class="w-100">
-                    <h2 class="mb-0 text-left">@yield('title')</h2>
-                    <ol class="breadcrumb p-0 m-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item active">
-                            @yield('title')
-                        </li>
-                    </ol>
+                <div class="flex d-flex flex-column flex-sm-row align-items-center">
+                    <div class="mb-24pt mb-sm-0 mr-sm-24pt text-sm-left">
+                        <h2 class="mb-0">@yield('title')</h2>
+                        <ol class="breadcrumb p-0 m-0">
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                            <li class="breadcrumb-item active">
+                                @yield('title')
+                            </li>
+                        </ol>
+                    </div>
                 </div>
             </div>
         </div>

@@ -259,46 +259,46 @@
                                         <strong></strong>
                                     </span>
                                 </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label class="form-label" for="coaches">Coaches</label>
-                                        <small class="text-black-100">(Optional)</small>
-                                        @if(count($coaches) == 0)
-                                            <div class="alert alert-light border-1 border-left-4 border-left-accent"
-                                                 role="alert">
-                                                <div class="d-flex flex-wrap align-items-center">
-                                                    <i class="material-icons mr-8pt">error_outline</i>
-                                                    <div class="media-body"
-                                                         style="min-width: 180px">
-                                                        <small class="text-black-100">Curently you haven't create any coach in your academy, please create your team</small>
-                                                    </div>
-                                                    <div class="ml-8pt mt-2 mt-sm-0">
-                                                        <a href="{{ route('coach.managements.create') }}"
-                                                           class="btn btn-link btn-sm">Create Now</a>
-                                                    </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="coaches">Coaches</label>
+                                    <small class="text-black-100">(Optional)</small>
+                                    @if(count($coaches) == 0)
+                                        <div class="alert alert-light border-1 border-left-4 border-left-accent"
+                                             role="alert">
+                                            <div class="d-flex flex-wrap align-items-center">
+                                                <i class="material-icons mr-8pt">error_outline</i>
+                                                <div class="media-body"
+                                                     style="min-width: 180px">
+                                                    <small class="text-black-100">Curently you haven't create any coach in your academy, please create your team</small>
+                                                </div>
+                                                <div class="ml-8pt mt-2 mt-sm-0">
+                                                    <a href="{{ route('coach.managements.create') }}"
+                                                       class="btn btn-link btn-sm">Create Now</a>
                                                 </div>
                                             </div>
-                                        @else
-                                            <select class="form-control form-select" id="coaches" name="coaches[]" data-toggle="select" multiple>
-                                                <option disabled>Select coaches to manage this team</option>
-                                                @foreach($coaches as $coach)
-                                                    <option value="{{ $coach->id }}" @selected(old('players') == $coach->id) data-avatar-src="{{ Storage::url($coach->user->foto) }}">
-                                                        {{ $coach->user->firstName }} {{ $coach->user->lastName }} - {{ $coach->specializations->name }} -
-                                                        @if(count($coach->teams) == 0)
-                                                            No Team
-                                                        @else
-                                                            @foreach($coach->teams as $team)
-                                                                <span class="badge badge-pill badge-danger mr-1">{{ $team->teamName }}</span>
-                                                            @endforeach
-                                                        @endif
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        @endif
-                                        <span class="invalid-feedback" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                    </div>
+                                        </div>
+                                    @else
+                                        <select class="form-control form-select" id="coaches" name="coaches[]" data-toggle="select" multiple>
+                                            <option disabled>Select coaches to manage this team</option>
+                                            @foreach($coaches as $coach)
+                                                <option value="{{ $coach->id }}" @selected(old('players') == $coach->id) data-avatar-src="{{ Storage::url($coach->user->foto) }}">
+                                                    {{ $coach->user->firstName }} {{ $coach->user->lastName }} - {{ $coach->specializations->name }} -
+                                                    @if(count($coach->teams) == 0)
+                                                        No Team
+                                                    @else
+                                                        @foreach($coach->teams as $team)
+                                                            <span class="badge badge-pill badge-danger mr-1">{{ $team->teamName }}</span>
+                                                        @endforeach
+                                                    @endif
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    @endif
+                                    <span class="invalid-feedback" role="alert">
+                                    <strong></strong>
+                                </span>
                                 </div>
                             </div>
                         </div>
@@ -316,7 +316,7 @@
     @section('content')
         <div class="pt-32pt">
             <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-                <div class="flex d-flex flex-column flex-sm-row align-items-center mb-24pt mb-md-0">
+                <div class="flex d-flex flex-column flex-sm-row align-items-center">
                     <div class="mb-24pt mb-sm-0 mr-sm-24pt">
                         <h2 class="mb-0">
                             @yield('title')
@@ -337,10 +337,6 @@
             <div class="list-group">
                 <form action="{{ route('competition-managements.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
-                    <div class="list-group-item d-flex justify-content-end">
-                        <a class="btn btn-secondary mx-2" href="{{ route('competition-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
-                        <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
-                    </div>
                     <div class="list-group-item">
                         <div role="group" aria-labelledby="label-question" class="m-0 form-group">
                             <div class="page-separator">
@@ -541,10 +537,10 @@
                                                          style="min-width: 180px">
                                                         <small class="text-black-100">Curently you haven't create any team in your academy, please create your team</small>
                                                     </div>
-                                                    <div class="ml-8pt mt-2 mt-sm-0">
-                                                        <a href="{{ route('team-managements.create') }}"
-                                                           class="btn btn-link btn-sm">Create Now</a>
-                                                    </div>
+{{--                                                    <div class="ml-8pt mt-2 mt-sm-0">--}}
+{{--                                                        <a href="{{ route('team-managements.create') }}"--}}
+{{--                                                           class="btn btn-link btn-sm">Create Now</a>--}}
+{{--                                                    </div>--}}
                                                 </div>
                                             </div>
                                         @else
@@ -605,6 +601,10 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-end">
+                        <a class="btn btn-secondary mx-2" href="{{ route('competition-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                     </div>
                 </form>
             </div>
