@@ -10,15 +10,8 @@ use App\Models\Team;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
-class TeamService extends Controller
+class TeamService extends Service
 {
-    private function deleteLogo($logo): void
-    {
-        if (Storage::disk('public')->exists($logo) && $logo != 'images/undefined-user.png'){
-            Storage::disk('public')->delete($logo);
-        }
-    }
-
     public function index(): \Illuminate\Http\JsonResponse
     {
         $query = Team::with('coaches', 'players')->get();
