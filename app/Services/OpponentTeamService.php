@@ -6,14 +6,8 @@ use App\Models\OpponentTeam;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
-class OpponentTeamService
+class OpponentTeamService extends Service
 {
-    private function deleteLogo($logo): void
-    {
-        if (Storage::disk('public')->exists($logo) && $logo != 'images/undefined-user.png'){
-            Storage::disk('public')->delete($logo);
-        }
-    }
     public function index(): \Illuminate\Http\JsonResponse
     {
             $query = OpponentTeam::all();
@@ -96,7 +90,7 @@ class OpponentTeamService
     public function update(array $opponentTeamData, OpponentTeam $opponentTeam): OpponentTeam
     {
         if (array_key_exists('logo', $opponentTeamData)){
-            $this->deleteLogo($opponentTeam->logo);
+            $this->deleteImage($opponentTeam->logo);
             $opponentTeamData['logo'] = $opponentTeamData['logo']->store('assets/team-logo', 'public');
         }else{
             $opponentTeamData['logo'] = $opponentTeam->logo;
@@ -121,7 +115,7 @@ class OpponentTeamService
 
     public function destroy(OpponentTeam $opponentTeam): OpponentTeam
     {
-        $this->deleteLogo($opponentTeam->logo);
+        $this->deleteImage($opponentTeam->logo);
         $opponentTeam->delete();
         return $opponentTeam;
     }

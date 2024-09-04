@@ -214,7 +214,7 @@ class TeamService extends Service
     public function update(array $teamData, Team $team): Team
     {
         if (array_key_exists('logo', $teamData)){
-            $this->deleteLogo($team->logo);
+            $this->deleteImage($team->logo);
             $teamData['logo'] = $teamData['logo']->store('assets/team-logo', 'public');
         }else{
             $teamData['logo'] = $team->logo;
@@ -265,7 +265,7 @@ class TeamService extends Service
 
     public function destroy(Team $team): Team
     {
-        $this->deleteLogo($team->logo);
+        $this->deleteImage($team->logo);
         $team->coaches()->detach();
         $team->players()->detach();
         $team->delete();
