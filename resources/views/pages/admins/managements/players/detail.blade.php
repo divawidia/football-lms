@@ -368,10 +368,17 @@
                             },
                             success: function(response) {
                                 Swal.fire({
-                                    icon: "success",
                                     title: "Player's account successfully deleted!",
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "{{ route('player-managements.index') }}";
+                                    }
                                 });
-                                window.location.href = "{{ route('player-managements.index') }}";
                             },
                             error: function(error) {
                                 Swal.fire({
