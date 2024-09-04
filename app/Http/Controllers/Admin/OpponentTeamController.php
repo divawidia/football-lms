@@ -7,11 +7,7 @@ use App\Http\Requests\OpponentTeamRequest;
 use App\Models\OpponentTeam;
 use App\Services\OpponentTeamService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
-use Yajra\DataTables\Facades\DataTables;
 
 class OpponentTeamController extends Controller
 {
@@ -25,7 +21,7 @@ class OpponentTeamController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $this->opponentTeamService->index();
+            return $this->opponentTeamService->index();
         }
         return view('pages.admins.managements.opponentTeams.index');
     }
