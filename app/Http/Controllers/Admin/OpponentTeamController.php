@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\OpponentTeamRequest;
 use App\Models\OpponentTeam;
 use App\Service\OpponentTeamService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -115,7 +116,7 @@ class OpponentTeamController extends Controller
         return redirect()->route('opponentTeam-managements.index');
     }
 
-    public function apiStore(OpponentTeamRequest $request): \Illuminate\Http\JsonResponse
+    public function apiStore(OpponentTeamRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
