@@ -406,7 +406,7 @@
                                     icon: "success",
                                     title: "Team successfully deleted!",
                                 });
-                                playersTable.ajax.reload();
+                                window.location.href = "{{ route('team-managements.index') }}";
                             },
                             error: function(error) {
                                 Swal.fire({
@@ -444,7 +444,7 @@
                                     icon: "success",
                                     title: "Player successfully removed!",
                                 });
-                                datatable.ajax.reload();
+                                playersTable.ajax.reload();
                             },
                             error: function(error) {
                                 Swal.fire({

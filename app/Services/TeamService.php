@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Controllers\Controller;
 use App\Models\Coach;
 use App\Models\OpponentTeam;
 use App\Models\Player;
@@ -9,7 +10,7 @@ use App\Models\Team;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
-class TeamService
+class TeamService extends Controller
 {
     private function deleteLogo($logo): void
     {
@@ -23,7 +24,7 @@ class TeamService
         $query = Team::with('coaches', 'players')->get();
         return Datatables::of($query)->addColumn('action', function ($item) {
                 if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('deactivate-coach', $item->id) . '" method="POST">
+                    $statusButton = '<form action="' . route('deactivate-team', $item->id) . '" method="POST">
                                                     ' . method_field("PATCH") . '
                                                     ' . csrf_field() . '
                                                     <button type="submit" class="dropdown-item">
@@ -31,7 +32,7 @@ class TeamService
                                                     </button>
                                                 </form>';
                 } else {
-                    $statusButton = '<form action="' . route('activate-coach', $item->id) . '" method="POST">
+                    $statusButton = '<form action="' . route('activate-team', $item->id) . '" method="POST">
                                                     ' . method_field("PATCH") . '
                                                     ' . csrf_field() . '
                                                     <button type="submit" class="dropdown-item">
@@ -89,6 +90,113 @@ class TeamService
             ->rawColumns(['action', 'name', 'status', 'players', 'coaches'])
             ->make();
     }
+
+    public function teamPlayers(Team $team){
+        $query = $team->players()->get();
+        return Datatables::of($query)
+            ->addColumn('action', function ($item) {
+                return '
+                                <div class="dropdown">
+                                  <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="material-icons">
+                                        more_vert
+                                    </span>
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="' . route('player-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Player</a>
+                                    <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Player</a>
+                                    <button type="button" class="dropdown-item remove-player" id="' . $item->id . '">
+                                        <span class="material-icons">delete</span> Remove Player From Team
+                                    </button>
+                                  </div>
+                                </div>';
+            })
+            ->editColumn('age', function ($item){
+                return $this->getAge($item->user->dob);
+            })
+            ->editColumn('name', function ($item) {
+                return '
+                            <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' '.$item->user->lastName.'</strong></p>
+                                            <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('appearance', function ($item) {
+                return 0;
+            })
+            ->editColumn('goals', function ($item) {
+                return 0;
+            })
+            ->editColumn('assists', function ($item) {
+                return 0;
+            })
+            ->editColumn('cleanSheets', function ($item) {
+                return 0;
+            })
+            ->rawColumns(['action', 'name', 'age', 'appearance', 'goals', 'assists','cleanSheets'])
+            ->make();
+    }
+
+    public function teamCoaches(Team $team){
+        $query = $team->coaches()->get();
+        return Datatables::of($query)
+            ->addColumn('action', function ($item) {
+                return '
+                                <div class="dropdown">
+                                  <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="material-icons">
+                                        more_vert
+                                    </span>
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="' . route('coach-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Coach</a>
+                                    <a class="dropdown-item" href="' . route('coach-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Coach</a>
+                                    <button type="button" class="dropdown-item remove-coach" id="' . $item->id . '">
+                                        <span class="material-icons">delete</span> Remove Coach From Team
+                                    </button>
+                                  </div>
+                                </div>';
+            })
+            ->editColumn('age', function ($item){
+                return $this->getAge($item->user->dob);
+            })
+            ->editColumn('name', function ($item) {
+                return '
+                            <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' '.$item->user->lastName.'</strong></p>
+                                            <small class="js-lists-values-email text-50">' . $item->specializations->name . ' - '.$item->certification->name.'</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('joinedDate', function ($item) {
+                return date('l, M d, Y. h:i A', strtotime($item->pivot->created_at));
+            })
+            ->editColumn('gender', function ($item) {
+                return $item->user->gender;
+            })
+            ->rawColumns(['action', 'name', 'age', 'gender','joinedDate'])
+            ->make();
+    }
+
     public  function store(array $teamData, $academyId){
 
         if (array_key_exists('logo', $teamData)){
