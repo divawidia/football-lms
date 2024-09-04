@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CompetitionRequest;
 use App\Models\Coach;
 use App\Models\Competition;
 use App\Models\OpponentTeam;
@@ -113,7 +114,7 @@ class CompetitionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CompetitionRequest $request)
     {
         $data = $request->validated();
 
