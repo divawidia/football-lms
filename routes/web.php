@@ -121,6 +121,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::get('', [OpponentTeamController::class, 'index'])->name('opponentTeam-managements.index');
         Route::get('create', [OpponentTeamController::class, 'create'])->name('opponentTeam-managements.create');
         Route::post('store', [OpponentTeamController::class, 'store'])->name('opponentTeam-managements.store');
+        Route::post('api/store', [OpponentTeamController::class, 'apiStore'])->name('opponentTeam-managements.apiStore');
         Route::prefix('{team}')->group(function () {
             Route::get('', [OpponentTeamController::class, 'show'])->name('opponentTeam-managements.show');
             Route::get('edit', [OpponentTeamController::class, 'edit'])->name('opponentTeam-managements.edit');

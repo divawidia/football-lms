@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\OpponentTeamRequest;
 use App\Models\OpponentTeam;
 use App\Service\OpponentTeamService;
-use Illuminate\Support\Facades\File;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -112,6 +113,19 @@ class OpponentTeamController extends Controller
         $text = 'Team '.$data['teamName'].' successfully added!';
         Alert::success($text);
         return redirect()->route('opponentTeam-managements.index');
+    }
+
+    public function apiStore(OpponentTeamRequest $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $data = $request->validated();
+
+            $team = $this->opponentTeamService->store($data);
+
+            return response()->json($team, 201);
+        }catch (\Illuminate\Validation\ValidationException $e){
+            return response()->json($e->errors(), 422);
+        }
     }
 
     /**
