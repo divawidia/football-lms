@@ -13,32 +13,33 @@
 </head>
 
 <body class="layout-app ">
-<div class="preloader">
-    <div class="sk-chase">
-        <div class="sk-chase-dot"></div>
-        <div class="sk-chase-dot"></div>
-        <div class="sk-chase-dot"></div>
-        <div class="sk-chase-dot"></div>
-        <div class="sk-chase-dot"></div>
-        <div class="sk-chase-dot"></div>
+    <div class="preloader">
+        <div class="sk-chase">
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+        </div>
     </div>
-</div>
 
-<div class="mdk-drawer-layout js-mdk-drawer-layout" data-push data-responsive-width="992px">
-    <div class="mdk-drawer-layout__content page-content">
-        @include('includes.header')
+    <div class="mdk-drawer-layout js-mdk-drawer-layout" data-push data-responsive-width="992px">
+        @yield('modal')
+        <div class="mdk-drawer-layout__content page-content">
+            @include('includes.header')
 
-        @yield('content')
+            @yield('content')
 
-        @include('includes.footer')
+            @include('includes.footer')
 
+        </div>
+        @include('includes.admins.navigation')
     </div>
-    @include('includes.admins.navigation')
-</div>
 
-@stack('prepend-script')
-@include('includes.scripts')
-@include('sweetalert::alert')
-@stack('addon-script')
+    @stack('prepend-script')
+    @include('includes.scripts')
+    @include('sweetalert::alert')
+    @stack('addon-script')
 </body>
 </html>

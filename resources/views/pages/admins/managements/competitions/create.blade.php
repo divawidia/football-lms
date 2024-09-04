@@ -6,6 +6,165 @@
     @yield('title')
 @endsection
 
+@section('modal')
+    <!-- Modal -->
+    <div class="modal fade" id="createNewTeamModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ route('opponentTeam-managements.store') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Create new opponent team</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label class="form-label">Team Logo</label>
+                                            <small class="text-black-100">(Optional)</small>
+                                            <div class="media align-items-center mb-2">
+                                                <img src="{{ Storage::url('images/undefined-user.png') }}"
+                                                     alt="people"
+                                                     width="54"
+                                                     height="54"
+                                                     id="teamPreview"
+                                                     class="mr-16pt rounded-circle img-object-fit-cover" />
+                                                <div class="media-body">
+                                                    <div class="custom-file">
+                                                        <input type="file"
+                                                               class="custom-file-input @error('logo') is-invalid @enderror"
+                                                               name="logo"
+                                                               id="teamLogo">
+                                                        <label class="custom-file-label" for="logo">Choose file</label>
+                                                    </div>
+                                                </div>
+                                                @error('logo')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group ">
+                                                <label class="form-label" for="teamName">Team Name</label>
+                                                <small class="text-danger">*</small>
+                                                <input type="text"
+                                                       id="teamName"
+                                                       name="teamName"
+                                                       required
+                                                       value="{{ old('teamName') }}"
+                                                       class="form-control @error('teamName') is-invalid @enderror"
+                                                       placeholder="Input team's name ...">
+                                                @error('teamName')
+                                                <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group ">
+                                                <label class="form-label" for="academyName">Academy Name</label>
+                                                <small class="text-danger">*</small>
+                                                <input type="text"
+                                                       id="academyName"
+                                                       name="academyName"
+                                                       required
+                                                       value="{{ old('academyName') }}"
+                                                       class="form-control @error('academyName') is-invalid @enderror"
+                                                       placeholder="Input team's name ...">
+                                                @error('academyName')
+                                                <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group ">
+                                                <label class="form-label" for="coachName">Coach Name</label>
+                                                <small class="text-black-100">(Optional)</small>
+                                                <input type="text"
+                                                       id="coachName"
+                                                       name="coachName"
+                                                       required
+                                                       value="{{ old('coachName') }}"
+                                                       class="form-control @error('coachName') is-invalid @enderror"
+                                                       placeholder="Input team's coach name ...">
+                                                @error('coachName')
+                                                <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group ">
+                                                <label class="form-label" for="directorName">Director Name</label>
+                                                <small class="text-black-100">(Optional)</small>
+                                                <input type="text"
+                                                       id="directorName"
+                                                       name="directorName"
+                                                       required
+                                                       value="{{ old('directorName') }}"
+                                                       class="form-control @error('directorName') is-invalid @enderror"
+                                                       placeholder="Input team's director name ...">
+                                                @error('directorName')
+                                                <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label" for="ageGroup">Age Group</label>
+                                                <small class="text-danger">*</small>
+                                                <select class="form-control form-select @error('ageGroup') is-invalid @enderror" id="ageGroup" name="ageGroup" required data-toggle="select">
+                                                    <option disabled selected>Select player's age group</option>
+                                                    @foreach(['U-6', 'U-7', 'U-8', 'U-9', 'U-10', 'U-11', 'U-12', 'U-13', 'U-14', 'U-15', 'U-16', 'U-17', 'U-18', 'U-19', 'U-20', 'U-21'] AS $ageGroup)
+                                                        <option value="{{ $ageGroup }}" @selected(old('ageGroup') == $ageGroup)>{{ $ageGroup }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('ageGroup')
+                                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group ">
+                                                <label class="form-label" for="totalPlayers">Total Players</label>
+                                                <small class="text-black-100">(Optional)</small>
+                                                <div class="input-group input-group-merge">
+                                                    <input type="number"
+                                                           id="totalPlayers"
+                                                           name="totalPlayers"
+                                                           required
+                                                           value="{{ old('totalPlayers') }}"
+                                                           class="form-control @error('totalPlayers') is-invalid @enderror"
+                                                           placeholder="Input team's total player ...">
+                                                    <div class="input-group-append">
+                                                        <div class="input-group-text">
+                                                            Player(s)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @error('totalPlayers')
+                                                <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
+
     @section('content')
         <div class="pt-32pt">
             <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
@@ -259,8 +418,11 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group mb-3">
-                                        <label class="form-label" for="opponentTeams">Opponent Teams</label>
-                                        <small class="text-danger">*</small>
+                                        <div class="d-flex flex-row align-items-center mb-2">
+                                            <label class="form-label mb-0" for="opponentTeams">Opponent Teams</label>
+                                            <small class="text-danger">*</small>
+                                            <button type="button" class="btn btn-primary btn-sm ml-auto" data-toggle="modal" data-target="#createNewTeamModal"><span class="material-icons mr-2">add</span> Add new team</button>
+                                        </div>
                                         @if(count($opponentTeams) == 0)
                                             <div class="alert alert-light border-1 border-left-4 border-left-accent"
                                                  role="alert">
@@ -270,14 +432,14 @@
                                                          style="min-width: 180px">
                                                         <small class="text-black-100">Curently you haven't create any opponent team, please create your opponent team</small>
                                                     </div>
-                                                    <div class="ml-8pt mt-2 mt-sm-0">
-                                                        <a href="{{ route('team-managements.create') }}"
-                                                           class="btn btn-link btn-sm">Create Now</a>
-                                                    </div>
+{{--                                                    <div class="ml-8pt mt-2 mt-sm-0">--}}
+{{--                                                        <a href="{{ route('opponentTeams-managements.create') }}"--}}
+{{--                                                           class="btn btn-link btn-sm">Create Now</a>--}}
+{{--                                                    </div>--}}
                                                 </div>
                                             </div>
                                         @else
-                                            <select class="form-control form-select @error('opponentTeams') is-invalid @enderror" id="opponentTeams" name="opponentTeams" data-toggle="select">
+                                            <select class="form-control form-select @error('opponentTeams') is-invalid @enderror" id="opponentTeams" name="opponentTeams" data-toggle="select" multiple>
                                                 <option disabled>Select your opponent team who play in this division</option>
                                                 @foreach($opponentTeams as $team)
                                                     <option value="{{ $team->id }}" @selected(old('opponentTeams') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
@@ -303,14 +465,20 @@
     @push('addon-script')
         <script>
             $(document).ready(function () {
-                logo.onchange = evt => {
-                    preview = document.getElementById('preview');
-                    preview.style.display = 'block';
-                    const [file] = logo.files
-                    if (file) {
-                        preview.src = URL.createObjectURL(file)
+                function imagePreview(inputId, imageId){
+                    document.getElementById(inputId).onchange = evt => {
+                        preview = document.getElementById(imageId);
+                        preview.style.display = 'block';
+                        const [file] = document.getElementById(inputId).files
+                        if (file) {
+                            preview.src = URL.createObjectURL(file)
+                        }
                     }
                 }
+
+                imagePreview('logo', 'preview');
+                imagePreview('teamLogo', 'teamPreview');
+
 
                 // var i=1;
                 // $('#add').click(function(){

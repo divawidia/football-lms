@@ -4,17 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OpponentTeamRequest;
-use App\Http\Requests\TeamRequest;
-use App\Models\Coach;
 use App\Models\OpponentTeam;
-use App\Models\Player;
-use App\Models\Team;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -119,7 +111,6 @@ class OpponentTeamController extends Controller
 
         $text = 'Team '.$data['teamName'].' successfully added!';
         Alert::success($text);
-        return redirect()->route('opponentTeam-managements.index');
     }
 
     /**
