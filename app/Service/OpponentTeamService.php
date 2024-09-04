@@ -10,9 +10,15 @@ use Illuminate\Support\Facades\Storage;
 
 class OpponentTeamService
 {
+    private function deleteLogo($logo): void
+    {
+        if (Storage::disk('public')->exists($logo) && $logo != 'images/undefined-user.png'){
+            Storage::disk('public')->delete($logo);
+        }
+    }
     public  function store(array $opponentTeamData){
 
-        if ($opponentTeamData['logo']){
+        if (array_key_exists('logo', $opponentTeamData)){
             $opponentTeamData['logo'] =$opponentTeamData['logo']->store('assets/team-logo', 'public');
         }else{
             $opponentTeamData['logo'] = 'images/undefined-user.png';
@@ -24,9 +30,7 @@ class OpponentTeamService
     public function update(array $opponentTeamData, OpponentTeam $opponentTeam): OpponentTeam
     {
         if (array_key_exists('logo', $opponentTeamData)){
-            if (Storage::disk('public')->exists($opponentTeam->logo) && $opponentTeam->logo != 'images/undefined-user.png'){
-                Storage::disk('public')->delete($opponentTeam->logo);
-            }
+            $this->deleteLogo($opponentTeam->logo);
             $opponentTeamData['logo'] = $opponentTeamData['logo']->store('assets/team-logo', 'public');
         }else{
             $opponentTeamData['logo'] = $opponentTeam->logo;
@@ -37,15 +41,22 @@ class OpponentTeamService
         return $opponentTeam;
     }
 
-    public function activate(OpponentTeam $opponentTeam)
+    public function activate(OpponentTeam $opponentTeam): OpponentTeam
     {
         $opponentTeam->update(['status' => '1']);
         return $opponentTeam;
     }
 
-    public function deactivate(OpponentTeam $opponentTeam)
+    public function deactivate(OpponentTeam $opponentTeam): OpponentTeam
     {
         $opponentTeam->update(['status' => '0']);
+        return $opponentTeam;
+    }
+
+    public function destroy(OpponentTeam $opponentTeam): OpponentTeam
+    {
+        $this->deleteLogo($opponentTeam->logo);
+        $opponentTeam->delete();
         return $opponentTeam;
     }
 }
