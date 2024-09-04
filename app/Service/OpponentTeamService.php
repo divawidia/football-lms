@@ -36,4 +36,16 @@ class OpponentTeamService
 
         return $opponentTeam;
     }
+
+    public function activate(OpponentTeam $opponentTeam)
+    {
+        $opponentTeam->update(['status' => '1']);
+        return $opponentTeam;
+    }
+
+    public function deactivate(OpponentTeam $opponentTeam)
+    {
+        $opponentTeam->update(['status' => '0']);
+        return $opponentTeam;
+    }
 }
