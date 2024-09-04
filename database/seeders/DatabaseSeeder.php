@@ -14,11 +14,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AcademySeeder::class,
-            PermissionSeeder::class,
             WorldSeeder::class,
             PlayerPositionSeeder::class,
             CoachSpecializationSeeder::class,
             CoachCertificationSeeder::class,
+            PermissionSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

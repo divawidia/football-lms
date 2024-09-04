@@ -19,7 +19,7 @@ class PlayerFactory extends Factory
     {
         return [
             'userId' => User::factory(),
-            'position' => 'Center Back',
+            'positionId' => 1,
             'skill' => 'Beginner',
             'strongFoot' => 'left',
             'height' => fake()->numberBetween(150,170),

@@ -15,9 +15,12 @@ return new class extends Migration
             $table->dropColumn('country');
             $table->dropColumn('state');
             $table->dropColumn('city');
-            $table->foreignId('country_id')->constrained('countries')->cascadeOnDelete();
-            $table->foreignId('state_id')->constrained('states')->cascadeOnDelete();
-            $table->foreignId('city_id')->constrained('cities')->cascadeOnDelete();
+            $table->unsignedInteger('country_id');
+            $table->unsignedInteger('state_id');
+            $table->unsignedInteger('city_id');
+//            $table->foreignId('country_id')->constrained('countries')->cascadeOnDelete();
+//            $table->foreignId('state_id')->constrained('states')->cascadeOnDelete();
+//            $table->foreignId('city_id')->constrained('cities')->cascadeOnDelete();
         });
     }
 
@@ -27,9 +30,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table){
-            $table->dropConstrainedForeignId('country_id');
-            $table->dropConstrainedForeignId('state_id');
-            $table->dropConstrainedForeignId('city_id');
+//            $table->dropConstrainedForeignId('country_id');
+//            $table->dropConstrainedForeignId('state_id');
+//            $table->dropConstrainedForeignId('city_id');
+            $table->dropColumn('country_id');
+            $table->dropColumn('state_id');
+            $table->dropColumn('city_id');
             $table->string('country');
             $table->string('state');
             $table->string('city');
