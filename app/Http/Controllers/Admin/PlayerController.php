@@ -50,6 +50,11 @@ class PlayerController extends Controller
         }
     }
 
+    public function removeTeam(User $player, Team $team)
+    {
+        $this->playerService->removeTeam($player->player, $team);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

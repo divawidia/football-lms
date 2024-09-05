@@ -147,6 +147,12 @@ class PlayerService extends Service
             ->make();
     }
 
+    public function removeTeam(Player $player, Team $team)
+    {
+        $player->teams()->detach($team->id);
+        return $player;
+    }
+
     public  function store(array $playerData, $academyId){
 
         $playerData['password'] = bcrypt($playerData['password']);
