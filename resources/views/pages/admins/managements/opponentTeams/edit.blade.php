@@ -85,11 +85,10 @@
                                     </div>
                                     <div class="form-group mb-4">
                                         <label class="form-label" for="academyName">Academy Name</label>
-                                        <small class="text-danger">*</small>
+                                        <small class="text-black-100">(Optional)</small>
                                         <input type="text"
                                                id="academyName"
                                                name="academyName"
-                                               required
                                                value="{{ old('academyName', $team->academyName) }}"
                                                class="form-control @error('academyName') is-invalid @enderror"
                                                placeholder="Input team's name ...">
@@ -101,11 +100,10 @@
                                     </div>
                                     <div class="form-group mb-4">
                                         <label class="form-label" for="coachName">Coach Name</label>
-                                        <small class="text-danger">*</small>
+                                        <small class="text-black-100">(Optional)</small>
                                         <input type="text"
                                                id="coachName"
                                                name="coachName"
-                                               required
                                                value="{{ old('coachName', $team->coachName) }}"
                                                class="form-control @error('coachName') is-invalid @enderror"
                                                placeholder="Input team's name ...">
@@ -119,11 +117,10 @@
                                 <div class="col-lg-6">
                                     <div class="form-group mb-4">
                                         <label class="form-label" for="directorName">Director Name</label>
-                                        <small class="text-danger">*</small>
+                                        <small class="text-black-100">(Optional)</small>
                                         <input type="text"
                                                id="directorName"
                                                name="directorName"
-                                               required
                                                value="{{ old('directorName', $team->directorName) }}"
                                                class="form-control @error('directorName') is-invalid @enderror"
                                                placeholder="Input team's name ...">
@@ -149,13 +146,12 @@
                                         @enderror
                                     </div>
                                     <div class="form-group mb-3">
-                                        <label class="form-label" for="totalPlayers">Players</label>
+                                        <label class="form-label" for="totalPlayers">Total Players</label>
                                         <small class="text-black-100">(Optional)</small>
                                         <div class="input-group input-group-merge">
                                             <input type="number"
                                                    id="totalPlayers"
                                                    name="totalPlayers"
-                                                   required
                                                    value="{{ old('totalPlayers', $team->totalPlayers) }}"
                                                    class="form-control @error('totalPlayers') is-invalid @enderror"
                                                    placeholder="Input team's total player ...">
