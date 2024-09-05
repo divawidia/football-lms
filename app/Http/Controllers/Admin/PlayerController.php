@@ -10,6 +10,7 @@ use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\PlayerService;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,12 @@ use function PHPUnit\Framework\isEmpty;
 
 class PlayerController extends Controller
 {
+    private PlayerService $playerService;
+
+    public function __construct(PlayerService $playerService)
+    {
+        $this->playerService = $playerService;
+    }
 
     /**
      * Display a listing of the resource.
@@ -31,85 +38,7 @@ class PlayerController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Player::with('user', 'teams', 'position')->get();
-            return Datatables::of($query)
-                ->addColumn('action', function ($item) {
-                    if ($item->user->status == '1'){
-                        $statusButton = '<form action="' . route('deactivate-player', $item->userId) . '" method="POST">
-                                            '.method_field("PATCH").'
-                                            '.csrf_field().'
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">block</span> Deactivate Player
-                                            </button>
-                                        </form>';
-                    }else{
-                        $statusButton = '<form action="' . route('activate-player', $item->userId) . '" method="POST">
-                                            '.method_field("PATCH").'
-                                            '.csrf_field().'
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">check_circle</span> Activate Player
-                                            </button>
-                                        </form>';
-                    }
-                    return '
-                        <div class="dropdown">
-                          <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('player-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Player</a>
-                            <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Player</a>
-                            '. $statusButton .'
-                            <a class="dropdown-item" href="' . route('player-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Player Password</a>
-                            <button type="button" class="dropdown-item delete-user" id="' . $item->userId . '">
-                                <span class="material-icons">delete</span> Delete Player
-                            </button>
-                          </div>
-                        </div>';
-                })
-                ->editColumn('teams.name', function ($item) {
-                    $playerTeam = '';
-                    if(count($item->teams) === 0){
-                        $playerTeam = 'No Team';
-                    }else{
-                        foreach ($item->teams as $team){
-                            $playerTeam .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
-                        }
-                    }
-                    return $playerTeam;
-                })
-                ->editColumn('name', function ($item) {
-                    return '
-                        <div class="media flex-nowrap align-items-center"
-                             style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
-                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>';
-                })
-                ->editColumn('status', function ($item){
-                    if ($item->user->status == '1') {
-                        return '<span class="badge badge-pill badge-success">Aktif</span>';
-                    }elseif ($item->user->status == '0'){
-                        return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
-                    }
-                })
-                ->editColumn('age', function ($item){
-                    return $this->getAge($item->user->dob);
-                })
-                ->rawColumns(['action', 'name','status', 'age', 'teams.name'])
-                ->make();
+            return $this->playerService->index();
         }
         return view('pages.admins.managements.players.index');
     }
@@ -141,36 +70,7 @@ class PlayerController extends Controller
     {
         $data = $request->validated();
 
-        $data['password'] = bcrypt($data['password']);
-
-        if ($request->hasFile('foto')){
-            $data['foto'] = $request->file('foto')->store('assets/user-profile', 'public');
-        }else{
-            $data['foto'] = 'images/undefined-user.png';
-        }
-
-        $data['status'] = '1';
-        $data['academyId'] = Auth::user()->academyId;
-
-        $user = User::create($data);
-        $user->assignRole('player');
-
-        $data['userId'] = $user->id;
-
-        $player = Player::create($data);
-
-        if ($request->team != null){
-            $player->teams()->attach($request->team);
-        }
-
-        PlayerParrent::create([
-            'firstName' => $data['firstName'],
-            'lastName' => $data['lastName'],
-            'relations' => $data['relations'],
-            'email' => $data['email'],
-            'phoneNumber' => $data['phoneNumber'],
-            'playerId' => $player->id,
-        ]);
+        $this->playerService->store($data, Auth::user()->academyId);
 
         $text = $data['firstName'].' account successfully added!';
         Alert::success($text);
@@ -184,7 +84,7 @@ class PlayerController extends Controller
     {
         $user = User::with('country', 'state', 'city', 'player')->findOrFail($id);
         $fullName = $user->firstName . ' ' . $user->lastName;
-        $age = $this->getAge($user->dob);
+        $age = $this->playerService->getAge($user->dob);
 
         if(count($user->player->teams) === 0){
             $team = 'No Team';
@@ -228,14 +128,7 @@ class PlayerController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('foto')){
-            $data['foto'] = $request->file('foto')->store('assets/user-profile', 'public');
-        }else{
-            $data['foto'] = $player_management->foto;
-        }
-
-        $player_management->update($data);
-        $player_management->player->update($data);
+        $this->playerService->update($data, $player_management);
 
         $text = $player_management->firstName.' successfully updated!';
         Alert::success($text);
@@ -243,17 +136,14 @@ class PlayerController extends Controller
     }
 
     public function deactivate(User $player){
-        $player->update([
-            'status' => '0'
-        ]);
+        $this->playerService->deactivate($player);
+
         Alert::success($player->firstName.' account status successfully deactivated!');
         return redirect()->route('player-managements.index');
     }
 
     public function activate(User $player){
-        $player->update([
-            'status' => '1'
-        ]);
+        $this->playerService->activate($player);
         Alert::success($player->firstName.' account status successfully activated!');
         return redirect()->route('player-managements.index');
     }
@@ -276,9 +166,7 @@ class PlayerController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
-        $player->update([
-            'password' => bcrypt($validator->getData()['password'])
-        ]);
+        $this->playerService->changePassword($validator->getData()['password'], $player);
         Alert::success($player->firstName.' account password successfully updated!');
         return redirect()->route('player-managements.index');
     }
@@ -288,12 +176,7 @@ class PlayerController extends Controller
      */
     public function destroy(User $player_management)
     {
-        if (File::exists($player_management->foto) && $player_management->foto != 'images/undefined-user.png'){
-            File::delete($player_management->foto);
-        }
-
-        $player_management->player->delete();
-        $player_management->delete();
+        $this->playerService->destroy($player_management);
 
         return response()->json(['success' => true]);
     }
