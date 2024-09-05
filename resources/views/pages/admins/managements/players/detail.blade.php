@@ -6,6 +6,68 @@
     @yield('title')
 @endsection
 
+@section('modal')
+    <div class="modal fade" id="addTeamModal" tabindex="-1" aria-labelledby="addTeamModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ route('opponentTeam-managements.apiStore') }}" method="post" id="formAddTeam">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Update Player's Team</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="teams">Teams</label>
+                                    <small class="text-danger">*</small>
+                                    @if(count($teams) == 0)
+                                        <div class="alert alert-light border-1 border-left-4 border-left-accent"
+                                             role="alert">
+                                            <div class="d-flex flex-wrap align-items-center">
+                                                <i class="material-icons mr-8pt">error_outline</i>
+                                                <div class="media-body"
+                                                     style="min-width: 180px">
+                                                    <small class="text-black-100">Curently you haven't create any player in your academy, please create your team</small>
+                                                </div>
+                                                <div class="ml-8pt mt-2 mt-sm-0">
+                                                    <a href="{{ route('team-managements.create') }}"
+                                                       class="btn btn-link btn-sm">Create Now</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <select class="form-control form-select @error('teams') is-invalid @enderror" id="teams" name="teams[]" data-toggle="select" multiple>
+                                            <option disabled>Select teams</option>
+                                            @foreach($teams as $team)
+                                                <option value="{{ $team->id }}" @selected(old('players') == in_array($team->id, $team_id)) data-avatar-src="{{ Storage::url($team->logo) }}">
+                                                    {{ $team->teamName }} - {{ $team->ageGroup }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    @endif
+                                    @error('teams')
+                                    <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
+
 @section('content')
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
@@ -167,12 +229,12 @@
             <div class="col-sm-6 card-group-row__col flex-column">
                 <div class="page-separator">
                     <div class="page-separator__text">Teams</div>
-                    <a href="#" class="btn btn-primary ml-auto" id="add-parent" data-toggle="modal" data-target="#exampleModal">
-                <span class="material-icons mr-2">
-                    add
-                </span>
+                    <button type="button" class="btn btn-sm btn-primary ml-auto" id="add-team">
+                        <span class="material-icons mr-2">
+                            add
+                        </span>
                         Add New
-                    </a>
+                    </button>
                 </div>
                 <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                     <div class="card-body">
@@ -448,6 +510,49 @@
                         });
                     }
                 });
+            });
+
+            $('body').on('click', '.delete-team', function() {
+                const idTeam = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert after delete this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, remove team!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('player-managements.removeTeam', ['player' => $user->id, 'team' => ':idTeam']) }}".replace(':idTeam', idTeam),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Player's team successfully removed!",
+                                });
+                                teamsTable.ajax.reload();
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "Something went wrong when deleting data!",
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('#add-team').on('click', function(e) {
+                e.preventDefault();
+                $('#addTeamModal').modal('show');
             });
         });
     </script>

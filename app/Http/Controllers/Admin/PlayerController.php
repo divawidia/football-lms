@@ -12,6 +12,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Services\PlayerService;
 use DateTime;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -96,11 +97,20 @@ class PlayerController extends Controller
         $user = User::with('country', 'state', 'city', 'player')->findOrFail($id);
         $fullName = $user->firstName . ' ' . $user->lastName;
         $age = $this->playerService->getAge($user->dob);
+        $teams = Team::all();
+
+        $team_id = [];
+
+        foreach ($user->player->teams as $team){
+            $team_id[] = $team->id;
+        }
 
         return view('pages.admins.managements.players.detail', [
             'user' => $user,
             'fullName' => $fullName,
             'age' => $age,
+            'teams' => $teams,
+            'team_id' => $team_id
         ]);
     }
 

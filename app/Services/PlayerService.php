@@ -117,7 +117,7 @@ class PlayerService extends Service
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="'.route('team-managements.edit', $item->id).'"><span class="material-icons">edit</span> Edit Team</a>
                             <a class="dropdown-item" href="'.route('team-managements.show', $item->id).'"><span class="material-icons">visibility</span> View Team</a>
-                            <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
+                            <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
                                 <span class="material-icons">delete</span> Remove Player from Team
                             </button>
                           </div>
