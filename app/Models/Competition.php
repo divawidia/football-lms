@@ -43,7 +43,7 @@ class Competition extends Model
     }
     public function opponentTeams()
     {
-        return $this->belongsToMany(OpponentTeam::class, 'competitionId', 'teamId')
+        return $this->belongsToMany(OpponentTeam::class, 'competition_team', 'competitionId', 'teamId')
             ->withPivot(
                 'matchPlayed',
                 'won',

@@ -541,7 +541,7 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <select class="form-control form-select @error('teams') is-invalid @enderror" id="teams" name="teams" data-toggle="select">
+                                            <select class="form-control form-select @error('teams') is-invalid @enderror" id="teams" name="teams[]" data-toggle="select">
                                                 <option selected disabled>Select team to play in this division</option>
                                                 @foreach($teams as $team)
                                                     <option value="{{ $team->id }}" @selected(old('teams') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
@@ -580,7 +580,7 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <select class="form-control form-select @error('opponentTeams') is-invalid @enderror" id="opponentTeams" name="opponentTeams" data-toggle="select" multiple>
+                                            <select class="form-control form-select @error('opponentTeams') is-invalid @enderror" id="opponentTeams" name="opponentTeams[]" data-toggle="select" multiple>
                                                 <option disabled>Select your opponent team who play in this division</option>
                                                 @foreach($opponentTeams as $team)
                                                     <option value="{{ $team->id }}" @selected(old('opponentTeams') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">

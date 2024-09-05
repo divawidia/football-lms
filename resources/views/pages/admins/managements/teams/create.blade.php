@@ -151,10 +151,10 @@
                                                      style="min-width: 180px">
                                                     <small class="text-black-100">Curently you haven't create any coach in your academy, please create your team</small>
                                                 </div>
-                                                <div class="ml-8pt mt-2 mt-sm-0">
-                                                    <a href="{{ route('coach.managements.create') }}"
-                                                       class="btn btn-link btn-sm">Create Now</a>
-                                                </div>
+{{--                                                <div class="ml-8pt mt-2 mt-sm-0">--}}
+{{--                                                    <a href="{{ route('coach.managements.create') }}"--}}
+{{--                                                       class="btn btn-link btn-sm">Create Now</a>--}}
+{{--                                                </div>--}}
                                             </div>
                                         </div>
                                     @else

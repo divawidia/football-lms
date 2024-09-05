@@ -29,7 +29,7 @@ class OpponentTeamRequest extends FormRequest
             'coachName' => ['nullable', 'string'],
             'directorName' => ['nullable','string'],
             'totalPlayers' => ['nullable','numeric', 'min:0'],
-            'academyName' => ['nullable','string']
+            'academyName' => ['nullable','string'],
         ];
     }
 }
