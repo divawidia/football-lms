@@ -10,7 +10,8 @@
     <div class="modal fade" id="addTeamModal" tabindex="-1" aria-labelledby="addTeamModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('opponentTeam-managements.apiStore') }}" method="post" id="formAddTeam">
+                <form action="{{ route('player-managements.updateTeams', $user->player->id) }}" method="post" id="formAddTeam">
+                    @method('PUT')
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Update Player's Team</h5>
@@ -40,20 +41,18 @@
                                             </div>
                                         </div>
                                     @else
-                                        <select class="form-control form-select @error('teams') is-invalid @enderror" id="teams" name="teams[]" data-toggle="select" multiple>
+                                        <select class="form-control form-select add_teams" id="teams" name="teams[]" data-toggle="select" multiple>
                                             <option disabled>Select teams</option>
                                             @foreach($teams as $team)
-                                                <option value="{{ $team->id }}" @selected(old('players') == in_array($team->id, $team_id)) data-avatar-src="{{ Storage::url($team->logo) }}">
+                                                <option value="{{ $team->id }}" @selected(in_array($team->id, $team_id)) data-avatar-src="{{ Storage::url($team->logo) }}">
                                                     {{ $team->teamName }} - {{ $team->ageGroup }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     @endif
-                                    @error('teams')
-                                    <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
+                                    <span class="invalid-feedback teams_error" role="alert">
+                                        <strong></strong>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -553,6 +552,40 @@
             $('#add-team').on('click', function(e) {
                 e.preventDefault();
                 $('#addTeamModal').modal('show');
+            });
+
+            $('#formAddTeam').on('submit', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: $(this).attr('method'),
+                    url: $(this).attr('action'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+                        $('#addTeamModal').modal('hide');
+                        Swal.fire({
+                            title: "Player's team successfully updated!",
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        $.each(response.errors, function(key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("select#add_" + key).addClass('is-invalid');
+                        });
+                    }
+                });
             });
         });
     </script>

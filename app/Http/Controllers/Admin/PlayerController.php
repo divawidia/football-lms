@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Nnjeim\World\World;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -147,6 +148,23 @@ class PlayerController extends Controller
         $text = $player_management->firstName.' successfully updated!';
         Alert::success($text);
         return redirect()->route('player-managements.show', $player_management->id);
+    }
+
+    public function updateTeams(Request $request, Player $player)
+    {
+        $validator = Validator::make($request->all(), [
+            'teams' => ['required', Rule::exists('teams', 'id')]
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->errors()->toArray()
+            ]);
+        }else{
+            $player = $this->playerService->updateTeams($validator->getData()['teams'], $player);
+            return response()->json($player, 204);
+        }
     }
 
     public function deactivate(User $player){

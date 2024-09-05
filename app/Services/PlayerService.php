@@ -153,6 +153,12 @@ class PlayerService extends Service
         return $player;
     }
 
+    public function updateTeams($teamData, Player $player)
+    {
+        $player->teams()->sync($teamData);
+        return $player;
+    }
+
     public  function store(array $playerData, $academyId){
 
         $playerData['password'] = bcrypt($playerData['password']);
