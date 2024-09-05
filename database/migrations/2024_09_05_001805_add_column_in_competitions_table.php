@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::table('competitions', function (Blueprint $table) {
             $table->enum('status', [1, 0]);
+            $table->string('logo')->nullable()->change();
+            $table->string('contactName')->nullable()->change();
+            $table->string('contactPhone')->nullable()->change();
         });
     }
 
@@ -23,6 +26,9 @@ return new class extends Migration
     {
         Schema::table('competitions', function (Blueprint $table) {
             $table->dropColumn('status');
+            $table->string('logo')->change();
+            $table->string('contactName')->change();
+            $table->string('contactPhone')->change();
         });
     }
 };
