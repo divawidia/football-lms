@@ -112,10 +112,10 @@ class CompetitionService extends Service
         $competition = Competition::create($competitionData);
 
         if (array_key_exists('opponentTeams', $competitionData)){
-            $competition->opponentTeams()->attach($competitionData['opponentTeams']);
+            $competition->opponentTeams()->attach($competitionData['opponentTeams'], ['groupDivision', $competitionData['division']]);
         }
         if (array_key_exists('teams', $competitionData)){
-            $competition->teams()->attach($competitionData['teams']);
+            $competition->teams()->attach($competitionData['teams'], ['groupDivision', $competitionData['division']]);
         }
         return $competition;
     }
@@ -130,9 +130,6 @@ class CompetitionService extends Service
         }
 
         $competition->update($competitionData);
-        $competition->teams()->sync($competitionData['teams']);
-        $competition->opponentTeams()->sync($competitionData['teams']);
-
         return $competition;
     }
 

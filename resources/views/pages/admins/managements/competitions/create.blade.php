@@ -608,7 +608,6 @@
         </div>
     @endsection
     @push('addon-script')
-        <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>
         <script>
             $(document).ready(function () {
                 function imagePreview(inputId, imageId){

@@ -13,6 +13,7 @@ use App\Services\CompetitionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -71,7 +72,7 @@ class CompetitionController extends Controller
      */
     public function show(Competition $competition)
     {
-        return view('pages.admins.managements.competition.detail', [
+        return view('pages.admins.managements.competitions.detail', [
             'competition' => $competition,
         ]);
     }
@@ -81,25 +82,10 @@ class CompetitionController extends Controller
      */
     public function edit(Competition $competition)
     {
-        $teams = Team::all();
-        $opponentTeams = OpponentTeam::all();
-        $teams_id = [];
-        $opponentTeams_id = [];
 
-        foreach ($competition->teams as $team){
-            $teams_id[] = $team->id;
-        }
 
-        foreach ($competition->opponentTeams as $opponentTeam){
-            $opponentTeams_id[] = $opponentTeam->id;
-        }
-
-        return view('pages.admins.managements.competition.edit',[
+        return view('pages.admins.managements.competitions.edit',[
             'competition' => $competition,
-            'teams' => $teams,
-            'opponentTeams' => $opponentTeams,
-            'teams_id' => $teams_id,
-            'opponentTeams_id' => $opponentTeams_id
         ]);
     }
 
@@ -108,13 +94,24 @@ class CompetitionController extends Controller
      */
     public function update(Request $request, Competition $competition)
     {
-        $data = $request->validated();
+
+        $data = $request->validate([
+            'name' => ['required', 'string'],
+            'type' => ['required', Rule::in('League', 'Tournament')],
+            'logo' => ['nullable', 'image', 'max:10240'],
+            'startDate' => ['required', 'date', 'after_or_equal:today'],
+            'endDate' => ['required', 'date', 'after:startDate'],
+            'location' => ['required', 'string'],
+            'contactName' => ['nullable', 'string'],
+            'contactPhone' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
+        ]);
 
         $this->competitionService->update($data, $competition);
 
         $text = 'Competition '.$competition->name.' successfully updated!';
         Alert::success($text);
-        return redirect()->route('competition-managements.show', $competition->id);
+        return redirect()->route('competition-managements.index');
     }
 
     public function activate(Competition $competition)
