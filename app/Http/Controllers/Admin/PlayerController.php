@@ -43,10 +43,10 @@ class PlayerController extends Controller
         return view('pages.admins.managements.players.index');
     }
 
-    public function playerTeams(Player $player)
+    public function playerTeams(User $player)
     {
         if (request()->ajax()) {
-            return $this->playerService->playerTeams($player);
+            return $this->playerService->playerTeams($player->player);
         }
     }
 

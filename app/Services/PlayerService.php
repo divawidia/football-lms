@@ -105,7 +105,6 @@ class PlayerService extends Service
     public function playerTeams(Player $player): \Illuminate\Http\JsonResponse
     {
         $query = Player::with('teams')->findOrFail($player->id);
-        dd($query);
         return Datatables::of($query->teams)
             ->addColumn('action', function ($item) {
                 return '
@@ -116,11 +115,10 @@ class PlayerService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('player-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Player</a>
-                            <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Player</a>
-                            <a class="dropdown-item" href="' . route('player-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Player Password</a>
-                            <button type="button" class="dropdown-item delete-user" id="' . $item->userId . '">
-                                <span class="material-icons">delete</span> Delete Player
+                            <a class="dropdown-item" href="'.route('team-managements.edit', $item->id).'"><span class="material-icons">edit</span> Edit Team</a>
+                            <a class="dropdown-item" href="'.route('team-managements.show', $item->id).'"><span class="material-icons">visibility</span> View Team</a>
+                            <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
+                                <span class="material-icons">delete</span> Remove Player from Team
                             </button>
                           </div>
                         </div>';

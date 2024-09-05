@@ -347,6 +347,26 @@
                 ]
             });
 
+            const teamsTable = $('#teamsTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! route('player-managements.playerTeams', $user->id) !!}',
+                },
+                columns: [
+                    { data: 'name', name: 'name' },
+                    { data: 'date', name: 'date' },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ]
+            });
+
             $('.delete-user').on('click', function() {
                 let id = $(this).attr('id');
 
