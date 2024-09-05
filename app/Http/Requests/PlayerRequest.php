@@ -51,7 +51,7 @@ class PlayerRequest extends FormRequest
             'email2' => ['email', Rule::unique('player_parrents', 'email')],
             'phoneNumber2' => ['string'],
             'relations' => ['string'],
-            'team' => ['nullable', Rule::exists('teams')]
+            'team' => ['nullable', Rule::exists('teams', 'id')]
         ];
     }
 }

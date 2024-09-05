@@ -30,10 +30,6 @@
             <div class="list-group">
                 <form action="{{ route('player-managements.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
-                    <div class="list-group-item d-flex justify-content-end">
-                        <a class="btn btn-secondary mx-2" href="{{ route('player-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
-                        <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
-                    </div>
                     <div class="list-group-item">
                         <div role="group" aria-labelledby="label-question" class="m-0 form-group">
                             <div class="page-separator">
@@ -135,7 +131,7 @@
                                             <select class="form-control form-select @error('team') is-invalid @enderror" id="team" name="team">
                                                 <option selected disabled>Select Team</option>
                                                 @foreach($teams as $team)
-                                                    <option value="{{ $team->id }}" @selected(old('team') == $team->id)>{{ $team->name }}</option>
+                                                    <option value="{{ $team->id }}" @selected(old('team') == $team->id)>{{ $team->teamName }}</option>
                                                 @endforeach
                                             </select>
                                         @endif
@@ -384,13 +380,20 @@
                                     <div class="form-group">
                                         <label class="form-label" for="height">Height</label>
                                         <small class="text-danger">*</small>
-                                        <input type="number"
-                                               class="form-control @error('height') is-invalid @enderror"
-                                               id="height"
-                                               name="height"
-                                               required
-                                               value="{{ old('height') }}"
-                                               placeholder="Input player's height ...">
+                                        <div class="input-group input-group-merge">
+                                            <input type="number"
+                                                   class="form-control @error('height') is-invalid @enderror"
+                                                   id="height"
+                                                   name="height"
+                                                   required
+                                                   value="{{ old('height') }}"
+                                                   placeholder="Input player's height ...">
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    CM
+                                                </div>
+                                            </div>
+                                        </div>
                                         @error('height')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -402,13 +405,20 @@
                                     <div class="form-group">
                                         <label class="form-label" for="weight">Weight</label>
                                         <small class="text-danger">*</small>
-                                        <input type="number"
-                                               class="form-control @error('weight') is-invalid @enderror"
-                                               id="weight"
-                                               name="weight"
-                                               required
-                                               value="{{ old('weight') }}"
-                                               placeholder="Input player's weight ...">
+                                        <div class="input-group input-group-merge">
+                                            <input type="number"
+                                                   class="form-control @error('weight') is-invalid @enderror"
+                                                   id="weight"
+                                                   name="weight"
+                                                   required
+                                                   value="{{ old('weight') }}"
+                                                   placeholder="Input player's weight ...">
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    KG
+                                                </div>
+                                            </div>
+                                        </div>
                                         @error('weight')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -418,7 +428,7 @@
                                 </div>
                             </div>
                             <div class="page-separator mt-3">
-                                <div class="page-separator__text">Parrents/Guardians</div>
+                                <div class="page-separator__text">Parent/Guardian</div>
                             </div>
                             <div class="row">
                                 <div class="col-lg-6">
@@ -514,6 +524,10 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-end">
+                        <a class="btn btn-secondary mx-2" href="{{ route('player-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                     </div>
                 </form>
             </div>

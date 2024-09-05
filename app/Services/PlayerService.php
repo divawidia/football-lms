@@ -121,8 +121,8 @@ class PlayerService extends Service
 
         $player = Player::create($playerData);
 
-        if ($playerData['teams'] != null){
-            $player->teams()->attach($playerData['teams']);
+        if ($playerData['team'] != null){
+            $player->teams()->attach($playerData['team']);
         }
 
         PlayerParrent::create([
