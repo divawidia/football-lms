@@ -357,13 +357,13 @@
                                                        name="logo"
                                                        id="logo">
                                                 <label class="custom-file-label" for="logo">Choose file</label>
+                                                @error('logo')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
                                             </div>
                                         </div>
-                                        @error('logo')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="type">Competition Type</label>
@@ -371,7 +371,7 @@
                                         <select class="form-control form-select @error('type') is-invalid @enderror" id="type" name="type" required data-toggle="select">
                                             <option disabled selected>Select competition type</option>
                                             @foreach(['League', 'Tournament'] AS $type)
-                                                <option value="{{ $type }}" @selected(old('ageGroup') == $type)>{{ $type }}</option>
+                                                <option value="{{ $type }}" @selected(old('type') == $type)>{{ $type }}</option>
                                             @endforeach
                                         </select>
                                         @error('ageGroup')
