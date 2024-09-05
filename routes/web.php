@@ -71,6 +71,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::patch('activate', [PlayerController::class, 'activate'])->name('activate-player');
         Route::get('change-password', [PlayerController::class, 'changePasswordPage'])->name('player-managements.change-password-page');
         Route::patch('change-password', [PlayerController::class, 'changePassword'])->name('player-managements.change-password');
+        Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('player-managements.playerTeams');
 
         Route::get('parents', [PlayerParentController::class, 'index'])->name('player-parents.index');
         Route::get('parents/create', [PlayerParentController::class, 'create'])->name('player-parents.create');
