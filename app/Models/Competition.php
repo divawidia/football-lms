@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Competition extends Model
 {
@@ -22,7 +23,7 @@ class Competition extends Model
         'status',
     ];
 
-    public function teams()
+    public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'competition_team', 'competitionId', 'teamId')
             ->withPivot(
@@ -37,9 +38,8 @@ class Competition extends Model
                 'redCards',
                 'yellowCards',
                 'groupDivision',
-                'competitionResult'
-            )
-            ->withTimestamps;
+                'competitionResult',
+            )->withTimestamps();
     }
     public function opponentTeams()
     {
@@ -57,7 +57,6 @@ class Competition extends Model
                 'yellowCards',
                 'groupDivision',
                 'competitionResult'
-            )
-            ->withTimestamps;
+            )->withTimestamps();
     }
 }

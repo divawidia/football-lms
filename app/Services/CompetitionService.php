@@ -105,6 +105,7 @@ class CompetitionService extends Service
         $competitionData['status'] = '1';
 
         $competition = Competition::create($competitionData);
+
         if (array_key_exists('opponentTeams', $competitionData)){
             $competition->opponentTeams()->attach($competitionData['opponentTeams']);
         }
