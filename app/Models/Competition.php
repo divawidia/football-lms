@@ -19,6 +19,7 @@ class Competition extends Model
         'contactName',
         'contactPhone',
         'description',
+        'status',
     ];
 
     public function teams()
