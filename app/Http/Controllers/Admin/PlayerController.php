@@ -69,7 +69,6 @@ class PlayerController extends Controller
     public function store(PlayerRequest $request)
     {
         $data = $request->validated();
-
         $this->playerService->store($data, Auth::user()->academyId);
 
         $text = $data['firstName'].' account successfully added!';
@@ -86,17 +85,10 @@ class PlayerController extends Controller
         $fullName = $user->firstName . ' ' . $user->lastName;
         $age = $this->playerService->getAge($user->dob);
 
-        if(count($user->player->teams) === 0){
-            $team = 'No Team';
-        }else{
-            $team = $user->player->teams->name;
-        }
-
         return view('pages.admins.managements.players.detail', [
             'user' => $user,
             'fullName' => $fullName,
             'age' => $age,
-            'team' => $team
         ]);
     }
 

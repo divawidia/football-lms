@@ -16,7 +16,7 @@
                  alt="instructor">
             <div class="flex mb-32pt mb-md-0">
                 <h2 class="text-white mb-0">{{ $fullName  }}</h2>
-                <p class="lead text-white-50 d-flex align-items-center">Player - {{ $user->player->position->name }} - {{ $team }}</p>
+                <p class="lead text-white-50 d-flex align-items-center">Player - {{ $user->player->position->name }}</p>
             </div>
             <div class="dropdown">
                 <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -93,7 +93,7 @@
                 </div>
             </div>
             <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
+                <div class="card border-1 border-left-3 border-left-accent">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
                             <div class="h2 mb-0 mr-3">12</div>

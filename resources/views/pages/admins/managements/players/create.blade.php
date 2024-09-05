@@ -110,8 +110,10 @@
                                         @enderror
                                     </div>
                                     <div class="form-group mb-3">
-                                        <label class="form-label" for="team">Team</label>
-                                        <small class="text-black-100">(Optional)</small>
+                                        <div class="d-flex flex-row align-items-center mb-2">
+                                            <label class="form-label mb-0" for="team">Player's Teams</label>
+                                            <small class="text-danger">*</small>
+                                        </div>
                                         @if(count($teams) == 0)
                                             <div class="alert alert-light border-1 border-left-4 border-left-accent"
                                                  role="alert">
@@ -119,26 +121,28 @@
                                                     <i class="material-icons mr-8pt">error_outline</i>
                                                     <div class="media-body"
                                                          style="min-width: 180px">
-                                                        <small class="text-black-100">Curently you haven't create any team in your academy, please create your team</small>
+                                                        <small class="text-black-100">Curently you haven't create any opponent team, please create your opponent team</small>
                                                     </div>
                                                     <div class="ml-8pt mt-2 mt-sm-0">
-                                                        <a href="#"
+                                                        <a href="{{ route('team-managements.create') }}"
                                                            class="btn btn-link btn-sm">Create Now</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         @else
-                                            <select class="form-control form-select @error('team') is-invalid @enderror" id="team" name="team">
-                                                <option selected disabled>Select Team</option>
+                                            <select class="form-control form-select @error('team') is-invalid @enderror" id="team" name="team[]" data-toggle="select" multiple >
+                                                <option disabled>Select your opponent team who play in this division</option>
                                                 @foreach($teams as $team)
-                                                    <option value="{{ $team->id }}" @selected(old('team') == $team->id)>{{ $team->teamName }}</option>
+                                                    <option value="{{ $team->id }}" @selected(old('team') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
+                                                        {{ $team->teamName }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         @endif
                                         @error('team')
                                         <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                                <strong>{{ $message }}</strong>
+                                            </span>
                                         @enderror
                                     </div>
                                 </div>
