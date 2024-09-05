@@ -90,7 +90,12 @@ class CompetitionService extends Service
                 return $startDate.' '.$endDate;
             })
             ->editColumn('contact', function ($item) {
-                return $item->contactName. ' ('.$item->contactPhone.')';
+                if ($item->contactName != null && $item->contactPhone != null){
+                    $contact = $item->contactName. ' ~ '.$item->contactPhone;
+                }else{
+                    $contact = 'No cantact added';
+                }
+                return $contact;
             })
             ->rawColumns(['action', 'name', 'teams', 'opponentTeams', 'date', 'contact'])
             ->make();

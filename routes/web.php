@@ -145,6 +145,8 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::get('edit', [CompetitionController::class, 'edit'])->name('competition-managements.edit');
             Route::put('update', [CompetitionController::class, 'update'])->name('competition-managements.update');
             Route::delete('destroy', [CompetitionController::class, 'destroy'])->name('competition-managements.destroy');
+            Route::patch('deactivate', [CompetitionController::class, 'deactivate'])->name('deactivate-competition');
+            Route::patch('activate', [CompetitionController::class, 'activate'])->name('activate-competition');
 //            Route::get('players', [CompetitionController::class, 'competitionPlayers'])->name('competition-managements.competitionPlayers');
 //            Route::get('coaches', [CompetitionController::class, 'competitionCoaches'])->name('competition-managements.competitionCoaches');
 //            Route::get('editPlayers', [CompetitionController::class, 'editPlayercompetition'])->name('competition-managements.editPlayercompetition');
