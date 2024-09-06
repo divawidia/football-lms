@@ -8,7 +8,6 @@ use App\Http\Controllers\Admin\OpponentTeamController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\TeamController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -122,27 +121,20 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             });
         });
         Route::prefix('opponent-teams')->group(function () {
-            Route::get('', [TeamController::class, 'opponentTeamsIndex'])->name('team-managements.opponentTeamsIndex');
+            Route::get('', [OpponentTeamController::class, 'index'])->name('opponentTeam-managements.index');
             Route::get('create', [OpponentTeamController::class, 'create'])->name('opponentTeam-managements.create');
+            Route::post('store', [OpponentTeamController::class, 'store'])->name('opponentTeam-managements.store');
+            Route::post('api/store', [OpponentTeamController::class, 'apiStore'])->name('opponentTeam-managements.apiStore');
+            Route::prefix('{team}')->group(function () {
+                Route::get('', [OpponentTeamController::class, 'show'])->name('opponentTeam-managements.show');
+                Route::get('edit', [OpponentTeamController::class, 'edit'])->name('opponentTeam-managements.edit');
+                Route::put('update', [OpponentTeamController::class, 'update'])->name('opponentTeam-managements.update');
+                Route::delete('destroy', [OpponentTeamController::class, 'destroy'])->name('opponentTeam-managements.destroy');
+            });
         });
     });
 
-    Route::prefix('opponent-team-managements')->group(function (){
-        Route::get('', [OpponentTeamController::class, 'index'])->name('opponentTeam-managements.index');
-        Route::get('create', [OpponentTeamController::class, 'create'])->name('opponentTeam-managements.create');
-        Route::post('store', [OpponentTeamController::class, 'store'])->name('opponentTeam-managements.store');
-        Route::post('api/store', [OpponentTeamController::class, 'apiStore'])->name('opponentTeam-managements.apiStore');
-        Route::prefix('{team}')->group(function () {
-            Route::get('', [OpponentTeamController::class, 'show'])->name('opponentTeam-managements.show');
-            Route::get('edit', [OpponentTeamController::class, 'edit'])->name('opponentTeam-managements.edit');
-            Route::put('update', [OpponentTeamController::class, 'update'])->name('opponentTeam-managements.update');
-            Route::delete('destroy', [OpponentTeamController::class, 'destroy'])->name('opponentTeam-managements.destroy');
-            Route::patch('deactivate', [OpponentTeamController::class, 'deactivate'])->name('deactivate-opponentTeam');
-            Route::patch('activate', [OpponentTeamController::class, 'activate'])->name('activate-opponentTeam');
-        });
-    });
-
-    Route::prefix('competition-managements')->group(function (){
+    Route::prefix('competition-managements')->group(function () {
         Route::get('', [CompetitionController::class, 'index'])->name('competition-managements.index');
         Route::get('create', [CompetitionController::class, 'create'])->name('competition-managements.create');
         Route::post('store', [CompetitionController::class, 'store'])->name('competition-managements.store');
@@ -153,14 +145,6 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::delete('destroy', [CompetitionController::class, 'destroy'])->name('competition-managements.destroy');
             Route::patch('deactivate', [CompetitionController::class, 'deactivate'])->name('deactivate-competition');
             Route::patch('activate', [CompetitionController::class, 'activate'])->name('activate-competition');
-//            Route::get('players', [CompetitionController::class, 'competitionPlayers'])->name('competition-managements.competitionPlayers');
-//            Route::get('coaches', [CompetitionController::class, 'competitionCoaches'])->name('competition-managements.competitionCoaches');
-//            Route::get('editPlayers', [CompetitionController::class, 'editPlayercompetition'])->name('competition-managements.editPlayercompetition');
-//            Route::put('updatePlayers', [CompetitionController::class, 'updatePlayercompetition'])->name('competition-managements.updatePlayercompetition');
-//            Route::get('editCoaches', [CompetitionController::class, 'editCoachescompetition'])->name('competition-managements.editCoachescompetition');
-//            Route::put('updateCoaches', [CompetitionController::class, 'updateCoachcompetition'])->name('competition-managements.updateCoachcompetition');
-//            Route::put('remove-team/{team}', [CompetitionController::class, 'removePlayer'])->name('competition-managements.removePlayer');
-//            Route::put('remove-opponent-team/{team}', [CompetitionController::class, 'removeCoach'])->name('competition-managements.removeCoach');
         });
     });
 });
