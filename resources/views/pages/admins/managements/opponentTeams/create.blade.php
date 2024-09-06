@@ -28,7 +28,7 @@
 
     <div class="container page__container page-section">
         <div class="list-group">
-            <form action="{{ route('team-managements.store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('opponentTeam-managements.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="list-group-item d-flex justify-content-end">
                     <a class="btn btn-secondary mx-2" href="{{ route('opponentTeam-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
@@ -81,56 +81,8 @@
                                         </span>
                                     @enderror
                                 </div>
-                                <div class="form-group ">
-                                    <label class="form-label" for="academyName">Academy Name</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="text"
-                                           id="academyName"
-                                           name="academyName"
-                                           required
-                                           value="{{ old('academyName') }}"
-                                           class="form-control @error('academyName') is-invalid @enderror"
-                                           placeholder="Input team's name ...">
-                                    @error('academyName')
-                                    <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="form-group ">
-                                    <label class="form-label" for="coachName">Coach Name</label>
-                                    <small class="text-black-100">(Optional)</small>
-                                    <input type="text"
-                                           id="coachName"
-                                           name="coachName"
-                                           required
-                                           value="{{ old('coachName') }}"
-                                           class="form-control @error('coachName') is-invalid @enderror"
-                                           placeholder="Input team's coach name ...">
-                                    @error('coachName')
-                                    <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
                             </div>
                             <div class="col-lg-6">
-                                <div class="form-group ">
-                                    <label class="form-label" for="directorName">Director Name</label>
-                                    <small class="text-black-100">(Optional)</small>
-                                    <input type="text"
-                                           id="directorName"
-                                           name="directorName"
-                                           required
-                                           value="{{ old('directorName') }}"
-                                           class="form-control @error('directorName') is-invalid @enderror"
-                                           placeholder="Input team's director name ...">
-                                    @error('directorName')
-                                    <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
                                 <div class="form-group">
                                     <label class="form-label" for="ageGroup">Age Group</label>
                                     <small class="text-danger">*</small>
@@ -141,29 +93,6 @@
                                         @endforeach
                                     </select>
                                     @error('ageGroup')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                                <div class="form-group ">
-                                    <label class="form-label" for="totalPlayers">Total Players</label>
-                                    <small class="text-black-100">(Optional)</small>
-                                    <div class="input-group input-group-merge">
-                                        <input type="number"
-                                               id="totalPlayers"
-                                               name="totalPlayers"
-                                               required
-                                               value="{{ old('totalPlayers') }}"
-                                               class="form-control @error('totalPlayers') is-invalid @enderror"
-                                               placeholder="Input team's total player ...">
-                                        <div class="input-group-append">
-                                            <div class="input-group-text">
-                                                Player(s)
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @error('totalPlayers')
                                     <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>

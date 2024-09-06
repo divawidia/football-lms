@@ -65,6 +65,22 @@
                                         </span>
                                     @enderror
                                 </div>
+                                <div class="form-group mb-4">
+                                    <label class="form-label" for="teamName">Team Name</label>
+                                    <small class="text-danger">*</small>
+                                    <input type="text"
+                                           id="teamName"
+                                           name="teamName"
+                                           required
+                                           value="{{ old('teamName') }}"
+                                           class="form-control @error('teamName') is-invalid @enderror"
+                                           placeholder="Input team's name ...">
+                                    @error('teamName')
+                                    <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
                                 <div class="form-group">
                                     <label class="form-label" for="ageGroup">Age Group</label>
                                     <small class="text-danger">*</small>
@@ -80,6 +96,8 @@
                                         </span>
                                     @enderror
                                 </div>
+                            </div>
+                            <div class="col-lg-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label" for="players">Players</label>
                                     <small class="text-black-100">(Optional)</small>
@@ -116,24 +134,6 @@
                                         </select>
                                     @endif
                                     @error('team')
-                                    <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group mb-4">
-                                    <label class="form-label" for="teamName">Team Name</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="text"
-                                           id="teamName"
-                                           name="teamName"
-                                           required
-                                           value="{{ old('teamName') }}"
-                                           class="form-control @error('teamName') is-invalid @enderror"
-                                           placeholder="Input team's name ...">
-                                    @error('teamName')
                                     <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>

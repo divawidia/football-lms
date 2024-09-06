@@ -57,7 +57,7 @@
 
             <div class="page-separator">
                 <div class="page-separator__text">Opponent Teams</div>
-                <a href="{{  route('team-managements.create') }}" class="btn btn-sm btn-primary ml-auto " id="add-new">
+                <a href="{{  route('opponentTeam-managements.create') }}" class="btn btn-sm btn-primary ml-auto " id="add-new">
                 <span class="material-icons mr-2">
                     add
                 </span>
@@ -114,7 +114,7 @@
                     serverSide: true,
                     ordering: true,
                     ajax: {
-                        url: '{!! route('team-managements.opponentTeamsIndex') !!}',
+                        url: '{!! route('opponentTeam-managements.index') !!}',
                     },
                     columns: [
                         { data: 'name', name: 'name' },
