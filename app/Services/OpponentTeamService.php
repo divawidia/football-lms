@@ -11,26 +11,26 @@ class OpponentTeamService extends Service
 {
     public function index(): \Illuminate\Http\JsonResponse
     {
-            $query = OpponentTeam::all();
-            return Datatables::of($query)->addColumn('action', function ($item) {
-                if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('deactivate-opponentTeam', $item->id) . '" method="POST">
-                                        ' . method_field("PATCH") . '
-                                        ' . csrf_field() . '
-                                        <button type="submit" class="dropdown-item">
-                                            <span class="material-icons">block</span> Deactivate Team
-                                        </button>
-                                    </form>';
-                } else {
-                    $statusButton = '<form action="' . route('activate-opponentTeam', $item->id) . '" method="POST">
-                                        ' . method_field("PATCH") . '
-                                        ' . csrf_field() . '
-                                        <button type="submit" class="dropdown-item">
-                                            <span class="material-icons">check_circle</span> Activate Team
-                                        </button>
-                                    </form>';
-                }
-                return '
+        $query = Team::with('competitions')->where('teamSide', 'Opponent Team')->get();
+        return Datatables::of($query)->addColumn('action', function ($item) {
+            if ($item->status == '1') {
+                $statusButton = '<form action="' . route('deactivate-team', $item->id) . '" method="POST">
+                                                    ' . method_field("PATCH") . '
+                                                    ' . csrf_field() . '
+                                                    <button type="submit" class="dropdown-item">
+                                                        <span class="material-icons">block</span> Deactivate Team
+                                                    </button>
+                                                </form>';
+            } else {
+                $statusButton = '<form action="' . route('activate-team', $item->id) . '" method="POST">
+                                                    ' . method_field("PATCH") . '
+                                                    ' . csrf_field() . '
+                                                    <button type="submit" class="dropdown-item">
+                                                        <span class="material-icons">check_circle</span> Activate Team
+                                                    </button>
+                                                </form>';
+            }
+            return '
                             <div class="dropdown">
                               <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="material-icons">
@@ -38,17 +38,30 @@ class OpponentTeamService extends Service
                                 </span>
                               </button>
                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
-                                <a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
+                                <a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
+                                <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
                                 ' . $statusButton . '
-                                <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
+                                <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
                                     <span class="material-icons">delete</span> Delete Team
                                 </button>
                               </div>
                             </div>';
+        })
+            ->editColumn('competitions', function ($item) {
+                $competition = '';
+                if (count($item->competitions) == 0){
+                    $competition = 'Not joined any competition yet';
+                }else{
+                    foreach ($item->competitions as $data){
+                        if ($data->status == '1'){
+                            $competition .= '<span class="badge badge-pill badge-danger">'.$data->name.'</span>';
+                        }
+                    }
+                }
+                return $competition;
             })
-                ->editColumn('name', function ($item) {
-                    return '
+            ->editColumn('name', function ($item) {
+                return '
                             <div class="media flex-nowrap align-items-center"
                                  style="white-space: nowrap;">
                                 <div class="avatar avatar-sm mr-8pt">
@@ -63,19 +76,18 @@ class OpponentTeamService extends Service
                                     </div>
                                 </div>
                             </div>';
-                })
-                ->editColumn('status', function ($item) {
-                    if ($item->status == '1') {
-                        return '<span class="badge badge-pill badge-success">Aktif</span>';
-                    } elseif ($item->status == '0') {
-                        return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
-                    }
-                })
-                ->editColumn('players', function ($item) {
-                    return $item->totalPlayers . ' Player(s)';
-                })
-                ->rawColumns(['action', 'name', 'status', 'players'])
-                ->make();
+            })
+            ->editColumn('status', function ($item) {
+                $status = '';
+                if ($item->status == '1') {
+                    $status = '<span class="badge badge-pill badge-success">Aktif</span>';
+                } elseif ($item->status == '0') {
+                    $status = '<span class="badge badge-pill badge-danger">Non Aktif</span>';
+                }
+                return $status;
+            })
+            ->rawColumns(['action', 'name', 'status', 'competitions'])
+            ->make();
     }
     public  function store(array $data){
 
@@ -89,36 +101,24 @@ class OpponentTeamService extends Service
         return Team::create($data);
     }
 
-    public function update(array $opponentTeamData, OpponentTeam $opponentTeam): OpponentTeam
+    public function update(array $data, Team $team): Team
     {
-        if (array_key_exists('logo', $opponentTeamData)){
-            $this->deleteImage($opponentTeam->logo);
-            $opponentTeamData['logo'] = $opponentTeamData['logo']->store('assets/team-logo', 'public');
+        if (array_key_exists('logo', $data)){
+            $this->deleteImage($team->logo);
+            $data['logo'] = $data['logo']->store('assets/team-logo', 'public');
         }else{
-            $opponentTeamData['logo'] = $opponentTeam->logo;
+            $data['logo'] = $team->logo;
         }
 
-        $opponentTeam->update($opponentTeamData);
+        $team->update($data);
 
-        return $opponentTeam;
+        return $team;
     }
 
-    public function activate(OpponentTeam $opponentTeam): OpponentTeam
+    public function destroy(Team $team): Team
     {
-        $opponentTeam->update(['status' => '1']);
-        return $opponentTeam;
-    }
-
-    public function deactivate(OpponentTeam $opponentTeam): OpponentTeam
-    {
-        $opponentTeam->update(['status' => '0']);
-        return $opponentTeam;
-    }
-
-    public function destroy(OpponentTeam $opponentTeam): OpponentTeam
-    {
-        $this->deleteImage($opponentTeam->logo);
-        $opponentTeam->delete();
-        return $opponentTeam;
+        $this->deleteImage($team->logo);
+        $team->delete();
+        return $team;
     }
 }

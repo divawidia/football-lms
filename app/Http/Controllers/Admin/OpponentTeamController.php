@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\OpponentTeamRequest;
+use App\Http\Requests\TeamRequest;
 use App\Models\OpponentTeam;
+use App\Models\Team;
 use App\Services\OpponentTeamService;
 use Illuminate\Http\JsonResponse;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -23,7 +24,6 @@ class OpponentTeamController extends Controller
         if (request()->ajax()) {
             return $this->opponentTeamService->index();
         }
-        return view('pages.admins.managements.opponentTeams.index');
     }
 
     /**
@@ -37,7 +37,7 @@ class OpponentTeamController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(OpponentTeamRequest $request)
+    public function store(TeamRequest $request)
     {
         $data = $request->validated();
 
@@ -45,20 +45,16 @@ class OpponentTeamController extends Controller
 
         $text = 'Team '.$data['teamName'].' successfully added!';
         Alert::success($text);
-        return redirect()->route('opponentTeam-managements.index');
+        return redirect()->route('team-managements.index');
     }
 
-    public function apiStore(OpponentTeamRequest $request): JsonResponse
+    public function apiStore(TeamRequest $request): JsonResponse
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
 
-            $team = $this->opponentTeamService->store($data);
+        $team = $this->opponentTeamService->store($data);
 
-            return response()->json($team, 201);
-        }catch (\Illuminate\Validation\ValidationException $e){
-            return response()->json($e->errors(), 422);
-        }
+        return response()->json($team, 201);
     }
 
     /**
@@ -84,7 +80,7 @@ class OpponentTeamController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(OpponentTeamRequest $request, OpponentTeam $team, OpponentTeamService $opponentTeamService)
+    public function update(TeamRequest $request, Team $team)
     {
         $data = $request->validated();
 
@@ -95,24 +91,10 @@ class OpponentTeamController extends Controller
         return redirect()->route('opponentTeam-managements.show', $team->id);
     }
 
-    public function deactivate(OpponentTeam $team){
-        $this->opponentTeamService->deactivate($team);
-
-        Alert::success('Team '.$team->teamName.' status successfully deactivated!');
-        return redirect()->route('opponentTeam-managements.index');
-    }
-
-    public function activate(OpponentTeam $team){
-        $this->opponentTeamService->activate($team);
-
-        Alert::success('Team '.$team->teamName.' status successfully activated!');
-        return redirect()->route('opponentTeam-managements.index');
-    }
-
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(OpponentTeam $team)
+    public function destroy(Team $team)
     {
         $this->opponentTeamService->destroy($team);
 

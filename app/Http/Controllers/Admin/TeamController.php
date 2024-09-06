@@ -42,13 +42,6 @@ class TeamController extends Controller
         return view('pages.admins.managements.teams.index');
     }
 
-    public function opponentTeamsIndex()
-    {
-        if (request()->ajax()) {
-            return $this->teamService->opponentTeamsIndex();
-        }
-    }
-
     public function teamPlayers(Team $team){
         if (request()->ajax()) {
             return $this->teamService->teamPlayers($team);
