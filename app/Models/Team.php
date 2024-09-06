@@ -15,6 +15,7 @@ class Team extends Model
         'ageGroup',
         'logo',
         'status',
+        'teamSide',
         'academyId',
     ];
 

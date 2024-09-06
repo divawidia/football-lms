@@ -100,24 +100,29 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
     Route::prefix('team-managements')->group(function (){
         Route::get('', [TeamController::class, 'index'])->name('team-managements.index');
-        Route::get('create', [TeamController::class, 'create'])->name('team-managements.create');
-        Route::post('store', [TeamController::class, 'store'])->name('team-managements.store');
-        Route::post('api/store', [TeamController::class, 'apiStore'])->name('team-managements.apiStore');
-        Route::prefix('{team}')->group(function () {
-            Route::get('', [TeamController::class, 'show'])->name('team-managements.show');
-            Route::get('edit', [TeamController::class, 'edit'])->name('team-managements.edit');
-            Route::put('update', [TeamController::class, 'update'])->name('team-managements.update');
-            Route::delete('destroy', [TeamController::class, 'destroy'])->name('team-managements.destroy');
-            Route::patch('deactivate', [TeamController::class, 'deactivate'])->name('deactivate-team');
-            Route::patch('activate', [TeamController::class, 'activate'])->name('activate-team');
-            Route::get('players', [TeamController::class, 'teamPlayers'])->name('team-managements.teamPlayers');
-            Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('team-managements.teamCoaches');
-            Route::get('editPlayers', [TeamController::class, 'editPlayerTeam'])->name('team-managements.editPlayerTeam');
-            Route::put('updatePlayers', [TeamController::class, 'updatePlayerTeam'])->name('team-managements.updatePlayerTeam');
-            Route::get('editCoaches', [TeamController::class, 'editCoachesTeam'])->name('team-managements.editCoachesTeam');
-            Route::put('updateCoaches', [TeamController::class, 'updateCoachTeam'])->name('team-managements.updateCoachTeam');
-            Route::put('remove-player/{player}', [TeamController::class, 'removePlayer'])->name('team-managements.removePlayer');
-            Route::put('remove-coach/{coach}', [TeamController::class, 'removeCoach'])->name('team-managements.removeCoach');
+        Route::prefix('our-teams')->group(function () {
+            Route::get('create', [TeamController::class, 'create'])->name('team-managements.create');
+            Route::post('store', [TeamController::class, 'store'])->name('team-managements.store');
+            Route::post('api/store', [TeamController::class, 'apiStore'])->name('team-managements.apiStore');
+            Route::prefix('{team}')->group(function () {
+                Route::get('', [TeamController::class, 'show'])->name('team-managements.show');
+                Route::get('edit', [TeamController::class, 'edit'])->name('team-managements.edit');
+                Route::put('update', [TeamController::class, 'update'])->name('team-managements.update');
+                Route::delete('destroy', [TeamController::class, 'destroy'])->name('team-managements.destroy');
+                Route::patch('deactivate', [TeamController::class, 'deactivate'])->name('deactivate-team');
+                Route::patch('activate', [TeamController::class, 'activate'])->name('activate-team');
+                Route::get('players', [TeamController::class, 'teamPlayers'])->name('team-managements.teamPlayers');
+                Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('team-managements.teamCoaches');
+                Route::get('editPlayers', [TeamController::class, 'editPlayerTeam'])->name('team-managements.editPlayerTeam');
+                Route::put('updatePlayers', [TeamController::class, 'updatePlayerTeam'])->name('team-managements.updatePlayerTeam');
+                Route::get('editCoaches', [TeamController::class, 'editCoachesTeam'])->name('team-managements.editCoachesTeam');
+                Route::put('updateCoaches', [TeamController::class, 'updateCoachTeam'])->name('team-managements.updateCoachTeam');
+                Route::put('remove-player/{player}', [TeamController::class, 'removePlayer'])->name('team-managements.removePlayer');
+                Route::put('remove-coach/{coach}', [TeamController::class, 'removeCoach'])->name('team-managements.removeCoach');
+            });
+        });
+        Route::prefix('opponent-teams')->group(function () {
+            Route::get('', [TeamController::class, 'opponentTeamsIndex'])->name('team-managements.opponentTeamsIndex');
         });
     });
 

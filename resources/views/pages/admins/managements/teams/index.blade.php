@@ -67,12 +67,11 @@
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="table">
+                        <table class="table table-hover mb-0" id="opponentTable">
                             <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Players</th>
-                                <th>Coaches/Staffs</th>
+                                <th>Competitions</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -109,6 +108,28 @@
                         },
                     ]
                 });
+
+                const opponentTable = $('#opponentTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{!! route('team-managements.opponentTeamsIndex') !!}',
+                    },
+                    columns: [
+                        { data: 'name', name: 'name' },
+                        { data: 'competitions', name: 'competitions' },
+                        { data: 'status', name: 'status' },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            width: '15%'
+                        },
+                    ]
+                });
+
                 $('body').on('click', '.delete-user', function() {
                     let id = $(this).attr('id');
 
