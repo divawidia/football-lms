@@ -71,7 +71,6 @@
                             <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Competitions</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -118,8 +117,7 @@
                     },
                     columns: [
                         { data: 'name', name: 'name' },
-                        { data: 'competitions', name: 'competitions' },
-                        { data: 'status', name: 'status' },
+                        { data: 'status', name: 'status', width: '15%' },
                         {
                             data: 'action',
                             name: 'action',

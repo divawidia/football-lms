@@ -2,16 +2,16 @@
 
 namespace App\Services;
 
-use App\Models\OpponentTeam;
 use App\Models\Team;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class OpponentTeamService extends Service
 {
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(): JsonResponse
     {
-        $query = Team::with('competitions')->where('teamSide', 'Opponent Team')->get();
+        $query = Team::where('teamSide','=','Opponent Team')->get();
         return Datatables::of($query)->addColumn('action', function ($item) {
             if ($item->status == '1') {
                 $statusButton = '<form action="' . route('deactivate-team', $item->id) . '" method="POST">
@@ -47,19 +47,6 @@ class OpponentTeamService extends Service
                               </div>
                             </div>';
         })
-            ->editColumn('competitions', function ($item) {
-                $competition = '';
-                if (count($item->competitions) == 0){
-                    $competition = 'Not joined any competition yet';
-                }else{
-                    foreach ($item->competitions as $data){
-                        if ($data->status == '1'){
-                            $competition .= '<span class="badge badge-pill badge-danger">'.$data->name.'</span>';
-                        }
-                    }
-                }
-                return $competition;
-            })
             ->editColumn('name', function ($item) {
                 return '
                             <div class="media flex-nowrap align-items-center"
@@ -86,7 +73,7 @@ class OpponentTeamService extends Service
                 }
                 return $status;
             })
-            ->rawColumns(['action', 'name', 'status', 'competitions'])
+            ->rawColumns(['action', 'name', 'status'])
             ->make();
     }
     public  function store(array $data){
