@@ -57,13 +57,13 @@
                                                    name="logo"
                                                    id="logo">
                                             <label class="custom-file-label" for="logo">Choose file</label>
+                                            @error('logo')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
                                         </div>
                                     </div>
-                                    @error('logo')
-                                    <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
                                 </div>
                                 <div class="form-group ">
                                     <label class="form-label" for="teamName">Team Name</label>
