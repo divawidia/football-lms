@@ -44,7 +44,7 @@ class TeamService extends Service
                                 <a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
                                 <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
                                 ' . $statusButton . '
-                                <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
+                                <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
                                     <span class="material-icons">delete</span> Delete Team
                                 </button>
                               </div>

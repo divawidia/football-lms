@@ -38,10 +38,10 @@ class OpponentTeamService extends Service
                                 </span>
                               </button>
                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
-                                <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
+                                <a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
+                                <a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
                                 ' . $statusButton . '
-                                <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
+                                <button type="button" class="dropdown-item delete-opponentTeam" id="' . $item->id . '">
                                     <span class="material-icons">delete</span> Delete Team
                                 </button>
                               </div>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TeamRequest;
-use App\Models\OpponentTeam;
 use App\Models\Team;
 use App\Services\OpponentTeamService;
 use Illuminate\Http\JsonResponse;
@@ -60,7 +59,7 @@ class OpponentTeamController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(OpponentTeam $team)
+    public function show(Team $team)
     {
         return view('pages.admins.managements.opponentTeams.detail', [
             'team' => $team,
@@ -70,7 +69,7 @@ class OpponentTeamController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(OpponentTeam $team)
+    public function edit(Team $team)
     {
         return view('pages.admins.managements.opponentTeams.edit',[
             'team' => $team,
@@ -88,7 +87,7 @@ class OpponentTeamController extends Controller
 
         $text = 'Team '.$team->teamName.' successfully updated!';
         Alert::success($text);
-        return redirect()->route('opponentTeam-managements.show', $team->id);
+        return redirect()->route('team-managements.index');
     }
 
     /**
