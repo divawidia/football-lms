@@ -16,7 +16,7 @@
                     </h2>
                     <ol class="breadcrumb p-0 m-0">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('opponentTeam-managements.index') }}">Opponent Teams Management</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('team-managements.index') }}">Teams Management</a></li>
                         <li class="breadcrumb-item active">
                             @yield('title')
                         </li>
@@ -28,7 +28,7 @@
 
     <div class="container page__container page-section">
         <div class="list-group">
-            <form action="{{ route('opponentTeam-managements.store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('team-managements.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="list-group-item d-flex justify-content-end">
                     <a class="btn btn-secondary mx-2" href="{{ route('opponentTeam-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>

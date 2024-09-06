@@ -277,6 +277,7 @@ class TeamService extends Service
             $teamData['logo'] = 'images/undefined-user.png';
         }
         $teamData['status'] = '1';
+        $teamData['teamSide'] = 'Academy Team';
         $teamData['academyId'] = $academyId;
 
         $team = Team::create($teamData);

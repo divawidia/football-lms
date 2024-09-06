@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\OpponentTeam;
+use App\Models\Team;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -76,15 +77,16 @@ class OpponentTeamService extends Service
                 ->rawColumns(['action', 'name', 'status', 'players'])
                 ->make();
     }
-    public  function store(array $opponentTeamData){
+    public  function store(array $data){
 
-        if (array_key_exists('logo', $opponentTeamData)){
-            $opponentTeamData['logo'] =$opponentTeamData['logo']->store('assets/team-logo', 'public');
+        if (array_key_exists('logo', $data)){
+            $data['logo'] =$data['logo']->store('assets/team-logo', 'public');
         }else{
-            $opponentTeamData['logo'] = 'images/undefined-user.png';
+            $data['logo'] = 'images/undefined-user.png';
         }
-        $opponentTeamData['status'] = '1';
-        return OpponentTeam::create($opponentTeamData);
+        $data['status'] = '1';
+        $data['teamSide'] = 'Opponent Team';
+        return Team::create($data);
     }
 
     public function update(array $opponentTeamData, OpponentTeam $opponentTeam): OpponentTeam

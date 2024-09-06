@@ -123,6 +123,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         });
         Route::prefix('opponent-teams')->group(function () {
             Route::get('', [TeamController::class, 'opponentTeamsIndex'])->name('team-managements.opponentTeamsIndex');
+            Route::get('create', [OpponentTeamController::class, 'create'])->name('opponentTeam-managements.create');
         });
     });
 
