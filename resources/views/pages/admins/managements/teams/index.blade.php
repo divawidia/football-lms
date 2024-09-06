@@ -13,12 +13,6 @@
                     <div class="mb-24pt mb-sm-0 w-100">
                         <div class="d-flex flex-row">
                             <h2 class="mb-0 text-left">@yield('title')</h2>
-                            <a href="{{  route('team-managements.create') }}" class="btn btn-sm btn-primary ml-auto" id="add-new">
-                                <span class="material-icons mr-2">
-                                    add
-                                </span>
-                                Add New Team
-                            </a>
                         </div>
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
@@ -32,6 +26,44 @@
         </div>
 
         <div class="container page__container page-section">
+            <div class="page-separator">
+                <div class="page-separator__text">Our Teams</div>
+                <a href="{{  route('team-managements.create') }}" class="btn btn-sm btn-primary ml-auto " id="add-new">
+                <span class="material-icons mr-2">
+                    add
+                </span>
+                    Add New Team
+                </a>
+            </div>
+            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Players</th>
+                                <th>Coaches/Staffs</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-separator">
+                <div class="page-separator__text">Opponent Teams</div>
+                <a href="{{  route('team-managements.create') }}" class="btn btn-sm btn-primary ml-auto " id="add-new">
+                <span class="material-icons mr-2">
+                    add
+                </span>
+                    Add New Team
+                </a>
+            </div>
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-body">
                     <div class="table-responsive">

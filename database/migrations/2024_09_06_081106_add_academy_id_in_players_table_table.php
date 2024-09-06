@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('teams', function (Blueprint $table){
-            $table->enum('teamSide', ['Academy Team', 'Opponent Team']);
-            $table->dropConstrainedForeignId('academyId');
+        Schema::table('teams', function (Blueprint $table) {
+            $table->foreignId('academyId')->nullable()->constrained('academies')->nullOnDelete();
         });
     }
 
@@ -22,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('teams', function (Blueprint $table){
-            $table->dropColumn('teamSide');
-            $table->foreignId('academyId')->constrained('academies');
+        Schema::table('teams', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('academyId');
         });
     }
 };
