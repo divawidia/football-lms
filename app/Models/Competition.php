@@ -23,40 +23,7 @@ class Competition extends Model
         'status',
     ];
 
-    public function teams(): BelongsToMany
-    {
-        return $this->belongsToMany(Team::class, 'competition_team', 'competitionId', 'teamId')
-            ->withPivot(
-                'matchPlayed',
-                'won',
-                'drawn',
-                'lost',
-                'goalsFor',
-                'goalsAgaints',
-                'goalsDifference',
-                'points',
-                'redCards',
-                'yellowCards',
-                'groupDivision',
-                'competitionResult',
-            )->withTimestamps();
-    }
-    public function opponentTeams()
-    {
-        return $this->belongsToMany(OpponentTeam::class, 'competition_team', 'competitionId', 'teamId')
-            ->withPivot(
-                'matchPlayed',
-                'won',
-                'drawn',
-                'lost',
-                'goalsFor',
-                'goalsAgaints',
-                'goalsDifference',
-                'points',
-                'redCards',
-                'yellowCards',
-                'groupDivision',
-                'competitionResult'
-            )->withTimestamps();
+    public function groups(){
+        return $this->hasMany(GroupDivision::class, 'competitionId');
     }
 }

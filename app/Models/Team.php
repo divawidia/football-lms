@@ -36,9 +36,9 @@ class Team extends Model
         return $this->belongsToMany(Coach::class, 'coach_team', 'teamId', 'coachId')->withTimestamps();
     }
 
-    public function competitions()
+    public function divisions()
     {
-        return $this->belongsToMany(Competition::class, 'competition_team', 'teamId', 'competitionId')
+        return $this->belongsToMany(GroupDivision::class, 'competition_team', 'teamId', 'divisionId')
             ->withPivot(
                 'matchPlayed',
                 'won',
@@ -50,7 +50,6 @@ class Team extends Model
                 'points',
                 'redCards',
                 'yellowCards',
-                'groupDivision',
                 'competitionResult'
             )
             ->withTimestamps;

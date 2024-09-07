@@ -19,6 +19,19 @@ class GroupDivision extends Model
     }
 
     public function teams(){
-        return $this->belongsToMany(Team::class, 'competition_team', 'divisionId', 'teamId');
+        return $this->belongsToMany(Team::class, 'competition_team', 'divisionId', 'teamId')
+            ->withPivot(
+                'matchPlayed',
+                'won',
+                'drawn',
+                'lost',
+                'goalsFor',
+                'goalsAgaints',
+                'goalsDifference',
+                'points',
+                'redCards',
+                'yellowCards',
+                'competitionResult',
+            )->withTimestamps();
     }
 }
