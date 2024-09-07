@@ -273,7 +273,7 @@
             </div>
         </div>
         <div class="page-separator">
-            <div class="page-separator__text">Divisions</div>
+            <div class="page-separator__text">Group Divisions</div>
             <a href="" class="btn btn-primary ml-auto btn-sm">
                 <span class="material-icons mr-2">
                     add
@@ -281,28 +281,33 @@
                 Add New
             </a>
         </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="playersTable">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Strong Foot</th>
-                            <th>Age</th>
-                            <th>Appearances</th>
-                            <th>Goals</th>
-                            <th>Assists</th>
-                            <th>Clean Sheets</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+        @foreach($competition->groups as $group)
+            <div class="page-separator">
+                <div class="page-separator__text">{{ $group->groupName }}</div>
+                <a href="" class="btn btn-primary ml-auto btn-sm">
+                <span class="material-icons mr-2">
+                    add
+                </span>
+                    Add New Team
+                </a>
+            </div>
+            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="groupTable{{$group->id}}">
+                            <thead>
+                            <tr>
+                                <th>Team Name</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endforeach
         <div class="page-separator">
             <div class="page-separator__text">Coaches/Staffs</div>
             <a href="" class="btn btn-primary ml-auto btn-sm">
@@ -352,30 +357,33 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            {{--const playersTable = $('#playersTable').DataTable({--}}
-            {{--    processing: true,--}}
-            {{--    serverSide: true,--}}
-            {{--    ordering: true,--}}
-            {{--    ajax: {--}}
-            {{--        url: '{!! route('team-managements.teamPlayers', $competition->id) !!}',--}}
-            {{--    },--}}
-            {{--    columns: [--}}
-            {{--        { data: 'name', name: 'name' },--}}
-            {{--        { data: 'strongFoot', name: 'strongFoot' },--}}
-            {{--        { data: 'age', name: 'age'},--}}
-            {{--        { data: 'appearance', name: 'appearance' },--}}
-            {{--        { data: 'goals', name: 'goals' },--}}
-            {{--        { data: 'assists', name: 'assists' },--}}
-            {{--        { data: 'cleanSheets', name: 'cleanSheets' },--}}
-            {{--        {--}}
-            {{--            data: 'action',--}}
-            {{--            name: 'action',--}}
-            {{--            orderable: false,--}}
-            {{--            searchable: false,--}}
-            {{--            width: '15%'--}}
-            {{--        },--}}
-            {{--    ]--}}
-            {{--});--}}
+            @foreach($competition->group as $group)
+                const groupTable{{$group->id}} = $('#groupTable{{$group->id}}').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{!! route('team-managements.teamPlayers', $competition->id) !!}',
+                    },
+                    columns: [
+                        { data: 'name', name: 'name' },
+                        { data: 'strongFoot', name: 'strongFoot' },
+                        { data: 'age', name: 'age'},
+                        { data: 'appearance', name: 'appearance' },
+                        { data: 'goals', name: 'goals' },
+                        { data: 'assists', name: 'assists' },
+                        { data: 'cleanSheets', name: 'cleanSheets' },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            width: '15%'
+                        },
+                    ]
+                });
+
+            @endforeach
             {{--const coachesTable = $('#coachesTable').DataTable({--}}
             {{--    processing: true,--}}
             {{--    serverSide: true,--}}
