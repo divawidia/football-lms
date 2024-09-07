@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GroupDivisionRequest;
 use App\Models\Coach;
 use App\Models\Competition;
 use App\Models\GroupDivision;

@@ -298,7 +298,7 @@
                                     <div class="form-group mb-3">
                                         <div class="d-flex flex-row align-items-center mb-2">
                                             <label class="form-label mb-0" for="teams">Our Teams</label>
-                                            <small class="text-danger">*</small>
+                                            <small class="text-danger">Optional</small>
                                             <button type="button" id="addNewTeam" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new team</button>
                                         </div>
 
