@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Coach;
 use App\Models\Competition;
 use App\Models\GroupDivision;
+use App\Models\Player;
 use App\Models\Team;
 use App\Services\GroupDivisionService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -18,19 +21,32 @@ class GroupDivisionController extends Controller
         $this->groupDivisionService = $groupDivisionService;
     }
 
-    public function index(GroupDivision $groupDivision){
+    public function index(Competition $competition, GroupDivision $group){
         if (request()->ajax()){
-            return $this->groupDivisionService->index($groupDivision);
+            return $this->groupDivisionService->index($group);
         }
     }
 
-    public function create(GroupDivision $groupDivision){
-        $teams = Team::where('teamSide', 'Academy Team')->get();
-        $opponentTeams = Team::where('teamSide', 'Opponent Team')->get();
+    public function create(Competition $competition){
+        $teams = Team::where('teamSide', 'Academy Team')
+            ->whereDoesntHave('divisions', function (Builder $query) use ($competition) {
+                $query->where('competitionId', $competition->id);
+            })->get();
+
+        $opponentTeams = Team::where('teamSide', 'Opponent Team')
+            ->whereDoesntHave('divisions', function (Builder $query) use ($competition) {
+                $query->where('competitionId', $competition->id);
+            })->get();
+
+        $players = Player::all();
+        $coaches = Coach::all();
 
         return view('pages.admins.managements.competitions.groups.create', [
             'teams' => $teams,
-            'opponentTeams' => $opponentTeams
+            'opponentTeams' => $opponentTeams,
+            'competition' => $competition,
+            'players' => $players,
+            'coaches' => $coaches
         ]);
     }
 

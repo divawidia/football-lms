@@ -52,6 +52,6 @@ class Team extends Model
                 'yellowCards',
                 'competitionResult'
             )
-            ->withTimestamps;
+            ->withTimestamps();
     }
 }

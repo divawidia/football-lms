@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CoachController;
 use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GroupDivisionController;
 use App\Http\Controllers\Admin\OpponentTeamController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
@@ -145,6 +146,14 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::delete('destroy', [CompetitionController::class, 'destroy'])->name('competition-managements.destroy');
             Route::patch('deactivate', [CompetitionController::class, 'deactivate'])->name('deactivate-competition');
             Route::patch('activate', [CompetitionController::class, 'activate'])->name('activate-competition');
+
+            Route::prefix('group-division')->group(function () {
+                Route::get('create', [GroupDivisionController::class, 'create'])->name('division-managements.create');
+                Route::post('store', [GroupDivisionController::class, 'store'])->name('division-managements.store');
+                Route::prefix('{group}')->group(function () {
+                    Route::get('', [GroupDivisionController::class, 'index'])->name('division-managements.index');
+                });
+            });
         });
     });
 });
