@@ -37,7 +37,7 @@
                             <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Teams</th>
+                                <th>Our Teams</th>
                                 <th>Opponent Teams</th>
                                 <th>Competition Date</th>
                                 <th>Contact</th>

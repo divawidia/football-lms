@@ -3,14 +3,16 @@
 namespace App\Services;
 
 use App\Models\Competition;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class CompetitionService extends Service
 {
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(): JsonResponse
     {
-        $query = Competition::all();
+        $query = Competition::with('teams')->get();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if ($item->status == '1') {
@@ -48,22 +50,23 @@ class CompetitionService extends Service
                             </div>';
             })
             ->editColumn('teams', function ($item) {
-                $academyTeam = '';
-                if (count($item->teams) == 0){
-                    $academyTeam = 'No teams in this competition at this moment';
+                $academyTeams = $item->with('teams')->whereRelation('teams', 'teamSide', 'Academy Team')->find($item->id);
+                $teams = '';
+                if ($academyTeams == null){
+                    $teams = 'No teams in this competition at this moment';
                 }else{
-                    foreach ($item->teams as $team) {
-                        $academyTeam .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
+                    foreach ($academyTeams->teams as $team) {
+                        $teams .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
                     }
                 }
-                return $academyTeam;
+                return $teams;
             })
             ->editColumn('opponentTeams', function ($item) {
-                $opponentTeam = '';
-                if (count($item->opponentTeams) == 0){
+                $opponentTeam = $item->with('teams')->whereRelation('teams', 'teamSide', 'Opponent Team')->find($item->id);
+                if ($opponentTeam == null){
                     $opponentTeam = 'No teams in this competition at this moment';
                 }else{
-                    $opponentTeam = count($item->opponentTeams).' Opponent teams';
+                    $opponentTeam = count($opponentTeam->teams).' Opponent teams';
                 }
                 return $opponentTeam;
             })
