@@ -503,16 +503,16 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group mb-4">
-                                        <label class="form-label" for="division">Division Name</label>
+                                        <label class="form-label" for="groupName">Division Name</label>
                                         <small class="text-danger">*</small>
                                         <input type="text"
-                                               id="division"
-                                               name="division"
+                                               id="groupName"
+                                               name="groupName"
                                                required
-                                               value="{{ old('division') }}"
-                                               class="form-control @error('division') is-invalid @enderror"
+                                               value="{{ old('groupName') }}"
+                                               class="form-control @error('groupName') is-invalid @enderror"
                                                placeholder="Ex: U-16 Group A ...">
-                                        @error('division')
+                                        @error('groupName')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -542,7 +542,7 @@
                                             </div>
                                         @else
                                             <select class="form-control form-select @error('teams') is-invalid @enderror" id="teams" name="teams[]" data-toggle="select">
-                                                <option selected disabled>Select team to play in this division</option>
+                                                <option selected disabled>Select our team to play in this division</option>
                                                 @foreach($teams as $team)
                                                     <option value="{{ $team->id }}" @selected(old('teams') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
                                                         {{ $team->teamName }}
@@ -608,6 +608,7 @@
         </div>
     @endsection
     @push('addon-script')
+        <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>
         <script>
             $(document).ready(function () {
                 function imagePreview(inputId, imageId){

@@ -37,9 +37,10 @@
                             <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Group Division</th>
                                 <th>Our Teams</th>
-                                <th>Opponent Teams</th>
                                 <th>Competition Date</th>
+                                <th>Location</th>
                                 <th>Contact</th>
                                 <th>Action</th>
                             </tr>
@@ -64,9 +65,10 @@
                     },
                     columns: [
                         { data: 'name', name: 'name' },
+                        { data: 'divisions', name: 'divisions' },
                         { data: 'teams', name: 'teams' },
-                        { data: 'opponentTeams', name: 'opponentTeams'},
                         { data: 'date', name: 'date'},
+                        { data: 'location', name: 'location'},
                         { data: 'contact', name: 'contact' },
                         {
                             data: 'action',

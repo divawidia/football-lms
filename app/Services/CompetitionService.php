@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Competition;
+use App\Models\GroupDivision;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -12,7 +13,7 @@ class CompetitionService extends Service
 {
     public function index(): JsonResponse
     {
-        $query = Competition::with('teams')->get();
+        $query = Competition::with('groups.teams')->get();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if ($item->status == '1') {
@@ -49,26 +50,30 @@ class CompetitionService extends Service
                               </div>
                             </div>';
             })
+            ->editColumn('divisions', function ($item) {
+                $divisions = '';
+                if (count($item->groups) == 0){
+                    $divisions = 'No division added in this competition';
+                }else{
+                    foreach ($item->groups as $group) {
+                        $divisions .= '<span class="badge badge-pill badge-danger">'.$group->groupName.'</span>';
+                    }
+                }
+                return $divisions;
+            })
             ->editColumn('teams', function ($item) {
-                $academyTeams = $item->with('teams')->whereRelation('teams', 'teamSide', 'Academy Team')->find($item->id);
+                $academyTeams = $item->with('groups.teams')->whereRelation('groups.teams', 'teamSide', 'Academy Team')->find($item->id);
                 $teams = '';
                 if ($academyTeams == null){
                     $teams = 'No teams in this competition at this moment';
                 }else{
-                    foreach ($academyTeams->teams as $team) {
-                        $teams .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
+                    foreach ($academyTeams->groups as $group) {
+                        foreach ($group->teams as $team){
+                            $teams .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
+                        }
                     }
                 }
                 return $teams;
-            })
-            ->editColumn('opponentTeams', function ($item) {
-                $opponentTeam = $item->with('teams')->whereRelation('teams', 'teamSide', 'Opponent Team')->find($item->id);
-                if ($opponentTeam == null){
-                    $opponentTeam = 'No teams in this competition at this moment';
-                }else{
-                    $opponentTeam = count($opponentTeam->teams).' Opponent teams';
-                }
-                return $opponentTeam;
             })
             ->editColumn('name', function ($item) {
                 return '
@@ -90,7 +95,7 @@ class CompetitionService extends Service
             ->editColumn('date', function ($item) {
                 $startDate = date('M d, Y', strtotime($item->startDate));
                 $endDate = date('M d, Y', strtotime($item->endDate));
-                return $startDate.' '.$endDate;
+                return $startDate.' - '.$endDate;
             })
             ->editColumn('contact', function ($item) {
                 if ($item->contactName != null && $item->contactPhone != null){
@@ -100,7 +105,7 @@ class CompetitionService extends Service
                 }
                 return $contact;
             })
-            ->rawColumns(['action', 'name', 'teams', 'opponentTeams', 'date', 'contact'])
+            ->rawColumns(['action', 'name', 'teams', 'divisions', 'date', 'contact'])
             ->make();
     }
     public  function store(array $competitionData){
@@ -114,11 +119,16 @@ class CompetitionService extends Service
 
         $competition = Competition::create($competitionData);
 
+        $division = GroupDivision::create([
+            'groupName' => $competitionData['groupName'],
+            'competitionId' => $competition->id
+        ]);
+
         if (array_key_exists('opponentTeams', $competitionData)){
-            $competition->opponentTeams()->attach($competitionData['opponentTeams'], ['groupDivision', $competitionData['division']]);
+            $division->teams()->attach($competitionData['opponentTeams']);
         }
         if (array_key_exists('teams', $competitionData)){
-            $competition->teams()->attach($competitionData['teams'], ['groupDivision', $competitionData['division']]);
+            $division->teams()->attach($competitionData['teams']);
         }
         return $competition;
     }

@@ -33,9 +33,9 @@ class CompetitionRequest extends FormRequest
             'contactName' => ['nullable', 'string'],
             'contactPhone' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
-            'division' => ['required', 'string'],
+            'groupName' => ['required', 'string'],
             'teams' => ['required', Rule::exists('teams', 'id')],
-            'opponentTeams' => ['required', Rule::exists('opponent_teams', 'id')],
+            'opponentTeams' => ['required', Rule::exists('teams', 'id')],
         ];
     }
 }

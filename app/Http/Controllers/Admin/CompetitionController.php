@@ -40,16 +40,16 @@ class CompetitionController extends Controller
      */
     public function create()
     {
-        $teams = Team::all();
+        $teams = Team::where('teamSide', 'Academy Team')->get();
+        $opponentTeams = Team::where('teamSide', 'Opponent Team')->get();
         $players = Player::all();
         $coaches = Coach::all();
-        $opponentTeams = OpponentTeam::all();
 
         return view('pages.admins.managements.competitions.create', [
             'teams' => $teams,
+            'opponentTeams' => $opponentTeams,
             'players' => $players,
-            'coaches' => $coaches,
-            'opponentTeams' => $opponentTeams
+            'coaches' => $coaches
         ]);
     }
 
