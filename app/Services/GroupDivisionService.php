@@ -67,6 +67,16 @@ class GroupDivisionService extends Service
         return $division;
     }
 
+    public  function storeTeam(array $data, GroupDivision $groupDivision){
+        if (array_key_exists('opponentTeams', $data)){
+            $groupDivision->teams()->attach($data['opponentTeams']);
+        }
+        if (array_key_exists('teams', $data)){
+            $groupDivision->teams()->attach($data['teams']);
+        }
+        return $groupDivision;
+    }
+
     public function update(array $data, GroupDivision $groupDivision): GroupDivision
     {
         $groupDivision->update($data);

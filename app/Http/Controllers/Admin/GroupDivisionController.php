@@ -12,6 +12,7 @@ use App\Models\Team;
 use App\Services\GroupDivisionService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class GroupDivisionController extends Controller
@@ -91,5 +92,18 @@ class GroupDivisionController extends Controller
             'coaches' => $coaches
         ]);
 
+    }
+
+    public function storeTeam(Request $request, Competition $competition, GroupDivision $group){
+        $data = $request->validate([
+            'teams' => ['nullable', Rule::exists('teams', 'id')],
+            'opponentTeams' => ['nullable', Rule::exists('teams', 'id')],
+        ]);
+
+        $this->groupDivisionService->storeTeam($data, $group);
+
+        $text = "Division ".$group->groupName."'s' teams successfully added!";
+        Alert::success($text);
+        return redirect()->route('competition-managements.show', $competition->id);
     }
 }
