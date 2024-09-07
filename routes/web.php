@@ -152,6 +152,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
                 Route::post('store', [GroupDivisionController::class, 'store'])->name('division-managements.store');
                 Route::prefix('{group}')->group(function () {
                     Route::get('', [GroupDivisionController::class, 'index'])->name('division-managements.index');
+                    Route::get('add-team', [GroupDivisionController::class, 'addTeam'])->name('division-managements.addTeam');
                 });
             });
         });

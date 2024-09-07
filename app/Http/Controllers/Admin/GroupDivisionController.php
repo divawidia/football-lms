@@ -38,9 +38,9 @@ class GroupDivisionController extends Controller
             ->whereDoesntHave('divisions', function (Builder $query) use ($competition) {
                 $query->where('competitionId', $competition->id);
             })->get();
-
         $players = Player::all();
         $coaches = Coach::all();
+
 
         return view('pages.admins.managements.competitions.groups.create', [
             'teams' => $teams,
@@ -59,5 +59,37 @@ class GroupDivisionController extends Controller
         $text = 'Division '.$data['groupName'].' successfully added!';
         Alert::success($text);
         return redirect()->route('competition-managements.show', $competition->id);
+    }
+
+    public function addTeam(Competition $competition, GroupDivision $group)
+    {
+        // get team data where teams are our academy team and added in the group division, this variable is used for detect if team are already added in the group division
+        $teams = Team::where('teamSide', 'Academy Team')
+            ->whereHas('divisions', function (Builder $query) use ($group) {
+                $query->where('divisionId', $group->id);
+            })->get();
+
+        $opponentTeams = Team::where('teamSide', 'Opponent Team')
+            ->whereDoesntHave('divisions', function (Builder $query) use ($group, $competition) {
+                $query->where('competitionId', $competition->id);
+            })->get();
+        $availableAcademyTeams = Team::where('teamSide', 'Academy Team')
+            ->whereDoesntHave('divisions', function (Builder $query) use ($competition) {
+                $query->where('competitionId', $competition->id);
+            })->get();
+
+        $players = Player::all();
+        $coaches = Coach::all();
+
+        return view('pages.admins.managements.competitions.groups.addTeam', [
+            'teams' => $teams,
+            'availableAcademyTeams' => $availableAcademyTeams,
+            'opponentTeams' => $opponentTeams,
+            'competition' => $competition,
+            'group' => $group,
+            'players' => $players,
+            'coaches' => $coaches
+        ]);
+
     }
 }

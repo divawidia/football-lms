@@ -286,11 +286,11 @@
                 <div class="col-lg-6">
                     <div class="page-separator">
                         <div class="page-separator__text">{{ $group->groupName }}</div>
-                        <a href="" class="btn btn-primary ml-auto btn-sm">
+                        <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-primary ml-auto btn-sm">
                         <span class="material-icons mr-2">
                             add
                         </span>
-                            Add New Team
+                            Update Team
                         </a>
                     </div>
                     <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
