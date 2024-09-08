@@ -23,7 +23,7 @@ class TeamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'logo' => ['image', 'nullable'],
+            'logo' => ['image', 'nullable', 'max:1024'],
             'teamName' => ['required', 'string', Rule::unique('teams', 'teamName')->ignore($this->team)],
             'ageGroup' => ['required', 'string'],
             'players' => ['nullable', Rule::exists('players', 'id')],

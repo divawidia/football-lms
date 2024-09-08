@@ -100,6 +100,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
     Route::prefix('team-managements')->group(function (){
         Route::get('', [TeamController::class, 'index'])->name('team-managements.index');
+
         Route::prefix('our-teams')->group(function () {
             Route::get('create', [TeamController::class, 'create'])->name('team-managements.create');
             Route::post('store', [TeamController::class, 'store'])->name('team-managements.store');

@@ -32,17 +32,13 @@
                 <form action="{{ route('team-managements.update', ['team' => $team]) }}" method="post" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
-                    <div class="list-group-item d-flex justify-content-end">
-                        <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
-                        <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">save</span> Save</button>
-                    </div>
                     <div class="list-group-item">
                         <div role="group" aria-labelledby="label-question" class="m-0 form-group">
                             <div class="page-separator">
                                 <div class="page-separator__text">Team Profile</div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <label class="form-label">Team Logo</label>
                                     <small class="text-black-100">(Optional)</small>
                                     <div class="media align-items-center mb-2">
@@ -57,16 +53,36 @@
                                                 <input type="file"
                                                        class="custom-file-input @error('logo') is-invalid @enderror"
                                                        name="logo"
-                                                       id="logo">
-                                                <label class="custom-file-label" for="logo">Choose file</label>
+                                                       id="foto">
+                                                <label class="custom-file-label" for="foto">Choose file</label>
+                                                @error('logo')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
                                             </div>
                                         </div>
-                                        @error('logo')
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group mb-4">
+                                        <label class="form-label" for="teamName">Team Name</label>
+                                        <small class="text-danger">*</small>
+                                        <input type="text"
+                                               id="teamName"
+                                               name="teamName"
+                                               required
+                                               value="{{ old('teamName', $team->teamName) }}"
+                                               class="form-control @error('teamName') is-invalid @enderror"
+                                               placeholder="Input team's name ...">
+                                        @error('teamName')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
                                     </div>
+                                </div>
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="form-label" for="ageGroup">Age Group</label>
                                         <small class="text-danger">*</small>
@@ -82,6 +98,8 @@
                                         </span>
                                         @enderror
                                     </div>
+                                </div>
+                                <div class="col-12">
                                     <div class="form-group mb-3">
                                         <label class="form-label" for="players">Players</label>
                                         <small class="text-black-100">(Optional)</small>
@@ -104,38 +122,21 @@
                                             <select class="form-control form-select @error('players') is-invalid @enderror" id="players" name="players[]" data-toggle="select" multiple>
                                                 <option disabled>Select players to play in this team</option>
                                                 @foreach($players as $player)
-                                                    <option value="{{ $player->id }}" @selected(old('players') == in_array($player->id, $player_id)) data-avatar-src="{{ Storage::url($player->user->foto) }}">
-                                                        {{ $player->user->firstName }} {{ $player->user->lastName }} - {{ $player->position->name }} -
-                                                        @if(count($player->teams) == 0)
-                                                            No Team
-                                                        @else
-                                                            @foreach($player->teams as $team)
-                                                                <span class="badge badge-pill badge-danger mr-1">{{ $team->teamName }}</span>
-                                                            @endforeach
-                                                        @endif
+                                                    <option value="{{ $player->id }}" @selected(in_array($player->id, $player_id)) data-avatar-src="{{ Storage::url($player->user->foto) }}">
+                                                        {{ $player->user->firstName }} {{ $player->user->lastName }}
+{{--                                                        {{ $player->user->firstName }} {{ $player->user->lastName }} - <br>{{ $player->position->name }} ---}}
+{{--                                                        @if(count($player->teams) == 0)--}}
+{{--                                                            No Team--}}
+{{--                                                        @else--}}
+{{--                                                            @foreach($player->teams as $team)--}}
+{{--                                                                {{ $team->teamName }},--}}
+{{--                                                            @endforeach--}}
+{{--                                                        @endif--}}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         @endif
                                         @error('team')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group mb-4">
-                                        <label class="form-label" for="teamName">Team Name</label>
-                                        <small class="text-danger">*</small>
-                                        <input type="text"
-                                               id="teamName"
-                                               name="teamName"
-                                               required
-                                               value="{{ old('teamName', $team->teamName) }}"
-                                               class="form-control @error('teamName') is-invalid @enderror"
-                                               placeholder="Input team's name ...">
-                                        @error('teamName')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -163,15 +164,16 @@
                                             <select class="form-control form-select @error('coaches') is-invalid @enderror" id="coaches" name="coaches[]" data-toggle="select" multiple>
                                                 <option disabled>Select coaches to manage this team</option>
                                                 @foreach($coaches as $coach)
-                                                    <option value="{{ $coach->id }}" @selected(old('coaches') == in_array($coach->id, $coach_id)) data-avatar-src="{{ Storage::url($coach->user->foto) }}">
-                                                        {{ $coach->user->firstName }} {{ $coach->user->lastName }} - {{ $coach->specializations->name }} -
-                                                        @if(count($coach->teams) == 0)
-                                                            No Team
-                                                        @else
-                                                            @foreach($coach->teams as $team)
-                                                                <span class="badge badge-pill badge-danger mr-1">{{ $team->teamName }}</span>
-                                                            @endforeach
-                                                        @endif
+                                                    <option value="{{ $coach->id }}" @selected(in_array($coach->id, $coach_id)) data-avatar-src="{{ Storage::url($coach->user->foto) }}">
+                                                        {{ $coach->user->firstName }} {{ $coach->user->lastName }}
+{{--                                                        {{ $coach->user->firstName }} {{ $coach->user->lastName }} - {{ $coach->specializations->name }} ---}}
+{{--                                                        @if(count($coach->teams) == 0)--}}
+{{--                                                            No Team--}}
+{{--                                                        @else--}}
+{{--                                                            @foreach($coach->teams as $team)--}}
+{{--                                                                {{ $team->teamName }},--}}
+{{--                                                            @endforeach--}}
+{{--                                                        @endif--}}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -186,6 +188,11 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="list-group-item d-flex justify-content-end">
+                        <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">save</span> Save</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -193,38 +200,6 @@
     @push('addon-script')
         <script>
             $(document).ready(function () {
-                const idCountry = $('.country-form option:selected').val();
-                const idState = {{ $coach->state_id }};
-                const idCity = {{ $coach->city_id }};
-                $.ajax({
-                    url: "{{url('api/states')}}",
-                    data: {
-                        fields: 'states',
-                        "filters[country_id]": idCountry,
-                    },
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (result){
-                        $.each(result.data, function (key, value){
-                            $('#state_id').append('<option value="'+value.id+'">'+value.name+'</option>');
-                        });
-                        $('#state_id option[value="' + idState + '"]').attr('selected', 'selected');
-                    }
-                });
-                $.ajax({
-                    url: "{{url('api/cities')}}",
-                    data: {
-                        fields: 'cities',
-                        "filters[state_id]": idState,
-                    },
-                    dataType: 'json',
-                    success: function (result){
-                        $.each(result.data, function (key, value){
-                            $('#city_id').append('<option value="'+value.id+'">'+value.name+'</option>');
-                        });
-                        $('#city_id option[value="' + idCity + '"]').attr('selected', 'selected');
-                    }
-                });
                 foto.onchange = evt => {
                     preview = document.getElementById('preview');
                     preview.style.display = 'block';
