@@ -584,7 +584,7 @@
                                                 <option disabled>Select your opponent team who play in this division</option>
                                                 @foreach($opponentTeams as $team)
                                                     <option value="{{ $team->id }}" @selected(old('opponentTeams') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
-                                                        {{ $team->teamName }}
+                                                    {{ $team->teamName }} ~ {{ $team->ageGroup }}
                                                     </option>
                                                 @endforeach
                                             </select>

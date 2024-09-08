@@ -62,16 +62,10 @@ class CompetitionService extends Service
                 return $divisions;
             })
             ->editColumn('teams', function ($item) {
-                $academyTeams = $item->with('groups.teams')->whereRelation('groups.teams', 'teamSide', 'Academy Team')->find($item->id);
                 $teams = '';
-                if ($academyTeams == null){
-                    $teams = 'No teams in this competition at this moment';
-                }else{
-                    foreach ($academyTeams->groups as $group) {
-                        foreach ($group->teams as $team){
-                            $teams .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
-                        }
-                    }
+                foreach ($item->groups as $group){
+                    $team = $group->teams->where('teamSide', 'Academy Team')->first();
+                    $teams .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
                 }
                 return $teams;
             })
