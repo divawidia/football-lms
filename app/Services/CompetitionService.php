@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Competition;
 use App\Models\GroupDivision;
+use App\Models\Team;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -157,6 +158,11 @@ class CompetitionService extends Service
     {
         $competition->update(['status' => '0']);
         return $competition;
+    }
+
+    public function removeTeam(GroupDivision $group, Team $team)
+    {
+        return $group->teams()->detach($team);
     }
 
     public function destroy(Competition $competition): Competition
