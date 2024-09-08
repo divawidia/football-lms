@@ -81,7 +81,7 @@
                         },
                     ]
                 });
-                $('body').on('click', '.delete-competition', function() {
+                $('body').on('click', '.delete', function() {
                     let id = $(this).attr('id');
 
                     Swal.fire({

@@ -45,7 +45,7 @@ class CompetitionService extends Service
                                 <a class="dropdown-item" href="' . route('competition-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Competition</a>
                                 <a class="dropdown-item" href="' . route('competition-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Competition</a>
                                 ' . $statusButton . '
-                                <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
+                                <button type="button" class="dropdown-item delete" id="' . $item->id . '">
                                     <span class="material-icons">delete</span> Delete Competition
                                 </button>
                               </div>
@@ -165,8 +165,6 @@ class CompetitionService extends Service
     public function destroy(Competition $competition): Competition
     {
         $this->deleteImage($competition->logo);
-        $competition->teams()->detach();
-        $competition->opponentTeams()->detach();
         $competition->delete();
         return $competition;
     }
