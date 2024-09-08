@@ -65,8 +65,10 @@ class CompetitionService extends Service
             ->editColumn('teams', function ($item) {
                 $teams = '';
                 foreach ($item->groups as $group){
-                    $team = $group->teams->where('teamSide', 'Academy Team')->first();
-                    $teams .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
+                    if (count($group->teams) > 0) {
+                        $team = $group->teams->where('teamSide', 'Academy Team')->first();
+                        $teams .= '<span class="badge badge-pill badge-danger">' . $team->teamName . '</span>';
+                    }
                 }
                 return $teams;
             })

@@ -296,16 +296,12 @@
                                                              style="min-width: 180px">
                                                             <small class="text-black-100">Currently all of your teams have joined competition or you haven't create any team in your academy, please create your team</small>
                                                         </div>
-                                                        {{--                                                    <div class="ml-8pt mt-2 mt-sm-0">--}}
-                                                        {{--                                                        <a href="{{ route('team-managements.create') }}"--}}
-                                                        {{--                                                           class="btn btn-link btn-sm">Create Now</a>--}}
-                                                        {{--                                                    </div>--}}
                                                     </div>
                                                 </div>
                                             @else
                                                 <select class="form-control form-select @error('teams') is-invalid @enderror" id="teams" name="teams[]" data-toggle="select">
                                                     <option selected disabled>Select our team to play in this division</option>
-                                                    @foreach($teams as $team)
+                                                    @foreach($availableAcademyTeams as $team)
                                                         <option value="{{ $team->id }}" @selected(old('teams') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
                                                             {{ $team->teamName }} ~ {{ $team->ageGroup }}
                                                         </option>

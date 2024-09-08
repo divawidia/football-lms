@@ -25,7 +25,7 @@ class GroupDivisionController extends Controller
 
     public function index(Competition $competition, GroupDivision $group){
         if (request()->ajax()){
-            return $this->groupDivisionService->index($group);
+            return $this->groupDivisionService->index($competition, $group);
         }
     }
 
@@ -64,7 +64,7 @@ class GroupDivisionController extends Controller
 
     public function addTeam(Competition $competition, GroupDivision $group)
     {
-        // get team data where teams are our academy team and added in the group division, this variable is used for detect if team are already added in the group division
+        // get team data where teams is our academy team and has been added in the group division, this variable is used for detect if team are already added in the group division
         $teams = Team::where('teamSide', 'Academy Team')
             ->whereHas('divisions', function (Builder $query) use ($group) {
                 $query->where('divisionId', $group->id);
@@ -78,6 +78,7 @@ class GroupDivisionController extends Controller
             ->whereDoesntHave('divisions', function (Builder $query) use ($competition) {
                 $query->where('competitionId', $competition->id);
             })->get();
+
 
         $players = Player::all();
         $coaches = Coach::all();
@@ -112,6 +113,8 @@ class GroupDivisionController extends Controller
     {
         $this->groupDivisionService->removeTeam($group, $team);
 
-        return response()->json(['success' => true]);
+        $text = "Team ".$team->teamName." successfully removed from ".$group->name."!";
+        Alert::success($text);
+        return redirect()->route('competition-managements.show', ['competition'=>$competition->id]);
     }
 }

@@ -12,11 +12,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class GroupDivisionService extends Service
 {
-    public function index(GroupDivision $groupDivision): JsonResponse
+    public function index(Competition $competition, GroupDivision $groupDivision): JsonResponse
     {
         $query = GroupDivision::with('teams')->find($groupDivision->id);
         return Datatables::of($query->teams)
-            ->addColumn('action', function ($item) {
+            ->addColumn('action', function ($item) use ($competition) {
                 return '
                             <div class="dropdown">
                               <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -27,9 +27,13 @@ class GroupDivisionService extends Service
                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
                                 <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
-                                <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
-                                    <span class="material-icons">delete</span> Remove Team
-                                </button>
+                                <form action="'.route('division-managements.removeTeam', ['competition' => $competition->id,'group'=>$item->pivot->divisionId, 'team'=>$item->id]).'" method="POST">
+                                    '.method_field("PUT").'
+                                    '.csrf_field().'
+                                    <button type="submit" class="dropdown-item delete-team" id="' . $item->id . '">
+                                        <span class="material-icons">delete</span> Remove Team
+                                    </button>
+                                </form>
                               </div>
                             </div>';
             })
