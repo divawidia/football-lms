@@ -110,7 +110,7 @@ class GroupDivisionController extends Controller
 
     public function removeTeam(Competition $competition, GroupDivision $group, Team $team)
     {
-        $this->competitionService->removeTeam($group, $team);
+        $this->groupDivisionService->removeTeam($group, $team);
 
         return response()->json(['success' => true]);
     }
