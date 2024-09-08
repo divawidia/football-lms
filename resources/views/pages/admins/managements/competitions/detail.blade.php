@@ -301,48 +301,49 @@
             @endforeach
         </div>
         <div class="page-separator">
-            <div class="page-separator__text">Coaches/Staffs</div>
-            <a href="" class="btn btn-primary ml-auto btn-sm">
-                <span class="material-icons mr-2">
-                    add
-                </span>
-                Add New
-            </a>
+            <div class="page-separator__text">Group Tables</div>
         </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="coachesTable">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Age</th>
-                            <th>Gender</th>
-                            <th>Joined Date</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+        @foreach($competition->groups as $group)
+            <div class="page-separator">
+                <div class="page-separator__text">{{ $group->groupName }}</div>
+                <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
+                    <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
+                        <span class="material-icons">edit</span>
+                    </a>
+                    <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
+                        <span class="material-icons">add</span>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
+                        <span class="material-icons">delete</span>
+                    </button>
                 </div>
             </div>
-        </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Competitions/Events</div>
-        </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Upcoming Matches</div>
-        </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Upcoming Training</div>
-        </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Match History</div>
-        </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Training History</div>
-        </div>
+            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="classTable{{$group->id}}">
+                            <thead>
+                            <tr>
+                                <th>Team</th>
+                                <th>Match Played</th>
+                                <th>won</th>
+                                <th>drawn</th>
+                                <th>lost</th>
+                                <th>goals For</th>
+                                <th>goals Againts</th>
+                                <th>goals Difference</th>
+                                <th>red Cards</th>
+                                <th>yellow Cards</th>
+                                <th>points</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        @endforeach
     </div>
 
 @endsection
@@ -368,6 +369,28 @@
                         },
                     ]
                 });
+
+            const classTable{{$group->id}} = $('#classTable{{$group->id}}').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
+                },
+                columns: [
+                    { data: 'teams', name: 'teams' },
+                    { data: 'pivot.matchPlayed', name: 'pivot.matchPlayed' },
+                    { data: 'pivot.won', name: 'pivot.won' },
+                    { data: 'pivot.drawn', name: 'pivot.drawn' },
+                    { data: 'pivot.lost', name: 'pivot.lost' },
+                    { data: 'pivot.goalsFor', name: 'pivot.goalsFor' },
+                    { data: 'pivot.goalsAgaints', name: 'pivot.goalsAgaints' },
+                    { data: 'pivot.goalsDifference', name: 'pivot.goalsDifference' },
+                    { data: 'pivot.redCards', name: 'pivot.redCards' },
+                    { data: 'pivot.yellowCards', name: 'pivot.yellowCards' },
+                    { data: 'pivot.points', name: 'pivot.points' },
+                ]
+            });
             @endforeach
 
             // show modal edit group data
@@ -429,27 +452,6 @@
                     }
                 });
             });
-            {{--const coachesTable = $('#coachesTable').DataTable({--}}
-            {{--    processing: true,--}}
-            {{--    serverSide: true,--}}
-            {{--    ordering: true,--}}
-            {{--    ajax: {--}}
-            {{--        url: '{!! route('team-managements.teamCoaches', $competition->id) !!}',--}}
-            {{--    },--}}
-            {{--    columns: [--}}
-            {{--        { data: 'name', name: 'name' },--}}
-            {{--        { data: 'age', name: 'age' },--}}
-            {{--        { data: 'gender', name: 'gender' },--}}
-            {{--        { data: 'joinedDate', name: 'joinedDate'},--}}
-            {{--        {--}}
-            {{--            data: 'action',--}}
-            {{--            name: 'action',--}}
-            {{--            orderable: false,--}}
-            {{--            searchable: false,--}}
-            {{--            width: '15%'--}}
-            {{--        },--}}
-            {{--    ]--}}
-            {{--});--}}
 
             $('.delete-group').on('click', function() {
                 let id = $(this).attr('id');
