@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Competition;
 use App\Models\GroupDivision;
+use App\Models\Team;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -75,6 +76,11 @@ class GroupDivisionService extends Service
             $groupDivision->teams()->attach($data['teams']);
         }
         return $groupDivision;
+    }
+
+    public function removeTeam(GroupDivision $group, Team $team)
+    {
+        return $group->teams()->detach($team);
     }
 
     public function update(array $data, GroupDivision $groupDivision): GroupDivision
