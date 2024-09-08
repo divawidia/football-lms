@@ -6,16 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CompetitionRequest;
 use App\Models\Coach;
 use App\Models\Competition;
-use App\Models\OpponentTeam;
 use App\Models\Player;
 use App\Models\Team;
 use App\Services\CompetitionService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use RealRashid\SweetAlert\Facades\Alert;
-use Yajra\DataTables\Facades\DataTables;
 
 class CompetitionController extends Controller
 {

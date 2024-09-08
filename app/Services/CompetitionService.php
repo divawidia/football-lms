@@ -160,11 +160,6 @@ class CompetitionService extends Service
         return $competition;
     }
 
-    public function removeTeam(GroupDivision $group, Team $team)
-    {
-        return $group->teams()->detach($team);
-    }
-
     public function destroy(Competition $competition): Competition
     {
         $this->deleteImage($competition->logo);

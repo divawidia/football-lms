@@ -106,4 +106,12 @@ class GroupDivisionController extends Controller
         Alert::success($text);
         return redirect()->route('competition-managements.show', $competition->id);
     }
+
+
+    public function removeTeam(Competition $competition, GroupDivision $group, Team $team)
+    {
+        $this->competitionService->removeTeam($group, $team);
+
+        return response()->json(['success' => true]);
+    }
 }
