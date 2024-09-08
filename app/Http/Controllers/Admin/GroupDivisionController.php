@@ -117,4 +117,19 @@ class GroupDivisionController extends Controller
         Alert::success($text);
         return redirect()->route('competition-managements.show', ['competition'=>$competition->id]);
     }
+
+    public function edit(Competition $competition, GroupDivision $group)
+    {
+        return response()->json($group);
+    }
+
+    public function update(Request $request, Competition $competition, GroupDivision $group)
+    {
+        $data = $request->validate([
+            'groupName' => ['required', 'string']
+        ]);
+
+        $groudDivision = $this->groupDivisionService->update($data, $group);
+        return response()->json($groudDivision, 204);
+    }
 }

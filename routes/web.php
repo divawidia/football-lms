@@ -153,6 +153,8 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
                 Route::post('store', [GroupDivisionController::class, 'store'])->name('division-managements.store');
                 Route::prefix('{group}')->group(function () {
                     Route::get('', [GroupDivisionController::class, 'index'])->name('division-managements.index');
+                    Route::get('edit', [GroupDivisionController::class, 'edit'])->name('division-managements.edit');
+                    Route::put('update', [GroupDivisionController::class, 'update'])->name('division-managements.update');
                     Route::get('add-team', [GroupDivisionController::class, 'addTeam'])->name('division-managements.addTeam');
                     Route::post('store-team', [GroupDivisionController::class, 'storeTeam'])->name('division-managements.storeTeam');
                     Route::put('remove-team/{team}', [GroupDivisionController::class, 'removeTeam'])->name('division-managements.removeTeam');

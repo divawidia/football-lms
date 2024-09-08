@@ -6,6 +6,50 @@
     @yield('title')
 @endsection
 
+@section('modal')
+    <!-- Modal Create Opponent Team -->
+    <div class="modal fade" id="editGroupModal" tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="#" method="post" id="formEditGroupModal">
+                    @method('PUT')
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Group Division</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <input type="hidden" id="groupId">
+                                <div class="form-group ">
+                                    <label class="form-label" for="add_groupName">Group Division Name</label>
+                                    <small class="text-danger">*</small>
+                                    <input type="text"
+                                           id="add_groupName"
+                                           name="groupName"
+                                           value="{{ old('groupName') }}"
+                                           class="form-control"
+                                           placeholder="Input group's name ...">
+                                    <span class="invalid-feedback groupName_error" role="alert">
+                                        <strong></strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
+
 @section('content')
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
@@ -228,12 +272,19 @@
                 @endif
                     <div class="page-separator">
                         <div class="page-separator__text">{{ $group->groupName }}</div>
-                        <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-primary ml-auto btn-sm">
-                        <span class="material-icons mr-2">
-                            add
-                        </span>
-                            Update Team
-                        </a>
+                        <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
+                                <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
+                                    <span class="material-icons">edit</span>
+                                </a>
+                                <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
+                                    <span class="material-icons">
+                                        add
+                                    </span>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
+                                    <span class="material-icons">delete</span>
+                                </button>
+                        </div>
                     </div>
                     <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                         <div class="card-body">
@@ -324,6 +375,66 @@
                     ]
                 });
             @endforeach
+
+            // show modal edit group data
+            $('body').on('click', '.edit-group', function(e) {
+                const id = $(this).attr('id');
+                e.preventDefault();
+
+                $.ajax({
+                    method: 'GET',
+                    url: "{{ route('division-managements.edit', ['competition' => $competition->id, 'group' => ':id']) }}".replace(':id', id),
+                    success: function(res) {
+                        $("#editGroupModal").modal('show');
+                        $('#groupId').val(id);
+                        $('#add_groupName').val(res.groupName);
+                    },
+                    error: function(xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        Swal.fire({
+                            icon: 'error',
+                            html: response,
+                            allowOutsideClick: true,
+                        });
+                    }
+                });
+            });
+
+            // insert data opponent team
+            $('#formEditGroupModal').on('submit', function(e) {
+                e.preventDefault();
+                let id = $('#groupId').val();
+
+                $.ajax({
+                    method: $(this).attr('method'),
+                    url: "{{ route('division-managements.update', ['competition' => $competition->id, 'group' => ':id']) }}".replace(':id', id),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+                        $('#editGroupModal').modal('hide');
+                        Swal.fire({
+                            title: 'Group Division successfully added!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        $.each(response.errors, function(key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("input#add_" + key).addClass('is-invalid');
+                        });
+                    }
+                });
+            });
             {{--const coachesTable = $('#coachesTable').DataTable({--}}
             {{--    processing: true,--}}
             {{--    serverSide: true,--}}

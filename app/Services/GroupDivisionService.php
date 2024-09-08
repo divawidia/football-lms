@@ -90,7 +90,6 @@ class GroupDivisionService extends Service
     public function update(array $data, GroupDivision $groupDivision): GroupDivision
     {
         $groupDivision->update($data);
-        $groupDivision->teams()->sync($data);
         return $groupDivision;
     }
 
