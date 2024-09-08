@@ -63,12 +63,7 @@
                         <div class="flex d-flex align-items-center">
                             <div class="h2 mb-0 mr-3">12</div>
                             <div class="ml-auto text-right">
-                                <div class="card-title">Match Played</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
+                                <div class="card-title">Total Teams</div>
                             </div>
                         </div>
                     </div>
@@ -80,12 +75,7 @@
                         <div class="flex d-flex align-items-center">
                             <div class="h2 mb-0 mr-3">12</div>
                             <div class="ml-auto text-right">
-                                <div class="card-title">Goals</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
+                                <div class="card-title">Total Match</div>
                             </div>
                         </div>
                     </div>
@@ -95,67 +85,9 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">2</div>
                             <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">goals conceded</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row card-group-row mb-4">
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">goal difference</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">clean sheets</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">own goals</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
+                                <div class="card-title text-capitalize">Toal Groups</div>
                             </div>
                         </div>
                     </div>
@@ -224,7 +156,13 @@
                     <div class="card-body flex-column">
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $competition->status }}</div>
+                            <div class="ml-auto p-2 text-muted">
+                                @if ($competition->status == '1')
+                                    <span class="badge badge-pill badge-success">Aktif</span>
+                                @elseif($competition->status == '0')
+                                    <span class="badge badge-pill badge-danger">Non Aktif</span>
+                                @endif
+                            </div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Start Date :</p></div>
@@ -283,7 +221,11 @@
         </div>
         <div class="row">
             @foreach($competition->groups as $group)
-                <div class="col-lg-6">
+                @if(count($competition->groups) <= 1)
+                    <div class="col-12">
+                @else
+                    <div class="col-lg-6">
+                @endif
                     <div class="page-separator">
                         <div class="page-separator__text">{{ $group->groupName }}</div>
                         <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-primary ml-auto btn-sm">
