@@ -38,10 +38,11 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Group Division</th>
-                                <th>Our Teams</th>
+                                <th>Joined Teams</th>
                                 <th>Competition Date</th>
                                 <th>Location</th>
                                 <th>Contact</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -70,6 +71,7 @@
                         { data: 'date', name: 'date'},
                         { data: 'location', name: 'location'},
                         { data: 'contact', name: 'contact' },
+                        { data: 'status', name: 'status' },
                         {
                             data: 'action',
                             name: 'action',
