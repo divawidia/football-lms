@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Edit {{ $team->teamName }} Players
+    Add {{ $team->teamName }} Players
 @endsection
 @section('page-title')
     @yield('title')
@@ -60,13 +60,13 @@
                                     <select class="form-control form-select @error('players') is-invalid @enderror" id="players" name="players[]" data-toggle="select" multiple>
                                         <option disabled>Select players to play in this team</option>
                                         @foreach($players as $player)
-                                            <option value="{{ $player->id }}" @selected(old('players') == in_array($player->id, $player_id)) data-avatar-src="{{ Storage::url($player->user->foto) }}">
+                                            <option value="{{ $player->id }}" data-avatar-src="{{ Storage::url($player->user->foto) }}">
                                                 {{ $player->user->firstName }} {{ $player->user->lastName }} - {{ $player->position->name }} -
                                                 @if(count($player->teams) == 0)
                                                     No Team
                                                 @else
                                                     @foreach($player->teams as $team)
-                                                        <span class="badge badge-pill badge-danger mr-1">{{ $team->teamName }}</span>
+                                                        {{ $team->teamName }},
                                                     @endforeach
                                                 @endif
                                             </option>

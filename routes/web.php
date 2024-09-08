@@ -114,10 +114,10 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
                 Route::patch('activate', [TeamController::class, 'activate'])->name('activate-team');
                 Route::get('players', [TeamController::class, 'teamPlayers'])->name('team-managements.teamPlayers');
                 Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('team-managements.teamCoaches');
-                Route::get('editPlayers', [TeamController::class, 'editPlayerTeam'])->name('team-managements.editPlayerTeam');
-                Route::put('updatePlayers', [TeamController::class, 'updatePlayerTeam'])->name('team-managements.updatePlayerTeam');
-                Route::get('editCoaches', [TeamController::class, 'editCoachesTeam'])->name('team-managements.editCoachesTeam');
-                Route::put('updateCoaches', [TeamController::class, 'updateCoachTeam'])->name('team-managements.updateCoachTeam');
+                Route::get('edit-players', [TeamController::class, 'addPlayerTeam'])->name('team-managements.addPlayerTeam');
+                Route::put('update-players', [TeamController::class, 'updatePlayerTeam'])->name('team-managements.updatePlayerTeam');
+                Route::get('edit-coaches', [TeamController::class, 'addCoachesTeam'])->name('team-managements.addCoachesTeam');
+                Route::put('update-coaches', [TeamController::class, 'updateCoachTeam'])->name('team-managements.updateCoachTeam');
                 Route::put('remove-player/{player}', [TeamController::class, 'removePlayer'])->name('team-managements.removePlayer');
                 Route::put('remove-coach/{coach}', [TeamController::class, 'removeCoach'])->name('team-managements.removeCoach');
             });

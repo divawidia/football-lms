@@ -10,6 +10,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Services\OpponentTeamService;
 use App\Services\TeamService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -110,25 +111,8 @@ class TeamController extends Controller
      */
     public function edit(Team $team)
     {
-        $players = Player::all();
-        $coaches = Coach::all();
-        $player_id = [];
-        $coach_id = [];
-
-        foreach ($team->players as $player){
-            $player_id[] = $player->id;
-        }
-
-        foreach ($team->coaches as $coach){
-            $coach_id[] = $coach->id;
-        }
-
         return view('pages.admins.managements.teams.edit',[
-            'team' => $team,
-            'players' => $players,
-            'coaches' => $coaches,
-            'player_id' => $player_id,
-            'coach_id' => $coach_id
+            'team' => $team
         ]);
     }
 
@@ -160,52 +144,40 @@ class TeamController extends Controller
         return redirect()->route('team-managements.index');
     }
 
-    public function editPlayerTeam(Team $team)
+    public function addPlayerTeam(Team $team)
     {
-        $players = Player::all();
-        $player_id = [];
-
-        foreach ($team->players as $player){
-            $player_id[] = $player->id;
-        }
+        $players = Player::with('user')->whereDoesntHave('teams', function (Builder $query) use ($team){
+            $query->where('teamId', $team->id);
+        })->get();
 
         return view('pages.admins.managements.teams.editPlayer',[
             'team' => $team,
             'players' => $players,
-            'player_id' => $player_id,
         ]);
     }
 
     public function updatePlayerTeam(Request $request, Team $team)
     {
-        $validator = Validator::make($request->all(), [
-            'players' => ['required', Rule::exists('players', 'id')]
+        $data = $request->validate([
+            'players' => ['required', Rule::exists('players', 'id')],
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator);
-        }
-
-        $this->teamService->updatePlayerTeam((array)$validator, $team);
+        $this->teamService->updatePlayerTeam($data, $team);
 
         $text = 'Team '.$team->teamName.' Players successfully updated!';
         Alert::success($text);
         return redirect()->route('team-managements.show', $team->id);
     }
 
-    public function editCoachesTeam(Team $team)
+    public function addCoachesTeam(Team $team)
     {
-        $coaches = Coach::all();
-        $coach_id = [];
-
-        foreach ($team->coaches as $coach){
-            $coach_id[] = $coach->id;
-        }
+        $coaches = Coach::with('user')->whereDoesntHave('teams', function (Builder $query) use ($team){
+            $query->where('teamId', $team->id);
+        })->get();
 
         return view('pages.admins.managements.teams.editCoach',[
             'team' => $team,
             'coaches' => $coaches,
-            'coach_id' => $coach_id,
         ]);
     }
 

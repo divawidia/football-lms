@@ -57,7 +57,7 @@
             <div class="page-separator__text">Overview</div>
         </div>
         <div class="row card-group-row mb-4">
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -74,7 +74,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -91,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -108,9 +108,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row card-group-row mb-4">
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -127,7 +125,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -144,7 +142,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -161,9 +159,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row card-group-row mb-4">
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -180,7 +176,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -197,7 +193,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -223,8 +219,14 @@
                 <div class="card card-sm card-group-row__card">
                     <div class="card-body flex-column">
                         <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Age Group :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $team->ageGroup }}</div>
+                            <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
+                            <div class="ml-auto p-2 text-muted">
+                                @if ($team->status == '1')
+                                    <span class="badge badge-pill badge-success">Aktif</span>
+                                @elseif($team->status == '0')
+                                    <span class="badge badge-pill badge-danger">Non Aktif</span>
+                                @endif
+                            </div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Total Players :</p></div>
@@ -236,11 +238,11 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($team->created_at)) }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->created_at)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($team->updated_at)) }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->updated_at)) }}</div>
                         </div>
                     </div>
                 </div>
@@ -258,7 +260,7 @@
         </div>
         <div class="page-separator">
             <div class="page-separator__text">Players</div>
-            <a href="{{ route('team-managements.editPlayerTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
+            <a href="{{ route('team-managements.addPlayerTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
                 <span class="material-icons mr-2">
                     add
                 </span>
@@ -289,7 +291,7 @@
         </div>
         <div class="page-separator">
             <div class="page-separator__text">Coaches/Staffs</div>
-            <a href="{{ route('team-managements.editCoachesTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
+            <a href="{{ route('team-managements.addCoachesTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
                 <span class="material-icons mr-2">
                     add
                 </span>

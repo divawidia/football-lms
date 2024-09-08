@@ -38,7 +38,7 @@
                                 <div class="page-separator__text">Team Profile</div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <label class="form-label">Team Logo</label>
                                     <small class="text-black-100">(Optional)</small>
                                     <div class="media align-items-center mb-2">
@@ -63,6 +63,8 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-lg-4">
                                     <div class="form-group mb-4">
                                         <label class="form-label" for="teamName">Team Name</label>
                                         <small class="text-danger">*</small>
@@ -80,7 +82,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="form-label" for="ageGroup">Age Group</label>
                                         <small class="text-danger">*</small>

@@ -222,15 +222,13 @@ class TeamService extends Service
         }
 
         $team->update($teamData);
-        $team->players()->sync($teamData['players']);
-        $team->coaches()->sync($teamData['coaches']);
 
         return $team;
     }
 
     public function updatePlayerTeam(array $teamData, Team $team): Team
     {
-        $team->players()->sync($teamData['players']);
+        $team->players()->attach($teamData['players']);
         return $team;
     }
 

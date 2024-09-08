@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Edit {{ $team->teamName }} Coaches
+    Add {{ $team->teamName }} Coaches
 @endsection
 @section('page-title')
     @yield('title')
@@ -51,7 +51,7 @@
                                                 <small class="text-black-100">Curently you haven't create any coach in your academy, please create your team</small>
                                             </div>
                                             <div class="ml-8pt mt-2 mt-sm-0">
-                                                <a href="{{ route('coach.managements.create') }}"
+                                                <a href="{{ route('coach-managements.create') }}"
                                                    class="btn btn-link btn-sm">Create Now</a>
                                             </div>
                                         </div>
@@ -60,7 +60,7 @@
                                     <select class="form-control form-select @error('coaches') is-invalid @enderror" id="coaches" name="coaches[]" data-toggle="select" multiple>
                                         <option disabled>Select coaches to manage this team</option>
                                         @foreach($coaches as $coach)
-                                            <option value="{{ $coach->id }}" @selected(old('coaches') == in_array($coach->id, $coach_id)) data-avatar-src="{{ Storage::url($coach->user->foto) }}">
+                                            <option value="{{ $coach->id }}" data-avatar-src="{{ Storage::url($coach->user->foto) }}">
                                                 {{ $coach->user->firstName }} {{ $coach->user->lastName }} - {{ $coach->specializations->name }} -
                                                 @if(count($coach->teams) == 0)
                                                     No Team

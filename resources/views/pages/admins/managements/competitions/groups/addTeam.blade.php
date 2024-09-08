@@ -283,7 +283,7 @@
                                         <div class="form-group mb-3">
                                             <div class="d-flex flex-row align-items-center mb-2">
                                                 <label class="form-label mb-0" for="teams">Our Teams</label>
-                                                <small class="text-danger">Optional</small>
+                                                <small class="text-sm">(Optional)</small>
                                                 <button type="button" id="addNewTeam" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new team</button>
                                             </div>
 
@@ -361,7 +361,7 @@
                         </div>
                     </div>
                     <div class="list-group-item d-flex justify-content-end">
-                        <a class="btn btn-secondary mx-2" href="{{ route('competition-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
                         <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                     </div>
                 </form>

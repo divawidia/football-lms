@@ -210,38 +210,6 @@
                     alert(error);
                 });
 
-                {{--const idCountry = $('.country-form option:selected').val();--}}
-                {{--const idState = {{ $coach->state_id }};--}}
-                {{--const idCity = {{ $coach->city_id }};--}}
-                {{--$.ajax({--}}
-                {{--    url: "{{url('api/states')}}",--}}
-                {{--    data: {--}}
-                {{--        fields: 'states',--}}
-                {{--        "filters[country_id]": idCountry,--}}
-                {{--    },--}}
-                {{--    type: 'GET',--}}
-                {{--    dataType: 'json',--}}
-                {{--    success: function (result){--}}
-                {{--        $.each(result.data, function (key, value){--}}
-                {{--            $('#state_id').append('<option value="'+value.id+'">'+value.name+'</option>');--}}
-                {{--        });--}}
-                {{--        $('#state_id option[value="' + idState + '"]').attr('selected', 'selected');--}}
-                {{--    }--}}
-                {{--});--}}
-                {{--$.ajax({--}}
-                {{--    url: "{{url('api/cities')}}",--}}
-                {{--    data: {--}}
-                {{--        fields: 'cities',--}}
-                {{--        "filters[state_id]": idState,--}}
-                {{--    },--}}
-                {{--    dataType: 'json',--}}
-                {{--    success: function (result){--}}
-                {{--        $.each(result.data, function (key, value){--}}
-                {{--            $('#city_id').append('<option value="'+value.id+'">'+value.name+'</option>');--}}
-                {{--        });--}}
-                {{--        $('#city_id option[value="' + idCity + '"]').attr('selected', 'selected');--}}
-                {{--    }--}}
-                {{--});--}}
                 logo.onchange = evt => {
                     preview = document.getElementById('preview');
                     preview.style.display = 'block';

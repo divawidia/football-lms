@@ -28,7 +28,7 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('opponentTeam-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
                     @if($team->status == '1')
-                        <form action="{{ route('deactivate-opponentTeam', $team->id) }}" method="POST">
+                        <form action="{{ route('deactivate-team', $team->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
@@ -36,7 +36,7 @@
                             </button>
                         </form>
                     @else
-                        <form action="{{ route('activate-opponentTeam', $team->id) }}" method="POST">
+                        <form action="{{ route('activate-team', $team->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
@@ -223,32 +223,22 @@
                 <div class="card card-sm card-group-row__card">
                     <div class="card-body flex-column">
                         <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Age Group :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $team->ageGroup }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Total Players :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $team->totalPlayers }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Coach :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $team->coachName }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Director :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $team->directorName }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Academy :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $team->academyName }}</div>
+                            <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
+                            <div class="ml-auto p-2 text-muted">
+                                @if ($team->status == '1')
+                                    <span class="badge badge-pill badge-success">Aktif</span>
+                                @elseif($team->status == '0')
+                                    <span class="badge badge-pill badge-danger">Non Aktif</span>
+                                @endif
+                            </div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($team->created_at)) }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->created_at)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($team->updated_at)) }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->updated_at)) }}</div>
                         </div>
                     </div>
                 </div>
@@ -308,7 +298,7 @@
                                         'Ok!'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
-                                        window.location.href = "{{ route('opponentTeam-managements.index') }}";
+                                        window.location.href = "{{ route('team-managements.index') }}";
                                     }
                                 });
                             },
