@@ -84,7 +84,7 @@
                             </button>
                         </form>
                     @endif
-                    <button type="button" class="dropdown-item delete-data" id="{{$competition->id}}">
+                    <button type="button" class="dropdown-item delete" id="{{$competition->id}}">
                         <span class="material-icons">delete</span> Delete Competition
                     </button>
                 </div>
@@ -490,6 +490,52 @@
                                 Swal.fire({
                                     icon: "error",
                                     title: "Something went wrong",
+                                    text: error,
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            // delete competition alert
+            $('body').on('click', '.delete', function() {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('competition-managements.destroy', ['competition' => ':id']) }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function() {
+                                Swal.fire({
+                                    title: 'Competition successfully deleted!',
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "{{ route('competition-managements.index') }}";
+                                    }
+                                });
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Something went wrong when deleting data!",
                                     text: error,
                                 });
                             }
