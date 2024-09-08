@@ -155,6 +155,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
                     Route::get('', [GroupDivisionController::class, 'index'])->name('division-managements.index');
                     Route::get('edit', [GroupDivisionController::class, 'edit'])->name('division-managements.edit');
                     Route::put('update', [GroupDivisionController::class, 'update'])->name('division-managements.update');
+                    Route::delete('destroy', [GroupDivisionController::class, 'destroy'])->name('division-managements.destroy');
                     Route::get('add-team', [GroupDivisionController::class, 'addTeam'])->name('division-managements.addTeam');
                     Route::post('store-team', [GroupDivisionController::class, 'storeTeam'])->name('division-managements.storeTeam');
                     Route::put('remove-team/{team}', [GroupDivisionController::class, 'removeTeam'])->name('division-managements.removeTeam');

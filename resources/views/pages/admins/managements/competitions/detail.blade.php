@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    <!-- Modal Create Opponent Team -->
+    <!-- Modal edit group modal -->
     <div class="modal fade" id="editGroupModal" tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -21,23 +21,19 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <input type="hidden" id="groupId">
-                                <div class="form-group ">
-                                    <label class="form-label" for="add_groupName">Group Division Name</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="text"
-                                           id="add_groupName"
-                                           name="groupName"
-                                           value="{{ old('groupName') }}"
-                                           class="form-control"
-                                           placeholder="Input group's name ...">
-                                    <span class="invalid-feedback groupName_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                            </div>
+                        <input type="hidden" id="groupId">
+                        <div class="form-group ">
+                            <label class="form-label" for="add_groupName">Group Division Name</label>
+                            <small class="text-danger">*</small>
+                            <input type="text"
+                                   id="add_groupName"
+                                   name="groupName"
+                                   value="{{ old('groupName') }}"
+                                   class="form-control"
+                                   placeholder="Input group's name ...">
+                            <span class="invalid-feedback groupName_error" role="alert">
+                                <strong></strong>
+                            </span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -277,11 +273,9 @@
                                     <span class="material-icons">edit</span>
                                 </a>
                                 <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
-                                    <span class="material-icons">
-                                        add
-                                    </span>
+                                    <span class="material-icons">add</span>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
+                                <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
                                     <span class="material-icons">delete</span>
                                 </button>
                         </div>
@@ -457,43 +451,50 @@
             {{--    ]--}}
             {{--});--}}
 
-            {{--$('.delete-team').on('click', function() {--}}
-            {{--    let id = $(this).attr('id');--}}
+            $('.delete-group').on('click', function() {
+                let id = $(this).attr('id');
 
-            {{--    Swal.fire({--}}
-            {{--        title: "Are you sure?",--}}
-            {{--        text: "You won't be able to revert this!",--}}
-            {{--        icon: "warning",--}}
-            {{--        showCancelButton: true,--}}
-            {{--        confirmButtonColor: "#1ac2a1",--}}
-            {{--        cancelButtonColor: "#E52534",--}}
-            {{--        confirmButtonText: "Yes, delete it!"--}}
-            {{--    }).then((result) => {--}}
-            {{--        if (result.isConfirmed) {--}}
-            {{--            $.ajax({--}}
-            {{--                url: "{{ route('team-managements.destroy', ['team' => ':id']) }}".replace(':id', id),--}}
-            {{--                type: 'DELETE',--}}
-            {{--                data: {--}}
-            {{--                    _token: "{{ csrf_token() }}"--}}
-            {{--                },--}}
-            {{--                success: function(response) {--}}
-            {{--                    Swal.fire({--}}
-            {{--                        icon: "success",--}}
-            {{--                        title: "Team successfully deleted!",--}}
-            {{--                    });--}}
-            {{--                    playersTable.ajax.reload();--}}
-            {{--                },--}}
-            {{--                error: function(error) {--}}
-            {{--                    Swal.fire({--}}
-            {{--                        icon: "error",--}}
-            {{--                        title: "Oops...",--}}
-            {{--                        text: "Something went wrong when deleting data!",--}}
-            {{--                    });--}}
-            {{--                }--}}
-            {{--            });--}}
-            {{--        }--}}
-            {{--    });--}}
-            {{--});--}}
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('division-managements.destroy', ['competition' => $competition->id,'group' => ':id']) }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function() {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Group division successfully deleted!",
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Something went wrong",
+                                    text: error,
+                                });
+                            }
+                        });
+                    }
+                });
+            });
         });
     </script>
 @endpush

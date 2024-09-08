@@ -132,4 +132,10 @@ class GroupDivisionController extends Controller
         $groudDivision = $this->groupDivisionService->update($data, $group);
         return response()->json($groudDivision, 204);
     }
+
+    public function destroy(Competition $competition, GroupDivision $group)
+    {
+        $data = $this->groupDivisionService->destroy($group);
+        return response()->json($data, 204);
+    }
 }
