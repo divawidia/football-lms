@@ -70,7 +70,7 @@
 @section('content')
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
-            <img src="{{ \Illuminate\Support\Facades\Storage::url($user->foto) }}"
+            <img src="{{ Storage::url($user->foto) }}"
                  width="104"
                  height="104"
                  class="mr-md-32pt mb-32pt mb-md-0 rounded-circle img-object-fit-cover"
