@@ -1,0 +1,29 @@
+@media (min-width: $breakpoint-xl) {
+        .layout-app{
+            .container-fluid, .container-lg, .container-md, .container-sm, .container-xl{
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+        }
+}
+
+.mdk-drawer-layout {
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex
+}
+
+.mdk-drawer-layout__content {
+    position: relative;
+    height: 100%;
+    transition: transform .2s;
+    min-width: 320px;
+    z-index: 0;
+    order: 1;
+    flex: 1 1 0%
+}
+
+.mdk-drawer-layout, .mdk-header-layout, .page-content {
+    flex: 1 1 0%
+}

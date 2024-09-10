@@ -1,0 +1,49 @@
+.card-nav {
+    .tab-content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid #dfe2e6;
+        border-radius: .5rem;
+        & > hr {
+            margin-right: 0;
+            margin-left: 0;
+        }
+        & > .list-group {
+            border-top: inherit;
+            border-bottom: inherit;
+
+            &:first-child{
+                border-top-width: 0;
+                border-top-left-radius: .5rem;
+                border-top-right-radius: .5rem
+            }
+
+            &:last-child{
+                border-bottom-width: 0;
+                border-bottom-right-radius: .5rem;
+                border-bottom-left-radius: .5rem
+            }
+        }
+    }
+}
+.card-header {
+    padding: 1rem;
+    background-color: #fff;
+
+    &:first-child {
+        border-radius: .5rem .5rem 0 0
+    }
+}
+.card-footer {
+    padding: 1rem;
+    background-color: #fff;
+
+    &:last-child {
+        border-radius: 0 0 .5rem .5rem
+    }
+}

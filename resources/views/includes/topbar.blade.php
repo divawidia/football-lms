@@ -1,8 +1,8 @@
-<div class="navbar navbar-expand pr-0 navbar-light border-bottom-2" id="default-navbar" data-primary>
+<div class="navbar navbar-expand pr-0 navbar-light border-bottom" id="default-navbar" data-primary>
 
     <!-- Navbar Toggler -->
 
-    <button class="navbar-toggler w-auto mr-16pt d-block d-lg-none rounded-0"
+    <button class="navbar-toggler w-auto mr-16pt d-block rounded-0 ml-3"
             type="button"
             data-toggle="sidebar">
         <span class="material-icons">short_text</span>
@@ -14,14 +14,14 @@
 
     <a href="index.html"
        class="navbar-brand mr-16pt d-lg-none">
-            <span class="avatar avatar-sm navbar-brand-icon mr-0 mr-lg-8pt">
-                <span class="avatar-title rounded bg-primary">
-                    <img src="../../public/images/illustration/student/128/white.svg"
-                         alt="logo"
-                         class="img-fluid" />
-                </span>
-            </span>
-        <span class="d-none d-lg-block">Luma</span>
+{{--            <span class="avatar avatar-sm navbar-brand-icon mr-0 mr-lg-8pt">--}}
+{{--                <span class="avatar-title rounded bg-primary">--}}
+{{--                    <img src="../../public/images/illustration/student/128/white.svg"--}}
+{{--                         alt="logo"--}}
+{{--                         class="img-fluid" />--}}
+{{--                </span>--}}
+{{--            </span>--}}
+        <span class="d-none d-lg-block">Logo</span>
     </a>
 
     <!-- // END Navbar Brand -->

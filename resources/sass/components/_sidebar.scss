@@ -1,0 +1,41 @@
+.mdk-drawer {
+    position: relative;
+    visibility: hidden
+}
+
+.mdk-drawer[data-closing], .mdk-drawer[data-opened] {
+    visibility: visible
+}
+
+.mdk-drawer[data-persistent] {
+    width: 256px;
+}
+.mdk-drawer[data-persistent][data-position=left] {
+    right: auto;
+}
+.mdk-drawer[data-persistent][data-position=right] {
+    left: auto;
+}
+.mdk-drawer__content {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 256px;
+    transition: transform .2s ease;
+    left: 0;
+    transform: translate3d(-100%, 0, 0);
+    background-color: $white
+}
+[dir] {
+    [data-opened] {
+        & > .mdk-drawer__content {
+            transform: translateZ(0);
+        }
+    }
+}
+
+.has-arrow{
+    &::after{
+        transform: rotate(-225deg) translate(0, -50%);
+    }
+}

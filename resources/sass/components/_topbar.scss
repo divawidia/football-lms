@@ -1,0 +1,105 @@
+.navbar-expand {
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+
+    .navbar-nav {
+        flex-direction: row;
+
+        .dropdown-menu {
+            position: absolute
+        }
+
+        .nav-link{
+            padding-right: .5rem;
+            padding-left: .5rem
+        }
+    }
+
+    .navbar-toggler {
+        display: none
+    }
+}
+
+.navbar-toggler {
+    font-size: 1.21875rem;
+    line-height: 1;
+    padding: .25rem .75rem;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+
+    &:focus, &:hover {
+        text-decoration: none;
+    }
+}
+
+.navbar-toggler-icon {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    vertical-align: middle;
+    content: "";
+    background: no-repeat 50%;
+    background-size: 100% 100%;
+}
+
+.navbar-light {
+    .navbar-brand {
+        &:focus, &:hover {
+            color: rgba(39, 44, 51, .9);
+        }
+    }
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #e9edf2;
+
+    .nav-item {
+        margin-bottom: -1px;
+
+        &.show {
+            .nav-link {
+                color: #272c33;
+                background-color: #f5f7fa;
+                border-color: transparent transparent #f5f7fa
+            }
+        }
+    }
+
+    .nav-link {
+        border: 1px solid transparent;
+        border-top-left-radius: .25rem;
+        border-top-right-radius: .25rem;
+
+        &:focus, &:hover {
+            border-color: transparent transparent #e9edf2
+        }
+        &.disabled {
+            color: #868e96;
+            background-color: transparent;
+            border-color: transparent
+        }
+        &.active {
+            color: #272c33;
+            background-color: #f5f7fa;
+            border-color: transparent transparent #f5f7fa
+        }
+    }
+
+    .dropdown-menu {
+        margin-top: -1px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0
+    }
+}
+
+.navbar-nav{
+    .dropdown-menu {
+        float: none
+    }
+}
+
+.navbar-text {
+    display: inline-block
+}
+

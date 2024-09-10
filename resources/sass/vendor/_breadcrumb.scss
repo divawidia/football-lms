@@ -1,0 +1,14 @@
+.breadcrumb {
+    background-color: transparent;
+    & + .breadcrumb-item {
+        &:before {
+            color: rgba(39, 44, 51, .5);
+            content: "/";
+        }
+    }
+}
+.breadcrumb-item {
+    &.active {
+        color: rgba(39, 44, 51, .35);
+    }
+}

@@ -1,8 +1,55 @@
-// Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
-
-// Variables
 @import 'variables';
+@import 'bootstrap/scss/bootstrap';
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
+/////////////
+// PLUGINS //
+/////////////
+
+//@import 'bootstrap-custom-checkbox-toggle/bootstrap-custom-checkbox-toggle';
+//@import 'fm-plugin-flatpickr/scss/flatpickr';
+//@import 'fm-plugin-chartjs/scss/chartjs';
+//@import 'fm-avatar/avatar';
+//@import 'fm-loader/loader';
+//@import 'sass-math/math';
+//@import 'corner-ribbon/sass/corner-ribbon';
+
+/////////
+// MDK //
+/////////
+
+@import 'material-design-kit/src/style';
+
+////////////
+// CUSTOM //
+////////////
+
+@import 'components/avatar';
+@import 'components/checkbox';
+@import 'components/sidebar';
+@import 'components/topbar';
+@import 'structures/layout';
+@import 'vendor/background';
+@import 'vendor/badge';
+@import 'vendor/bootstrap';
+@import 'vendor/breadcrumb';
+@import 'vendor/card';
+@import 'vendor/flex';
+@import 'vendor/margin';
+@import 'vendor/padding';
+@import 'vendor/page';
+@import 'preloader';
+
+.ui .page__container {
+  max-width: 944px;
+}
+
+.application-shell-content {
+  border-width: 4px !important;
+  border-style: dashed !important;
+  padding: 1rem;
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include border-radius($border-radius-lg);
+}

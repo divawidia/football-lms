@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6cebc62c76f825d43e89fa927d07e8cd",
+    "content-hash": "289b671b6336db6f72842a6622ad2250",
     "packages": [
         {
             "name": "brick/math",
@@ -2512,6 +2512,53 @@
                 }
             ],
             "time": "2023-02-08T01:06:31+00:00"
+        },
+        {
+            "name": "onokumus/metismenu",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/onokumus/metismenu.git",
+                "reference": "8d03f02f709cbd2f1d06f0e3eaa62c32ea64fd45"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/onokumus/metismenu/zipball/8d03f02f709cbd2f1d06f0e3eaa62c32ea64fd45",
+                "reference": "8d03f02f709cbd2f1d06f0e3eaa62c32ea64fd45",
+                "shasum": ""
+            },
+            "suggest": {
+                "components/jquery": ">=1.9"
+            },
+            "default-branch": true,
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Osman Nuri Okumus",
+                    "email": "onokumus@gmail.com",
+                    "homepage": "https://onokumus.com"
+                }
+            ],
+            "description": "A jQuery menu plugin",
+            "homepage": "https://github.com/onokumus/metisMenu",
+            "keywords": [
+                "JS",
+                "bootstrap",
+                "css",
+                "jquery",
+                "menu",
+                "plugin",
+                "web"
+            ],
+            "support": {
+                "issues": "https://github.com/onokumus/metisMenu/issues",
+                "source": "https://github.com/onokumus/metismenu/tree/master"
+            },
+            "time": "2023-07-12T12:46:04+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -8642,7 +8689,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "onokumus/metismenu": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

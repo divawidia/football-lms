@@ -1,4 +1,4 @@
-<div class="bg-white border-top-2 mt-auto">
+<div class="bg-white border-top mt-auto">
     <div class="container page__container page-section d-flex flex-column">
         <p class="text-70 brand mb-24pt">
 {{--            <img class="brand-icon"--}}
