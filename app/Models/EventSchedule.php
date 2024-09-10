@@ -13,13 +13,13 @@ class EventSchedule extends Model
     protected $fillable = [
         'teamId',
         'userId',
-        'coachId',
-        'opponentTeamsId',
         'eventType',
         'matchType',
         'eventName',
-        'startDateTime',
-        'endDateTime',
+        'competitionId',
+        'date',
+        'startTime',
+        'endTime',
         'place',
         'note',
         'status'
