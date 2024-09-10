@@ -13,12 +13,6 @@
     @include('includes.style')
     @stack('addon-style')
 
-    <!-- script -->
-    @stack('prepend-script')
-    @include('includes.scripts')
-    @include('sweetalert::alert')
-    @stack('addon-script')
-
     @vite(['resources/sass/app.scss', 'resources/js/app.js', ])
 </head>
 
@@ -46,5 +40,12 @@
     </div>
     @include('includes.admins.sidebar')
 </div>
+
+<!-- script -->
+@stack('prepend-script')
+@include('includes.scripts')
+@include('sweetalert::alert')
+@stack('addon-script')
+
 </body>
 </html>

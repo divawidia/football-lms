@@ -1,5 +1,5 @@
 @import 'variables';
-@import 'bootstrap/scss/bootstrap';
+//@import 'bootstrap/scss/bootstrap';
 
 /////////////
 // PLUGINS //
@@ -51,5 +51,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  @include border-radius($border-radius-lg);
+  //@include border-radius($border-radius-lg);
 }

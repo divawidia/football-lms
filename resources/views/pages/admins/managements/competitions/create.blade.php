@@ -15,7 +15,7 @@
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Create new opponent team</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -139,7 +139,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
@@ -155,7 +155,7 @@
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Create new team</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -301,7 +301,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
@@ -314,7 +314,7 @@
         <div class="pt-32pt">
             <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
                 <div class="flex d-flex flex-column flex-sm-row align-items-center">
-                    <div class="mb-24pt mb-sm-0 mr-sm-24pt">
+                    <div class="mb-24pt mb-sm-0 mr-sm-24pt text-sm-start">
                         <h2 class="mb-0">
                             @yield('title')
                         </h2>
@@ -522,7 +522,7 @@
                                         <div class="d-flex flex-row align-items-center mb-2">
                                             <label class="form-label mb-0" for="teams">Our Teams</label>
                                             <small class="text-danger">*</small>
-                                            <button type="button" id="addNewTeam" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new team</button>
+                                            <button type="button" id="addNewTeam" class="btn btn-primary btn-sm ml-auto" data-toggle="modal" data-target="#createNewTeamModal"><span class="material-icons mr-2">add</span> Add new team</button>
                                         </div>
 
                                         @if(count($teams) == 0)

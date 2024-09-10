@@ -8,6 +8,7 @@
         <!-- Prevent the demo from appearing in search engines -->
         <meta name="robots" content="noindex">
         @include('includes.style')
+        @vite(['resources/sass/app.scss', 'resources/js/app.js', ])
     </head>
 
     <body class="layout-default layout-login-centered-boxed">
