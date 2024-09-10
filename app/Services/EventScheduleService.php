@@ -11,9 +11,11 @@ class EventScheduleService extends Service
 {
     public function index(): Collection
     {
-        $query = EventSchedule::all();
-        return $query;
+        return EventSchedule::all();
     }
 
-
+    public function store(array $data, $userId){
+        $data['userId'] = $userId;
+        EventSchedule::create($data);
+    }
 }
