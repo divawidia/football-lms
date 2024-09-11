@@ -57,4 +57,22 @@ class EventScheduleService extends Service
         }
         return $schedule;
     }
+    public function activate(EventSchedule $schedule)
+    {
+        return $schedule->update(['status' => '1']);
+    }
+
+    public function deactivate(EventSchedule $schedule)
+    {
+        return $schedule->update(['status' => '0']);
+    }
+
+    public function destroy(EventSchedule $schedule)
+    {
+        $schedule->teams()->detach();
+        $schedule->players()->detach();
+        $schedule->coaches()->detach();
+        $schedule->delete();
+        return $schedule;
+    }
 }
