@@ -77,4 +77,8 @@ class EventSchedule extends Model
     {
         return $this->hasMany(PlayerPerformanceReview::class, 'eventId');
     }
+    public function notes()
+    {
+        return $this->hasMany(ScheduleNote::class, 'competitionId');
+    }
 }
