@@ -45,4 +45,8 @@ class EventScheduleService extends Service
         $schedule->coaches()->attach($team->coaches);
         return $schedule;
     }
+
+    public function updateTraining(array $data, EventSchedule $schedule){
+        return $schedule->update($data);
+    }
 }
