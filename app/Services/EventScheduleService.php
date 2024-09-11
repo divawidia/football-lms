@@ -75,6 +75,14 @@ class EventScheduleService extends Service
         return $schedule->coaches()->updateExistingPivot($coaches->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
     }
 
+    public function updateNote($data, EventSchedule $schedule){
+        $schedule->update(['note' => $data['note']]);
+    }
+
+    public function destroyNote(EventSchedule $schedule){
+        $schedule->update(['note' => '']);
+    }
+
     public function destroy(EventSchedule $schedule)
     {
         $schedule->teams()->detach();
