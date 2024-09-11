@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Team;
 use App\Services\EventScheduleService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class EventScheduleController extends Controller
 {
@@ -43,15 +46,24 @@ class EventScheduleController extends Controller
      */
     public function create()
     {
-        //
+        $teams = Team::where('teamSide', 'Academy Team')->get();
+        return view('pages.admins.academies.schedules.trainings.create', [
+            'teams' => $teams,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TrainingScheduleRequest $request)
     {
-        //
+        $data = $request->validated();
+        $userId = Auth::user()->id;
+        $this->eventScheduleService->storeTraining($data, $userId);
+
+        $text = 'Training schedule successfully added!';
+        Alert::success($text);
+        return redirect()->route('training-schedules.index');
     }
 
     /**
