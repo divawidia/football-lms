@@ -12,9 +12,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class EventScheduleService extends Service
 {
-    public function index(): Collection
+    public function indexMatch(): Collection
     {
-        return EventSchedule::all();
+        return EventSchedule::with('teams')->where('eventType', 'Match')->get();
+    }
+    public function indexTraining(): Collection
+    {
+        return EventSchedule::with('teams')->where('eventType', 'Training')->get();
     }
 
     public function storeTraining(array $data, $userId){
@@ -73,14 +77,6 @@ class EventScheduleService extends Service
     }
     public function updateCoachAttendanceStatus($data, EventSchedule $schedule, Coach $coaches){
         return $schedule->coaches()->updateExistingPivot($coaches->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
-    }
-
-    public function updateNote($data, EventSchedule $schedule){
-        $schedule->update(['note' => $data['note']]);
-    }
-
-    public function destroyNote(EventSchedule $schedule){
-        $schedule->update(['note' => '']);
     }
 
     public function destroy(EventSchedule $schedule)
