@@ -11,7 +11,6 @@ class EventSchedule extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'teamId',
         'userId',
         'eventType',
         'matchType',

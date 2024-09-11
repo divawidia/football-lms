@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::table('event_schedules', function (Blueprint $table){
             $table->dropConstrainedForeignId('coachId');
+            $table->dropConstrainedForeignId('teamId');
             $table->dropColumn('endDateTime');
             $table->dropColumn('startDateTime');
             $table->foreignId('competitionId')->constrained('competitions')->cascadeOnDelete();
             $table->enum('eventType', ['Training', 'Match'])->change();
-            $table->enum('matchType', ['Friendly Match', 'Competition'])->change();
+            $table->enum('matchType', ['Friendly Match', 'Competition'])->nullable()->change();
             $table->date('date');
             $table->time('startTime');
             $table->time('endTime');
@@ -31,16 +32,17 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('event_schedules', function (Blueprint $table){
-            $table->foreignId('coachId')->constrained('coaches')->cascadeOnDelete();
-            $table->datetimes('endDateTime');
-            $table->datetimes('startDateTime');
-            $table->dropConstrainedForeignId('competitionId');
-            $table->enum('eventType', ['training', 'match'])->change();
-            $table->enum('matchType', ['friendlyMatch', 'cup', 'league'])->change();
-            $table->dropColumn('date');
-            $table->dropColumn('startTime');
-            $table->dropColumn('endTime');
             $table->string('eventName')->change();
+            $table->dropColumn('endTime');
+            $table->dropColumn('startTime');
+            $table->dropColumn('date');
+            $table->enum('matchType', ['friendlyMatch', 'cup', 'league'])->change();
+            $table->enum('eventType', ['training', 'match'])->change();
+            $table->dropConstrainedForeignId('competitionId');
+            $table->dateTime('startDateTime');
+            $table->dateTime('endDateTime');
+            $table->foreignId('coachId')->constrained('coaches')->cascadeOnDelete();
+            $table->foreignId('teamId')->constrained('teams')->cascadeOnDelete();
         });
     }
 };
