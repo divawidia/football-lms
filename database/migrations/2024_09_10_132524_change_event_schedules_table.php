@@ -23,6 +23,7 @@ return new class extends Migration
             $table->time('startTime');
             $table->time('endTime');
             $table->string('eventName')->nullable()->change();
+            $table->dropColumn('note');
         });
     }
 
@@ -43,6 +44,7 @@ return new class extends Migration
             $table->dateTime('endDateTime');
             $table->foreignId('coachId')->constrained('coaches')->cascadeOnDelete();
             $table->foreignId('teamId')->constrained('teams')->cascadeOnDelete();
+            $table->string('note')->nullable();
         });
     }
 };
