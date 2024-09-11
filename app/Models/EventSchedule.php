@@ -48,15 +48,19 @@ class EventSchedule extends Model
     {
         return $this->belongsTo(User::class, 'userId');
     }
-    public function coach()
+    public function coaches()
     {
-        return $this->belongsTo(Coach::class, 'coachId');
+        return $this->belongsToMany(Coach::class, 'event_participants', 'eventId', 'participantId')
+            ->withPivot(
+                'attendanceStatus',
+                'note'
+            )->withTimestamps();
     }
     public function matchScore()
     {
         return $this->hasMany(MatchScore::class, 'eventId');
     }
-    public function participant()
+    public function players()
     {
         return $this->belongsToMany(Player::class, 'event_participants', 'eventId', 'participantId')
             ->withPivot(

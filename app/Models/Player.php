@@ -44,7 +44,7 @@ class Player extends Model
     {
         return $this->hasMany(PlayerPerformanceReview::class, 'playerId');
     }
-    public function event()
+    public function schedules()
     {
         return $this->belongsToMany(EventSchedule::class, 'event_participants', 'participantId', 'eventId')
             ->withPivot(
