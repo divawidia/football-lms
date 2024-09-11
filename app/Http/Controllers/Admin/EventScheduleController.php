@@ -3,16 +3,45 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\EventScheduleService;
 use Illuminate\Http\Request;
 
 class EventScheduleController extends Controller
 {
+    private EventScheduleService $eventScheduleService;
+    public function __construct(EventScheduleService $eventScheduleService)
+    {
+        $this->eventScheduleService = $eventScheduleService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $trainings = $this->eventScheduleService->indexTraining();
+        $matches = $this->eventScheduleService->indexMatch();
+        $events = [];
+        foreach ($trainings as $training) {
+            $events[] = [
+                'title' => $training->eventName.' - '.$training->teams[0]->teamName,
+                'start' => $training->tanggal - $training->startTime,
+                'end' => $training->tanggal - $training->endTime,
+                'className' => 'bg-warning'
+            ];
+        }
+
+        foreach ($matches as $match) {
+            $events[] = [
+                'title' => $match->teams[0]->teamName.' Vs. '.$match->teams[1]->teamName,
+                'start' => $match->tanggal - $match->startTime,
+                'end' => $match->tanggal - $match->endTime,
+                'className' => 'bg-primary'
+            ];
+        }
+
+        return view('pages.admins.academies.schedules.index', [
+            'events' => $events
+        ]);
     }
 
     /**
