@@ -8,6 +8,7 @@ use App\Models\Player;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class EventScheduleService extends Service
@@ -19,6 +20,78 @@ class EventScheduleService extends Service
     public function indexTraining(): Collection
     {
         return EventSchedule::with('teams')->where('eventType', 'Training')->get();
+    }
+
+    public function dataTablesTraining(){
+        $data = $this->indexTraining();
+        return Datatables::of($data)
+            ->addColumn('action', function ($item) {
+                if ($item->status == '1') {
+                    $statusButton = '<form action="' . route('deactivate-competition', $item->id) . '" method="POST">
+                                                ' . method_field("PATCH") . '
+                                                ' . csrf_field() . '
+                                                <button type="submit" class="dropdown-item">
+                                                    <span class="material-icons">block</span> Deactivate Competition
+                                                </button>
+                                            </form>';
+                } else {
+                    $statusButton = '<form action="' . route('activate-competition', $item->id) . '" method="POST">
+                                                ' . method_field("PATCH") . '
+                                                ' . csrf_field() . '
+                                                <button type="submit" class="dropdown-item">
+                                                    <span class="material-icons">check_circle</span> Activate Competition
+                                                </button>
+                                            </form>';
+                }
+                return '
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="material-icons">
+                                more_vert
+                            </span>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="' . route('competition-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Competition</a>
+                            <a class="dropdown-item" href="' . route('competition-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Competition</a>
+                            ' . $statusButton . '
+                            <button type="button" class="dropdown-item delete" id="' . $item->id . '">
+                                <span class="material-icons">delete</span> Delete Competition
+                            </button>
+                          </div>
+                        </div>';
+            })
+            ->editColumn('team', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                             style="white-space: nowrap;">
+                            <div class="avatar avatar-sm mr-8pt">
+                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
+                            </div>
+                            <div class="media-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex d-flex flex-column">
+                                        <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->name . '</strong></p>
+                                        <small class="js-lists-values-email text-50">' . $item->teams[0]->ageGroup . '</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+            })
+            ->editColumn('date', function ($item) {
+                $date = date('M d, Y', strtotime($item->date));
+                $startTime = date('h:i A', strtotime($item->startTime));
+                $endTime = date('h:i A', strtotime($item->endTime));
+                return $date.' ('.$startTime.' - '.$endTime.')';
+            })
+            ->editColumn('status', function ($item) {
+                if ($item->status == '1') {
+                    return '<span class="badge badge-pill badge-success">Aktif</span>';
+                } elseif ($item->status == '0') {
+                    return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
+                }
+            })
+            ->rawColumns(['action','teams','date','status'])
+            ->make();
     }
 
     public function storeTraining(array $data, $userId){

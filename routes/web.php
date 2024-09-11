@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CoachController;
 use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EventScheduleController;
 use App\Http\Controllers\Admin\GroupDivisionController;
 use App\Http\Controllers\Admin\OpponentTeamController;
 use App\Http\Controllers\Admin\PlayerController;
@@ -162,6 +163,10 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
                 });
             });
         });
+    });
+
+    Route::prefix('training-schedules')->group(function (){
+        Route::get('', [EventScheduleController::class, 'indexTraining'])->name('schedules.index');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {

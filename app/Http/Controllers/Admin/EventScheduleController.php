@@ -16,10 +16,13 @@ class EventScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function indexTraining()
     {
+        if (request()->ajax()){
+            $this->eventScheduleService->dataTablesTraining();
+        }
+
         $trainings = $this->eventScheduleService->indexTraining();
-        $matches = $this->eventScheduleService->indexMatch();
         $events = [];
         foreach ($trainings as $training) {
             $events[] = [
@@ -30,16 +33,7 @@ class EventScheduleController extends Controller
             ];
         }
 
-        foreach ($matches as $match) {
-            $events[] = [
-                'title' => $match->teams[0]->teamName.' Vs. '.$match->teams[1]->teamName,
-                'start' => $match->tanggal - $match->startTime,
-                'end' => $match->tanggal - $match->endTime,
-                'className' => 'bg-primary'
-            ];
-        }
-
-        return view('pages.admins.academies.schedules.index', [
+        return view('pages.admins.academies.schedules.trainings.index', [
             'events' => $events
         ]);
     }
