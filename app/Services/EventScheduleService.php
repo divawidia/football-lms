@@ -46,7 +46,15 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function updateTraining(array $data, EventSchedule $schedule){
-        return $schedule->update($data);
+    public function update(array $data, EventSchedule $schedule){
+        $schedule->update($data);
+
+        if (array_key_exists('teamId', $data)){
+            $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->get();
+            $schedule->teams()->sync($data['teamId']);
+            $schedule->players()->sync($team->players);
+            $schedule->coaches()->sync($team->coaches);
+        }
+        return $schedule;
     }
 }
