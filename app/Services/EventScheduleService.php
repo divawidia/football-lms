@@ -90,7 +90,7 @@ class EventScheduleService extends Service
                     return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
                 }
             })
-            ->rawColumns(['action','teams','date','status'])
+            ->rawColumns(['action','team','date','status'])
             ->make();
     }
 

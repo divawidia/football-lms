@@ -72,12 +72,10 @@
                         url: '{!! url()->current() !!}',
                     },
                     columns: [
-                        { data: 'name', name: 'name' },
-                        { data: 'divisions', name: 'divisions' },
-                        { data: 'teams', name: 'teams' },
-                        { data: 'date', name: 'date'},
+                        { data: 'eventName', name: 'eventName' },
+                        { data: 'team', name: 'team' },
+                        { data: 'date', name: 'date' },
                         { data: 'location', name: 'location'},
-                        { data: 'contact', name: 'contact' },
                         { data: 'status', name: 'status' },
                         {
                             data: 'action',

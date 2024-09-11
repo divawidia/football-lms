@@ -86,7 +86,7 @@
                         </a>
                         <ul class="collapse sm-indent" id="scheduleMenu">
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="">
+                                <a class="sidebar-menu-button" href="{{ route('training-schedules.index') }}">
                                     <span class="sidebar-menu-text">Training</span>
                                 </a>
                             </li>
