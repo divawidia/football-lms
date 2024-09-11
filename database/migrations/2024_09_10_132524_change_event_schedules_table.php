@@ -16,7 +16,7 @@ return new class extends Migration
             $table->dropConstrainedForeignId('teamId');
             $table->dropColumn('endDateTime');
             $table->dropColumn('startDateTime');
-            $table->foreignId('competitionId')->constrained('competitions')->cascadeOnDelete();
+            $table->foreignId('competitionId')->nullable()->constrained('competitions')->cascadeOnDelete();
             $table->enum('eventType', ['Training', 'Match'])->change();
             $table->enum('matchType', ['Friendly Match', 'Competition'])->nullable()->change();
             $table->date('date');

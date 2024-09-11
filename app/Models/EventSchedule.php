@@ -24,9 +24,25 @@ class EventSchedule extends Model
         'status'
     ];
 
-    public function team()
+    public function teams()
     {
-        return $this->belongsTo(Team::class, 'teamId');
+        return $this->belongsToMany(Team::class, 'team_schedule', 'eventId', 'teamId')
+            ->withPivot(
+                'teamScore',
+                'teamOwnGoal',
+                'teamPossesion',
+                'teamShotOnTarget',
+                'teamShots',
+                'teamTouches',
+                'teamTackles',
+                'teamClearances',
+                'teamCorners',
+                'teamOffsides',
+                'teamYellowCards',
+                'teamRedCards',
+                'teamFoulsConceded',
+                'resultStatus',
+            )->withTimestamps();
     }
     public function user()
     {
@@ -48,10 +64,7 @@ class EventSchedule extends Model
                 'note'
             )->withTimestamps();
     }
-    public function teamMatchStats()
-    {
-        return $this->hasMany(TeamMatchStats::class, 'eventId');
-    }
+
     public function playerSkillStats()
     {
         return $this->hasMany(PlayerSkillStats::class, 'eventId');

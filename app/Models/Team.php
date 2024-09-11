@@ -23,9 +23,25 @@ class Team extends Model
     {
         return $this->belongsTo(Academy::class, 'academyId');
     }
-    public function teamMatchStats()
+    public function schedules()
     {
-        return $this->hasMany(TeamMatchStats::class, 'teamId');
+        return $this->belongsToMany(EventSchedule::class, 'team_schedule', 'teamId', 'eventId')
+            ->withPivot(
+                'teamScore',
+                'teamOwnGoal',
+                'teamPossesion',
+                'teamShotOnTarget',
+                'teamShots',
+                'teamTouches',
+                'teamTackles',
+                'teamClearances',
+                'teamCorners',
+                'teamOffsides',
+                'teamYellowCards',
+                'teamRedCards',
+                'teamFoulsConceded',
+                'resultStatus',
+            )->withTimestamps();
     }
     public function players()
     {
