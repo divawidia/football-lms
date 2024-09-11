@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TrainingScheduleRequest;
 use App\Models\Team;
 use App\Services\EventScheduleService;
 use Illuminate\Http\Request;
