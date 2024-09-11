@@ -17,7 +17,20 @@ class EventScheduleService extends Service
     public function storeTraining(array $data, $userId){
         $data['userId'] = $userId;
         $data['eventType'] = 'Training';
-        return EventSchedule::create($data);
+        $data['status'] = '1';
+        $schedule =  EventSchedule::create($data);
+        $schedule->teams()->attach($data['teamId']);
+        return $schedule;
+    }
+
+
+    public function storeTraining(array $data, $userId){
+        $data['userId'] = $userId;
+        $data['eventType'] = 'Training';
+        $data['status'] = '1';
+        $schedule =  EventSchedule::create($data);
+        $schedule->teams()->attach($data['teamId']);
+        return $schedule;
     }
 
 
