@@ -29,6 +29,14 @@ class Coach extends Model
     {
         return $this->belongsToMany(Team::class, 'coach_team', 'coachId', 'teamId')->withTimestamps();
     }
+    public function schedules()
+    {
+        return $this->belongsToMany(EventSchedule::class, 'coach_attendance', 'coachId', 'scheduleId')
+            ->withPivot(
+                'attendanceStatus',
+                'note'
+            )->withTimestamps();
+    }
     public function playerSkillStats()
     {
         return $this->hasMany(PlayerSkillStats::class, 'coachId');
