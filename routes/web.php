@@ -169,6 +169,14 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::get('', [EventScheduleController::class, 'indexTraining'])->name('training-schedules.index');
         Route::get('create', [EventScheduleController::class, 'createTraining'])->name('training-schedules.create');
         Route::post('store', [EventScheduleController::class, 'storeTraining'])->name('training-schedules.store');
+        Route::prefix('{schedule}')->group(function () {
+            Route::get('', [EventScheduleController::class, 'show'])->name('training-schedules.show');
+            Route::get('edit', [EventScheduleController::class, 'edit'])->name('training-schedules.edit');
+            Route::put('update', [EventScheduleController::class, 'update'])->name('training-schedules.update');
+            Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('training-schedules.destroy');
+            Route::patch('deactivate', [EventScheduleController::class, 'deactivate'])->name('deactivate-schedules');
+            Route::patch('activate', [EventScheduleController::class, 'activate'])->name('activate-schedules');
+        });
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
