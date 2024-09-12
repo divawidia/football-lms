@@ -111,8 +111,10 @@ class EventScheduleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(EventSchedule $schedule)
     {
-        //
+        $this->eventScheduleService->destroy($schedule);
+
+        return response()->json(['success' => true]);
     }
 }
