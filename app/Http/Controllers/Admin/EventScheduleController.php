@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingScheduleRequest;
+use App\Models\EventSchedule;
 use App\Models\Team;
 use App\Services\EventScheduleService;
 use Illuminate\Http\Request;
@@ -38,9 +39,8 @@ class EventScheduleController extends Controller
      */
     public function createTraining()
     {
-        $teams = Team::where('teamSide', 'Academy Team')->get();
         return view('pages.admins.academies.schedules.trainings.create', [
-            'teams' => $teams,
+            'teams' => $this->eventScheduleService->getAcademyTeams(),
         ]);
     }
 
@@ -69,9 +69,12 @@ class EventScheduleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function editTraining(EventSchedule $schedule)
     {
-        //
+        return view('pages.admins.academies.schedules.trainings.edit', [
+            'teams' => $this->eventScheduleService->getAcademyTeams(),
+            'data' => $schedule
+        ]);
     }
 
     /**

@@ -21,6 +21,11 @@ class EventScheduleService extends Service
     {
         return EventSchedule::with('teams')->where('eventType', 'Training')->get();
     }
+
+    public function getAcademyTeams(){
+        return Team::where('teamSide', 'Academy Team')->get();
+    }
+
     public function trainingCalendar(){
         $trainings = $this->indexTraining();
         $events = [];
