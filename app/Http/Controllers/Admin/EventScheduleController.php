@@ -30,6 +30,7 @@ class EventScheduleController extends Controller
         $events = [];
         foreach ($trainings as $training) {
             $events[] = [
+                'id' => $training->id,
                 'title' => $training->eventName.' - '.$training->teams[0]->teamName,
                 'start' => $training->date.' '.$training->startTime,
                 'end' => $training->date.' '.$training->endTime,
