@@ -46,7 +46,7 @@ class EventScheduleService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('deactivate-competition', $item->id) . '" method="POST">
+                    $statusButton = '<form action="' . route('deactivate-schedules', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
@@ -54,7 +54,7 @@ class EventScheduleService extends Service
                                                 </button>
                                             </form>';
                 } else {
-                    $statusButton = '<form action="' . route('activate-competition', $item->id) . '" method="POST">
+                    $statusButton = '<form action="' . route('activate-schedules', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
@@ -70,8 +70,8 @@ class EventScheduleService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('competition-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Competition</a>
-                            <a class="dropdown-item" href="' . route('competition-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Competition</a>
+                            <a class="dropdown-item" href="' . route('training-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Competition</a>
+                            <a class="dropdown-item" href="' . route('training-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Competition</a>
                             ' . $statusButton . '
                             <button type="button" class="dropdown-item delete" id="' . $item->id . '">
                                 <span class="material-icons">delete</span> Delete Competition
