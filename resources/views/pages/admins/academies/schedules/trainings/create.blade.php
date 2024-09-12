@@ -104,68 +104,66 @@
                                     <div class="form-group mb-3">
                                         <label class="form-label" for="date">Training Date</label>
                                         <small class="text-danger">*</small>
-                                        <input type="date"
-                                               class="form-control @error('date') is-invalid @enderror"
+                                        <input type="hidden"
+                                               class="form-control flatpickr-input @error('date') is-invalid @enderror"
                                                id="date"
                                                name="date"
                                                required
-                                               value="{{ old('date') }}">
+                                               value="today"
+                                               data-toggle="flatpickr">
                                         @error('date')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
                                     </div>
-                                    <div class="col-6">
-                                        <div class="form-group mb-3">
-                                            <label class="form-label" for="startTime">Start Time</label>
-                                            <small class="text-danger">*</small>
-                                            <input type="time"
-                                                   id="startTime"
-                                                   name="startTime"
-                                                   required
-                                                   value="{{ old('startTime') }}"
-                                                   class="form-control @error('startTime') is-invalid @enderror"
-                                                   placeholder="Input training's start time ...">
-                                            @error('startTime')
-                                            <span class="invalid-feedback" role="alert">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label" for="startTime">Start Time</label>
+                                                <small class="text-danger">*</small>
+                                                <input type="text"
+                                                       id="startTime"
+                                                       name="startTime"
+                                                       required
+                                                       value="{{ old('startTime') }}"
+                                                       class="form-control @error('startTime') is-invalid @enderror"
+                                                       placeholder="Input training's start time ..."
+                                                       data-toggle="flatpickr"
+                                                       data-flatpickr-enable-time="true"
+                                                       data-flatpickr-no-calendar="true"
+                                                       data-flatpickr-alt-format="H:i"
+                                                       data-flatpickr-date-format="H:i">
+                                                @error('startTime')
+                                                <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
-                                            @enderror
+                                                @enderror
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group mb-3">
-                                            <label class="form-label" for="endTime">End Time</label>
-                                            <small class="text-danger">*</small>
-                                            <input type="time"
-                                                   id="endTime"
-                                                   name="endTime"
-                                                   required
-                                                   value="{{ old('endTime') }}"
-                                                   class="form-control @error('endTime') is-invalid @enderror"
-                                                   placeholder="Input training's end time ...">
-                                            @error('endTime')
-                                            <span class="invalid-feedback" role="alert">
+                                        <div class="col-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label" for="endTime">End Time</label>
+                                                <small class="text-danger">*</small>
+                                                <input type="text"
+                                                       id="endTime"
+                                                       name="endTime"
+                                                       required
+                                                       value="{{ old('endTime') }}"
+                                                       class="form-control @error('endTime') is-invalid @enderror"
+                                                       placeholder="Input training's end time ..."
+                                                       data-toggle="flatpickr"
+                                                       data-flatpickr-enable-time="true"
+                                                       data-flatpickr-no-calendar="true"
+                                                       data-flatpickr-alt-format="H:i"
+                                                       data-flatpickr-date-format="H:i">>
+                                                @error('endTime')
+                                                <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
-                                            @enderror
+                                                @enderror
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label class="form-label" for="endDate">End Date</label>
-                                        <small class="text-danger">*</small>
-                                        <input type="date"
-                                               class="form-control @error('endDate') is-invalid @enderror"
-                                               id="endDate"
-                                               name="endDate"
-                                               required
-                                               value="{{ old('endDate') }}">
-                                        @error('endDate')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
                                     </div>
                                 </div>
                             </div>

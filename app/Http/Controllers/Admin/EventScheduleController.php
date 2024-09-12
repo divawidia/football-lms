@@ -23,7 +23,7 @@ class EventScheduleController extends Controller
     public function indexTraining()
     {
         if (request()->ajax()){
-            $this->eventScheduleService->dataTablesTraining();
+            return $this->eventScheduleService->dataTablesTraining();
         }
 
         $trainings = $this->eventScheduleService->indexTraining();
@@ -31,11 +31,12 @@ class EventScheduleController extends Controller
         foreach ($trainings as $training) {
             $events[] = [
                 'title' => $training->eventName.' - '.$training->teams[0]->teamName,
-                'start' => $training->tanggal - $training->startTime,
-                'end' => $training->tanggal - $training->endTime,
+                'start' => $training->date.' '.$training->startTime,
+                'end' => $training->date.' '.$training->endTime,
                 'className' => 'bg-warning'
             ];
         }
+//        dd($events);
 
         return view('pages.admins.academies.schedules.trainings.index', [
             'events' => $events
@@ -45,7 +46,7 @@ class EventScheduleController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function createTraining()
     {
         $teams = Team::where('teamSide', 'Academy Team')->get();
         return view('pages.admins.academies.schedules.trainings.create', [
@@ -56,7 +57,7 @@ class EventScheduleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(TrainingScheduleRequest $request)
+    public function storeTraining(TrainingScheduleRequest $request)
     {
         $data = $request->validated();
         $userId = Auth::user()->id;

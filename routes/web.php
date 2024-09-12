@@ -167,6 +167,8 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
     Route::prefix('training-schedules')->group(function (){
         Route::get('', [EventScheduleController::class, 'indexTraining'])->name('training-schedules.index');
+        Route::get('create', [EventScheduleController::class, 'createTraining'])->name('training-schedules.create');
+        Route::post('store', [EventScheduleController::class, 'storeTraining'])->name('training-schedules.store');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {

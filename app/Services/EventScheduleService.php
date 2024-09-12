@@ -63,19 +63,19 @@ class EventScheduleService extends Service
             ->editColumn('team', function ($item) {
                 return '
                         <div class="media flex-nowrap align-items-center"
-                             style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->name . '</strong></p>
-                                        <small class="js-lists-values-email text-50">' . $item->teams[0]->ageGroup . '</small>
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->teamName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$item->teams[0]->ageGroup.'</small>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>';
+                            </div>';
             })
             ->editColumn('date', function ($item) {
                 $date = date('M d, Y', strtotime($item->date));
@@ -100,7 +100,8 @@ class EventScheduleService extends Service
         $data['status'] = '1';
         $schedule =  EventSchedule::create($data);
 
-        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->get();
+        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
+//        dd($team->players);
 
         $schedule->teams()->attach($data['teamId']);
         $schedule->players()->attach($team->players);

@@ -24,7 +24,7 @@
         </div>
 
         <div class="container page__container page-section">
-            <a href="{{  route('competition-managements.create') }}" class="btn btn-primary mb-3" id="add-new">
+            <a href="{{  route('training-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">
                 <span class="material-icons mr-2">
                     add
                 </span>
@@ -75,7 +75,7 @@
                         { data: 'eventName', name: 'eventName' },
                         { data: 'team', name: 'team' },
                         { data: 'date', name: 'date' },
-                        { data: 'location', name: 'location'},
+                        { data: 'place', name: 'place'},
                         { data: 'status', name: 'status' },
                         {
                             data: 'action',
@@ -139,8 +139,8 @@
 
                 const calendar = new FullCalendar.Calendar(calendarEl, {
                     timeZone: 'local',
-                    editable: true,
-                    droppable: true,
+                    editable: false,
+                    droppable: false,
                     selectable: true,
                     initialView: getInitialView(),
                     themeSystem: 'bootstrap',
@@ -151,7 +151,7 @@
                     },
                     // responsive
                     windowResize: function (view) {
-                        var newView = getInitialView();
+                        const newView = getInitialView();
                         calendar.changeView(newView);
                     },
                     events: @json($events)
