@@ -26,18 +26,7 @@ class EventScheduleController extends Controller
             return $this->eventScheduleService->dataTablesTraining();
         }
 
-        $trainings = $this->eventScheduleService->indexTraining();
-        $events = [];
-        foreach ($trainings as $training) {
-            $events[] = [
-                'id' => $training->id,
-                'title' => $training->eventName.' - '.$training->teams[0]->teamName,
-                'start' => $training->date.' '.$training->startTime,
-                'end' => $training->date.' '.$training->endTime,
-                'className' => 'bg-warning'
-            ];
-        }
-//        dd($events);
+        $events = $this->eventScheduleService->trainingCalendar();
 
         return view('pages.admins.academies.schedules.trainings.index', [
             'events' => $events

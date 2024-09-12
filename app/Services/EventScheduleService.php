@@ -21,6 +21,20 @@ class EventScheduleService extends Service
     {
         return EventSchedule::with('teams')->where('eventType', 'Training')->get();
     }
+    public function trainingCalendar(){
+        $trainings = $this->indexTraining();
+        $events = [];
+        foreach ($trainings as $training) {
+            $events[] = [
+                'id' => $training->id,
+                'title' => $training->eventName.' - '.$training->teams[0]->teamName,
+                'start' => $training->date.' '.$training->startTime,
+                'end' => $training->date.' '.$training->endTime,
+                'className' => 'bg-warning'
+            ];
+        }
+        return $events;
+    }
 
     public function dataTablesTraining(){
         $data = $this->indexTraining();
@@ -101,7 +115,6 @@ class EventScheduleService extends Service
         $schedule =  EventSchedule::create($data);
 
         $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
-//        dd($team->players);
 
         $schedule->teams()->attach($data['teamId']);
         $schedule->players()->attach($team->players);
