@@ -143,7 +143,7 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function update(array $data, EventSchedule $schedule){
+    public function updateTraining(array $data, EventSchedule $schedule){
         $schedule->update($data);
 
         if (array_key_exists('teamId', $data)){

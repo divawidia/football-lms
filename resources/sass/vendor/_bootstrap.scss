@@ -1,7 +1,8 @@
 body {
     font-family: Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
     font-size: .8125rem;
-    color: #272c33
+    color: #272c33;
+    background-color: #f5f7fa;
 }
 
 a {
@@ -264,4 +265,8 @@ select {
         background-color: #868e96;
         border-color: #868e96
     }
+}
+
+.btn-outline-white{
+    color: $white;
 }
