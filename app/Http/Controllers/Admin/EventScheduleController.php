@@ -80,10 +80,33 @@ class EventScheduleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(TrainingScheduleRequest $request, EventSchedule $schedule)
     {
-        //
+        $data = $request->validated();
+        $this->eventScheduleService->update($data, $schedule);
+
+        $text = 'Schedule successfully updated!';
+        Alert::success($text);
+        return redirect()->route('training-schedules.index');
     }
+    public function activate(EventSchedule $schedule)
+    {
+        $this->eventScheduleService->activate($schedule);
+
+        $text = 'Schedule status successfully updated!';
+        Alert::success($text);
+        return redirect()->route('competition-managements.show', $schedule->id);
+    }
+
+    public function deactivate(EventSchedule $schedule)
+    {
+        $this->eventScheduleService->deactivate($schedule);
+
+        $text = 'Schedule status successfully updated!';
+        Alert::success($text);
+        return redirect()->route('competition-managements.show', $schedule->id);
+    }
+
 
     /**
      * Remove the specified resource from storage.

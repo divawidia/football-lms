@@ -78,8 +78,6 @@ class CompetitionController extends Controller
      */
     public function edit(Competition $competition)
     {
-
-
         return view('pages.admins.managements.competitions.edit',[
             'competition' => $competition,
         ]);
