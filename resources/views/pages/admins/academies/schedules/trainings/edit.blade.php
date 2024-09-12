@@ -28,7 +28,7 @@
 
         <div class="container page__container page-section">
             <div class="list-group">
-                <form action="{{ route('training-schedules.update') }}" method="post">
+                <form action="{{ route('training-schedules.update', $data->id) }}" method="post">
                     @method('PUT')
                     @csrf
                     <div class="list-group-item">

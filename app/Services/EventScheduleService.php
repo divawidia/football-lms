@@ -50,7 +50,7 @@ class EventScheduleService extends Service
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">block</span> Deactivate Competition
+                                                    <span class="material-icons">block</span> Deactivate Schedule
                                                 </button>
                                             </form>';
                 } else {
@@ -58,7 +58,7 @@ class EventScheduleService extends Service
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">check_circle</span> Activate Competition
+                                                    <span class="material-icons">check_circle</span> Activate Schedule
                                                 </button>
                                             </form>';
                 }
@@ -70,11 +70,11 @@ class EventScheduleService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('training-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Competition</a>
-                            <a class="dropdown-item" href="' . route('training-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Competition</a>
+                            <a class="dropdown-item" href="' . route('training-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Schedule</a>
+                            <a class="dropdown-item" href="' . route('training-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Schedule</a>
                             ' . $statusButton . '
                             <button type="button" class="dropdown-item delete" id="' . $item->id . '">
-                                <span class="material-icons">delete</span> Delete Competition
+                                <span class="material-icons">delete</span> Delete Schedule
                             </button>
                           </div>
                         </div>';
@@ -147,7 +147,7 @@ class EventScheduleService extends Service
         $schedule->update($data);
 
         if (array_key_exists('teamId', $data)){
-            $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->get();
+            $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->first();
             $schedule->teams()->sync($data['teamId']);
             $schedule->players()->sync($team->players);
             $schedule->coaches()->sync($team->coaches);

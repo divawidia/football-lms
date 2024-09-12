@@ -171,7 +171,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::post('store', [EventScheduleController::class, 'storeTraining'])->name('training-schedules.store');
         Route::prefix('{schedule}')->group(function () {
             Route::get('', [EventScheduleController::class, 'show'])->name('training-schedules.show');
-            Route::get('edit', [EventScheduleController::class, 'edit'])->name('training-schedules.edit');
+            Route::get('edit', [EventScheduleController::class, 'editTraining'])->name('training-schedules.edit');
             Route::put('update', [EventScheduleController::class, 'update'])->name('training-schedules.update');
             Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('training-schedules.destroy');
             Route::patch('deactivate', [EventScheduleController::class, 'deactivate'])->name('deactivate-training');
