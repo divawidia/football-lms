@@ -95,7 +95,7 @@ class EventScheduleController extends Controller
 
         $text = 'Schedule status successfully updated!';
         Alert::success($text);
-        return redirect()->route('competition-managements.show', $schedule->id);
+        return redirect()->route('training-schedules.show', $schedule->id);
     }
 
     public function deactivate(EventSchedule $schedule)
@@ -104,7 +104,7 @@ class EventScheduleController extends Controller
 
         $text = 'Schedule status successfully updated!';
         Alert::success($text);
-        return redirect()->route('competition-managements.show', $schedule->id);
+        return redirect()->route('training-schedules.show', $schedule->id);
     }
 
 

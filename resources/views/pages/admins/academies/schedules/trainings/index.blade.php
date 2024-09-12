@@ -101,7 +101,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: "{{ route('competition-managements.destroy', ['competition' => ':id']) }}".replace(':id', id),
+                                url: "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
                                 type: 'DELETE',
                                 data: {
                                     _token: "{{ csrf_token() }}"

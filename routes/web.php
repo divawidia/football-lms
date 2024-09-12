@@ -174,8 +174,8 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::get('edit', [EventScheduleController::class, 'edit'])->name('training-schedules.edit');
             Route::put('update', [EventScheduleController::class, 'update'])->name('training-schedules.update');
             Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('training-schedules.destroy');
-            Route::patch('deactivate', [EventScheduleController::class, 'deactivate'])->name('deactivate-schedules');
-            Route::patch('activate', [EventScheduleController::class, 'activate'])->name('activate-schedules');
+            Route::patch('deactivate', [EventScheduleController::class, 'deactivate'])->name('deactivate-training');
+            Route::patch('activate', [EventScheduleController::class, 'activate'])->name('activate-training');
         });
     });
 });
