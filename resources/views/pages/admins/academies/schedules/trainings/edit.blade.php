@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Create Training Schedule
+    Edit Training {{ $data->eventName }} Schedule
 @endsection
 @section('page-title')
     @yield('title')
@@ -28,7 +28,8 @@
 
         <div class="container page__container page-section">
             <div class="list-group">
-                <form action="{{ route('training-schedules.store') }}" method="post">
+                <form action="{{ route('training-schedules.update') }}" method="post">
+                    @method('PUT')
                     @csrf
                     <div class="list-group-item">
                         <div role="group" aria-labelledby="label-question" class="m-0 form-group">
@@ -41,7 +42,7 @@
                                                class="form-control @error('eventName') is-invalid @enderror"
                                                id="eventName"
                                                name="eventName"
-                                               value="{{ old('eventName') }}"
+                                               value="{{ old('eventName', $data->eventName ) }}"
                                                placeholder="E.g. : Physical conditioning training ...">
                                         @error('eventName')
                                         <span class="invalid-feedback" role="alert">
@@ -56,7 +57,7 @@
                                                class="form-control @error('place') is-invalid @enderror"
                                                id="place"
                                                name="place"
-                                               value="{{ old('place') }}"
+                                               value="{{ old('place', $data->place) }}"
                                                placeholder="E.g. : Football field ...">
                                         @error('place')
                                         <span class="invalid-feedback" role="alert">
@@ -87,7 +88,7 @@
                                             <select class="form-control form-select @error('teamId') is-invalid @enderror" id="teamId" name="teamId" data-toggle="select">
                                                 <option selected disabled>Select team to train in this schedule</option>
                                                 @foreach($teams as $team)
-                                                    <option value="{{ $team->id }}" @selected(old('teamId') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
+                                                    <option value="{{ $team->id }}" @selected(old('teamId', $data->teams[0]->id) == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
                                                         {{ $team->teamName }}
                                                     </option>
                                                 @endforeach
@@ -109,7 +110,7 @@
                                                id="date"
                                                name="date"
                                                required
-                                               value="today"
+                                               value="{{ $data->date }}"
                                                data-toggle="flatpickr">
                                         @error('date')
                                         <span class="invalid-feedback" role="alert">
@@ -126,7 +127,7 @@
                                                        id="startTime"
                                                        name="startTime"
                                                        required
-                                                       value="{{ old('startTime') }}"
+                                                       value="{{ old('startTime', $data->startTime) }}"
                                                        class="form-control @error('startTime') is-invalid @enderror"
                                                        placeholder="Input training's start time ..."
                                                        data-toggle="flatpickr"
@@ -149,7 +150,7 @@
                                                        id="endTime"
                                                        name="endTime"
                                                        required
-                                                       value="{{ old('endTime') }}"
+                                                       value="{{ old('endTime', $data->endTime) }}"
                                                        class="form-control @error('endTime') is-invalid @enderror"
                                                        placeholder="Input training's end time ..."
                                                        data-toggle="flatpickr"
