@@ -1,0 +1,10 @@
+.fc{
+    .fc-button-primary{
+        background-color: $accent-1;
+        border-color: $accent-1;
+        &:disabled{
+            background-color: $accent-1;
+            border-color: $accent-1;
+        }
+    }
+}
