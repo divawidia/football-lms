@@ -98,6 +98,37 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal edit coach attendance modal -->
+    <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ route('training-schedules.create-note') }}" method="post" id="formCreateNoteModal">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="coachName">Create note for {{ $data->eventName }} Session</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label" for="add_note">Note</label>
+                            <small>(Optional)</small>
+                            <textarea class="form-control" id="add_note" name="note" placeholder="Input note here ...">{{ old('note') }}</textarea>
+                            <span class="invalid-feedback note_error" role="alert">
+                                <strong></strong>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('content')
@@ -145,15 +176,15 @@
         <div class="container page__container">
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
-                    <i class="material-icons text-muted icon--left icon-16pt">event</i>
+                    <i class="material-icons text-danger icon--left icon-16pt">event</i>
                     {{ date('D, M d Y', strtotime($data->date)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
-                    <i class="material-icons text-muted icon--left icon-16pt">schedule</i>
+                    <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
                     {{ date('h:i A', strtotime($data->startTime)) }} - {{ date('h:i A', strtotime($data->endTime)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
-                    <i class="material-icons text-muted icon--left icon-16pt">location_on</i>
+                    <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
                     {{ $data->place }}
                 </li>
                 <li class="nav-item navbar-list__item">
@@ -175,6 +206,7 @@
         </div>
     </div>
 
+    {{--    Attendance Overview    --}}
     <div class="container page__container page-section">
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
@@ -262,41 +294,40 @@
             </div>
         </div>
 
-        <div class="row card-group-row">
-            <div class="col-12 card-group-row__col flex-column">
-                <div class="page-separator">
-                    <div class="page-separator__text">Player Attendance</div>
-                </div>
-                <div class="row">
-                    @foreach($data->players as $player)
-                        <div class="col-md-6">
-                            <div class="card @if($player->pivot->attendanceStatus == 'Required Action') border-warning @elseif($player->pivot->attendanceStatus == 'Attended') border-success @else border-danger @endif" id="{{$player->id}}">
-                                <div class="card-body d-flex align-items-center flex-row text-left">
-                                    <img src="{{ Storage::url($player->user->foto) }}"
-                                         width="50"
-                                         height="50"
-                                         class="rounded-circle img-object-fit-cover"
-                                         alt="instructor">
-                                    <div class="flex ml-3">
-                                        <h5 class="mb-0">{{ $player->user->firstName  }} {{ $player->user->lastName  }}</h5>
-                                        <p class="text-50 lh-1 mb-0">{{ $player->position->name }}</p>
-                                    </div>
-                                    <a class="btn @if($player->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($player->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif playerAttendance" id="{{$player->id}}" href="">
-                                        <span class="material-icons mr-2">
-                                            @if($player->pivot->attendanceStatus == 'Required Action') error
-                                            @elseif($player->pivot->attendanceStatus == 'Attended') check_circle
-                                            @else cancel
-                                            @endif
-                                        </span>
-                                        {{ $player->pivot->attendanceStatus }}
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
+        {{--    Player Attendance    --}}
+        <div class="page-separator">
+            <div class="page-separator__text">Player Attendance</div>
         </div>
+        <div class="row">
+            @foreach($data->players as $player)
+                <div class="col-md-6">
+                    <div class="card @if($player->pivot->attendanceStatus == 'Required Action') border-warning @elseif($player->pivot->attendanceStatus == 'Attended') border-success @else border-danger @endif" id="{{$player->id}}">
+                        <div class="card-body d-flex align-items-center flex-row text-left">
+                            <img src="{{ Storage::url($player->user->foto) }}"
+                                 width="50"
+                                 height="50"
+                                 class="rounded-circle img-object-fit-cover"
+                                 alt="instructor">
+                            <div class="flex ml-3">
+                                <h5 class="mb-0">{{ $player->user->firstName  }} {{ $player->user->lastName  }}</h5>
+                                <p class="text-50 lh-1 mb-0">{{ $player->position->name }}</p>
+                            </div>
+                            <a class="btn @if($player->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($player->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif playerAttendance" id="{{$player->id}}" href="">
+                                <span class="material-icons mr-2">
+                                    @if($player->pivot->attendanceStatus == 'Required Action') error
+                                    @elseif($player->pivot->attendanceStatus == 'Attended') check_circle
+                                    @else cancel
+                                    @endif
+                                </span>
+                                {{ $player->pivot->attendanceStatus }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        {{--    Coach Attendance    --}}
         <div class="page-separator">
             <div class="page-separator__text">Coach Attendance</div>
         </div>
@@ -328,6 +359,36 @@
                 </div>
             @endforeach
         </div>
+
+        {{--    Training Note    --}}
+        <div class="page-separator">
+            <div class="page-separator__text">Training Note</div>
+            <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+        </div>
+        @if(count($data->notes)==0)
+            <small class="text-70 text-headings text-uppercase mr-3">You haven't create any note</small>
+        @else
+            @foreach($data->notes as $note)
+                <div class="card">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="flex">
+                            <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($note->created_at)) }}</h4>
+                            <div class="card-subtitle text-50">Last updated at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="material-icons">
+                                more_vert
+                            </span>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        @php
+                            echo $note->note
+                        @endphp
+                    </div>
+                </div>
+            @endforeach
+        @endif
     </div>
 
 @endsection
@@ -384,6 +445,11 @@
                         });
                     }
                 });
+            });
+
+            $('#addNewNote').on('click', function(e) {
+                e.preventDefault();
+                $('#createNoteModal').modal('show');
             });
 
             // update player attendance data

@@ -503,6 +503,10 @@ select.form-control:focus::-ms-value {
   color: rgba(39, 44, 51, 0.35);
 }
 
+.card {
+  border-radius: 0.75rem;
+}
+
 .card-nav .tab-content {
   position: relative;
   display: flex;

@@ -79,6 +79,6 @@ class EventSchedule extends Model
     }
     public function notes()
     {
-        return $this->hasMany(ScheduleNote::class, 'competitionId');
+        return $this->hasMany(ScheduleNote::class, 'scheduleId');
     }
 }
