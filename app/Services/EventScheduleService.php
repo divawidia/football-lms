@@ -181,8 +181,8 @@ class EventScheduleService extends Service
     public function updatePlayerAttendanceStatus($data, EventSchedule $schedule, Player $player){
         return $schedule->players()->updateExistingPivot($player->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
     }
-    public function updateCoachAttendanceStatus($data, EventSchedule $schedule, Coach $coaches){
-        return $schedule->coaches()->updateExistingPivot($coaches->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
+    public function updateCoachAttendanceStatus($data, EventSchedule $schedule, Coach $coach){
+        return $schedule->coaches()->updateExistingPivot($coach->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
     }
 
     public function destroy(EventSchedule $schedule)

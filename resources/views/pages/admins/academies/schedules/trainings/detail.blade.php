@@ -26,7 +26,7 @@
                             <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
                             <small class="text-danger">*</small>
                             <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
-                                <option disabled>Select player's attendance status</option>
+                                <option disabled selected>Select player's attendance status</option>
                                 @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
                                     <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
                                 @endforeach
@@ -61,18 +61,18 @@
                     @method('PUT')
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="CoachName"></h5>
+                        <h5 class="modal-title" id="coachName"></h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" id="CoachId">
+                        <input type="hidden" id="coachId">
                         <div class="form-group">
                             <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
                             <small class="text-danger">*</small>
                             <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
-                                <option disabled>Select Coach's attendance status</option>
+                                <option disabled selected>Select Coach's attendance status</option>
                                 @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
                                     <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
                                 @endforeach
@@ -314,7 +314,7 @@
                                 <h5 class="mb-0">{{ $coach->user->firstName  }} {{ $coach->user->lastName  }}</h5>
                                 <p class="text-50 lh-1 mb-0">{{ $coach->specializations->name }}</p>
                             </div>
-                            <a class="btn @if($coach->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($coach->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif coachAttendance" id="{{$coach->id}}" href="">
+                            <a class="btn @if($coach->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($coach->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif coachAttendance" id="{{$coach->id}}" href="{{ route('training-schedules.coach', ['schedule' => $data->id, 'coach' => $coach->id]) }}">
                                         <span class="material-icons mr-2">
                                             @if($coach->pivot->attendanceStatus == 'Required Action') error
                                             @elseif($coach->pivot->attendanceStatus == 'Attended') check_circle
@@ -346,8 +346,7 @@
 
                         const heading = document.getElementById('playerName');
                         heading.textContent = 'Update Player '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
-                        // $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.schedules[0].pivot.attendanceStatus);
-                        $('#add_attendanceStatus option[value="' + res.data.schedules[0].pivot.attendanceStatus + '"]').attr('selected', 'selected');
+                        $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.schedules[0].pivot.attendanceStatus);
                         $('#editPlayerAttendanceModal #add_note').val(res.data.schedules[0].pivot.note);
                         $('#playerId').val(res.data.id);
                     },
@@ -361,7 +360,33 @@
                 });
             });
 
-            // insert data opponent team
+            $('.coachAttendance').on('click', function(e) {
+                e.preventDefault();
+                const id = $(this).attr('id');
+
+                $.ajax({
+                    url: "{{ route('training-schedules.coach', ['schedule' => $data->id, 'coach' => ":id"]) }}".replace(':id', id),
+                    type: 'get',
+                    success: function(res) {
+                        $('#editCoachAttendanceModal').modal('show');
+
+                        const heading = document.getElementById('coachName');
+                        heading.textContent = 'Update Coach '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
+                        $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.schedules[0].pivot.attendanceStatus);
+                        $('#editCoachAttendanceModal #add_note').val(res.data.schedules[0].pivot.note);
+                        $('#coachId').val(res.data.id);
+                    },
+                    error: function(error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when deleting data!",
+                            text: error,
+                        });
+                    }
+                });
+            });
+
+            // update player attendance data
             $('#formEditPlayerAttendanceModal').on('submit', function(e) {
                 e.preventDefault();
                 const id = $('#playerId').val();
@@ -373,9 +398,8 @@
                     processData: false,
                     success: function(res) {
                         $('#editPlayerAttendanceModal').modal('hide');
-                        // console.log(res);
                         Swal.fire({
-                            title: 'Player attendance successfully added!',
+                            title: 'Player attendance successfully updated!',
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",
@@ -392,7 +416,43 @@
                         console.log(response);
                         $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
-                            $("input#add_" + key).addClass('is-invalid');
+                            $("#add_" + key).addClass('is-invalid');
+                        });
+                    }
+                });
+            });
+
+            // update coach attendance data
+            $('#formEditCoachAttendanceModal').on('submit', function(e) {
+                e.preventDefault();
+                const id = $('#coachId').val();
+                $.ajax({
+                    url: "{{ route('training-schedules.update-coach', ['schedule' => $data->id, 'coach' => ":id"]) }}".replace(':id', id),
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+                        $('#editCoachAttendanceModal').modal('hide');
+                        Swal.fire({
+                            title: 'Coach attendance successfully updated!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        console.log(response);
+                        $.each(response.errors, function(key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("#add_" + key).addClass('is-invalid');
                         });
                     }
                 });

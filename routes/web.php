@@ -178,15 +178,11 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('deactivate', [EventScheduleController::class, 'deactivate'])->name('deactivate-training');
             Route::patch('activate', [EventScheduleController::class, 'activate'])->name('activate-training');
 
-            Route::prefix('{player}')->group(function () {
-                Route::get('', [EventScheduleController::class, 'getPlayerAttendance'])->name('training-schedules.player');
-                Route::put('update-attendance', [EventScheduleController::class, 'updatePlayerAttendance'])->name('training-schedules.update-player');
-            });
+            Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('training-schedules.player');
+            Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('training-schedules.update-player');
 
-            Route::prefix('{coach}')->group(function () {
-                Route::get('', [EventScheduleController::class, 'getCoachAttendance'])->name('training-schedules.coach');
-                Route::put('update-attendance', [EventScheduleController::class, 'updateCoachAttendance'])->name('training-schedules.update-coach');
-            });
+            Route::get('edit-coach-attendance/{coach}', [EventScheduleController::class, 'getCoachAttendance'])->name('training-schedules.coach');
+            Route::put('update-coach-attendance/{coach}', [EventScheduleController::class, 'updateCoachAttendance'])->name('training-schedules.update-coach');
 
         });
     });

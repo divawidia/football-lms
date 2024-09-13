@@ -10,6 +10,7 @@ use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\Team;
 use App\Services\EventScheduleService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -185,7 +186,9 @@ class EventScheduleController extends Controller
 
     public function getCoachAttendance(EventSchedule $schedule, Coach $coach){
         $data = $this->eventScheduleService->getCoachAttendance($schedule, $coach);
-
+//        return view('pages.admins.academies.schedules.trainings.editCoachAttendance', [
+//            'data' => $data
+//        ]);
         if (request()->ajax()) {
             if ($data) {
                 return response()->json([
@@ -203,7 +206,7 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function updatePlayerAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Player $player)
+    public function updatePlayerAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Player $player): JsonResponse
     {
         $data = $request->validated();
         $attendance = $this->eventScheduleService->updatePlayerAttendanceStatus($data, $schedule, $player);
@@ -212,11 +215,13 @@ class EventScheduleController extends Controller
 
     public function updateCoachAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Coach $coach)
     {
-        $data = $request->validated();~
+        $data = $request->validated();
         $attendance = $this->eventScheduleService->updateCoachAttendanceStatus($data, $schedule, $coach);
+//        $text = 'Coach attendance status successfully updated!';
+//        Alert::success($text);
+//        return redirect()->route('training-schedules.show', $schedule->id);
         return response()->json($attendance);
     }
-
 
     /**
      * Remove the specified resource from storage.
