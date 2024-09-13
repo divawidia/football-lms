@@ -194,6 +194,10 @@ class EventScheduleService extends Service
     public function updateNote($data, EventSchedule $schedule, ScheduleNote $note){
         return $note->update($data);
     }
+    public function destroyNote(EventSchedule $schedule, ScheduleNote $note)
+    {
+        return $note->delete();
+    }
 
     public function destroy(EventSchedule $schedule)
     {

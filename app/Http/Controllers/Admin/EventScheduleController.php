@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use mysql_xdevapi\Exception;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class EventScheduleController extends Controller
@@ -237,6 +238,23 @@ class EventScheduleController extends Controller
         }
     }
 
+    public function editNote(EventSchedule $schedule, ScheduleNote $note)
+    {
+        try {
+            return response()->json([
+                'status' => '200',
+                'data' => $note,
+                'message' => 'Success'
+            ]);
+        }catch (\Throwable $throwable){
+            return response()->json([
+                'status' => '400',
+                'data' => $throwable,
+                'message' => 'Error'
+            ]);
+        }
+    }
+
     public function updateNote(ScheduleNoteRequest $request, EventSchedule $schedule, ScheduleNote $note){
         $data = $request->validated();
         $note = $this->eventScheduleService->updateNote($data, $schedule, $note);
@@ -246,7 +264,12 @@ class EventScheduleController extends Controller
                 'message' => 'Success'
             ]);
     }
+    public function destroyNote(EventSchedule $schedule, ScheduleNote $note)
+    {
+        $this->eventScheduleService->destroyNote($schedule, $note);
 
+        return response()->json(['success' => true]);
+    }
     /**
      * Remove the specified resource from storage.
      */
