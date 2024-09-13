@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingScheduleRequest;
+use App\Models\Coach;
 use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\Team;
@@ -163,6 +164,26 @@ class EventScheduleController extends Controller
 
     public function getPlayerAttendance(EventSchedule $schedule, Player $player){
         $data = $this->eventScheduleService->getPlayerAttendance($schedule, $player);
+
+        if (request()->ajax()) {
+            if ($data) {
+                return response()->json([
+                    'status' => '200',
+                    'data' => $data
+                ]);
+            } else {
+                return response()->json([
+                    'status' => '404',
+                    'message' => 'Data not found!'
+                ]);
+            }
+        } else {
+            abort(404);
+        }
+    }
+
+    public function getCoachAttendance(EventSchedule $schedule, Coach $coach){
+        $data = $this->eventScheduleService->getCoachAttendance($schedule, $coach);
 
         if (request()->ajax()) {
             if ($data) {
