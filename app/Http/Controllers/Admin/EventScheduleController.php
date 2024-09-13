@@ -212,7 +212,7 @@ class EventScheduleController extends Controller
 
     public function updateCoachAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Coach $coach)
     {
-        $data = $request->validated();
+        $data = $request->validated();~
         $attendance = $this->eventScheduleService->updateCoachAttendanceStatus($data, $schedule, $coach);
         return response()->json($attendance);
     }

@@ -183,6 +183,11 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
                 Route::put('update-attendance', [EventScheduleController::class, 'updatePlayerAttendance'])->name('training-schedules.update-player');
             });
 
+            Route::prefix('{coach}')->group(function () {
+                Route::get('', [EventScheduleController::class, 'getCoachAttendance'])->name('training-schedules.coach');
+                Route::put('update-attendance', [EventScheduleController::class, 'updateCoachAttendance'])->name('training-schedules.update-coach');
+            });
+
         });
     });
 });
