@@ -73,8 +73,8 @@ class EventScheduleController extends Controller
             ->get();
         $playerDidntAttend = $schedule->players()
             ->where('attendanceStatus', 'Illness')
-            ->where('attendanceStatus', 'Injured')
-            ->where('attendanceStatus', 'Other')
+            ->orWhere('attendanceStatus', 'Injured')
+            ->orWhere('attendanceStatus', 'Other')
             ->get();
         $playerIllness = $schedule->players()
             ->where('attendanceStatus', 'Illness')
