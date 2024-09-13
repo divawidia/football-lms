@@ -164,6 +164,20 @@ class EventScheduleService extends Service
         return $schedule->update(['status' => '0']);
     }
 
+    public function getPlayerAttendance(EventSchedule $schedule, Player $player)
+    {
+        return Player::with('schedules', 'user')
+            ->whereRelation('schedules', 'scheduleId', $schedule->id)
+            ->findOrFail($player->id);
+    }
+
+    public function getCoachAttendance(EventSchedule $schedule, Coach $coach)
+    {
+        return Coach::with('schedules', 'user')
+            ->whereRelation('schedules', 'scheduleId', $schedule->id)
+            ->findOrFail($coach->id);
+    }
+
     public function updatePlayerAttendanceStatus($data, EventSchedule $schedule, Player $player){
         return $schedule->players()->updateExistingPivot($player->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
     }

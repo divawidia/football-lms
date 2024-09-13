@@ -162,9 +162,7 @@ class EventScheduleController extends Controller
     }
 
     public function getPlayerAttendance(EventSchedule $schedule, Player $player){
-        $data = Player::with('schedules', 'user')
-            ->whereRelation('schedules', 'scheduleId', $schedule->id)
-            ->findOrFail($player->id);
+        $data = $this->eventScheduleService->getPlayerAttendance($schedule, $player);
 
         if (request()->ajax()) {
             if ($data) {
@@ -189,9 +187,8 @@ class EventScheduleController extends Controller
             'attendanceStatus' => ['required', Rule::in('Attended', 'Illness', 'Injured', 'Other')],
             'note' => ['nullable', 'string']
         ]);
-        $attendande = $this->eventScheduleService->updatePlayerAttendanceStatus($data, $schedule, $player);
-//        $data = $schedule->players()->updateExistingPivot($player->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
-        return response()->json($attendande);
+        $attendance = $this->eventScheduleService->updatePlayerAttendanceStatus($data, $schedule, $player);
+        return response()->json($attendance);
     }
 
 
