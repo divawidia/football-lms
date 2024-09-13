@@ -8,42 +8,50 @@
 
 @section('modal')
     <!-- Modal edit group modal -->
-{{--    <div class="modal fade" id="editGroupModal" tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">--}}
-{{--        <div class="modal-dialog modal-dialog-centered">--}}
-{{--            <div class="modal-content">--}}
-{{--                <form action="#" method="post" id="formEditGroupModal">--}}
-{{--                    @method('PUT')--}}
-{{--                    @csrf--}}
-{{--                    <div class="modal-header">--}}
-{{--                        <h5 class="modal-title" id="exampleModalLabel">Edit Group Division</h5>--}}
-{{--                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">--}}
-{{--                            <span aria-hidden="true">&times;</span>--}}
-{{--                        </button>--}}
-{{--                    </div>--}}
-{{--                    <div class="modal-body">--}}
-{{--                        <input type="hidden" id="groupId">--}}
-{{--                        <div class="form-group ">--}}
-{{--                            <label class="form-label" for="add_groupName">Group Division Name</label>--}}
-{{--                            <small class="text-danger">*</small>--}}
-{{--                            <input type="text"--}}
-{{--                                   id="add_groupName"--}}
-{{--                                   name="groupName"--}}
-{{--                                   value="{{ old('groupName') }}"--}}
-{{--                                   class="form-control"--}}
-{{--                                   placeholder="Input group's name ...">--}}
-{{--                            <span class="invalid-feedback groupName_error" role="alert">--}}
-{{--                                <strong></strong>--}}
-{{--                            </span>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                    <div class="modal-footer">--}}
-{{--                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>--}}
-{{--                        <button type="submit" class="btn btn-primary">Submit</button>--}}
-{{--                    </div>--}}
-{{--                </form>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
+    <div class="modal fade" id="editPlayerAttendanceModal" tabindex="-1" aria-labelledby="editPlayerAttendanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="#" method="post" id="formEditGroupModal">
+                    @method('PUT')
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"></h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="playerId">
+                        <div class="form-group">
+                            <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
+                            <small class="text-danger">*</small>
+                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required data-toggle="select">
+                                <option disabled selected>Select competition type</option>
+                                @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
+                                    <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
+                                @endforeach
+                            </select>
+                            <span class="invalid-feedback attendanceStatus_error" role="alert">
+                                <strong></strong>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="add_note">Note</label>
+                            <small>(Optional)</small>
+                            <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason">{{ old('note') }}</textarea>
+                            <span class="invalid-feedback note_error" role="alert">
+                                <strong></strong>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('content')
@@ -216,7 +224,7 @@
                 <div class="row">
                     @foreach($data->players as $player)
                         <div class="col-md-6">
-                            <div class="card @if($player->pivot->attendanceStatus == 'Required Action') border-warning @elseif($player->pivot->attendanceStatus == 'Attended') border-success @else border-danger @endif">
+                            <div class="card @if($player->pivot->attendanceStatus == 'Required Action') border-warning @elseif($player->pivot->attendanceStatus == 'Attended') border-success @else border-danger @endif" id="{{$player->id}}">
                                 <div class="card-body d-flex align-items-center flex-row text-left">
                                     <img src="{{ Storage::url($player->user->foto) }}"
                                          width="50"
@@ -227,7 +235,7 @@
                                         <h5 class="mb-0">{{ $player->user->firstName  }} {{ $player->user->lastName  }}</h5>
                                         <p class="text-50 lh-1 mb-0">{{ $player->position->name }}</p>
                                     </div>
-                                    <a class="btn @if($player->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($player->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif">
+                                    <button class="btn @if($player->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($player->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif playerAttendance" id="{{$player->id}}" type="button">
                                         <span class="material-icons mr-2">
                                             @if($player->pivot->attendanceStatus == 'Required Action') error
                                             @elseif($player->pivot->attendanceStatus == 'Attended') check_circle
@@ -235,7 +243,7 @@
                                             @endif
                                         </span>
                                         {{ $player->pivot->attendanceStatus }}
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -258,6 +266,12 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
+            $('body').on('click', '.playerAttendance', function(e) {
+                e.preventDefault();
+                $('#editPlayerAttendanceModal').modal('show');
+            });
+
+
             // delete competition alert
             $('body').on('click', '.delete', function() {
                 let id = $(this).attr('id');

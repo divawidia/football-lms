@@ -1,3 +1,4 @@
+import './bootstrap.js';
 // import './main'
 import './perfect-scrollbar'
 import './sidebar'

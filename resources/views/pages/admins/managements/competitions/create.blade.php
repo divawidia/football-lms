@@ -15,7 +15,7 @@
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Create new opponent team</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -60,48 +60,8 @@
                                         <strong></strong>
                                     </span>
                                 </div>
-                                <div class="form-group ">
-                                    <label class="form-label" for="add_academyName">Academy Name</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="text"
-                                           id="add_academyName"
-                                           name="academyName"
-                                           required
-                                           value="{{ old('academyName') }}"
-                                           class="form-control"
-                                           placeholder="Input team's name ...">
-                                    <span class="invalid-feedback academyName_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group ">
-                                    <label class="form-label" for="add_coachName">Coach Name</label>
-                                    <small class="text-black-100">(Optional)</small>
-                                    <input type="text"
-                                           id="add_coachName"
-                                           name="coachName"
-                                           value="{{ old('coachName') }}"
-                                           class="form-control"
-                                           placeholder="Input team's coach name ...">
-                                    <span class="invalid-feedback coachName_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
                             </div>
                             <div class="col-lg-6">
-                                <div class="form-group ">
-                                    <label class="form-label" for="add_directorName">Director Name</label>
-                                    <small class="text-black-100">(Optional)</small>
-                                    <input type="text"
-                                           id="add_directorName"
-                                           name="directorName"
-                                           value="{{ old('directorName') }}"
-                                           class="form-control"
-                                           placeholder="Input team's director name ...">
-                                    <span class="invalid-feedback directorName_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
                                 <div class="form-group">
                                     <label class="form-label" for="add_ageGroup">Age Group</label>
                                     <small class="text-danger">*</small>
@@ -115,31 +75,11 @@
                                         <strong></strong>
                                     </span>
                                 </div>
-                                <div class="form-group ">
-                                    <label class="form-label" for="add_totalPlayers">Total Players</label>
-                                    <small class="text-black-100">(Optional)</small>
-                                    <div class="input-group input-group-merge">
-                                        <input type="number"
-                                               id="add_totalPlayers"
-                                               name="totalPlayers"
-                                               value="{{ old('totalPlayers') }}"
-                                               class="form-control"
-                                               placeholder="Input team's total player ...">
-                                        <div class="input-group-append">
-                                            <div class="input-group-text">
-                                                Player(s)
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span class="invalid-feedback totalPlayers_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
@@ -522,7 +462,7 @@
                                         <div class="d-flex flex-row align-items-center mb-2">
                                             <label class="form-label mb-0" for="teams">Our Teams</label>
                                             <small class="text-danger">*</small>
-                                            <button type="button" id="addNewTeam" class="btn btn-primary btn-sm ml-auto" data-toggle="modal" data-target="#createNewTeamModal"><span class="material-icons mr-2">add</span> Add new team</button>
+                                            <button type="button" id="addNewTeam" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new team</button>
                                         </div>
 
                                         @if(count($teams) == 0)
@@ -530,14 +470,9 @@
                                                  role="alert">
                                                 <div class="d-flex flex-wrap align-items-center">
                                                     <i class="material-icons mr-8pt">error_outline</i>
-                                                    <div class="media-body"
-                                                         style="min-width: 180px">
+                                                    <div class="media-body" style="min-width: 180px">
                                                         <small class="text-black-100">Curently you haven't create any team in your academy, please create your team</small>
                                                     </div>
-{{--                                                    <div class="ml-8pt mt-2 mt-sm-0">--}}
-{{--                                                        <a href="{{ route('team-managements.create') }}"--}}
-{{--                                                           class="btn btn-link btn-sm">Create Now</a>--}}
-{{--                                                    </div>--}}
                                                 </div>
                                             </div>
                                         @else
@@ -573,10 +508,6 @@
                                                          style="min-width: 180px">
                                                         <small class="text-black-100">Curently you haven't create any opponent team, please create your opponent team</small>
                                                     </div>
-{{--                                                    <div class="ml-8pt mt-2 mt-sm-0">--}}
-{{--                                                        <a href="{{ route('opponentTeams-managements.create') }}"--}}
-{{--                                                           class="btn btn-link btn-sm">Create Now</a>--}}
-{{--                                                    </div>--}}
                                                 </div>
                                             </div>
                                         @else
