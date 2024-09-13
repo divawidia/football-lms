@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AttendanceStatusRequest;
 use App\Http\Requests\TrainingScheduleRequest;
 use App\Models\Coach;
 use App\Models\EventSchedule;
@@ -202,22 +203,16 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function updatePlayerAttendance(Request $request, EventSchedule $schedule, Player $player)
+    public function updatePlayerAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Player $player)
     {
-        $data = $request->validate([
-            'attendanceStatus' => ['required', Rule::in('Attended', 'Illness', 'Injured', 'Other')],
-            'note' => ['nullable', 'string']
-        ]);
+        $data = $request->validated();
         $attendance = $this->eventScheduleService->updatePlayerAttendanceStatus($data, $schedule, $player);
         return response()->json($attendance);
     }
 
-    public function updateCoachAttendance(Request $request, EventSchedule $schedule, Coach $coach)
+    public function updateCoachAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Coach $coach)
     {
-        $data = $request->validate([
-            'attendanceStatus' => ['required', Rule::in('Attended', 'Illness', 'Injured', 'Other')],
-            'note' => ['nullable', 'string']
-        ]);
+        $data = $request->validated();
         $attendance = $this->eventScheduleService->updateCoachAttendanceStatus($data, $schedule, $coach);
         return response()->json($attendance);
     }
