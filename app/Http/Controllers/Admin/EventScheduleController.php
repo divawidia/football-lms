@@ -212,6 +212,16 @@ class EventScheduleController extends Controller
         return response()->json($attendance);
     }
 
+    public function updateCoachAttendance(Request $request, EventSchedule $schedule, Coach $coach)
+    {
+        $data = $request->validate([
+            'attendanceStatus' => ['required', Rule::in('Attended', 'Illness', 'Injured', 'Other')],
+            'note' => ['nullable', 'string']
+        ]);
+        $attendance = $this->eventScheduleService->updateCoachAttendanceStatus($data, $schedule, $coach);
+        return response()->json($attendance);
+    }
+
 
     /**
      * Remove the specified resource from storage.
