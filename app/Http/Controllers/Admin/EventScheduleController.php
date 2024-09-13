@@ -85,21 +85,21 @@ class EventScheduleController extends Controller
         $playerOther = $schedule->players()
             ->where('attendanceStatus', 'Other')
             ->get();
-        $coachAttended = $schedule->players()
+        $coachAttended = $schedule->coaches()
             ->where('attendanceStatus', 'Attended')
             ->get();
-        $coachDidntAttend = $schedule->players()
+        $coachDidntAttend = $schedule->coaches()
             ->where('attendanceStatus', 'Illness')
             ->where('attendanceStatus', 'Injured')
             ->where('attendanceStatus', 'Other')
             ->get();
-        $coachIllness = $schedule->players()
+        $coachIllness = $schedule->coaches()
             ->where('attendanceStatus', 'Illness')
             ->get();
-        $coachInjured = $schedule->players()
+        $coachInjured = $schedule->coaches()
             ->where('attendanceStatus', 'Injured')
             ->get();
-        $coachOther = $schedule->players()
+        $coachOther = $schedule->coaches()
             ->where('attendanceStatus', 'Other')
             ->get();
 
