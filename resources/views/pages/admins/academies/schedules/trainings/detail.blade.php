@@ -210,9 +210,9 @@
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
                     @if($data->status == '1')
-                        Status : <span class="badge badge-pill badge-success ml-2">Active</span>
+                        Status : <span class="badge badge-pill badge-success ml-1">Active</span>
                     @else
-                        Status : <span class="badge badge-pill badge-danger ml-2">Ended</span>
+                        Status : <span class="badge badge-pill badge-danger ml-1">Ended</span>
                     @endif
                 </li>
                 <li class="nav-item navbar-list__item">
@@ -261,7 +261,7 @@
                                 <div class="card-title">Total Participants</div>
                             </div>
                         </div>
-                        <i class="material-icons icon-32pt text-20 ml-8pt">group</i>
+                        <i class='bx bxs-group icon-32pt text-danger ml-8pt' ></i>
                     </div>
                 </div>
             </div>
@@ -274,7 +274,7 @@
                                 <div class="card-title">Attended</div>
                             </div>
                         </div>
-                        <i class="material-icons icon-32pt text-20 ml-8pt">how_to_reg</i>
+                        <i class='bx bxs-user-check icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -287,7 +287,7 @@
                                 <div class="card-title">Didn't Attended</div>
                             </div>
                         </div>
-                        <i class="material-icons icon-32pt text-20 ml-8pt">person_remove</i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
                     </div>
                 </div>
             </div>
@@ -302,7 +302,7 @@
                                 <div class="card-title">Illness</div>
                             </div>
                         </div>
-                        <i class="material-icons icon-32pt text-20 ml-8pt">group_remove</i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
                     </div>
                 </div>
             </div>
@@ -315,7 +315,7 @@
                                 <div class="card-title">Injured</div>
                             </div>
                         </div>
-                        <i class="material-icons icon-32pt text-20 ml-8pt">group_remove</i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
                     </div>
                 </div>
             </div>
@@ -328,7 +328,7 @@
                                 <div class="card-title">Others</div>
                             </div>
                         </div>
-                        <i class="material-icons icon-32pt text-20 ml-8pt">group_remove</i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
                     </div>
                 </div>
             </div>
