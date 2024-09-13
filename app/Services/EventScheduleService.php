@@ -114,6 +114,95 @@ class EventScheduleService extends Service
             ->make();
     }
 
+    public function dataTablesMatch(){
+        $data = $this->indexMatch();
+        return Datatables::of($data)
+            ->addColumn('action', function ($item) {
+                if ($item->status == '1') {
+                    $statusButton = '<form action="' . route('deactivate-training', $item->id) . '" method="POST">
+                                                ' . method_field("PATCH") . '
+                                                ' . csrf_field() . '
+                                                <button type="submit" class="dropdown-item">
+                                                    <span class="material-icons">block</span> Deactivate Schedule
+                                                </button>
+                                            </form>';
+                } else {
+                    $statusButton = '<form action="' . route('activate-training', $item->id) . '" method="POST">
+                                                ' . method_field("PATCH") . '
+                                                ' . csrf_field() . '
+                                                <button type="submit" class="dropdown-item">
+                                                    <span class="material-icons">check_circle</span> Activate Schedule
+                                                </button>
+                                            </form>';
+                }
+                return '
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="material-icons">
+                                more_vert
+                            </span>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="' . route('training-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Schedule</a>
+                            <a class="dropdown-item" href="' . route('training-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Schedule</a>
+                            ' . $statusButton . '
+                            <button type="button" class="dropdown-item delete" id="' . $item->id . '">
+                                <span class="material-icons">delete</span> Delete Schedule
+                            </button>
+                          </div>
+                        </div>';
+            })
+            ->editColumn('team', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->teamName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$item->teams[0]->ageGroup.'</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('opponentTeam', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[1]->logo) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[1]->teamName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$item->teams[1]->ageGroup.'</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('date', function ($item) {
+                $date = date('M d, Y', strtotime($item->date));
+                $startTime = date('h:i A', strtotime($item->startTime));
+                $endTime = date('h:i A', strtotime($item->endTime));
+                return $date.' ('.$startTime.' - '.$endTime.')';
+            })
+            ->editColumn('status', function ($item) {
+                if ($item->status == '1') {
+                    return '<span class="badge badge-pill badge-success">Active</span>';
+                } elseif ($item->status == '0') {
+                    return '<span class="badge badge-pill badge-danger">Ended</span>';
+                }
+            })
+            ->rawColumns(['action','team', 'opponentTeam','date','status'])
+            ->make();
+    }
+
     public function storeTraining(array $data, $userId){
         $data['userId'] = $userId;
         $data['eventType'] = 'Training';
@@ -139,6 +228,7 @@ class EventScheduleService extends Service
         $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->get();
 
         $schedule->teams()->attach($data['teamId']);
+        $schedule->teams()->attach($data['opponentTeamId']);
         $schedule->players()->attach($team->players);
         $schedule->coaches()->attach($team->coaches);
         return $schedule;
