@@ -8,6 +8,7 @@ use App\Http\Requests\TrainingScheduleRequest;
 use App\Models\Coach;
 use App\Models\EventSchedule;
 use App\Models\Player;
+use App\Models\ScheduleNote;
 use App\Models\Team;
 use App\Services\EventScheduleService;
 use Illuminate\Http\JsonResponse;
@@ -221,6 +222,28 @@ class EventScheduleController extends Controller
 //        Alert::success($text);
 //        return redirect()->route('training-schedules.show', $schedule->id);
         return response()->json($attendance);
+    }
+
+    public function createNote(ScheduleNoteRequest $request, EventSchedule $schedule){
+        $data = $request->validated();
+        $note = $this->eventScheduleService->createNote($data, $schedule);
+        if (request()->ajax()) {
+            return response()->json([
+                'status' => '200',
+                'data' => $note,
+                'message' => 'Success'
+            ]);
+        }
+    }
+
+    public function updateNote(ScheduleNoteRequest $request, EventSchedule $schedule, ScheduleNote $note){
+        $data = $request->validated();
+        $note = $this->eventScheduleService->updateNote($data, $schedule, $note);
+            return response()->json([
+                'status' => '200',
+                'data' => $note,
+                'message' => 'Success'
+            ]);
     }
 
     /**
