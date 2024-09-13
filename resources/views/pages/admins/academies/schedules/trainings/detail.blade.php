@@ -185,7 +185,7 @@
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
-                                <span class="material-icons">block</span> Deactivate Competition
+                                <span class="material-icons">block</span> End Training
                             </button>
                         </form>
                     @else
@@ -193,12 +193,12 @@
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
-                                <span class="material-icons">check_circle</span> Activate Competition
+                                <span class="material-icons">check_circle</span> Start Training
                             </button>
                         </form>
                     @endif
                     <button type="button" class="dropdown-item delete" id="{{$data->id}}">
-                        <span class="material-icons">delete</span> Delete Competition
+                        <span class="material-icons">delete</span> Delete Training
                     </button>
                 </div>
             </div>
@@ -208,6 +208,13 @@
     <div class="navbar navbar-expand-sm navbar-light bg-white border-bottom navbar-list p-0 m-0 align-items-center">
         <div class="container page__container">
             <ul class="nav navbar-nav flex align-items-sm-center">
+                <li class="nav-item navbar-list__item">
+                    @if($data->status == '1')
+                        Status : <span class="badge badge-pill badge-success ml-2">Active</span>
+                    @else
+                        Status : <span class="badge badge-pill badge-danger ml-2">Ended</span>
+                    @endif
+                </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">event</i>
                     {{ date('D, M d Y', strtotime($data->date)) }}

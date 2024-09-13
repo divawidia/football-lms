@@ -105,9 +105,9 @@ class EventScheduleService extends Service
             })
             ->editColumn('status', function ($item) {
                 if ($item->status == '1') {
-                    return '<span class="badge badge-pill badge-success">Aktif</span>';
+                    return '<span class="badge badge-pill badge-success">Active</span>';
                 } elseif ($item->status == '0') {
-                    return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
+                    return '<span class="badge badge-pill badge-danger">Ended</span>';
                 }
             })
             ->rawColumns(['action','team','date','status'])
