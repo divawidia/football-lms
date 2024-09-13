@@ -497,7 +497,7 @@
                                         <div class="d-flex flex-row align-items-center mb-2">
                                             <label class="form-label mb-0" for="opponentTeams">Opponent Teams</label>
                                             <small class="text-danger">*</small>
-                                            <button type="button" id="addNewOpponentTeam" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new team</button>
+                                            <a href="" id="addNewOpponentTeam" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new team</a>
                                         </div>
                                         @if(count($opponentTeams) == 0)
                                             <div class="alert alert-light border-1 border-left-4 border-left-accent"

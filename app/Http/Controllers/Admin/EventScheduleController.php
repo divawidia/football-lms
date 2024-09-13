@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingScheduleRequest;
 use App\Models\EventSchedule;
+use App\Models\Player;
 use App\Models\Team;
 use App\Services\EventScheduleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class EventScheduleController extends Controller
@@ -156,6 +159,39 @@ class EventScheduleController extends Controller
         $text = 'Schedule status successfully updated!';
         Alert::success($text);
         return redirect()->route('training-schedules.show', $schedule->id);
+    }
+
+    public function getPlayerAttendance(EventSchedule $schedule, Player $player){
+        $data = Player::with('schedules', 'user')
+            ->whereRelation('schedules', 'scheduleId', $schedule->id)
+            ->findOrFail($player->id);
+
+        if (request()->ajax()) {
+            if ($data) {
+                return response()->json([
+                    'status' => '200',
+                    'data' => $data
+                ]);
+            } else {
+                return response()->json([
+                    'status' => '404',
+                    'message' => 'Data not found!'
+                ]);
+            }
+        } else {
+            abort(404);
+        }
+    }
+
+    public function updatePlayerAttendance(Request $request, EventSchedule $schedule, Player $player)
+    {
+        $data = $request->validate([
+            'attendanceStatus' => ['required', Rule::in('Attended', 'Illness', 'Injured', 'Other')],
+            'note' => ['nullable', 'string']
+        ]);
+        $attendande = $this->eventScheduleService->updatePlayerAttendanceStatus($data, $schedule, $player);
+//        $data = $schedule->players()->updateExistingPivot($player->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
+        return response()->json($attendande);
     }
 
 

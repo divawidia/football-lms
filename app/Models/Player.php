@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Player extends Model
@@ -44,7 +45,7 @@ class Player extends Model
     {
         return $this->hasMany(PlayerPerformanceReview::class, 'playerId');
     }
-    public function schedules()
+    public function schedules(): BelongsToMany
     {
         return $this->belongsToMany(EventSchedule::class, 'player_attendance', 'playerId', 'scheduleId')
             ->withPivot(

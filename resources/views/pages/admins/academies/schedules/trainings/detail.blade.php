@@ -7,15 +7,15 @@
 @endsection
 
 @section('modal')
-    <!-- Modal edit group modal -->
+    <!-- Modal edit player attendance modal -->
     <div class="modal fade" id="editPlayerAttendanceModal" tabindex="-1" aria-labelledby="editPlayerAttendanceModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="#" method="post" id="formEditGroupModal">
+                <form action="" method="post" id="formEditPlayerAttendanceModal">
                     @method('PUT')
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel"></h5>
+                        <h5 class="modal-title" id="playerName"></h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -25,8 +25,8 @@
                         <div class="form-group">
                             <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required data-toggle="select">
-                                <option disabled selected>Select competition type</option>
+                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
+                                <option disabled>Select player's attendance status</option>
                                 @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
                                     <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
                                 @endforeach
@@ -38,7 +38,7 @@
                         <div class="form-group">
                             <label class="form-label" for="add_note">Note</label>
                             <small>(Optional)</small>
-                            <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason">{{ old('note') }}</textarea>
+                            <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -235,7 +235,7 @@
                                         <h5 class="mb-0">{{ $player->user->firstName  }} {{ $player->user->lastName  }}</h5>
                                         <p class="text-50 lh-1 mb-0">{{ $player->position->name }}</p>
                                     </div>
-                                    <button class="btn @if($player->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($player->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif playerAttendance" id="{{$player->id}}" type="button">
+                                    <a class="btn @if($player->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($player->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif playerAttendance" id="{{$player->id}}" href="">
                                         <span class="material-icons mr-2">
                                             @if($player->pivot->attendanceStatus == 'Required Action') error
                                             @elseif($player->pivot->attendanceStatus == 'Attended') check_circle
@@ -243,7 +243,7 @@
                                             @endif
                                         </span>
                                         {{ $player->pivot->attendanceStatus }}
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -266,11 +266,69 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            $('body').on('click', '.playerAttendance', function(e) {
+            $('.playerAttendance').on('click', function(e) {
                 e.preventDefault();
-                $('#editPlayerAttendanceModal').modal('show');
+                const id = $(this).attr('id');
+
+                $.ajax({
+                    url: "{{ route('training-schedules.player', ['schedule' => $data->id, 'player' => ":id"]) }}".replace(':id', id),
+                    type: 'get',
+                    success: function(res) {
+                        $('#editPlayerAttendanceModal').modal('show');
+
+                        const heading = document.getElementById('playerName');
+                        heading.textContent = 'Update Player '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
+                        // $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.schedules[0].pivot.attendanceStatus);
+                        $('#add_attendanceStatus option[value="' + res.data.schedules[0].pivot.attendanceStatus + '"]').attr('selected', 'selected');
+                        $('#editPlayerAttendanceModal #add_note').val(res.data.schedules[0].pivot.note);
+                        $('#playerId').val(res.data.id);
+                    },
+                    error: function(error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when deleting data!",
+                            text: error,
+                        });
+                    }
+                });
             });
 
+            // insert data opponent team
+            $('#formEditPlayerAttendanceModal').on('submit', function(e) {
+                e.preventDefault();
+                const id = $('#playerId').val();
+                $.ajax({
+                    url: "{{ route('training-schedules.update-player', ['schedule' => $data->id, 'player' => ":id"]) }}".replace(':id', id),
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+                        $('#editPlayerAttendanceModal').modal('hide');
+                        // console.log(res);
+                        Swal.fire({
+                            title: 'Player attendance successfully added!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        console.log(response);
+                        $.each(response.errors, function(key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("input#add_" + key).addClass('is-invalid');
+                        });
+                    }
+                });
+            });
 
             // delete competition alert
             $('body').on('click', '.delete', function() {
