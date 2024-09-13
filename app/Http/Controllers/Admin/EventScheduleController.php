@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttendanceStatusRequest;
+use App\Http\Requests\ScheduleNoteRequest;
 use App\Http\Requests\TrainingScheduleRequest;
 use App\Models\Coach;
 use App\Models\EventSchedule;
