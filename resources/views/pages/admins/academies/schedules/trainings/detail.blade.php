@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    <!-- Modal edit player attendance modal -->
+    <!-- Modal edit player attendance -->
     <div class="modal fade" id="editPlayerAttendanceModal" tabindex="-1" aria-labelledby="editPlayerAttendanceModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <!-- Modal edit coach attendance modal -->
+    <!-- Modal edit coach attendance -->
     <div class="modal fade" id="editCoachAttendanceModal" tabindex="-1" aria-labelledby="editCoachAttendanceModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -99,7 +99,7 @@
         </div>
     </div>
 
-    <!-- Modal edit coach attendance modal -->
+    <!-- Modal create note -->
     <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -114,8 +114,41 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="form-label" for="add_note">Note</label>
-                            <small>(Optional)</small>
+                            <small class="text-danger">*</small>
                             <textarea class="form-control" id="add_note" name="note" placeholder="Input note here ..." required>{{ old('note') }}</textarea>
+                            <span class="invalid-feedback note_error" role="alert">
+                                <strong></strong>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal edit note -->
+    <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="" method="post" id="formUpdateNoteModal">
+                    @method('PUT')
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="coachName">Update note for {{ $data->eventName }} Session</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="noteId">
+                        <div class="form-group">
+                            <label class="form-label" for="edit_note">Note</label>
+                            <small class="text-danger">*</small>
+                            <textarea class="form-control" id="edit_note" name="note" placeholder="Input note here ..." required></textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -375,11 +408,23 @@
                             <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($note->created_at)) }}</h4>
                             <div class="card-subtitle text-50">Last updated at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
                         </div>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
                                 more_vert
                             </span>
-                        </button>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item edit-note" id="{{ $note->id }}" href="">
+                                    <span class="material-icons">edit</span>
+                                    Edit Note
+                                </a>
+                                <button type="button" class="dropdown-item delete-note" id="{{ $note->id }}">
+                                    <span class="material-icons">delete</span>
+                                    Delete Note
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         @php
@@ -450,6 +495,30 @@
             $('#addNewNote').on('click', function(e) {
                 e.preventDefault();
                 $('#createNoteModal').modal('show');
+            });
+
+            $('.edit-note').on('click', function(e) {
+                e.preventDefault();
+                const id = $(this).attr('id');
+
+                $.ajax({
+                    url: "{{ route('training-schedules.edit-note', ['schedule' => $data->id, 'note' => ":id"]) }}".replace(':id', id),
+                    type: 'get',
+                    success: function(res) {
+                        $('#editNoteModal').modal('show');
+
+                        const heading = document.getElementById('edit_note');
+                        heading.textContent = res.data.note;
+                        $('#noteId').val(res.data.id);
+                    },
+                    error: function(error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when deleting data!",
+                            text: error,
+                        });
+                    }
+                });
             });
 
             // update player attendance data
@@ -536,7 +605,7 @@
                     success: function(res) {
                         $('#createNoteModal').modal('hide');
                         Swal.fire({
-                            title: 'Training session note successfully updated!',
+                            title: 'Training session note successfully added!',
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",
@@ -554,6 +623,42 @@
                         $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#add_" + key).addClass('is-invalid');
+                        });
+                    }
+                });
+            });
+
+            // update schedule note data
+            $('#formUpdateNoteModal').on('submit', function(e) {
+                e.preventDefault();
+                const id = $('#noteId').val();
+                $.ajax({
+                    url: "{{ route('training-schedules.update-note', ['schedule' => $data->id, 'note' => ":id"]) }}".replace(':id', id),
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+                        $('#editNoteModal').modal('hide');
+                        Swal.fire({
+                            title: 'Training session note successfully updated!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        console.log(response);
+                        $.each(response.errors, function(key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("#edit_" + key).addClass('is-invalid');
                         });
                     }
                 });
@@ -589,7 +694,53 @@
                                         'Ok!'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
-                                        window.location.href = "{{ route('competition-managements.index') }}";
+                                        window.location.href = "{{ route('training-schedules.index') }}";
+                                    }
+                                });
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Something went wrong when deleting data!",
+                                    text: error,
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            // delete schedule note alert
+            $('body').on('click', '.delete-note', function() {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('training-schedules.destroy-note', ['schedule' => $data->id, 'note'=>':id']) }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function() {
+                                Swal.fire({
+                                    title: 'Competition successfully deleted!',
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
                                     }
                                 });
                             },
