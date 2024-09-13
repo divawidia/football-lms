@@ -103,7 +103,7 @@
     <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('training-schedules.create-note') }}" method="post" id="formCreateNoteModal">
+                <form action="{{ route('training-schedules.create-note', $data->id) }}" method="post" id="formCreateNoteModal">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="coachName">Create note for {{ $data->eventName }} Session</h5>
@@ -115,7 +115,7 @@
                         <div class="form-group">
                             <label class="form-label" for="add_note">Note</label>
                             <small>(Optional)</small>
-                            <textarea class="form-control" id="add_note" name="note" placeholder="Input note here ...">{{ old('note') }}</textarea>
+                            <textarea class="form-control" id="add_note" name="note" placeholder="Input note here ..." required>{{ old('note') }}</textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -342,7 +342,7 @@
                                  class="rounded-circle img-object-fit-cover"
                                  alt="instructor">
                             <div class="flex ml-3">
-                                <h5 class="mb-0">{{ $coach->user->firstName  }} {{ $coach->user->lastName  }}</h5>
+                                <h5 class="mb-0">{{ $coach->user->firstName }} {{ $coach->user->lastName }}</h5>
                                 <p class="text-50 lh-1 mb-0">{{ $coach->specializations->name }}</p>
                             </div>
                             <a class="btn @if($coach->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($coach->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif coachAttendance" id="{{$coach->id}}" href="{{ route('training-schedules.coach', ['schedule' => $data->id, 'coach' => $coach->id]) }}">
@@ -502,6 +502,41 @@
                         $('#editCoachAttendanceModal').modal('hide');
                         Swal.fire({
                             title: 'Coach attendance successfully updated!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        console.log(response);
+                        $.each(response.errors, function(key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("#add_" + key).addClass('is-invalid');
+                        });
+                    }
+                });
+            });
+
+            // create schedule note data
+            $('#formCreateNoteModal').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+                        $('#createNoteModal').modal('hide');
+                        Swal.fire({
+                            title: 'Training session note successfully updated!',
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",

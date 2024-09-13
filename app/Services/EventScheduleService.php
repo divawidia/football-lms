@@ -188,6 +188,7 @@ class EventScheduleService extends Service
 
     public function createNote($data, EventSchedule $schedule){
         $data['scheduleId'] = $schedule->id;
+//        dd($data);
         return ScheduleNote::create($data);
     }
 

@@ -11,7 +11,7 @@ class ScheduleNote extends Model
 
     protected $fillable = [
         'note',
-        'competitionId',
+        'scheduleId',
     ];
 
     public function schedule()
