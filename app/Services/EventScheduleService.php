@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Coach;
 use App\Models\EventSchedule;
 use App\Models\Player;
+use App\Models\ScheduleNote;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
@@ -183,6 +184,15 @@ class EventScheduleService extends Service
     }
     public function updateCoachAttendanceStatus($data, EventSchedule $schedule, Coach $coach){
         return $schedule->coaches()->updateExistingPivot($coach->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
+    }
+
+    public function createNote($data, EventSchedule $schedule){
+        $data['scheduleId'] = $schedule->id;
+        return ScheduleNote::create($data);
+    }
+
+    public function updateNote($data, EventSchedule $schedule, ScheduleNote $note){
+        return $note->update($data);
     }
 
     public function destroy(EventSchedule $schedule)
