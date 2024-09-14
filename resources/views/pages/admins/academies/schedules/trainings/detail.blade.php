@@ -1,7 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    @dd($data)
-    Training {{ $data->eventName  }}
+    Training {{ $data['dataSchedule']->eventName  }}
 @endsection
 @section('page-title')
     @yield('title')
@@ -104,10 +103,10 @@
     <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('training-schedules.create-note', $data->id) }}" method="post" id="formCreateNoteModal">
+                <form action="{{ route('training-schedules.create-note', $data['dataSchedule']->id) }}" method="post" id="formCreateNoteModal">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="coachName">Create note for {{ $data->eventName }} Session</h5>
+                        <h5 class="modal-title" id="coachName">Create note for {{ $data['dataSchedule']->eventName }} Session</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -139,7 +138,7 @@
                     @method('PUT')
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="coachName">Update note for {{ $data->eventName }} Session</h5>
+                        <h5 class="modal-title" id="coachName">Update note for {{ $data['dataSchedule']->eventName }} Session</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -169,8 +168,8 @@
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex">
-                <h2 class="text-white mb-0">{{ $data->eventName  }}</h2>
-                <p class="lead text-white-50 d-flex align-items-center">{{ $data->eventType }} ~ {{ $data->teams[0]->teamName }}</p>
+                <h2 class="text-white mb-0">{{ $data['dataSchedule']->eventName  }}</h2>
+                <p class="lead text-white-50 d-flex align-items-center">{{ $data['dataSchedule']->eventType }} ~ {{ $data['dataSchedule']->teams[0]->teamName }}</p>
             </div>
             <div class="dropdown">
                 <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -180,9 +179,9 @@
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('training-schedules.edit', $data->id) }}"><span class="material-icons">edit</span> Edit Training Schedule</a>
-                    @if($data->status == '1')
-                        <form action="{{ route('deactivate-training', $data->id) }}" method="POST">
+                    <a class="dropdown-item" href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}"><span class="material-icons">edit</span> Edit Training Schedule</a>
+                    @if($data['dataSchedule']->status == '1')
+                        <form action="{{ route('deactivate-training', $data['dataSchedule']->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
@@ -190,7 +189,7 @@
                             </button>
                         </form>
                     @else
-                        <form action="{{ route('activate-training', $data->id) }}" method="POST">
+                        <form action="{{ route('activate-training', $data['dataSchedule']->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
@@ -198,7 +197,7 @@
                             </button>
                         </form>
                     @endif
-                    <button type="button" class="dropdown-item delete" id="{{$data->id}}">
+                    <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
                         <span class="material-icons">delete</span> Delete Training
                     </button>
                 </div>
@@ -210,7 +209,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
-                    @if($data->status == '1')
+                    @if($data['dataSchedule']->status == '1')
                         Status : <span class="badge badge-pill badge-success ml-1">Active</span>
                     @else
                         Status : <span class="badge badge-pill badge-danger ml-1">Ended</span>
@@ -218,27 +217,27 @@
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                    {{ date('D, M d Y', strtotime($data->date)) }}
+                    {{ date('D, M d Y', strtotime($data['dataSchedule']->date)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                    {{ date('h:i A', strtotime($data->startTime)) }} - {{ date('h:i A', strtotime($data->endTime)) }}
+                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }} - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                    {{ $data->place }}
+                    {{ $data['dataSchedule']->place }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <div class="media align-items-center">
                         <span class="media-left mr-16pt">
-                            <img src="{{Storage::url($data->user->foto) }}"
+                            <img src="{{Storage::url($data['dataSchedule']->user->foto) }}"
                                  width="30"
                                  alt="avatar"
                                  class="rounded-circle">
                         </span>
                         <div class="media-body">
                             <a class="card-title m-0"
-                               href="">Created by {{$data->user->firstName}} {{$data->user->lastName}}</a>
+                               href="">Created by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
                             <p class="text-50 lh-1 mb-0">Admin</p>
                         </div>
                     </div>
@@ -257,7 +256,7 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $totalParticipant }}</div>
+                            <div class="h2 mb-0 mr-3">{{ $data['totalParticipant'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Total Participants</div>
                             </div>
@@ -270,7 +269,7 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $totalAttend }}</div>
+                            <div class="h2 mb-0 mr-3">{{ $data['totalAttend'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Attended</div>
                             </div>
@@ -283,7 +282,7 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $totalDidntAttend }}</div>
+                            <div class="h2 mb-0 mr-3">{{ $data['totalDidntAttend'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Didn't Attended</div>
                             </div>
@@ -298,7 +297,7 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $totalIllness }}</div>
+                            <div class="h2 mb-0 mr-3">{{ $data['totalIllness'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Illness</div>
                             </div>
@@ -311,7 +310,7 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $totalInjured }}</div>
+                            <div class="h2 mb-0 mr-3">{{ $data['totalInjured'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Injured</div>
                             </div>
@@ -324,7 +323,7 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $totalOthers }}</div>
+                            <div class="h2 mb-0 mr-3">{{ $data['totalOthers'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Others</div>
                             </div>
@@ -340,7 +339,7 @@
             <div class="page-separator__text">Player Attendance</div>
         </div>
         <div class="row">
-            @foreach($data->players as $player)
+            @foreach($data['dataSchedule']->players as $player)
                 <div class="col-md-6">
                     <div class="card @if($player->pivot->attendanceStatus == 'Required Action') border-warning @elseif($player->pivot->attendanceStatus == 'Attended') border-success @else border-danger @endif" id="{{$player->id}}">
                         <div class="card-body d-flex align-items-center flex-row text-left">
@@ -373,7 +372,8 @@
             <div class="page-separator__text">Coach Attendance</div>
         </div>
         <div class="row">
-            @foreach($data->coaches as $coach)
+            @foreach($data['dataSchedule']->coaches as $coach)
+{{--                @dd($coach->pivot->attendanceStatus)--}}
                 <div class="col-md-6">
                     <div class="card @if($coach->pivot->attendanceStatus == 'Required Action') border-warning @elseif($coach->pivot->attendanceStatus == 'Attended') border-success @else border-danger @endif" id="{{$coach->id}}">
                         <div class="card-body d-flex align-items-center flex-row text-left">
@@ -386,7 +386,7 @@
                                 <h5 class="mb-0">{{ $coach->user->firstName }} {{ $coach->user->lastName }}</h5>
                                 <p class="text-50 lh-1 mb-0">{{ $coach->specializations->name }}</p>
                             </div>
-                            <a class="btn @if($coach->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($coach->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif coachAttendance" id="{{$coach->id}}" href="{{ route('training-schedules.coach', ['schedule' => $data->id, 'coach' => $coach->id]) }}">
+                            <a class="btn @if($coach->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($coach->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif coachAttendance" id="{{$coach->id}}" href="{{ route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => $coach->id]) }}">
                                         <span class="material-icons mr-2">
                                             @if($coach->pivot->attendanceStatus == 'Required Action') error
                                             @elseif($coach->pivot->attendanceStatus == 'Attended') check_circle
@@ -406,10 +406,10 @@
             <div class="page-separator__text">Training Note</div>
             <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
         </div>
-        @if(count($data->notes)==0)
+        @if(count($data['dataSchedule']->notes)==0)
             <small class="text-70 text-headings text-uppercase mr-3">You haven't create any note</small>
         @else
-            @foreach($data->notes as $note)
+            @foreach($data['dataSchedule']->notes as $note)
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
                         <div class="flex">
@@ -453,7 +453,7 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
-                    url: "{{ route('training-schedules.player', ['schedule' => $data->id, 'player' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
                     type: 'get',
                     success: function(res) {
                         $('#editPlayerAttendanceModal').modal('show');
@@ -479,7 +479,7 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
-                    url: "{{ route('training-schedules.coach', ['schedule' => $data->id, 'coach' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
                     type: 'get',
                     success: function(res) {
                         $('#editCoachAttendanceModal').modal('show');
@@ -510,7 +510,7 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
-                    url: "{{ route('training-schedules.edit-note', ['schedule' => $data->id, 'note' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
                     type: 'get',
                     success: function(res) {
                         $('#editNoteModal').modal('show');
@@ -534,7 +534,7 @@
                 e.preventDefault();
                 const id = $('#playerId').val();
                 $.ajax({
-                    url: "{{ route('training-schedules.update-player', ['schedule' => $data->id, 'player' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -570,7 +570,7 @@
                 e.preventDefault();
                 const id = $('#coachId').val();
                 $.ajax({
-                    url: "{{ route('training-schedules.update-coach', ['schedule' => $data->id, 'coach' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -641,7 +641,7 @@
                 e.preventDefault();
                 const id = $('#noteId').val();
                 $.ajax({
-                    url: "{{ route('training-schedules.update-note', ['schedule' => $data->id, 'note' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -733,7 +733,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('training-schedules.destroy-note', ['schedule' => $data->id, 'note'=>':id']) }}".replace(':id', id),
+                            url: "{{ route('training-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"
