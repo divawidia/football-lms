@@ -42,6 +42,7 @@ class EventSchedule extends Model
                 'teamRedCards',
                 'teamFoulsConceded',
                 'resultStatus',
+                'teamPasses',
             )->withTimestamps();
     }
     public function user()
@@ -62,7 +63,7 @@ class EventSchedule extends Model
                 'note'
             )->withTimestamps();
     }
-    public function matchScore()
+    public function matchScores()
     {
         return $this->hasMany(MatchScore::class, 'eventId');
     }
@@ -78,6 +79,22 @@ class EventSchedule extends Model
     public function playerSkillStats()
     {
         return $this->hasMany(PlayerSkillStats::class, 'eventId');
+    }
+    public function playerMatchStats()
+    {
+        return $this->belongsToMany(Player::class, 'player_match_stats', 'eventId', 'playerId')
+            ->withPivot(
+                'minutesPlayed',
+                'goals',
+                'assists',
+                'ownGoal',
+                'shots',
+                'passes',
+                'fouls',
+                'yellowCards',
+                'redCards',
+                'saves',
+            )->withTimestamps();
     }
     public function playerPerformanceReview()
     {

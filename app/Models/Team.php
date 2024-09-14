@@ -41,6 +41,7 @@ class Team extends Model
                 'teamRedCards',
                 'teamFoulsConceded',
                 'resultStatus',
+                'teamPasses',
             )->withTimestamps();
     }
     public function players()

@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttendanceStatusRequest;
 use App\Http\Requests\MatchScheduleRequest;
+use App\Http\Requests\MatchScoreRequest;
 use App\Http\Requests\ScheduleNoteRequest;
 use App\Http\Requests\TrainingScheduleRequest;
 use App\Models\Coach;
 use App\Models\Competition;
 use App\Models\EventSchedule;
+use App\Models\MatchScore;
 use App\Models\Player;
 use App\Models\ScheduleNote;
 use App\Services\CompetitionService;
@@ -104,6 +106,13 @@ class EventScheduleController extends Controller
     public function showTraining(EventSchedule $schedule)
     {
         return view('pages.admins.academies.schedules.trainings.detail', [
+            'data' => $this->eventScheduleService->show($schedule),
+        ]);
+    }
+
+    public function showMatch(EventSchedule $schedule)
+    {
+        return view('pages.admins.academies.schedules.matches.detail', [
             'data' => $this->eventScheduleService->show($schedule),
         ]);
     }
@@ -278,6 +287,34 @@ class EventScheduleController extends Controller
             ],
             'message' => 'Success'
         ]);
+    }
+
+    public function getAssistPlayer(EventSchedule $schedule, Player $player){
+        $players = $schedule->players()->with('user', 'position')->where('players.id', '!=', $player->id)->get();
+        return response()->json([
+            'status' => '200',
+            'data' => $players,
+            'message' => 'Success'
+        ]);
+    }
+
+    public function storeMatchScorer(MatchScoreRequest $request, EventSchedule $schedule){
+        $data = $request->validated();
+        $note = $this->eventScheduleService->storeMatchScorer($data, $schedule);
+        if (request()->ajax()) {
+            return response()->json([
+                'status' => '200',
+                'data' => $note,
+                'message' => 'Success'
+            ]);
+        }
+    }
+
+    public function indexPlayerMatchStats(EventSchedule $schedule)
+    {
+        if (request()->ajax()){
+            return $this->eventScheduleService->dataTablesPlayerStats($schedule);
+        }
     }
 
     /**
