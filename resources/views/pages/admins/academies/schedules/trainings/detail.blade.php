@@ -1,5 +1,6 @@
 @extends('layouts.master')
 @section('title')
+    @dd($data)
     Training {{ $data->eventName  }}
 @endsection
 @section('page-title')

@@ -101,59 +101,10 @@ class EventScheduleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(EventSchedule $schedule)
+    public function showTraining(EventSchedule $schedule)
     {
-        $totalParticipant = count($schedule->players) + count($schedule->coaches);
-
-        $playerAttended = $schedule->players()
-            ->where('attendanceStatus', 'Attended')
-            ->get();
-        $playerDidntAttend = $schedule->players()
-            ->where('attendanceStatus', 'Illness')
-            ->orWhere('attendanceStatus', 'Injured')
-            ->orWhere('attendanceStatus', 'Other')
-            ->get();
-        $playerIllness = $schedule->players()
-            ->where('attendanceStatus', 'Illness')
-            ->get();
-        $playerInjured = $schedule->players()
-            ->where('attendanceStatus', 'Injured')
-            ->get();
-        $playerOther = $schedule->players()
-            ->where('attendanceStatus', 'Other')
-            ->get();
-        $coachAttended = $schedule->coaches()
-            ->where('attendanceStatus', 'Attended')
-            ->get();
-        $coachDidntAttend = $schedule->coaches()
-            ->where('attendanceStatus', 'Illness')
-            ->where('attendanceStatus', 'Injured')
-            ->where('attendanceStatus', 'Other')
-            ->get();
-        $coachIllness = $schedule->coaches()
-            ->where('attendanceStatus', 'Illness')
-            ->get();
-        $coachInjured = $schedule->coaches()
-            ->where('attendanceStatus', 'Injured')
-            ->get();
-        $coachOther = $schedule->coaches()
-            ->where('attendanceStatus', 'Other')
-            ->get();
-
-        $totalAttend = count($playerAttended) + count($coachAttended);
-        $totalDidntAttend = count($playerDidntAttend) + count($coachDidntAttend);
-        $totalIllness = count($playerIllness) + count($coachIllness);
-        $totalInjured = count($playerInjured) + count($coachInjured);
-        $totalOthers = count($playerOther) + count($coachOther);
-
         return view('pages.admins.academies.schedules.trainings.detail', [
-            'totalParticipant' => $totalParticipant,
-            'totalAttend' => $totalAttend,
-            'totalDidntAttend' => $totalDidntAttend,
-            'totalIllness' => $totalIllness,
-            'totalInjured' => $totalInjured,
-            'totalOthers' => $totalOthers,
-            'data' => $schedule,
+            'data' => $this->eventScheduleService->show($schedule),
         ]);
     }
 
@@ -220,9 +171,7 @@ class EventScheduleController extends Controller
 
     public function getCoachAttendance(EventSchedule $schedule, Coach $coach){
         $data = $this->eventScheduleService->getCoachAttendance($schedule, $coach);
-//        return view('pages.admins.academies.schedules.trainings.editCoachAttendance', [
-//            'data' => $data
-//        ]);
+
         if (request()->ajax()) {
             if ($data) {
                 return response()->json([
@@ -251,9 +200,7 @@ class EventScheduleController extends Controller
     {
         $data = $request->validated();
         $attendance = $this->eventScheduleService->updateCoachAttendanceStatus($data, $schedule, $coach);
-//        $text = 'Coach attendance status successfully updated!';
-//        Alert::success($text);
-//        return redirect()->route('training-schedules.show', $schedule->id);
+
         return response()->json($attendance);
     }
 

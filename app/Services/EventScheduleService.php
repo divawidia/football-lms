@@ -240,6 +240,55 @@ class EventScheduleService extends Service
             ->make();
     }
 
+    public function show(EventSchedule $schedule){
+        $totalParticipant = count($schedule->players) + count($schedule->coaches);
+
+        $playerAttended = $schedule->players()
+            ->where('attendanceStatus', 'Attended')
+            ->get();
+        $playerDidntAttend = $schedule->players()
+            ->where('attendanceStatus', 'Illness')
+            ->orWhere('attendanceStatus', 'Injured')
+            ->orWhere('attendanceStatus', 'Other')
+            ->get();
+        $playerIllness = $schedule->players()
+            ->where('attendanceStatus', 'Illness')
+            ->get();
+        $playerInjured = $schedule->players()
+            ->where('attendanceStatus', 'Injured')
+            ->get();
+        $playerOther = $schedule->players()
+            ->where('attendanceStatus', 'Other')
+            ->get();
+        $coachAttended = $schedule->coaches()
+            ->where('attendanceStatus', 'Attended')
+            ->get();
+        $coachDidntAttend = $schedule->coaches()
+            ->where('attendanceStatus', 'Illness')
+            ->where('attendanceStatus', 'Injured')
+            ->where('attendanceStatus', 'Other')
+            ->get();
+        $coachIllness = $schedule->coaches()
+            ->where('attendanceStatus', 'Illness')
+            ->get();
+        $coachInjured = $schedule->coaches()
+            ->where('attendanceStatus', 'Injured')
+            ->get();
+        $coachOther = $schedule->coaches()
+            ->where('attendanceStatus', 'Other')
+            ->get();
+
+        $totalAttend = count($playerAttended) + count($coachAttended);
+        $totalDidntAttend = count($playerDidntAttend) + count($coachDidntAttend);
+        $totalIllness = count($playerIllness) + count($coachIllness);
+        $totalInjured = count($playerInjured) + count($coachInjured);
+        $totalOthers = count($playerOther) + count($coachOther);
+
+        $dataSchedule = $schedule;
+
+        return compact('totalParticipant', 'totalAttend', 'totalDidntAttend', 'totalIllness', 'totalInjured', 'totalOthers', 'dataSchedule');
+    }
+
     public function storeTraining(array $data, $userId){
         $data['userId'] = $userId;
         $data['eventType'] = 'Training';
