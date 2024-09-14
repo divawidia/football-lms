@@ -197,6 +197,16 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::get('get-competition-teams/{competition}', [EventScheduleController::class, 'getCompetitionTeam'])->name('match-schedules.get-competition-team');
         Route::get('get-friendlymatch-teams', [EventScheduleController::class, 'getFriendlyMatchTeam'])->name('match-schedules.get-friendlymatch-team');
         Route::post('store', [EventScheduleController::class, 'storeMatch'])->name('match-schedules.store');
+
+        Route::prefix('{schedule}')->group(function () {
+            Route::get('', [EventScheduleController::class, 'showMatch'])->name('match-schedules.show');
+            Route::get('edit', [EventScheduleController::class, 'editMatch'])->name('match-schedules.edit');
+            Route::put('update', [EventScheduleController::class, 'updateMatch'])->name('match-schedules.update');
+            Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('match-schedules.destroy');
+            Route::patch('deactivate', [EventScheduleController::class, 'deactivate'])->name('deactivate-match');
+            Route::patch('activate', [EventScheduleController::class, 'activate'])->name('activate-match');
+
+        });
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
