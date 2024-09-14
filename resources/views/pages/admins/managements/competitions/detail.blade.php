@@ -54,7 +54,7 @@
                  height="104"
                  class="mr-md-32pt mb-32pt mb-md-0 rounded-circle img-object-fit-cover"
                  alt="instructor">
-            <div class="flex mb-32pt mb-md-0">
+            <div class="flex mb-32pt mb-md-0 ml-3">
                 <h2 class="text-white mb-0">{{ $competition->name  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">{{ $competition->type }}</p>
             </div>

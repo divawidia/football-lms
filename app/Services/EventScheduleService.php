@@ -16,7 +16,7 @@ class EventScheduleService extends Service
 {
     public function indexMatch(): Collection
     {
-        return EventSchedule::with('teams')->where('eventType', 'Match')->get();
+        return EventSchedule::with('teams', 'competition')->where('eventType', 'Match')->get();
     }
     public function indexTraining(): Collection
     {
@@ -37,6 +37,21 @@ class EventScheduleService extends Service
                 'start' => $training->date.' '.$training->startTime,
                 'end' => $training->date.' '.$training->endTime,
                 'className' => 'bg-warning'
+            ];
+        }
+        return $events;
+    }
+
+    public function matchCalendar(){
+        $matches = $this->indexMatch();
+        $events = [];
+        foreach ($matches as $match) {
+            $events[] = [
+                'id' => $match->id,
+                'title' => $match->eventName.' - '.$match->teams[0]->teamName .' Vs. '.$match->teams[1]->teamName,
+                'start' => $match->date.' '.$match->startTime,
+                'end' => $match->date.' '.$match->endTime,
+                'className' => 'bg-primary'
             ];
         }
         return $events;
@@ -186,6 +201,28 @@ class EventScheduleService extends Service
                                 </div>
                             </div>';
             })
+            ->editColumn('competition', function ($item) {
+                if ($item->competition){
+                    $competition = '
+                            <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->competition->logo) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->competition->name . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$item->competition->type.'</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+                }else{
+                    $competition = 'No Competition';
+                }
+                return $competition;
+            })
             ->editColumn('date', function ($item) {
                 $date = date('M d, Y', strtotime($item->date));
                 $startTime = date('h:i A', strtotime($item->startTime));
@@ -199,7 +236,7 @@ class EventScheduleService extends Service
                     return '<span class="badge badge-pill badge-danger">Ended</span>';
                 }
             })
-            ->rawColumns(['action','team', 'opponentTeam','date','status'])
+            ->rawColumns(['action','team', 'competition','opponentTeam','date','status'])
             ->make();
     }
 
@@ -225,8 +262,8 @@ class EventScheduleService extends Service
         $data['status'] = '1';
         $schedule =  EventSchedule::create($data);
 
-        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->get();
-
+        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
+//        dd($team);
         $schedule->teams()->attach($data['teamId']);
         $schedule->teams()->attach($data['opponentTeamId']);
         $schedule->players()->attach($team->players);

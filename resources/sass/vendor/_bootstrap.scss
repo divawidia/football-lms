@@ -270,3 +270,7 @@ select {
 .btn-outline-white{
     color: $white;
 }
+
+.border-left-accent {
+    border-left: 4px solid $accent-1 !important
+}

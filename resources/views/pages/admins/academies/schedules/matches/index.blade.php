@@ -24,7 +24,7 @@
         </div>
 
         <div class="container page__container page-section">
-            <a href="{{  route('training-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">
+            <a href="{{  route('match-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">
                 <span class="material-icons mr-2">
                     add
                 </span>
@@ -37,7 +37,7 @@
                             <thead>
                             <tr>
                                 <th>Team</th>
-                                <th>Opponent Team</th>
+                                <th>Opponent</th>
                                 <th>Match Date</th>
                                 <th>Location</th>
                                 <th>Competition</th>

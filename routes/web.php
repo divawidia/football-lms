@@ -190,6 +190,14 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::delete('delete-note/{note}', [EventScheduleController::class, 'destroyNote'])->name('training-schedules.destroy-note');
         });
     });
+
+    Route::prefix('match-schedules')->group(function () {
+        Route::get('', [EventScheduleController::class, 'indexMatch'])->name('match-schedules.index');
+        Route::get('create', [EventScheduleController::class, 'createMatch'])->name('match-schedules.create');
+        Route::get('get-competition-teams/{competition}', [EventScheduleController::class, 'getCompetitionTeam'])->name('match-schedules.get-competition-team');
+        Route::get('get-friendlymatch-teams', [EventScheduleController::class, 'getFriendlyMatchTeam'])->name('match-schedules.get-friendlymatch-team');
+        Route::post('store', [EventScheduleController::class, 'storeMatch'])->name('match-schedules.store');
+    });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
 //    Route::get('dashboard', [DashboardController::class, 'index'])->name('coach.dashboard');

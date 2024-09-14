@@ -4,28 +4,28 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttendanceStatusRequest;
+use App\Http\Requests\MatchScheduleRequest;
 use App\Http\Requests\ScheduleNoteRequest;
 use App\Http\Requests\TrainingScheduleRequest;
 use App\Models\Coach;
+use App\Models\Competition;
 use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\ScheduleNote;
-use App\Models\Team;
+use App\Services\CompetitionService;
 use App\Services\EventScheduleService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use mysql_xdevapi\Exception;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class EventScheduleController extends Controller
 {
     private EventScheduleService $eventScheduleService;
-    public function __construct(EventScheduleService $eventScheduleService)
+    private CompetitionService $competitionService;
+    public function __construct(EventScheduleService $eventScheduleService, CompetitionService $competitionService)
     {
         $this->eventScheduleService = $eventScheduleService;
+        $this->competitionService = $competitionService;
     }
     /**
      * Display a listing of the resource.
@@ -43,6 +43,19 @@ class EventScheduleController extends Controller
         ]);
     }
 
+    public function indexMatch()
+    {
+        if (request()->ajax()){
+            return $this->eventScheduleService->dataTablesMatch();
+        }
+
+        $events = $this->eventScheduleService->matchCalendar();
+
+        return view('pages.admins.academies.schedules.matches.index', [
+            'events' => $events
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -50,6 +63,13 @@ class EventScheduleController extends Controller
     {
         return view('pages.admins.academies.schedules.trainings.create', [
             'teams' => $this->eventScheduleService->getAcademyTeams(),
+        ]);
+    }
+
+    public function createMatch()
+    {
+        return view('pages.admins.academies.schedules.matches.create', [
+            'competitions' => $this->competitionService->index(),
         ]);
     }
 
@@ -65,6 +85,17 @@ class EventScheduleController extends Controller
         $text = 'Training schedule successfully added!';
         Alert::success($text);
         return redirect()->route('training-schedules.index');
+    }
+
+    public function storeMatch(MatchScheduleRequest $request)
+    {
+        $data = $request->validated();
+        $userId = Auth::user()->id;
+        $this->eventScheduleService->storeMatch($data, $userId);
+
+        $text = 'Match schedule successfully added!';
+        Alert::success($text);
+        return redirect()->route('match-schedules.index');
     }
 
     /**
@@ -258,11 +289,11 @@ class EventScheduleController extends Controller
     public function updateNote(ScheduleNoteRequest $request, EventSchedule $schedule, ScheduleNote $note){
         $data = $request->validated();
         $note = $this->eventScheduleService->updateNote($data, $schedule, $note);
-            return response()->json([
-                'status' => '200',
-                'data' => $note,
-                'message' => 'Success'
-            ]);
+        return response()->json([
+            'status' => '200',
+            'data' => $note,
+            'message' => 'Success'
+        ]);
     }
     public function destroyNote(EventSchedule $schedule, ScheduleNote $note)
     {
@@ -270,6 +301,38 @@ class EventScheduleController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function getCompetitionTeam(Competition $competition){
+        $groups = $competition->groups()->with('teams')->get();
+        $teams = [];
+        $opponentTeams = [];
+        foreach ($groups as $group){
+            $teams[] = $group->teams()->where('teamSide', 'Academy Team')->get();
+            $opponentTeams[] = $group->teams()->where('teamSide', 'Opponent Team')->get();
+        }
+        return response()->json([
+            'status' => '200',
+            'data' => [
+                'teams' => $teams,
+                'opponentTeams' => $opponentTeams,
+                ],
+            'message' => 'Success'
+        ]);
+    }
+
+    public function getFriendlyMatchTeam(){
+        $teams = $this->competitionService->getTeams();
+        $opponentTeams = $this->competitionService->getOpponentTeams();
+        return response()->json([
+            'status' => '200',
+            'data' => [
+                'teams' => $teams,
+                'opponentTeams' => $opponentTeams,
+            ],
+            'message' => 'Success'
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

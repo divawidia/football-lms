@@ -34,7 +34,7 @@
                         <div role="group" aria-labelledby="label-question" class="m-0 form-group">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <div class="form-group mb-3">
+                                    <div class="form-group ">
                                         <label class="form-label" for="eventName">Training Topic</label>
                                         <small class="text-danger">*</small>
                                         <input type="text"
@@ -49,7 +49,7 @@
                                         </span>
                                         @enderror
                                     </div>
-                                    <div class="form-group mb-3">
+                                    <div class="form-group ">
                                         <label class="form-label" for="place">Training Location</label>
                                         <small class="text-danger">*</small>
                                         <input type="text"
@@ -64,7 +64,7 @@
                                         </span>
                                         @enderror
                                     </div>
-                                    <div class="form-group mb-3">
+                                    <div class="form-group ">
                                         <div class="d-flex flex-row align-items-center mb-2">
                                             <label class="form-label mb-0" for="teamId">Teams</label>
                                             <small class="text-danger">*</small>
@@ -101,7 +101,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="form-group mb-3">
+                                    <div class="form-group ">
                                         <label class="form-label" for="date">Training Date</label>
                                         <small class="text-danger">*</small>
                                         <input type="hidden"
@@ -119,7 +119,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
-                                            <div class="form-group mb-3">
+                                            <div class="form-group ">
                                                 <label class="form-label" for="startTime">Start Time</label>
                                                 <small class="text-danger">*</small>
                                                 <input type="text"
@@ -142,7 +142,7 @@
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="form-group mb-3">
+                                            <div class="form-group ">
                                                 <label class="form-label" for="endTime">End Time</label>
                                                 <small class="text-danger">*</small>
                                                 <input type="text"

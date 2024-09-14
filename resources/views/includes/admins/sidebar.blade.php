@@ -91,7 +91,7 @@
                                 </a>
                             </li>
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="">
+                                <a class="sidebar-menu-button" href="{{ route('match-schedules.index') }}">
                                     <span class="sidebar-menu-text">Match</span>
                                 </a>
                             </li>

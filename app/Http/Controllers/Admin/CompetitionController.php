@@ -26,7 +26,7 @@ class CompetitionController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            return $this->competitionService->index();
+            return $this->competitionService->datatables();
         }
         return view('pages.admins.managements.competitions.index');
     }
@@ -36,8 +36,8 @@ class CompetitionController extends Controller
      */
     public function create()
     {
-        $teams = Team::where('teamSide', 'Academy Team')->get();
-        $opponentTeams = Team::where('teamSide', 'Opponent Team')->get();
+        $teams = $this->competitionService->getTeams();
+        $opponentTeams = $this->competitionService->getOpponentTeams();
         $players = Player::all();
         $coaches = Coach::all();
 

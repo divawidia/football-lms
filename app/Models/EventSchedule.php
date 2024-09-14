@@ -48,6 +48,12 @@ class EventSchedule extends Model
     {
         return $this->belongsTo(User::class, 'userId');
     }
+
+    public function competition()
+    {
+        return $this->belongsTo(Competition::class, 'competitionId');
+    }
+
     public function coaches()
     {
         return $this->belongsToMany(Coach::class, 'coach_attendance', 'scheduleId', 'coachId')

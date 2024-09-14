@@ -482,6 +482,10 @@ select.form-control:focus::-ms-value {
   color: #fff;
 }
 
+.border-left-accent {
+  border-left: 4px solid #E52534 !important;
+}
+
 .fc .fc-button-primary {
   background-color: #E52534;
   border-color: #E52534;

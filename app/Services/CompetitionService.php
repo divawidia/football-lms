@@ -12,9 +12,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CompetitionService extends Service
 {
-    public function index(): JsonResponse
+    public function index(){
+        return Competition::with('groups.teams')->get();
+    }
+    public function datatables(): JsonResponse
     {
-        $query = Competition::with('groups.teams')->get();
+        $query = $this->index();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if ($item->status == '1') {
@@ -160,6 +163,14 @@ class CompetitionService extends Service
     {
         $competition->update(['status' => '0']);
         return $competition;
+    }
+
+    public function getTeams(){
+        return Team::where('teamSide', 'Academy Team')->get();
+    }
+
+    public function getOpponentTeams(){
+        return Team::where('teamSide', 'Opponent Team')->get();
     }
 
     public function destroy(Competition $competition): Competition
