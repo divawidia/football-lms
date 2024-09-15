@@ -423,12 +423,12 @@ class EventScheduleService extends Service
     public function storeMatchScorer($data, EventSchedule $schedule)
     {
         $data['eventId'] = $schedule->id;
-        $matchScore = MatchScore::create($data);
-        $teamScore = $schedule->teams[0]->teamScore + 1;
+        MatchScore::create($data);
+        $teamScore = $schedule->teams[0]->pivot->teamScore + 1;
         $player = $schedule->playerMatchStats()->find($data['playerId']);
         $assistPlayer = $schedule->playerMatchStats()->find($data['assistPlayerId']);
         $playerGoal = $player->pivot->goals + 1;
-//        dd($playerGoal);
+
         $playerAssist = $assistPlayer->pivot->assists + 1;
         $schedule->playerMatchStats()->updateExistingPivot($data['playerId'], ['goals' => $playerGoal]);
         $schedule->playerMatchStats()->updateExistingPivot($data['assistPlayerId'], ['assists' => $playerAssist]);
