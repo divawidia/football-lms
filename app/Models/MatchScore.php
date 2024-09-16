@@ -15,6 +15,7 @@ class MatchScore extends Model
         'assistPlayerId',
         'eventId',
         'minuteScored',
+        'isOwnGoal'
     ];
 
     public function player()
