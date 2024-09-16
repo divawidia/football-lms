@@ -333,6 +333,18 @@ class EventScheduleController extends Controller
         }
     }
 
+    public function storeOwnGoal(MatchScoreRequest $request, EventSchedule $schedule){
+        $data = $request->validated();
+        $ownGoal = $this->eventScheduleService->storeOwnGoal($data, $schedule);
+        if (request()->ajax()) {
+            return response()->json([
+                'status' => '200',
+                'data' => $ownGoal,
+                'message' => 'Success'
+            ]);
+        }
+    }
+
     public function indexPlayerMatchStats(EventSchedule $schedule)
     {
         if (request()->ajax()){

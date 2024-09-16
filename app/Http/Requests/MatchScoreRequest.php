@@ -24,7 +24,7 @@ class MatchScoreRequest extends FormRequest
     {
         return [
             'playerId' => ['required', Rule::exists('players', 'id')],
-            'assistPlayerId' => ['required', Rule::exists('players', 'id')],
+            'assistPlayerId' => ['nullable', Rule::exists('players', 'id')],
             'minuteScored' => ['required', 'min:1', 'max:160', 'numeric'],
         ];
     }
