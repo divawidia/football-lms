@@ -246,13 +246,13 @@
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}"><span class="material-icons">edit</span> Edit Training Schedule</a>
+                    <a class="dropdown-item" href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}"><span class="material-icons">edit</span> Edit Match Schedule</a>
                     @if($data['dataSchedule']->status == '1')
                         <form action="{{ route('deactivate-training', $data['dataSchedule']->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
-                                <span class="material-icons">block</span> End Training
+                                <span class="material-icons">block</span> End Match
                             </button>
                         </form>
                     @else
@@ -260,12 +260,12 @@
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
-                                <span class="material-icons">check_circle</span> Start Training
+                                <span class="material-icons">check_circle</span> Start Match
                             </button>
                         </form>
                     @endif
                     <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
-                        <span class="material-icons">delete</span> Delete Training
+                        <span class="material-icons">delete</span> Delete Match
                     </button>
                 </div>
             </div>
