@@ -227,10 +227,11 @@
     </div>
 
     <!-- Modal add team match stats -->
-    <div class="modal fade" id="teamMatchStats" tabindex="-1" aria-labelledby="teamMatchStatsModal" aria-hidden="true">
+    <div class="modal fade" id="teamMatchStatsModal" tabindex="-1" aria-labelledby="teamMatchStatsModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('match-schedules.store-match-scorer', $data['dataSchedule']->id) }}" method="post" id="formTeamMatchStats">
+                <form action="{{ route('match-schedules.update-match-stats', $data['dataSchedule']->id) }}" method="post" id="formTeamMatchStats">
+                    @method('PUT')
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="coachName">Update team stats of this match</h5>
@@ -1726,7 +1727,42 @@
             // show update match stats modal
             $('#updateMatchStats').on('click', function (e) {
                 e.preventDefault();
-                $('#teamMatchStats').modal('show');
+                $('#teamMatchStatsModal').modal('show');
+            });
+
+            // update team match stats data
+            $('#formTeamMatchStats').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function (res) {
+                        $('#teamMatchStatsModal').modal('hide');
+                        Swal.fire({
+                            title: 'Match stats successfully added!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        console.log(response);
+                        $.each(response.errors, function (key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("#" + key).addClass('is-invalid');
+                        });
+                    }
+                });
             });
         });
     </script>
