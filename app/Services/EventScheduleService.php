@@ -468,6 +468,19 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
+    public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer)
+    {
+        $player = $schedule->playerMatchStats()->find($scorer->playerId);
+
+        $teamScore = $schedule->teams[1]->pivot->teamScore - 1;
+        $playerGoal = $player->pivot->ownGoal - 1;
+
+        $schedule->playerMatchStats()->updateExistingPivot($scorer->playerId, ['ownGoal' => $playerGoal]);
+        $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['teamScore' => $teamScore]);
+
+        return $scorer->delete();
+    }
+
     public function updateMatchStats(array $data, EventSchedule $schedule)
     {
         $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, [
