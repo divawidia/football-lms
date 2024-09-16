@@ -423,6 +423,7 @@ class EventScheduleService extends Service
     public function storeMatchScorer($data, EventSchedule $schedule)
     {
         $data['eventId'] = $schedule->id;
+        $data['isOwnGoal'] = 0;
         MatchScore::create($data);
         $player = $schedule->playerMatchStats()->find($data['playerId']);
         $assistPlayer = $schedule->playerMatchStats()->find($data['assistPlayerId']);

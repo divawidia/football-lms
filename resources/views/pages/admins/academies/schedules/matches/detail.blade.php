@@ -1343,7 +1343,7 @@
                                         <p class="text-50 lh-1 mb-0">Assist : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
                                     @endif
                                 </div>
-                                <button class="btn btn-sm btn-outline-secondary delete-scorer" type="button" id="{{ $matchScore->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete scorer">
+                                <button class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif" type="button" id="{{ $matchScore->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete scorer">
                                     <span class="material-icons">
                                         close
                                     </span>
@@ -2212,6 +2212,51 @@
                             success: function () {
                                 Swal.fire({
                                     title: 'Match Scorer successfully deleted!',
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Something went wrong when deleting data!",
+                                    text: textStatus, errorThrown,
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('body').on('click', '.delete-own-goal', function () {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure to delete this own goal?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('match-schedules.destroy-own-goal', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function () {
+                                Swal.fire({
+                                    title: 'Own goal successfully deleted!',
                                     icon: 'success',
                                     showCancelButton: false,
                                     confirmButtonColor: "#1ac2a1",
