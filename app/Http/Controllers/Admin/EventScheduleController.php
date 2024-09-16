@@ -319,6 +319,19 @@ class EventScheduleController extends Controller
         ]);
     }
 
+    public function updateMatchStats(MatchStatsRequest $request, EventSchedule $schedule)
+    {
+        $data = $request->validated();
+        $matchStats = $this->eventScheduleService->updateMatchStats($data, $schedule);
+        if (request()->ajax()) {
+            return response()->json([
+                'status' => '200',
+                'data' => $matchStats,
+                'message' => 'Success'
+            ]);
+        }
+    }
+
     public function indexPlayerMatchStats(EventSchedule $schedule)
     {
         if (request()->ajax()){
