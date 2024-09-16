@@ -453,6 +453,44 @@ class EventScheduleService extends Service
         return $scorer->delete();
     }
 
+    public function updateMatchStats(array $data, EventSchedule $schedule)
+    {
+        $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, [
+                'teamOwnGoal' => $data['teamAOwnGoal'],
+                'teamPossesion' => $data['teamAPossession'],
+                'teamShotOnTarget' => $data['teamAShotOnTarget'],
+                'teamShots' => $data['teamAShots'],
+                'teamTouches' => $data['teamATouches'],
+                'teamTackles' => $data['teamATackles'],
+                'teamClearances' => $data['teamAClearances'],
+                'teamCorners' => $data['teamACorners'],
+                'teamOffsides' => $data['teamAOffsides'],
+                'teamYellowCards' => $data['teamAYellowCards'],
+                'teamRedCards' => $data['teamARedCards'],
+                'teamFoulsConceded' => $data['teamAFoulsConceded'],
+                'teamPasses' => $data['teamAPasses'],
+            ]);
+
+        $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, [
+            'teamScore' => $data['teamBTeamScore'],
+            'teamOwnGoal' => $data['teamBOwnGoal'],
+            'teamPossesion' => $data['teamBPossession'],
+            'teamShotOnTarget' => $data['teamBShotOnTarget'],
+            'teamShots' => $data['teamBShots'],
+            'teamTouches' => $data['teamBTouches'],
+            'teamTackles' => $data['teamBTackles'],
+            'teamClearances' => $data['teamBClearances'],
+            'teamCorners' => $data['teamBCorners'],
+            'teamOffsides' => $data['teamBOffsides'],
+            'teamYellowCards' => $data['teamBYellowCards'],
+            'teamRedCards' => $data['teamBRedCards'],
+            'teamFoulsConceded' => $data['teamBFoulsConceded'],
+            'teamPasses' => $data['teamBPasses'],
+        ]);
+
+        return $schedule;
+    }
+
     public function destroy(EventSchedule $schedule)
     {
         $schedule->teams()->detach();
