@@ -747,14 +747,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="page-separator">
-                            <img src="{{ Storage::url($data['dataSchedule']->teams[0]->logo) }}"
-                                 width="50"
-                                 height="50"
-                                 class="rounded-circle img-object-fit-cover mr-3"
-                                 alt="team-logo">
-                            <div class="page-separator__text">{{ $data['dataSchedule']->teams[0]->teamName }} Match Stats</div>
-                        </div>
                         <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
@@ -768,35 +760,6 @@
                                            value="{{ old('teamAOwnGoal', $data['dataSchedule']->teams[0]->pivot->teamOwnGoal) }}"
                                            placeholder="Input team own goal">
                                     <span class="invalid-feedback teamAOwnGoal_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="teamAPossession">Goals</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamAPossession"
-                                           name="teamAPossession"
-                                           min="0"
-                                           max="100"
-                                           value="{{ old('teamAPossession', $data['dataSchedule']->teams[0]->pivot->teamPossesion) }}"
-                                           placeholder="Input team possession">
-                                    <span class="invalid-feedback teamAPossession_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="teamAShotOnTarget">Shot on Target</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamAShotOnTarget"
-                                           name="teamAShotOnTarget"
-                                           min="0"
-                                           value="{{ old('teamAShotOnTarget', $data['dataSchedule']->teams[0]->pivot->teamShotOnTarget) }}"
-                                           placeholder="Input team Shot on Target">
-                                    <span class="invalid-feedback teamAShotOnTarget_error" role="alert">
                                         <strong></strong>
                                     </span>
                                 </div>
@@ -816,7 +779,7 @@
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label" for="teamATouches">Touches</label>
+                                    <label class="form-label" for="teamATouches">Passes</label>
                                     <small class="text-danger">*</small>
                                     <input type="number"
                                            class="form-control"
@@ -831,7 +794,7 @@
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label" for="teamAPasses">Passes</label>
+                                    <label class="form-label" for="teamAPasses">Fouls</label>
                                     <small class="text-danger">*</small>
                                     <input type="number"
                                            class="form-control"
@@ -845,8 +808,10 @@
                                         <strong></strong>
                                     </span>
                                 </div>
+                            </div>
+                            <div class="col-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="teamATackles">Tackles</label>
+                                    <label class="form-label" for="teamATackles">Yellow Cards</label>
                                     <small class="text-danger">*</small>
                                     <input type="number"
                                            class="form-control"
@@ -860,10 +825,8 @@
                                         <strong></strong>
                                     </span>
                                 </div>
-                            </div>
-                            <div class="col-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="teamAClearances">Clearances</label>
+                                    <label class="form-label" for="teamAClearances">Red Cards</label>
                                     <small class="text-danger">*</small>
                                     <input type="number"
                                            class="form-control"
@@ -878,7 +841,7 @@
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label" for="teamACorners">Corners</label>
+                                    <label class="form-label" for="teamACorners">Saves</label>
                                     <small class="text-danger">*</small>
                                     <input type="number"
                                            class="form-control"
@@ -889,66 +852,6 @@
                                            value="{{ old('teamACorners', $data['dataSchedule']->teams[0]->pivot->teamCorners) }}"
                                            placeholder="Input team Corners">
                                     <span class="invalid-feedback teamACorners_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="teamAOffsides">Offsides</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamAOffsides"
-                                           name="teamAOffsides"
-                                           min="0"
-
-                                           value="{{ old('teamAOffsides', $data['dataSchedule']->teams[0]->pivot->teamOffsides) }}"
-                                           placeholder="Input team Offsides">
-                                    <span class="invalid-feedback teamAOffsides_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="teamAYellowCards">Yellow Cards</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamAYellowCards"
-                                           name="teamAYellowCards"
-                                           min="0"
-
-                                           value="{{ old('teamAYellowCards', $data['dataSchedule']->teams[0]->pivot->teamYellowCards) }}"
-                                           placeholder="Input team Yellow Cards">
-                                    <span class="invalid-feedback teamAYellowCards_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="teamARedCards">Red Cards</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamARedCards"
-                                           name="teamARedCards"
-                                           min="0"
-
-                                           value="{{ old('teamARedCards', $data['dataSchedule']->teams[0]->pivot->teamRedCards) }}"
-                                           placeholder="Input team Red Cards">
-                                    <span class="invalid-feedback teamARedCards_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="teamAFoulsConceded">Fouls Conceded</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamAFoulsConceded"
-                                           name="teamAFoulsConceded"
-                                           min="0"
-
-                                           value="{{ old('teamAFoulsConceded', $data['dataSchedule']->teams[0]->pivot->teamFoulsConceded) }}"
-                                           placeholder="Input team Fouls Conceded">
-                                    <span class="invalid-feedback teamAFoulsConceded_error" role="alert">
                                         <strong></strong>
                                     </span>
                                 </div>
@@ -2360,6 +2263,12 @@
                         });
                     }
                 });
+            });
+
+            // show add own goal modal
+            $('#edit-player-stats').on('click', function (e) {
+                e.preventDefault();
+                $('#playerMatchStatsModal').modal('show');
             });
         });
     </script>

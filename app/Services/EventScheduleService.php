@@ -254,8 +254,8 @@ class EventScheduleService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('match-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Player Stats</a>
-                            <a class="dropdown-item" href="' . route('match-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Player</a>
+                            <a class="dropdown-item edit-player-stats" href="" id="'.$item->id.'"><span class="material-icons">edit</span> Edit Player Stats</a>
+                            <a class="dropdown-item" href="' . route('player-managements.show', ['player_management'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player</a>
                           </div>
                         </div>';
             })
@@ -485,7 +485,6 @@ class EventScheduleService extends Service
     public function updateMatchStats(array $data, EventSchedule $schedule)
     {
         $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, [
-                'teamOwnGoal' => $data['teamAOwnGoal'],
                 'teamPossesion' => $data['teamAPossession'],
                 'teamShotOnTarget' => $data['teamAShotOnTarget'],
                 'teamShots' => $data['teamAShots'],
@@ -517,6 +516,20 @@ class EventScheduleService extends Service
             'teamPasses' => $data['teamBPasses'],
         ]);
 
+        return $schedule;
+    }
+
+    public function updatePlayerStats(array $data, EventSchedule $schedule, Player $player)
+    {
+        $schedule->playerMatchStats()->updateExistingPivot($player->id, [
+            'minutesPlayed' => $data['minutesPlayed'],
+            'shots' => $data['shots'],
+            'passes' => $data['passes'],
+            'fouls' => $data['fouls'],
+            'yellowCards' => $data['yellowCards'],
+            'redCards' => $data['redCards'],
+            'saves' => $data['saves'],
+        ]);
         return $schedule;
     }
 
