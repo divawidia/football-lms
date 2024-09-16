@@ -7,6 +7,7 @@ use App\Http\Requests\AttendanceStatusRequest;
 use App\Http\Requests\MatchScheduleRequest;
 use App\Http\Requests\MatchScoreRequest;
 use App\Http\Requests\MatchStatsRequest;
+use App\Http\Requests\PlayerMatchStatsRequest;
 use App\Http\Requests\ScheduleNoteRequest;
 use App\Http\Requests\TrainingScheduleRequest;
 use App\Models\Coach;
