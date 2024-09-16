@@ -243,7 +243,7 @@
                             <label class="form-label" for="add_playerId">Player Name</label>
                             <small class="text-danger">*</small>
                             <select class="form-control form-select" id="add_playerId" name="playerId" data-toggle="select" required>
-                                <option disabled selected>Select team player who scored goal</option>
+                                <option disabled selected>Select team player who scored own goal</option>
                                 @foreach($data['dataSchedule']->players as $player)
                                     <option value="{{ $player->id }}" @selected(old('playerId') == $player->id) data-avatar-src="{{ Storage::url($player->user->foto) }}">
                                         {{  $player->user->firstName }} {{  $player->user->lastName }} ~ {{ $player->position->name }}
@@ -1311,6 +1311,7 @@
         <div class="page-separator">
             <div class="page-separator__text">Scorer(s)</div>
             <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add team scorer</a>
+            <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span class="material-icons mr-2">add</span> Add own goal</a>
         </div>
         @if(count($data['dataSchedule']->matchScores)==0)
             <div class="alert alert-light border-left-accent" role="alert">
@@ -1336,7 +1337,11 @@
                                 <div class="flex ml-3">
                                     <h5 class="mb-0 d-flex">{{ $matchScore->player->user->firstName  }} {{ $matchScore->player->user->lastName  }} <p class="text-50 ml-2 mb-0">({{ $matchScore->minuteScored }}')</p></h5>
                                     <p class="text-50 lh-1 mb-0">{{ $matchScore->player->position->name }}</p>
-                                    <p class="text-50 lh-1 mb-0">Assist : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
+                                    @if($matchScore->isOwnGoal == 1)
+                                        <p class="text-50 lh-1 mb-0"><strong>Own Goal</strong></p>
+                                    @else
+                                        <p class="text-50 lh-1 mb-0">Assist : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
+                                    @endif
                                 </div>
                                 <button class="btn btn-sm btn-outline-secondary delete-scorer" type="button" id="{{ $matchScore->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete scorer">
                                     <span class="material-icons">
@@ -2249,6 +2254,47 @@
                         $('#teamMatchStatsModal').modal('hide');
                         Swal.fire({
                             title: 'Match stats successfully added!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        console.log(response);
+                        $.each(response.errors, function (key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("#" + key).addClass('is-invalid');
+                        });
+                    }
+                });
+            });
+
+            // show add own goal modal
+            $('#addOwnGoal').on('click', function (e) {
+                e.preventDefault();
+                $('#createTeamOwnGoalModal').modal('show');
+            });
+
+            // store team own goal data
+            $('#formAddOwnGoalModal').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function (res) {
+                        $('#teamMatchStatsModal').modal('hide');
+                        Swal.fire({
+                            title: 'Team own goal successfully added!',
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",
