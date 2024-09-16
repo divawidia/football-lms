@@ -345,6 +345,15 @@ class EventScheduleController extends Controller
         }
     }
 
+    public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer){
+        $ownGoal = $this->eventScheduleService->destroyOwnGoal($schedule, $scorer);
+        return response()->json([
+            'status' => '200',
+            'data' => $ownGoal,
+            'message' => 'Success'
+        ]);
+    }
+
     public function indexPlayerMatchStats(EventSchedule $schedule)
     {
         if (request()->ajax()){
