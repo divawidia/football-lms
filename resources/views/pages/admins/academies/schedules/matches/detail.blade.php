@@ -226,6 +226,59 @@
         </div>
     </div>
 
+    <!-- Modal add own goal -->
+    <div class="modal fade" id="createTeamOwnGoalModal" tabindex="-1" aria-labelledby="createTeamOwnGoalModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ route('match-schedules.store-own-goal', $data['dataSchedule']->id) }}" method="post" id="formAddOwnGoalModal">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="coachName">Add own goal of this match</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label" for="add_playerId">Player Name</label>
+                            <small class="text-danger">*</small>
+                            <select class="form-control form-select" id="add_playerId" name="playerId" data-toggle="select" required>
+                                <option disabled selected>Select team player who scored goal</option>
+                                @foreach($data['dataSchedule']->players as $player)
+                                    <option value="{{ $player->id }}" @selected(old('playerId') == $player->id) data-avatar-src="{{ Storage::url($player->user->foto) }}">
+                                        {{  $player->user->firstName }} {{  $player->user->lastName }} ~ {{ $player->position->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <span class="invalid-feedback playerId_error" role="alert">
+                                <strong></strong>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="add_minuteScored">Minute Scored</label>
+                            <small class="text-danger">*</small>
+                            <input type="number"
+                                   class="form-control"
+                                   id="add_minuteScored"
+                                   name="minuteScored"
+                                   min="1"
+                                   max="160"
+                                   value="{{ old('minuteScored') }}"
+                                   placeholder="Pick minutes the player scored the own goal. Eg : 60">
+                            <span class="invalid-feedback minuteScored_error" role="alert">
+                                <strong></strong>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal add team match stats -->
     <div class="modal fade" id="teamMatchStatsModal" tabindex="-1" aria-labelledby="teamMatchStatsModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
