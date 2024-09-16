@@ -424,16 +424,33 @@ class EventScheduleService extends Service
     {
         $data['eventId'] = $schedule->id;
         MatchScore::create($data);
-        $teamScore = $schedule->teams[0]->pivot->teamScore + 1;
         $player = $schedule->playerMatchStats()->find($data['playerId']);
         $assistPlayer = $schedule->playerMatchStats()->find($data['assistPlayerId']);
-        $playerGoal = $player->pivot->goals + 1;
 
+        $playerGoal = $player->pivot->goals + 1;
         $playerAssist = $assistPlayer->pivot->assists + 1;
+        $teamScore = $schedule->teams[0]->pivot->teamScore + 1;
+
         $schedule->playerMatchStats()->updateExistingPivot($data['playerId'], ['goals' => $playerGoal]);
         $schedule->playerMatchStats()->updateExistingPivot($data['assistPlayerId'], ['assists' => $playerAssist]);
         $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['teamScore' => $teamScore]);
         return $schedule;
+    }
+
+    public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer)
+    {
+        $player = $schedule->playerMatchStats()->find($scorer->playerId);
+        $assistPlayer = $schedule->playerMatchStats()->find($scorer->assistPlayerId);
+
+        $teamScore = $schedule->teams[0]->pivot->teamScore - 1;
+        $playerGoal = $player->pivot->goals - 1;
+        $playerAssist = $assistPlayer->pivot->assists - 1;
+
+        $schedule->playerMatchStats()->updateExistingPivot($scorer->playerId, ['goals' => $playerGoal]);
+        $schedule->playerMatchStats()->updateExistingPivot($scorer->assistPlayerId, ['assists' => $playerAssist]);
+        $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['teamScore' => $teamScore]);
+
+        return $scorer->delete();
     }
 
     public function destroy(EventSchedule $schedule)

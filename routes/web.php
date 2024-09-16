@@ -207,7 +207,9 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('deactivate', [EventScheduleController::class, 'deactivate'])->name('deactivate-match');
             Route::patch('activate', [EventScheduleController::class, 'activate'])->name('activate-match');
             Route::get('get-assisted-player/{player}', [EventScheduleController::class, 'getAssistPlayer'])->name('get-assist-player');
+
             Route::post('match-scorer', [EventScheduleController::class, 'storeMatchScorer'])->name('match-schedules.store-match-scorer');
+            Route::delete('match-scorer/{scorer}/destroy', [EventScheduleController::class, 'destroyMatchScorer'])->name('match-schedules.destroy-match-scorer');
 
         });
     });

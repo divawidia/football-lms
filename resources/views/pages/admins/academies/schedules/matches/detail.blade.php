@@ -180,10 +180,10 @@
                         <div class="form-group">
                             <label class="form-label" for="add_playerId">Player Name</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_playerId" name="playerId" required data-toggle="select">
+                            <select class="form-control form-select" id="add_playerId" name="playerId" data-toggle="select" required>
                                 <option disabled selected>Select team player who scored goal</option>
                                 @foreach($data['dataSchedule']->players as $player)
-                                    <option value="{{ $player->id }}" @selected(old('playerId') == $player->id)>
+                                    <option value="{{ $player->id }}" @selected(old('playerId') == $player->id) data-avatar-src="{{ Storage::url($player->user->foto) }}">
                                         {{  $player->user->firstName }} {{  $player->user->lastName }} ~ {{ $player->position->name }}
                                     </option>
                                 @endforeach
@@ -195,9 +195,9 @@
                         <div class="form-group">
                             <label class="form-label" for="add_assistPlayerId">Assist Player Name</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_assistPlayerId" name="assistPlayerId" required data-toggle="select">
+                            <select class="form-control form-select" id="add_assistPlayerId" name="assistPlayerId" data-toggle="select" required>
                             </select>
-                            <span class="invalid-feedback playerId_error" role="alert">
+                            <span class="invalid-feedback assistPlayerId_error" role="alert">
                                 <strong></strong>
                             </span>
                         </div>
@@ -314,7 +314,7 @@
     </div>
 
     <div class="container page__container page-section">
-        {{--    Match Score    --}}
+        {{--    Team Match Score    --}}
         <div class="card px-lg-5">
             <div class="card-body">
                 <div class="row row d-flex align-items-center">
@@ -347,6 +347,7 @@
             </div>
         </div>
 
+        {{--    Match Scorer    --}}
         <div class="page-separator">
             <div class="page-separator__text">Scorer(s)</div>
             <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add team scorer</a>
@@ -377,19 +378,11 @@
                                     <p class="text-50 lh-1 mb-0">{{ $matchScore->player->position->name }}</p>
                                     <p class="text-50 lh-1 mb-0">Assist : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
                                 </div>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownScorer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="material-icons">
-                                            more_vert
-                                        </span>
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownScorer">
-                                        <a class="dropdown-item" href=""><span class="material-icons">edit</span> Edit Scorer</a>
-                                        <button type="button" class="dropdown-item delete" id="{{ $matchScore->id }}">
-                                            <span class="material-icons">delete</span> Delete Scorer
-                                        </button>
-                                    </div>
-                                </div>
+                                <button class="btn btn-sm btn-outline-secondary delete-scorer" type="button" id="{{ $matchScore->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete scorer">
+                                    <span class="material-icons">
+                                        close
+                                    </span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -836,18 +829,18 @@
                     url: '{!! route('match-schedules.index-player-match-stats', $data['dataSchedule']->id) !!}',
                 },
                 columns: [
-                    { data: 'name', name: 'name' },
-                    { data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed' },
-                    { data: 'pivot.goals', name: 'pivot.goals'},
-                    { data: 'pivot.assists', name: 'pivot.assists' },
-                    { data: 'pivot.ownGoal', name: 'pivot.ownGoal' },
-                    { data: 'pivot.shots', name: 'pivot.shots' },
-                    { data: 'pivot.passes', name: 'pivot.passes' },
-                    { data: 'pivot.fouls', name: 'pivot.fouls' },
-                    { data: 'pivot.yellowCards', name: 'pivot.yellowCards' },
-                    { data: 'pivot.redCards', name: 'pivot.redCards' },
-                    { data: 'pivot.saves', name: 'pivot.saves' },
-                    { data: 'updated_at', name: 'updated_at' },
+                    {data: 'name', name: 'name'},
+                    {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
+                    {data: 'pivot.goals', name: 'pivot.goals'},
+                    {data: 'pivot.assists', name: 'pivot.assists'},
+                    {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
+                    {data: 'pivot.shots', name: 'pivot.shots'},
+                    {data: 'pivot.passes', name: 'pivot.passes'},
+                    {data: 'pivot.fouls', name: 'pivot.fouls'},
+                    {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                    {data: 'pivot.redCards', name: 'pivot.redCards'},
+                    {data: 'pivot.saves', name: 'pivot.saves'},
+                    {data: 'updated_at', name: 'updated_at'},
                     {
                         data: 'action',
                         name: 'action',
@@ -858,23 +851,23 @@
                 ]
             });
 
-            $('.playerAttendance').on('click', function(e) {
+            $('.playerAttendance').on('click', function (e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
 
                 $.ajax({
                     url: "{{ route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
                     type: 'get',
-                    success: function(res) {
+                    success: function (res) {
                         $('#editPlayerAttendanceModal').modal('show');
 
                         const heading = document.getElementById('playerName');
-                        heading.textContent = 'Update Player '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
+                        heading.textContent = 'Update Player ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
                         $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.schedules[0].pivot.attendanceStatus);
                         $('#editPlayerAttendanceModal #add_note').val(res.data.schedules[0].pivot.note);
                         $('#playerId').val(res.data.id);
                     },
-                    error: function(error) {
+                    error: function (error) {
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when deleting data!",
@@ -884,23 +877,23 @@
                 });
             });
 
-            $('.coachAttendance').on('click', function(e) {
+            $('.coachAttendance').on('click', function (e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
 
                 $.ajax({
                     url: "{{ route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
                     type: 'get',
-                    success: function(res) {
+                    success: function (res) {
                         $('#editCoachAttendanceModal').modal('show');
 
                         const heading = document.getElementById('coachName');
-                        heading.textContent = 'Update Coach '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
+                        heading.textContent = 'Update Coach ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
                         $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.schedules[0].pivot.attendanceStatus);
                         $('#editCoachAttendanceModal #add_note').val(res.data.schedules[0].pivot.note);
                         $('#coachId').val(res.data.id);
                     },
-                    error: function(error) {
+                    error: function (error) {
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when deleting data!",
@@ -910,26 +903,26 @@
                 });
             });
 
-            $('#addNewNote').on('click', function(e) {
+            $('#addNewNote').on('click', function (e) {
                 e.preventDefault();
                 $('#createNoteModal').modal('show');
             });
 
-            $('.edit-note').on('click', function(e) {
+            $('.edit-note').on('click', function (e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
 
                 $.ajax({
                     url: "{{ route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
                     type: 'get',
-                    success: function(res) {
+                    success: function (res) {
                         $('#editNoteModal').modal('show');
 
                         const heading = document.getElementById('edit_note');
                         heading.textContent = res.data.note;
                         $('#noteId').val(res.data.id);
                     },
-                    error: function(error) {
+                    error: function (error) {
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when deleting data!",
@@ -940,7 +933,7 @@
             });
 
             // update player attendance data
-            $('#formEditPlayerAttendanceModal').on('submit', function(e) {
+            $('#formEditPlayerAttendanceModal').on('submit', function (e) {
                 e.preventDefault();
                 const id = $('#playerId').val();
                 $.ajax({
@@ -949,7 +942,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function(res) {
+                    success: function (res) {
                         $('#editPlayerAttendanceModal').modal('hide');
                         Swal.fire({
                             title: 'Player attendance successfully updated!',
@@ -964,10 +957,10 @@
                             }
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         const response = JSON.parse(xhr.responseText);
                         console.log(response);
-                        $.each(response.errors, function(key, val) {
+                        $.each(response.errors, function (key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#add_" + key).addClass('is-invalid');
                         });
@@ -976,7 +969,7 @@
             });
 
             // update coach attendance data
-            $('#formEditCoachAttendanceModal').on('submit', function(e) {
+            $('#formEditCoachAttendanceModal').on('submit', function (e) {
                 e.preventDefault();
                 const id = $('#coachId').val();
                 $.ajax({
@@ -985,7 +978,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function(res) {
+                    success: function (res) {
                         $('#editCoachAttendanceModal').modal('hide');
                         Swal.fire({
                             title: 'Coach attendance successfully updated!',
@@ -1000,10 +993,10 @@
                             }
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         const response = JSON.parse(xhr.responseText);
                         console.log(response);
-                        $.each(response.errors, function(key, val) {
+                        $.each(response.errors, function (key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#add_" + key).addClass('is-invalid');
                         });
@@ -1012,7 +1005,7 @@
             });
 
             // create schedule note data
-            $('#formCreateNoteModal').on('submit', function(e) {
+            $('#formCreateNoteModal').on('submit', function (e) {
                 e.preventDefault();
                 $.ajax({
                     url: $(this).attr('action'),
@@ -1020,7 +1013,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function(res) {
+                    success: function (res) {
                         $('#createNoteModal').modal('hide');
                         Swal.fire({
                             title: 'Training session note successfully added!',
@@ -1035,10 +1028,10 @@
                             }
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         const response = JSON.parse(xhr.responseText);
                         console.log(response);
-                        $.each(response.errors, function(key, val) {
+                        $.each(response.errors, function (key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#add_" + key).addClass('is-invalid');
                         });
@@ -1047,7 +1040,7 @@
             });
 
             // update schedule note data
-            $('#formUpdateNoteModal').on('submit', function(e) {
+            $('#formUpdateNoteModal').on('submit', function (e) {
                 e.preventDefault();
                 const id = $('#noteId').val();
                 $.ajax({
@@ -1056,7 +1049,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function(res) {
+                    success: function (res) {
                         $('#editNoteModal').modal('hide');
                         Swal.fire({
                             title: 'Training session note successfully updated!',
@@ -1071,10 +1064,10 @@
                             }
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         const response = JSON.parse(xhr.responseText);
                         console.log(response);
-                        $.each(response.errors, function(key, val) {
+                        $.each(response.errors, function (key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#edit_" + key).addClass('is-invalid');
                         });
@@ -1083,7 +1076,7 @@
             });
 
             // delete competition alert
-            $('body').on('click', '.delete', function() {
+            $('body').on('click', '.delete', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -1102,7 +1095,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function() {
+                            success: function () {
                                 Swal.fire({
                                     title: 'Competition successfully deleted!',
                                     icon: 'success',
@@ -1116,7 +1109,7 @@
                                     }
                                 });
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Something went wrong when deleting data!",
@@ -1129,7 +1122,7 @@
             });
 
             // delete schedule note alert
-            $('body').on('click', '.delete-note', function() {
+            $('body').on('click', '.delete-note', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -1148,7 +1141,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function() {
+                            success: function () {
                                 Swal.fire({
                                     title: 'Competition successfully deleted!',
                                     icon: 'success',
@@ -1162,7 +1155,7 @@
                                     }
                                 });
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Something went wrong when deleting data!",
@@ -1175,11 +1168,12 @@
             });
 
             // show create team scorer modal
-            $('#addTeamScorer').on('click', function(e) {
+            $('#addTeamScorer').on('click', function (e) {
                 e.preventDefault();
                 $('#createTeamScorerModal').modal('show');
             });
 
+            // fetch assist player data
             $('#add_playerId').on('change', function () {
                 const id = this.value;
                 $.ajax({
@@ -1189,13 +1183,14 @@
                     success: function (result) {
                         $('#add_assistPlayerId').html('<option disabled selected>Select player who assisted scoring the goal</option>');
                         $.each(result.data, function (key, value) {
-                            $('#add_assistPlayerId').append('<option value=' + value.id + '>' + value.user.firstName + ' ' + value.user.lastName + ' ~ ' + value.position.name + '</option>');
+                            $('#add_assistPlayerId').append('<option value="' + value.id + '" data-avatar-src="' + '{{ Storage::url('') }}' + value.user.foto + '">' + value.user.firstName + ' ' + value.user.lastName + ' ~ ' + value.position.name + '</option>');
                         });
                     }
                 });
             });
 
-            $('#formAddScorerModal').on('submit', function(e) {
+            // store team scorer data
+            $('#formAddScorerModal').on('submit', function (e) {
                 e.preventDefault();
                 $.ajax({
                     url: $(this).attr('action'),
@@ -1203,7 +1198,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function(res) {
+                    success: function (res) {
                         $('#createTeamScorerModal').modal('hide');
                         Swal.fire({
                             title: 'Match scorer successfully added!',
@@ -1218,12 +1213,58 @@
                             }
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         const response = JSON.parse(xhr.responseText);
                         console.log(response);
-                        $.each(response.errors, function(key, val) {
+                        $.each(response.errors, function (key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#edit_" + key).addClass('is-invalid');
+                        });
+                    }
+                });
+            });
+
+            // delete team scorer with alert
+            $('body').on('click', '.delete-scorer', function () {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure to delete this scorer?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('match-schedules.destroy-match-scorer', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function () {
+                                Swal.fire({
+                                    title: 'Match Scorer successfully deleted!',
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Something went wrong when deleting data!",
+                                    text: textStatus, errorThrown,
+                                });
+                            }
                         });
                     }
                 });

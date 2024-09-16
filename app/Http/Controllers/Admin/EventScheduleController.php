@@ -310,6 +310,15 @@ class EventScheduleController extends Controller
         }
     }
 
+    public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer){
+        $matchScorer = $this->eventScheduleService->destroyMatchScorer($schedule, $scorer);
+        return response()->json([
+            'status' => '200',
+            'data' => $matchScorer,
+            'message' => 'Success'
+        ]);
+    }
+
     public function indexPlayerMatchStats(EventSchedule $schedule)
     {
         if (request()->ajax()){
