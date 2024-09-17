@@ -142,7 +142,7 @@ class EventScheduleController extends Controller
         Alert::success($text);
         return redirect()->route('training-schedules.index');
     }
-    public function activate(EventSchedule $schedule)
+    public function activateTraining(EventSchedule $schedule)
     {
         $this->eventScheduleService->activate($schedule);
 
@@ -151,13 +151,31 @@ class EventScheduleController extends Controller
         return redirect()->route('training-schedules.show', $schedule->id);
     }
 
-    public function deactivate(EventSchedule $schedule)
+    public function deactivateTraining(EventSchedule $schedule)
     {
         $this->eventScheduleService->deactivate($schedule);
 
         $text = 'Schedule status successfully updated!';
         Alert::success($text);
         return redirect()->route('training-schedules.show', $schedule->id);
+    }
+
+    public function activateMatch(EventSchedule $schedule)
+    {
+        $this->eventScheduleService->activate($schedule);
+
+        $text = 'Match status successfully updated!';
+        Alert::success($text);
+        return redirect()->route('match-schedules.show', $schedule->id);
+    }
+
+    public function deactivateMatch(EventSchedule $schedule)
+    {
+        $this->eventScheduleService->deactivate($schedule);
+
+        $text = 'Match status successfully updated!';
+        Alert::success($text);
+        return redirect()->route('match-schedules.show', $schedule->id);
     }
 
     public function getPlayerAttendance(EventSchedule $schedule, Player $player){

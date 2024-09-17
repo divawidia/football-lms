@@ -175,8 +175,8 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::get('edit', [EventScheduleController::class, 'editTraining'])->name('training-schedules.edit');
             Route::put('update', [EventScheduleController::class, 'updateTraining'])->name('training-schedules.update');
             Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('training-schedules.destroy');
-            Route::patch('deactivate', [EventScheduleController::class, 'deactivate'])->name('deactivate-training');
-            Route::patch('activate', [EventScheduleController::class, 'activate'])->name('activate-training');
+            Route::patch('deactivate', [EventScheduleController::class, 'deactivateTraining'])->name('deactivate-training');
+            Route::patch('activate', [EventScheduleController::class, 'activateTraining'])->name('activate-training');
 
             Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('training-schedules.player');
             Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('training-schedules.update-player');
