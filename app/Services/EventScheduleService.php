@@ -388,9 +388,7 @@ class EventScheduleService extends Service
 
     public function getPlayerAttendance(EventSchedule $schedule, Player $player)
     {
-        return Player::with('schedules', 'user')
-            ->whereRelation('schedules', 'scheduleId', $schedule->id)
-            ->findOrFail($player->id);
+        return $schedule->players()->find($player->id);
     }
 
     public function getCoachAttendance(EventSchedule $schedule, Coach $coach)

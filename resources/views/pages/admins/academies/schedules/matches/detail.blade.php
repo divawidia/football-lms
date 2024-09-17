@@ -1500,19 +1500,19 @@
                     url: "{{ route('match-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
                     type: 'get',
                     success: function (res) {
-                        console.log(res);
-                        // $('#editPlayerAttendanceModal').modal('show');
-                        // const heading = document.getElementById('playerName');
-                        // heading.textContent = 'Update Player ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
-                        // $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.schedules[0].pivot.attendanceStatus);
-                        // $('#editPlayerAttendanceModal #add_note').val(res.data.schedules[0].pivot.note);
-                        // $('#playerId').val(res.data.id);
+                        // console.log(res);
+                        $('#editPlayerAttendanceModal').modal('show');
+                        const heading = document.getElementById('playerName');
+                        heading.textContent = 'Update Player ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
+                        $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
+                        $('#editPlayerAttendanceModal #add_note').val(res.data.coachAttendance.note);
+                        $('#playerId').val(res.data.coachAttendance.playerId);
                     },
-                    error: function (error) {
+                    error: function (jqXHR, textStatus, errorThrown) {
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when deleting data!",
-                            text: error,
+                            text: errorThrown,
                         });
                     }
                 });
@@ -1535,11 +1535,11 @@
                         $('#editCoachAttendanceModal #add_note').val(res.data.coachAttendance.note);
                         $('#coachId').val(res.data.coachAttendance.coachId);
                     },
-                    error: function (error) {
+                    error: function (jqXHR, textStatus, errorThrown) {
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when deleting data!",
-                            text: error,
+                            text: errorThrown,
                         });
                     }
                 });

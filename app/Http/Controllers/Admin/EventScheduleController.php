@@ -185,7 +185,10 @@ class EventScheduleController extends Controller
             if ($data) {
                 return response()->json([
                     'status' => '200',
-                    'data' => $data
+                    'data' => [
+                        'user' => $data->user,
+                        'coachAttendance'=>$data->pivot
+                    ]
                 ]);
             } else {
                 return response()->json([
