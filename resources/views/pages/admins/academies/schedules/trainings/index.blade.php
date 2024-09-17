@@ -91,7 +91,7 @@
                     let id = $(this).attr('id');
 
                     Swal.fire({
-                        title: "Are you sure?",
+                        title: "Are you sure to delete this training?",
                         text: "You won't be able to revert this!",
                         icon: "warning",
                         showCancelButton: true,
@@ -109,7 +109,7 @@
                                 success: function(response) {
                                     Swal.fire({
                                         icon: "success",
-                                        title: "Competition successfully deleted!",
+                                        title: "Training schedule successfully deleted!",
                                     });
                                     datatable.ajax.reload();
                                 },

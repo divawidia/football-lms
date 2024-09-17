@@ -95,7 +95,7 @@
                     let id = $(this).attr('id');
 
                     Swal.fire({
-                        title: "Are you sure?",
+                        title: "Are you sure to delete this match?",
                         text: "You won't be able to revert this!",
                         icon: "warning",
                         showCancelButton: true,
@@ -105,7 +105,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
+                                url: "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
                                 type: 'DELETE',
                                 data: {
                                     _token: "{{ csrf_token() }}"
@@ -113,7 +113,7 @@
                                 success: function(response) {
                                     Swal.fire({
                                         icon: "success",
-                                        title: "Competition successfully deleted!",
+                                        title: "Match successfully deleted!",
                                     });
                                     datatable.ajax.reload();
                                 },
