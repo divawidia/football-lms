@@ -157,7 +157,7 @@
                                                        data-flatpickr-enable-time="true"
                                                        data-flatpickr-no-calendar="true"
                                                        data-flatpickr-alt-format="H:i"
-                                                       data-flatpickr-date-format="H:i">>
+                                                       data-flatpickr-date-format="H:i">
                                                 @error('endTime')
                                                 <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>

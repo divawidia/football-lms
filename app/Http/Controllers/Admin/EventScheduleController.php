@@ -130,6 +130,14 @@ class EventScheduleController extends Controller
         ]);
     }
 
+    public function editMatch(EventSchedule $schedule)
+    {
+        return view('pages.admins.academies.schedules.matches.edit', [
+            'competitions' => $this->competitionService->index(),
+            'data' => $schedule
+        ]);
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -142,6 +150,17 @@ class EventScheduleController extends Controller
         Alert::success($text);
         return redirect()->route('training-schedules.index');
     }
+
+    public function updateMatch(MatchScheduleRequest $request, EventSchedule $schedule)
+    {
+        $data = $request->validated();
+        $this->eventScheduleService->updateTraining($data, $schedule);
+
+        $text = 'Match Schedule successfully updated!';
+        Alert::success($text);
+        return redirect()->route('match-schedules.index');
+    }
+
     public function activateTraining(EventSchedule $schedule)
     {
         $this->eventScheduleService->activate($schedule);
