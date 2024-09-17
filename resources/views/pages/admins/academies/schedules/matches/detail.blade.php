@@ -1694,7 +1694,7 @@
                     success: function (res) {
                         $('#editNoteModal').modal('hide');
                         Swal.fire({
-                            title: 'Training session note successfully updated!',
+                            title: 'Match session note successfully updated!',
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",
