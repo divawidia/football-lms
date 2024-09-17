@@ -1717,12 +1717,12 @@
                 });
             });
 
-            // delete competition alert
+            // delete match alert
             $('body').on('click', '.delete', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
-                    title: "Are you sure?",
+                    title: "Are you sure to delete this match?",
                     text: "You won't be able to revert this!",
                     icon: "warning",
                     showCancelButton: true,
@@ -1739,7 +1739,7 @@
                             },
                             success: function () {
                                 Swal.fire({
-                                    title: 'Competition successfully deleted!',
+                                    title: 'Match schedule successfully deleted!',
                                     icon: 'success',
                                     showCancelButton: false,
                                     confirmButtonColor: "#1ac2a1",
@@ -1751,11 +1751,11 @@
                                     }
                                 });
                             },
-                            error: function (error) {
+                            error: function (jqXHR, textStatus, errorThrown) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Something went wrong when deleting data!",
-                                    text: error,
+                                    text: errorThrown,
                                 });
                             }
                         });
@@ -1797,11 +1797,11 @@
                                     }
                                 });
                             },
-                            error: function (error) {
+                            error: function (jqXHR, textStatus, errorThrown) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Something went wrong when deleting data!",
-                                    text: error,
+                                    text: errorThrown,
                                 });
                             }
                         });
@@ -1904,7 +1904,7 @@
                                 Swal.fire({
                                     icon: "error",
                                     title: "Something went wrong when deleting data!",
-                                    text: textStatus, errorThrown,
+                                    text: errorThrown,
                                 });
                             }
                         });
@@ -1949,7 +1949,7 @@
                                 Swal.fire({
                                     icon: "error",
                                     title: "Something went wrong when deleting data!",
-                                    text: textStatus, errorThrown,
+                                    text: errorThrown,
                                 });
                             }
                         });
