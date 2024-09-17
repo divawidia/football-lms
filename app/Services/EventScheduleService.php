@@ -50,7 +50,7 @@ class EventScheduleService extends Service
         foreach ($matches as $match) {
             $events[] = [
                 'id' => $match->id,
-                'title' => $match->eventName.' - '.$match->teams[0]->teamName .' Vs. '.$match->teams[1]->teamName,
+                'title' => $match->teams[0]->teamName .' Vs. '.$match->teams[1]->teamName,
                 'start' => $match->date.' '.$match->startTime,
                 'end' => $match->date.' '.$match->endTime,
                 'className' => 'bg-primary'
@@ -376,6 +376,17 @@ class EventScheduleService extends Service
         }
         return $schedule;
     }
+
+    public function updateMatch(array $data, EventSchedule $schedule){
+        $schedule->update($data);
+
+        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->first();
+        $schedule->teams()->sync([$data['teamId'], $data['opponentTeamId']]);
+        $schedule->players()->sync($team->players);
+        $schedule->coaches()->sync($team->coaches);
+        return $schedule;
+    }
+
     public function activate(EventSchedule $schedule)
     {
         return $schedule->update(['status' => '1']);

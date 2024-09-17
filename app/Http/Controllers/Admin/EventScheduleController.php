@@ -154,7 +154,7 @@ class EventScheduleController extends Controller
     public function updateMatch(MatchScheduleRequest $request, EventSchedule $schedule)
     {
         $data = $request->validated();
-        $this->eventScheduleService->updateTraining($data, $schedule);
+        $this->eventScheduleService->updateMatch($data, $schedule);
 
         $text = 'Match Schedule successfully updated!';
         Alert::success($text);
