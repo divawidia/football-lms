@@ -104,7 +104,7 @@
     <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('training-schedules.create-note', $data['dataSchedule']->id) }}" method="post" id="formCreateNoteModal">
+                <form action="{{ route('match-schedules.create-note', $data['dataSchedule']->id) }}" method="post" id="formCreateNoteModal">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="coachName">Create note for {{ $data['dataSchedule']->eventName }} Session</h5>
@@ -882,9 +882,9 @@
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}"><span class="material-icons">edit</span> Edit Match Schedule</a>
+                    <a class="dropdown-item" href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}"><span class="material-icons">edit</span> Edit Match Schedule</a>
                     @if($data['dataSchedule']->status == '1')
-                        <form action="{{ route('deactivate-training', $data['dataSchedule']->id) }}" method="POST">
+                        <form action="{{ route('deactivate-match', $data['dataSchedule']->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
@@ -892,7 +892,7 @@
                             </button>
                         </form>
                     @else
-                        <form action="{{ route('activate-training', $data['dataSchedule']->id) }}" method="POST">
+                        <form action="{{ route('activate-match', $data['dataSchedule']->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
@@ -1392,7 +1392,7 @@
                                 <h5 class="mb-0">{{ $coach->user->firstName }} {{ $coach->user->lastName }}</h5>
                                 <p class="text-50 lh-1 mb-0">{{ $coach->specializations->name }}</p>
                             </div>
-                            <a class="btn @if($coach->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($coach->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif coachAttendance" id="{{$coach->id}}" href="{{ route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => $coach->id]) }}">
+                            <a class="btn @if($coach->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($coach->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif coachAttendance" id="{{$coach->id}}" href="{{ route('match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => $coach->id]) }}">
                                         <span class="material-icons mr-2">
                                             @if($coach->pivot->attendanceStatus == 'Required Action') error
                                             @elseif($coach->pivot->attendanceStatus == 'Attended') check_circle
@@ -1497,7 +1497,7 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
-                    url: "{{ route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('match-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
                     type: 'get',
                     success: function (res) {
                         $('#editPlayerAttendanceModal').modal('show');
@@ -1523,7 +1523,7 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
-                    url: "{{ route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
                     type: 'get',
                     success: function (res) {
                         $('#editCoachAttendanceModal').modal('show');
@@ -1554,7 +1554,7 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
-                    url: "{{ route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('match-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
                     type: 'get',
                     success: function (res) {
                         $('#editNoteModal').modal('show');
@@ -1578,7 +1578,7 @@
                 e.preventDefault();
                 const id = $('#playerId').val();
                 $.ajax({
-                    url: "{{ route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -1614,7 +1614,7 @@
                 e.preventDefault();
                 const id = $('#coachId').val();
                 $.ajax({
-                    url: "{{ route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -1685,7 +1685,7 @@
                 e.preventDefault();
                 const id = $('#noteId').val();
                 $.ajax({
-                    url: "{{ route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('match-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -1731,7 +1731,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
+                            url: "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"
@@ -1746,7 +1746,7 @@
                                         'Ok!'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
-                                        window.location.href = "{{ route('training-schedules.index') }}";
+                                        window.location.href = "{{ route('match-schedules.index') }}";
                                     }
                                 });
                             },
@@ -1777,7 +1777,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('training-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
+                            url: "{{ route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"

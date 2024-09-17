@@ -203,12 +203,23 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::get('edit', [EventScheduleController::class, 'editMatch'])->name('match-schedules.edit');
             Route::put('update', [EventScheduleController::class, 'updateMatch'])->name('match-schedules.update');
             Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('match-schedules.destroy');
-            Route::patch('deactivate', [EventScheduleController::class, 'deactivate'])->name('deactivate-match');
-            Route::patch('activate', [EventScheduleController::class, 'activate'])->name('activate-match');
+            Route::patch('deactivate', [EventScheduleController::class, 'deactivateMatch'])->name('deactivate-match');
+            Route::patch('activate', [EventScheduleController::class, 'activateMatch'])->name('activate-match');
             Route::get('get-assisted-player/{player}', [EventScheduleController::class, 'getAssistPlayer'])->name('get-assist-player');
+
+            Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('match-schedules.player');
+            Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('match-schedules.update-player');
+
+            Route::get('edit-coach-attendance/{coach}', [EventScheduleController::class, 'getCoachAttendance'])->name('match-schedules.coach');
+            Route::put('update-coach-attendance/{coach}', [EventScheduleController::class, 'updateCoachAttendance'])->name('match-schedules.update-coach');
 
             Route::post('match-scorer', [EventScheduleController::class, 'storeMatchScorer'])->name('match-schedules.store-match-scorer');
             Route::delete('match-scorer/{scorer}/destroy', [EventScheduleController::class, 'destroyMatchScorer'])->name('match-schedules.destroy-match-scorer');
+
+            Route::post('create-note', [EventScheduleController::class, 'createNote'])->name('match-schedules.create-note');
+            Route::get('edit-note/{note}', [EventScheduleController::class, 'editNote'])->name('match-schedules.edit-note');
+            Route::put('update-note/{note}', [EventScheduleController::class, 'updateNote'])->name('match-schedules.update-note');
+            Route::delete('delete-note/{note}', [EventScheduleController::class, 'destroyNote'])->name('match-schedules.destroy-note');
 
             Route::post('own-goal', [EventScheduleController::class, 'storeOwnGoal'])->name('match-schedules.store-own-goal');
             Route::delete('own-goal/{scorer}/destroy', [EventScheduleController::class, 'destroyOwnGoal'])->name('match-schedules.destroy-own-goal');
