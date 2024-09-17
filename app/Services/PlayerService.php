@@ -7,6 +7,7 @@ use App\Models\Coach;
 use App\Models\OpponentTeam;
 use App\Models\Player;
 use App\Models\PlayerParrent;
+use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use Nnjeim\World\World;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -157,6 +159,19 @@ class PlayerService extends Service
     {
         $player->teams()->sync($teamData);
         return $player;
+    }
+
+    public function create()
+    {
+        $action =  World::countries();
+        if ($action->success) {
+            $countries = $action->data;
+        }
+
+        $positions = PlayerPosition::all();
+        $teams = Team::where('teamSide', 'Academy Team')->get();
+
+        return compact('countries', 'positions', 'teams');
     }
 
     public  function store(array $playerData, $academyId){

@@ -62,18 +62,12 @@ class PlayerController extends Controller
      */
     public function create()
     {
-        $action =  World::countries();
-        if ($action->success) {
-            $countries = $action->data;
-        }
-
-        $positions = PlayerPosition::all();
-        $teams = Team::all();
+        $data = $this->playerService->create();
 
         return view('pages.admins.managements.players.create', [
-            'countries' => $countries,
-            'positions' => $positions,
-            'teams' => $teams
+            'countries' => $data['countries'],
+            'positions' => $data['positions'],
+            'teams' => $data['teams']
         ]);
     }
 
