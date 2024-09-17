@@ -310,8 +310,8 @@ class EventScheduleService extends Service
             ->get();
         $coachDidntAttend = $schedule->coaches()
             ->where('attendanceStatus', 'Illness')
-            ->where('attendanceStatus', 'Injured')
-            ->where('attendanceStatus', 'Other')
+            ->orWhere('attendanceStatus', 'Injured')
+            ->orWhere('attendanceStatus', 'Other')
             ->get();
         $coachIllness = $schedule->coaches()
             ->where('attendanceStatus', 'Illness')
