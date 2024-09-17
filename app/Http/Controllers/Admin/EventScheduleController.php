@@ -362,6 +362,15 @@ class EventScheduleController extends Controller
         }
     }
 
+    public function getPlayerStats(EventSchedule $schedule, Player $player){
+        $player = $this->eventScheduleService->getPlayerStats($schedule, $player);
+        return response()->json([
+            'status' => '200',
+            'data' => $player,
+            'message' => 'Success'
+        ]);
+    }
+
     public function updatePlayerStats(PlayerMatchStatsRequest $request, EventSchedule $schedule, Player $player)
     {
         $data = $request->validated();

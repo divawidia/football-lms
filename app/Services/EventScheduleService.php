@@ -519,18 +519,28 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
+    public function getPlayerStats(EventSchedule $schedule, Player $player)
+    {
+        $data = $schedule->playerMatchStats()->find($player->id);
+        $playerData = $data->user;
+        $statsData = $data->pivot;
+        return compact('playerData', 'statsData');
+    }
+
     public function updatePlayerStats(array $data, EventSchedule $schedule, Player $player)
     {
-        $schedule->playerMatchStats()->updateExistingPivot($player->id, [
-            'minutesPlayed' => $data['minutesPlayed'],
-            'shots' => $data['shots'],
-            'passes' => $data['passes'],
-            'fouls' => $data['fouls'],
-            'yellowCards' => $data['yellowCards'],
-            'redCards' => $data['redCards'],
-            'saves' => $data['saves'],
-        ]);
-        return $schedule;
+//        $schedule->playerMatchStats()->updateExistingPivot($player->id, [
+//            'minutesPlayed' => $data['minutesPlayed'],
+//            'shots' => $data['shots'],
+//            'passes' => $data['passes'],
+//            'fouls' => $data['fouls'],
+//            'yellowCards' => $data['yellowCards'],
+//            'redCards' => $data['redCards'],
+//            'saves' => $data['saves'],
+//        ]);
+//        dd($schedule);
+
+        return $schedule->playerMatchStats()->updateExistingPivot($player->id, $data);
     }
 
     public function destroy(EventSchedule $schedule)

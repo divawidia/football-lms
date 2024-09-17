@@ -200,7 +200,6 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
         Route::prefix('{schedule}')->group(function () {
             Route::get('', [EventScheduleController::class, 'showMatch'])->name('match-schedules.show');
-            Route::get('datatables-player-match-stats', [EventScheduleController::class, 'indexPlayerMatchStats'])->name('match-schedules.index-player-match-stats');
             Route::get('edit', [EventScheduleController::class, 'editMatch'])->name('match-schedules.edit');
             Route::put('update', [EventScheduleController::class, 'updateMatch'])->name('match-schedules.update');
             Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('match-schedules.destroy');
@@ -215,6 +214,12 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::delete('own-goal/{scorer}/destroy', [EventScheduleController::class, 'destroyOwnGoal'])->name('match-schedules.destroy-own-goal');
 
             Route::put('update-match-stats', [EventScheduleController::class, 'updateMatchStats'])->name('match-schedules.update-match-stats');
+
+            Route::prefix('player-match-stats')->group(function () {
+                Route::get('', [EventScheduleController::class, 'indexPlayerMatchStats'])->name('match-schedules.index-player-match-stats');
+                Route::get('{player}', [EventScheduleController::class, 'getPlayerStats'])->name('match-schedules.show-player-match-stats');
+                Route::put('{player}/update', [EventScheduleController::class, 'updatePlayerStats'])->name('match-schedules.update-player-match-stats');
+            });
         });
     });
 });
