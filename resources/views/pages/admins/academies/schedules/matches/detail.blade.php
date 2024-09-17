@@ -75,7 +75,7 @@
                             <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
                                 <option disabled selected>Select Coach's attendance status</option>
                                 @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
-                                    <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
+                                    <option value="{{ $type }}">{{ $type }}</option>
                                 @endforeach
                             </select>
                             <span class="invalid-feedback attendanceStatus_error" role="alert">
@@ -1500,13 +1500,13 @@
                     url: "{{ route('match-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
                     type: 'get',
                     success: function (res) {
-                        $('#editPlayerAttendanceModal').modal('show');
-
-                        const heading = document.getElementById('playerName');
-                        heading.textContent = 'Update Player ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
-                        $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.schedules[0].pivot.attendanceStatus);
-                        $('#editPlayerAttendanceModal #add_note').val(res.data.schedules[0].pivot.note);
-                        $('#playerId').val(res.data.id);
+                        console.log(res);
+                        // $('#editPlayerAttendanceModal').modal('show');
+                        // const heading = document.getElementById('playerName');
+                        // heading.textContent = 'Update Player ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
+                        // $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.schedules[0].pivot.attendanceStatus);
+                        // $('#editPlayerAttendanceModal #add_note').val(res.data.schedules[0].pivot.note);
+                        // $('#playerId').val(res.data.id);
                     },
                     error: function (error) {
                         Swal.fire({
@@ -1526,13 +1526,14 @@
                     url: "{{ route('match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
                     type: 'get',
                     success: function (res) {
+                        // console.log(res);
                         $('#editCoachAttendanceModal').modal('show');
 
                         const heading = document.getElementById('coachName');
                         heading.textContent = 'Update Coach ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
-                        $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.schedules[0].pivot.attendanceStatus);
-                        $('#editCoachAttendanceModal #add_note').val(res.data.schedules[0].pivot.note);
-                        $('#coachId').val(res.data.id);
+                        $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
+                        $('#editCoachAttendanceModal #add_note').val(res.data.coachAttendance.note);
+                        $('#coachId').val(res.data.coachAttendance.coachId);
                     },
                     error: function (error) {
                         Swal.fire({
@@ -1563,11 +1564,11 @@
                         heading.textContent = res.data.note;
                         $('#noteId').val(res.data.id);
                     },
-                    error: function (error) {
+                    error: function (jqXHR, textStatus, errorThrown) {
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when deleting data!",
-                            text: error,
+                            text: errorThrown,
                         });
                     }
                 });

@@ -395,9 +395,7 @@ class EventScheduleService extends Service
 
     public function getCoachAttendance(EventSchedule $schedule, Coach $coach)
     {
-        return Coach::with('schedules', 'user')
-            ->whereRelation('schedules', 'scheduleId', $schedule->id)
-            ->findOrFail($coach->id);
+        return $schedule->coaches()->find($coach->id);
     }
 
     public function updatePlayerAttendanceStatus($data, EventSchedule $schedule, Player $player){
