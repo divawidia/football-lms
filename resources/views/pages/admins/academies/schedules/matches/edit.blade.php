@@ -171,22 +171,22 @@
                                                 </span>
                                                 @enderror
                                             </div>
-                                            <div class="form-group mb-3">
-                                                <label class="form-label" for="place">Match Location</label>
-                                                <small class="text-danger">*</small>
-                                                <input type="text"
-                                                       class="form-control @error('place') is-invalid @enderror"
-                                                       id="place"
-                                                       name="place"
-                                                       value="{{ old('place', $data->place) }}"
-                                                       placeholder="E.g. : Football field ...">
-                                                @error('place')
-                                                <span class="invalid-feedback" role="alert">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="place">Match Location</label>
+                                        <small class="text-danger">*</small>
+                                        <input type="text"
+                                               class="form-control @error('place') is-invalid @enderror"
+                                               id="place"
+                                               name="place"
+                                               value="{{ old('place', $data->place) }}"
+                                               placeholder="E.g. : Football field ...">
+                                        @error('place')
+                                        <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
-                                                @enderror
-                                            </div>
-                                        </div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -200,3 +200,84 @@
             </div>
         </div>
     @endsection
+
+@push('addon-script')
+    <script>
+        $(document).ready(function () {
+            const teamId = {{ $data->teams[0]->id }};
+            const opponentTeamId = {{ $data->teams[1]->id }};
+
+            function getCompetitionTeam(teamId, opponentTeamId, competitionId){
+                return $.ajax({
+                    url: "{{route('match-schedules.get-competition-team', ['competition' => ':id']) }}".replace(':id', competitionId),
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (result) {
+                        $('#teamId').html('<option disabled selected>Select team in this match</option>');
+                        $.each(result.data.teams, function (key, value) {
+                            $.each(value, function (key, value) {
+                                // console.log(value);
+                                $('#teamId').append('<option value=' + value.id + '>' + value.teamName + '</option>');
+                            });
+                        });
+                        $('#teamId option[value="' + teamId + '"]').attr('selected', 'selected');
+
+                        $('#opponentTeamId').html('<option disabled selected>Select opponent team in this match</option>');
+                        $.each(result.data.opponentTeams, function (key, value) {
+                            $.each(value, function (key, value) {
+                                $('#opponentTeamId').append('<option value=' + value.id + '>' + value.teamName + '</option>');
+                            });
+                            $('#opponentTeamId option[value="' + opponentTeamId + '"]').attr('selected', 'selected');
+
+                        });
+                    }
+                });
+            }
+
+            function getFriendlyMatchTeam(teamId, opponentTeamId){
+                return $.ajax({
+                    url: "{{route('match-schedules.get-friendlymatch-team')}}",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (result) {
+                        $('#teamId').html('<option disabled>Select team in this match</option>');
+                        $.each(result.data.teams, function (key, value) {
+                            $('#teamId').append('<option value=' + value.id + '>' + value.teamName + '</option>');
+                        });
+                        $('#teamId option[value="' + teamId + '"]').attr('selected', 'selected');
+
+                        $('#opponentTeamId').html('<option disabled>Select opponent team in this match</option>');
+                        $.each(result.data.opponentTeams, function (key, value) {
+                            $('#opponentTeamId').append('<option value=' + value.id + '>' + value.teamName + '</option>');
+                        })
+                        $('#opponentTeamId option[value="' + opponentTeamId + '"]').attr('selected', 'selected');
+
+                    }
+                });
+            }
+
+            @if($data->matchType == 'Competition')
+                $('.competition-section').show();
+                getCompetitionTeam(teamId, opponentTeamId, {{ $data->competitionId }});
+            @elseif($data->matchType == 'Friendly Match')
+                $('.competition-section').hide();
+                getFriendlyMatchTeam(teamId, opponentTeamId);
+            @endif
+
+            $('.matchType-form').on('change', function () {
+                const type = this.value;
+                if (type === 'Competition'){
+                    $('.competition-section').show();
+                }else {
+                    $('.competition-section').hide();
+                    getFriendlyMatchTeam(teamId, opponentTeamId);
+                }
+            });
+
+            $('#competitionId').on('change', function () {
+                const id = this.value;
+                getCompetitionTeam(teamId, opponentTeamId, id);
+            });
+        });
+    </script>
+@endpush
