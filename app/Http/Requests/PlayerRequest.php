@@ -48,7 +48,7 @@ class PlayerRequest extends FormRequest
             'weight' => ['required', 'numeric'],
             'firstName2' => ['string'],
             'lastName2' => ['string'],
-            'email2' => ['email', Rule::unique('player_parrents', 'email')],
+            'email2' => ['email'],
             'phoneNumber2' => ['string'],
             'relations' => ['string'],
             'team' => ['nullable', Rule::exists('teams', 'id')]

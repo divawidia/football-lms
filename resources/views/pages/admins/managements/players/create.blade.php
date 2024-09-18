@@ -130,7 +130,7 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <select class="form-control form-select @error('team') is-invalid @enderror" id="team" name="team[]" data-toggle="select" multiple >
+                                            <select class="form-control form-select @error('team') is-invalid @enderror" id="team" name="team[]" data-toggle="select" multiple required>
                                                 <option disabled>Select your opponent team who play in this division</option>
                                                 @foreach($teams as $team)
                                                     <option value="{{ $team->id }}" @selected(old('team') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
@@ -171,7 +171,6 @@
                                                name="password"
                                                id="password"
                                                required
-                                               value="{{ old('password') }}"
                                                placeholder="Input player account's password ...">
                                         @error('password')
                                         <span class="invalid-feedback" role="alert">
@@ -184,7 +183,9 @@
                                         <small class="text-danger">*</small>
                                         <input type="password"
                                                class="form-control @error('password') is-invalid @enderror"
-                                               name="password_confirmation" required id="password-confirm"
+                                               name="password_confirmation"
+                                               required
+                                               id="password-confirm"
                                                placeholder="Retype inputted password ...">
                                         @error('password')
                                         <span class="invalid-feedback" role="alert">
@@ -285,7 +286,7 @@
                                         <select class="form-control form-select country-form @error('country_id') is-invalid @enderror" id="country_id" name="country_id" required>
                                             <option selected disabled>Select Country</option>
                                             @foreach($countries as $country)
-                                                <option value="{{ $country['id'] }}" @selected(old('country_id') == $country['id'])>{{ $country['name'] }}</option>
+                                                <option value="{{ $country['id'] }}">{{ $country['name'] }}</option>
                                             @endforeach
                                         </select>
                                         @error('country')
@@ -559,7 +560,7 @@
                     });
                 });
                 $('#state_id').on('change', function (){
-                    var idState = this.value;
+                    const idState = this.value;
                     $.ajax({
                         url: "{{url('api/cities')}}",
                         data: {
