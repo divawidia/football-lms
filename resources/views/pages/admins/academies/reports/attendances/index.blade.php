@@ -60,20 +60,20 @@
                     </div>
                     <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                         <div class="card-body d-flex align-items-center flex-row text-left">
-                            <img src=""
+                            <img src="{{ Storage::url($mostAttended->user->foto) }}"
                                  width="50"
                                  height="50"
                                  class="rounded-circle img-object-fit-cover"
                                  alt="player-photo">
                             <div class="flex ml-3">
-                                <h5 class="mb-0">name</h5>
-                                <p class="text-50 lh-1 mb-0">Team</p>
+                                <h5 class="mb-0">{{ $mostAttended->user->firstName }} {{ $mostAttended->user->lastName }}</h5>
+                                <p class="text-50 lh-1 mb-0">{{ $mostAttended->position->name }}</p>
                             </div>
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $mostAttended->attended_count }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title">Event Attended</div>
                                 <p class="card-subtitle text-50">
-                                    90& of total event
+                                    {{ $mostAttendedPercentage }}& of total event
                                 </p>
                             </div>
                         </div>
@@ -85,20 +85,20 @@
                     </div>
                     <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                         <div class="card-body d-flex align-items-center flex-row text-left">
-                            <img src=""
+                            <img src="{{ Storage::url($mostDidntAttend->user->foto) }}"
                                  width="50"
                                  height="50"
                                  class="rounded-circle img-object-fit-cover"
                                  alt="player-photo">
                             <div class="flex ml-3">
-                                <h5 class="mb-0">name</h5>
-                                <p class="text-50 lh-1 mb-0">Team</p>
+                                <h5 class="mb-0">{{ $mostDidntAttend->user->firstName }} {{ $mostDidntAttend->user->lastName }}</h5>
+                                <p class="text-50 lh-1 mb-0">{{ $mostDidntAttend->position->name }}</p>
                             </div>
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $mostDidntAttend->attended_count }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title">Event Absent</div>
                                 <p class="card-subtitle text-50">
-                                    90& of total event
+                                    {{ $mostDidntAttendPercentage }}& of total event
                                 </p>
                             </div>
                         </div>
@@ -117,6 +117,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Teams</th>
+                                <th>Total Events</th>
                                 <th>Match</th>
                                 <th>Training</th>
                                 <th>Attended</th>
@@ -134,3 +135,30 @@
             </div>
         </div>
     @endsection
+
+@push('addon-script')
+    <script>
+        $(document).ready(function() {
+            const datatable = $('#table').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! url()->current() !!}',
+                },
+                columns: [
+                    { data: 'name', name: 'name' },
+                    { data: 'teams', name: 'teams' },
+                    { data: 'totalEvent', name: 'totalEvent' },
+                    { data: 'match', name: 'match'},
+                    { data: 'training', name: 'training'},
+                    { data: 'attended', name: 'attended'},
+                    { data: 'absent', name: 'absent'},
+                    { data: 'illness', name: 'illness'},
+                    { data: 'injured', name: 'injured'},
+                    { data: 'others', name: 'others'},
+                ]
+            });
+        });
+    </script>
+@endpush
