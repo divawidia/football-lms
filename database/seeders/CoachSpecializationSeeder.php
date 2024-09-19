@@ -14,17 +14,18 @@ class CoachSpecializationSeeder extends Seeder
     public function run(): void
     {
         $specializations = [
-            'Goalkeeper',
-            'Defender',
-            'Midfielder',
-            'Forward',
-            'Technical',
-            'Tactical',
-            'Mental',
-            'Physical Conditioning/Fitness',
-            'Youth Development',
-            'Analytics',
-            'Head Coach'
+            'Goalkeeper Coach',
+            'Defender Coach',
+            'Midfielder Coach',
+            'Forward Coach',
+            'Technical Coach',
+            'Tactical Analyst',
+            'Mental Coach',
+            'Conditioning/Fitness Coach',
+            'Youth Development Coach',
+            'Match Analyst',
+            'Head Coach',
+            'Assistant Head Coach'
         ];
 
         foreach ($specializations as $specialization){
