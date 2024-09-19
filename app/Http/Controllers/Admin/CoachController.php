@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Nnjeim\World\World;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -45,6 +46,28 @@ class CoachController extends Controller
         if (request()->ajax()) {
             return $this->coachService->coachTeams($coach);
         }
+    }
+
+    public function updateTeams(Request $request, Coach $coach)
+    {
+        $validator = Validator::make($request->all(), [
+            'teams' => ['required', Rule::exists('teams', 'id')]
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->errors()->toArray()
+            ]);
+        }else{
+            $coach = $this->coachService->updateTeams($validator->getData()['teams'], $coach);
+            return response()->json($coach, 204);
+        }
+    }
+
+    public function removeTeam(Coach $coach, Team $team)
+    {
+        return $this->coachService->removeTeam($coach, $team);
     }
 
     /**

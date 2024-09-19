@@ -151,16 +151,16 @@ class CoachService extends Service
             ->make();
     }
 
-    public function removeTeam(Player $player, Team $team)
+    public function removeTeam(Coach $coach, Team $team)
     {
-        $player->teams()->detach($team->id);
-        return $player;
+        $coach->teams()->detach($team->id);
+        return $coach;
     }
 
-    public function updateTeams($teamData, Player $player)
+    public function updateTeams($teamData, Coach $coach)
     {
-        $player->teams()->sync($teamData);
-        return $player;
+        $coach->teams()->sync($teamData);
+        return $coach;
     }
 
     public function create()

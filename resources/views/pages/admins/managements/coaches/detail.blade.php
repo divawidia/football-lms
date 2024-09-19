@@ -359,6 +359,83 @@
                     }
                 });
             });
+
+            $('body').on('click', '.delete-team', function() {
+                const idTeam = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure to remove coach from this team?",
+                    text: "You won't be able to revert after delete this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, remove team!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('coach-managements.removeTeam', ['coach' => $user->coach->id, 'team' => ':idTeam']) }}".replace(':idTeam', idTeam),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "coach's team successfully removed!",
+                                });
+                                teamsTable.ajax.reload();
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "Something went wrong when deleting data!",
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('#add-team').on('click', function(e) {
+                e.preventDefault();
+                $('#addTeamModal').modal('show');
+            });
+
+            $('#formAddTeam').on('submit', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: $(this).attr('method'),
+                    url: $(this).attr('action'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+                        $('#addTeamModal').modal('hide');
+                        Swal.fire({
+                            title: "Player's team successfully updated!",
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        $.each(response.errors, function(key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("select#add_" + key).addClass('is-invalid');
+                        });
+                    }
+                });
+            });
         });
     </script>
 @endpush

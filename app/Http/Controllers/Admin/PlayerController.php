@@ -54,7 +54,7 @@ class PlayerController extends Controller
 
     public function removeTeam(User $player, Team $team)
     {
-        $this->playerService->removeTeam($player->player, $team);
+        return $this->playerService->removeTeam($player->player, $team);
     }
 
     /**
