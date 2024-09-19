@@ -169,7 +169,7 @@ class PlayerService extends Service
         }
 
         $positions = PlayerPosition::all();
-        $teams = Team::where('teamSide', 'Academy Team')->get();
+        $teams = $this->getAcademyTeams();
 
         return compact('countries', 'positions', 'teams');
     }
@@ -204,6 +204,21 @@ class PlayerService extends Service
             'playerId' => $player->id,
         ]);
         return $player;
+    }
+
+    public function show(User $user)
+    {
+        $fullName = $this->getUserFullName($user);
+        $age = $this->getAge($user->dob);
+        $teams = $this->getAcademyTeams();
+
+        $team_id = [];
+
+        foreach ($user->player->teams as $team){
+            $team_id[] = $team->id;
+        }
+
+        return compact('fullName', 'age', 'teams', 'team_id');
     }
 
     public function update(array $playerData, User $user): User

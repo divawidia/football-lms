@@ -87,25 +87,16 @@ class PlayerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $player_management)
     {
-        $user = User::with('country', 'state', 'city', 'player')->findOrFail($id);
-        $fullName = $user->firstName . ' ' . $user->lastName;
-        $age = $this->playerService->getAge($user->dob);
-        $teams = Team::all();
-
-        $team_id = [];
-
-        foreach ($user->player->teams as $team){
-            $team_id[] = $team->id;
-        }
+        $data = $this->playerService->show($player_management);
 
         return view('pages.admins.managements.players.detail', [
-            'user' => $user,
-            'fullName' => $fullName,
-            'age' => $age,
-            'teams' => $teams,
-            'team_id' => $team_id
+            'user' => $player_management,
+            'fullName' => $data['fullName'],
+            'age' => $data['age'],
+            'teams' => $data['teams'],
+            'team_id' => $data['team_id']
         ]);
     }
 
