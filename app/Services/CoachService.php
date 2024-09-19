@@ -156,6 +156,19 @@ class CoachService extends Service
         return $coach;
     }
 
+    public function edit(User $coach){
+        $action =  World::countries();
+        if ($action->success) {
+            $countries = $action->data;
+        }
+
+        $certifications = CoachCertification::all();
+        $specializations = CoachSpecialization::all();
+        $fullname = $coach->firstName . ' ' . $coach->lastName;
+
+        return compact('countries', 'certifications', 'specializations', 'fullname', 'coach');
+    }
+
     public function update(array $playerData, User $user): User
     {
         if (array_key_exists('foto', $playerData)){

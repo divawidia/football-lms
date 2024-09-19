@@ -96,19 +96,13 @@ class CoachController extends Controller
      */
     public function edit(User $coach)
     {
-        $fullname = $coach->firstName . ' ' . $coach->lastName;
-        $action =  World::countries();
-        $certifications = CoachCertification::all();
-        $specializations = CoachSpecialization::all();
-        if ($action->success) {
-            $countries = $action->data;
-        }
+        $data = $this->coachService->edit($coach);
         return view('pages.admins.managements.coaches.edit',[
-            'coach' => $coach,
-            'fullname' => $fullname,
-            'certifications' => $certifications,
-            'specializations' => $specializations,
-            'countries' => $countries
+            'coach' => $data['coach'],
+            'fullname' => $data['fullname'],
+            'certifications' => $data['certifications'],
+            'specializations' => $data['specializations'],
+            'countries' => $data['countries']
         ]);
     }
 
