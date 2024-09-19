@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AttendanceReportController;
 use App\Http\Controllers\Admin\CoachController;
 use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -235,6 +236,10 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
                 Route::put('{player}/update', [EventScheduleController::class, 'updatePlayerStats'])->name('match-schedules.update-player-match-stats');
             });
         });
+    });
+
+    Route::prefix('attendance-reports')->group(function () {
+        Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {

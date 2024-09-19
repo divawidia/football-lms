@@ -106,7 +106,7 @@
                         <ul class="collapse sm-indent"
                             id="reportsMenu">
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="">
+                                <a class="sidebar-menu-button" href="{{ route('attendance-report.index') }}">
                                     <span class="sidebar-menu-text">Attendance</span>
                                 </a>
                             </li>
