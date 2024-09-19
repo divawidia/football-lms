@@ -114,8 +114,8 @@
                                         @enderror
                                     </div>
                                     <div class="form-group mb-3">
-                                        <label class="form-label" for="team">Team</label>
-                                        <small class="text-black-100">(Optional)</small>
+                                        <label class="form-label" for="team">Teams Managed</label>
+                                        <small class="text-danger">*</small>
                                         @if(count($teams) == 0)
                                             <div class="alert alert-light border-1 border-left-4 border-left-accent"
                                                  role="alert">
@@ -126,16 +126,18 @@
                                                         <small class="text-black-100">Curently you haven't create any team in your academy, please create your team</small>
                                                     </div>
                                                     <div class="ml-8pt mt-2 mt-sm-0">
-                                                        <a href="#"
+                                                        <a href="{{ route('team-managements.create') }}"
                                                            class="btn btn-link btn-sm">Create Now</a>
                                                     </div>
                                                 </div>
                                             </div>
-                                        @else
-                                            <select class="form-control form-select @error('team') is-invalid @enderror" id="team" name="team[]" data-toggle="select" multiple>
-                                                <option selected disabled>Select Managed Teams</option>
+                                        @elseif(count($teams) > 0)
+                                            <select class="form-control form-select @error('team') is-invalid @enderror" id="team" name="team[]" data-toggle="select" multiple required>
+                                                <option disabled>Select Managed Teams</option>
                                                 @foreach($teams as $team)
-                                                    <option value="{{ $team->id }}" @selected(old('team') == $team->id)>{{ $team->name }}</option>
+                                                    <option value="{{ $team->id }}" @selected(old('team') == $team->id) data-avatar-src="{{ Storage::url($team->logo) }}">
+                                                        {{ $team->teamName }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         @endif

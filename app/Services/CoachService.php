@@ -130,39 +130,30 @@ class CoachService extends Service
         $specializations = CoachSpecialization::all();
         $teams = Team::where('teamSide', 'Academy Team')->get();
 
-        return compact('countries', 'positions', 'teams');
+        return compact('countries', 'certifications', 'specializations', 'teams');
     }
 
-    public  function store(array $playerData, $academyId){
+    public  function store(array $data, $academyId){
 
-        $playerData['password'] = bcrypt($playerData['password']);
+        $data['password'] = bcrypt($data['password']);
 
-        if (array_key_exists('foto', $playerData)){
-            $playerData['foto'] = $playerData['foto']->store('assets/user-profile', 'public');
+        if (array_key_exists('foto', $data)){
+            $data['foto'] = $data['foto']->store('assets/user-profile', 'public');
         }else{
-            $playerData['foto'] = 'images/undefined-user.png';
+            $data['foto'] = 'images/undefined-user.png';
         }
 
-        $playerData['status'] = '1';
-        $playerData['academyId'] = $academyId;
+        $data['status'] = '1';
+        $data['academyId'] = $academyId;
 
-        $user = User::create($playerData);
-        $user->assignRole('player');
+        $user = User::create($data);
+        $user->assignRole('coach');
 
-        $playerData['userId'] = $user->id;
+        $data['userId'] = $user->id;
 
-        $player = Player::create($playerData);
-        $player->teams()->attach($playerData['team']);
-
-        PlayerParrent::create([
-            'firstName' => $playerData['firstName'],
-            'lastName' => $playerData['lastName'],
-            'relations' => $playerData['relations'],
-            'email' => $playerData['email'],
-            'phoneNumber' => $playerData['phoneNumber'],
-            'playerId' => $player->id,
-        ]);
-        return $player;
+        $coach = Coach::create($data);
+        $coach->teams()->attach($data['team']);
+        return $coach;
     }
 
     public function update(array $playerData, User $user): User

@@ -45,20 +45,13 @@ class CoachController extends Controller
      */
     public function create()
     {
-        $action =  World::countries();
-        if ($action->success) {
-            $countries = $action->data;
-        }
-
-        $certifications = CoachCertification::all();
-        $specializations = CoachSpecialization::all();
-        $teams = Team::all();
+        $data = $this->coachService->create();
 
         return view('pages.admins.managements.coaches.create', [
-            'countries' => $countries,
-            'certifications' => $certifications,
-            'specializations' => $specializations,
-            'teams' => $teams
+            'countries' => $data['countries'],
+            'certifications' => $data['certifications'],
+            'specializations' => $data['specializations'],
+            'teams' => $data['teams'],
         ]);
     }
 
@@ -69,23 +62,7 @@ class CoachController extends Controller
     {
         $data = $request->validated();
 
-        $data['password'] = bcrypt($data['password']);
-
-        if ($request->hasFile('foto')){
-            $data['foto'] = $request->file('foto')->store('assets/user-profile', 'public');
-        }else{
-            $data['foto'] = 'images/undefined-user.png';
-        }
-
-        $data['status'] = '1';
-        $data['academyId'] = Auth::user()->academyId;
-
-        $user = User::create($data);
-        $user->assignRole('coach');
-
-        $data['userId'] = $user->id;
-
-        Coach::create($data);
+        $this->coachService->store($data, $this->getAcademyId());
 
         $text = 'Coach '.$data['firstName'].' '.$data['lastName'].' successfully added!';
         Alert::success($text);
