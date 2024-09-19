@@ -7,64 +7,7 @@
 @endsection
 
 @section('modal')
-    <div class="modal fade" id="addTeamModal" tabindex="-1" aria-labelledby="addTeamModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="{{ route('player-managements.updateTeams', $user->player->id) }}" method="post" id="formAddTeam">
-                    @method('PUT')
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Update Player's Team</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="teams">Teams</label>
-                                    <small class="text-danger">*</small>
-                                    @if(count($teams) == 0)
-                                        <div class="alert alert-light border-1 border-left-4 border-left-accent"
-                                             role="alert">
-                                            <div class="d-flex flex-wrap align-items-center">
-                                                <i class="material-icons mr-8pt">error_outline</i>
-                                                <div class="media-body"
-                                                     style="min-width: 180px">
-                                                    <small class="text-black-100">Curently you haven't create any player in your academy, please create your team</small>
-                                                </div>
-                                                <div class="ml-8pt mt-2 mt-sm-0">
-                                                    <a href="{{ route('team-managements.create') }}"
-                                                       class="btn btn-link btn-sm">Create Now</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <select class="form-control form-select add_teams" id="teams" name="teams[]" data-toggle="select" multiple>
-                                            <option disabled>Select teams</option>
-                                            @foreach($teams as $team)
-                                                <option value="{{ $team->id }}" @selected(in_array($team->id, $team_id)) data-avatar-src="{{ Storage::url($team->logo) }}">
-                                                    {{ $team->teamName }} - {{ $team->ageGroup }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    @endif
-                                    <span class="invalid-feedback teams_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    @include('pages.admins.managements.modal-forms.add-team-to-player-coach')
 @endsection
 
 @section('content')
@@ -228,12 +171,12 @@
             <div class="col-sm-6 card-group-row__col flex-column">
                 <div class="page-separator">
                     <div class="page-separator__text">Teams</div>
-                    <button type="button" class="btn btn-sm btn-primary ml-auto" id="add-team">
+                    <a href="#" class="btn btn-sm btn-primary ml-auto" id="add-team">
                         <span class="material-icons mr-2">
                             add
                         </span>
                         Add New
-                    </button>
+                    </a>
                 </div>
                 <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                     <div class="card-body">
@@ -532,10 +475,17 @@
                             },
                             success: function(response) {
                                 Swal.fire({
-                                    icon: "success",
-                                    title: "Player's team successfully removed!",
+                                    title: "Team successfully removed from player!",
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
                                 });
-                                teamsTable.ajax.reload();
                             },
                             error: function(error) {
                                 Swal.fire({
@@ -556,17 +506,16 @@
 
             $('#formAddTeam').on('submit', function(e) {
                 e.preventDefault();
-
                 $.ajax({
+                    url: "{{ route('player-managements.updateTeams', ['player' => $user->player->id]) }}",
                     method: $(this).attr('method'),
-                    url: $(this).attr('action'),
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function(res) {
+                    success: function() {
                         $('#addTeamModal').modal('hide');
                         Swal.fire({
-                            title: "Player's team successfully updated!",
+                            title: "Team successfully added to player!",
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",

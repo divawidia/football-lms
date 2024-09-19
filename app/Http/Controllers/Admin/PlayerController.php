@@ -96,7 +96,6 @@ class PlayerController extends Controller
             'fullName' => $data['fullName'],
             'age' => $data['age'],
             'teams' => $data['teams'],
-            'team_id' => $data['team_id']
         ]);
     }
 

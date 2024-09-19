@@ -12,6 +12,7 @@ use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -113,7 +114,7 @@ class CoachService extends Service
             ->addColumn('action', function ($item) {
                 return '
                         <div class="dropdown">
-                          <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
                                 more_vert
                             </span>
@@ -159,7 +160,7 @@ class CoachService extends Service
 
     public function updateTeams($teamData, Coach $coach)
     {
-        $coach->teams()->sync($teamData);
+        $coach->teams()->attach($teamData);
         return $coach;
     }
 
@@ -203,15 +204,12 @@ class CoachService extends Service
     {
         $fullName = $this->getUserFullName($user);
         $age = $this->getAge($user->dob);
-        $teams = $this->getAcademyTeams();
+        $teams = Team::where('teamSide', 'Academy Team')
+            ->whereDoesntHave('coaches', function (Builder $query) use ($user) {
+                $query->where('coachId', $user->coach->id);
+            })->get();
 
-        $team_id = [];
-
-        foreach ($user->coach->teams as $team){
-            $team_id[] = $team->id;
-        }
-
-        return compact('fullName', 'age', 'teams', 'team_id');
+        return compact('fullName', 'age', 'teams');
     }
 
     public function edit(User $coach){

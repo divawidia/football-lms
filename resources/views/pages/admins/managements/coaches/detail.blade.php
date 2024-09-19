@@ -6,27 +6,35 @@
     @yield('title')
 @endsection
 
+@section('modal')
+    @include('pages.admins.managements.modal-forms.add-team-to-player-coach')
+@endsection
+
 @section('content')
     <div class="page-section bg-primary">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div
+            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($user->foto) }}"
                  width="104"
                  height="104"
                  class="mr-md-32pt mb-32pt mb-md-0 rounded-circle img-object-fit-cover"
                  alt="instructor">
-            <div class="flex mb-32pt mb-md-0">
+            <div class="flex mb-32pt mb-md-0 ml-md-3">
                 <h2 class="text-white mb-0">{{ $fullName  }}</h2>
-                <p class="lead text-white-50 d-flex align-items-center">Coach - {{ $user->coach->specializations->name }} - {{ $user->coach->certification->name }}</p>
+                <p class="lead text-white-50 d-flex align-items-center">Coach
+                    - {{ $user->coach->specializations->name }} - {{ $user->coach->certification->name }}</p>
             </div>
             <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
                     Action
-                            <span class="material-icons ml-3">
+                    <span class="material-icons ml-3">
                                 keyboard_arrow_down
                             </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('coach-managements.edit', $user->id) }}"><span class="material-icons">edit</span> Edit Coach Profile</a>
+                    <a class="dropdown-item" href="{{ route('coach-managements.edit', $user->id) }}"><span
+                            class="material-icons">edit</span> Edit Coach Profile</a>
                     @if($user->status == '1')
                         <form action="{{ route('deactivate-coach', $user->id) }}" method="POST">
                             @method("PATCH")
@@ -44,7 +52,9 @@
                             </button>
                         </form>
                     @endif
-                    <a class="dropdown-item" href="{{ route('coach-managements.change-password-page', $user->id) }}"><span class="material-icons">lock</span> Change Coach's Account Password</a>
+                    <a class="dropdown-item"
+                       href="{{ route('coach-managements.change-password-page', $user->id) }}"><span
+                            class="material-icons">lock</span> Change Coach's Account Password</a>
                     <button type="button" class="dropdown-item delete-user" id="{{$user->id}}">
                         <span class="material-icons">delete</span> Delete Coach
                     </button>
@@ -57,7 +67,7 @@
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
         </div>
-        <div class="row card-group-row mb-4">
+        <div class="row card-group-row mb-md-3">
             <div class="col-lg-4 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
@@ -110,7 +120,7 @@
                 </div>
             </div>
         </div>
-        <div class="row card-group-row mb-4">
+        <div class="row card-group-row mb-md-3">
             <div class="col-lg-4 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
@@ -167,10 +177,10 @@
             <div class="col-sm-6 card-group-row__col flex-column">
                 <div class="page-separator">
                     <div class="page-separator__text">Teams Managed</div>
-                    <a href="#" class="btn btn-primary ml-auto" id="add-parent" data-toggle="modal" data-target="#exampleModal">
-                <span class="material-icons mr-2">
-                    add
-                </span>
+                    <a href="#" class="btn btn-sm btn-primary ml-auto" id="add-team">
+                        <span class="material-icons mr-2">
+                            add
+                        </span>
                         Add New
                     </a>
                 </div>
@@ -271,19 +281,23 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Hired Date :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y', strtotime($user->coach->hireDate)) }}</div>
+                            <div
+                                class="ml-auto p-2 text-muted">{{ date('M d, Y', strtotime($user->coach->hireDate)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->created_at)) }}</div>
+                            <div
+                                class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->created_at)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->updated_at)) }}</div>
+                            <div
+                                class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->updated_at)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Seen :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->lastSeen)) }}</div>
+                            <div
+                                class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->lastSeen)) }}</div>
                         </div>
                     </div>
                 </div>
@@ -294,7 +308,7 @@
 @endsection
 @push('addon-script')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             const teamsTable = $('#teamsTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -303,8 +317,8 @@
                     url: '{!! route('coach-managements.coach-teams', $user->coach->id) !!}',
                 },
                 columns: [
-                    { data: 'name', name: 'name' },
-                    { data: 'date', name: 'date' },
+                    {data: 'name', name: 'name'},
+                    {data: 'date', name: 'date'},
                     {
                         data: 'action',
                         name: 'action',
@@ -315,7 +329,7 @@
                 ]
             });
 
-            $('.delete-user').on('click', function() {
+            $('.delete-user').on('click', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -334,7 +348,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 Swal.fire({
                                     title: "Coach's account successfully deleted!",
                                     icon: 'success',
@@ -348,7 +362,7 @@
                                     }
                                 });
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -360,7 +374,7 @@
                 });
             });
 
-            $('body').on('click', '.delete-team', function() {
+            $('body').on('click', '.delete-team', function () {
                 const idTeam = $(this).attr('id');
 
                 Swal.fire({
@@ -379,14 +393,21 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 Swal.fire({
-                                    icon: "success",
-                                    title: "coach's team successfully removed!",
+                                    title: "Team successfully removed to coach!",
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
                                 });
-                                teamsTable.ajax.reload();
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -398,24 +419,24 @@
                 });
             });
 
-            $('#add-team').on('click', function(e) {
+            $('#add-team').on('click', function (e) {
                 e.preventDefault();
                 $('#addTeamModal').modal('show');
             });
 
-            $('#formAddTeam').on('submit', function(e) {
+            $('#formAddTeam').on('submit', function (e) {
                 e.preventDefault();
 
                 $.ajax({
+                    url: "{{ route('coach-managements.updateTeams', $user->coach->id) }}",
                     method: $(this).attr('method'),
-                    url: $(this).attr('action'),
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function(res) {
+                    success: function () {
                         $('#addTeamModal').modal('hide');
                         Swal.fire({
-                            title: "Player's team successfully updated!",
+                            title: "Team successfully added to coach!",
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",
@@ -427,9 +448,9 @@
                             }
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         const response = JSON.parse(xhr.responseText);
-                        $.each(response.errors, function(key, val) {
+                        $.each(response.errors, function (key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("select#add_" + key).addClass('is-invalid');
                         });
