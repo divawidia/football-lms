@@ -9,16 +9,10 @@
     @section('content')
         <div class="pt-32pt">
             <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-                <div class="flex d-flex flex-column flex-sm-row align-items-center mb-24pt mb-md-0">
-                    <div class="mb-24pt mb-sm-0 w-100">
+                <div class="flex d-flex flex-column flex-sm-row align-items-center">
+                    <div class="w-100">
                         <div class="d-flex flex-row">
                             <h2 class="mb-0 text-left">@yield('title')</h2>
-                            <a href="{{  route('coach-managements.create') }}" class="btn btn-sm btn-primary ml-auto" id="add-new">
-                                <span class="material-icons mr-2">
-                                    add
-                                </span>
-                                Add New Coach
-                            </a>
                         </div>
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
@@ -32,6 +26,12 @@
         </div>
 
         <div class="container page__container page-section">
+            <a href="{{  route('coach-managements.create') }}" class="btn btn-primary mb-3" id="add-new">
+                <span class="material-icons mr-2">
+                    add
+                </span>
+                Add New Coach
+            </a>
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-body">
                     <div class="table-responsive">
