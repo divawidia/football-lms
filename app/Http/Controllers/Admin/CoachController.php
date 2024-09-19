@@ -74,20 +74,14 @@ class CoachController extends Controller
      */
     public function show(User $coach)
     {
-        $fullName = $coach->firstName . ' ' . $coach->lastName;
-        $age = $this->getAge($coach->dob);
-
-        if(count($coach->coach->teams) == 0){
-            $team = 'No Team';
-        }else{
-            $team = $coach->coach->teams->name;
-        }
+        $data = $this->coachService->show($coach);
 
         return view('pages.admins.managements.coaches.detail', [
             'user' => $coach,
-            'fullName' => $fullName,
-            'age' => $age,
-            'team' => $team
+            'fullName' => $data['fullName'],
+            'age' => $data['age'],
+            'teams' => $data['teams'],
+            'team_id' => $data['team_id'],
         ]);
     }
 

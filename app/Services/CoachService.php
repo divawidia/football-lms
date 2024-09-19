@@ -155,6 +155,20 @@ class CoachService extends Service
         $coach->teams()->attach($data['team']);
         return $coach;
     }
+    public function show(User $user)
+    {
+        $fullName = $this->getUserFullName($user);
+        $age = $this->getAge($user->dob);
+        $teams = $this->getAcademyTeams();
+
+        $team_id = [];
+
+        foreach ($user->player->teams as $team){
+            $team_id[] = $team->id;
+        }
+
+        return compact('fullName', 'age', 'teams', 'team_id');
+    }
 
     public function edit(User $coach){
         $action =  World::countries();
