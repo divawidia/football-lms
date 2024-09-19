@@ -40,6 +40,13 @@ class CoachController extends Controller
         return view('pages.admins.managements.coaches.index');
     }
 
+    public function coachTeams(Coach $coach)
+    {
+        if (request()->ajax()) {
+            return $this->coachService->coachTeams($coach);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      */

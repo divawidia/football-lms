@@ -10,6 +10,7 @@ use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +22,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PlayerService extends Service
 {
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(): JsonResponse
     {
         $query = Player::with('user', 'teams', 'position')->get();
         return Datatables::of($query)
@@ -45,7 +46,7 @@ class PlayerService extends Service
                 }
                 return '
                         <div class="dropdown">
-                          <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
                                 more_vert
                             </span>
@@ -104,10 +105,9 @@ class PlayerService extends Service
             ->make();
     }
 
-    public function playerTeams(Player $player): \Illuminate\Http\JsonResponse
+    public function playerTeams(Player $player): JsonResponse
     {
-        $query = Player::with('teams')->findOrFail($player->id);
-        return Datatables::of($query->teams)
+        return Datatables::of($player->teams)
             ->addColumn('action', function ($item) {
                 return '
                         <div class="dropdown">

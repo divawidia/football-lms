@@ -9,7 +9,7 @@
 @section('content')
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
-            <img src="{{ \Illuminate\Support\Facades\Storage::url($user->foto) }}"
+            <img src="{{ Storage::url($user->foto) }}"
                  width="104"
                  height="104"
                  class="mr-md-32pt mb-32pt mb-md-0 rounded-circle img-object-fit-cover"
@@ -295,6 +295,26 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
+            const teamsTable = $('#teamsTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! route('coach-managements.coach-teams', $user->coach->id) !!}',
+                },
+                columns: [
+                    { data: 'name', name: 'name' },
+                    { data: 'date', name: 'date' },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ]
+            });
+
             $('.delete-user').on('click', function() {
                 let id = $(this).attr('id');
 

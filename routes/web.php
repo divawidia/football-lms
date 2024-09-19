@@ -96,6 +96,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('activate', [CoachController::class, 'activate'])->name('activate-coach');
             Route::get('change-password', [CoachController::class, 'changePasswordPage'])->name('coach-managements.change-password-page');
             Route::patch('change-password', [CoachController::class, 'changePassword'])->name('coach-managements.change-password');
+            Route::get('coach-teams', [CoachController::class, 'coachTeams'])->name('coach-managements.coach-teams');
         });
     });
 
