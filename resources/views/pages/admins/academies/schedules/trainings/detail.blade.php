@@ -460,9 +460,11 @@
 
                         const heading = document.getElementById('playerName');
                         heading.textContent = 'Update Player '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
-                        $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
-                        $('#editPlayerAttendanceModal #add_note').val(res.data.coachAttendance.note);
-                        $('#playerId').val(res.data.coachAttendance.playerId);
+                        if (res.data.playerAttendance.attendanceStatus !== 'Required Action'){
+                            $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.playerAttendance.attendanceStatus);
+                        }
+                        $('#editPlayerAttendanceModal #add_note').val(res.data.playerAttendance.note);
+                        $('#playerId').val(res.data.playerAttendance.playerId);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         Swal.fire({
@@ -486,7 +488,9 @@
 
                         const heading = document.getElementById('coachName');
                         heading.textContent = 'Update Coach '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
-                        $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
+                        if (res.data.coachAttendance.attendanceStatus !== 'Required Action'){
+                            $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
+                        }
                         $('#editCoachAttendanceModal #add_note').val(res.data.coachAttendance.note);
                         $('#coachId').val(res.data.coachAttendance.coachId);
                     },

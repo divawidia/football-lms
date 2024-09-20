@@ -206,7 +206,7 @@ class EventScheduleController extends Controller
                     'status' => '200',
                     'data' => [
                         'user' => $data->user,
-                        'coachAttendance'=>$data->pivot
+                        'playerAttendance'=>$data->pivot
                     ]
                 ]);
             } else {

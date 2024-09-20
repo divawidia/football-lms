@@ -156,7 +156,7 @@
                                                        data-flatpickr-enable-time="true"
                                                        data-flatpickr-no-calendar="true"
                                                        data-flatpickr-alt-format="H:i"
-                                                       data-flatpickr-date-format="H:i">>
+                                                       data-flatpickr-date-format="H:i">
                                                 @error('endTime')
                                                 <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -170,7 +170,7 @@
                         </div>
                     </div>
                     <div class="list-group-item d-flex justify-content-end">
-                        <a class="btn btn-secondary mx-2" href="{{ route('competition-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <a class="btn btn-secondary mx-2" href="{{ route('training-schedules.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
                         <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                     </div>
                 </form>

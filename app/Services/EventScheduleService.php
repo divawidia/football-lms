@@ -22,7 +22,10 @@ class EventScheduleService extends Service
     }
     public function indexTraining(): Collection
     {
-        return EventSchedule::with('teams')->where('eventType', 'Training')->get();
+        return EventSchedule::with('teams')
+            ->where('eventType', 'Training')
+            ->orderBy('date')
+            ->get();
     }
 
     public function getAcademyTeams(){
@@ -35,7 +38,7 @@ class EventScheduleService extends Service
         foreach ($trainings as $training) {
             $events[] = [
                 'id' => $training->id,
-                'title' => $training->eventName.' - '.$training->teams[0]->teamName,
+                'title' => $training->teams[0]->teamName.' - '.$training->eventName,
                 'start' => $training->date.' '.$training->startTime,
                 'end' => $training->date.' '.$training->endTime,
                 'className' => 'bg-warning'
