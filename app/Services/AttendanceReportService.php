@@ -69,12 +69,17 @@ class AttendanceReportService extends Service
                 }
             })
             ->addColumn('absent', function ($item){
-                $didntAttend = $item->schedules()
+                $illness = $item->schedules()
                     ->where('attendanceStatus', 'Illness')
-                    ->orWhere('attendanceStatus', 'Injured')
-                    ->orWhere('attendanceStatus', 'Other')
                     ->get();
-                $totalDidntAttended = count($didntAttend);
+                $injured = $item->schedules()
+                    ->where('attendanceStatus', 'Injured')
+                    ->get();
+                $others = $item->schedules()
+                    ->where('attendanceStatus', 'Others')
+                    ->get();
+
+                $totalDidntAttended = count($illness) + count($injured) + count($others);
                 $totalEvent = count($item->schedules);
                 if ($totalEvent == 0){
                     return 'No event yet';
@@ -188,7 +193,6 @@ class AttendanceReportService extends Service
                 }
             })
             ->editColumn('attendanceStatus', function ($item) {
-//                dd($item);
                 if ($item->pivot->attendanceStatus == 'Attended') {
                     return '<span class="badge badge-pill badge-success">Attended</span>';
                 } else {
@@ -286,7 +290,6 @@ class AttendanceReportService extends Service
                 }
             })
             ->editColumn('attendanceStatus', function ($item) {
-//                dd($item);
                 if ($item->pivot->attendanceStatus == 'Attended') {
                     return '<span class="badge badge-pill badge-success">Attended</span>';
                 } else {
