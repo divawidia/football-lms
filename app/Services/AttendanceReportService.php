@@ -208,4 +208,102 @@ class AttendanceReportService extends Service
             ->rawColumns(['action','team','date','status', 'attendanceStatus', 'last_updated', 'note'])
             ->make();
     }
+
+    public function dataTablesMatch(Player $player){
+        return Datatables::of($player->schedules()->where('eventType', 'Match')->get())
+            ->addColumn('action', function ($item) {
+                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View match detail">
+                            <span class="material-icons">visibility</span>
+                        </a>';
+            })
+            ->editColumn('team', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->teamName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$item->teams[0]->ageGroup.'</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('opponentTeam', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[1]->logo) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[1]->teamName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$item->teams[1]->ageGroup.'</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('competition', function ($item) {
+                if ($item->competition){
+                    $competition = '
+                            <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->competition->logo) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->competition->name . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$item->competition->type.'</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+                }else{
+                    $competition = 'No Competition';
+                }
+                return $competition;
+            })
+            ->editColumn('date', function ($item) {
+                $date = date('M d, Y', strtotime($item->date));
+                $startTime = date('h:i A', strtotime($item->startTime));
+                $endTime = date('h:i A', strtotime($item->endTime));
+                return $date.' ('.$startTime.' - '.$endTime.')';
+            })
+            ->editColumn('status', function ($item) {
+                if ($item->status == '1') {
+                    return '<span class="badge badge-pill badge-success">Active</span>';
+                } elseif ($item->status == '0') {
+                    return '<span class="badge badge-pill badge-danger">Ended</span>';
+                }
+            })
+            ->editColumn('attendanceStatus', function ($item) {
+//                dd($item);
+                if ($item->pivot->attendanceStatus == 'Attended') {
+                    return '<span class="badge badge-pill badge-success">Attended</span>';
+                } else {
+                    return '<span class="badge badge-pill badge-danger">'.$item->pivot->attendanceStatus.'</span>';
+                }
+            })
+            ->editColumn('note', function ($item) {
+                if ($item->pivot->note == null) {
+                    return 'No note added';
+                } else {
+                    return $item->pivot->note;
+                }
+            })
+            ->editColumn('last_updated', function ($item) {
+                return date('M d, Y ~ h:i A', strtotime($item->pivot->updated_at));
+            })
+            ->rawColumns(['action','team', 'competition','opponentTeam','date','status', 'attendanceStatus', 'last_updated', 'note'])
+            ->make();
+    }
 }
