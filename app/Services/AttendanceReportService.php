@@ -142,6 +142,45 @@ class AttendanceReportService extends Service
         $totalInjured = count($playerInjured);
         $totalOther = count($playerOther);
 
-        return compact('totalAttended', 'totalIllness', 'totalInjured', 'totalOther')
+        return compact('totalAttended', 'totalIllness', 'totalInjured', 'totalOther');
+    }
+
+    public function dataTablesTraining(Player $player){
+        return Datatables::of($player->schedules()->where('eventType', 'Training')->get())
+            ->addColumn('action', function ($item) {
+                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('training-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Training</a>';
+            })
+            ->editColumn('team', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->teamName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$item->teams[0]->ageGroup.'</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('date', function ($item) {
+                $date = date('M d, Y', strtotime($item->date));
+                $startTime = date('h:i A', strtotime($item->startTime));
+                $endTime = date('h:i A', strtotime($item->endTime));
+                return $date.' ('.$startTime.' - '.$endTime.')';
+            })
+            ->editColumn('status', function ($item) {
+                if ($item->status == '1') {
+                    return '<span class="badge badge-pill badge-success">Active</span>';
+                } elseif ($item->status == '0') {
+                    return '<span class="badge badge-pill badge-danger">Ended</span>';
+                }
+            })
+            ->rawColumns(['action','team','date','status'])
+            ->make();
     }
 }
