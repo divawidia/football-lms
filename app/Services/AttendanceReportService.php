@@ -121,4 +121,27 @@ class AttendanceReportService extends Service
 
         return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage');
     }
+
+    public function show(Player $player){
+        $playerAttended = $player->schedules()
+            ->where('attendanceStatus', 'Attended')
+            ->get();
+
+        $playerIllness = $player->schedules()
+            ->where('attendanceStatus', 'Illness')
+            ->get();
+        $playerInjured = $player->schedules()
+            ->where('attendanceStatus', 'Injured')
+            ->get();
+        $playerOther = $player->schedules()
+            ->where('attendanceStatus', 'Other')
+            ->get();
+
+        $totalAttended = count($playerAttended);
+        $totalIllness = count($playerIllness);
+        $totalInjured = count($playerInjured);
+        $totalOther = count($playerOther);
+
+        return compact('totalAttended', 'totalIllness', 'totalInjured', 'totalOther')
+    }
 }
