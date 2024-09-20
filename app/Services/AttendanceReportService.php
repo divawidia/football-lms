@@ -13,7 +13,9 @@ class AttendanceReportService extends Service
         $query = Player::all();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('attendance-report.show', $item->id) . '"><span class="material-icons">visibility</span> View Attendance Detail</a>';
+                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('attendance-report.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player attendance detail">
+                            <span class="material-icons">visibility</span>
+                        </a>';
             })
             ->editColumn('teams', function ($item) {
                 $playerTeam = '';
@@ -99,7 +101,7 @@ class AttendanceReportService extends Service
                     ->get();
                 return count($didntAttend);
             })
-            ->rawColumns(['teams', 'name','totalEvent', 'match', 'training', 'attended', 'absent', 'illness', 'injured', 'others'])
+            ->rawColumns(['action','teams', 'name','totalEvent', 'match', 'training', 'attended', 'absent', 'illness', 'injured', 'others'])
             ->make();
     }
 
@@ -151,7 +153,9 @@ class AttendanceReportService extends Service
     public function dataTablesTraining(Player $player){
         return Datatables::of($player->schedules()->where('eventType', 'Training')->get())
             ->addColumn('action', function ($item) {
-                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('training-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Training</a>';
+                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('training-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View training detail">
+                            <span class="material-icons">visibility</span>
+                        </a>';
             })
             ->editColumn('team', function ($item) {
                 return '
@@ -183,7 +187,25 @@ class AttendanceReportService extends Service
                     return '<span class="badge badge-pill badge-danger">Ended</span>';
                 }
             })
-            ->rawColumns(['action','team','date','status'])
+            ->editColumn('attendanceStatus', function ($item) {
+//                dd($item);
+                if ($item->pivot->attendanceStatus == 'Attended') {
+                    return '<span class="badge badge-pill badge-success">Attended</span>';
+                } else {
+                    return '<span class="badge badge-pill badge-danger">'.$item->pivot->attendanceStatus.'</span>';
+                }
+            })
+            ->editColumn('note', function ($item) {
+                if ($item->pivot->note == null) {
+                    return 'No note added';
+                } else {
+                    return $item->pivot->note;
+                }
+            })
+            ->editColumn('last_updated', function ($item) {
+                return date('M d, Y ~ h:i A', strtotime($item->pivot->updated_at));
+            })
+            ->rawColumns(['action','team','date','status', 'attendanceStatus', 'last_updated', 'note'])
             ->make();
     }
 }

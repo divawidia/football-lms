@@ -6,10 +6,6 @@
     @yield('title')
 @endsection
 
-@section('modal')
-    @include('pages.admins.managements.modal-forms.add-team-to-player-coach')
-@endsection
-
 @section('content')
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
@@ -18,8 +14,8 @@
                  height="104"
                  class="mr-md-32pt mb-32pt mb-md-0 rounded-circle img-object-fit-cover"
                  alt="instructor">
-            <div class="flex mb-32pt mb-md-0">
-                <h2 class="text-white mb-0">{{ $player->user->firstName  }} {{ $player->user->lastName  }}}</h2>
+            <div class="flex mb-32pt mb-md-0 ml-md-4">
+                <h2 class="text-white mb-0">{{ $player->user->firstName  }} {{ $player->user->lastName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">{{ $player->position->name }}</p>
             </div>
 {{--            <div class="dropdown">--}}
@@ -62,7 +58,7 @@
             <div class="page-separator__text">Overview</div>
         </div>
         <div class="row card-group-row mb-4">
-            <div class="col-lg-3 card-group-row__col flex-column">
+            <div class="col-lg-6 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -79,7 +75,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 card-group-row__col flex-column">
+            <div class="col-lg-6 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -96,7 +92,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 card-group-row__col flex-column">
+        </div>
+        <div class="row card-group-row mb-4">
+            <div class="col-lg-6 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -113,7 +111,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 card-group-row__col flex-column">
+            <div class="col-lg-6 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -145,7 +143,10 @@
                                 <th>Team</th>
                                 <th>training date</th>
                                 <th>Location</th>
-                                <th>Status</th>
+                                <th>Training Status</th>
+                                <th>Attendance Status</th>
+                                <th>Note</th>
+                                <th>Last Updated Attendance</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -177,6 +178,9 @@
                     { data: 'date', name: 'date' },
                     { data: 'place', name: 'place'},
                     { data: 'status', name: 'status' },
+                    { data: 'attendanceStatus', name: 'attendanceStatus' },
+                    { data: 'note', name: 'note' },
+                    { data: 'last_updated', name: 'last_updated' },
                     {
                         data: 'action',
                         name: 'action',

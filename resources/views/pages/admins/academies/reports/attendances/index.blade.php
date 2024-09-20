@@ -125,6 +125,7 @@
                                 <th>Injured</th>
                                 <th>Illness</th>
                                 <th>Others</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -157,6 +158,13 @@
                     { data: 'illness', name: 'illness'},
                     { data: 'injured', name: 'injured'},
                     { data: 'others', name: 'others'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
                 ]
             });
         });
