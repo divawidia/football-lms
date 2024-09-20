@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Player;
 use App\Services\AttendanceReportService;
 use Illuminate\Http\Request;
 
@@ -24,6 +25,22 @@ class AttendanceReportController extends Controller
             'mostAttended' => $data['mostAttended'],
             'mostAttendedPercentage' => $data['mostAttendedPercentage'],
             'mostDidntAttendPercentage' => $data['mostDidntAttendPercentage'],
+        ]);
+    }
+
+    public function show(Player $player){
+        if (\request()->ajax()){
+            return $this->attendanceReportService->dataTablesTraining($player);
+        }
+
+        $data = $this->attendanceReportService->show($player);
+
+        return view('pages.admins.academies.reports.attendances.player-detail', [
+            'totalAttended' => $data['totalAttended'],
+            'totalIllness' => $data['totalIllness'],
+            'totalInjured' => $data['totalInjured'],
+            'totalOther' => $data['totalOther'],
+            'player' => $player
         ]);
     }
 }
