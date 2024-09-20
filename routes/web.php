@@ -240,6 +240,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
     Route::prefix('attendance-reports')->group(function () {
         Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
+        Route::get('{player}', [AttendanceReportController::class, 'show'])->name('attendance-report.show');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {

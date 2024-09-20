@@ -12,6 +12,9 @@ class AttendanceReportService extends Service
     public function attendanceDatatables(){
         $query = Player::all();
         return Datatables::of($query)
+            ->addColumn('action', function ($item) {
+                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('attendance-report.show', $item->id) . '"><span class="material-icons">visibility</span> View Attendance Detail</a>';
+            })
             ->editColumn('teams', function ($item) {
                 $playerTeam = '';
                 if(count($item->teams) === 0){
