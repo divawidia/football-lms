@@ -26,7 +26,7 @@
                             <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
                             <small class="text-danger">*</small>
                             <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
-                                <option disabled selected>Select player's attendance status</option>
+                                <option value="null" disabled>Select player's attendance status</option>
                                 @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
                                     <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
                                 @endforeach
@@ -72,7 +72,7 @@
                             <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
                             <small class="text-danger">*</small>
                             <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
-                                <option disabled selected>Select Coach's attendance status</option>
+                                <option value="null" disabled>Select player's attendance status</option>
                                 @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
                                     <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
                                 @endforeach
@@ -338,67 +338,16 @@
         <div class="page-separator">
             <div class="page-separator__text">Player Attendance</div>
         </div>
-        <div class="row">
-            @foreach($data['dataSchedule']->players as $player)
-                <div class="col-md-6">
-                    <div class="card @if($player->pivot->attendanceStatus == 'Required Action') border-warning @elseif($player->pivot->attendanceStatus == 'Attended') border-success @else border-danger @endif" id="{{$player->id}}">
-                        <div class="card-body d-flex align-items-center flex-row text-left">
-                            <img src="{{ Storage::url($player->user->foto) }}"
-                                 width="50"
-                                 height="50"
-                                 class="rounded-circle img-object-fit-cover"
-                                 alt="instructor">
-                            <div class="flex ml-3">
-                                <h5 class="mb-0">{{ $player->user->firstName  }} {{ $player->user->lastName  }}</h5>
-                                <p class="text-50 lh-1 mb-0">{{ $player->position->name }}</p>
-                            </div>
-                            <a class="btn @if($player->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($player->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif playerAttendance" id="{{$player->id}}" href="">
-                                <span class="material-icons mr-2">
-                                    @if($player->pivot->attendanceStatus == 'Required Action') error
-                                    @elseif($player->pivot->attendanceStatus == 'Attended') check_circle
-                                    @else cancel
-                                    @endif
-                                </span>
-                                {{ $player->pivot->attendanceStatus }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
+        <div class=".player-attendance">
+            @include('pages.admins.academies.schedules.player-attendance-data')
         </div>
 
         {{--    Coach Attendance    --}}
         <div class="page-separator">
             <div class="page-separator__text">Coach Attendance</div>
         </div>
-        <div class="row">
-            @foreach($data['dataSchedule']->coaches as $coach)
-{{--                @dd($coach->pivot->attendanceStatus)--}}
-                <div class="col-md-6">
-                    <div class="card @if($coach->pivot->attendanceStatus == 'Required Action') border-warning @elseif($coach->pivot->attendanceStatus == 'Attended') border-success @else border-danger @endif" id="{{$coach->id}}">
-                        <div class="card-body d-flex align-items-center flex-row text-left">
-                            <img src="{{ Storage::url($coach->user->foto) }}"
-                                 width="50"
-                                 height="50"
-                                 class="rounded-circle img-object-fit-cover"
-                                 alt="instructor">
-                            <div class="flex ml-3">
-                                <h5 class="mb-0">{{ $coach->user->firstName }} {{ $coach->user->lastName }}</h5>
-                                <p class="text-50 lh-1 mb-0">{{ $coach->specializations->name }}</p>
-                            </div>
-                            <a class="btn @if($coach->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($coach->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif coachAttendance" id="{{$coach->id}}" href="{{ route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => $coach->id]) }}">
-                                        <span class="material-icons mr-2">
-                                            @if($coach->pivot->attendanceStatus == 'Required Action') error
-                                            @elseif($coach->pivot->attendanceStatus == 'Attended') check_circle
-                                            @else cancel
-                                            @endif
-                                        </span>
-                                {{ $coach->pivot->attendanceStatus }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
+        <div class=".coach-attendance">
+            @include('pages.admins.academies.schedules.coach-attendance-data')
         </div>
 
         {{--    Training Note    --}}
@@ -460,7 +409,9 @@
 
                         const heading = document.getElementById('playerName');
                         heading.textContent = 'Update Player '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
-                        if (res.data.playerAttendance.attendanceStatus !== 'Required Action'){
+                        if (res.data.playerAttendance.attendanceStatus === 'Required Action'){
+                            $('#editPlayerAttendanceModal #add_attendanceStatus').val('null');
+                        } else {
                             $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.playerAttendance.attendanceStatus);
                         }
                         $('#editPlayerAttendanceModal #add_note').val(res.data.playerAttendance.note);
@@ -488,7 +439,9 @@
 
                         const heading = document.getElementById('coachName');
                         heading.textContent = 'Update Coach '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
-                        if (res.data.coachAttendance.attendanceStatus !== 'Required Action'){
+                        if (res.data.coachAttendance.attendanceStatus === 'Required Action'){
+                            $('#editCoachAttendanceModal #add_attendanceStatus').val('null');
+                        } else {
                             $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
                         }
                         $('#editCoachAttendanceModal #add_note').val(res.data.coachAttendance.note);

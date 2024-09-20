@@ -107,15 +107,27 @@ class EventScheduleController extends Controller
      */
     public function showTraining(EventSchedule $schedule)
     {
+        $data = $this->eventScheduleService->show($schedule);
+        $players = $data['dataSchedule']->players()->paginate(6);
+        $coaches = $data['dataSchedule']->coaches;
+
         return view('pages.admins.academies.schedules.trainings.detail', [
-            'data' => $this->eventScheduleService->show($schedule),
+            'data' => $data,
+            'players' => $players,
+            'coaches' => $coaches
         ]);
     }
 
     public function showMatch(EventSchedule $schedule)
     {
+        $data = $this->eventScheduleService->show($schedule);
+        $players = $data['dataSchedule']->players()->paginate(6);
+        $coaches = $data['dataSchedule']->coaches;
+
         return view('pages.admins.academies.schedules.matches.detail', [
-            'data' => $this->eventScheduleService->show($schedule),
+            'data' => $data,
+            'players' => $players,
+            'coaches' => $coaches
         ]);
     }
 
