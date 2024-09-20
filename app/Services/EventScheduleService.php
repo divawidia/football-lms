@@ -294,11 +294,7 @@ class EventScheduleService extends Service
         $playerAttended = $schedule->players()
             ->where('attendanceStatus', 'Attended')
             ->get();
-        $playerDidntAttend = $schedule->players()
-            ->where('attendanceStatus', 'Illness')
-            ->orWhere('attendanceStatus', 'Injured')
-            ->orWhere('attendanceStatus', 'Other')
-            ->get();
+
         $playerIllness = $schedule->players()
             ->where('attendanceStatus', 'Illness')
             ->get();
@@ -308,14 +304,12 @@ class EventScheduleService extends Service
         $playerOther = $schedule->players()
             ->where('attendanceStatus', 'Other')
             ->get();
+        $playerDidntAttend = count($playerIllness) + count($playerInjured) + count($playerOther);
+
         $coachAttended = $schedule->coaches()
             ->where('attendanceStatus', 'Attended')
             ->get();
-        $coachDidntAttend = $schedule->coaches()
-            ->where('attendanceStatus', 'Illness')
-            ->orWhere('attendanceStatus', 'Injured')
-            ->orWhere('attendanceStatus', 'Other')
-            ->get();
+
         $coachIllness = $schedule->coaches()
             ->where('attendanceStatus', 'Illness')
             ->get();
@@ -325,9 +319,10 @@ class EventScheduleService extends Service
         $coachOther = $schedule->coaches()
             ->where('attendanceStatus', 'Other')
             ->get();
+        $coachDidntAttend = count($coachIllness) + count($coachInjured) + count($coachOther);
 
         $totalAttend = count($playerAttended) + count($coachAttended);
-        $totalDidntAttend = count($playerDidntAttend) + count($coachDidntAttend);
+        $totalDidntAttend = $playerDidntAttend + $coachDidntAttend;
         $totalIllness = count($playerIllness) + count($coachIllness);
         $totalInjured = count($playerInjured) + count($coachInjured);
         $totalOthers = count($playerOther) + count($coachOther);

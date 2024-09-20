@@ -57,7 +57,7 @@ class AttendanceReportService extends Service
                 $totalAttended = count($attended);
                 $totalEvent = count($item->schedules);
                 if ($totalEvent == 0){
-                    return 'NO event yet';
+                    return 'No event yet';
                 }else{
                     $percentage = $totalAttended/count($item->schedules)*100;
                     return $totalAttended . ' ('.round($percentage, 1).'%)';

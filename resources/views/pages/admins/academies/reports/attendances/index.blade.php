@@ -94,7 +94,7 @@
                                 <h5 class="mb-0">{{ $mostDidntAttend->user->firstName }} {{ $mostDidntAttend->user->lastName }}</h5>
                                 <p class="text-50 lh-1 mb-0">{{ $mostDidntAttend->position->name }}</p>
                             </div>
-                            <div class="h2 mb-0 mr-3">{{ $mostDidntAttend->attended_count }}</div>
+                            <div class="h2 mb-0 mr-3">{{ $mostDidntAttend->didnt_attended_count }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title">Event Absent</div>
                                 <p class="card-subtitle text-50">
