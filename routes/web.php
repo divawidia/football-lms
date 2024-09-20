@@ -240,7 +240,12 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
     Route::prefix('attendance-reports')->group(function () {
         Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
-        Route::get('{player}', [AttendanceReportController::class, 'show'])->name('attendance-report.show');
+
+        Route::prefix('{player}')->group(function () {
+            Route::get('', [AttendanceReportController::class, 'show'])->name('attendance-report.show');
+            Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('attendance-report.trainingTable');
+            Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('attendance-report.matchDatatable');
+        });
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
