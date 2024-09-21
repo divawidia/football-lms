@@ -37,7 +37,7 @@
                             <h4 class="card-title">Player Attendance</h4>
                         </div>
                         <div class="card-body">
-                            <div id='calendar'></div>
+                                    <canvas id="areaChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -166,6 +166,29 @@
                         width: '15%'
                     },
                 ]
+            });
+
+            const ctx = document.getElementById('areaChart');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @json($lineChart['label']),
+                    datasets: [{
+                        label: 'Attended Player',
+                        data: @json($lineChart['attended']),
+                        borderColor: '#20F4CB',
+                        tension: 0.4,
+                    }, {
+                        label: 'Didnt Attend Player',
+                        data: @json($lineChart['didntAttend']),
+                        borderColor: '#E52534',
+                        tension: 0.4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                },
             });
         });
     </script>

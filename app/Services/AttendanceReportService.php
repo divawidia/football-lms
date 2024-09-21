@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Coach;
 use App\Models\Player;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -129,7 +130,42 @@ class AttendanceReportService extends Service
         $mostDidntAttendPercentage = $mostDidntAttend->didnt_attended_count / count($mostDidntAttend->schedules) * 100;
         $mostDidntAttendPercentage = round($mostDidntAttendPercentage, 1);
 
-        return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage');
+        $lineChart = $this->attendanceLineChart();
+
+        return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage', 'lineChart');
+    }
+
+    public function attendanceLineChart(){
+        $attendedData = DB::table('event_schedules as es')
+            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
+            ->join('players as p', 'pa.playerId', '=', 'p.id')
+            ->select(DB::raw('weekday(es.date) as day'), DB::raw('COUNT(pa.playerId) as total_attended_players'))
+            ->where('pa.attendanceStatus', '=', 'Attended')
+            ->groupBy(DB::raw('weekday(es.date)'))
+            ->orderBy('day')
+            ->get();
+        $didntAttendData = DB::table('event_schedules as es')
+            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
+            ->join('players as p', 'pa.playerId', '=', 'p.id')
+            ->select(DB::raw('weekday(es.date) as day'), DB::raw('COUNT(pa.playerId) as total_didnt_attend_players'))
+            ->where(DB::raw("pa.attendanceStatus = 'Illness' OR pa.attendanceStatus = 'Injured' OR pa.attendanceStatus = 'Other'"))
+            ->groupBy(DB::raw('weekday(es.date)'))
+            ->orderBy('day')
+            ->get();
+
+        $label = [];
+        $attended = [];
+        $didntAttend = [];
+        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        foreach ($attendedData as $result){
+            $label[] = $days[$result->day];
+            $attended[] = $result->total_attended_players;
+        }
+        foreach ($didntAttendData as $result){
+            $didntAttend[] = $result->total_didnt_attend_players;
+        }
+
+        return compact('label', 'attended', 'didntAttend');
     }
 
     public function show(Player $player){
@@ -146,6 +182,7 @@ class AttendanceReportService extends Service
         $playerOther = $player->schedules()
             ->where('attendanceStatus', 'Other')
             ->get();
+
 
         $totalAttended = count($playerAttended);
         $totalIllness = count($playerIllness);

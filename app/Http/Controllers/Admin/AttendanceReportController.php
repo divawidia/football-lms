@@ -20,17 +20,18 @@ class AttendanceReportController extends Controller
             return $this->attendanceReportService->attendanceDatatables();
         }
         $data = $this->attendanceReportService->index();
+
         return view('pages.admins.academies.reports.attendances.index', [
             'mostDidntAttend' => $data['mostDidntAttend'],
             'mostAttended' => $data['mostAttended'],
             'mostAttendedPercentage' => $data['mostAttendedPercentage'],
             'mostDidntAttendPercentage' => $data['mostDidntAttendPercentage'],
+            'lineChart' => $data['lineChart']
         ]);
     }
 
     public function show(Player $player){
         $data = $this->attendanceReportService->show($player);
-
         return view('pages.admins.academies.reports.attendances.player-detail', [
             'totalAttended' => $data['totalAttended'],
             'totalIllness' => $data['totalIllness'],
