@@ -26,7 +26,8 @@ class AttendanceReportController extends Controller
             'mostAttended' => $data['mostAttended'],
             'mostAttendedPercentage' => $data['mostAttendedPercentage'],
             'mostDidntAttendPercentage' => $data['mostDidntAttendPercentage'],
-            'lineChart' => $data['lineChart']
+            'lineChart' => $data['lineChart'],
+            'doughnutChart' => $data['doughnutChart'],
         ]);
     }
 

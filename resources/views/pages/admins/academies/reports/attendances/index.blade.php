@@ -31,23 +31,23 @@
             </div>
 
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-8">
                     <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                         <div class="card-header">
                             <h4 class="card-title">Player Attendance</h4>
                         </div>
                         <div class="card-body">
-                                    <canvas id="areaChart"></canvas>
+                            <canvas id="areaChart"></canvas>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                     <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                         <div class="card-header">
                             <h4 class="card-title">Player Attendance</h4>
                         </div>
                         <div class="card-body">
-                            <div id='calendar'></div>
+                            <canvas id="doughnutChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -168,9 +168,10 @@
                 ]
             });
 
-            const ctx = document.getElementById('areaChart');
+            const lineChart = document.getElementById('areaChart');
+            const doughnutChart = document.getElementById('doughnutChart');
 
-            new Chart(ctx, {
+            new Chart(lineChart, {
                 type: 'line',
                 data: {
                     labels: @json($lineChart['label']),
@@ -184,6 +185,20 @@
                         data: @json($lineChart['didntAttend']),
                         borderColor: '#E52534',
                         tension: 0.4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                },
+            });
+            new Chart(doughnutChart, {
+                type: 'doughnut',
+                data: {
+                    labels: @json($doughnutChart['label']),
+                    datasets: [{
+                        label: '# of Player',
+                        data: @json($doughnutChart['data']),
+                        backgroundColor: ['#20F4CB', '#E52534', '#F9B300', '#00122A']
                     }]
                 },
                 options: {

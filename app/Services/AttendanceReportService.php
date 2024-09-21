@@ -131,8 +131,9 @@ class AttendanceReportService extends Service
         $mostDidntAttendPercentage = round($mostDidntAttendPercentage, 1);
 
         $lineChart = $this->attendanceLineChart();
+        $doughnutChart = $this->attendanceDoughnutChart();
 
-        return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage', 'lineChart');
+        return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage', 'lineChart', 'doughnutChart');
     }
 
     public function attendanceLineChart(){
@@ -166,6 +167,23 @@ class AttendanceReportService extends Service
         }
 
         return compact('label', 'attended', 'didntAttend');
+    }
+
+    public function attendanceDoughnutChart(){
+        $results = DB::table('player_attendance as pa')
+            ->select('pa.attendanceStatus as status', DB::raw('COUNT(pa.playerId) AS total_players'))
+            ->where('pa.attendanceStatus', '!=', 'Required Action')
+            ->groupBy('pa.attendanceStatus')
+            ->get();
+
+        $label = [];
+        $data = [];
+        foreach ($results as $result){
+            $label[] = $result->status;
+            $data[] = $result->total_players;
+        }
+
+        return compact('label', 'data');
     }
 
     public function show(Player $player){
