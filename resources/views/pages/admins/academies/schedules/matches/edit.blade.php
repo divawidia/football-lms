@@ -1,29 +1,24 @@
 @extends('layouts.master')
 @section('title')
-    Edit Match {{ $data->eventName }} Schedule
+    Edit Match {{ $data->teams[0]->teamName }} Vs. {{ $data->teams[1]->teamName }} Schedule
 @endsection
 @section('page-title')
     @yield('title')
 @endsection
 
     @section('content')
-        <div class="pt-32pt">
-            <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-                <div class="flex d-flex flex-column flex-sm-row align-items-center">
-                    <div class="mb-24pt mb-sm-0 mr-sm-24pt text-sm-start">
-                        <h2 class="mb-0">
-                            @yield('title')
-                        </h2>
-                        <ol class="breadcrumb p-0 m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('match-schedules.index') }}">Match Schedule</a></li>
-                            <li class="breadcrumb-item active">
-                                @yield('title')
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
+        <div class="container page__container d-flex flex-column pt-32pt">
+            <h2 class="mb-0">
+                @yield('title')
+            </h2>
+            <ol class="breadcrumb p-0 m-0">
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('match-schedules.index') }}">Match Schedule</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('match-schedules.show', $data->id) }}">Match {{ $data->teams[0]->teamName }} Vs. {{ $data->teams[1]->teamName }}</a></li>
+                <li class="breadcrumb-item active">
+                    Edit
+                </li>
+            </ol>
         </div>
 
         <div class="container page__container page-section">
@@ -68,7 +63,7 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <select class="form-control form-select @error('competitionId') is-invalid @enderror" id="competitionId" name="competitionId" data-toggle="select">
+                                            <select class="form-control form-select @error('competitionId') is-invalid @enderror" id="competitionId" name="competitionId">
                                                 <option disabled selected>Select match competition</option>
                                                 @foreach($competitions AS $competition)
                                                     <option value="{{ $competition->id }}" @selected(old('competitionId', $data->competitionId) == $competition->id) data-avatar-src="{{ Storage::url($competition->logo) }}">{{ $competition->name }}</option>
@@ -164,7 +159,7 @@
                                                        data-flatpickr-enable-time="true"
                                                        data-flatpickr-no-calendar="true"
                                                        data-flatpickr-alt-format="H:i"
-                                                       data-flatpickr-date-format="H:i">>
+                                                       data-flatpickr-date-format="H:i">
                                                 @error('endTime')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -193,7 +188,7 @@
                         </div>
                     </div>
                     <div class="list-group-item d-flex justify-content-end">
-                        <a class="btn btn-secondary mx-2" href="{{ route('competition-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
                         <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                     </div>
                 </form>
@@ -268,7 +263,8 @@
                 const type = this.value;
                 if (type === 'Competition'){
                     $('.competition-section').show();
-                }else {
+                    getCompetitionTeam(teamId, opponentTeamId, {{ $data->competitionId }});
+                }else if (type === 'Friendly Match'){
                     $('.competition-section').hide();
                     getFriendlyMatchTeam(teamId, opponentTeamId);
                 }
