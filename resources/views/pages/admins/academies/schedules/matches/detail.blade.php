@@ -865,10 +865,20 @@
 
 @section('content')
     <div class="page-section bg-primary">
+{{--        <div class="container page__container page-section py-2">--}}
+{{--            <ol class="breadcrumb p-0 m-0">--}}
+{{--                <li class="breadcrumb-item text-white"><a href="{{ route('admin.dashboard') }}">Home</a></li>--}}
+{{--                <li class="breadcrumb-item text-white"><a href="{{ route('match-schedules.index') }}">Match</a></li>--}}
+{{--                <li class="breadcrumb-item text-white active">--}}
+{{--                    @yield('title')--}}
+{{--                </li>--}}
+{{--            </ol>--}}
+{{--        </div>--}}
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
-            <div class="flex">
+            <div class="flex mb-3 mb-md-0">
                 <h2 class="text-white mb-0">Match {{ $data['dataSchedule']->teams[0]->teamName }} Vs {{ $data['dataSchedule']->teams[1]->teamName }}</h2>
-                <p class="lead text-white-50 d-flex align-items-center">{{ $data['dataSchedule']->eventType }} ~ {{ $data['dataSchedule']->matchType }}
+                <p class="lead text-white-50">
+                    {{ $data['dataSchedule']->eventType }} ~ {{ $data['dataSchedule']->matchType }}
                     @if($data['dataSchedule']->competition)
                         ~ {{$data['dataSchedule']->competition->name}}
                     @endif
@@ -953,14 +963,14 @@
         {{--    Team Match Score    --}}
         <div class="card px-lg-5">
             <div class="card-body">
-                <div class="row row d-flex align-items-center">
-                    <div class="col-4 d-flex">
+                <div class="row d-flex">
+                    <div class="col-4 d-flex flex-column flex-md-row align-items-center">
                         <img src="{{ Storage::url($data['dataSchedule']->teams[0]->logo) }}"
                              width="50"
                              height="50"
                              class="rounded-circle img-object-fit-cover"
                              alt="instructor">
-                        <div class="flex ml-3">
+                        <div class="ml-md-3 text-center text-md-left">
                             <h5 class="mb-0">{{ $data['dataSchedule']->teams[0]->teamName }}</h5>
                             <p class="text-50 lh-1 mb-0">{{ $data['dataSchedule']->teams[0]->ageGroup }}</p>
                         </div>
@@ -968,10 +978,10 @@
                     <div class="col-4 text-center">
                         <h2 class="mb-0">{{ $data['dataSchedule']->teams[0]->pivot->teamScore }} - {{ $data['dataSchedule']->teams[1]->pivot->teamScore }}</h2>
                     </div>
-                    <div class="col-4 d-flex justify-content-end">
-                        <div class="mr-3">
+                    <div class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
+                        <div class="mr-md-3 text-center text-md-right">
                             <h5 class="mb-0">{{ $data['dataSchedule']->teams[1]->teamName }}</h5>
-                            <p class="text-50 lh-1 mb-0 text-right">{{ $data['dataSchedule']->teams[1]->ageGroup }}</p>
+                            <p class="text-50 lh-1 mb-0">{{ $data['dataSchedule']->teams[1]->ageGroup }}</p>
                         </div>
                         <img src="{{ Storage::url($data['dataSchedule']->teams[1]->logo) }}"
                              width="50"
