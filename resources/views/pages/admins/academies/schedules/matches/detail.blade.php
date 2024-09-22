@@ -305,20 +305,6 @@
                         <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="teamAOwnGoal">Own Goal</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamAOwnGoal"
-                                           name="teamAOwnGoal"
-                                           min="0"
-                                           value="{{ old('teamAOwnGoal', $data['dataSchedule']->teams[0]->pivot->teamOwnGoal) }}"
-                                           placeholder="Input team own goal">
-                                    <span class="invalid-feedback teamAOwnGoal_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
                                     <label class="form-label" for="teamAPossession">Possession</label>
                                     <small class="text-danger">*</small>
                                     <input type="number"
