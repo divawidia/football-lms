@@ -9,17 +9,17 @@
     @section('content')
         <div class="pt-32pt">
             <div class="container page__container d-flex flex-column">
-                        <h2 class="mb-2">
-                            @yield('title')
-                        </h2>
-                        <ol class="breadcrumb p-0 m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('competition-managements.index') }}">Competitions</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('competition-managements.show', $competition->id) }}">{{ $competition->name }}</a></li>
-                            <li class="breadcrumb-item active">
-                                Edit
-                            </li>
-                        </ol>
+                <h2 class="mb-2">
+                    @yield('title')
+                </h2>
+                <ol class="breadcrumb p-0 m-0">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('competition-managements.index') }}">Competitions</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('competition-managements.show', $competition->id) }}">{{ $competition->name }}</a></li>
+                    <li class="breadcrumb-item active">
+                        Edit
+                    </li>
+                </ol>
             </div>
         </div>
 
