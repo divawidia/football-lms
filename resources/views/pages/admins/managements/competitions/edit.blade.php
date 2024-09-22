@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Edit Competition {{ $competition->name }}
+    Edit {{ $competition->name }}
 @endsection
 @section('page-title')
     @yield('title')
@@ -8,22 +8,18 @@
 
     @section('content')
         <div class="pt-32pt">
-            <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-                <div class="flex d-flex flex-column flex-sm-row align-items-center mb-24pt mb-md-0">
-                    <div class="mb-24pt mb-sm-0 mr-sm-24pt">
-                        <h2 class="mb-0">
+            <div class="container page__container d-flex flex-column">
+                        <h2 class="mb-2">
                             @yield('title')
                         </h2>
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('competition-managements.index') }}">Competition Management</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('competition-managements.show', $competition->id) }}">{{ $competition->teamName }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('competition-managements.index') }}">Competitions</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('competition-managements.show', $competition->id) }}">{{ $competition->name }}</a></li>
                             <li class="breadcrumb-item active">
-                                @yield('title')
+                                Edit
                             </li>
                         </ol>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -32,10 +28,6 @@
                 <form action="{{ route('competition-managements.update', ['competition' => $competition]) }}" method="post" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
-                    <div class="list-group-item d-flex justify-content-end">
-                        <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
-                        <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">save</span> Save</button>
-                    </div>
                     <div class="list-group-item">
                         <div role="group" aria-labelledby="label-question" class="m-0 form-group">
                             <div class="page-separator">
@@ -194,6 +186,10 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-end">
+                        <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">save</span> Save</button>
                     </div>
                 </form>
             </div>
