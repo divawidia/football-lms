@@ -14,16 +14,16 @@
                  height="104"
                  class="mr-md-32pt mb-32pt mb-md-0 rounded-circle img-object-fit-cover"
                  alt="instructor">
-            <div class="flex mb-32pt mb-md-0">
+            <div class="flex mb-32pt mb-md-0 ml-md-4">
                 <h2 class="text-white mb-0">{{ $team->teamName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">{{ $team->ageGroup }}</p>
             </div>
             <div class="dropdown">
                 <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Action
-                            <span class="material-icons ml-3">
-                                keyboard_arrow_down
-                            </span>
+                    <span class="material-icons ml-3">
+                        keyboard_arrow_down
+                    </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('team-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>

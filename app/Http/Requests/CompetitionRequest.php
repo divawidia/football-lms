@@ -27,7 +27,7 @@ class CompetitionRequest extends FormRequest
             'name' => ['required', 'string'],
             'type' => ['required', Rule::in('League', 'Tournament')],
             'logo' => ['nullable', 'image', 'max:1024'],
-            'startDate' => ['required', 'date', 'after_or_equal:today'],
+            'startDate' => ['required', 'date'],
             'endDate' => ['required', 'date', 'after:startDate'],
             'location' => ['required', 'string'],
             'contactName' => ['nullable', 'string'],

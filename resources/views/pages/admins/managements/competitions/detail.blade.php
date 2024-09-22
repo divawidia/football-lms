@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Competition {{ $competition->teamName  }}
+    {{ $competition->name  }}
 @endsection
 @section('page-title')
     @yield('title')
@@ -52,11 +52,11 @@
             <img src="{{ Storage::url($competition->logo) }}"
                  width="104"
                  height="104"
-                 class="mr-md-32pt mb-32pt mb-md-0 rounded-circle img-object-fit-cover"
+                 class="mr-md-32pt rounded-circle img-object-fit-cover"
                  alt="instructor">
-            <div class="flex mb-32pt mb-md-0 ml-3">
+            <div class="flex ml-md-4 mb-3 mb-md-0">
                 <h2 class="text-white mb-0">{{ $competition->name  }}</h2>
-                <p class="lead text-white-50 d-flex align-items-center">{{ $competition->type }}</p>
+                <p class="lead text-white-50">{{ $competition->type }}</p>
             </div>
             <div class="dropdown">
                 <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -92,12 +92,22 @@
         </div>
     </div>
 
-    <div class="container page__container page-section">
+    <div class="container page__container page-section py-4">
+        <ol class="breadcrumb p-0 m-0">
+            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('competition-managements.index') }}">Competitions</a></li>
+            <li class="breadcrumb-item active">
+                @yield('title')
+            </li>
+        </ol>
+    </div>
+
+    <div class="container page__container page-section pt-0">
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
         </div>
-        <div class="row card-group-row mb-4">
-            <div class="col-lg-4 card-group-row__col flex-column">
+        <div class="row card-group-row mb-md-3">
+            <div class="col-md-4 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -109,7 +119,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-md-4 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -121,13 +131,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-md-4 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
                             <div class="h2 mb-0 mr-3">2</div>
                             <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">Toal Groups</div>
+                                <div class="card-title text-capitalize">Total Groups</div>
                             </div>
                         </div>
                     </div>
@@ -135,7 +145,7 @@
             </div>
         </div>
         <div class="row card-group-row mb-4">
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-md-4 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -152,7 +162,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-md-4 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
@@ -169,7 +179,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
+            <div class="col-md-4 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">

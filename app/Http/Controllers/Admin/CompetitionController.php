@@ -93,7 +93,7 @@ class CompetitionController extends Controller
             'name' => ['required', 'string'],
             'type' => ['required', Rule::in('League', 'Tournament')],
             'logo' => ['nullable', 'image', 'max:10240'],
-            'startDate' => ['required', 'date', 'after_or_equal:today'],
+            'startDate' => ['required', 'date'],
             'endDate' => ['required', 'date', 'after:startDate'],
             'location' => ['required', 'string'],
             'contactName' => ['nullable', 'string'],
