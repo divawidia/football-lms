@@ -9,21 +9,17 @@
 
 @section('content')
     <div class="pt-32pt">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-            <div class="flex d-flex flex-column flex-sm-row align-items-center">
-                <div class="mb-24pt mb-sm-0 mr-sm-24pt text-sm-start">
-                    <h2 class="mb-0">
-                        @yield('title')
-                    </h2>
-                    <ol class="breadcrumb p-0 m-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('match-schedules.index') }}">Match Schedule</a></li>
-                        <li class="breadcrumb-item active">
-                            @yield('title')
-                        </li>
-                    </ol>
-                </div>
-            </div>
+        <div class="container page__container d-flex flex-column">
+            <h2 class="mb-0">
+                @yield('title')
+            </h2>
+            <ol class="breadcrumb p-0 m-0">
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('match-schedules.index') }}">Match Schedule</a></li>
+                <li class="breadcrumb-item active">
+                    Create
+                </li>
+            </ol>
         </div>
     </div>
 
@@ -68,12 +64,12 @@
                                             </div>
                                         </div>
                                     @else
-                                    <select class="form-control form-select @error('competitionId') is-invalid @enderror" id="competitionId" name="competitionId" data-toggle="select">
-                                        <option disabled selected>Select match competition</option>
-                                        @foreach($competitions AS $competition)
-                                            <option value="{{ $competition->id }}" @selected(old('competitionId') == $competition->id) data-avatar-src="{{ Storage::url($competition->logo) }}">{{ $competition->name }}</option>
-                                        @endforeach
-                                    </select>
+                                        <select class="form-control form-select @error('competitionId') is-invalid @enderror" id="competitionId" name="competitionId">
+                                            <option value="null" disabled selected>Select match competition</option>
+                                            @foreach($competitions AS $competition)
+                                                <option value="{{ $competition->id }}" data-avatar-src="{{ Storage::url($competition->logo) }}">{{ $competition->name }}</option>
+                                            @endforeach
+                                        </select>
                                     @endif
                                     @error('competitionId')
                                         <span class="invalid-feedback" role="alert">
@@ -210,9 +206,14 @@
                 const type = this.value;
 
                 if (type === 'Competition'){
+                    $('#competitionId').val("null");
+                    // $('#competitionId option[value="null"]').attr('selected', 'selected');
+                    $('#teamId').html('');
+                    $('#opponentTeamId').html('');
                     $('.competition-section').show();
-                }else {
+                }else if (type === 'Friendly Match') {
                     $('.competition-section').hide();
+                    $('#competitionId').val("null");
                     $.ajax({
                         url: "{{route('match-schedules.get-friendlymatch-team')}}",
                         type: 'GET',

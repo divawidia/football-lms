@@ -26,7 +26,7 @@ class MatchScheduleRequest extends FormRequest
             'matchType' => ['required', Rule::in('Friendly Match', 'Competition')],
             'competitionId' => ['nullable', Rule::exists('competitions', 'id')],
             'place' => ['required', 'string'],
-            'date' => ['required', 'date', 'after_or_equal:today'],
+            'date' => ['required', 'date'],
             'startTime' => ['required', 'date_format:H:i'],
             'endTime' => ['required', 'date_format:H:i', 'after:startTime'],
             'teamId' => ['required', Rule::exists('teams', 'id')],
