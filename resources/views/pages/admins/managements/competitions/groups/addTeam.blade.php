@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Add Team to {{ $group->groupName }}
+    Add Team to Group {{ $group->groupName }}
 @endsection
 @section('page-title')
     @yield('title')
@@ -252,22 +252,18 @@
 
     @section('content')
         <div class="pt-32pt">
-            <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-                <div class="flex d-flex flex-column flex-sm-row align-items-center">
-                    <div class="mb-24pt mb-sm-0 mr-sm-24pt">
-                        <h2 class="mb-0">
-                            @yield('title')
-                        </h2>
-                        <ol class="breadcrumb p-0 m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('competition-managements.index') }}">Competitions</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('competition-managements.show', $competition->id) }}">{{$competition->name}}</a></li>
-                            <li class="breadcrumb-item active">
-                                @yield('title')
-                            </li>
-                        </ol>
-                    </div>
-                </div>
+            <div class="container page__container d-flex flex-column">
+                <h2 class="mb-0">
+                    @yield('title')
+                </h2>
+                <ol class="breadcrumb p-0 m-0">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('competition-managements.index') }}">Competitions</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('competition-managements.show', $competition->id) }}">{{$competition->name}}</a></li>
+                    <li class="breadcrumb-item active">
+                        @yield('title')
+                    </li>
+                </ol>
             </div>
         </div>
 
