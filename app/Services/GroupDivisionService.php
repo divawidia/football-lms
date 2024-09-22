@@ -17,6 +17,13 @@ class GroupDivisionService extends Service
         $query = GroupDivision::with('teams')->find($groupDivision->id);
         return Datatables::of($query->teams)
             ->addColumn('action', function ($item) use ($competition) {
+                if ($item->teamSide == 'Opponent Team'){
+                    $dropdownTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
+                                    <a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>';
+                }else{
+                    $dropdownTeam = '<a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
+                                    <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>';
+                }
                 return '
                             <div class="dropdown">
                               <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -25,8 +32,7 @@ class GroupDivisionService extends Service
                                 </span>
                               </button>
                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
-                                <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
+                                '.$dropdownTeam.'
                                 <form action="'.route('division-managements.removeTeam', ['competition' => $competition->id,'group'=>$item->pivot->divisionId, 'team'=>$item->id]).'" method="POST">
                                     '.method_field("PUT").'
                                     '.csrf_field().'
