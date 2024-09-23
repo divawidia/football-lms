@@ -139,7 +139,7 @@ class EventScheduleService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('deactivate-match', $item->id) . '" method="POST">
+                    $statusButton = '<form action="' . route('end-match', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">

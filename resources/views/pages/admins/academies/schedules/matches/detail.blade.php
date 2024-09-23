@@ -880,7 +880,7 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}"><span class="material-icons">edit</span> Edit Match Schedule</a>
                     @if($data['dataSchedule']->status == '1')
-                        <form action="{{ route('deactivate-match', $data['dataSchedule']->id) }}" method="POST">
+                        <form action="{{ route('end-match', $data['dataSchedule']->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">

@@ -200,11 +200,11 @@ class EventScheduleController extends Controller
         return redirect()->route('match-schedules.show', $schedule->id);
     }
 
-    public function deactivateMatch(EventSchedule $schedule)
+    public function endMatch(EventSchedule $schedule)
     {
-        $this->eventScheduleService->deactivate($schedule);
+        $this->eventScheduleService->endMatch($schedule);
 
-        $text = 'Match status successfully updated!';
+        $text = 'Match status successfully ended!';
         Alert::success($text);
         return redirect()->route('match-schedules.show', $schedule->id);
     }
