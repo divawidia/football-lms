@@ -395,6 +395,22 @@ class EventScheduleService extends Service
         return $schedule->update(['status' => '0']);
     }
 
+    public function endMatch(EventSchedule $schedule)
+    {
+        if ($schedule->teams[0]->teamScore > $schedule->teams[1]->teamScore){
+            $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Win']);
+            $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Lose']);
+        } elseif ($schedule->teams[0]->teamScore < $schedule->teams[1]->teamScore){
+            $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Win']);
+            $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Lose']);
+        }elseif ($schedule->teams[0]->teamScore == $schedule->teams[1]->teamScore){
+            $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Draw']);
+            $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Draw']);
+        }
+        return $schedule->update(['status' => '0']);
+    }
+
+
     public function getPlayerAttendance(EventSchedule $schedule, Player $player)
     {
         return $schedule->players()->find($player->id);
