@@ -18,7 +18,10 @@ class EventScheduleService extends Service
 {
     public function indexMatch(): Collection
     {
-        return EventSchedule::with('teams', 'competition')->where('eventType', 'Match')->get();
+        return EventSchedule::with('teams', 'competition')
+            ->where('eventType', 'Match')
+            ->where('status', '1')
+            ->get();
     }
     public function indexTraining(): Collection
     {
@@ -71,7 +74,7 @@ class EventScheduleService extends Service
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">block</span> Deactivate Schedule
+                                                    <span class="material-icons">block</span> End Training
                                                 </button>
                                             </form>';
                 } else {
@@ -79,7 +82,7 @@ class EventScheduleService extends Service
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">check_circle</span> Activate Schedule
+                                                    <span class="material-icons">check_circle</span> Start Training
                                                 </button>
                                             </form>';
                 }
@@ -143,7 +146,7 @@ class EventScheduleService extends Service
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">block</span> Deactivate Schedule
+                                                    <span class="material-icons">block</span> End Match
                                                 </button>
                                             </form>';
                 } else {
@@ -151,7 +154,7 @@ class EventScheduleService extends Service
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">check_circle</span> Activate Schedule
+                                                    <span class="material-icons">check_circle</span> Start Match
                                                 </button>
                                             </form>';
                 }

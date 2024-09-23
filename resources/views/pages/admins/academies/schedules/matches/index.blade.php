@@ -82,7 +82,8 @@
                             searchable: false,
                             width: '15%'
                         },
-                    ]
+                    ],
+                    order: [[2, 'asc']]
                 });
 
                 $('body').on('click', '.delete', function() {
