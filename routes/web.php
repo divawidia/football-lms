@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventScheduleController;
 use App\Http\Controllers\Admin\GroupDivisionController;
 use App\Http\Controllers\Admin\OpponentTeamController;
+use App\Http\Controllers\Admin\PerformanceReportController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\TeamController;
@@ -246,6 +247,10 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('attendance-report.trainingTable');
             Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('attendance-report.matchDatatable');
         });
+    });
+
+    Route::prefix('performance-reports')->group(function () {
+        Route::get('', [PerformanceReportController::class, 'index'])->name('performance-report.index');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
