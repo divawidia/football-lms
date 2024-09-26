@@ -46,6 +46,10 @@ class EventSchedule extends Model
                 'teamPasses',
             )->withTimestamps();
     }
+    public function matches(){
+        return $this->hasMany(TeamMatch::class, 'eventId');
+    }
+
     public function teamWin()
     {
         return $this->belongsTo(Team::class, 'teamWinner');

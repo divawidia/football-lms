@@ -45,6 +45,10 @@ class Team extends Model
             )->withTimestamps();
     }
 
+    public function matches(){
+        return $this->hasMany(TeamMatch::class, 'teamId');
+    }
+
     public function winMatches(){
         return $this->hasMany(EventSchedule::class, 'teamWinner');
     }
