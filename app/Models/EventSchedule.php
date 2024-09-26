@@ -21,8 +21,6 @@ class EventSchedule extends Model
         'place',
         'note',
         'status',
-        'teamWinner',
-        'isDraw'
     ];
 
     public function teams()
@@ -50,10 +48,6 @@ class EventSchedule extends Model
         return $this->hasMany(TeamMatch::class, 'eventId');
     }
 
-    public function teamWin()
-    {
-        return $this->belongsTo(Team::class, 'teamWinner');
-    }
     public function user()
     {
         return $this->belongsTo(User::class, 'userId');
