@@ -18,8 +18,10 @@ class PerformanceReportController extends Controller
         if (\request()->ajax()){
             return $this->performanceReportService->matchHistory();
         }
-//        $data = $this->attendanceReportService->index();
+        $latestMatches = $this->performanceReportService->latestMatch();
 
-        return view('pages.admins.academies.reports.performance.index');
+        return view('pages.admins.academies.reports.performance.index', [
+            'latestMatches' => $latestMatches
+        ]);
     }
 }

@@ -8,6 +8,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PerformanceReportService extends Service
 {
+    public function latestMatch(){
+        return EventSchedule::with('teams', 'competition')
+            ->where('eventType', 'Match')
+            ->where('status', '0')
+            ->orderBy('date', 'desc')
+            ->take(2)
+            ->get();
+    }
     public function matchHistory(){
         $data = EventSchedule::with('teams', 'competition')
             ->where('eventType', 'Match')
