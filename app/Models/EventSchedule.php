@@ -20,7 +20,9 @@ class EventSchedule extends Model
         'endTime',
         'place',
         'note',
-        'status'
+        'status',
+        'teamWinner',
+        'isDraw'
     ];
 
     public function teams()
@@ -43,6 +45,10 @@ class EventSchedule extends Model
                 'resultStatus',
                 'teamPasses',
             )->withTimestamps();
+    }
+    public function teamWin()
+    {
+        return $this->belongsTo(Team::class, 'teamWinner');
     }
     public function user()
     {
