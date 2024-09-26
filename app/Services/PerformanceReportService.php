@@ -11,7 +11,7 @@ class PerformanceReportService extends Service
     public function matchHistory(){
         $data = EventSchedule::with('teams', 'competition')
             ->where('eventType', 'Match')
-            ->where('status', '1')
+            ->where('status', '0')
             ->get();
 
         return Datatables::of($data)
@@ -32,7 +32,7 @@ class PerformanceReportService extends Service
                           </div>
                         </div>';
             })
-            ->editColumn('teams', function ($item) {
+            ->editColumn('team', function ($item) {
                 return '
                         <div class="media flex-nowrap align-items-center"
                                  style="white-space: nowrap;">
@@ -67,7 +67,7 @@ class PerformanceReportService extends Service
                             </div>';
             })
             ->editColumn('score', function ($item){
-                return '<h2 class="mb-0">' . $item->teams[0]->pivot->teamScore . ' - ' . $item->teams[1]->pivot->teamScore . '</h2>';
+                return '<p class="mb-0"><strong class="js-lists-values-lead">' .$item->teams[0]->pivot->teamScore . ' - ' . $item->teams[1]->pivot->teamScore.'</strong></p>';
             })
             ->editColumn('competition', function ($item) {
                 if ($item->competition){

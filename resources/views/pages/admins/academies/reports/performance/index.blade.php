@@ -262,10 +262,12 @@
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="playerStatTable">
+                        <table class="table table-hover mb-0" id="matchHistoryTable">
                             <thead>
                             <tr>
                                 <th>Teams</th>
+                                <th>Opponent Teams</th>
+                                <th>Score</th>
                                 <th>Match Date</th>
                                 <th>Location</th>
                                 <th>Competition</th>
@@ -316,33 +318,29 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            {{--const datatable = $('#table').DataTable({--}}
-            {{--    processing: true,--}}
-            {{--    serverSide: true,--}}
-            {{--    ordering: true,--}}
-            {{--    ajax: {--}}
-            {{--        url: '{!! url()->current() !!}',--}}
-            {{--    },--}}
-            {{--    columns: [--}}
-            {{--        { data: 'name', name: 'name' },--}}
-            {{--        { data: 'teams', name: 'teams' },--}}
-            {{--        { data: 'totalEvent', name: 'totalEvent' },--}}
-            {{--        { data: 'match', name: 'match'},--}}
-            {{--        { data: 'training', name: 'training'},--}}
-            {{--        { data: 'attended', name: 'attended'},--}}
-            {{--        { data: 'absent', name: 'absent'},--}}
-            {{--        { data: 'illness', name: 'illness'},--}}
-            {{--        { data: 'injured', name: 'injured'},--}}
-            {{--        { data: 'others', name: 'others'},--}}
-            {{--        {--}}
-            {{--            data: 'action',--}}
-            {{--            name: 'action',--}}
-            {{--            orderable: false,--}}
-            {{--            searchable: false,--}}
-            {{--            width: '15%'--}}
-            {{--        },--}}
-            {{--    ]--}}
-            {{--});--}}
+            const matchHistory = $('#matchHistoryTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! url()->current() !!}',
+                },
+                columns: [
+                    { data: 'team', name: 'team' },
+                    { data: 'opponentTeam', name: 'opponentTeam' },
+                    { data: 'score', name: 'score'},
+                    { data: 'date', name: 'date'},
+                    { data: 'place', name: 'place'},
+                    { data: 'competition', name: 'competition'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ]
+            });
 
             {{--const lineChart = document.getElementById('areaChart');--}}
             {{--const doughnutChart = document.getElementById('doughnutChart');--}}
