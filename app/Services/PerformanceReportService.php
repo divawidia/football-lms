@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\EventSchedule;
 use App\Models\Team;
+use App\Models\TeamMatch;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Yajra\DataTables\Facades\DataTables;
@@ -11,14 +12,30 @@ use Yajra\DataTables\Facades\DataTables;
 class PerformanceReportService extends Service
 {
     public function overviewStats(){
-        $matches = EventSchedule::with('teams')
-            ->where('eventType', 'Match')
-            ->whereHas('teams', function($q) {
-                $q->where('resultStatus', 'Win');
-            })
-            ->get();
+        $wins = TeamMatch::where('resultStatus', 'Win')
+            ->whereHas('team', function($q) {
+                $q->where('teamSide', 'Academy Team');
+            })->count();
 
-        return $matches;
+        $losses = TeamMatch::where('resultStatus', 'Lose')
+            ->whereHas('team', function($q) {
+                $q->where('teamSide', 'Academy Team');
+            })->count();
+
+        $draws = TeamMatch::where('resultStatus', 'Draw')
+            ->whereHas('team', function($q) {
+                $q->where('teamSide', 'Academy Team');
+            })->count();
+
+        $matchPlayed = TeamMatch::whereHas('team', function($q) {
+                $q->where('teamSide', 'Academy Team');
+            })->count();
+
+        $goals = TeamMatch::whereHas('team', function($q) {
+            $q->where('teamSide', 'Academy Team');
+        })->sum('teamScore');
+
+        return compact('wins', 'losses', 'draws', 'matchPlayed', 'goals');
     }
     public function latestMatch(){
         return EventSchedule::with('teams', 'competition')
