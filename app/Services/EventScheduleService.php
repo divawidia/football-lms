@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
+use function PHPUnit\Framework\isFalse;
 
 class EventScheduleService extends Service
 {
@@ -400,18 +401,124 @@ class EventScheduleService extends Service
 
     public function endMatch(EventSchedule $schedule)
     {
+
         $academyTeamScore = $schedule->teams[0]->pivot->teamScore;
         $opponentTeamScore = $schedule->teams[1]->pivot->teamScore;
+
+        $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['goalConceded'=> $opponentTeamScore]);
+        $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['goalConceded'=> $academyTeamScore]);
+
+        $academyTeamGoalsDifference = $academyTeamScore - $opponentTeamScore;
+        $opponentTeamGoalsDifference = $opponentTeamScore - $academyTeamScore;
+
+        if ($schedule->competition()->exists()){
+            $groupDivision = $schedule->competition->groups()
+                ->whereRelation('teams','teamId', $schedule->teams[0]->id)
+                ->first();
+
+            $academyTeam = $groupDivision->teams()->where('teamId', $schedule->teams[0]->id)->first();
+            $opponentTeam = $groupDivision->teams()->where('teamId', $schedule->teams[0]->id)->first();
+        }
+
         if ($academyTeamScore > $opponentTeamScore){
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Win']);
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Lose']);
+
+            if ($schedule->competition()->exists()){
+                $groupDivision->teams()
+                    ->updateExistingPivot($schedule->teams[0]->id, [
+                        'matchPlayed'=> $academyTeam->pivot->matchPlayed + 1,
+                        'won'=> $academyTeam->pivot->won + 1,
+                        'goalsFor'=> $academyTeam->pivot->goalsFor + $academyTeamScore,
+                        'goalsAgaints'=> $academyTeam->pivot->goalsAgaints + $opponentTeamScore,
+                        'goalsDifference'=> $academyTeam->pivot->goalsDifference + $academyTeamGoalsDifference,
+                        'points'=> $academyTeam->pivot->points + 3,
+                        'redCards'=> $academyTeam->pivot->redCards + $schedule->teams[0]->pivot->teamRedCards,
+                        'yellowCards'=> $academyTeam->pivot->yellowCards + $schedule->teams[0]->pivot->teamYellowCards,
+                    ]);
+
+                $groupDivision->teams()
+                    ->updateExistingPivot($schedule->teams[1]->id, [
+                        'matchPlayed'=> $opponentTeam->pivot->matchPlayed + 1,
+                        'lost'=> $opponentTeam->pivot->lost + 1,
+                        'goalsFor'=> $opponentTeam->pivot->goalsFor + $opponentTeamScore,
+                        'goalsAgaints'=> $opponentTeam->pivot->goalsAgaints + $academyTeamScore,
+                        'goalsDifference'=> $opponentTeam->pivot->goalsDifference + $opponentTeamGoalsDifference,
+                        'points'=> $opponentTeam->pivot->points + 0,
+                        'redCards'=> $opponentTeam->pivot->redCards + $schedule->teams[1]->pivot->teamRedCards,
+                        'yellowCards'=> $opponentTeam->pivot->yellowCards + $schedule->teams[1]->pivot->teamYellowCards,
+                    ]);
+            }
+
         } elseif ($academyTeamScore < $opponentTeamScore){
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Win']);
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Lose']);
+
+            if ($schedule->competition()->exists()){
+                $groupDivision->teams()
+                    ->updateExistingPivot($schedule->teams[0]->id, [
+                        'matchPlayed'=> $academyTeam->pivot->matchPlayed + 1,
+                        'lost'=> $academyTeam->pivot->lost + 1,
+                        'goalsFor'=> $academyTeam->pivot->goalsFor + $academyTeamScore,
+                        'goalsAgaints'=> $academyTeam->pivot->goalsAgaints + $opponentTeamScore,
+                        'goalsDifference'=> $academyTeam->pivot->goalsDifference + $academyTeamGoalsDifference,
+                        'points'=> $academyTeam->pivot->points + 0,
+                        'redCards'=> $academyTeam->pivot->redCards + $schedule->teams[0]->pivot->teamRedCards,
+                        'yellowCards'=> $academyTeam->pivot->yellowCards + $schedule->teams[0]->pivot->teamYellowCards,
+                    ]);
+
+                $groupDivision->teams()
+                    ->updateExistingPivot($schedule->teams[1]->id, [
+                        'matchPlayed'=> $opponentTeam->pivot->matchPlayed + 1,
+                        'won'=> $opponentTeam->pivot->won + 1,
+                        'goalsFor'=> $opponentTeam->pivot->goalsFor + $opponentTeamScore,
+                        'goalsAgaints'=> $opponentTeam->pivot->goalsAgaints + $academyTeamScore,
+                        'goalsDifference'=> $opponentTeam->pivot->goalsDifference + $opponentTeamGoalsDifference,
+                        'points'=> $opponentTeam->pivot->points + 3,
+                        'redCards'=> $opponentTeam->pivot->redCards + $schedule->teams[1]->pivot->teamRedCards,
+                        'yellowCards'=> $opponentTeam->pivot->yellowCards + $schedule->teams[1]->pivot->teamYellowCards,
+                    ]);
+            }
+
         }elseif ($academyTeamScore == $opponentTeamScore){
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Draw']);
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Draw']);
+
+            if ($schedule->competition()->exists()){
+                $groupDivision->teams()
+                    ->updateExistingPivot($schedule->teams[0]->id, [
+                        'matchPlayed'=> $academyTeam->pivot->matchPlayed + 1,
+                        'draw'=> $academyTeam->pivot->draw + 1,
+                        'goalsFor'=> $academyTeam->pivot->goalsFor + $academyTeamScore,
+                        'goalsAgaints'=> $academyTeam->pivot->goalsAgaints + $opponentTeamScore,
+                        'goalsDifference'=> $academyTeam->pivot->goalsDifference + $academyTeamGoalsDifference,
+                        'points'=> $academyTeam->pivot->points + 1,
+                        'redCards'=> $academyTeam->pivot->redCards + $schedule->teams[0]->pivot->teamRedCards,
+                        'yellowCards'=> $academyTeam->pivot->yellowCards + $schedule->teams[0]->pivot->teamYellowCards,
+                    ]);
+
+                $groupDivision->teams()
+                    ->updateExistingPivot($schedule->teams[1]->id, [
+                        'matchPlayed'=> $opponentTeam->pivot->matchPlayed + 1,
+                        'draw'=> $opponentTeam->pivot->draw + 1,
+                        'goalsFor'=> $opponentTeam->pivot->goalsFor + $opponentTeamScore,
+                        'goalsAgaints'=> $opponentTeam->pivot->goalsAgaints + $academyTeamScore,
+                        'goalsDifference'=> $opponentTeam->pivot->goalsDifference + $opponentTeamGoalsDifference,
+                        'points'=> $opponentTeam->pivot->points + 1,
+                        'redCards'=> $opponentTeam->pivot->redCards + $schedule->teams[1]->pivot->teamRedCards,
+                        'yellowCards'=> $opponentTeam->pivot->yellowCards + $schedule->teams[1]->pivot->teamYellowCards,
+                    ]);
+            }
         }
+
+        if ($academyTeamScore == 0){
+            $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['cleanSheets'=> 1]);
+        }
+
+        if ($opponentTeamScore == 0){
+            $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['cleanSheets'=> 1]);
+        }
+
         return $schedule->update(['status' => '0']);
     }
 
