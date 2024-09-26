@@ -265,18 +265,10 @@
                         <table class="table table-hover mb-0" id="playerStatTable">
                             <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Minutes Played</th>
-                                <th>Goals</th>
-                                <th>Assists</th>
-                                <th>Own Goals</th>
-                                <th>Shots</th>
-                                <th>Passes</th>
-                                <th>Fouls</th>
-                                <th>Yellow Cards</th>
-                                <th>Red Cards</th>
-                                <th>Saves</th>
-                                <th>Last Updated</th>
+                                <th>Teams</th>
+                                <th>Match Date</th>
+                                <th>Location</th>
+                                <th>Competition</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
