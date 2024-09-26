@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Attendance
+    Performance Report
 @endsection
 @section('page-title')
     @yield('title')
@@ -84,7 +84,7 @@
                             <div class="flex d-flex align-items-center">
                                 <div class="h2 mb-0 mr-3">12</div>
                                 <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">match appearannces</div>
+                                    <div class="card-title text-capitalize">match played</div>
                                     <p class="card-subtitle text-50">
                                         4
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
@@ -118,7 +118,7 @@
                             <div class="flex d-flex align-items-center">
                                 <div class="h2 mb-0 mr-3">12</div>
                                 <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">assists</div>
+                                    <div class="card-title text-capitalize">goals conceded</div>
                                     <p class="card-subtitle text-50">
                                         4
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
@@ -135,7 +135,7 @@
                             <div class="flex d-flex align-items-center">
                                 <div class="h2 mb-0 mr-3">12</div>
                                 <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">Fouls</div>
+                                    <div class="card-title text-capitalize">goal difference</div>
                                     <p class="card-subtitle text-50">
                                         4
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
@@ -152,7 +152,7 @@
                             <div class="flex d-flex align-items-center">
                                 <div class="h2 mb-0 mr-3">12</div>
                                 <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">shots</div>
+                                    <div class="card-title text-capitalize">clean sheets</div>
                                     <p class="card-subtitle text-50">
                                         4
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
@@ -169,7 +169,7 @@
                             <div class="flex d-flex align-items-center">
                                 <div class="h2 mb-0 mr-3">12</div>
                                 <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">Minutes played</div>
+                                    <div class="card-title text-capitalize">own goals</div>
                                     <p class="card-subtitle text-50">
                                         4
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>

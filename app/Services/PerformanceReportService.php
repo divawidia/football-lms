@@ -3,11 +3,23 @@
 namespace App\Services;
 
 use App\Models\EventSchedule;
+use App\Models\Team;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 use Yajra\DataTables\Facades\DataTables;
 
 class PerformanceReportService extends Service
 {
+    public function overviewStats(){
+        $matches = EventSchedule::with('teams')
+            ->where('eventType', 'Match')
+            ->whereHas('teams', function($q) {
+                $q->where('resultStatus', 'Win');
+            })
+            ->get();
+
+        return $matches;
+    }
     public function latestMatch(){
         return EventSchedule::with('teams', 'competition')
             ->where('eventType', 'Match')

@@ -19,9 +19,12 @@ class PerformanceReportController extends Controller
             return $this->performanceReportService->matchHistory();
         }
         $latestMatches = $this->performanceReportService->latestMatch();
+        $overviewStats = $this->performanceReportService->overviewStats();
+//        dd($overviewStats);
 
         return view('pages.admins.academies.reports.performance.index', [
-            'latestMatches' => $latestMatches
+            'latestMatches' => $latestMatches,
+            'overviewStats' => $overviewStats
         ]);
     }
 }
