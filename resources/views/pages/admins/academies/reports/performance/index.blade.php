@@ -189,7 +189,7 @@
             <div class="row">
                 @foreach($latestMatches as $latestMatch)
                     <div class="col-lg-6">
-                        <div class="card">
+                        <a class="card" href="{{ route('match-schedules.show', $latestMatch->id) }}">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-4 d-flex flex-column flex-md-row align-items-center">
@@ -234,7 +234,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 @endforeach
             </div>

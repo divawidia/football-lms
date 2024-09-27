@@ -1449,7 +1449,11 @@
                         $('#editPlayerAttendanceModal').modal('show');
                         const heading = document.getElementById('playerName');
                         heading.textContent = 'Update Player ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
-                        $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.playerAttendance.attendanceStatus);
+
+                        if (res.data.playerAttendance.attendanceStatus !== 'Required Action'){
+                            $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.playerAttendance.attendanceStatus);
+                        }
+
                         $('#editPlayerAttendanceModal #add_note').val(res.data.playerAttendance.note);
                         $('#playerId').val(res.data.playerAttendance.playerId);
                     },
@@ -1476,7 +1480,11 @@
 
                         const heading = document.getElementById('coachName');
                         heading.textContent = 'Update Coach ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
-                        $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
+
+                        if (res.data.coachAttendance.attendanceStatus !== 'Required Action'){
+                            $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
+                        }
+
                         $('#editCoachAttendanceModal #add_note').val(res.data.coachAttendance.note);
                         $('#coachId').val(res.data.coachAttendance.coachId);
                     },
@@ -1603,7 +1611,7 @@
                     success: function (res) {
                         $('#createNoteModal').modal('hide');
                         Swal.fire({
-                            title: 'Training session note successfully added!',
+                            title: 'Match note successfully added!',
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",
@@ -1639,7 +1647,7 @@
                     success: function (res) {
                         $('#editNoteModal').modal('hide');
                         Swal.fire({
-                            title: 'Match session note successfully updated!',
+                            title: 'Match note successfully updated!',
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",
@@ -1713,7 +1721,7 @@
                 let id = $(this).attr('id');
 
                 Swal.fire({
-                    title: "Are you sure?",
+                    title: "Are you sure tp delete this note?",
                     text: "You won't be able to revert this!",
                     icon: "warning",
                     showCancelButton: true,
@@ -1730,7 +1738,7 @@
                             },
                             success: function () {
                                 Swal.fire({
-                                    title: 'Competition successfully deleted!',
+                                    title: 'Match note successfully deleted!',
                                     icon: 'success',
                                     showCancelButton: false,
                                     confirmButtonColor: "#1ac2a1",
