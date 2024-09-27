@@ -35,8 +35,12 @@
                                 <div class="ml-auto text-right">
                                     <div class="card-title">Wins</div>
                                     <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        {{ $overviewStats['thisMonthWins'] }}
+                                        @if($overviewStats['thisMonthWins'] >= 0)
+                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        @else
+                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
+                                        @endif
                                         From Last Month
                                     </p>
                                 </div>
@@ -52,8 +56,12 @@
                                 <div class="ml-auto text-right">
                                     <div class="card-title">Losses</div>
                                     <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        {{ $overviewStats['thisMonthLosses'] }}
+                                        @if($overviewStats['thisMonthLosses'] >= 0)
+                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        @else
+                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
+                                        @endif
                                         From Last Month
                                     </p>
                                 </div>
@@ -69,8 +77,12 @@
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">Draws</div>
                                     <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        {{ $overviewStats['thisMonthDraws'] }}
+                                        @if($overviewStats['thisMonthDraws'] >= 0)
+                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        @else
+                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
+                                        @endif
                                         From Last Month
                                     </p>
                                 </div>
@@ -86,8 +98,12 @@
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">match played</div>
                                     <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        {{ $overviewStats['thisMonthMatchPlayed'] }}
+                                        @if($overviewStats['thisMonthMatchPlayed'] >= 0)
+                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        @else
+                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
+                                        @endif
                                         From Last Month
                                     </p>
                                 </div>
@@ -103,8 +119,12 @@
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">goals</div>
                                     <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        {{ $overviewStats['thisMonthGoals'] }}
+                                        @if($overviewStats['thisMonthGoals'] >= 0)
+                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        @else
+                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
+                                        @endif
                                         From Last Month
                                     </p>
                                 </div>
@@ -120,8 +140,12 @@
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">goals conceded</div>
                                     <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        {{ $overviewStats['thisMonthGoalsConceded'] }}
+                                        @if($overviewStats['thisMonthGoalsConceded'] >= 0)
+                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        @else
+                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
+                                        @endif
                                         From Last Month
                                     </p>
                                 </div>
@@ -137,8 +161,12 @@
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">goal difference</div>
                                     <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        {{ abs($overviewStats['thisMonthGoalsDifference']) }}
+                                        @if($overviewStats['thisMonthGoalsDifference'] >= 0)
+                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        @else
+                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
+                                        @endif
                                         From Last Month
                                     </p>
                                 </div>
@@ -154,8 +182,12 @@
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">clean sheets</div>
                                     <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        {{ $overviewStats['thisMonthCleanSheets'] }}
+                                        @if($overviewStats['thisMonthCleanSheets'] >= 0)
+                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        @else
+                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
+                                        @endif
                                         From Last Month
                                     </p>
                                 </div>
@@ -171,8 +203,12 @@
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">own goals</div>
                                     <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        {{ $overviewStats['thisMonthOwnGoals'] }}
+                                        @if($overviewStats['thisMonthOwnGoals'] >= 0)
+                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        @else
+                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
+                                        @endif
                                         From Last Month
                                     </p>
                                 </div>
