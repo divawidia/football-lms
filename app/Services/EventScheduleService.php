@@ -488,7 +488,7 @@ class EventScheduleService extends Service
                 $groupDivision->teams()
                     ->updateExistingPivot($schedule->teams[0]->id, [
                         'matchPlayed'=> $academyTeam->pivot->matchPlayed + 1,
-                        'draw'=> $academyTeam->pivot->draw + 1,
+                        'drawn'=> $academyTeam->pivot->drawn + 1,
                         'goalsFor'=> $academyTeam->pivot->goalsFor + $academyTeamScore,
                         'goalsAgaints'=> $academyTeam->pivot->goalsAgaints + $opponentTeamScore,
                         'goalsDifference'=> $academyTeam->pivot->goalsDifference + $academyTeamGoalsDifference,
@@ -500,7 +500,7 @@ class EventScheduleService extends Service
                 $groupDivision->teams()
                     ->updateExistingPivot($schedule->teams[1]->id, [
                         'matchPlayed'=> $opponentTeam->pivot->matchPlayed + 1,
-                        'draw'=> $opponentTeam->pivot->draw + 1,
+                        'drawn'=> $opponentTeam->pivot->drawn + 1,
                         'goalsFor'=> $opponentTeam->pivot->goalsFor + $opponentTeamScore,
                         'goalsAgaints'=> $opponentTeam->pivot->goalsAgaints + $academyTeamScore,
                         'goalsDifference'=> $opponentTeam->pivot->goalsDifference + $opponentTeamGoalsDifference,

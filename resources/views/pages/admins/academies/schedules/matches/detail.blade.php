@@ -211,7 +211,8 @@
                                    min="1"
                                    max="160"
                                    value="{{ old('minuteScored') }}"
-                                   placeholder="Pick minutes the player scored the goal. Eg : 60">
+                                   placeholder="Pick minutes the player scored the goal. Eg : 60"
+                                    required>
                             <span class="invalid-feedback minuteScored_error" role="alert">
                                 <strong></strong>
                             </span>
