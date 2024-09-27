@@ -31,7 +31,7 @@
                     <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                         <div class="card-body d-flex align-items-center">
                             <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">12</div>
+                                <div class="h2 mb-0 mr-3">{{ $overviewStats['wins'] }}</div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title">Wins</div>
                                     <p class="card-subtitle text-50">
@@ -48,7 +48,7 @@
                     <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                         <div class="card-body d-flex align-items-center">
                             <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">12</div>
+                                <div class="h2 mb-0 mr-3">{{ $overviewStats['losses'] }}</div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title">Losses</div>
                                     <p class="card-subtitle text-50">
@@ -65,7 +65,7 @@
                     <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                         <div class="card-body d-flex align-items-center">
                             <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">12</div>
+                                <div class="h2 mb-0 mr-3">{{ $overviewStats['draws'] }}</div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">Draws</div>
                                     <p class="card-subtitle text-50">
@@ -82,7 +82,7 @@
                     <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                         <div class="card-body d-flex align-items-center">
                             <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">12</div>
+                                <div class="h2 mb-0 mr-3">{{ $overviewStats['matchPlayed'] }}</div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">match played</div>
                                     <p class="card-subtitle text-50">
@@ -99,7 +99,7 @@
                     <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                         <div class="card-body d-flex align-items-center">
                             <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">12</div>
+                                <div class="h2 mb-0 mr-3">{{ $overviewStats['goals'] }}</div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">goals</div>
                                     <p class="card-subtitle text-50">
@@ -116,7 +116,7 @@
                     <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                         <div class="card-body d-flex align-items-center">
                             <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">12</div>
+                                <div class="h2 mb-0 mr-3">{{ $overviewStats['goalsConceded'] }}</div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">goals conceded</div>
                                     <p class="card-subtitle text-50">
@@ -133,7 +133,7 @@
                     <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                         <div class="card-body d-flex align-items-center">
                             <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">12</div>
+                                <div class="h2 mb-0 mr-3">{{ $overviewStats['goalsDifference'] }}</div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">goal difference</div>
                                     <p class="card-subtitle text-50">
@@ -150,7 +150,7 @@
                     <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                         <div class="card-body d-flex align-items-center">
                             <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">12</div>
+                                <div class="h2 mb-0 mr-3">{{ $overviewStats['cleanSheets'] }}</div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">clean sheets</div>
                                     <p class="card-subtitle text-50">
@@ -167,7 +167,7 @@
                     <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                         <div class="card-body d-flex align-items-center">
                             <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">12</div>
+                                <div class="h2 mb-0 mr-3">{{ $overviewStats['ownGoals'] }}</div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title text-capitalize">own goals</div>
                                     <p class="card-subtitle text-50">
@@ -266,35 +266,46 @@
             </div>
 
             <div class="page-separator">
-                <div class="page-separator__text">Leaderboard</div>
+                <div class="page-separator__text">Competition Leaderboard</div>
                 <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>
             </div>
 
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="classTable">
-                            <thead>
-                            <tr>
-                                <th>Team</th>
-                                <th>Match Played</th>
-                                <th>won</th>
-                                <th>drawn</th>
-                                <th>lost</th>
-                                <th>goals For</th>
-                                <th>goals Againts</th>
-                                <th>goals Difference</th>
-                                <th>red Cards</th>
-                                <th>yellow Cards</th>
-                                <th>points</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
+            @foreach($competitions as $competition)
+                <div class="page-separator">
+                    <div class="page-separator__text">{{ $competition->name }}</div>
                 </div>
-            </div>
+                @foreach($competition->groups as $group)
+                    <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                        <div class="card-header">
+                            <h5 class="mb-0">{{ $group->groupName }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" id="classTable{{ $group->id }}">
+                                    <thead>
+                                    <tr>
+                                        <th>Team</th>
+                                        <th>Match Played</th>
+                                        <th>won</th>
+                                        <th>drawn</th>
+                                        <th>lost</th>
+                                        <th>goals For</th>
+                                        <th>goals Againts</th>
+                                        <th>goals Difference</th>
+                                        <th>red Cards</th>
+                                        <th>yellow Cards</th>
+                                        <th>points</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endforeach
+
 
         </div>
     @endsection
@@ -325,6 +336,33 @@
                     },
                 ]
             });
+
+            @foreach($competitions as $competition)
+                @foreach($competition->groups as $group)
+                    const classTable{{$group->id}} = $('#classTable{{$group->id}}').DataTable({
+                        processing: true,
+                        serverSide: true,
+                        ordering: true,
+                        ajax: {
+                            url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
+                        },
+                        columns: [
+                            { data: 'teams', name: 'teams' },
+                            { data: 'pivot.matchPlayed', name: 'pivot.matchPlayed' },
+                            { data: 'pivot.won', name: 'pivot.won' },
+                            { data: 'pivot.drawn', name: 'pivot.drawn' },
+                            { data: 'pivot.lost', name: 'pivot.lost' },
+                            { data: 'pivot.goalsFor', name: 'pivot.goalsFor' },
+                            { data: 'pivot.goalsAgaints', name: 'pivot.goalsAgaints' },
+                            { data: 'pivot.goalsDifference', name: 'pivot.goalsDifference' },
+                            { data: 'pivot.redCards', name: 'pivot.redCards' },
+                            { data: 'pivot.yellowCards', name: 'pivot.yellowCards' },
+                            { data: 'pivot.points', name: 'pivot.points' },
+                        ],
+                        order: [[10, 'desc']]
+                    });
+                @endforeach
+            @endforeach
 
             {{--const lineChart = document.getElementById('areaChart');--}}
             {{--const doughnutChart = document.getElementById('doughnutChart');--}}
