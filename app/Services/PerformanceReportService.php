@@ -27,15 +27,30 @@ class PerformanceReportService extends Service
                 $q->where('teamSide', 'Academy Team');
             })->count();
 
-        $matchPlayed = TeamMatch::whereHas('team', function($q) {
+        $matchPlayed = EventSchedule::whereHas('teams', function($q) {
                 $q->where('teamSide', 'Academy Team');
-            })->count();
+            })->where('status', '0')
+            ->where('eventType', 'Match')->count();
 
         $goals = TeamMatch::whereHas('team', function($q) {
             $q->where('teamSide', 'Academy Team');
         })->sum('teamScore');
 
-        return compact('wins', 'losses', 'draws', 'matchPlayed', 'goals');
+        $goalsConceded = TeamMatch::whereHas('team', function($q) {
+            $q->where('teamSide', 'Opponent Team');
+        })->sum('teamScore');
+
+        $goalsDifference = $goals - $goalsConceded;
+
+        $cleanSheets = TeamMatch::whereHas('team', function($q) {
+            $q->where('teamSide', 'Academy Team');
+        })->sum('cleanSheets');
+
+        $ownGoals = TeamMatch::whereHas('team', function($q) {
+            $q->where('teamSide', 'Academy Team');
+        })->sum('teamOwnGoal');
+
+        return compact('wins', 'losses', 'draws', 'matchPlayed', 'goals', 'goalsConceded', 'goalsDifference', 'cleanSheets', 'ownGoals');
     }
     public function latestMatch(){
         return EventSchedule::with('teams', 'competition')
