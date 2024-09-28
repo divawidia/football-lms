@@ -24,7 +24,7 @@ class TrainingVideo extends Model
         return $this->belongsToMany(Invoice::class, 'invoice_subscriptions', 'subscriptionId', 'invoiceId')
             ->withTimestamps();
     }
-    public function player()
+    public function players()
     {
         return $this->belongsToMany(Player::class, 'training_video_players', 'trainingVideoId', 'playerId')
             ->withPivot('progress', 'status')->withTimestamps();

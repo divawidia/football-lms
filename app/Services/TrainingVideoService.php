@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Player;
 use App\Models\TrainingVideo;
 
 class TrainingVideoService
@@ -32,5 +33,13 @@ class TrainingVideoService
         }
 
         return $trainingVideo->update($data);
+    }
+
+    public function assignPlayer(array $data, TrainingVideo $trainingVideo){
+        return $trainingVideo->players()->attach($data);
+    }
+
+    public function removePlayer(TrainingVideo $trainingVideo, Player $player){
+        return $trainingVideo->players()->detach($player);
     }
 }
