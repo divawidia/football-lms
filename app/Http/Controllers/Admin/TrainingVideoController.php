@@ -29,7 +29,7 @@ class TrainingVideoController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.admins.academies.training-videos.create');
     }
 
     /**
