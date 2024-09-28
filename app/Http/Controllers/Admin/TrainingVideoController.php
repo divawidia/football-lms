@@ -84,8 +84,10 @@ class TrainingVideoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(TrainingVideo $trainingVideo)
     {
-        //
+        $this->trainingVideoService->destroy($trainingVideo);
+
+        return response()->json(200);
     }
 }
