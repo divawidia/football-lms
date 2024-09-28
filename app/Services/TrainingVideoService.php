@@ -22,4 +22,15 @@ class TrainingVideoService
 
         return TrainingVideo::create($data);
     }
+
+    public function update(array $data, TrainingVideo $trainingVideo){
+        if (array_key_exists('previewPhoto', $data)){
+            $this->deleteImage($trainingVideo->previewPhoto);
+            $data['previewPhoto'] = $data['previewPhoto']->store('assets/training-videos', 'public');
+        }else{
+            $data['previewPhoto'] = $trainingVideo->previewPhoto;
+        }
+
+        return $trainingVideo->update($data);
+    }
 }
