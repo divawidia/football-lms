@@ -15,4 +15,9 @@ class TrainingVideoLessonService
     public function update(array $data, TrainingVideoLesson $trainingVideoLesson){
         return $trainingVideoLesson->update($data);
     }
+
+    public function destroy(TrainingVideoLesson $trainingVideoLesson)
+    {
+        return $trainingVideoLesson->delete();
+    }
 }
