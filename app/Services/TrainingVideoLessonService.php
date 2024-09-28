@@ -11,4 +11,8 @@ class TrainingVideoLessonService
         $data['trainingVideoId'] = $trainingVideo->id;
         return TrainingVideoLesson::create($data);
     }
+
+    public function update(array $data, TrainingVideoLesson $trainingVideoLesson){
+        return $trainingVideoLesson->update($data);
+    }
 }
