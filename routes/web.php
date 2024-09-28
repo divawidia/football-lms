@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\PerformanceReportController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\TeamController;
+use App\Http\Controllers\Admin\TrainingVideoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -258,6 +259,30 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::get('', [LeaderboardController::class, 'index'])->name('leaderboards.index');
         Route::get('teams', [LeaderboardController::class, 'teamLeaderboard'])->name('leaderboards.teams');
         Route::get('players', [LeaderboardController::class, 'playerLeaderboard'])->name('leaderboards.players');
+    });
+
+    Route::prefix('training-videos')->group(function () {
+        Route::get('', [TrainingVideoController::class, 'index'])->name('training-videos.index');
+        Route::get('create', [TrainingVideoController::class, 'create'])->name('training-videos.create');
+        Route::post('store', [TrainingVideoController::class, 'store'])->name('training-videos.store');
+
+        Route::prefix('{trainingVideos}')->group(function () {
+            Route::get('', [TrainingVideoController::class, 'show'])->name('training-videos.show');
+            Route::get('edit', [TrainingVideoController::class, 'edit'])->name('training-videos.edit');
+            Route::put('update', [TrainingVideoController::class, 'update'])->name('training-videos.update');
+
+            Route::get('players', [TrainingVideoController::class, 'players'])->name('training-videos.players');
+            Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->name('training-videos.assign-players');
+            Route::put('remove-player/{player}', [TrainingVideoController::class, 'removePlayer'])->name('training-videos.remove-player');
+
+            Route::get('lessons', [TrainingVideoLessonController::class, 'lessons'])->name('training-videos.lessons-index');
+            Route::get('store-lessons', [TrainingVideoLessonController::class, 'create'])->name('training-videos.lessons-store');
+            Route::prefix('{lesson}')->group(function () {
+                Route::get('', [TrainingVideoLessonController::class, 'show'])->name('training-videos.lessons-show');
+                Route::get('update', [TrainingVideoLessonController::class, 'update'])->name('training-videos.lessons-update');
+                Route::delete('destroy', [TrainingVideoLessonController::class, 'destroy'])->name('training-videos.lessons-destroy');
+            });
+        });
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
