@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\GroupDivision;
 use App\Models\Player;
 use App\Models\PlayerMatchStats;
+use App\Models\Team;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -91,6 +92,73 @@ class LeaderboardService extends Service
                 'yellowCards',
                 'redCards',
                 'saves',
+            ])
+            ->make();
+    }
+
+    public function teamLeaderboard(){
+        $query = Team::with('matches')->where('teamSide', 'Academy Team')->get();
+        return Datatables::of($query)
+            ->addColumn('action', function ($item) {
+                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('team-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View team">
+                            <span class="material-icons">visibility</span>
+                        </a>';
+            })
+            ->editColumn('name', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                             style="white-space: nowrap;">
+                            <div class="avatar avatar-sm mr-8pt">
+                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
+                            </div>
+                            <div class="media-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex d-flex flex-column">
+                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->teamName .'</strong></p>
+                                        <small class="js-lists-values-email text-50">' . $item->ageGroup . '</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+            })
+            ->addColumn('match', function ($item){
+                return $item->schedules()
+                    ->where('status', '0')
+                    ->where('eventType', 'Match')
+                    ->count();
+            })
+            ->addColumn('won', function ($item){
+                return $item->matches()->where('resultStatus', 'Win')->count();
+            })
+            ->addColumn('drawn', function ($item){
+                return $item->matches()->where('resultStatus', 'Draw')->count();
+            })
+            ->addColumn('lost', function ($item){
+                return $item->matches()->where('resultStatus', 'Lose')->count();
+            })
+            ->addColumn('goals', function ($item){
+                return $item->matches()->sum('teamScore');
+            })
+            ->addColumn('goalsConceded', function ($item){
+                return $item->matches()->sum('goalConceded');
+            })
+            ->addColumn('cleanSheets', function ($item){
+                return $item->matches()->sum('cleanSheets');
+            })
+            ->addColumn('ownGoals', function ($item){
+                return $item->matches()->sum('teamOwnGoal');
+            })
+            ->rawColumns([
+                'action',
+                'name',
+                'match',
+                'won',
+                'drawn',
+                'lost',
+                'goals',
+                'goalsConceded',
+                'cleanSheets',
+                'ownGoals',
             ])
             ->make();
     }
