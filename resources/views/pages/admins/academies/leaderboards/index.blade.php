@@ -29,7 +29,7 @@
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="teamLeaderboardTable">
+                        <table class="table table-hover mb-0" id="teamsLeaderboardTable">
                             <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -59,7 +59,7 @@
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="playerLeaderboardTable">
+                        <table class="table table-hover mb-0" id="playersLeaderboardTable">
                             <thead>
                             <tr>
                                 <th>Pos.</th>
@@ -90,20 +90,24 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            const matchHistory = $('#matchHistoryTable').DataTable({
+            const teamsLeaderboard = $('#teamsLeaderboardTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->current() !!}',
+                    url: '{!! route('leaderboards.teams') !!}',
                 },
                 columns: [
-                    { data: 'team', name: 'team' },
-                    { data: 'opponentTeam', name: 'opponentTeam' },
-                    { data: 'score', name: 'score'},
-                    { data: 'date', name: 'date'},
-                    { data: 'place', name: 'place'},
-                    { data: 'competition', name: 'competition'},
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'name', name: 'name' },
+                    { data: 'match', name: 'match' },
+                    { data: 'won', name: 'won'},
+                    { data: 'drawn', name: 'drawn'},
+                    { data: 'lost', name: 'lost'},
+                    { data: 'goals', name: 'goals'},
+                    { data: 'goalsConceded', name: 'goalsConceded'},
+                    { data: 'cleanSheets', name: 'cleanSheets'},
+                    { data: 'ownGoals', name: 'ownGoals'},
                     {
                         data: 'action',
                         name: 'action',
@@ -111,73 +115,41 @@
                         searchable: false,
                         width: '15%'
                     },
-                ]
+                ],
+                order: [[3, 'desc']]
             });
 
-            @foreach($competitions as $competition)
-                @foreach($competition->groups as $group)
-                    const classTable{{$group->id}} = $('#classTable{{$group->id}}').DataTable({
-                        processing: true,
-                        serverSide: true,
-                        ordering: true,
-                        ajax: {
-                            url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
-                        },
-                        columns: [
-                            { data: 'teams', name: 'teams' },
-                            { data: 'pivot.matchPlayed', name: 'pivot.matchPlayed' },
-                            { data: 'pivot.won', name: 'pivot.won' },
-                            { data: 'pivot.drawn', name: 'pivot.drawn' },
-                            { data: 'pivot.lost', name: 'pivot.lost' },
-                            { data: 'pivot.goalsFor', name: 'pivot.goalsFor' },
-                            { data: 'pivot.goalsAgaints', name: 'pivot.goalsAgaints' },
-                            { data: 'pivot.goalsDifference', name: 'pivot.goalsDifference' },
-                            { data: 'pivot.redCards', name: 'pivot.redCards' },
-                            { data: 'pivot.yellowCards', name: 'pivot.yellowCards' },
-                            { data: 'pivot.points', name: 'pivot.points' },
-                        ],
-                        order: [[10, 'desc']]
-                    });
-                @endforeach
-            @endforeach
-
-            {{--const lineChart = document.getElementById('areaChart');--}}
-            {{--const doughnutChart = document.getElementById('doughnutChart');--}}
-
-            {{--new Chart(lineChart, {--}}
-            {{--    type: 'line',--}}
-            {{--    data: {--}}
-            {{--        labels: @json($lineChart['label']),--}}
-            {{--        datasets: [{--}}
-            {{--            label: 'Attended Player',--}}
-            {{--            data: @json($lineChart['attended']),--}}
-            {{--            borderColor: '#20F4CB',--}}
-            {{--            tension: 0.4,--}}
-            {{--        }, {--}}
-            {{--            label: 'Didnt Attend Player',--}}
-            {{--            data: @json($lineChart['didntAttend']),--}}
-            {{--            borderColor: '#E52534',--}}
-            {{--            tension: 0.4,--}}
-            {{--        }]--}}
-            {{--    },--}}
-            {{--    options: {--}}
-            {{--        responsive: true,--}}
-            {{--    },--}}
-            {{--});--}}
-            {{--new Chart(doughnutChart, {--}}
-            {{--    type: 'doughnut',--}}
-            {{--    data: {--}}
-            {{--        labels: @json($doughnutChart['label']),--}}
-            {{--        datasets: [{--}}
-            {{--            label: '# of Player',--}}
-            {{--            data: @json($doughnutChart['data']),--}}
-            {{--            backgroundColor: ['#20F4CB', '#E52534', '#F9B300', '#00122A']--}}
-            {{--        }]--}}
-            {{--    },--}}
-            {{--    options: {--}}
-            {{--        responsive: true,--}}
-            {{--    },--}}
-            {{--});--}}
+            const playersLeaderboard = $('#playersLeaderboardTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! route('leaderboards.players') !!}',
+                },
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'name', name: 'name' },
+                    { data: 'teams', name: 'teams' },
+                    { data: 'apps', name: 'apps'},
+                    { data: 'goals', name: 'goals'},
+                    { data: 'assists', name: 'assists'},
+                    { data: 'ownGoals', name: 'ownGoals'},
+                    { data: 'shots', name: 'shots'},
+                    { data: 'passes', name: 'passes'},
+                    { data: 'fouls', name: 'fouls'},
+                    { data: 'yellowCards', name: 'yellowCards'},
+                    { data: 'redCards', name: 'redCards'},
+                    { data: 'saves', name: 'saves'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ],
+                order: [[4, 'desc']]
+            });
         });
     </script>
 @endpush

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventScheduleController;
 use App\Http\Controllers\Admin\GroupDivisionController;
+use App\Http\Controllers\Admin\LeaderboardController;
 use App\Http\Controllers\Admin\OpponentTeamController;
 use App\Http\Controllers\Admin\PerformanceReportController;
 use App\Http\Controllers\Admin\PlayerController;
@@ -251,6 +252,12 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
     Route::prefix('performance-reports')->group(function () {
         Route::get('', [PerformanceReportController::class, 'index'])->name('performance-report.index');
+    });
+
+    Route::prefix('leaderboards')->group(function () {
+        Route::get('', [LeaderboardController::class, 'index'])->name('leaderboards.index');
+        Route::get('teams', [LeaderboardController::class, 'teamLeaderboard'])->name('leaderboards.teams');
+        Route::get('players', [LeaderboardController::class, 'playerLeaderboard'])->name('leaderboards.players');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {

@@ -93,6 +93,7 @@ class LeaderboardService extends Service
                 'redCards',
                 'saves',
             ])
+            ->addIndexColumn()
             ->make();
     }
 
@@ -160,6 +161,7 @@ class LeaderboardService extends Service
                 'cleanSheets',
                 'ownGoals',
             ])
+            ->addIndexColumn()
             ->make();
     }
 }
