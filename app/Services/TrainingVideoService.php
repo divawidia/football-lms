@@ -8,7 +8,7 @@ use App\Models\TrainingVideo;
 class TrainingVideoService
 {
     public function index(){
-        return TrainingVideo::all();
+        return TrainingVideo::paginate(16);
     }
 
     public function store(array $data, $userId){

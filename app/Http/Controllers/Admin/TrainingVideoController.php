@@ -3,16 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\TrainingVideo;
+use App\Services\TrainingVideoService;
 use Illuminate\Http\Request;
 
 class TrainingVideoController extends Controller
 {
+    private TrainingVideoService $trainingVideoService;
+
+    public function __construct(TrainingVideoService $trainingVideoService){
+        $this->trainingVideoService = $trainingVideoService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return view('pages.admins.academies.training-videos.index',[
+            'data' => $this->trainingVideoService->index()
+        ]);
     }
 
     /**
