@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingVideoRequest;
+use App\Models\TrainingVideo;
 use App\Services\TrainingVideoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -50,9 +51,11 @@ class TrainingVideoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(TrainingVideo $trainingVideo)
     {
-        //
+        return view('pages.admins.academies.training-videos.detail',[
+            'data' => $trainingVideo
+        ]);
     }
 
     /**
