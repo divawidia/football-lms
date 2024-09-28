@@ -42,4 +42,10 @@ class TrainingVideoService
     public function removePlayer(TrainingVideo $trainingVideo, Player $player){
         return $trainingVideo->players()->detach($player);
     }
+
+    public function destroy(TrainingVideo $trainingVideo){
+        $trainingVideo->players()->detach();
+        $this->deleteImage($trainingVideo->previewPhoto);
+        return $trainingVideo->delete();
+    }
 }
