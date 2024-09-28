@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\TrainingVideo;
+use App\Http\Requests\TrainingVideoRequest;
 use App\Services\TrainingVideoService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class TrainingVideoController extends Controller
 {
@@ -35,9 +37,14 @@ class TrainingVideoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TrainingVideoRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        $trainingVideos = $this->trainingVideoService->store($data, Auth::user()->id());
+
+        Alert::success('Training Videos'. $data['trainingTitle'] .' successfully created!');
+        return route('training-videos.show', $trainingVideos->id);
     }
 
     /**
