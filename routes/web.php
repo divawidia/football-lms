@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TrainingVideoController;
+use App\Http\Controllers\Admin\TrainingVideoLessonController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -275,7 +276,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->name('training-videos.assign-players');
             Route::put('remove-player/{player}', [TrainingVideoController::class, 'removePlayer'])->name('training-videos.remove-player');
 
-            Route::get('lessons', [TrainingVideoLessonController::class, 'lessons'])->name('training-videos.lessons-index');
+            Route::get('lessons', [TrainingVideoLessonController::class, 'index'])->name('training-videos.lessons-index');
             Route::get('store-lessons', [TrainingVideoLessonController::class, 'create'])->name('training-videos.lessons-store');
             Route::prefix('{lesson}')->group(function () {
                 Route::get('', [TrainingVideoLessonController::class, 'show'])->name('training-videos.lessons-show');
