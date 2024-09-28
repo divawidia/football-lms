@@ -61,9 +61,11 @@ class TrainingVideoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(TrainingVideo $trainingVideo)
     {
-        //
+        return view('pages.admins.academies.training-videos.edit',[
+            'data' => $trainingVideo
+        ]);
     }
 
     /**
