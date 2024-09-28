@@ -267,7 +267,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::get('create', [TrainingVideoController::class, 'create'])->name('training-videos.create');
         Route::post('store', [TrainingVideoController::class, 'store'])->name('training-videos.store');
 
-        Route::prefix('{trainingVideos}')->group(function () {
+        Route::prefix('{trainingVideo}')->group(function () {
             Route::get('', [TrainingVideoController::class, 'show'])->name('training-videos.show');
             Route::get('edit', [TrainingVideoController::class, 'edit'])->name('training-videos.edit');
             Route::put('update', [TrainingVideoController::class, 'update'])->name('training-videos.update');

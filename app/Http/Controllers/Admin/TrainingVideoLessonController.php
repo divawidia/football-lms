@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TrainingVideoLessonRequest;
 use App\Models\TrainingVideo;
 use App\Services\TrainingVideoLessonService;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class TrainingVideoLessonController extends Controller
 {
@@ -16,5 +18,12 @@ class TrainingVideoLessonController extends Controller
 
     public function index(TrainingVideo $trainingVideo){
         return $this->trainingVideoLessonService->index($trainingVideo);
+    }
+
+    public function store(TrainingVideoLessonRequest $request, TrainingVideo $trainingVideo)
+    {
+        $data = $request->validated();
+        $lesson = $this->trainingVideoLessonService->store($data, $trainingVideo);
+        return response()->json($lesson);
     }
 }
