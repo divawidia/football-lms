@@ -26,4 +26,11 @@ class TrainingVideoLessonController extends Controller
         $lesson = $this->trainingVideoLessonService->store($data, $trainingVideo);
         return response()->json($lesson);
     }
+
+    public function edit( $trainingVideo)
+    {
+        return view('pages.admins.academies.training-videos.lessons.show',[
+            'data' => $trainingVideo
+        ]);
+    }
 }
