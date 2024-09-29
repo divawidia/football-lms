@@ -97,7 +97,7 @@
             {{--    Lessons    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Lesson(s)</div>
-                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add lesson</a>
+                <a href="" id="addLesson" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add lesson</a>
             </div>
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-body">
@@ -112,6 +112,32 @@
                                 <th>Publish Status</th>
                                 <th>Created At</th>
                                 <th>Last Updated</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {{--    Assigned Player    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">Assigned Player(s)</div>
+                <a href="" id="addPlayer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add Player</a>
+            </div>
+            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="lessonsTable">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Progress</th>
+                                <th>Completion Status</th>
+                                <th>Assigned At</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
