@@ -76,7 +76,7 @@
                                         <label class="form-label" for="level">Difficulty Level</label>
                                         <small class="text-danger">*</small>
                                         <select class="form-control form-select @error('level') is-invalid @enderror" id="gender" name="gender" required>
-                                            <option disabled selected>Select player's gender</option>
+                                            <option disabled selected>Select training video's difficulty</option>
                                             @foreach(['Beginner', 'Intermediate', 'Expert'] AS $level)
                                                 <option value="{{ $level }}" @selected(old('level') == $level)>{{ $level }}</option>
                                             @endforeach
