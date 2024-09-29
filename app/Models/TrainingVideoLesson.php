@@ -22,4 +22,11 @@ class TrainingVideoLesson extends Model
     {
         return $this->belongsTo(TrainingVideo::class, 'trainingVideoId', 'id');
     }
+
+    public function players()
+    {
+        return $this->belongsToMany(TrainingVideoLesson::class, 'player_lesson', 'lessonId', 'playerId')
+            ->withPivot('completionStatus')
+            ->withTimestamps();
+    }
 }
