@@ -23,10 +23,10 @@ class TrainingVideoLessonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'previewPhoto' => ['image', 'required', 'max:1024'],
             'lessonTitle' => ['required', 'string', Rule::unique('training_video_lessons', 'lessonTitle')->ignore($this->lesson)],
-            'description' => ['required', 'string'],
+            'description' => ['nullable', 'string'],
             'lessonVideoURL' => ['required', 'url'],
+            'totalDuration' => ['required', 'numeric']
         ];
     }
 }

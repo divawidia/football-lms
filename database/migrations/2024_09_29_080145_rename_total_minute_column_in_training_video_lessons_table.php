@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('training_videos', function (Blueprint $table) {
-            $table->enum('status', ['1', '0'])->default('1');
+        Schema::table('training_video_lessons', function (Blueprint $table) {
             $table->renameColumn('totalMinutes', 'totalDuration');
         });
     }
@@ -22,8 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('training_videos', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('training_video_lessons', function (Blueprint $table) {
             $table->renameColumn('totalDuration', 'totalMinutes');
         });
     }

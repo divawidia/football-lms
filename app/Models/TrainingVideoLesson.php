@@ -15,7 +15,7 @@ class TrainingVideoLesson extends Model
         'lessonTitle',
         'description',
         'lessonVideoURL',
-        'totalMinutes',
+        'totalDuration',
         'status',
     ];
     public function trainingVideo()

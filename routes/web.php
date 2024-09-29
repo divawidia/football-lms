@@ -277,7 +277,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::put('remove-player/{player}', [TrainingVideoController::class, 'removePlayer'])->name('training-videos.remove-player');
 
             Route::get('lessons', [TrainingVideoLessonController::class, 'index'])->name('training-videos.lessons-index');
-            Route::get('store-lessons', [TrainingVideoLessonController::class, 'store'])->name('training-videos.lessons-store');
+            Route::post('store-lessons', [TrainingVideoLessonController::class, 'store'])->name('training-videos.lessons-store');
 //            Route::prefix('{lesson}')->group(function () {
 //                Route::get('', [TrainingVideoLessonController::class, 'show'])->name('training-videos.lessons-show');
 //                Route::get('update', [TrainingVideoLessonController::class, 'update'])->name('training-videos.lessons-update');

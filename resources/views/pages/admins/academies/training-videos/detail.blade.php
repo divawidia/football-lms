@@ -6,6 +6,77 @@
     @yield('title')
 @endsection
 
+
+@section('modal')
+    <!-- Modal add lesson -->
+    <div class="modal fade" id="addLessonModal" tabindex="-1" aria-labelledby="addLessonModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="" method="post" id="formAddLessonModal">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add lesson to {{ $data->trainingTitle }} Training</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label" for="add_lessonTitle">Lesson Title</label>
+                            <small class="text-danger">*</small>
+                            <input type="text"
+                                   id="add_lessonTitle"
+                                   name="lessonTitle"
+                                   class="form-control"
+                                   placeholder="Input lesson's title ..."
+                                    required>
+                            <span class="invalid-feedback lessonTitle_error" role="alert">
+                                <strong></strong>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editor">Description</label>
+                            <small class="text-sm">(Optional)</small>
+                            <div class="editor-container editor-container_classic-editor editor-container_include-style" id="editor-container">
+                                <div class="editor-container__editor">
+                                <textarea class="form-control"
+                                          id="editor"
+                                          name="description">
+                                </textarea>
+                                </div>
+                            </div>
+                            <span class="invalid-feedback description_error" role="alert">
+                                <strong></strong>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="add_lessonVideoURL">Lesson Video URL</label>
+                            <small class="text-danger">*</small>
+                            <input type="text"
+                                   id="add_lessonVideoURL"
+                                   name="lessonVideoURL"
+                                   class="form-control"
+                                   placeholder="Input youtube video url (only from youtube!) ..."
+                                   required>
+                            <span class="invalid-feedback lessonVideoURL_error" role="alert">
+                                <strong></strong>
+                            </span>
+                            <div id="preview-container">
+                                <div id="player"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="totalDuration" name="totalDuration">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
+
     @section('content')
         <div style="background: url({{ Storage::url($data->previewPhoto) }});
                     background-repeat: no-repeat;
@@ -93,7 +164,6 @@
                 </div>
         </div>
         <div class="container page__container page-section">
-
             {{--    Lessons    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Lesson(s)</div>
@@ -152,7 +222,7 @@
     @push('addon-script')
         <script>
             $(document).ready(function() {
-                const lessonsTable = $('#lessonsTable').DataTable({
+                $('#lessonsTable').DataTable({
                     processing: true,
                     serverSide: true,
                     ordering: true,
@@ -160,7 +230,7 @@
                         url: '{!! route('training-videos.lessons-index', $data->id) !!}',
                     },
                     columns: [
-                        { data: 'DT_Rowindex', name: 'DT_Rowindex', orderable: false, searchable: false},
+                        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                         {data: 'title', name: 'title'},
                         {data: 'totalMinutes', name: 'totalMinutes'},
                         {data: 'description', name: 'description'},
@@ -176,6 +246,100 @@
                     ]
                 });
 
+                $('#addLesson').on('click', function (e) {
+                    e.preventDefault();
+                    $('#addLessonModal').modal('show');
+                });
+
+                // This code loads the IFrame Player API code asynchronously.
+                var tag = document.createElement('script');
+
+                tag.src = "https://www.youtube.com/iframe_api";
+                var firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+                let player;
+
+                // Load the YouTube Iframe API and create a player
+                function onYouTubeIframeAPIReady(videoId) {
+                    player = new YT.Player('player', {
+                        height: '250',
+                        width: '100%',
+                        videoId: videoId,
+                        playerVars: {
+                            'playsinline': 1
+                        },
+                        events: {
+                            'onReady': onPlayerReady
+                        }
+                    });
+                }
+
+                // When the player is ready, get the video duration and show video
+                function onPlayerReady(event) {
+                    const duration = player.getDuration(); // Get the duration in seconds
+                    // event.target.playVideo();
+                    $('#totalDuration').val(duration);
+                }
+
+                // Extract video ID from the URL
+                function extractVideoID(url) {
+                    const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+                    const match = url.match(regex);
+                    return (match && match[1]) ? match[1] : null;
+                }
+
+                // Handle form submission
+                $('#add_lessonVideoURL').on('change', function (e) {
+                    e.preventDefault(); // Prevent form submission
+
+                    // Get the YouTube URL from the input
+                    const url = document.getElementById('add_lessonVideoURL').value;
+
+                    // Extract the video ID
+                    const videoID = extractVideoID(url);
+
+                    if (videoID) {
+                        onYouTubeIframeAPIReady(videoID);
+                    } else {
+                        alert('Invalid YouTube URL');
+                    }
+                });
+
+                // create schedule note data
+                $('#formAddLessonModal').on('submit', function (e) {
+                    e.preventDefault();
+                    $.ajax({
+                        url: "{{ route('training-videos.lessons-store', $data->id) }}",
+                        method: $(this).attr('method'),
+                        data: new FormData(this),
+                        contentType: false,
+                        processData: false,
+                        success: function () {
+                            $('#addLessonModal').modal('hide');
+                            Swal.fire({
+                                title: 'Training lesson successfully created!',
+                                icon: 'success',
+                                showCancelButton: false,
+                                confirmButtonColor: "#1ac2a1",
+                                confirmButtonText:
+                                    'Ok!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function (xhr) {
+                            const response = JSON.parse(xhr.responseText);
+                            console.log(response);
+                            $.each(response.errors, function (key, val) {
+                                $('span.' + key + '_error').text(val[0]);
+                                $("#add_" + key).addClass('is-invalid');
+                            });
+                        }
+                    });
+                });
 
                 $('body').on('click', '.delete', function() {
                     let id = $(this).attr('id');
@@ -196,7 +360,7 @@
                                 data: {
                                     _token: "{{ csrf_token() }}"
                                 },
-                                success: function(response) {
+                                success: function() {
                                     Swal.fire({
                                         icon: "success",
                                         title: "Competition successfully deleted!",
