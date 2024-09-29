@@ -5,20 +5,14 @@ namespace App\Services;
 use App\Models\Player;
 use App\Models\TrainingVideo;
 
-class TrainingVideoService
+class TrainingVideoService extends Service
 {
     public function index(){
         return TrainingVideo::paginate(16);
     }
 
     public function store(array $data, $userId){
-        if (array_key_exists('previewPhoto', $data)){
-            $data['previewPhoto'] =$data['previewPhoto']->store('assets/training-videos', 'public');
-        }else{
-            $data['previewPhoto'] = 'images/video-preview.png';
-        }
-        $data['totalLesson'] = 0;
-        $data['totalMinute'] = 0;
+        $data['previewPhoto'] = $this->storeImage($data, 'previewPhoto', 'assets/training-videos', 'images/video-preview.png');
         $data['userId'] = $userId;
 
         return TrainingVideo::create($data);

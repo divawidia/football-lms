@@ -40,13 +40,12 @@ class TrainingVideoController extends Controller
      */
     public function store(TrainingVideoRequest $request)
     {
-        dd($request);
         $data = $request->validated();
 
-        $trainingVideos = $this->trainingVideoService->store($data, Auth::user()->id());
+        $trainingVideos = $this->trainingVideoService->store($data, Auth::user()->id);
 
-        Alert::success('Training Videos'. $data['trainingTitle'] .' successfully created!');
-        return route('training-videos.show', $trainingVideos->id);
+        Alert::success('Training Videos '. $data['trainingTitle'] .' successfully created!');
+        return redirect()->route('training-videos.show', $trainingVideos->id);
     }
 
     /**

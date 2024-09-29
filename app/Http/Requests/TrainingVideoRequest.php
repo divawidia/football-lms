@@ -26,7 +26,7 @@ class TrainingVideoRequest extends FormRequest
             'previewPhoto' => ['image', 'required', 'max:1024'],
             'trainingTitle' => ['required', 'string', Rule::unique('training_videos', 'trainingTitle')->ignore($this->training)],
             'description' => ['required', 'string'],
-            'level' => ['required', Rule::in('beginer', 'intermediate', 'expert')]
+            'level' => ['required', Rule::in('Beginner', 'Intermediate', 'Expert')]
         ];
     }
 }
