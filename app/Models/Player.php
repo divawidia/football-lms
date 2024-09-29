@@ -61,9 +61,17 @@ class Player extends Model
     {
         return $this->hasMany(Invoice::class, 'playerId', 'id');
     }
-    public function trainingVideo()
+    public function trainingVideos()
     {
         return $this->belongsToMany(TrainingVideo::class, 'training_video_players', 'playerId', 'trainingVideoId')
-            ->withPivot('progress', 'status')->withTimestamps();
+            ->withPivot('progress', 'status')
+            ->withTimestamps();
+    }
+
+    public function lessons()
+    {
+        return $this->belongsToMany(TrainingVideoLesson::class, 'player_lesson', 'playerId', 'lessonId')
+            ->withPivot('completionStatus')
+            ->withTimestamps();
     }
 }
