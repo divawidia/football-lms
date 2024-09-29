@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -63,6 +62,7 @@ class TrainingVideoLessonService
                 }
             })
             ->rawColumns(['action','title','totalMinutes','description', 'created_date', 'last_updated', 'status'])
+            ->addIndexColumn()
             ->make();
     }
     public function store(array $data, TrainingVideo $trainingVideo){

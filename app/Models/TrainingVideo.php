@@ -17,7 +17,8 @@ class TrainingVideo extends Model
         'previewPhoto',
         'totalLesson',
         'totalMinute',
-        'level'
+        'level',
+        'status'
     ];
     public function invoices()
     {
@@ -35,6 +36,6 @@ class TrainingVideo extends Model
     }
     public function lessons()
     {
-        return $this->hasMany(TrainingVideoLesson::class, 'trainingLessonId', 'id');
+        return $this->hasMany(TrainingVideoLesson::class, 'trainingVideoId', 'id');
     }
 }

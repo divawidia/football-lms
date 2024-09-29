@@ -37,7 +37,7 @@
                             <div class="card-body">
                                 <div class="d-flex">
                                     <div class="flex">
-                                        <a class="card-title mb-4pt" href="">{{$training->trainingTitle}}</a>
+                                        <a class="card-title mb-4pt" href="{{ route('training-videos.show', $training->id) }}">{{$training->trainingTitle}}</a>
                                     </div>
                                     <a href="{{ route('training-videos.show', $training->id) }}" class="ml-4pt material-icons text-20 card-course__icon-favorite">edit</a>
                                 </div>
