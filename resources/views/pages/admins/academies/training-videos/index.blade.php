@@ -31,7 +31,7 @@
                 <div class="col-sm-6 col-lg-4">
                     <div class="card card-sm card--elevated p-relative o-hidden">
                         <a href="">
-                            <img class="img-fluid" src="{{ Storage::url('images/image 1.jpg') }}" alt="training-preview">
+                            <img class="img-fluid" src="{{ Storage::url('images/video-preview.png') }}" alt="training-preview">
                         </a>
                         <div class="card-body">
                             <div class="d-flex">
@@ -61,7 +61,7 @@
                 <div class="col-sm-6 col-lg-4">
                     <div class="card card-sm card--elevated p-relative o-hidden">
                         <a href="">
-                            <img class="img-fluid" src="{{ Storage::url('images/image 1.jpg') }}" alt="training-preview">
+                            <img class="img-fluid" src="{{ Storage::url('images/video-preview.png') }}" alt="training-preview">
                         </a>
                         <div class="card-body">
                             <div class="d-flex">
@@ -91,7 +91,7 @@
                 <div class="col-sm-6 col-lg-4">
                     <div class="card card-sm card--elevated p-relative o-hidden">
                         <a href="">
-                            <img class="img-fluid" src="{{ Storage::url('images/image 1.jpg') }}" alt="training-preview">
+                            <img class="img-fluid" src="{{ Storage::url('images/video-preview.png') }}" alt="training-preview">
                         </a>
                         <div class="card-body">
                             <div class="d-flex">
@@ -120,7 +120,7 @@
                 <div class="col-sm-6 col-lg-4">
                     <div class="card card-sm card--elevated p-relative o-hidden">
                         <a href="">
-                            <img class="img-fluid" src="{{ Storage::url('images/image 1.jpg') }}" alt="training-preview">
+                            <img class="img-fluid" src="{{ Storage::url('images/video-preview.png') }}" alt="training-preview">
                         </a>
                         <div class="card-body">
                             <div class="d-flex">

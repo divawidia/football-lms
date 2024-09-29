@@ -21,6 +21,7 @@
     "dependencies": {
         "@material/elevation": "^14.0.0",
         "bootstrap-custom-checkbox-toggle": "^1.0.0",
+        "ckeditor5": "^43.1.1",
         "corner-ribbon": "^1.0.0",
         "dom-factory": "^1.1.0",
         "fm-avatar": "^1.0.0",

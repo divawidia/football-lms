@@ -40,6 +40,7 @@ class TrainingVideoController extends Controller
      */
     public function store(TrainingVideoRequest $request)
     {
+        dd($request);
         $data = $request->validated();
 
         $trainingVideos = $this->trainingVideoService->store($data, Auth::user()->id());
