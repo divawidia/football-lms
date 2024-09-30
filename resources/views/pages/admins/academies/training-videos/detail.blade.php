@@ -331,12 +331,17 @@
                                 }
                             });
                         },
-                        error: function (xhr) {
+                        error: function (jqXHR, textStatus, errorThrown) {
                             const response = JSON.parse(xhr.responseText);
                             console.log(response);
                             $.each(response.errors, function (key, val) {
                                 $('span.' + key + '_error').text(val[0]);
                                 $("#add_" + key).addClass('is-invalid');
+                            });
+                            Swal.fire({
+                                icon: "error",
+                                title: "Something went wrong when updating data!",
+                                text: errorThrown,
                             });
                         }
                     });
@@ -368,11 +373,11 @@
                                     });
                                     datatable.ajax.reload();
                                 },
-                                error: function(error) {
+                                error: function(jqXHR, textStatus, errorThrown) {
                                     Swal.fire({
                                         icon: "error",
-                                        title: "Oops...",
-                                        text: "Something went wrong when deleting data!",
+                                        title: "Something went wrong when deleting data!",
+                                        text: errorThrown,
                                     });
                                 }
                             });

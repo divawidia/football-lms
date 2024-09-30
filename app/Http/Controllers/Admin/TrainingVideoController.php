@@ -84,6 +84,19 @@ class TrainingVideoController extends Controller
         return response()->json($trainingVideos);
     }
 
+    public function unpublish(TrainingVideo $trainingVideo){
+        $this->trainingVideoService->unpublish($trainingVideo);
+
+        Alert::success('Training '.$trainingVideo->trainingTitle.' status successfully unpublished!');
+        return redirect()->route('training-videos.show', $trainingVideo->id);
+    }
+
+    public function publish(TrainingVideo $trainingVideo){
+        $this->trainingVideoService->publish($trainingVideo);
+
+        Alert::success('Team '.$trainingVideo->trainingTitle.' status successfully published!');
+        return redirect()->route('training-videos.show', $trainingVideo->id);
+    }
     /**
      * Remove the specified resource from storage.
      */
