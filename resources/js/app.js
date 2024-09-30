@@ -38,5 +38,5 @@ import './player'
         });
     }
 
-    imagePreview('previewPhoto', 'preview');
+    imagePreview('add_previewPhoto', 'preview');
 })()

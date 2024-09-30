@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingVideoRequest;
 use App\Models\TrainingVideo;
 use App\Services\TrainingVideoService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use mysql_xdevapi\Exception;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class TrainingVideoController extends Controller
@@ -61,10 +63,12 @@ class TrainingVideoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(TrainingVideo $trainingVideo)
+    public function edit(TrainingVideo $trainingVideo): JsonResponse
     {
-        return view('pages.admins.academies.training-videos.edit',[
-            'data' => $trainingVideo
+        return response()->json([
+            'status' => '200',
+            'data' => $trainingVideo,
+            'message' => 'Success'
         ]);
     }
 

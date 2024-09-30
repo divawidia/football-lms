@@ -8,7 +8,7 @@
 
 
 @section('modal')
-    @include('pages.admins.academies.training-videos.form-modal.add-lesson')
+{{--    @include('pages.admins.academies.training-videos.form-modal.add-lesson')--}}
     @include('pages.admins.academies.training-videos.form-modal.edit-training-video')
 @endsection
 
@@ -188,9 +188,64 @@
                     $('#addLessonModal').modal('show');
                 });
 
+                // show edit form modal when edit training button clicked
                 $('#editTrainingVideo').on('click', function (e) {
                     e.preventDefault();
-                    $('#editTrainingVideoModal').modal('show');
+                    const id = $(this).attr('id');
+                    $.ajax({
+                        url: "{{ route('training-videos.edit', $data->id) }}",
+                        type: 'get',
+                        success: function (res) {
+                            $('#editTrainingVideoModal').modal('show');
+
+                            document.getElementById('training-title').textContent = 'Edit Training ' + res.data.trainingTitle;
+                            $('#add_trainingTitle').val(res.data.trainingTitle);
+                            $('#add_level').val(res.data.level);
+                            $('#add_description').val(res.data.description);
+                            $('#preview').attr('src', "/storage/"+res.data.previewPhoto).addClass('d-block');
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Something went wrong when deleting data!",
+                                text: errorThrown,
+                            });
+                        }
+                    });
+                });
+
+                $('#formEditTrainingVideoModal').on('submit', function (e) {
+                    e.preventDefault();
+                    $.ajax({
+                        url: "{{ route('training-videos.update', $data->id) }}",
+                        method: $(this).attr('method'),
+                        data: new FormData(this),
+                        contentType: false,
+                        processData: false,
+                        success: function () {
+                            $('#editTrainingVideoModal').modal('hide');
+                            Swal.fire({
+                                title: 'Training video successfully updated!',
+                                icon: 'success',
+                                showCancelButton: false,
+                                confirmButtonColor: "#1ac2a1",
+                                confirmButtonText:
+                                    'Ok!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function (xhr) {
+                            const response = JSON.parse(xhr.responseText);
+                            console.log(response);
+                            $.each(response.errors, function (key, val) {
+                                $('span.' + key + '_error').text(val[0]);
+                                $("#add_" + key).addClass('is-invalid');
+                            });
+                        }
+                    });
                 });
 
                 // This code loads the IFrame Player API code asynchronously.

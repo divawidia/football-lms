@@ -3,10 +3,10 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form action="" method="post" id="formEditTrainingVideoModal">
-{{--                @method('PUT')--}}
+                @method('PUT')
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title"></h5>
+                    <h5 class="modal-title" id="training-title"></h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -34,40 +34,36 @@
                                        class="custom-file-input"
                                        name="previewPhoto"
                                        id="add_previewPhoto"
-                                       accept="image/jpg, image/jpeg, image/png"
-                                       required>
+                                       accept="image/jpg, image/jpeg, image/png">
                                 <label class="custom-file-label" for="add_previewPhoto">Choose image</label>
-                                <span class="invalid-feedback" role="alert">
+                                <span class="invalid-feedback previewPhoto_error" role="alert">
                                     <strong></strong>
                                 </span>
                             </div>
-                            <img id="preview" class="image-upload-preview img-fluid mt-3" alt="image-preview" src=""/>
+                            <img id="preview" class="image-upload-preview img-fluid mt-4" alt="image-preview" src=""/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="level">Difficulty Level</label>
                         <small class="text-danger">*</small>
-                        <select class="form-control form-select" id="level" name="level" required>
+                        <select class="form-control form-select" id="add_level" name="level" required>
                             <option disabled selected>Select training video's difficulty</option>
                             @foreach(['Beginner', 'Intermediate', 'Expert'] AS $level)
                                 <option value="{{ $level }}">{{ $level }}</option>
                             @endforeach
                         </select>
-                        <span class="invalid-feedback" role="alert">
+                        <span class="invalid-feedback level_error" role="alert">
                             <strong></strong>
                         </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="description">Description</label>
+                        <label class="form-label" for="add_description">Description</label>
                         <small class="text-sm">(Optional)</small>
-                        <div class="editor-container editor-container_classic-editor editor-container_include-style" id="editor-container">
-                            <div class="editor-container__editor">
-                                <textarea class="form-control editorTrainingVideo"
-                                          id="description"
-                                          name="description">
-                                </textarea>
-                            </div>
-                        </div>
+                        <textarea class="form-control"
+                                  id="add_description"
+                                  name="description"
+                                    rows="5">
+                        </textarea>
                         <span class="invalid-feedback description_error" role="alert">
                             <strong></strong>
                         </span>
