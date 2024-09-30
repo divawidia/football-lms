@@ -32,18 +32,35 @@
                             <div class="lead text-white-50 measure-hero-lead mb-24pt">
                                 {!! $data->description !!}
                             </div>
-                            <a href="" id="editTrainingVideo" class="btn btn-sm btn-white">
-                                <span class="material-icons mr-2">edit</span>
-                                Edit Training
-                            </a>
-                            <a href="" class="btn btn-sm btn-white my-2 mx-2">
-                                <span class="material-icons mr-2">block</span>
-                                Unpublished Training
-                            </a>
-                            <a href="" class="btn btn-sm btn-white">
-                                <span class="material-icons mr-2">delete</span>
-                                Delete Training
-                            </a>
+                            <div class="btn-toolbar" role="toolbar">
+                                <a href="" id="editTrainingVideo" class="btn btn-sm btn-white">
+                                    <span class="material-icons mr-2">edit</span>
+                                    Edit Training
+                                </a>
+                                @if($data->status == "1")
+                                    <form action="{{ route('training-videos.unpublish', $data->id) }}" method="POST">
+                                        @method("PATCH")
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-white mx-2">
+                                            <span class="material-icons mr-2">block</span>
+                                            Unpublish Training
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('training-videos.publish', $data->id) }}" method="POST">
+                                        @method("PATCH")
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-white mx-2">
+                                            <span class="material-icons mr-2">check_circle</span>
+                                            Publish Training
+                                        </button>
+                                    </form>
+                                @endif
+                                <a href="" class="btn btn-sm btn-white">
+                                    <span class="material-icons mr-2">delete</span>
+                                    Delete Training
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">

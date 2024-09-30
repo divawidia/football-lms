@@ -21,7 +21,7 @@
                                name="trainingTitle"
                                class="form-control"
                                placeholder="Input training's title ..."
-                               >
+                               required>
                         <span class="invalid-feedback trainingTitle" role="alert">
                             <strong></strong>
                         </span>

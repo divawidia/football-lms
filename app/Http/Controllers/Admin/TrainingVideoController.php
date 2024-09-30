@@ -94,7 +94,7 @@ class TrainingVideoController extends Controller
     public function publish(TrainingVideo $trainingVideo){
         $this->trainingVideoService->publish($trainingVideo);
 
-        Alert::success('Team '.$trainingVideo->trainingTitle.' status successfully published!');
+        Alert::success('Training '.$trainingVideo->trainingTitle.' status successfully published!');
         return redirect()->route('training-videos.show', $trainingVideo->id);
     }
     /**
