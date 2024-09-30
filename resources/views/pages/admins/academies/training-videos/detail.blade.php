@@ -84,7 +84,7 @@
                     overflow: hidden;
                     background-position: center center;">
                 <div class="mdk-box__content">
-                    <div class="hero py-64pt text-center text-sm-left" style="background-color: rgba(239, 37, 52, 0.8)">
+                    <div class="hero py-64pt text-center text-sm-left" style="background-color: rgba(239, 37, 52, 0.75)">
                         <div class="container page__container">
                             <ol class="breadcrumb p-0 m-0">
                                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
@@ -232,7 +232,7 @@
                     columns: [
                         { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                         {data: 'title', name: 'title'},
-                        {data: 'totalMinutes', name: 'totalMinutes'},
+                        {data: 'totalDuration', name: 'totalDuration'},
                         {data: 'description', name: 'description'},
                         {data: 'status', name: 'status'},
                         {data: 'created_date', name: 'created_date'},
@@ -241,7 +241,8 @@
                             data: 'action',
                             name: 'action',
                             orderable: false,
-                            searchable: false
+                            searchable: false,
+                            width: '20%'
                         },
                     ]
                 });

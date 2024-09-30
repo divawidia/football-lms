@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingVideoLessonRequest;
 use App\Models\TrainingVideo;
+use App\Models\TrainingVideoLesson;
 use App\Services\TrainingVideoLessonService;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -27,10 +28,28 @@ class TrainingVideoLessonController extends Controller
         return response()->json($lesson);
     }
 
-    public function edit( $trainingVideo)
+    public function show(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
         return view('pages.admins.academies.training-videos.lessons.show',[
-            'data' => $trainingVideo
+            'data' => $lesson
         ]);
+    }
+
+    public function publish(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
+    {
+        $this->trainingVideoLessonService->publish($lesson);
+
+        $text = 'Lesson status successfully published!';
+        Alert::success($text);
+        return redirect()->route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$lesson->id]);
+    }
+
+    public function unpublish(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
+    {
+        $this->trainingVideoLessonService->unpublish($lesson);
+
+        $text = 'Lesson status successfully unpublished!';
+        Alert::success($text);
+        return redirect()->route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$lesson->id]);
     }
 }

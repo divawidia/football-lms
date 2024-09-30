@@ -276,13 +276,17 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->name('training-videos.assign-players');
             Route::put('remove-player/{player}', [TrainingVideoController::class, 'removePlayer'])->name('training-videos.remove-player');
 
-            Route::get('lessons', [TrainingVideoLessonController::class, 'index'])->name('training-videos.lessons-index');
-            Route::post('store-lessons', [TrainingVideoLessonController::class, 'store'])->name('training-videos.lessons-store');
-//            Route::prefix('{lesson}')->group(function () {
-//                Route::get('', [TrainingVideoLessonController::class, 'show'])->name('training-videos.lessons-show');
-//                Route::get('update', [TrainingVideoLessonController::class, 'update'])->name('training-videos.lessons-update');
-//                Route::delete('destroy', [TrainingVideoLessonController::class, 'destroy'])->name('training-videos.lessons-destroy');
-//            });
+            Route::prefix('lessons')->group(function () {
+            Route::get('', [TrainingVideoLessonController::class, 'index'])->name('training-videos.lessons-index');
+            Route::post('store', [TrainingVideoLessonController::class, 'store'])->name('training-videos.lessons-store');
+                Route::prefix('{lesson}')->group(function () {
+                    Route::get('', [TrainingVideoLessonController::class, 'show'])->name('training-videos.lessons-show');
+                    Route::get('update', [TrainingVideoLessonController::class, 'update'])->name('training-videos.lessons-update');
+                    Route::delete('destroy', [TrainingVideoLessonController::class, 'destroy'])->name('training-videos.lessons-destroy');
+                    Route::patch('unpublish', [TrainingVideoLessonController::class, 'unpublish'])->name('training-videos.lessons-unpublish');
+                    Route::patch('publish', [TrainingVideoLessonController::class, 'publish'])->name('training-videos.lessons-publish');
+                });
+            });
         });
     });
 });

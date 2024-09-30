@@ -41,4 +41,11 @@ class Service
         }
         return  $data[$arrayKey];
     }
+
+    public function secondToMinute($seconds){
+        $minutes = floor($seconds / 60);  // Get the number of whole minutes
+        $remaining_seconds = $seconds % 60;  // Get the remaining seconds
+
+        return $minutes . "m " . $remaining_seconds . "s";
+    }
 }
