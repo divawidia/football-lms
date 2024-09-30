@@ -31,14 +31,14 @@ class TrainingVideoLessonService extends Service
                                     </form>';
                 }
                 return '<div class="btn-toolbar" role="toolbar">
-                            <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="" data-toggle="tooltip" data-placement="bottom" title="Edit lesson">
+                            <a class="btn btn-sm btn-outline-secondary mr-1 editLesson" id="'.$item->id.'" href="" data-toggle="tooltip" data-placement="bottom" title="Edit lesson">
                                 <span class="material-icons">edit</span>
                              </a>
                              <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="" data-toggle="tooltip" data-placement="bottom" title="View lesson">
                                 <span class="material-icons">visibility</span>
                              </a>
                              '.$statusButton.'
-                            <button type="button" class="btn btn-sm btn-outline-secondary delete-lesson" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Edit lesson">
+                            <button type="button" class="btn btn-sm btn-outline-secondary deleteLesson" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Edit lesson">
                                 <span class="material-icons">delete</span>
                             </button>
                         </div>';
