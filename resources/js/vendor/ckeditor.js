@@ -193,4 +193,8 @@ const editorConfig = {
     }
 };
 
-ClassicEditor.create(document.querySelector('#editor'), editorConfig);
+const classSelectors = ['.editorTrainingVideo', '.editorLesson'];
+
+classSelectors.forEach(classSelectors => {
+    ClassicEditor.create(document.querySelector(classSelectors), editorConfig);
+});

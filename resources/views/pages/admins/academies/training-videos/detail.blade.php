@@ -8,73 +8,8 @@
 
 
 @section('modal')
-    <!-- Modal add lesson -->
-    <div class="modal fade" id="addLessonModal" tabindex="-1" aria-labelledby="addLessonModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="post" id="formAddLessonModal">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add lesson to {{ $data->trainingTitle }} Training</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label class="form-label" for="add_lessonTitle">Lesson Title</label>
-                            <small class="text-danger">*</small>
-                            <input type="text"
-                                   id="add_lessonTitle"
-                                   name="lessonTitle"
-                                   class="form-control"
-                                   placeholder="Input lesson's title ..."
-                                    required>
-                            <span class="invalid-feedback lessonTitle_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="editor">Description</label>
-                            <small class="text-sm">(Optional)</small>
-                            <div class="editor-container editor-container_classic-editor editor-container_include-style" id="editor-container">
-                                <div class="editor-container__editor">
-                                <textarea class="form-control"
-                                          id="editor"
-                                          name="description">
-                                </textarea>
-                                </div>
-                            </div>
-                            <span class="invalid-feedback description_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="add_lessonVideoURL">Lesson Video URL</label>
-                            <small class="text-danger">*</small>
-                            <input type="text"
-                                   id="add_lessonVideoURL"
-                                   name="lessonVideoURL"
-                                   class="form-control"
-                                   placeholder="Input youtube video url (only from youtube!) ..."
-                                   required>
-                            <span class="invalid-feedback lessonVideoURL_error" role="alert">
-                                <strong></strong>
-                            </span>
-                            <div id="preview-container">
-                                <div id="player"></div>
-                            </div>
-                        </div>
-                        <input type="hidden" id="totalDuration" name="totalDuration">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    @include('pages.admins.academies.training-videos.form-modal.add-lesson')
+    @include('pages.admins.academies.training-videos.form-modal.edit-training-video')
 @endsection
 
     @section('content')
@@ -97,7 +32,7 @@
                             <div class="lead text-white-50 measure-hero-lead mb-24pt">
                                 {!! $data->description !!}
                             </div>
-                            <a href="" class="btn btn-sm btn-white">
+                            <a href="" id="editTrainingVideo" class="btn btn-sm btn-white">
                                 <span class="material-icons mr-2">edit</span>
                                 Edit Training
                             </a>
@@ -219,6 +154,7 @@
             </div>
         </div>
     @endsection
+
     @push('addon-script')
         <script>
             $(document).ready(function() {
@@ -250,6 +186,11 @@
                 $('#addLesson').on('click', function (e) {
                     e.preventDefault();
                     $('#addLessonModal').modal('show');
+                });
+
+                $('#editTrainingVideo').on('click', function (e) {
+                    e.preventDefault();
+                    $('#editTrainingVideoModal').modal('show');
                 });
 
                 // This code loads the IFrame Player API code asynchronously.
