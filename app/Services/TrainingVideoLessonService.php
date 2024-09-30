@@ -78,7 +78,11 @@ class TrainingVideoLessonService extends Service
     }
     public function store(array $data, TrainingVideo $trainingVideo){
         $data['trainingVideoId'] = $trainingVideo->id;
-        return TrainingVideoLesson::create($data);
+        $players = $trainingVideo->players()->select('playerId')->get();
+//        dd($players);
+        $lesson = TrainingVideoLesson::create($data);
+        $lesson->players()->attach($players);
+        return $lesson;
     }
 
     public function update(array $data, TrainingVideoLesson $trainingVideoLesson){
