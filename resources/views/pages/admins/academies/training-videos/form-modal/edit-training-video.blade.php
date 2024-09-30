@@ -12,31 +12,32 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" id="trainingId">
                     <div class="form-group">
-                        <label class="form-label" for="add_trainingTitle">Training Title</label>
+                        <label class="form-label" for="trainingTitle">Training Title</label>
                         <small class="text-danger">*</small>
                         <input type="text"
-                               id="add_trainingTitle"
+                               id="trainingTitle"
                                name="trainingTitle"
                                class="form-control"
                                placeholder="Input training's title ..."
-                               required>
-                        <span class="invalid-feedback trainingTitle_error" role="alert">
+                               >
+                        <span class="invalid-feedback trainingTitle" role="alert">
                             <strong></strong>
                         </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="add_previewPhoto">Training Preview Image</label>
+                        <label class="form-label" for="previewPhoto">Training Preview Image</label>
                         <small class="text-danger">*</small>
                         <div class="media justify-content-center mb-2">
                             <div class="custom-file">
                                 <input type="file"
                                        class="custom-file-input"
                                        name="previewPhoto"
-                                       id="add_previewPhoto"
+                                       id="previewPhoto"
                                        accept="image/jpg, image/jpeg, image/png">
-                                <label class="custom-file-label" for="add_previewPhoto">Choose image</label>
-                                <span class="invalid-feedback previewPhoto_error" role="alert">
+                                <label class="custom-file-label" for="previewPhoto">Choose image</label>
+                                <span class="invalid-feedback previewPhoto" role="alert">
                                     <strong></strong>
                                 </span>
                             </div>
@@ -46,29 +47,24 @@
                     <div class="form-group">
                         <label class="form-label" for="level">Difficulty Level</label>
                         <small class="text-danger">*</small>
-                        <select class="form-control form-select" id="add_level" name="level" required>
+                        <select class="form-control form-select" id="level" name="level" required>
                             <option disabled selected>Select training video's difficulty</option>
                             @foreach(['Beginner', 'Intermediate', 'Expert'] AS $level)
                                 <option value="{{ $level }}">{{ $level }}</option>
                             @endforeach
                         </select>
-                        <span class="invalid-feedback level_error" role="alert">
+                        <span class="invalid-feedback level" role="alert">
                             <strong></strong>
                         </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="add_description">Description</label>
+                        <label class="form-label" for="description">Description</label>
                         <small class="text-sm">(Optional)</small>
-                        <textarea class="form-control"
-                                  id="add_description"
-                                  name="description"
-                                    rows="5">
-                        </textarea>
-                        <span class="invalid-feedback description_error" role="alert">
+                        <textarea class="form-control" id="description" name="description" rows="5"></textarea>
+                        <span class="invalid-feedback description" role="alert">
                             <strong></strong>
                         </span>
                     </div>
-                    <input type="hidden" id="totalDuration" name="totalDuration">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

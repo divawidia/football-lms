@@ -23,9 +23,9 @@ class TrainingVideoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'previewPhoto' => ['image', 'required', 'max:1024'],
-            'trainingTitle' => ['required', 'string', Rule::unique('training_videos', 'trainingTitle')->ignore($this->training)],
-            'description' => ['required', 'string'],
+            'previewPhoto' => ['image', 'nullable', 'max:1024'],
+            'trainingTitle' => ['required', 'string', Rule::unique('training_videos', 'trainingTitle')->ignore($this->trainingVideo)],
+            'description' => ['nullable', 'string'],
             'level' => ['required', Rule::in('Beginner', 'Intermediate', 'Expert')]
         ];
     }

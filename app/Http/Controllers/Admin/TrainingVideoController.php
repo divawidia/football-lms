@@ -81,8 +81,7 @@ class TrainingVideoController extends Controller
 
         $trainingVideos = $this->trainingVideoService->update($data, $trainingVideo);
 
-        Alert::success('Training Videos'. $data['trainingTitle'] .' successfully updated!');
-        return route('training-videos.show', $trainingVideos->id);
+        return response()->json($trainingVideos);
     }
 
     /**

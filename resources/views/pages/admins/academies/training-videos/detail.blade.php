@@ -191,7 +191,6 @@
                 // show edit form modal when edit training button clicked
                 $('#editTrainingVideo').on('click', function (e) {
                     e.preventDefault();
-                    const id = $(this).attr('id');
                     $.ajax({
                         url: "{{ route('training-videos.edit', $data->id) }}",
                         type: 'get',
@@ -199,9 +198,10 @@
                             $('#editTrainingVideoModal').modal('show');
 
                             document.getElementById('training-title').textContent = 'Edit Training ' + res.data.trainingTitle;
-                            $('#add_trainingTitle').val(res.data.trainingTitle);
-                            $('#add_level').val(res.data.level);
-                            $('#add_description').val(res.data.description);
+                            $('#trainingId').val(res.data.id);
+                            $('#trainingTitle').val(res.data.trainingTitle);
+                            $('#level').val(res.data.level);
+                            $('#description').val(res.data.description);
                             $('#preview').attr('src', "/storage/"+res.data.previewPhoto).addClass('d-block');
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
@@ -237,12 +237,16 @@
                                 }
                             });
                         },
-                        error: function (xhr) {
-                            const response = JSON.parse(xhr.responseText);
-                            console.log(response);
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            const response = JSON.parse(jqXHR.responseText);
                             $.each(response.errors, function (key, val) {
-                                $('span.' + key + '_error').text(val[0]);
-                                $("#add_" + key).addClass('is-invalid');
+                                $('span.' + key).text(val[0]);
+                                $("#" + key).addClass('is-invalid');
+                            });
+                            Swal.fire({
+                                icon: "error",
+                                title: "Something went wrong when updating data!",
+                                text: errorThrown,
                             });
                         }
                     });
