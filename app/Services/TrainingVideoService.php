@@ -50,6 +50,7 @@ class TrainingVideoService extends Service
     public function destroy(TrainingVideo $trainingVideo){
         $trainingVideo->players()->detach();
         $this->deleteImage($trainingVideo->previewPhoto);
-        return $trainingVideo->delete();
+        $trainingVideo->delete();
+        return $trainingVideo;
     }
 }

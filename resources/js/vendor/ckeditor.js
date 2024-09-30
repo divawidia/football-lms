@@ -193,10 +193,10 @@ const editorConfig = {
     }
 };
 
-const classSelectors = ['.editorTrainingVideo', '.editorLesson'];
+// const classSelectors = ['.editorTrainingVideo', '.editorLesson'];
 
 // classSelectors.forEach(classSelectors => {
 //     ClassicEditor.create(document.querySelector(classSelectors), editorConfig);
 // });
 
-ClassicEditor.create(document.querySelector('#editor'), editorConfig);
+// ClassicEditor.create(document.querySelector('#editor'), editorConfig);

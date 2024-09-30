@@ -273,6 +273,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::put('update', [TrainingVideoController::class, 'update'])->name('training-videos.update');
             Route::patch('unpublish', [TrainingVideoController::class, 'unpublish'])->name('training-videos.unpublish');
             Route::patch('publish', [TrainingVideoController::class, 'publish'])->name('training-videos.publish');
+            Route::delete('delete', [TrainingVideoController::class, 'destroy'])->name('training-videos.destroy');
 
             Route::get('players', [TrainingVideoController::class, 'players'])->name('training-videos.players');
             Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->name('training-videos.assign-players');
