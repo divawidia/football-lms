@@ -16,7 +16,6 @@ class TrainingVideoService extends Service
 
     public function players(TrainingVideo $trainingVideo){
         $data = $trainingVideo->players()->get();
-//        dd($data);
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideo) {
                 return '<div class="btn-toolbar" role="toolbar">
@@ -101,7 +100,11 @@ class TrainingVideoService extends Service
     }
 
     public function removePlayer(TrainingVideo $trainingVideo, Player $player){
-        return $trainingVideo->players()->detach($player);
+        $trainingVideo->players()->detach($player);
+        foreach($trainingVideo->lessons as $lesson){
+            $lesson->players()->detach($player);
+        }
+        return $trainingVideo;
     }
 
     public function destroy(TrainingVideo $trainingVideo){

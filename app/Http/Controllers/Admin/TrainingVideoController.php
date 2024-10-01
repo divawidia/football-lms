@@ -129,6 +129,12 @@ class TrainingVideoController extends Controller
         Alert::success($text);
         return redirect()->route('training-videos.show', $trainingVideo->id);
     }
+
+    public function removePLayer(TrainingVideo $trainingVideo, Player $player): JsonResponse
+    {
+        return response()->json($this->trainingVideoService->removePlayer($trainingVideo, $player));
+    }
+
     /**
      * Remove the specified resource from storage.
      */
