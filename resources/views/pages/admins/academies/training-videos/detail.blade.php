@@ -88,11 +88,11 @@
                         </li>
                         <li class="nav-item navbar-list__item">
                             <i class="material-icons text-muted icon--left">schedule</i>
-                            {{ $data->totalMinute }} m
+                            {{ $totalDuration }}
                         </li>
                         <li class="nav-item navbar-list__item">
                             <span class="material-icons text-muted icon--left">play_circle_outline</span>
-                            {{ $data->totalLesson }} Lesson
+                            {{ $data->lessons()->count() }} Lesson
                         </li>
                         <li class="nav-item navbar-list__item">
                             <i class="material-icons text-muted icon--left">assessment</i>
@@ -120,6 +120,50 @@
         </div>
     </div>
     <div class="container page__container page-section">
+        <div class="page-separator">
+            <div class="page-separator__text">Overview</div>
+{{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
+                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="flex d-flex align-items-center">
+                            <div class="h2 mb-0 mr-3">{{ $data->players()->count() }}</div>
+                            <div class="ml-auto text-right">
+                                <div class="card-title">Total Assigned Players</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
+                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="flex d-flex align-items-center">
+                            <div class="h2 mb-0 mr-3">{{ $data->players()->where('status', 'Completed')->count() }}</div>
+                            <div class="ml-auto text-right">
+                                <div class="card-title">Players Completed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
+                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="flex d-flex align-items-center">
+                            <div class="h2 mb-0 mr-3">{{ $data->players()->where('status', 'On Progress')->count() }}</div>
+                            <div class="ml-auto text-right">
+                                <div class="card-title text-capitalize">Players on progress</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {{--    Lessons    --}}
         <div class="page-separator">
             <div class="page-separator__text">Lesson(s)</div>

@@ -63,6 +63,10 @@ class TrainingVideoService extends Service
             ->make();
     }
 
+    public function getTotalDuration(TrainingVideo $trainingVideo){
+        return $this->secondToMinute($trainingVideo->lessons()->sum('totalDuration'));
+    }
+
     public function store(array $data, $userId){
         $data['previewPhoto'] = $this->storeImage($data, 'previewPhoto', 'assets/training-videos', 'images/video-preview.png');
         $data['userId'] = $userId;

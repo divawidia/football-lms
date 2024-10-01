@@ -53,7 +53,7 @@ class TrainingVideoLessonService extends Service
                 if ($item->description == null){
                     $description = 'No description yet';
                 }else{
-                    $description = htmlspecialchars_decode(Str::limit($item->description, 150));
+                    $description = Str::limit($item->description, 150);
                 }
                 return $description;
             })

@@ -60,6 +60,7 @@ class TrainingVideoController extends Controller
     {
         return view('pages.admins.academies.training-videos.detail',[
             'data' => $trainingVideo,
+            'totalDuration' => $this->trainingVideoService->getTotalDuration($trainingVideo)
         ]);
     }
 
