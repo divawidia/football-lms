@@ -64,14 +64,14 @@ class Player extends Model
     public function trainingVideos()
     {
         return $this->belongsToMany(TrainingVideo::class, 'training_video_players', 'playerId', 'trainingVideoId')
-            ->withPivot('progress', 'status')
+            ->withPivot('progress', 'status', 'completed_at')
             ->withTimestamps();
     }
 
     public function lessons()
     {
         return $this->belongsToMany(TrainingVideoLesson::class, 'player_lesson', 'playerId', 'lessonId')
-            ->withPivot('completionStatus')
+            ->withPivot('completionStatus', 'completed_at')
             ->withTimestamps();
     }
 }
