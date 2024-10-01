@@ -79,7 +79,6 @@ class TrainingVideoLessonService extends Service
     public function store(array $data, TrainingVideo $trainingVideo){
         $data['trainingVideoId'] = $trainingVideo->id;
         $players = $trainingVideo->players()->select('playerId')->get();
-//        dd($players);
         $lesson = TrainingVideoLesson::create($data);
         $lesson->players()->attach($players);
         return $lesson;

@@ -40,7 +40,11 @@ class TrainingVideoService extends Service
     }
 
     public function updatePlayer(array $data, TrainingVideo $trainingVideo){
-        return $trainingVideo->players()->attach($data['players']);
+        $trainingVideo->players()->attach($data['players']);
+        foreach($trainingVideo->lessons as $lesson){
+            $lesson->players()->attach($data['players']);
+        }
+        return $trainingVideo;
     }
 
     public function removePlayer(TrainingVideo $trainingVideo, Player $player){
