@@ -7,6 +7,7 @@ use App\Http\Requests\TrainingVideoLessonRequest;
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
 use App\Services\TrainingVideoLessonService;
+use Illuminate\Http\JsonResponse;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class TrainingVideoLessonController extends Controller
@@ -32,6 +33,15 @@ class TrainingVideoLessonController extends Controller
     {
         return view('pages.admins.academies.training-videos.lessons.show',[
             'data' => $lesson
+        ]);
+    }
+
+    public function edit(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson): JsonResponse
+    {
+        return response()->json([
+            'status' => '200',
+            'data' => $lesson,
+            'message' => 'Success'
         ]);
     }
 

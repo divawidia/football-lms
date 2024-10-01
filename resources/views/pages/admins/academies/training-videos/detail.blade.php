@@ -446,7 +446,7 @@
             });
 
             // show edit form modal when edit training button clicked
-            $('#editTrainingVideo').on('click', function (e) {
+            $('#editLesson').on('click', function (e) {
                 e.preventDefault();
                 $.ajax({
                     url: "{{ route('training-videos.edit', $data->id) }}",
