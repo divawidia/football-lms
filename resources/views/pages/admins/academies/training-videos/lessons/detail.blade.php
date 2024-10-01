@@ -161,6 +161,7 @@
                             <th>Name</th>
                             <th>Completion Status</th>
                             <th>Assigned At</th>
+                            <th>Completed At</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -190,6 +191,7 @@
                     {data: 'name', name: 'name'},
                     {data: 'status', name: 'status'},
                     {data: 'assignedAt', name: 'assignedAt'},
+                    {data: 'completedAt', name: 'completedAt'},
                     {
                         data: 'action',
                         name: 'action',
