@@ -19,7 +19,6 @@ class TrainingVideo extends Model
         'totalMinute',
         'level',
         'status',
-        'completed_at'
     ];
     public function invoices()
     {
@@ -29,7 +28,7 @@ class TrainingVideo extends Model
     public function players()
     {
         return $this->belongsToMany(Player::class, 'training_video_players', 'trainingVideoId', 'playerId')
-            ->withPivot('progress', 'status')->withTimestamps();
+            ->withPivot('progress', 'status', 'completed_at')->withTimestamps();
     }
     public function user()
     {

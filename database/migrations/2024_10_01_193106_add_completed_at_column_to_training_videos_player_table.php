@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('training_videos', function (Blueprint $table) {
+        Schema::table('training_video_players', function (Blueprint $table) {
             $table->timestamp('completed_at')->nullable();
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('training_videos', function (Blueprint $table) {
+        Schema::table('training_video_players', function (Blueprint $table) {
             $table->dropColumn('completed_at');
         });
     }
