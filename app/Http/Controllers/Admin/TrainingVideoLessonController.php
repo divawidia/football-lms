@@ -69,4 +69,9 @@ class TrainingVideoLessonController extends Controller
         Alert::success($text);
         return redirect()->route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$lesson->id]);
     }
+
+    public function destroy(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson): JsonResponse
+    {
+        return response()->json($this->trainingVideoLessonService->destroy($lesson));
+    }
 }

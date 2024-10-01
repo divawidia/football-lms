@@ -451,7 +451,7 @@
                 });
             });
 
-            // show edit form modal when edit training button clicked
+            // show edit form modal when edit lesson button clicked
             body.on('click', '.editLesson', function (e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
@@ -484,7 +484,7 @@
 
             showYoutubePreview('#edit-lessonVideoURL', '#formEditLessonModal', '#edit-player');
 
-            // update training video data when form submitted
+            // update lesson data when form submitted
             $('#formEditLessonModal').on('submit', function (e) {
                 e.preventDefault();
                 const id = $('#lessonId').val();
@@ -521,6 +521,52 @@
                             icon: "error",
                             title: "Something went wrong when updating data!",
                             text: errorThrown,
+                        });
+                    }
+                });
+            });
+
+            // delete lesson data
+            body.on('click', '.deleteLesson', function () {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure to delete this lesson?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('training-videos.lessons-destroy', ['trainingVideo'=>$data->id, 'lesson' => ':id']) }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function (res) {
+                                Swal.fire({
+                                    title: 'Training lesson successfully deleted!',
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "{{ route('training-videos.show', $data->id) }}";
+                                    }
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Something went wrong when deleting data!",
+                                    text: errorThrown,
+                                });
+                            }
                         });
                     }
                 });
