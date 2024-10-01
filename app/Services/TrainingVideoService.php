@@ -48,15 +48,23 @@ class TrainingVideoService extends Service
                 return $item->pivot->progress .'%';
             })
             ->editColumn('assignedAt', function ($item) {
-                $date = date('M d, Y ~ h:i A', strtotime($item->pivot->created_at));
-                return $date;
+                return $this->convertTimestamp($item->pivot->created_at);
+            })
+            ->editColumn('completedAt', function ($item) {
+                if ($item->pivot->completed_at == null){
+                    $data = 'Not completed yet';
+                }else{
+                    $data = $this->convertTimestamp($item->pivot->completed_at);
+                }
+                return $data;
             })
             ->editColumn('status', function ($item) {
                 if ($item->pivot->status == 'Completed') {
-                    return '<span class="badge badge-pill badge-success">Completed</span>';
+                    $badge = '<span class="badge badge-pill badge-success">Completed</span>';
                 } elseif ($item->pivot->status == 'On Progress') {
-                    return '<span class="badge badge-pill badge-warning">On Progress</span>';
+                    $badge = '<span class="badge badge-pill badge-warning">On Progress</span>';
                 }
+                return $badge;
             })
             ->rawColumns(['action','name','progress','assignedAt', 'status'])
             ->addIndexColumn()

@@ -63,19 +63,18 @@ class TrainingVideoLessonService extends Service
                 return $description;
             })
             ->editColumn('created_date', function ($item) {
-                $date = date('M d, Y ~ h:i A', strtotime($item->created_at));
-                return $date;
+                return $this->convertTimestamp($item->created_at);
             })
             ->editColumn('last_updated', function ($item) {
-                $date = date('M d, Y ~ h:i A', strtotime($item->updated_at));
-                return $date;
+                return $this->convertTimestamp($item->updated_at);
             })
             ->editColumn('status', function ($item) {
                 if ($item->status == '1') {
-                    return '<span class="badge badge-pill badge-success">Active</span>';
+                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
                 } elseif ($item->status == '0') {
-                    return '<span class="badge badge-pill badge-danger">Non-Active</span>';
+                    $badge = '<span class="badge badge-pill badge-danger">Non-Active</span>';
                 }
+                return $badge;
             })
             ->rawColumns(['action','title','totalMinutes','description', 'created_date', 'last_updated', 'status'])
             ->addIndexColumn()
@@ -110,8 +109,15 @@ class TrainingVideoLessonService extends Service
                             </div>';
             })
             ->editColumn('assignedAt', function ($item) {
-                $date = date('M d, Y ~ h:i A', strtotime($item->pivot->created_at));
-                return $date;
+                return $this->convertTimestamp($item->pivot->created_at);
+            })
+            ->editColumn('completedAt', function ($item) {
+                if ($item->pivot->completed_at == null){
+                    $data = 'Not completed yet';
+                }else{
+                    $data = $this->convertTimestamp($item->pivot->completed_at);
+                }
+                return $data;
             })
             ->editColumn('status', function ($item) {
                 if ($item->pivot->completionStatus == '1') {
@@ -121,7 +127,7 @@ class TrainingVideoLessonService extends Service
                 }
                 return $badge;
             })
-            ->rawColumns(['action','name','assignedAt', 'status'])
+            ->rawColumns(['action','name','assignedAt', 'completedAt','status'])
             ->addIndexColumn()
             ->make();
     }

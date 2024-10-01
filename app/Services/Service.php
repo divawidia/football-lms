@@ -48,4 +48,8 @@ class Service
 
         return $minutes . "m " . $remaining_seconds . "s";
     }
+
+    public function convertTimestamp($timestamp){
+        return date('M d, Y ~ h:i A', strtotime($timestamp));
+    }
 }
