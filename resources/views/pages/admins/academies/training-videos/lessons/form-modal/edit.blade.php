@@ -54,6 +54,13 @@
                         </div>
                     </div>
                     <input type="hidden" id="totalDuration" name="totalDuration">
+                    <span class="invalid-feedback totalDuration" role="alert">
+                        <strong></strong>
+                    </span>
+                    <input type="hidden" id="videoId" name="videoId">
+                    <span class="invalid-feedback videoId" role="alert">
+                        <strong></strong>
+                    </span>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

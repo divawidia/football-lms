@@ -349,6 +349,8 @@
 
                 // Extract the video ID
                 const videoID = extractVideoID(url);
+                $('#videoId').val(videoID);
+                // alert(('#videoId').val());
 
                 if (videoID) {
                     onYouTubeIframeAPIReady(videoID);
@@ -383,11 +385,11 @@
                         });
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(xhr.responseText);
+                        const response = JSON.parse(jqXHR.responseText);
                         console.log(response);
                         $.each(response.errors, function (key, val) {
-                            $('span.' + key).text(val[0]);
-                            $("#" + key).addClass('is-invalid');
+                            $('#formAddLessonModal span.' + key).text(val[0]);
+                            $("#formAddLessonModal #" + key).addClass('is-invalid');
                         });
                         Swal.fire({
                             icon: "error",

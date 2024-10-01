@@ -26,7 +26,8 @@ class TrainingVideoLessonRequest extends FormRequest
             'lessonTitle' => ['required', 'string', Rule::unique('training_video_lessons', 'lessonTitle')->ignore($this->lesson)],
             'description' => ['nullable', 'string'],
             'lessonVideoURL' => ['required', 'url'],
-            'totalDuration' => ['required', 'numeric']
+            'totalDuration' => ['required', 'numeric'],
+            'videoId' => ['required', 'string'],
         ];
     }
 }

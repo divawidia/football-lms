@@ -17,6 +17,7 @@ class TrainingVideoLesson extends Model
         'lessonVideoURL',
         'totalDuration',
         'status',
+        'videoId'
     ];
     public function trainingVideo()
     {
