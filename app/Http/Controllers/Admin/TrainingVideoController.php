@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingVideoRequest;
+use App\Models\Player;
 use App\Models\TrainingVideo;
 use App\Services\TrainingVideoService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,8 +57,13 @@ class TrainingVideoController extends Controller
      */
     public function show(TrainingVideo $trainingVideo)
     {
+        $players = Player::with('user')->whereDoesntHave('trainingVideos', function (Builder $query) use ($trainingVideo){
+            $query->where('trainingVideoId', $trainingVideo->id);
+        })->get();
+
         return view('pages.admins.academies.training-videos.detail',[
-            'data' => $trainingVideo
+            'data' => $trainingVideo,
+            'players' => $players,
         ]);
     }
 
