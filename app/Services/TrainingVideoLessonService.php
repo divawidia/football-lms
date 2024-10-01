@@ -4,11 +4,16 @@ namespace App\Services;
 
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
 class TrainingVideoLessonService extends Service
 {
+    public function getTotalDuration(TrainingVideoLesson $trainingVideoLesson): string
+    {
+        return $this->secondToMinute($trainingVideoLesson->totalDuration);
+    }
     public function index(TrainingVideo $trainingVideo){
         $data = $trainingVideo->lessons;
         return Datatables::of($data)
@@ -34,7 +39,7 @@ class TrainingVideoLessonService extends Service
                             <button class="btn btn-sm btn-outline-secondary mr-1 editLesson" id="'.$item->id.'" type="button" data-toggle="tooltip" data-placement="bottom" title="Edit lesson">
                                 <span class="material-icons">edit</span>
                              </button>
-                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="" data-toggle="tooltip" data-placement="bottom" title="View lesson">
+                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$item->id]).'" data-toggle="tooltip" data-placement="bottom" title="View lesson">
                                 <span class="material-icons">visibility</span>
                              </a>
                              '.$statusButton.'
@@ -47,7 +52,7 @@ class TrainingVideoLessonService extends Service
                 return '<p class="mb-0"><strong class="js-lists-values-lead">' . $item->lessonTitle . '</strong></p>';
             })
             ->editColumn('totalDuration', function ($item) {
-                return $this->secondToMinute($item->totalDuration);
+                return $this->getTotalDuration($item);
             })
             ->editColumn('description', function ($item) {
                 if ($item->description == null){
@@ -73,6 +78,50 @@ class TrainingVideoLessonService extends Service
                 }
             })
             ->rawColumns(['action','title','totalMinutes','description', 'created_date', 'last_updated', 'status'])
+            ->addIndexColumn()
+            ->make();
+    }
+
+    public function players(TrainingVideoLesson $trainingVideoLesson){
+        $data = $trainingVideoLesson->players()->get();
+        return Datatables::of($data)
+            ->addColumn('action', function ($item) use ($trainingVideoLesson) {
+                return '<div class="btn-toolbar" role="toolbar">
+                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="" data-toggle="tooltip" data-placement="bottom" title="View Player">
+                                <span class="material-icons">visibility</span>
+                             </a>
+                        </div>';
+            })
+            ->editColumn('name', function ($item) {
+                return '
+                            <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' '.$item->user->lastName.'</strong></p>
+                                            <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('assignedAt', function ($item) {
+                $date = date('M d, Y ~ h:i A', strtotime($item->pivot->created_at));
+                return $date;
+            })
+            ->editColumn('status', function ($item) {
+                if ($item->pivot->completionStatus == '1') {
+                    $badge = '<span class="badge badge-pill badge-success">Completed</span>';
+                } elseif ($item->pivot->completionStatus == '0') {
+                    $badge = '<span class="badge badge-pill badge-warning">On Progress</span>';
+                }
+                return $badge;
+            })
+            ->rawColumns(['action','name','assignedAt', 'status'])
             ->addIndexColumn()
             ->make();
     }

@@ -22,6 +22,10 @@ class TrainingVideoLessonController extends Controller
         return $this->trainingVideoLessonService->index($trainingVideo);
     }
 
+    public function players(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson){
+        return $this->trainingVideoLessonService->players($lesson);
+    }
+
     public function store(TrainingVideoLessonRequest $request, TrainingVideo $trainingVideo)
     {
         $data = $request->validated();
@@ -31,8 +35,9 @@ class TrainingVideoLessonController extends Controller
 
     public function show(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
-        return view('pages.admins.academies.training-videos.lessons.show',[
-            'data' => $lesson
+        return view('pages.admins.academies.training-videos.lessons.detail',[
+            'data' => $lesson,
+            'totalDuration' => $this->trainingVideoLessonService->getTotalDuration($lesson)
         ]);
     }
 

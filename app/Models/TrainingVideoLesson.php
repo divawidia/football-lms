@@ -26,7 +26,7 @@ class TrainingVideoLesson extends Model
 
     public function players()
     {
-        return $this->belongsToMany(TrainingVideoLesson::class, 'player_lesson', 'lessonId', 'playerId')
+        return $this->belongsToMany(Player::class, 'player_lesson', 'lessonId', 'playerId')
             ->withPivot('completionStatus')
             ->withTimestamps();
     }

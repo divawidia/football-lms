@@ -71,12 +71,12 @@
                     <ul class="nav navbar-nav flex align-items-sm-center">
                         <li class="nav-item navbar-list__item">
                             <div class="media align-items-center">
-                                                <span class="media-left mr-16pt">
-                                                    <img src="{{ Storage::url($data->user->foto) }}"
-                                                         width="40"
-                                                         alt="avatar"
-                                                         class="rounded-circle">
-                                                </span>
+                                <span class="media-left mr-16pt">
+                                    <img src="{{ Storage::url($data->user->foto) }}"
+                                         width="40"
+                                         alt="avatar"
+                                         class="rounded-circle">
+                                </span>
                                 <div class="media-body">
                                     <a class="card-title m-0"
                                        href="{{ route('admin-managements.show', $data->user->id) }}">
