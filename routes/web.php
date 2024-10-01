@@ -279,7 +279,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
             Route::get('players', [TrainingVideoController::class, 'players'])->name('training-videos.players');
             Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->name('training-videos.assign-players');
-            Route::put('remove-player/{player}', [TrainingVideoController::class, 'removePlayer'])->name('training-videos.remove-player');
+            Route::delete('remove-player/{player}', [TrainingVideoController::class, 'removePlayer'])->name('training-videos.remove-player');
 
             Route::prefix('lessons')->group(function () {
             Route::get('', [TrainingVideoLessonController::class, 'index'])->name('training-videos.lessons-index');

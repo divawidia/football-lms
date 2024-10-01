@@ -22,7 +22,7 @@ class TrainingVideoService extends Service
                              <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="" data-toggle="tooltip" data-placement="bottom" title="View Player">
                                 <span class="material-icons">visibility</span>
                              </a>
-                            <button type="button" class="btn btn-sm btn-outline-secondary deleteLesson" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Remove Player">
+                            <button type="button" class="btn btn-sm btn-outline-secondary deletePlayer" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Remove Player">
                                 <span class="material-icons">delete</span>
                             </button>
                         </div>';
