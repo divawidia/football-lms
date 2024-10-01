@@ -20,7 +20,7 @@
                     overflow: hidden;
                     background-position: center center;">
         <div class="mdk-box__content">
-            <div class="hero py-64pt text-center text-sm-left" style="background-color: rgba(239, 37, 52, 0.75)">
+            <div class="hero py-64pt text-center text-sm-left" style="background-color: rgba(239, 37, 52, 0.8)">
                 <div class="container page__container">
                     <ol class="breadcrumb p-0 m-0">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>

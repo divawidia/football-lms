@@ -18,7 +18,8 @@ class TrainingVideo extends Model
         'totalLesson',
         'totalMinute',
         'level',
-        'status'
+        'status',
+        'completed_at'
     ];
     public function invoices()
     {
