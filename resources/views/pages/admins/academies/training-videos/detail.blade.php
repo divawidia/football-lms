@@ -11,7 +11,6 @@
     @include('pages.admins.academies.training-videos.lessons.form-modal.create')
     @include('pages.admins.academies.training-videos.lessons.form-modal.edit')
     @include('pages.admins.academies.training-videos.form-modal.edit')
-    @include('pages.admins.academies.training-videos.assign-player')
 @endsection
 
 @section('content')
