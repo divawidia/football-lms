@@ -11,7 +11,7 @@
     @include('pages.admins.academies.training-videos.lessons.form-modal.create')
     @include('pages.admins.academies.training-videos.lessons.form-modal.edit')
     @include('pages.admins.academies.training-videos.form-modal.edit')
-    @include('pages.admins.academies.training-videos.form-modal.assign-player')
+    @include('pages.admins.academies.training-videos.assign-player')
 @endsection
 
 @section('content')
@@ -153,7 +153,7 @@
         {{--    Assigned Player    --}}
         <div class="page-separator">
             <div class="page-separator__text">Assigned Player(s)</div>
-            <a href="" id="addPlayer" class="btn btn-primary btn-sm ml-auto">
+            <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}" class="btn btn-primary btn-sm ml-auto">
                 <span class="material-icons mr-2">add</span>
                 Add Player
             </a>
@@ -322,6 +322,7 @@
                     done = true;
                 }
             }
+
             function stopVideo() {
                 player.stopVideo();
             }
@@ -338,9 +339,9 @@
                 $(inputId).on('change', function (e) {
                     e.preventDefault(); // Prevent form submission
 
-                    let preview = $(formId+' #preview-container');
+                    let preview = $(formId + ' #preview-container');
                     let player = $(playerId);
-                    let errorSpan = $(formId+' span.lessonVideoURL');
+                    let errorSpan = $(formId + ' span.lessonVideoURL');
                     let inputUrl = $(inputId);
 
                     errorSpan.text('');
@@ -348,7 +349,7 @@
 
                     if (player.attr('src') != undefined) {
                         player.remove();
-                        preview.html('<div id="'+playerId.replace(/^#/,'')+'"></div>')
+                        preview.html('<div id="' + playerId.replace(/^#/, '') + '"></div>')
                     }
 
                     // Get the YouTube URL from the input
@@ -356,10 +357,10 @@
 
                     // Extract the video ID
                     const videoID = extractVideoID(url);
-                    $(formId+' #videoId').val(videoID);
+                    $(formId + ' #videoId').val(videoID);
 
                     if (videoID) {
-                        onYouTubeIframeAPIReady(videoID, playerId.replace(/^#/,''));
+                        onYouTubeIframeAPIReady(videoID, playerId.replace(/^#/, ''));
                     } else {
                         errorSpan.text('Invalid youtube URL');
                         inputUrl.addClass('is-invalid');
@@ -461,7 +462,7 @@
                 $.ajax({
                     url: "{{ route('training-videos.lessons-edit', ['trainingVideo'=>$data->id, 'lesson' => ':id']) }}".replace(':id', id),
                     type: 'get',
-                    success: function (res){
+                    success: function (res) {
                         $('#editLessonModal').modal('show');
 
                         $('#formEditLessonModal #lessonFormTitle').text('Edit Lesson ' + res.data.lessonTitle);

@@ -39,8 +39,8 @@ class TrainingVideoService extends Service
         return $trainingVideo->update(['status' => '0']);
     }
 
-    public function assignPlayer(array $data, TrainingVideo $trainingVideo){
-        return $trainingVideo->players()->attach($data);
+    public function updatePlayer(array $data, TrainingVideo $trainingVideo){
+        return $trainingVideo->players()->attach($data['players']);
     }
 
     public function removePlayer(TrainingVideo $trainingVideo, Player $player){
