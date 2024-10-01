@@ -63,6 +63,10 @@ class TrainingVideoController extends Controller
         ]);
     }
 
+    public function players(TrainingVideo $trainingVideo){
+        return $this->trainingVideoService->players($trainingVideo);
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

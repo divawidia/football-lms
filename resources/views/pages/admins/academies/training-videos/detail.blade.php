@@ -160,7 +160,7 @@
         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="lessonsTable">
+                    <table class="table table-hover mb-0" id="playersTable">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -206,6 +206,29 @@
                         orderable: false,
                         searchable: false,
                         width: '20%'
+                    },
+                ]
+            });
+
+            const playersTable = $('#playersTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! route('training-videos.players', $data->id) !!}',
+                },
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'name', name: 'name'},
+                    {data: 'progress', name: 'progress'},
+                    {data: 'status', name: 'status'},
+                    {data: 'assignedAt', name: 'assignedAt'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
                     },
                 ]
             });
