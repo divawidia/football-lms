@@ -6,54 +6,51 @@
                 @method('PUT')
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Add lesson to Training</h5>
+                    <h5 class="modal-title" id="lessonFormTitle"></h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" id="lessonId" name="lessonId">
                     <div class="form-group">
-                        <label class="form-label" for="lessonTitle">Lesson Title</label>
+                        <label class="form-label" for="edit-lessonTitle">Lesson Title</label>
                         <small class="text-danger">*</small>
                         <input type="text"
-                               id="lessonTitle"
+                               id="edit-lessonTitle"
                                name="lessonTitle"
                                class="form-control"
                                placeholder="Input lesson's title ..."
-                               required>
+                               >
                         <span class="invalid-feedback lessonTitle" role="alert">
                             <strong></strong>
                         </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="description">Description</label>
+                        <label class="form-label" for="edit-description">Description</label>
                         <small class="text-sm">(Optional)</small>
-                        <div class="editor-container editor-container_classic-editor editor-container_include-style" id="editor-container">
-                            <div class="editor-container__editor">
-                                <textarea class="form-control" id="description" name="description"></textarea>
-                            </div>
-                        </div>
+                        <textarea class="form-control" id="edit-description" name="description"></textarea>
                         <span class="invalid-feedback description" role="alert">
                             <strong></strong>
                         </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="lessonVideoURL">Lesson Video URL</label>
+                        <label class="form-label" for="edit-lessonVideoURL">Lesson Video URL</label>
                         <small class="text-danger">*</small>
                         <input type="text"
-                               id="lessonVideoURL"
+                               id="edit-lessonVideoURL"
                                name="lessonVideoURL"
                                class="form-control"
                                placeholder="Input youtube video url (only from youtube!) ..."
-                               required>
+                               >
                         <span class="invalid-feedback lessonVideoURL" role="alert">
                             <strong></strong>
                         </span>
-                        <div id="preview-container">
-                            <div id="player"></div>
+                        <div id="preview-container" data-value="2131">
+                            <div id="edit-player"></div>
                         </div>
                     </div>
-                    <input type="hidden" id="totalDuration" name="totalDuration">
+                    <input type="hidden" class="totalDuration" name="totalDuration">
                     <span class="invalid-feedback totalDuration" role="alert">
                         <strong></strong>
                     </span>

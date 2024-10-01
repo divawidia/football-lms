@@ -9,6 +9,7 @@
 
 @section('modal')
     @include('pages.admins.academies.training-videos.lessons.form-modal.create')
+    @include('pages.admins.academies.training-videos.lessons.form-modal.edit')
     @include('pages.admins.academies.training-videos.form-modal.edit')
 @endsection
 
@@ -180,7 +181,9 @@
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            $('#lessonsTable').DataTable({
+            const body = $('body');
+
+            const lessonsTable = $('#lessonsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -286,8 +289,8 @@
             let player;
 
             // Load the YouTube Iframe API and create a player
-            function onYouTubeIframeAPIReady(videoId) {
-                player = new YT.Player('player', {
+            function onYouTubeIframeAPIReady(videoId, playerId) {
+                player = new YT.Player(playerId, {
                     height: '250',
                     width: '100%',
                     videoId: videoId,
@@ -305,7 +308,7 @@
             function onPlayerReady(event) {
                 const duration = player.getDuration(); // Get the duration in seconds
                 // event.target.playVideo();
-                $('#totalDuration').val(duration);
+                $('.totalDuration').val(duration);
             }
 
             let done = false;
@@ -328,37 +331,40 @@
             }
 
             // Handle form submission
-            $('#lessonVideoURL').on('change', function (e) {
-                e.preventDefault(); // Prevent form submission
+            function showYoutubePreview(inputId, formId, playerId) {
+                $(inputId).on('change', function (e) {
+                    e.preventDefault(); // Prevent form submission
 
-                let preview = $('#preview-container');
-                let player = $('#player');
-                let errorSpan = $('span.lessonVideoURL');
-                let inputUrl = $("#lessonVideoURL");
+                    let preview = $(formId+' #preview-container');
+                    let player = $(playerId);
+                    let errorSpan = $(formId+' span.lessonVideoURL');
+                    let inputUrl = $(inputId);
 
-                errorSpan.text('ntah');
-                inputUrl.removeClass('is-invalid');
+                    errorSpan.text('');
+                    inputUrl.removeClass('is-invalid');
 
-                if (player.attr('src') != undefined){
-                    player.remove();
-                    preview.html('<div id="player"></div>')
-                }
+                    if (player.attr('src') != undefined) {
+                        player.remove();
+                        preview.html('<div id="'+playerId.replace(/^#/,'')+'"></div>')
+                    }
 
-                // Get the YouTube URL from the input
-                const url = document.getElementById('lessonVideoURL').value;
+                    // Get the YouTube URL from the input
+                    const url = inputUrl.val();
 
-                // Extract the video ID
-                const videoID = extractVideoID(url);
-                $('#videoId').val(videoID);
-                // alert(('#videoId').val());
+                    // Extract the video ID
+                    const videoID = extractVideoID(url);
+                    $(formId+' #videoId').val(videoID);
 
-                if (videoID) {
-                    onYouTubeIframeAPIReady(videoID);
-                } else {
-                    errorSpan.text('Invalid youtube URL');
-                    inputUrl.addClass('is-invalid');
-                }
-            });
+                    if (videoID) {
+                        onYouTubeIframeAPIReady(videoID, playerId.replace(/^#/,''));
+                    } else {
+                        errorSpan.text('Invalid youtube URL');
+                        inputUrl.addClass('is-invalid');
+                    }
+                });
+            }
+
+            showYoutubePreview('#lessonVideoURL', '#formAddLessonModal', '#create-player');
 
             // create schedule note data
             $('#formAddLessonModal').on('submit', function (e) {
@@ -400,7 +406,7 @@
                 });
             });
 
-            $('body').on('click', '.delete-training', function () {
+            body.on('click', '.delete-training', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -446,20 +452,25 @@
             });
 
             // show edit form modal when edit training button clicked
-            $('#editLesson').on('click', function (e) {
+            body.on('click', '.editLesson', function (e) {
                 e.preventDefault();
+                const id = $(this).attr('id');
                 $.ajax({
-                    url: "{{ route('training-videos.edit', $data->id) }}",
+                    url: "{{ route('training-videos.lessons-edit', ['trainingVideo'=>$data->id, 'lesson' => ':id']) }}".replace(':id', id),
                     type: 'get',
-                    success: function (res) {
-                        $('#editTrainingVideoModal').modal('show');
+                    success: function (res){
+                        $('#editLessonModal').modal('show');
 
-                        document.getElementById('training-title').textContent = 'Edit Training ' + res.data.trainingTitle;
-                        $('#trainingId').val(res.data.id);
-                        $('#trainingTitle').val(res.data.trainingTitle);
-                        $('#level').val(res.data.level);
-                        $('#formEditTrainingVideoModal #description').text(res.data.description);
-                        $('#preview').attr('src', "/storage/" + res.data.previewPhoto).addClass('d-block');
+                        $('#formEditLessonModal #lessonFormTitle').text('Edit Lesson ' + res.data.lessonTitle);
+                        $('#formEditLessonModal #lessonId').val(res.data.id);
+                        $('#edit-lessonTitle').val(res.data.lessonTitle);
+                        $('#edit-description').text(res.data.description);
+                        $('#edit-lessonVideoURL').val(res.data.lessonVideoURL);
+                        $('#formEditLessonModal .totalDuration').val(res.data.totalDuration);
+                        $('#formEditLessonModal #videoId').val(res.data.videoId);
+                        $('#edit-player').remove();
+                        $('#formEditLessonModal #preview-container').html('<div id="edit-player"></div>')
+                        onYouTubeIframeAPIReady(res.data.videoId, 'edit-player');
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         Swal.fire({
@@ -471,19 +482,23 @@
                 });
             });
 
+            showYoutubePreview('#edit-lessonVideoURL', '#formEditLessonModal', '#edit-player');
+
             // update training video data when form submitted
-            $('#formEditTrainingVideoModal').on('submit', function (e) {
+            $('#formEditLessonModal').on('submit', function (e) {
                 e.preventDefault();
+                const id = $('#lessonId').val();
+
                 $.ajax({
-                    url: "{{ route('training-videos.update', $data->id) }}",
+                    url: "{{ route('training-videos.lessons-update', ['trainingVideo'=>$data->id, 'lesson' => ':id']) }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
                     success: function () {
-                        $('#editTrainingVideoModal').modal('hide');
+                        $('#editLessonModal').modal('hide');
                         Swal.fire({
-                            title: 'Training video successfully updated!',
+                            title: 'Training lesson successfully updated!',
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",
@@ -491,7 +506,7 @@
                                 'Ok!'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                location.reload();
+                                lessonsTable.ajax.reload(null, false);
                             }
                         });
                     },
@@ -500,7 +515,7 @@
                         console.log(response)
                         $.each(response.errors, function (key, val) {
                             $('span.' + key).text(val[0]);
-                            $("#" + key).addClass('is-invalid');
+                            $("#edit-" + key).addClass('is-invalid');
                         });
                         Swal.fire({
                             icon: "error",

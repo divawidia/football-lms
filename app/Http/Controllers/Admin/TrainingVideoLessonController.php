@@ -45,6 +45,13 @@ class TrainingVideoLessonController extends Controller
         ]);
     }
 
+    public function update(TrainingVideoLessonRequest $request, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
+    {
+        $data = $request->validated();
+
+        return response()->json($this->trainingVideoLessonService->update($data, $lesson));
+    }
+
     public function publish(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
         $this->trainingVideoLessonService->publish($lesson);

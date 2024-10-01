@@ -49,10 +49,10 @@
                             <strong></strong>
                         </span>
                         <div id="preview-container">
-                            <div id="player"></div>
+                            <div id="create-player"></div>
                         </div>
                     </div>
-                    <input type="hidden" id="totalDuration" name="totalDuration">
+                    <input type="hidden" class="totalDuration" name="totalDuration">
                     <span class="invalid-feedback totalDuration" role="alert">
                         <strong></strong>
                     </span>
