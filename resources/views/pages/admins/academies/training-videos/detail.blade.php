@@ -11,6 +11,7 @@
     @include('pages.admins.academies.training-videos.lessons.form-modal.create')
     @include('pages.admins.academies.training-videos.lessons.form-modal.edit')
     @include('pages.admins.academies.training-videos.form-modal.edit')
+    @include('pages.admins.academies.training-videos.form-modal.assign-player')
 @endsection
 
 @section('content')
@@ -152,8 +153,10 @@
         {{--    Assigned Player    --}}
         <div class="page-separator">
             <div class="page-separator__text">Assigned Player(s)</div>
-            <a href="" id="addPlayer" class="btn btn-primary btn-sm ml-auto"><span
-                    class="material-icons mr-2">add</span> Add Player</a>
+            <a href="" id="addPlayer" class="btn btn-primary btn-sm ml-auto">
+                <span class="material-icons mr-2">add</span>
+                Add Player
+            </a>
         </div>
         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
             <div class="card-body">
