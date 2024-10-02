@@ -71,7 +71,7 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data->lessons()->where('completionStatus', '1')->count() }}</div>
+                            <div class="h2 mb-0 mr-3">{{ $totalCompleted }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title">Total Completed Lesson</div>
                             </div>
@@ -83,7 +83,7 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data->lessons()->where('completionStatus', '0')->count() }}</div>
+                            <div class="h2 mb-0 mr-3">{{ $totalOnProgress }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title">Total Lesson Remaining</div>
                             </div>

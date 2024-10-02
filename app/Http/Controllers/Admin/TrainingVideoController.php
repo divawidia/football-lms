@@ -68,6 +68,19 @@ class TrainingVideoController extends Controller
         return $this->trainingVideoService->players($trainingVideo);
     }
 
+    public function showPlayer(TrainingVideo $trainingVideo, Player $player)
+    {
+        return view('pages.admins.academies.training-videos.players.detail',[
+            'data' => $player,
+            'totalCompleted' => $player->lessons()->where('completionStatus', '1')->count(),
+            'totalOnProgress' => $player->lessons()->where('completionStatus', '0')->count(),
+        ]);
+    }
+
+    public function playerLessons(TrainingVideo $trainingVideo, Player $player){
+        return $this->trainingVideoService->playerLessons($trainingVideo, $player);
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
