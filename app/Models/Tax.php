@@ -14,10 +14,17 @@ class Tax extends Model
         'taxName',
         'percentage',
         'description',
+        'status',
+        'userId'
     ];
 
     public function invoice()
     {
         return $this->hasMany(Invoice::class, 'taxId');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId');
     }
 }
