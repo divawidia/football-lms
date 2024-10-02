@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\PerformanceReportController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\ProductCategoryController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TrainingVideoController;
@@ -329,6 +330,19 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('deactivate', [TaxController::class, 'deactivate'])->name('taxes.deactivate');
             Route::patch('activate', [TaxController::class, 'activate'])->name('taxes.activate');
             Route::delete('delete', [TaxController::class, 'destroy'])->name('taxes.destroy');
+        });
+    });
+
+    Route::prefix('products')->group(function () {
+        Route::get('', [ProductController::class, 'index'])->name('products.index');
+        Route::post('store', [ProductController::class, 'store'])->name('products.store');
+
+        Route::prefix('{product}')->group(function () {
+            Route::get('edit', [ProductController::class, 'edit'])->name('products.edit');
+            Route::put('update', [ProductController::class, 'update'])->name('products.update');
+            Route::patch('deactivate', [ProductController::class, 'deactivate'])->name('products.deactivate');
+            Route::patch('activate', [ProductController::class, 'activate'])->name('products.activate');
+            Route::delete('delete', [ProductController::class, 'destroy'])->name('products.destroy');
         });
     });
 });
