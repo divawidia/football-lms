@@ -8,10 +8,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ProductCategoryService extends Service
 {
+    public function getAllData(){
+        return ProductCategory::all();
+    }
     public function index()
     {
-        $data = ProductCategory::all();
-        return Datatables::of($data)
+        return Datatables::of($this->getAllData())
             ->addColumn('action', function ($item) {
                 if ($item->status == '1') {
                     $statusButton = '<form action="' . route('product-categories.deactivate', $item->id) . '" method="POST">

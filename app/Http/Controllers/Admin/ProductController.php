@@ -15,10 +15,12 @@ use Illuminate\Support\Facades\Auth;
 class ProductController extends Controller
 {
     private ProductService $productService;
+    private ProductCategoryService $productCategoryService;
 
-    public function __construct(ProductService $productService)
+    public function __construct(ProductService $productService, ProductCategoryService $productCategoryService)
     {
         $this->productService = $productService;
+        $this->productCategoryService = $productCategoryService;
     }
 
     /**
@@ -30,7 +32,9 @@ class ProductController extends Controller
             return $this->productService->index();
         }
 
-        return view('pages.admins.payments.products.index');
+        return view('pages.admins.payments.products.index', [
+            'categories' => $this->productCategoryService->getAllData()
+        ]);
     }
 
     /**
