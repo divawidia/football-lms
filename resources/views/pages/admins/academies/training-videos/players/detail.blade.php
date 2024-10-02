@@ -26,7 +26,7 @@
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data->position->name }}</p>
             </div>
             <button class="btn btn-outline-white deletePlayer" type="button" id="{{ $data->id }}">
-                <span class="material-icons ml-3">
+                <span class="material-icons mr-2">
                     cancel
                 </span>
                 Remove Player
@@ -39,7 +39,7 @@
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">visibility</i>
-                    @if($item->pivot->status == '1')
+                    @if($training->pivot->status == 'Completed')
                         Completion Status : <span class="badge badge-pill badge-success ml-1">Completed</span>
                     @else
                         Completion Status : <span class="badge badge-pill badge-danger ml-1">On Progress</span>
@@ -47,15 +47,15 @@
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">schedule</i>
-                    Progress : {{ $item->pivot->progress }} %
+                    Progress : {{ $training->pivot->progress }} %
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">date_range</i>
-                    Assigned at : {{ date('M d, Y ~ H:i', strtotime($data->created_at)) }}
+                    Assigned at : {{ date('M d, Y ~ H:i', strtotime($training->pivot->created_at)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">date_range</i>
-                    Completed At : {{ date('M d, Y ~ H:i', strtotime($data->updated_at)) }}
+                    Completed At : {{ date('M d, Y ~ H:i', strtotime($training->pivot->completed_at)) }}
                 </li>
             </ul>
         </div>
@@ -126,12 +126,12 @@
         $(document).ready(function () {
             const body = $('body');
 
-            const playersTable = $('#playersTable').DataTable({
+            $('#lessonsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('training-videos.lessons-players', ['trainingVideo'=>$data->trainingVideoId, 'lesson'=>$data->id]) !!}',
+                    url: '{!! route('training-videos.player-lessons', ['trainingVideo'=>$training->id, 'player'=>$data->id]) !!}',
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
@@ -151,8 +151,6 @@
             });
 
             body.on('click', '.deletePlayer', function () {
-                let id = $(this).attr('id');
-
                 Swal.fire({
                     title: "Are you sure to remove this player?",
                     text: "You won't be able to revert this!",
@@ -164,7 +162,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('training-videos.remove-player', ['trainingVideo'=>$data->id, 'player' => ':id']) }}".replace(':id', id),
+                            url: "{{ route('training-videos.remove-player', ['trainingVideo'=>$training->id, 'player'=>$data->id]) }}",
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"
@@ -179,7 +177,7 @@
                                         'Ok!'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
-                                        window.location.href = "{{ route('training-videos.show', $data->trainingVideos->id) }}";
+                                        window.location.href = "{{ route('training-videos.show', $training->id) }}";
                                     }
                                 });
                             },

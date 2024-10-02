@@ -72,6 +72,7 @@ class TrainingVideoController extends Controller
     {
         return view('pages.admins.academies.training-videos.players.detail',[
             'data' => $player,
+            'training' => $player->trainingVideos()->where('trainingVideoId', $trainingVideo->id)->first(),
             'totalCompleted' => $player->lessons()->where('completionStatus', '1')->count(),
             'totalOnProgress' => $player->lessons()->where('completionStatus', '0')->count(),
         ]);

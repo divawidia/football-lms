@@ -92,7 +92,12 @@ class TrainingVideoService extends Service
                 return $this->secondToMinute($item->totalDuration);
             })
             ->editColumn('completedAt', function ($item) {
-                return $this->convertTimestamp($item->pivot->completed_at);
+                if ($item->pivot->completed_at == null){
+                    $data = 'Not completed yet';
+                }else{
+                    $data = $this->convertTimestamp($item->pivot->completed_at);
+                }
+                return $data;
             })
             ->editColumn('assignedAt', function ($item) {
                 return $this->convertTimestamp($item->pivot->created_at);
@@ -101,7 +106,7 @@ class TrainingVideoService extends Service
                 if ($item->pivot->completionStatus == '1') {
                     $badge = '<span class="badge badge-pill badge-success">Completed</span>';
                 } elseif ($item->pivot->completionStatus == '0') {
-                    $badge = '<span class="badge badge-pill badge-danger">On Progress</span>';
+                    $badge = '<span class="badge badge-pill badge-warning">On Progress</span>';
                 }
                 return $badge;
             })
