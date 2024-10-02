@@ -6,13 +6,6 @@
     @yield('title')
 @endsection
 
-
-@section('modal')
-    @include('pages.admins.academies.training-videos.lessons.form-modal.create')
-    @include('pages.admins.academies.training-videos.lessons.form-modal.edit')
-    @include('pages.admins.academies.training-videos.form-modal.edit')
-@endsection
-
 @section('content')
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
