@@ -52,4 +52,8 @@ class Service
     public function convertTimestamp($timestamp){
         return date('M d, Y ~ h:i A', strtotime($timestamp));
     }
+
+    public function priceFormat($price){
+        return 'Rp. ' . number_format($price);
+    }
 }
