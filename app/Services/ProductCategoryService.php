@@ -8,7 +8,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ProductCategoryService extends Service
 {
-    public function index(){
+    public function index()
+    {
         $data = ProductCategory::all();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
@@ -30,10 +31,10 @@ class ProductCategoryService extends Service
                                     </form>';
                 }
                 return '<div class="btn-toolbar" role="toolbar">
-                            <button class="btn btn-sm btn-outline-secondary mr-1 editProductCategory" id="'.$item->id.'" type="button" data-toggle="tooltip" data-placement="bottom" title="Edit Product Category">
+                            <button class="btn btn-sm btn-outline-secondary mr-1 editProductCategory" id="' . $item->id . '" type="button" data-toggle="tooltip" data-placement="bottom" title="Edit Product Category">
                                 <span class="material-icons">edit</span>
                              </button>
-                             '.$statusButton.'
+                             ' . $statusButton . '
                             <button type="button" class="btn btn-sm btn-outline-secondary deleteProductCategory" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Edit Product Category">
                                 <span class="material-icons">delete</span>
                             </button>
@@ -49,7 +50,7 @@ class ProductCategoryService extends Service
                                 <div class="media-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->admin->user->firstName . ' '.$item->admin->user->lastName.'</strong></p>
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->admin->user->firstName . ' ' . $item->admin->user->lastName . '</strong></p>
                                             <small class="js-lists-values-email text-50">' . $item->admin->position->name . '</small>
                                         </div>
                                     </div>
@@ -70,8 +71,34 @@ class ProductCategoryService extends Service
                 }
                 return $badge;
             })
-            ->rawColumns(['action','createdBy','updatedAt','createdAt', 'status'])
+            ->rawColumns(['action', 'createdBy', 'updatedAt', 'createdAt', 'status'])
             ->addIndexColumn()
             ->make();
+    }
+
+    public function store(array $data, $adminId)
+    {
+        $data['adminId'] = $adminId;
+        return ProductCategory::create($data);
+    }
+
+    public function update(array $data, ProductCategory $productCategory)
+    {
+        return $productCategory->update($data);
+    }
+
+    public function activate(ProductCategory $productCategory)
+    {
+        return $productCategory->update(['status' => '1']);
+    }
+
+    public function deactivate(ProductCategory $productCategory)
+    {
+        return $productCategory->update(['status' => '0']);
+    }
+
+    public function destroy(ProductCategory $productCategory)
+    {
+        return $productCategory->delete();
     }
 }
