@@ -15,11 +15,11 @@ class TrainingVideoService extends Service
     }
 
     public function players(TrainingVideo $trainingVideo){
-        $data = $trainingVideo->players()->get();
+        $data = $trainingVideo->players;
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideo) {
                 return '<div class="btn-toolbar" role="toolbar">
-                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="" data-toggle="tooltip" data-placement="bottom" title="View Player">
+                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.show-player', ['trainingVideo' => $trainingVideo->id, 'player' => $item->id]).'" data-toggle="tooltip" data-placement="bottom" title="View Player">
                                 <span class="material-icons">visibility</span>
                              </a>
                             <button type="button" class="btn btn-sm btn-outline-secondary deletePlayer" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Remove Player">

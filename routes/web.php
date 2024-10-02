@@ -277,13 +277,19 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::put('update-player', [TrainingVideoController::class, 'updatePlayers'])->name('training-videos.update-player');
             Route::delete('delete', [TrainingVideoController::class, 'destroy'])->name('training-videos.destroy');
 
-            Route::get('players', [TrainingVideoController::class, 'players'])->name('training-videos.players');
-            Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->name('training-videos.assign-players');
-            Route::delete('remove-player/{player}', [TrainingVideoController::class, 'removePlayer'])->name('training-videos.remove-player');
+            Route::prefix('players')->group(function () {
+                Route::get('', [TrainingVideoController::class, 'players'])->name('training-videos.players');
+                Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->name('training-videos.assign-players');
+                Route::prefix('{player}')->group(function () {
+                    Route::get('', [TrainingVideoController::class, 'showPlayer'])->name('training-videos.show-player');
+                    Route::delete('remove', [TrainingVideoController::class, 'removePlayer'])->name('training-videos.remove-player');
+                    Route::post('lessons', [TrainingVideoController::class, 'store'])->name('training-videos.player-lessons');
+                });
+            });
 
             Route::prefix('lessons')->group(function () {
-            Route::get('', [TrainingVideoLessonController::class, 'index'])->name('training-videos.lessons-index');
-            Route::post('store', [TrainingVideoLessonController::class, 'store'])->name('training-videos.lessons-store');
+                Route::get('', [TrainingVideoLessonController::class, 'index'])->name('training-videos.lessons-index');
+                Route::post('store', [TrainingVideoLessonController::class, 'store'])->name('training-videos.lessons-store');
                 Route::prefix('{lesson}')->group(function () {
                     Route::get('', [TrainingVideoLessonController::class, 'show'])->name('training-videos.lessons-show');
                     Route::get('players', [TrainingVideoLessonController::class, 'players'])->name('training-videos.lessons-players');
@@ -294,6 +300,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
                     Route::patch('publish', [TrainingVideoLessonController::class, 'publish'])->name('training-videos.lessons-publish');
                 });
             });
+
         });
     });
 });
