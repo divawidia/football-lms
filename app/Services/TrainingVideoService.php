@@ -75,6 +75,41 @@ class TrainingVideoService extends Service
         return $this->secondToMinute($trainingVideo->lessons()->sum('totalDuration'));
     }
 
+    public function playerLessons(TrainingVideo $trainingVideo, Player $player){
+        $data = $player->lessons;
+        return Datatables::of($data)
+            ->addColumn('action', function ($item) use ($trainingVideo) {
+                return '<div class="btn-toolbar" role="toolbar">
+                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$item->id]).'" data-toggle="tooltip" data-placement="bottom" title="View lesson">
+                                <span class="material-icons">visibility</span>
+                             </a>
+                        </div>';
+            })
+            ->editColumn('lessonTitle', function ($item) {
+                return '<p class="mb-0"><strong class="js-lists-values-lead">' . $item->lessonTitle . '</strong></p>';
+            })
+            ->editColumn('totalDuration', function ($item) {
+                return $this->secondToMinute($item->totalDuration);
+            })
+            ->editColumn('completedAt', function ($item) {
+                return $this->convertTimestamp($item->pivot->completed_at);
+            })
+            ->editColumn('assignedAt', function ($item) {
+                return $this->convertTimestamp($item->pivot->created_at);
+            })
+            ->editColumn('status', function ($item) {
+                if ($item->pivot->completionStatus == '1') {
+                    $badge = '<span class="badge badge-pill badge-success">Completed</span>';
+                } elseif ($item->pivot->completionStatus == '0') {
+                    $badge = '<span class="badge badge-pill badge-danger">On Progress</span>';
+                }
+                return $badge;
+            })
+            ->rawColumns(['action','lessonTitle','totalDuration','completedAt', 'assignedAt', 'status'])
+            ->addIndexColumn()
+            ->make();
+    }
+
     public function store(array $data, $userId){
         $data['previewPhoto'] = $this->storeImage($data, 'previewPhoto', 'assets/training-videos', 'images/video-preview.png');
         $data['userId'] = $userId;
