@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\OpponentTeamController;
 use App\Http\Controllers\Admin\PerformanceReportController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
+use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TrainingVideoController;
 use App\Http\Controllers\Admin\TrainingVideoLessonController;
@@ -301,6 +302,18 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
                 });
             });
 
+        });
+    });
+    Route::prefix('product-categories')->group(function () {
+        Route::get('', [ProductCategoryController::class, 'index'])->name('product-categories.index');
+        Route::post('store', [ProductCategoryController::class, 'store'])->name('product-categories.store');
+
+        Route::prefix('{productCategory}')->group(function () {
+            Route::get('edit', [ProductCategoryController::class, 'edit'])->name('product-categories.edit');
+            Route::put('update', [ProductCategoryController::class, 'update'])->name('product-categories.update');
+            Route::patch('deactivate', [ProductCategoryController::class, 'deactivate'])->name('product-categories.deactivate');
+            Route::patch('activate', [ProductCategoryController::class, 'activate'])->name('product-categories.activate');
+            Route::delete('delete', [ProductCategoryController::class, 'destroy'])->name('product-categories.destroy');
         });
     });
 });
