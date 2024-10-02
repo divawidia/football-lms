@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\PerformanceReportController;
 use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\ProductCategoryController;
+use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TrainingVideoController;
 use App\Http\Controllers\Admin\TrainingVideoLessonController;
@@ -304,6 +305,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
         });
     });
+
     Route::prefix('product-categories')->group(function () {
         Route::get('', [ProductCategoryController::class, 'index'])->name('product-categories.index');
         Route::post('store', [ProductCategoryController::class, 'store'])->name('product-categories.store');
@@ -314,6 +316,19 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('deactivate', [ProductCategoryController::class, 'deactivate'])->name('product-categories.deactivate');
             Route::patch('activate', [ProductCategoryController::class, 'activate'])->name('product-categories.activate');
             Route::delete('delete', [ProductCategoryController::class, 'destroy'])->name('product-categories.destroy');
+        });
+    });
+
+    Route::prefix('taxes')->group(function () {
+        Route::get('', [TaxController::class, 'index'])->name('taxes.index');
+        Route::post('store', [TaxController::class, 'store'])->name('taxes.store');
+
+        Route::prefix('{tax}')->group(function () {
+            Route::get('edit', [TaxController::class, 'edit'])->name('taxes.edit');
+            Route::put('update', [TaxController::class, 'update'])->name('taxes.update');
+            Route::patch('deactivate', [TaxController::class, 'deactivate'])->name('taxes.deactivate');
+            Route::patch('activate', [TaxController::class, 'activate'])->name('taxes.activate');
+            Route::delete('delete', [TaxController::class, 'destroy'])->name('taxes.destroy');
         });
     });
 });
