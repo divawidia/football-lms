@@ -506,7 +506,7 @@
                                                     <i class="material-icons mr-8pt">error_outline</i>
                                                     <div class="media-body"
                                                          style="min-width: 180px">
-                                                        <small class="text-black-100">Curently you haven't create any opponent team, please create your opponent team</small>
+                                                        <small class="text-black-100">Currently you haven't created any opponent team, please create your opponent team</small>
                                                     </div>
                                                 </div>
                                             </div>
