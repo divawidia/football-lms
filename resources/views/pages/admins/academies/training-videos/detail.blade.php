@@ -438,7 +438,7 @@
 
             showYoutubePreview('#lessonVideoURL', '#formAddLessonModal', '#create-player');
 
-            // create schedule note data
+            // create new lesson data
             $('#formAddLessonModal').on('submit', function (e) {
                 e.preventDefault();
                 $.ajax({

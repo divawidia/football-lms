@@ -8,9 +8,7 @@
 
 
 @section('modal')
-    @include('pages.admins.academies.training-videos.lessons.form-modal.create')
     @include('pages.admins.academies.training-videos.lessons.form-modal.edit')
-    @include('pages.admins.academies.training-videos.form-modal.edit')
 @endsection
 
 @section('content')
@@ -41,10 +39,10 @@
             <p class="hero__lead measure-hero-lead text-white-50 mb-24pt">{!! $data->description !!}</p>
 
             <div class="btn-toolbar" role="toolbar">
-                <a href="" id="editTrainingVideo" class="btn btn-sm btn-white">
+                <button type="button" class="btn btn-sm btn-white editLesson" id="{{ $data->id }}">
                     <span class="material-icons mr-2">edit</span>
                     Edit Lesson
-                </a>
+                </button>
                 @if($data->status == "1")
                     <form action="{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->trainingVideoId, 'lesson'=>$data->id]) }}" method="POST">
                         @method("PATCH")
@@ -212,35 +210,87 @@
             let player;
 
             // Load the YouTube Iframe API and create a player
-            function onYouTubeIframeAPIReady() {
-                player = new YT.Player('player', {
+            function onYouTubeIframeAPIReady(videoId, playerId) {
+                player = new YT.Player(playerId, {
                     height: '250',
                     width: '100%',
-                    videoId: '{{ $data->videoId }}',
+                    videoId: videoId,
                     // playerVars: {
                     //     'playsinline': 1
                     // },
                     events: {
                         'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
                     }
                 });
             }
 
             // When the player is ready, get the video duration and show video
             function onPlayerReady(event) {
-                // const duration = player.getDuration(); // Get the duration in seconds
-                event.target.playVideo();
-                // $('.totalDuration').val(duration);
+                const duration = player.getDuration(); // Get the duration in seconds
+                // event.target.playVideo();
+                $('.totalDuration').val(duration);
             }
 
-{{--            onYouTubeIframeAPIReady('{{ $data->videoId }}', 'player');--}}
+            let done = false;
 
+            function onPlayerStateChange(event) {
+                if (event.data == YT.PlayerState.PLAYING && !done) {
+                    setTimeout(stopVideo, 6000);
+                    done = true;
+                }
+            }
+
+            function stopVideo() {
+                player.stopVideo();
+            }
+
+            // Extract video ID from the URL
+            function extractVideoID(url) {
+                const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+                const match = url.match(regex);
+                return (match && match[1]) ? match[1] : null;
+            }
+
+            // Handle form submission
+            function showYoutubePreview(inputId, formId, playerId) {
+                $(inputId).on('change', function (e) {
+                    e.preventDefault(); // Prevent form submission
+
+                    let preview = $(formId + ' #preview-container');
+                    let player = $(playerId);
+                    let errorSpan = $(formId + ' span.lessonVideoURL');
+                    let inputUrl = $(inputId);
+
+                    errorSpan.text('');
+                    inputUrl.removeClass('is-invalid');
+
+                    if (player.attr('src') != undefined) {
+                        player.remove();
+                        preview.html('<div id="' + playerId.replace(/^#/, '') + '"></div>')
+                    }
+
+                    // Get the YouTube URL from the input
+                    const url = inputUrl.val();
+
+                    // Extract the video ID
+                    const videoID = extractVideoID(url);
+                    $(formId + ' #videoId').val(videoID);
+
+                    if (videoID) {
+                        onYouTubeIframeAPIReady(videoID, playerId.replace(/^#/, ''));
+                    } else {
+                        errorSpan.text('Invalid youtube URL');
+                        inputUrl.addClass('is-invalid');
+                    }
+                });
+            }
             // show edit form modal when edit lesson button clicked
             body.on('click', '.editLesson', function (e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
                 $.ajax({
-                    url: "{{ route('training-videos.lessons-edit', ['trainingVideo'=>$data->id, 'lesson' => ':id']) }}".replace(':id', id),
+                    url: "{{ route('training-videos.lessons-edit', ['trainingVideo'=>$data->trainingVideoId, 'lesson' => ':id']) }}".replace(':id', id),
                     type: 'get',
                     success: function (res) {
                         $('#editLessonModal').modal('show');
@@ -259,14 +309,14 @@
                     error: function (jqXHR, textStatus, errorThrown) {
                         Swal.fire({
                             icon: "error",
-                            title: "Something went wrong when deleting data!",
+                            title: "Something went wrong when showing form!",
                             text: errorThrown,
                         });
                     }
                 });
             });
 
-            // showYoutubePreview('#edit-lessonVideoURL', '#formEditLessonModal', '#edit-player');
+            showYoutubePreview('#edit-lessonVideoURL', '#formEditLessonModal', '#edit-player');
 
             // update lesson data when form submitted
             $('#formEditLessonModal').on('submit', function (e) {
@@ -274,7 +324,7 @@
                 const id = $('#lessonId').val();
 
                 $.ajax({
-                    url: "{{ route('training-videos.lessons-update', ['trainingVideo'=>$data->id, 'lesson' => ':id']) }}".replace(':id', id),
+                    url: "{{ route('training-videos.lessons-update', ['trainingVideo'=>$data->trainingVideoId, 'lesson' => ':id']) }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -290,7 +340,7 @@
                                 'Ok!'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                lessonsTable.ajax.reload(null, false);
+                                window.location.reload();
                             }
                         });
                     },
@@ -348,52 +398,6 @@
                                 Swal.fire({
                                     icon: "error",
                                     title: "Something went wrong when deleting data!",
-                                    text: errorThrown,
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            // delete lesson data
-            body.on('click', '.deletePlayer', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to remove this player?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('training-videos.remove-player', ['trainingVideo'=>$data->id, 'player' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (res) {
-                                Swal.fire({
-                                    title: 'Player successfully removed from training!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        playersTable.ajax.reload(null, false);
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when removing player!",
                                     text: errorThrown,
                                 });
                             }
