@@ -25,9 +25,9 @@
             <div class="dropdown">
                 <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Action
-                            <span class="material-icons ml-3">
-                                keyboard_arrow_down
-                            </span>
+                    <span class="material-icons ml-3">
+                        keyboard_arrow_down
+                    </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('player-managements.edit', $user->id) }}"><span class="material-icons">edit</span> Edit Player</a>

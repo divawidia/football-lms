@@ -644,7 +644,7 @@
                 });
             });
 
-            // delete lesson data
+            // remove player from training
             body.on('click', '.deletePlayer', function () {
                 let id = $(this).attr('id');
 
