@@ -34,9 +34,9 @@ class TaxController extends Controller
     public function store(TaxRequest $request)
     {
         $data = $request->validated();
-        $admin = Auth::user()->roles()->first();
+        $admin = Auth::user()->id;
 
-        return response()->json($this->taxService->store($data, $admin->id));
+        return response()->json($this->taxService->store($data, $admin));
     }
 
     /**

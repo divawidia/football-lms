@@ -11,7 +11,7 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'adminId',
+        'userId',
         'categoryId',
         'productName',
         'price',
@@ -21,9 +21,9 @@ class Product extends Model
         'status',
     ];
 
-    public function admin()
+    public function user()
     {
-        return $this->belongsTo(Admin::class, 'adminId');
+        return $this->belongsTo(User::class, 'userId');
     }
     public function category()
     {

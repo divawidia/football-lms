@@ -11,15 +11,15 @@ class ProductCategory extends Model
     use HasFactory;
 
     protected $fillable = [
-        'adminId',
+        'userId',
         'categoryName',
         'description',
         'status',
     ];
 
-    public function admin()
+    public function user()
     {
-        return $this->belongsTo(Admin::class, 'adminId');
+        return $this->belongsTo(User::class, 'userId');
     }
     public function products()
     {

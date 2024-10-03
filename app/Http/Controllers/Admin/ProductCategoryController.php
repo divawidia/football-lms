@@ -33,9 +33,8 @@ class ProductCategoryController extends Controller
     public function store(ProductCategoryRequest $request)
     {
         $data = $request->validated();
-        $admin = Auth::user()->roles()->first();
-
-        return response()->json($this->productCategoryService->store($data, $admin->id));
+        $admin = Auth::user()->id;
+        return response()->json($this->productCategoryService->store($data, $admin));
     }
 
     /**

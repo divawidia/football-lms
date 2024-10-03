@@ -557,8 +557,8 @@
 
             const formAddTax = '#formAddTaxModal';
             const addTaxModal = '#addTaxModal';
+
             $('#addTax').on('click', function () {
-                // e.preventDefault();
                 $(addTaxModal).modal('show');
             });
 
@@ -594,6 +594,75 @@
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when creating data!",
+                            text: errorThrown,
+                        });
+                    }
+                });
+            });
+
+            const formEditTax = '#formEditTaxModal';
+            const editTaxModalId = '#editTaxModal';
+
+            // show edit product form modal when edit product button clicked
+            body.on('click', '.editTax', function () {
+                const id = $(this).attr('id');
+                $.ajax({
+                    url: "{{ route('taxes.edit', ':id') }}".replace(':id', id),
+                    type: 'GET',
+                    success: function (res) {
+                        $(editTaxModalId).modal('show');
+
+                        document.getElementById('tax-title').textContent = 'Edit tax ' + res.data.taxName;
+                        $('#taxId').val(res.data.id);
+                        $(formEditTax + ' #taxName').val(res.data.taxName);
+                        $(formEditTax + ' #percentage').val(res.data.percentage);
+                        $(formEditTax + ' #description').val(res.data.description);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when updating data!",
+                            text: errorThrown,
+                        });
+                    }
+                });
+            });
+
+            // update product data when form submitted
+            $(formEditTax).on('submit', function (e) {
+                e.preventDefault();
+                const id = $('#taxId').val()
+                $.ajax({
+                    url: "{{ route('taxes.update', ':id') }}".replace(':id', id),
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function () {
+                        $(editTaxModalId).modal('hide');
+                        Swal.fire({
+                            title: 'Tax successfully updated!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        const response = JSON.parse(jqXHR.responseText);
+                        console.log(response)
+                        $.each(response.errors, function (key, val) {
+                            $(formEditTax + ' span.' + key).text(val[0]);
+                            $(formEditTax + " #" + key).addClass('is-invalid');
+                        });
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when updating data!",
                             text: errorThrown,
                         });
                     }
