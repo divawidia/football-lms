@@ -8,6 +8,7 @@ use App\Models\ProductCategory;
 use App\Services\ProductCategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductCategoryController extends Controller
 {
@@ -60,11 +61,17 @@ class ProductCategoryController extends Controller
     }
 
     public function activate(ProductCategory $productCategory){
-        return response()->json($this->productCategoryService->activate($productCategory));
+        $this->productCategoryService->activate($productCategory);
+        $text = 'Product Category '. $productCategory->categoryName . ' status successfully activated!';
+        Alert::success($text);
+        return redirect()->route('products.index');
     }
 
     public function deactivate(ProductCategory $productCategory){
-        return response()->json($this->productCategoryService->deactivate($productCategory));
+        $this->productCategoryService->deactivate($productCategory);
+        $text = 'Product Category '. $productCategory->categoryName . ' status successfully deactivated!';
+        Alert::success($text);
+        return redirect()->route('products.index');
     }
 
     /**
