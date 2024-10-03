@@ -12,22 +12,22 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="form-label" for="categoryName">Product Category Name</label>
+                        <label class="form-label" for="add-categoryName">Product Category Name</label>
                         <small class="text-danger">*</small>
                         <input type="text"
-                               id="categoryName"
+                               id="add-categoryName"
                                name="categoryName"
                                class="form-control"
                                placeholder="Input product category's name ..."
-                               required>
+                               >
                         <span class="invalid-feedback categoryName" role="alert">
                             <strong></strong>
                         </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="description">Description</label>
+                        <label class="form-label" for="add-description">Description</label>
                         <small class="text-sm">(Optional)</small>
-                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        <textarea class="form-control" id="add-description" name="description" rows="3"></textarea>
                         <span class="invalid-feedback description" role="alert">
                             <strong></strong>
                         </span>

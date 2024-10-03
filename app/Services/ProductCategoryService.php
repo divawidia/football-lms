@@ -53,11 +53,14 @@ class ProductCategoryService extends Service
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
                                             <p class="mb-0"><strong class="js-lists-values-lead">' . $item->admin->user->firstName . ' ' . $item->admin->user->lastName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->admin->position->name . '</small>
+                                            <small class="js-lists-values-email text-50">' . $item->admin->position . '</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>';
+            })
+            ->editColumn('description', function ($item) {
+                return $this->description($item->description);
             })
             ->editColumn('updatedAt', function ($item) {
                 return $this->convertTimestamp($item->created_at);
@@ -73,7 +76,7 @@ class ProductCategoryService extends Service
                 }
                 return $badge;
             })
-            ->rawColumns(['action', 'createdBy', 'updatedAt', 'createdAt', 'status'])
+            ->rawColumns(['action', 'createdBy', 'description', 'updatedAt', 'createdAt', 'status'])
             ->addIndexColumn()
             ->make();
     }

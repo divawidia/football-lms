@@ -138,6 +138,7 @@
                     url: '{!! url()->current() !!}',
                 },
                 columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'productName', name: 'productName'},
                     {data: 'category.categoryName', name: 'category.categoryName'},
                     {data: 'description', name: 'description'},
@@ -158,7 +159,7 @@
                 ]
             });
 
-            const productCategoriesTable = $('#productCategoriesTable').DataTable({
+            $('#productCategoriesTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -166,19 +167,14 @@
                     url: '{!! route('product-categories.index') !!}',
                 },
                 columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'categoryName', name: 'categoryName'},
                     {data: 'description', name: 'description'},
                     {data: 'status', name: 'status'},
                     {data: 'createdBy', name: 'createdBy'},
                     {data: 'createdAt', name: 'createdAt'},
                     {data: 'updatedAt', name: 'updatedAt'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false, width: '50%'},
                 ]
             });
 
@@ -190,6 +186,7 @@
                     url: '{!! route('taxes.index') !!}',
                 },
                 columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'taxName', name: 'taxName'},
                     {data: 'description', name: 'description'},
                     {data: 'percentage', name: 'percentage'},
@@ -269,6 +266,44 @@
                 e.preventDefault();
                 $('#addProductModal').modal('hide');
                 $('#addProductCategoryModal').modal('show');
+            });
+
+            $('#formAddProductCategoryModal').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ route('product-categories.store') }}",
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function () {
+                        $('#addProductModal').modal('hide');
+                        Swal.fire({
+                            title: 'Product category successfully created!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        const response = JSON.parse(jqXHR.responseText);
+                        $.each(response.errors, function (key, val) {
+                            $('span.' + key).text(val[0]);
+                            $("#add-" + key).addClass('is-invalid');
+                        });
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when creating data!",
+                            text: errorThrown,
+                        });
+                    }
+                });
             });
 
 

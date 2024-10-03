@@ -55,12 +55,7 @@ class TrainingVideoLessonService extends Service
                 return $this->getTotalDuration($item);
             })
             ->editColumn('description', function ($item) {
-                if ($item->description == null){
-                    $description = 'No description yet';
-                }else{
-                    $description = Str::limit($item->description, 150);
-                }
-                return $description;
+                return $this->description($item->description);
             })
             ->editColumn('created_date', function ($item) {
                 return $this->convertTimestamp($item->created_at);

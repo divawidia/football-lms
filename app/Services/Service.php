@@ -6,6 +6,7 @@ use App\Models\Team;
 use App\Models\User;
 use DateTime;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Service
 {
@@ -55,5 +56,14 @@ class Service
 
     public function priceFormat($price){
         return 'Rp. ' . number_format($price);
+    }
+
+    public function description($description){
+        if ($description == null){
+            $description = 'No description yet';
+        }else{
+            $description = Str::limit($description, 150);
+        }
+        return $description;
     }
 }
