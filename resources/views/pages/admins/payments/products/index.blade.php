@@ -11,6 +11,8 @@
     @include('pages.admins.payments.products.form-modal.products.edit')
     @include('pages.admins.payments.products.form-modal.product-categories.create')
     @include('pages.admins.payments.products.form-modal.product-categories.edit')
+    @include('pages.admins.payments.products.form-modal.taxes.create')
+    @include('pages.admins.payments.products.form-modal.taxes.edit')
 @endsection
 
 @section('content')
@@ -548,6 +550,51 @@
                                     text: errorThrown
                                 });
                             }
+                        });
+                    }
+                });
+            });
+
+            const formAddTax = '#formAddTaxModal';
+            const addTaxModal = '#addTaxModal';
+            $('#addTax').on('click', function () {
+                // e.preventDefault();
+                $(addTaxModal).modal('show');
+            });
+
+            $(formAddTax).on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ route('taxes.store') }}",
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function () {
+                        $(addTaxModal).modal('hide');
+                        Swal.fire({
+                            title: 'Tax successfully created!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        const response = JSON.parse(jqXHR.responseText);
+                        $.each(response.errors, function (key, val) {
+                            $(formAddTax + ' span.' + key).text(val[0]);
+                            $(formAddTax + " #" + key).addClass('is-invalid');
+                        });
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when creating data!",
+                            text: errorThrown,
                         });
                     }
                 });

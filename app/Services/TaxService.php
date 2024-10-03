@@ -52,11 +52,14 @@ class TaxService extends Service
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
                                             <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
+                                            <small class="js-lists-values-email text-50">' . $item->user->admin->position . '</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>';
+            })
+            ->editColumn('description', function ($item) {
+                return $this->description($item->description);
             })
             ->editColumn('updatedAt', function ($item) {
                 return $this->convertTimestamp($item->created_at);
