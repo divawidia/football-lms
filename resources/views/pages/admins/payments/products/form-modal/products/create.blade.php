@@ -12,10 +12,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="form-label" for="add-productName">Product Name</label>
+                        <label class="form-label" for="productName">Product Name</label>
                         <small class="text-danger">*</small>
                         <input type="text"
-                               id="add-productName"
+                               id="productName"
                                name="productName"
                                class="form-control"
                                placeholder="Input product's name ..."
@@ -25,8 +25,28 @@
                         </span>
                     </div>
                     <div class="form-group">
+                        <label class="form-label" for="price">Price</label>
+                        <small class="text-danger">*</small>
+                        <div class="input-group input-group-merge">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    Rp.
+                                </div>
+                            </div>
+                            <input type="number"
+                                   id="price"
+                                   name="price"
+                                   class="form-control"
+                                   placeholder="Input product's price ..."
+                                   required>
+                            <span class="invalid-feedback price" role="alert">
+                                <strong></strong>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="d-flex flex-row align-items-center mb-2">
-                            <label class="form-label" for="add-categoryId">Product Category</label>
+                            <label class="form-label" for="categoryId">Product Category</label>
                             <small class="text-danger">*</small>
                             <button type="button"  class="btn btn-primary btn-sm ml-auto addProductCategory">
                                 <span class="material-icons mr-2">add</span>
@@ -45,7 +65,7 @@
                                 </div>
                             </div>
                         @else
-                            <select class="form-control form-select" id="add-categoryId" name="categoryId" required data-toggle="select">
+                            <select class="form-control form-select" id="categoryId" name="categoryId" required data-toggle="select">
                                 <option disabled selected>Select product's category</option>
                                 @foreach($categories AS $category)
                                     <option value="{{ $category->id }}">{{ $category->categoryName }}</option>
@@ -57,30 +77,30 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="add-description">Description</label>
+                        <label class="form-label" for="description">Description</label>
                         <small class="text-sm">(Optional)</small>
-                        <textarea class="form-control" id="add-description" name="description" rows="3"></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         <span class="invalid-feedback description" role="alert">
                             <strong></strong>
                         </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="add-paymentOption">Payment Type</label>
+                        <label class="form-label" for="priceOption">Payment Type</label>
                         <small class="text-danger">*</small>
-                        <select class="form-control form-select" id="add-paymentOption" name="paymentOption" required>
+                        <select class="form-control form-select priceOption" id="priceOption" name="priceOption" required>
                             <option disabled selected>Select product's payment type</option>
                             @foreach(['subscription', 'one time payment'] AS $payment)
                                 <option value="{{ $payment }}">{{ $payment }}</option>
                             @endforeach
                         </select>
-                        <span class="invalid-feedback paymentOption" role="alert">
+                        <span class="invalid-feedback priceOption" role="alert">
                             <strong></strong>
                         </span>
                     </div>
                     <div class="form-group subscriptionCycleForm">
-                        <label class="form-label" for="add-subscriptionCycle">Subscription Cycle</label>
+                        <label class="form-label" for="subscriptionCycle">Subscription Cycle</label>
                         <small class="text-danger">*</small>
-                        <select class="form-control form-select" id="add-subscriptionCycle" name="subscriptionCycle">
+                        <select class="form-control form-select subscriptionCycle" id="subscriptionCycle" name="subscriptionCycle">
                             <option disabled selected>Select product's subscription cycle</option>
                             @foreach(['monthly', 'quarterly', 'semianually', 'anually'] AS $cycle)
                                 <option value="{{ $cycle }}">{{ $cycle }}</option>

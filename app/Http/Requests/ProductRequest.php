@@ -26,7 +26,7 @@ class ProductRequest extends FormRequest
             'productName' => ['required', 'string', 'max:255', Rule::unique('product_categories', 'categoryName')->ignore($this->productCategory)],
             'description' => ['nullable', 'string'],
             'categoryId' => ['required', Rule::exists('product_categories', 'id')],
-            'price' => ['required', 'numeric', 'max:1'],
+            'price' => ['required', 'numeric', 'min:0'],
             'priceOption' => ['required', Rule::in('subscription', 'one time payment')],
             'subscriptionCycle' => ['nullable', Rule::in('monthly','quarterly','semianually','anually')],
         ];

@@ -178,7 +178,7 @@
                 ]
             });
 
-            const taxTable = $('#taxTable').DataTable({
+            $('#taxTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -213,7 +213,7 @@
                 subscriptionCycleForm.hide();
             });
 
-            $('#paymentOption').on('change', function (e) {
+            $('#priceOption').on('change', function (e) {
                 e.preventDefault();
                 if ($(this).val() === 'subscription'){
                     subscriptionCycleForm.show()
@@ -250,8 +250,8 @@
                     error: function (jqXHR, textStatus, errorThrown) {
                         const response = JSON.parse(jqXHR.responseText);
                         $.each(response.errors, function (key, val) {
-                            $('span.' + key).text(val[0]);
-                            $("#add-" + key).addClass('is-invalid');
+                            $('#formAddProductModal span.' + key).text(val[0]);
+                            $("#formAddProductModal #" + key).addClass('is-invalid');
                         });
                         Swal.fire({
                             icon: "error",
@@ -294,8 +294,8 @@
                     error: function (jqXHR, textStatus, errorThrown) {
                         const response = JSON.parse(jqXHR.responseText);
                         $.each(response.errors, function (key, val) {
-                            $('span.' + key).text(val[0]);
-                            $("#add-" + key).addClass('is-invalid');
+                            $('#formAddProductCategoryModal span.' + key).text(val[0]);
+                            $("#formAddProductCategoryModal #" + key).addClass('is-invalid');
                         });
                         Swal.fire({
                             icon: "error",
