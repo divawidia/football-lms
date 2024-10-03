@@ -134,7 +134,7 @@
         $(document).ready(function () {
             const body = $('body');
 
-            const productsTable = $('#productsTable').DataTable({
+            $('#productsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -395,8 +395,8 @@
                 });
             });
 
-            $('.addProductCategory').on('click', function (e) {
-                e.preventDefault();
+            $('.addProductCategory').on('click', function () {
+                // e.preventDefault();
                 $('#addProductModal').modal('hide');
                 $('#addProductCategoryModal').modal('show');
             });
@@ -440,7 +440,7 @@
             });
 
             const formEditProductCategory = '#formEditProductCategoryModal';
-            const editProductCategoryModalId = '#editProductCategoryModal'
+            const editProductCategoryModalId = '#editProductCategoryModal';
 
             // show edit product form modal when edit product button clicked
             body.on('click', '.editProductCategory', function () {
@@ -502,6 +502,52 @@
                             icon: "error",
                             title: "Something went wrong when updating data!",
                             text: errorThrown,
+                        });
+                    }
+                });
+            });
+
+            // delete product data
+            body.on('click', '.deleteProductCategory', function () {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure to delete this product category?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('product-categories.destroy', ':id') }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function () {
+                                Swal.fire({
+                                    title: 'Product category successfully deleted!',
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Something went wrong when deleting data!",
+                                    text: errorThrown
+                                });
+                            }
                         });
                     }
                 });
