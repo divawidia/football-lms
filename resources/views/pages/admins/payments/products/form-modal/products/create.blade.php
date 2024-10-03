@@ -28,7 +28,7 @@
                         <div class="d-flex flex-row align-items-center mb-2">
                             <label class="form-label" for="categoryId">Product Category</label>
                             <small class="text-danger">*</small>
-                            <button type="button" id="addProductCategory" class="btn btn-primary btn-sm ml-auto">
+                            <button type="button"  class="btn btn-primary btn-sm ml-auto addProductCategory">
                                 <span class="material-icons mr-2">add</span>
                                 Add new
                             </button>

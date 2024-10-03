@@ -8,6 +8,7 @@
 
 @section('modal')
     @include('pages.admins.payments.products.form-modal.products.create')
+    @include('pages.admins.payments.products.form-modal.product-categories.create')
 @endsection
 
 @section('content')
@@ -62,7 +63,7 @@
 
         <div class="page-separator">
             <div class="page-separator__text">Product Categories</div>
-            <button type="button" class="btn btn-sm btn-primary ml-auto " id="addProductCategory">
+            <button type="button" class="btn btn-sm btn-primary ml-auto addProductCategory">
                     <span class="material-icons mr-2">
                         add
                     </span>
@@ -223,6 +224,12 @@
                     subscriptionCycleForm.hide();
                     subscriptionCycleSelect.val("Select product's subscription cycle").removeAttr('required');
                 }
+            });
+
+            $('.addProductCategory').on('click', function (e) {
+                e.preventDefault();
+                $('#addProductModal').modal('hide');
+                $('#addProductCategoryModal').modal('show');
             });
 
             $('body').on('click', '.delete-team', function () {
