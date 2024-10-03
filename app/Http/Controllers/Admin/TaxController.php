@@ -9,6 +9,7 @@ use App\Models\ProductCategory;
 use App\Models\Tax;
 use App\Services\TaxService;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class TaxController extends Controller
 {
@@ -61,11 +62,17 @@ class TaxController extends Controller
     }
 
     public function activate(Tax $tax){
-        return response()->json($this->taxService->activate($tax));
+        $this->taxService->activate($tax);
+        $text = 'Tax '. $tax->taxName . ' status successfully activated!';
+        Alert::success($text);
+        return redirect()->route('products.index');
     }
 
     public function deactivate(Tax $tax){
-        return response()->json($this->taxService->deactivate($tax));
+        $this->taxService->activate($tax);
+        $text = 'Tax '. $tax->taxName . ' status successfully activated!';
+        Alert::success($text);
+        return redirect()->route('products.index');
     }
 
     /**
