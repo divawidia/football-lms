@@ -8,6 +8,7 @@
 
 @section('modal')
     @include('pages.admins.payments.products.form-modal.products.create')
+    @include('pages.admins.payments.products.form-modal.products.edit')
     @include('pages.admins.payments.products.form-modal.product-categories.create')
 @endsection
 
@@ -130,6 +131,8 @@
 @push('addon-script')
     <script>
         $(document).ready(function () {
+            const body = $('body');
+
             const productsTable = $('#productsTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -205,7 +208,7 @@
             })
 
             let subscriptionCycleForm = $('.subscriptionCycleForm');
-            let subscriptionCycleSelect = $('#subscriptionCycle');
+            let subscriptionCycleSelect = $('.subscriptionCycle');
 
             $('#addProducts').on('click', function (e) {
                 e.preventDefault();
@@ -213,16 +216,27 @@
                 subscriptionCycleForm.hide();
             });
 
-            $('#priceOption').on('change', function (e) {
-                e.preventDefault();
-                if ($(this).val() === 'subscription'){
+            function subscriptionCycleDisplay(formId){
+                const priceOption = $(formId + ' .priceOption');
+                if (priceOption.val() === 'subscription'){
                     subscriptionCycleForm.show()
                     subscriptionCycleSelect.attr('required');
-                }else {
+                }else if (priceOption.val() === 'one time payment') {
                     subscriptionCycleForm.hide();
-                    subscriptionCycleSelect.val("Select product's subscription cycle").removeAttr('required');
+                    subscriptionCycleSelect.val("(NULL)").removeAttr('required');
                 }
-            });
+            }
+
+            function priceOptionFormOnChange(formId) {
+                const priceOption = $(formId + ' .priceOption');
+                priceOption.on('change', function (e) {
+                    e.preventDefault();
+                    subscriptionCycleDisplay(formId);
+                });
+            }
+
+            priceOptionFormOnChange('#formAddProductModal');
+            priceOptionFormOnChange('#formEditProductModal');
 
             $('#formAddProductModal').on('submit', function (e) {
                 e.preventDefault();
@@ -256,6 +270,76 @@
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when creating data!",
+                            text: errorThrown,
+                        });
+                    }
+                });
+            });
+
+            // show edit product form modal when edit product button clicked
+            body.on('click', '.edit-product', function () {
+                const id = $(this).attr('id');
+                $.ajax({
+                    url: "{{ route('products.edit', ':id') }}".replace(':id', id),
+                    type: 'GET',
+                    success: function (res) {
+                        $('#editProductModal').modal('show');
+
+                        document.getElementById('product-title').textContent = 'Edit product ' + res.data.productName;
+                        $('#productId').val(res.data.id);
+                        $('#formEditProductModal #productName').val(res.data.productName);
+                        $('#formEditProductModal #price').val(res.data.price);
+                        $('#formEditProductModal #categoryId').val(res.data.categoryId);
+                        $('#formEditProductModal #description').val(res.data.description);
+                        $('#formEditProductModal #priceOption').val(res.data.priceOption);
+                        $('#formEditProductModal #subscriptionCycle').val(res.data.subscriptionCycle);
+                        subscriptionCycleDisplay('#formEditProductModal');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when updating data!",
+                            text: errorThrown,
+                        });
+                    }
+                });
+            });
+
+            // update training video data when form submitted
+            $('#formEditProductModal').on('submit', function (e) {
+                e.preventDefault();
+                const id = $('#productId').val()
+                $.ajax({
+                    url: "{{ route('products.update', ':id') }}".replace(':id', id),
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function () {
+                        $('#editTrainingVideoModal').modal('hide');
+                        Swal.fire({
+                            title: 'Product successfully updated!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        const response = JSON.parse(jqXHR.responseText);
+                        console.log(response)
+                        $.each(response.errors, function (key, val) {
+                            $('#formEditProductModal span.' + key).text(val[0]);
+                            $("#formEditProductModal #" + key).addClass('is-invalid');
+                        });
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when updating data!",
                             text: errorThrown,
                         });
                     }

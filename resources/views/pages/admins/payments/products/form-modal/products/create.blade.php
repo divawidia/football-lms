@@ -101,7 +101,7 @@
                         <label class="form-label" for="subscriptionCycle">Subscription Cycle</label>
                         <small class="text-danger">*</small>
                         <select class="form-control form-select subscriptionCycle" id="subscriptionCycle" name="subscriptionCycle">
-                            <option disabled selected>Select product's subscription cycle</option>
+                            <option disabled value="(NULL)" selected>Select product's subscription cycle</option>
                             @foreach(['monthly', 'quarterly', 'semianually', 'anually'] AS $cycle)
                                 <option value="{{ $cycle }}">{{ $cycle }}</option>
                             @endforeach

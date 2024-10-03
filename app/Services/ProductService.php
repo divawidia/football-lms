@@ -31,7 +31,7 @@ class ProductService extends Service
                                     </form>';
                 }
                 return '<div class="btn-toolbar" role="toolbar">
-                            <button class="btn btn-sm btn-outline-secondary mr-1 editProduct" id="' . $item->id . '" type="button" data-toggle="tooltip" data-placement="bottom" title="Edit Product">
+                            <button class="btn btn-sm btn-outline-secondary mr-1 edit-product" id="' . $item->id . '" type="button" data-toggle="tooltip" data-placement="bottom" title="Edit Product">
                                 <span class="material-icons">edit</span>
                              </button>
                              ' . $statusButton . '
@@ -80,7 +80,7 @@ class ProductService extends Service
             ->editColumn('subscriptionCycle', function ($item) {
                 if ($item->priceOption == 'subscription') {
                     $badge = '<p class="text-capitalize">'.$item->subscriptionCycle.'</p>';
-                } elseif ($item->priceOption == 'subscription') {
+                } elseif ($item->priceOption == 'one time payment') {
                     $badge = 'Not Subscription';
                 }
                 return $badge;
