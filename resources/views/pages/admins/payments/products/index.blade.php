@@ -444,7 +444,7 @@
             const formEditProductCategory = '#formEditProductCategoryModal';
             const editProductCategoryModalId = '#editProductCategoryModal';
 
-            // show edit product form modal when edit product button clicked
+            // show edit product category form modal when edit product button clicked
             body.on('click', '.editProductCategory', function () {
                 const id = $(this).attr('id');
                 $.ajax({
@@ -468,7 +468,7 @@
                 });
             });
 
-            // update product data when form submitted
+            // update product category data when form submitted
             $(formEditProductCategory).on('submit', function (e) {
                 e.preventDefault();
                 const id = $('#productCategoryId').val()
@@ -509,7 +509,7 @@
                 });
             });
 
-            // delete product data
+            // delete product category data
             body.on('click', '.deleteProductCategory', function () {
                 let id = $(this).attr('id');
 
@@ -664,6 +664,52 @@
                             icon: "error",
                             title: "Something went wrong when updating data!",
                             text: errorThrown,
+                        });
+                    }
+                });
+            });
+
+            // delete product category data
+            body.on('click', '.deleteTax', function () {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure to delete this tax?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('taxes.destroy', ':id') }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function () {
+                                Swal.fire({
+                                    title: 'Tax successfully deleted!',
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Something went wrong when deleting data!",
+                                    text: errorThrown
+                                });
+                            }
                         });
                     }
                 });
