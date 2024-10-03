@@ -1,59 +1,28 @@
 <!-- Modal add lesson -->
-<div class="modal fade" id="editTrainingVideoModal" tabindex="-1" aria-labelledby="editTrainingVideoModalLabel" aria-hidden="true">
+<div class="modal fade" id="editProductCategoryModal" tabindex="-1" aria-labelledby="editProductCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form method="POST" id="formEditTrainingVideoModal" enctype="multipart/form-data">
+            <form method="POST" id="formEditProductCategoryModal">
                 @method('PUT')
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="training-title"></h5>
+                    <h5 class="modal-title" id="product-category-title"></h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="trainingId">
+                    <input id="productCategoryId" type="hidden">
                     <div class="form-group">
-                        <label class="form-label" for="trainingTitle">Training Title</label>
+                        <label class="form-label" for="categoryName">Product Category Name</label>
                         <small class="text-danger">*</small>
                         <input type="text"
-                               id="trainingTitle"
-                               name="trainingTitle"
+                               id="categoryName"
+                               name="categoryName"
                                class="form-control"
-                               placeholder="Input training's title ..."
+                               placeholder="Input product category's name ..."
                                required>
-                        <span class="invalid-feedback trainingTitle" role="alert">
-                            <strong></strong>
-                        </span>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="previewPhoto">Training Preview Image</label>
-                        <small class="text-sm">(Optional)</small>
-                        <div class="media justify-content-center mb-2">
-                            <div class="custom-file">
-                                <input type="file"
-                                       class="custom-file-input"
-                                       name="previewPhoto"
-                                       id="previewPhoto"
-                                       accept="image/jpg, image/jpeg, image/png">
-                                <label class="custom-file-label" for="previewPhoto">Choose image</label>
-                                <span class="invalid-feedback previewPhoto" role="alert">
-                                    <strong></strong>
-                                </span>
-                            </div>
-                            <img id="preview" class="image-upload-preview img-fluid mt-4" alt="image-preview" src=""/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="level">Difficulty Level</label>
-                        <small class="text-danger">*</small>
-                        <select class="form-control form-select" id="level" name="level" required>
-                            <option disabled selected>Select training video's difficulty</option>
-                            @foreach(['Beginner', 'Intermediate', 'Expert'] AS $level)
-                                <option value="{{ $level }}">{{ $level }}</option>
-                            @endforeach
-                        </select>
-                        <span class="invalid-feedback level" role="alert">
+                        <span class="invalid-feedback categoryName" role="alert">
                             <strong></strong>
                         </span>
                     </div>

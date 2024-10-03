@@ -10,6 +10,7 @@
     @include('pages.admins.payments.products.form-modal.products.create')
     @include('pages.admins.payments.products.form-modal.products.edit')
     @include('pages.admins.payments.products.form-modal.product-categories.create')
+    @include('pages.admins.payments.products.form-modal.product-categories.edit')
 @endsection
 
 @section('content')
@@ -210,6 +211,7 @@
             let subscriptionCycleForm = $('.subscriptionCycleForm');
             let subscriptionCycleSelect = $('.subscriptionCycle');
 
+            // show add product form modal when add new product button clicked
             $('#addProducts').on('click', function (e) {
                 e.preventDefault();
                 $('#addProductModal').modal('show');
@@ -238,6 +240,7 @@
             priceOptionFormOnChange('#formAddProductModal');
             priceOptionFormOnChange('#formEditProductModal');
 
+            // store product data when form submitted
             $('#formAddProductModal').on('submit', function (e) {
                 e.preventDefault();
                 $.ajax({
@@ -305,7 +308,7 @@
                 });
             });
 
-            // update training video data when form submitted
+            // update product data when form submitted
             $('#formEditProductModal').on('submit', function (e) {
                 e.preventDefault();
                 const id = $('#productId').val()
@@ -345,6 +348,8 @@
                     }
                 });
             });
+
+            // delete product data
             body.on('click', '.delete-product', function () {
                 let id = $(this).attr('id');
 
@@ -434,39 +439,69 @@
                 });
             });
 
-            $('body').on('click', '.delete-opponentTeam', function () {
-                let id = $(this).attr('id');
+            const formEditProductCategory = '#formEditProductCategoryModal';
+            const editProductCategoryModalId = '#editProductCategoryModal'
 
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('opponentTeam-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (response) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Team successfully deleted!",
-                                });
-                                opponentTable.ajax.reload();
-                            },
-                            error: function (error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Oops...",
-                                    text: "Something went wrong when deleting data!",
-                                });
+            // show edit product form modal when edit product button clicked
+            body.on('click', '.editProductCategory', function () {
+                const id = $(this).attr('id');
+                $.ajax({
+                    url: "{{ route('product-categories.edit', ':id') }}".replace(':id', id),
+                    type: 'GET',
+                    success: function (res) {
+                        $(editProductCategoryModalId).modal('show');
+
+                        document.getElementById('product-category-title').textContent = 'Edit product category ' + res.data.productName;
+                        $('#productCategoryId').val(res.data.id);
+                        $(formEditProductCategory + ' #categoryName').val(res.data.categoryName);
+                        $(formEditProductCategory + ' #description').val(res.data.description);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when updating data!",
+                            text: errorThrown,
+                        });
+                    }
+                });
+            });
+
+            // update product data when form submitted
+            $(formEditProductCategory).on('submit', function (e) {
+                e.preventDefault();
+                const id = $('#productCategoryId').val()
+                $.ajax({
+                    url: "{{ route('product-categories.update', ':id') }}".replace(':id', id),
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function () {
+                        $(editProductCategoryModalId).modal('hide');
+                        Swal.fire({
+                            title: 'Product category successfully updated!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
                             }
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        const response = JSON.parse(jqXHR.responseText);
+                        console.log(response)
+                        $.each(response.errors, function (key, val) {
+                            $(formEditProductCategory + ' span.' + key).text(val[0]);
+                            $(formEditProductCategory + " #" + key).addClass('is-invalid');
+                        });
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when updating data!",
+                            text: errorThrown,
                         });
                     }
                 });
