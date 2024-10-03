@@ -209,6 +209,7 @@
 
             let subscriptionCycleForm = $('.subscriptionCycleForm');
             let subscriptionCycleSelect = $('#subscriptionCycle');
+
             $('#addProducts').on('click', function (e) {
                 e.preventDefault();
                 $('#addProductModal').modal('show');
@@ -226,11 +227,50 @@
                 }
             });
 
+            $('#formAddProductModal').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ route('products.store') }}",
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function () {
+                        $('#addProductModal').modal('hide');
+                        Swal.fire({
+                            title: 'Product successfully created!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        const response = JSON.parse(jqXHR.responseText);
+                        $.each(response.errors, function (key, val) {
+                            $('span.' + key).text(val[0]);
+                            $("#add-" + key).addClass('is-invalid');
+                        });
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when creating data!",
+                            text: errorThrown,
+                        });
+                    }
+                });
+            });
+
             $('.addProductCategory').on('click', function (e) {
                 e.preventDefault();
                 $('#addProductModal').modal('hide');
                 $('#addProductCategoryModal').modal('show');
             });
+
 
             $('body').on('click', '.delete-team', function () {
                 let id = $(this).attr('id');
