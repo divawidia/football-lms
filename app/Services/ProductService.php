@@ -35,7 +35,7 @@ class ProductService extends Service
                                 <span class="material-icons">edit</span>
                              </button>
                              ' . $statusButton . '
-                            <button type="button" class="btn btn-sm btn-outline-secondary deleteProduct" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Delete Product">
+                            <button type="button" class="btn btn-sm btn-outline-secondary delete-product" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Delete Product">
                                 <span class="material-icons">delete</span>
                             </button>
                         </div>';
