@@ -11,6 +11,7 @@ use App\Services\ProductCategoryService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductController extends Controller
 {
@@ -69,11 +70,17 @@ class ProductController extends Controller
     }
 
     public function activate(Product $product){
-        return response()->json($this->productService->activate($product));
+        $this->productService->activate($product);
+        $text = 'Product '. $product->productName . ' status successfully activated!';
+        Alert::success($text);
+        return redirect()->route('products.index');
     }
 
     public function deactivate(Product $product){
-        return response()->json($this->productService->deactivate($product));
+        $this->productService->deactivate($product);
+        $text = 'Product '. $product->productName . ' status successfully deactivated!';
+        Alert::success($text);
+        return redirect()->route('products.index');
     }
 
     /**
