@@ -8,11 +8,21 @@ use App\Models\ProductCategory;
 use App\Models\Subscription;
 use App\Models\Tax;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Storage;
+use Midtrans\Config;
+use Midtrans\Snap;
 use Yajra\DataTables\Facades\DataTables;
 
 class InvoiceService extends Service
 {
+    public function __construct()
+    {
+        Config::$serverKey    = config('services.midtrans.serverKey');
+        Config::$isProduction = config('services.midtrans.isProduction');
+        Config::$isSanitized  = config('services.midtrans.isSanitized');
+        Config::$is3ds        = config('services.midtrans.is3ds');
+    }
     public function index()
     {
         $data = Invoice::with('player.user')->latest();
@@ -138,6 +148,34 @@ class InvoiceService extends Service
             if ($productDetail->priceOption == 'subscription'){
                 $this->storeSubscription($data['playerId'], $product['ammount'], $product['productId']);
             }
+        }
+
+        $midtrans = [
+            'transaction_details' => [
+                'order_id' => $data['invoiceNumber'],
+                'gross_amount' => (int) $data['ammountDue'],
+            ],
+            'customer_details' => [
+                'first_name' => $invoice->player->user->firstName,
+                'email' => $invoice->player->user->email
+            ],
+            'enabled_payments' => [
+                'gopay', 'bank_transfer'
+            ],
+            'vtweb' => []
+        ];
+
+        try {
+            $snaptoken = Snap::getSnapToken($midtrans);
+            $data['snap_token'] = $snaptoken;
+            $invoice->fill(['snap_token' => $data['snap_token']]);
+
+//            Mail::to($data['email'])->send(new PayBookingTrfMail($booking));
+
+//            return redirect()->route('pay-booking', $booking->transaction_code);
+        }
+        catch (Exception $e){
+            echo $e->getMessage();
         }
 
         return $invoice;
