@@ -3,16 +3,26 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
+    private InvoiceService $invoiceService;
+
+    public function __construct(InvoiceService $invoiceService){
+        $this->invoiceService = $invoiceService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        if (\request()->ajax()){
+            return $this->invoiceService->index();
+        }
+
+        return view('pages.admins.payments.invoices.index');
     }
 
     /**
