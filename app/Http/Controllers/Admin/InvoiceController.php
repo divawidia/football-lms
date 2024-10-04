@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\InvoiceRequest;
 use App\Models\Product;
 use App\Models\Tax;
 use App\Models\User;
@@ -16,12 +17,14 @@ class InvoiceController extends Controller
     private Product $product;
     private Tax $tax;
     private User $user;
+
     public function __construct(InvoiceService $invoiceService, Product $product, Tax $tax, User $user){
         $this->invoiceService = $invoiceService;
         $this->product = $product;
         $this->tax = $tax;
         $this->user = $user;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -49,9 +52,12 @@ class InvoiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(InvoiceRequest $request)
     {
-        //
+        $data = $request->validated();
+        $loggedUserId = $this->getLoggedUserId();
+        $academyId = $this->getAcademyId();
+        return response()->json($this->invoiceService->store($data, $loggedUserId, $academyId));
     }
 
     /**
