@@ -33,7 +33,7 @@ class PlayerService extends Service
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">block</span> Deactivate Player
+                                                <span class="material-icons text-danger">block</span> Deactivate Player
                                             </button>
                                         </form>';
                 }else{
@@ -41,7 +41,7 @@ class PlayerService extends Service
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">check_circle</span> Activate Player
+                                                <span class="material-icons text-success">check_circle</span> Activate Player
                                             </button>
                                         </form>';
                 }

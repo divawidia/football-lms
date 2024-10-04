@@ -66,4 +66,9 @@ class Service
         }
         return $description;
     }
+
+    public function generateInvoiceNumber(){
+        $numbers = range(1, 10000);
+        return 'INV-'.shuffle($numbers);
+    }
 }
