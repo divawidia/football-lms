@@ -116,14 +116,12 @@ class InvoiceService extends Service
             ->make();
     }
 
-    public function store(array $data, $userId, $academyId)
+    public function store(array $data, $creatorUserIdd, $academyId)
     {
-        $data['userId'] = $userId;
+        $data['creatorUserId'] = $creatorUserIdd;
         $data['academyId'] = $academyId;
         $data['invoiceNumber'] = $this->generateInvoiceNumber();
-        $data['status'] = 'open';
         $data['subtotal'] = 0;
-        $data['sentDate'] = Carbon::now();
 
         foreach ($data['products'] as $product) {
             $data['subtotal'] = $data['subtotal'] + $product['ammount'];
