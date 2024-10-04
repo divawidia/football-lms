@@ -11,27 +11,26 @@ class Invoice extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'playerId',
-        'adminId',
+        'creatorUserId',
+        'receiverUserId',
         'academyId',
         'taxId',
         'invoiceNumber',
         'dueDate',
         'ammountDue',
-        'sentDate',
         'totalTax',
         'subtotal',
-        'paymentURL',
+        'snapToken',
         'status',
     ];
 
-    public function player()
+    public function creatorUser()
     {
-        return $this->belongsTo(Player::class, 'playerId');
+        return $this->belongsTo(User::class, 'creatorUserId');
     }
-    public function admin()
+    public function receiverUser()
     {
-        return $this->belongsTo(Admin::class, 'adminId');
+        return $this->belongsTo(User::class, 'receiverUserId');
     }
     public function academy()
     {
