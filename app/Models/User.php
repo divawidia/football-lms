@@ -60,6 +60,10 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function getAllUserWithoutLoggedUserData($authUserId){
+        return $this->where('id', '!=', $authUserId)->get();
+    }
+
     public function admin()
     {
         return $this->hasOne(Admin::class, 'userId');

@@ -3,15 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Tax;
+use App\Models\User;
 use App\Services\InvoiceService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
     private InvoiceService $invoiceService;
-
-    public function __construct(InvoiceService $invoiceService){
+    private Product $product;
+    private Tax $tax;
+    private User $user;
+    public function __construct(InvoiceService $invoiceService, Product $product, Tax $tax, User $user){
         $this->invoiceService = $invoiceService;
+        $this->product = $product;
+        $this->tax = $tax;
+        $this->user = $user;
     }
     /**
      * Display a listing of the resource.
@@ -22,7 +31,11 @@ class InvoiceController extends Controller
             return $this->invoiceService->index();
         }
 
-        return view('pages.admins.payments.invoices.index');
+        return view('pages.admins.payments.invoices.index', [
+            'products' => $this->product->getAllProducts(),
+            'taxes' => $this->tax->getAllTax(),
+            'contacts' => $this->user->getAllUserWithoutLoggedUserData($this->getLoggedUserId())
+        ]);
     }
 
     /**

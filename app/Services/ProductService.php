@@ -8,9 +8,15 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ProductService extends Service
 {
+    private Product $product;
+
+    public function __construct(Product $product){
+        $this->product = $product;
+    }
+
     public function index()
     {
-        $data = Product::with('category')->get();
+        $data = $this->product->getAllProducts();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if ($item->status == '1') {

@@ -21,6 +21,10 @@ class Product extends Model
         'status',
     ];
 
+    public function getAllProducts(){
+        return $this->with('category')->get();
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'userId');

@@ -11,8 +11,13 @@ use Illuminate\Support\Facades\Auth;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
+    private Auth $auth;
 
     public function getAcademyId(){
-        return Auth::user()->academyId;
+        return $this->auth->user()->academyId;
+    }
+
+    public function getLoggedUserId(){
+        return $this->auth->user()->id;
     }
 }

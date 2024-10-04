@@ -9,9 +9,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TaxService extends Service
 {
+    private Tax $tax;
+
+    public function __construct(Tax $tax){
+        $this->tax = $tax;
+    }
     public function index()
     {
-        $data = Tax::all();
+        $data = $this->tax->getAllTax();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if ($item->status == '1') {
