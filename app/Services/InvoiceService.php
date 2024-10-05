@@ -179,6 +179,27 @@ class InvoiceService extends Service
         return $invoice;
     }
 
+    public function calculateProductAmount(array $data, Product $product){
+        return $data['qty'] * $product->price;
+    }
+
+    public function calculateInvoiceTotal(array $data){
+        $data['subtotal'] = 0;
+
+        foreach ($data['products'] as $product) {
+            $data['subtotal'] = $data['subtotal'] + $product['ammount'];
+        }
+        $data['ammountDue'] = $data['subtotal'];
+
+        if ($data['taxId']){
+            $tax = $this->getTaxDetail($data['taxId']);
+            $data['totalTax'] = $data['subtotal'] * $tax->percentage;
+            $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
+        }
+
+        return $data;
+    }
+
     public function getProductDetail($productId){
         return Product::findOrFail($productId);
     }
