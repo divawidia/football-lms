@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventScheduleController;
 use App\Http\Controllers\Admin\GroupDivisionController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\LeaderboardController;
 use App\Http\Controllers\Admin\OpponentTeamController;
 use App\Http\Controllers\Admin\PerformanceReportController;
@@ -344,6 +345,19 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('activate', [ProductController::class, 'activate'])->name('products.activate');
             Route::delete('delete', [ProductController::class, 'destroy'])->name('products.destroy');
         });
+    });
+
+    Route::prefix('invoices')->group(function () {
+        Route::get('', [InvoiceController::class, 'index'])->name('invoices.index');
+//        Route::post('store', [ProductController::class, 'store'])->name('products.store');
+//
+//        Route::prefix('{product}')->group(function () {
+//            Route::get('edit', [ProductController::class, 'edit'])->name('products.edit');
+//            Route::put('update', [ProductController::class, 'update'])->name('products.update');
+//            Route::patch('deactivate', [ProductController::class, 'deactivate'])->name('products.deactivate');
+//            Route::patch('activate', [ProductController::class, 'activate'])->name('products.activate');
+//            Route::delete('delete', [ProductController::class, 'destroy'])->name('products.destroy');
+//        });
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
