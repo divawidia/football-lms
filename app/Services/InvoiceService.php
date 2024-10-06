@@ -179,8 +179,8 @@ class InvoiceService extends Service
         return $invoice;
     }
 
-    public function calculateProductAmount(array $data, Product $product){
-        return $data['qty'] * $product->price;
+    public function calculateProductAmount(int $qty, Product $product){
+        return $qty * $product->price;
     }
 
     public function calculateInvoiceTotal(array $data){

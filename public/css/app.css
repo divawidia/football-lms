@@ -9954,38 +9954,6 @@ label {
     border-color: #d9534f
 }
 
-[dir=ltr] .input-group.input-group-merge .form-control-prepended {
-    padding-left: 0;
-    border-left-width: 0;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-top-right-radius: .25rem;
-    border-bottom-right-radius: .25rem
-}
-
-[dir=rtl] .input-group.input-group-merge .form-control-prepended {
-    padding-right: 0;
-    border-right-width: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-top-left-radius: .25rem;
-    border-bottom-left-radius: .25rem
-}
-
-[dir=ltr] .input-group.input-group-merge .form-control-appended {
-    padding-right: 0;
-    border-right-width: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0
-}
-
-[dir=rtl] .input-group.input-group-merge .form-control-appended {
-    padding-left: 0;
-    border-left-width: 0;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0
-}
-
 .input-group.input-group-merge .input-group-prepend {
     order: -1
 }

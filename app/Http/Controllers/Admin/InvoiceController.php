@@ -60,6 +60,10 @@ class InvoiceController extends Controller
         return response()->json($this->invoiceService->store($data, $loggedUserId, $academyId));
     }
 
+    public function calculateProductAmount(Request $request, Product $product){
+        $qty = $request->input('');
+    }
+
     /**
      * Display the specified resource.
      */
