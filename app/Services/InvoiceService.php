@@ -16,12 +16,15 @@ use Yajra\DataTables\Facades\DataTables;
 
 class InvoiceService extends Service
 {
-    public function __construct()
+    private Product $product;
+    public function __construct(Product $product)
     {
         Config::$serverKey    = config('services.midtrans.serverKey');
         Config::$isProduction = config('services.midtrans.isProduction');
         Config::$isSanitized  = config('services.midtrans.isSanitized');
         Config::$is3ds        = config('services.midtrans.is3ds');
+
+        $this->product = $product;
     }
     public function index()
     {
@@ -142,7 +145,7 @@ class InvoiceService extends Service
                 'ammount' => $product['ammount']
             ]);
 
-            $productDetail = $this->getProductDetail($product['productId']);
+            $productDetail = $this->product->findProductById($product['productId']);
             if ($productDetail->priceOption == 'subscription'){
                 $this->storeSubscription($data['playerId'], $product['ammount'], $product['productId']);
             }
@@ -179,8 +182,25 @@ class InvoiceService extends Service
         return $invoice;
     }
 
-    public function calculateProductAmount(int $qty, Product $product){
-        return $qty * $product->price;
+    public function calculateProductAmount(int $qty, $productId){
+        $product = $this->product->findProductById($productId);
+        $productPrice = $product->price;
+        $amount = $qty * $productPrice;
+        $cycle = $product->subscriptionCycle;
+
+        if ($cycle == 'monthly'){
+            $subscription = '/Month';
+        } elseif ($cycle == 'quarterly'){
+            $subscription = '/3 Month';
+        } elseif ($cycle == 'semianually'){
+            $subscription = '/6 Month';
+        } elseif ($cycle == 'anually'){
+            $subscription = '/Year';
+        } else {
+            $subscription = '';
+        }
+
+        return compact('productPrice', 'amount', 'subscription');
     }
 
     public function calculateInvoiceTotal(array $data){
@@ -200,10 +220,6 @@ class InvoiceService extends Service
         return $data;
     }
 
-    public function getProductDetail($productId){
-        return Product::findOrFail($productId);
-    }
-
     public function getTaxDetail($taxId){
         return Tax::findOrFail($taxId);
     }
@@ -215,7 +231,7 @@ class InvoiceService extends Service
         $data['status'] = 'scheduled';
         $data['playerId'] = $playerId;
 
-        $product = $this->getProductDetail($productId);
+        $product = $this->product->findProductById($productId);
 
         if ($product->subscriptionCycle == 'monthly'){
             $data['cycle'] =  'monthly';

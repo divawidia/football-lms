@@ -108,7 +108,7 @@
                         '<div class="form-group col-7 col-lg-4">' +
                             '<label class="form-label" for="productId'+i+'">Product</label>' +
                             '<small class="text-danger">*</small>'+
-                            '<select class="form-control form-select" id="productId'+i+'" name="products['+i+'][productId]" required>'+
+                            '<select class="form-control form-select product-select" data-row="'+i+'" id="productId'+i+'" name="products['+i+'][productId]" required>'+
                                 '<option disabled selected>Select product</option>'+
                                 '@foreach($products AS $product)'+
                                 '<option value="{{ $product->id }}">'+
@@ -123,7 +123,7 @@
                         '<div class="form-group col-3 col-lg-1">' +
                             '<label class="form-label" for="qty'+i+'">Qty</label>' +
                             '<small class="text-danger">*</small>'+
-                            '<input type="number" id="qty'+i+'" name="products['+i+'][qty]" required class="form-control" placeholder="Input product qty">'+
+                            '<input type="number" id="qty'+i+'" name="products['+i+'][qty]" required class="form-control qty-form" placeholder="Input product qty" data-row="'+i+'">'+
                             '<span class="invalid-feedback qty'+i+'" role="alert">'+
                                 '<strong></strong>'+
                             '</span>'+
@@ -140,7 +140,7 @@
                                     '<strong></strong>'+
                                 '</span>'+
                                 '<div class="input-group-append">'+
-                                    '<div class="input-group-text"></div>'+
+                                    '<div class="input-group-text" id="subscription-info'+i+'"></div>'+
                                 '</div>'+
                             '</div>'+
                         '</div>'+
@@ -151,7 +151,7 @@
                                 '<div class="input-group-prepend">'+
                                     '<div class="input-group-text">Rp.</div>'+
                                 '</div>'+
-                                '<input type="number" id="ammount'+i+'" name="products['+i+'][ammount]" required class="form-control" disabled>'+
+                                '<input type="number" id="amount'+i+'" name="products['+i+'][ammount]" required class="form-control" disabled>'+
                                 '<span class="invalid-feedback price'+i+'" role="alert">'+
                                     '<strong></strong>'+
                                 '</span>'+
@@ -169,6 +169,36 @@
             body.on('click', '.btnRemoveProduct', function(){
                 const button_id = $(this).attr("id");
                 $('#row'+button_id+'').remove();
+                i -= 1;
+            });
+
+            // calculate and show product amount when qty form inputed
+            body.on('change', '.qty-form',function() {
+                // Capture user input for query parameters
+                const rowId = $(this).attr('data-row');
+                const qty = $(this).val();
+                const productId = $('#productId'+rowId).val();
+
+                // Send an AJAX request with query parameters
+                $.ajax({
+                    url: '{{ route('invoices.calculate-product-amount') }}',  // URL endpoint
+                    type: 'GET',
+                    data: {
+                        qty: qty,   // Add query parameters here
+                        productId: productId
+                    },
+                    success: function(response) {
+                        // Process the response
+                        console.log(response);
+                        $('#price'+rowId).val(response.data.productPrice);
+                        $('#amount'+rowId).val(response.data.amount);
+                        $('#subscription-info'+rowId).text(response.data.subscription);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle any errors
+                        alert('Error:', error);
+                    }
+                });
             });
 
             // store product data when form submitted

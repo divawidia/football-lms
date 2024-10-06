@@ -25,6 +25,10 @@ class Product extends Model
         return $this->with('category')->get();
     }
 
+    public function findProductById($productId){
+        return $this->findOrFail($productId);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'userId');

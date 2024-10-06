@@ -44,7 +44,7 @@
                             <div class="form-group col-7 col-lg-4">
                                 <label class="form-label" for="productId">Product</label>
                                 <small class="text-danger">*</small>
-                                <select class="form-control form-select" id="productId" name="products[1][productId]" required>
+                                <select class="form-control form-select product-select" data-row="1" id="productId1" name="products[1][productId]" required>
                                     <option disabled selected>Select product</option>
                                     @foreach($products AS $product)
                                         <option value="{{ $product->id }}">
@@ -60,10 +60,11 @@
                                 <label class="form-label" for="qty">Qty</label>
                                 <small class="text-danger">*</small>
                                 <input type="number"
-                                       id="qty"
+                                       id="qty1"
+                                       data-row="1"
                                        name="products[1][qty]"
                                        required
-                                       class="form-control"
+                                       class="form-control qty-form"
                                        placeholder="Input product's qty ...">
                                 <span class="invalid-feedback qty" role="alert">
                                     <strong></strong>
@@ -78,7 +79,7 @@
                                         </div>
                                     </div>
                                     <input type="number"
-                                           id="price"
+                                           id="price1"
                                            name="products[1][price]"
                                            class="form-control"
                                            required
@@ -87,13 +88,13 @@
                                         <strong></strong>
                                     </span>
                                     <div class="input-group-append">
-                                        <div class="input-group-text">
+                                        <div class="input-group-text" id="subscription-info1">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group col-4 col-lg-2">
-                                <label class="form-label" for="price">Total</label>
+                                <label class="form-label" for="amount">Total</label>
                                 <div class="input-group input-group-merge">
                                     <div class="input-group-prepend">
                                         <div class="input-group-text">
@@ -101,12 +102,12 @@
                                         </div>
                                     </div>
                                     <input type="number"
-                                           id="price"
+                                           id="amount1"
                                            name="products[1][ammount]"
                                            class="form-control"
                                            required
                                            disabled>
-                                    <span class="invalid-feedback price" role="alert">
+                                    <span class="invalid-feedback ammount" role="alert">
                                         <strong></strong>
                                     </span>
                                 </div>

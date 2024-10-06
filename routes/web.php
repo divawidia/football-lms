@@ -349,6 +349,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
     Route::prefix('invoices')->group(function () {
         Route::get('', [InvoiceController::class, 'index'])->name('invoices.index');
+        Route::get('calculate-product-amount', [InvoiceController::class, 'calculateProductAmount'])->name('invoices.calculate-product-amount');
 //        Route::post('store', [ProductController::class, 'store'])->name('products.store');
 //
 //        Route::prefix('{product}')->group(function () {

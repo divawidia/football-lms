@@ -9,7 +9,6 @@ use App\Models\Tax;
 use App\Models\User;
 use App\Services\InvoiceService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
@@ -60,8 +59,17 @@ class InvoiceController extends Controller
         return response()->json($this->invoiceService->store($data, $loggedUserId, $academyId));
     }
 
-    public function calculateProductAmount(Request $request, Product $product){
-        $qty = $request->input('');
+    public function calculateProductAmount(Request $request){
+        $qty = $request->query('qty');
+        $productId = $request->query('productId');
+
+        $data = $this->invoiceService->calculateProductAmount($qty, $productId);
+
+        return response()->json([
+            'status' => 200,
+            'data' => $data,
+            'message' => 'Success'
+        ]);
     }
 
     /**
