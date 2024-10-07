@@ -54,7 +54,61 @@
                             {{ $data['createdDate'] }}
                         </p>
                     </div>
-                    <div><button class="btn btn-outline-white">Download <i class="material-icons icon--right">file_download</i></button></div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Action
+                            <span class="material-icons ml-3">
+                        keyboard_arrow_down
+                    </span>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href=""><span class="material-icons">edit</span> Edit Invoice</a>
+                            @if($data['invoice']->status == 'Open')
+                                <form action="" method="POST">
+                                    @method("PATCH")
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <span class="material-icons text-success">check_circle</span>
+                                        Mark as Paid
+                                    </button>
+                                </form>
+                                <form action="" method="POST">
+                                    @method("PATCH")
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <span class="material-icons text-danger">check_circle</span>
+                                        Mark as Uncollectible
+                                    </button>
+                                </form>
+                            @elseif($data['invoice']->status == 'Paid')
+                                <form action="" method="POST">
+                                    @method("PATCH")
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <span class="material-icons text-danger">check_circle</span>
+                                        Mark as Uncollectible
+                                    </button>
+                                </form>
+                            @elseif($data['invoice']->status == 'Uncollectible')
+                                <form action="" method="POST">
+                                    @method("PATCH")
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <span class="material-icons text-success">check_circle</span>
+                                        Mark as Paid
+                                    </button>
+                                </form>
+                            @endif
+                            <a href="javascript:window.print()" class="dropdown-item" id="{{$data['invoice']->id}}">
+                                <span class="material-icons">file_download</span>
+                                Download Invoice
+                            </a>
+                            <button type="button" class="dropdown-item deleteInvoice" id="{{$data['invoice']->id}}">
+                                <span class="material-icons text-danger">delete</span>
+                                Archive Invoice
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
