@@ -11,20 +11,21 @@ class Subscription extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'playerId',
+        'userId',
         'cycle',
         'startDate',
         'nextDueDate',
         'ammountDue',
         'status',
     ];
+
     public function invoices()
     {
         return $this->belongsToMany(Invoice::class, 'invoice_subscriptions', 'subscriptionId', 'invoiceId')
             ->withTimestamps();
     }
-    public function player()
+    public function user()
     {
-        return $this->belongsTo(Player::class, 'playerId', 'id');
+        return $this->belongsTo(User::class, 'userId', 'id');
     }
 }

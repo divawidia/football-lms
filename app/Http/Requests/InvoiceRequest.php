@@ -28,6 +28,8 @@ class InvoiceRequest extends FormRequest
             'taxId' => ['nullable', Rule::exists('taxes', 'id')],
             'products.*.productId' => ['required', Rule::exists('products', 'id')],
             'products.*.qty' => ['required', 'numeric', 'min:1'],
+            'products.*.price' => ['required', 'numeric', 'min:1'],
+            'products.*.ammount' => ['required', 'numeric', 'min:1'],
         ];
     }
 }

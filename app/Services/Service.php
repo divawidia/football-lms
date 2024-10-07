@@ -68,7 +68,7 @@ class Service
     }
 
     public function generateInvoiceNumber(){
-        $numbers = range(1, 10000);
-        return 'INV-'.shuffle($numbers);
+        $numbers = mt_rand(00000, 999999);
+        return 'INV-'.$numbers;
     }
 }

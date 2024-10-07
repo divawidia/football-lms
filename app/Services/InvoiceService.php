@@ -28,11 +28,11 @@ class InvoiceService extends Service
     }
     public function index()
     {
-        $data = Invoice::with('player.user')->latest();
+        $data = Invoice::with('receiverUser', 'creatorUser')->latest();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 $paidButton =
-                    '<form action="' . route('invoices.paid', $item->id) . '" method="POST">
+                    '<form action="" method="POST">
                         ' . method_field("PATCH") . '
                         ' . csrf_field() . '
                         <button type="submit" class="dropdown-item">
@@ -41,7 +41,7 @@ class InvoiceService extends Service
                         </button>
                     </form>';
                 $uncollectibleButton =
-                    '<form action="' . route('invoices.uncollectible', $item->id) . '" method="POST">
+                    '<form action="" method="POST">
                         ' . method_field("PATCH") . '
                         ' . csrf_field() . '
                         <button type="submit" class="dropdown-item">
@@ -50,11 +50,12 @@ class InvoiceService extends Service
                         </button>
                     </form>';
 
-                if ($item->status == 'open') {
-                    $statusButton = [$paidButton, $uncollectibleButton];
-                } elseif ($item->status == 'paid') {
+                $statusButton = '';
+                if ($item->status == 'Open') {
+                    $statusButton = $paidButton. ''. $uncollectibleButton;
+                } elseif ($item->status == 'Paid') {
                     $statusButton = $uncollectibleButton;
-                } elseif ($item->status == 'uncollectible') {
+                } elseif ($item->status == 'Uncollectible') {
                     $statusButton = $paidButton;
                 }
                 return
@@ -70,28 +71,31 @@ class InvoiceService extends Service
                                 Edit Invoice
                              </button>
                              ' . $statusButton . '
-                            <button type="button" class="btn btn-sm btn-outline-secondary deleteTax" id="' . $item->id . '">
-                                <span class="material-icons">delete</span>
+                            <button type="button" class="dropdown-item deleteInvoice" id="' . $item->id . '">
+                                <span class="material-icons text-danger">delete</span>
                                 Delete Invoice
                             </button>
                         </div>';
             })
-            ->editColumn('createdBy', function ($item) {
+            ->editColumn('name', function ($item) {
                 return '
                             <div class="media flex-nowrap align-items-center"
                                  style="white-space: nowrap;">
                                 <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->receiverUser->foto) . '" alt="profile-pic"/>
                                 </div>
                                 <div class="media-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->user->admin->position . '</small>
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->receiverUser->firstName . ' ' . $item->receiverUser->lastName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">' . $item->receiverUser->roles[0]['name'] . '</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>';
+            })
+            ->editColumn('email', function ($item) {
+                return $item->receiverUser->email;
             })
             ->editColumn('ammount', function ($item) {
                 return $this->priceFormat($item->ammountDue);
@@ -102,19 +106,23 @@ class InvoiceService extends Service
             ->editColumn('createdAt', function ($item) {
                 return $this->convertTimestamp($item->created_at);
             })
+            ->editColumn('updatedAt', function ($item) {
+                return $this->convertTimestamp($item->updatedAt);
+            })
             ->editColumn('status', function ($item) {
-                if ($item->status == 'open') {
-                    $badge = '<span class="badge badge-pill badge-info">Open</span>';
-                } elseif ($item->status == 'paid') {
-                    $badge = '<span class="badge badge-pill badge-success">Paid</span>';
-                } elseif ($item->status == 'pastDue') {
-                    $badge = '<span class="badge badge-pill badge-warning">Past Due</span>';
-                } elseif ($item->status == 'uncollectible') {
-                    $badge = '<span class="badge badge-pill badge-warning">Uncollectable</span>';
+                $badge = '';
+                if ($item->status == 'Open') {
+                    $badge = '<span class="badge badge-pill badge-info">'.$item->status.'</span>';
+                } elseif ($item->status == 'Paid') {
+                    $badge = '<span class="badge badge-pill badge-success">'.$item->status.'</span>';
+                } elseif ($item->status == 'Past Due') {
+                    $badge = '<span class="badge badge-pill badge-warning">'.$item->status.'</span>';
+                } elseif ($item->status == 'Uncollectible') {
+                    $badge = '<span class="badge badge-pill badge-warning">'.$item->status.'</span>';
                 }
                 return $badge;
             })
-            ->rawColumns(['action', 'createdBy', 'ammount','dueDate', 'createdAt', 'status'])
+            ->rawColumns(['action', 'email', 'ammount','dueDate', 'name', 'status', 'updatedAt'])
             ->addIndexColumn()
             ->make();
     }
@@ -133,21 +141,21 @@ class InvoiceService extends Service
 
         if ($data['taxId']){
             $tax = $this->getTaxDetail($data['taxId']);
-            $data['totalTax'] = $data['subtotal'] * $tax->percentage;
+            $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
         }
 
         $invoice = Invoice::create($data);
 
         foreach ($data['products'] as $product){
-            $invoice->product()->attach($product['productId'], [
+            $invoice->products()->attach($product['productId'], [
                 'qty' => $product['qty'],
                 'ammount' => $product['ammount']
             ]);
 
             $productDetail = $this->product->findProductById($product['productId']);
             if ($productDetail->priceOption == 'subscription'){
-                $this->storeSubscription($data['playerId'], $product['ammount'], $product['productId']);
+                $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
             }
         }
 
@@ -157,8 +165,8 @@ class InvoiceService extends Service
                 'gross_amount' => (int) $data['ammountDue'],
             ],
             'customer_details' => [
-                'first_name' => $invoice->player->user->firstName,
-                'email' => $invoice->player->user->email
+                'first_name' => $invoice->receiverUser->firstName,
+                'email' => $invoice->receiverUser->email
             ],
             'enabled_payments' => [
                 'gopay', 'bank_transfer'
@@ -168,8 +176,8 @@ class InvoiceService extends Service
 
         try {
             $snaptoken = Snap::getSnapToken($midtrans);
-            $data['snap_token'] = $snaptoken;
-            $invoice->fill(['snap_token' => $data['snap_token']]);
+            $invoice['snapToken'] = $snaptoken;
+            $invoice->save();
 
 //            Mail::to($data['email'])->send(new PayBookingTrfMail($booking));
 
@@ -224,12 +232,12 @@ class InvoiceService extends Service
         return Tax::findOrFail($taxId);
     }
 
-    public function storeSubscription($playerId, $ammount, $productId){
+    public function storeSubscription($userId, $ammount, $productId){
         $data = [];
         $data['startDate'] = Carbon::now();
         $data['ammountDue'] = $ammount;
         $data['status'] = 'scheduled';
-        $data['playerId'] = $playerId;
+        $data['userId'] = $userId;
 
         $product = $this->product->findProductById($productId);
 

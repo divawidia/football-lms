@@ -13,7 +13,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div class="d-flex flex-row align-items-center mb-2">
-                            <label class="form-label" for="categoryId">User Contact</label>
+                            <label class="form-label" for="receiverUserId">User Contact</label>
                             <small class="text-danger">*</small>
                         </div>
                         <select class="form-control form-select" id="receiverUserId" name="receiverUserId" required data-toggle="select">
@@ -42,7 +42,7 @@
                                 <label class="form-label"># 1</label>
                             </div>
                             <div class="form-group col-7 col-lg-4">
-                                <label class="form-label" for="productId">Product</label>
+                                <label class="form-label" for="productId1">Product</label>
                                 <small class="text-danger">*</small>
                                 <select class="form-control form-select product-select" data-row="1" id="productId1" name="products[1][productId]" required>
                                     <option disabled selected>Select product</option>
@@ -52,7 +52,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <span class="invalid-feedback price" role="alert">
+                                <span class="invalid-feedback productId1" role="alert">
                                     <strong></strong>
                                 </span>
                             </div>
@@ -83,7 +83,7 @@
                                            name="products[1][price]"
                                            class="form-control"
                                            required
-                                           disabled>
+                                           readonly="readonly">
                                     <span class="invalid-feedback price" role="alert">
                                         <strong></strong>
                                     </span>
@@ -104,9 +104,9 @@
                                     <input type="number"
                                            id="amount1"
                                            name="products[1][ammount]"
-                                           class="form-control"
+                                           class="form-control amount-form"
                                            required
-                                           disabled>
+                                           readonly="readonly">
                                     <span class="invalid-feedback ammount" role="alert">
                                         <strong></strong>
                                     </span>
@@ -150,11 +150,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="list-group-item d-flex flex-column align-items-end">
-                    <p class="form-label" id="subtotal"></p>
-                    <p class="form-label" id="tax"></p>
-                    <p class="form-label" id="totalAmount"></p>
-                </div>
+{{--                <div class="list-group-item d-flex flex-column align-items-end">--}}
+{{--                    <p class="form-label" id="subtotal"></p>--}}
+{{--                    <p class="form-label" id="tax"></p>--}}
+{{--                    <p class="form-label" id="totalAmount"></p>--}}
+{{--                </div>--}}
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

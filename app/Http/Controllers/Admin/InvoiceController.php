@@ -56,7 +56,12 @@ class InvoiceController extends Controller
         $data = $request->validated();
         $loggedUserId = $this->getLoggedUserId();
         $academyId = $this->getAcademyId();
-        return response()->json($this->invoiceService->store($data, $loggedUserId, $academyId));
+        $result = $this->invoiceService->store($data, $loggedUserId, $academyId);
+        return response()->json([
+            'status' => 200,
+            'data' => $result,
+            'message'=> 'Success'
+        ]);
     }
 
     public function calculateProductAmount(Request $request){
@@ -64,6 +69,18 @@ class InvoiceController extends Controller
         $productId = $request->query('productId');
 
         $data = $this->invoiceService->calculateProductAmount($qty, $productId);
+
+        return response()->json([
+            'status' => 200,
+            'data' => $data,
+            'message' => 'Success'
+        ]);
+    }
+
+    public function calculateInvoiceTotal(Request $request){
+        $data = $request->all();
+
+        $result = $this->invoiceService->calculateInvoiceTotal($data);
 
         return response()->json([
             'status' => 200,
