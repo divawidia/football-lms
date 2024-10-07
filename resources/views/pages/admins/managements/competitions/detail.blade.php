@@ -47,6 +47,15 @@
 @endsection
 
 @section('content')
+    <nav class="navbar navbar-light border-bottom border-top px-0">
+        <div class="container page__container">
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a href="{{ route('competition-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Competition Lists</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($competition->logo) }}"
@@ -92,17 +101,7 @@
         </div>
     </div>
 
-    <div class="container page__container page-section py-4">
-        <ol class="breadcrumb p-0 m-0">
-            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('competition-managements.index') }}">Competitions</a></li>
-            <li class="breadcrumb-item active">
-                @yield('title')
-            </li>
-        </ol>
-    </div>
-
-    <div class="container page__container page-section pt-0">
+    <div class="container page__container page-section">
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
         </div>
