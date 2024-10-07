@@ -67,10 +67,10 @@ class ProductService extends Service
                 return $this->description($item->description);
             })
             ->editColumn('updatedAt', function ($item) {
-                return $this->convertTimestamp($item->created_at);
+                return $this->convertToDatetime($item->created_at);
             })
             ->editColumn('createdAt', function ($item) {
-                return $this->convertTimestamp($item->updated_at);
+                return $this->convertToDatetime($item->updated_at);
             })
             ->editColumn('price', function ($item) {
                 return $this->priceFormat($item->price);
