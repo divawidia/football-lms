@@ -20,16 +20,17 @@
                     overflow: hidden;
                     background-position: center center;">
         <div class="mdk-box__content">
+            <nav class="navbar navbar-light border-bottom border-top px-0">
+                <div class="container page__container">
+                    <ul class="nav navbar-nav">
+                        <li class="nav-item">
+                            <a href="{{ route('training-videos.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Training Video Lists</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
             <div class="hero py-64pt text-center text-sm-left" style="background-color: rgba(239, 37, 52, 0.8)">
                 <div class="container page__container">
-                    <ol class="breadcrumb p-0 m-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('training-videos.index') }}">Training Videos</a>
-                        </li>
-                        <li class="breadcrumb-item active">
-                            @yield('title')
-                        </li>
-                    </ol>
                     <h1 class="text-white mt-3">{{ $data->trainingTitle }}</h1>
                     <div class="lead text-white-50 measure-hero-lead mb-24pt">
                         {!! $data->description !!}

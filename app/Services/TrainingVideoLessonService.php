@@ -58,10 +58,10 @@ class TrainingVideoLessonService extends Service
                 return $this->description($item->description);
             })
             ->editColumn('created_date', function ($item) {
-                return $this->convertTimestamp($item->created_at);
+                return $this->convertToDatetime($item->created_at);
             })
             ->editColumn('last_updated', function ($item) {
-                return $this->convertTimestamp($item->updated_at);
+                return $this->convertToDatetime($item->updated_at);
             })
             ->editColumn('status', function ($item) {
                 if ($item->status == '1') {
@@ -104,13 +104,13 @@ class TrainingVideoLessonService extends Service
                             </div>';
             })
             ->editColumn('assignedAt', function ($item) {
-                return $this->convertTimestamp($item->pivot->created_at);
+                return $this->convertToDatetime($item->pivot->created_at);
             })
             ->editColumn('completedAt', function ($item) {
                 if ($item->pivot->completed_at == null){
                     $data = 'Not completed yet';
                 }else{
-                    $data = $this->convertTimestamp($item->pivot->completed_at);
+                    $data = $this->convertToDatetime($item->pivot->completed_at);
                 }
                 return $data;
             })

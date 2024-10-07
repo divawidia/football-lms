@@ -48,13 +48,13 @@ class TrainingVideoService extends Service
                 return $item->pivot->progress .'%';
             })
             ->editColumn('assignedAt', function ($item) {
-                return $this->convertTimestamp($item->pivot->created_at);
+                return $this->convertToDatetime($item->pivot->created_at);
             })
             ->editColumn('completedAt', function ($item) {
                 if ($item->pivot->completed_at == null){
                     $data = 'Not completed yet';
                 }else{
-                    $data = $this->convertTimestamp($item->pivot->completed_at);
+                    $data = $this->convertToDatetime($item->pivot->completed_at);
                 }
                 return $data;
             })
@@ -95,12 +95,12 @@ class TrainingVideoService extends Service
                 if ($item->pivot->completed_at == null){
                     $data = 'Not completed yet';
                 }else{
-                    $data = $this->convertTimestamp($item->pivot->completed_at);
+                    $data = $this->convertToDatetime($item->pivot->completed_at);
                 }
                 return $data;
             })
             ->editColumn('assignedAt', function ($item) {
-                return $this->convertTimestamp($item->pivot->created_at);
+                return $this->convertToDatetime($item->pivot->created_at);
             })
             ->editColumn('status', function ($item) {
                 if ($item->pivot->completionStatus == '1') {
