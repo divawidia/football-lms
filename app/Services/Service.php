@@ -50,8 +50,12 @@ class Service
         return $minutes . "m " . $remaining_seconds . "s";
     }
 
-    public function convertTimestamp($timestamp){
+    public function convertToDatetime($timestamp){
         return date('M d, Y ~ h:i A', strtotime($timestamp));
+    }
+
+    public function convertToDate($timestamp){
+        return date('M d, Y', strtotime($timestamp));
     }
 
     public function priceFormat($price){

@@ -96,7 +96,7 @@ class InvoiceController extends Controller
     public function show(Invoice $invoice)
     {
         return view('pages.admins.payments.invoices.detail', [
-            'data' => $invoice
+            'data' => $this->invoiceService->show($invoice)
         ]);
     }
 

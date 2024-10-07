@@ -105,13 +105,13 @@ class InvoiceService extends Service
                 return $this->priceFormat($item->ammountDue);
             })
             ->editColumn('dueDate', function ($item) {
-                return $this->convertTimestamp($item->dueDate);
+                return $this->convertToDatetime($item->dueDate);
             })
             ->editColumn('createdAt', function ($item) {
-                return $this->convertTimestamp($item->created_at);
+                return $this->convertToDatetime($item->created_at);
             })
             ->editColumn('updatedAt', function ($item) {
-                return $this->convertTimestamp($item->updatedAt);
+                return $this->convertToDatetime($item->updatedAt);
             })
             ->editColumn('status', function ($item) {
                 $badge = '';
@@ -260,6 +260,16 @@ class InvoiceService extends Service
         }
 
         return Subscription::create($data);
+    }
+
+    public function show(Invoice $invoice)
+    {
+        $createdAt = $this->convertToDatetime($invoice->created_at);
+        $dueDate = $this->convertToDatetime($invoice->dueDate);
+        $updatedAt = $this->convertToDatetime($invoice->updated_at);
+        $createdDate = $this->convertToDate($invoice->created_at);
+
+        return compact('invoice', 'createdAt', 'dueDate', 'updatedAt', 'createdDate');
     }
 
     public function update(array $data, Invoice $invoice)
