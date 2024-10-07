@@ -11,14 +11,23 @@
 @endsection
 
 @section('content')
+    <nav class="navbar navbar-light border-bottom border-top px-0">
+        <div class="container page__container">
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a href="{{ route('player-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Player lists</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($user->foto) }}"
                  width="104"
                  height="104"
-                 class="mr-md-32pt mb-32pt mb-md-0 rounded-circle img-object-fit-cover"
+                 class="mr-md-32pt mb-3 mb-md-0 rounded-circle img-object-fit-cover"
                  alt="instructor">
-            <div class="flex mb-32pt mb-md-0 ml-md-4">
+            <div class="flex mb-3 mb-md-0 ml-md-4">
                 <h2 class="text-white mb-0">{{ $fullName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $user->player->position->name }}</p>
             </div>
