@@ -12,18 +12,17 @@
 @endsection
 
 @section('content')
+    <nav class="navbar navbar-light border-bottom border-top px-0">
+        <div class="container page__container">
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a href="{{ route('training-videos.show', $data->trainingVideoId) }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to {{ $data->trainingVideo->trainingTitle }}</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="bg-primary pb-lg-64pt py-32pt">
         <div class="container page__container">
-            <ol class="breadcrumb p-0 m-0">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('training-videos.index') }}">Training Videos</a>
-                <li class="breadcrumb-item"><a href="{{ route('training-videos.show', $data->trainingVideoId) }}">{{ $data->trainingVideo->trainingTitle }}</a>
-                </li>
-                <li class="breadcrumb-item active">
-                    @yield('title')
-                </li>
-            </ol>
-
             <div class="js-player bg-primary embed-responsive embed-responsive-16by9 my-4">
                 <div class="player embed-responsive-item">
                     <div class="player__content">
