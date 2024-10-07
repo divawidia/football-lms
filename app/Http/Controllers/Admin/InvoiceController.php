@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceRequest;
+use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Tax;
 use App\Models\User;
@@ -92,9 +93,11 @@ class InvoiceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Invoice $invoice)
     {
-        //
+        return view('pages.admins.payments.invoices.detail', [
+            'data' => $invoice
+        ]);
     }
 
     /**

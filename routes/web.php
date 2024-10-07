@@ -352,14 +352,15 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::get('calculate-product-amount', [InvoiceController::class, 'calculateProductAmount'])->name('invoices.calculate-product-amount');
         Route::post('calculate-invoice-total', [InvoiceController::class, 'calculateInvoiceTotal'])->name('invoices.calculate-invoice-total');
         Route::post('store', [InvoiceController::class, 'store'])->name('invoices.store');
-//
-//        Route::prefix('{product}')->group(function () {
+
+        Route::prefix('{invoice}')->group(function () {
+            Route::get('', [InvoiceController::class, 'show'])->name('invoices.show');
 //            Route::get('edit', [ProductController::class, 'edit'])->name('products.edit');
 //            Route::put('update', [ProductController::class, 'update'])->name('products.update');
 //            Route::patch('deactivate', [ProductController::class, 'deactivate'])->name('products.deactivate');
 //            Route::patch('activate', [ProductController::class, 'activate'])->name('products.activate');
 //            Route::delete('delete', [ProductController::class, 'destroy'])->name('products.destroy');
-//        });
+        });
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {
