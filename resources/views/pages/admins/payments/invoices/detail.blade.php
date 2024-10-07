@@ -1,13 +1,9 @@
 @extends('layouts.master')
 @section('title')
-    Invoices
+    Invoices {{ $data->invoiceNumber }}
 @endsection
 @section('page-title')
     @yield('title')
-@endsection
-
-@section('modal')
-    @include('pages.admins.payments.invoices.form-modal.create')
 @endsection
 
 @section('content')
@@ -15,8 +11,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="billing-history.html"
-                       class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Payment History</a>
+                    <a href="{{ route('invoices.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Invoices</a>
                 </li>
             </ul>
         </div>
@@ -31,13 +26,24 @@
                     <div class="row">
                         <div class="col-md-6 mb-24pt mb-lg-0">
                             <p class="text-white-70 mb-0"><strong>Prepared for</strong></p>
-                            <h2 class="text-white">Alexander Watson</h2>
-                            <p class="text-white-50">640 Joy Bypass Suite 448<br>Germany</p>
+                            <h2 class="text-white">{{ $data->receiverUser->firstName }} {{ $data->receiverUser->lastName }}</h2>
+                            <p class="text-white-50">
+                                {{ $data->receiverUser->address }}
+                                <br>{{ $data->receiverUser->city->name }}
+                                <br>{{ $data->receiverUser->state->name }}
+                                <br>{{ $data->receiverUser->country->name }}
+                                <br>{{ $data->receiverUser->zipCode }}
+                            </p>
                         </div>
                         <div class="col-md-6">
                             <p class="text-white-70 mb-0"><strong>Prepared by</strong></p>
-                            <h2 class="text-white">Luma Inc.</h2>
-                            <p class="text-white-50">32 Noah Cliffs Suite 626, Romania<br>Tax ID RO18880609</p>
+                            <h2 class="text-white">{{ $data->academy->academyName }}</h2>
+                            <p class="text-white-50">
+                                {{ $data->academy->address }}
+                                <br>{{ $data->academy->city->name }}
+                                <br>{{ $data->academy->state->name }}
+                                <br>{{ $data->academy->country->name }}
+                                <br>{{ $data->academy->zipCode }}
                         </div>
                     </div>
                 </div>

@@ -70,6 +70,10 @@ class InvoiceService extends Service
                                 <span class="material-icons">edit</span>
                                 Edit Invoice
                              </button>
+                             <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
+                                <span class="material-icons">visibility</span>
+                                Show Invoice
+                             </a>
                              ' . $statusButton . '
                             <button type="button" class="dropdown-item deleteInvoice" id="' . $item->id . '">
                                 <span class="material-icons text-danger">delete</span>
