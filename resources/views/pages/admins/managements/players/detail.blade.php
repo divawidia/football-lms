@@ -15,7 +15,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('player-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Player lists</a>
+                    <a href="{{ route('player-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Player Lists</a>
                 </li>
             </ul>
         </div>
@@ -26,7 +26,7 @@
                  width="104"
                  height="104"
                  class="mr-md-32pt mb-3 mb-md-0 rounded-circle img-object-fit-cover"
-                 alt="instructor">
+                 alt="player-photo">
             <div class="flex mb-3 mb-md-0 ml-md-4">
                 <h2 class="text-white mb-0">{{ $fullName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $user->player->position->name }}</p>
