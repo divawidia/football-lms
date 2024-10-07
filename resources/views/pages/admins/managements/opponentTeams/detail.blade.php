@@ -7,6 +7,15 @@
 @endsection
 
 @section('content')
+    <nav class="navbar navbar-light border-bottom border-top px-0">
+        <div class="container page__container">
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a href="{{ route('team-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Team Lists</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($team->logo) }}"
