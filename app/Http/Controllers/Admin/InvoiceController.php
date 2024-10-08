@@ -120,10 +120,10 @@ class InvoiceController extends Controller
     public function update(InvoiceRequest $request, Invoice $invoice)
     {
         $data = $request->validated();
-        $result = $this->invoiceService->update($data, $invoice);
+        $this->invoiceService->update($data, $invoice);
         $text = 'Invoice '.$invoice->invoiceNumber.' successfully updated';
         Alert::success($text);
-        return redirect()->route('invoices.show', $invoice->id);
+        return redirect()->route('invoices.show', ['invoice'=>$invoice->id]);
     }
 
     /**

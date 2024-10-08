@@ -168,34 +168,7 @@ class InvoiceService extends Service
                 $invoice->subscriptions()->attach($subscription->id);
             }
         }
-
-        $midtrans = [
-            'transaction_details' => [
-                'order_id' => $data['invoiceNumber'],
-                'gross_amount' => (int) $data['ammountDue'],
-            ],
-            'customer_details' => [
-                'first_name' => $invoice->receiverUser->firstName,
-                'email' => $invoice->receiverUser->email
-            ],
-            'enabled_payments' => [
-                'gopay', 'bank_transfer'
-            ],
-            'vtweb' => []
-        ];
-
-        try {
-            $snaptoken = Snap::getSnapToken($midtrans);
-            $invoice['snapToken'] = $snaptoken;
-            $invoice->save();
-
-//            Mail::to($data['email'])->send(new PayBookingTrfMail($booking));
-
-//            return redirect()->route('pay-booking', $booking->transaction_code);
-        }
-        catch (Exception $e){
-            echo $e->getMessage();
-        }
+        $this->midtransPayment($data, $invoice);
 
         return $invoice;
     }
@@ -275,21 +248,52 @@ class InvoiceService extends Service
         return compact('invoice', 'createdAt', 'dueDate', 'updatedAt', 'createdDate');
     }
 
+    public function midtransPayment(array $data, Invoice $invoice){
+        $midtrans = [
+            'transaction_details' => [
+                'order_id' => $data['invoiceNumber'],
+                'gross_amount' => (int) $data['ammountDue'],
+            ],
+            'customer_details' => [
+                'first_name' => $invoice->receiverUser->firstName,
+                'email' => $invoice->receiverUser->email
+            ],
+            'enabled_payments' => [
+                'gopay', 'bank_transfer'
+            ],
+            'vtweb' => []
+        ];
+
+        try {
+            $snaptoken = Snap::getSnapToken($midtrans);
+            $invoice['snapToken'] = $snaptoken;
+            return $invoice->save();
+
+//            Mail::to($data['email'])->send(new PayBookingTrfMail($booking));
+
+//            return redirect()->route('pay-booking', $booking->transaction_code);
+        }
+        catch (Exception $e){
+            return $e->getMessage();
+        }
+    }
+
     public function update(array $data, Invoice $invoice)
     {
         $data['subtotal'] = 0;
+        $data['invoiceNumber'] = $invoice->invoiceNumber;
+
         foreach ($data['products'] as $product) {
             $data['subtotal'] = $data['subtotal'] + $product['ammount'];
         }
         $data['ammountDue'] = $data['subtotal'];
 
-        if ($data['taxId']){
+        if ($data['taxId'] != null){
             $tax = $this->tax->getTaxDetail($data['taxId']);
             $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
         }else{
             $data['totalTax'] = 0;
-            $data['ammountDue'] = $data['ammountDue'] - $invoice->totalTax;
         }
 
         $invoice->products()->sync($data['products']);
@@ -298,7 +302,7 @@ class InvoiceService extends Service
 
         foreach ($invoiceSubscriptions as $subscription){
             if (!in_array($subscription->id, $data['products'])){
-                $invoice->subscriptions->detach($subscription->id);
+                $invoice->subscriptions()->detach($subscription->id);
                 Subscription::destroy($subscription->id);
             }
         }
@@ -307,19 +311,21 @@ class InvoiceService extends Service
             $productDetail = $this->product->findProductById($product['productId']);
 
             if ($productDetail->priceOption == 'subscription'){
-                if ($this->checkSubscriptionIsExist($data['productId'], $data['receiverUserId']) == null){
+                if ($this->checkSubscriptionIsExist($product['productId'], $data['receiverUserId']) == null){
                     $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
-                    $invoice->subscriptions->attach($subscription->id);
+                    $invoice->subscriptions()->attach($subscription->id);
                 }
             }
         }
-        return $invoice->update($data);
+        $invoice->update($data);
+        $this->midtransPayment($data, $invoice);
+        return $invoice;
     }
 
     public function checkSubscriptionIsExist($productId, $userId){
         return Subscription::where('productId', $productId)
             ->where('userId', $userId)
-            ->exist();
+            ->exists();
     }
 
     public function paid(Invoice $invoice)

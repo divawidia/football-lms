@@ -62,7 +62,7 @@
                     </span>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href=""><span class="material-icons">edit</span> Edit Invoice</a>
+                            <a class="dropdown-item" href="{{ route('invoices.edit', $data['invoice']->id) }}"><span class="material-icons">edit</span> Edit Invoice</a>
                             @if($data['invoice']->status == 'Open')
                                 <form action="" method="POST">
                                     @method("PATCH")

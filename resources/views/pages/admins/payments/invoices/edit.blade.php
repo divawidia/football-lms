@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <div class="container page__container page-section">
+        <div class="container page__container page-section" style="max-width: 1200px">
             <div class="list-group">
                 <form action="{{ route('invoices.update', $data->id) }}" method="post">
                     @method('PUT')
@@ -184,6 +184,7 @@
                                     <small>(Optional)</small>
                                     <select class="form-control form-select" id="taxId" name="taxId" required data-toggle="select">
                                         <option disabled>Select tax</option>
+                                        <option value="">Without Tax</option>
                                         @foreach($taxes AS $tax)
                                             <option value="{{ $tax->id }}" @selected(old('taxId', $data->taxId) == $tax->id)>
                                                 {{ $tax->taxName }} ~ {{ $tax->percentage }}%
@@ -217,7 +218,7 @@
                             '<div class="col-auto d-flex align-items-center">' +
                                 '<label class="form-label"># '+i+'</label>' +
                             '</div>' +
-                            '<div class="form-group col-7 col-lg-4">' +
+                            '<div class="form-group col-7 col-lg-3">' +
                                 '<label class="form-label" for="productId'+i+'">Product</label>' +
                                 '<small class="text-danger">*</small>'+
                                 '<select class="form-control form-select product-select" data-row="'+i+'" id="productId'+i+'" name="products['+i+'][productId]" required>'+
@@ -256,7 +257,7 @@
                                     '</div>'+
                                 '</div>'+
                             '</div>'+
-                            '<div class="form-group col-4 col-lg-2">' +
+                            '<div class="form-group col-4 col-lg-3">' +
                                 '<label class="form-label" for="amount'+i+'">Total</label>' +
                                 '<small class="text-danger">*</small>'+
                                 '<div class="input-group input-group-merge">'+

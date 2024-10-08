@@ -12,6 +12,7 @@ class Subscription extends Model
 
     protected $fillable = [
         'userId',
+        'productId',
         'cycle',
         'startDate',
         'nextDueDate',
