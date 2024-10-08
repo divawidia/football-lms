@@ -26,10 +26,16 @@
     <div class="container page__container page-section">
         <div class="page-separator">
             <div class="page-separator__text">Invoices</div>
-            <button type="button" class="btn btn-sm btn-primary ml-auto " id="addInvoice">
-                    <span class="material-icons mr-2">
-                        add
-                    </span>
+            <a href="{{ route('invoices.archived') }}" class="btn btn-sm btn-danger ml-auto ">
+                <span class="material-icons mr-2 text-danger">
+                    delete
+                </span>
+                Archived Invoice
+            </a>
+            <button type="button" class="btn btn-sm btn-primary ml-3 " id="addInvoice">
+                <span class="material-icons mr-2">
+                    add
+                </span>
                 Add New
             </button>
         </div>
