@@ -21,6 +21,9 @@ class Tax extends Model
     public function getAllTax(){
         return $this->all();
     }
+    public function getTaxDetail($taxId){
+        return $this->findOrFail($taxId);
+    }
     public function invoice()
     {
         return $this->hasMany(Invoice::class, 'taxId');

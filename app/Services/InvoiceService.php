@@ -17,7 +17,8 @@ use Yajra\DataTables\Facades\DataTables;
 class InvoiceService extends Service
 {
     private Product $product;
-    public function __construct(Product $product)
+    private Tax $tax;
+    public function __construct(Product $product, Tax $tax)
     {
         Config::$serverKey    = config('services.midtrans.serverKey');
         Config::$isProduction = config('services.midtrans.isProduction');
@@ -25,6 +26,7 @@ class InvoiceService extends Service
         Config::$is3ds        = config('services.midtrans.is3ds');
 
         $this->product = $product;
+        $this->tax = $tax;
     }
     public function index()
     {
@@ -144,7 +146,7 @@ class InvoiceService extends Service
         $data['ammountDue'] = $data['subtotal'];
 
         if ($data['taxId']){
-            $tax = $this->getTaxDetail($data['taxId']);
+            $tax = $this->tax->getTaxDetail($data['taxId']);
             $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
         }
@@ -224,16 +226,12 @@ class InvoiceService extends Service
         $data['ammountDue'] = $data['subtotal'];
 
         if ($data['taxId']){
-            $tax = $this->getTaxDetail($data['taxId']);
+            $tax = $this->tax->getTaxDetail($data['taxId']);
             $data['totalTax'] = $data['subtotal'] * $tax->percentage;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
         }
 
         return $data;
-    }
-
-    public function getTaxDetail($taxId){
-        return Tax::findOrFail($taxId);
     }
 
     public function storeSubscription($userId, $ammount, $productId){
@@ -274,6 +272,31 @@ class InvoiceService extends Service
 
     public function update(array $data, Invoice $invoice)
     {
+        $invoice->update($data);
+
+        foreach ($data['products'] as $product) {
+            $data['subtotal'] = $data['subtotal'] + $product['ammount'];
+        }
+        $data['ammountDue'] = $data['subtotal'];
+
+        if ($data['taxId']){
+            $tax = $this->tax->getTaxDetail($data['taxId']);
+            $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
+            $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
+        }
+
+        foreach ($data['products'] as $product){
+            $invoice->products()->attach($product['productId'], [
+                'qty' => $product['qty'],
+                'ammount' => $product['ammount']
+            ]);
+
+            $productDetail = $this->product->findProductById($product['productId']);
+
+            if ($productDetail->priceOption == 'subscription'){
+                $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
+            }
+        }
         return $invoice->update($data);
     }
 
