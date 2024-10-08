@@ -330,14 +330,22 @@ class InvoiceService extends Service
 
     public function paid(Invoice $invoice)
     {
-        return $invoice->update(['status' => 'paid']);
+        return $invoice->update(['status' => 'Paid']);
     }
 
     public function uncollectible(Invoice $invoice)
     {
-        return $invoice->update(['status' => 'uncollectible']);
+        return $invoice->update(['status' => 'Uncollectible']);
     }
 
+    public function open(Invoice $invoice)
+    {
+        return $invoice->update(['status' => 'Open']);
+    }
+    public function pastDue(Invoice $invoice)
+    {
+        return $invoice->update(['status' => 'Past Due']);
+    }
     public function destroy(Invoice $invoice)
     {
         return $invoice->delete();
