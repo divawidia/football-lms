@@ -9,6 +9,7 @@ use App\Models\Subscription;
 use App\Models\Tax;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -149,6 +150,8 @@ class InvoiceService extends Service
             $tax = $this->tax->getTaxDetail($data['taxId']);
             $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
+        }else{
+            $data['totalTax'] = 0;
         }
 
         $invoice = Invoice::create($data);
@@ -161,7 +164,8 @@ class InvoiceService extends Service
 
             $productDetail = $this->product->findProductById($product['productId']);
             if ($productDetail->priceOption == 'subscription'){
-                $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
+                $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
+                $invoice->subscriptions->attach($subscription->id);
             }
         }
 
@@ -240,6 +244,7 @@ class InvoiceService extends Service
         $data['ammountDue'] = $ammount;
         $data['status'] = 'scheduled';
         $data['userId'] = $userId;
+        $data['productId'] = $productId;
 
         $product = $this->product->findProductById($productId);
 
@@ -272,8 +277,6 @@ class InvoiceService extends Service
 
     public function update(array $data, Invoice $invoice)
     {
-        $invoice->update($data);
-
         foreach ($data['products'] as $product) {
             $data['subtotal'] = $data['subtotal'] + $product['ammount'];
         }
@@ -283,21 +286,39 @@ class InvoiceService extends Service
             $tax = $this->tax->getTaxDetail($data['taxId']);
             $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
+        }else{
+            $data['totalTax'] = 0;
+            $data['ammountDue'] = $data['ammountDue'] - $invoice->totalTax;
+        }
+
+        $invoice->products()->sync($data['products']);
+
+        $invoiceSubscriptions = $invoice->subscriptions()->get();
+
+        foreach ($invoiceSubscriptions as $subscription){
+            if (!in_array($subscription->id, $data['products'])){
+                $invoice->subscriptions->detach($subscription->id);
+                Subscription::destroy($subscription->id);
+            }
         }
 
         foreach ($data['products'] as $product){
-            $invoice->products()->attach($product['productId'], [
-                'qty' => $product['qty'],
-                'ammount' => $product['ammount']
-            ]);
-
             $productDetail = $this->product->findProductById($product['productId']);
 
             if ($productDetail->priceOption == 'subscription'){
-                $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
+                if ($this->checkSubscriptionIsExist($data['productId'], $data['receiverUserId']) == null){
+                    $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
+                    $invoice->subscriptions->attach($subscription->id);
+                }
             }
         }
         return $invoice->update($data);
+    }
+
+    public function checkSubscriptionIsExist($productId, $userId){
+        return Subscription::where('productId', $productId)
+            ->where('userId', $userId)
+            ->exist();
     }
 
     public function paid(Invoice $invoice)
