@@ -357,7 +357,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::get('', [InvoiceController::class, 'deletedData'])->name('invoices.archived');
             Route::prefix('{invoice}')->group(function () {
                 Route::get('', [InvoiceController::class, 'showArchived'])->name('invoices.show-archived');
-                Route::patch('restore', [InvoiceController::class, 'restoreData'])->name('invoices.restore');
+                Route::post('restore', [InvoiceController::class, 'restoreData'])->name('invoices.restore');
                 Route::delete('permanent-delete', [InvoiceController::class, 'permanentDeleteData'])->name('invoices.permanent-delete');
             });
         });
@@ -370,7 +370,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('set-uncollectible', [InvoiceController::class, 'setUncollectible'])->name('invoices.set-uncollectible');
             Route::patch('set-open', [InvoiceController::class, 'setOpen'])->name('invoices.set-open');
             Route::patch('set-past-due', [InvoiceController::class, 'setPastDue'])->name('invoices.set-past-due');
-            Route::patch('delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+            Route::delete('delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
         });
     });
 });

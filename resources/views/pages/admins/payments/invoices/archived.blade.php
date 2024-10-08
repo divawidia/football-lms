@@ -84,28 +84,27 @@
 
 
             // delete product data
-            body.on('click', '.deleteInvoice', function () {
-                let id = $(this).attr('id');
-
+            body.on('click', '.restoreInvoice', function () {
+                const id = $(this).attr('id');
                 Swal.fire({
-                    title: "Are you sure to archive this invoice?",
+                    title: "Are you sure to restore this invoice?",
                     text: "You won't be able to revert this!",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#1ac2a1",
                     cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, archive it!"
+                    confirmButtonText: "Yes, restore it!"
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('invoices.destroy', ['invoice' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
+                            url: "{{ route('invoices.restore', ['invoice' => ':id']) }}".replace(':id', id),
+                            type: 'POST',
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function (response) {
+                            success: function () {
                                 Swal.fire({
-                                    title: 'Invoice successfully archived!',
+                                    title: 'Invoice successfully restored!',
                                     icon: 'success',
                                     showCancelButton: false,
                                     confirmButtonColor: "#1ac2a1",
@@ -113,7 +112,52 @@
                                         'Ok!'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
-                                        location.reload();
+                                        location.href = '{{ route('invoices.index') }}';
+                                    }
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Something went wrong when archiving data!",
+                                    text: errorThrown
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            // force delete invoice
+            body.on('click', '.forceDeleteInvoice',function (){
+                const id = $(this).attr('id');
+                Swal.fire({
+                    title: "Are you sure to permanently delete this invoice?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('invoices.permanent-delete', ['invoice' => ':id']) }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function () {
+                                Swal.fire({
+                                    title: 'Invoice successfully permanently deleted!',
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.href = '{{ route('invoices.index') }}';
                                     }
                                 });
                             },

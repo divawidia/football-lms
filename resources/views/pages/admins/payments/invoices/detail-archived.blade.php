@@ -11,7 +11,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('invoices.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Invoices</a>
+                    <a href="{{ route('invoices.archived') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Archived Invoices</a>
                 </li>
             </ul>
         </div>
@@ -66,22 +66,14 @@
                                 <span class="material-icons">file_download</span>
                                 Download Invoice
                             </a>
-                            <form action="{{ route('invoices.restore', ['invoice' => $data['invoice']->id]) }}" method="POST">
-                                @method('PATCH')
-                                @csrf
-                                <button type="button" class="dropdown-item restoreInvoice">
-                                    <span class="material-icons text-success">restore</span>
-                                    Restore Invoice
-                                </button>
-                            </form>
-                            <form action="{{ route('invoices.permanent-delete', ['invoice' => $data['invoice']->id]) }}" method="POST">
-                                @method('PATCH')
-                                @csrf
-                                <button type="button" class="dropdown-item forceDeleteInvoice">
-                                    <span class="material-icons text-danger">delete</span>
-                                    Permanently Delete Invoice
-                                </button>
-                            </form>
+                            <button type="button" class="dropdown-item restoreInvoice">
+                                <span class="material-icons text-success">restore</span>
+                                Restore Invoice
+                            </button>
+                            <button type="button" class="dropdown-item forceDeleteInvoice">
+                                <span class="material-icons text-danger">delete</span>
+                                Permanently Delete Invoice
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -198,8 +190,11 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: $(this).attr('action'),
-                            type: $(this).attr('method'),
+                            url: "{{ route('invoices.restore', ['invoice' => $data['invoice']->id]) }}",
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
                             success: function () {
                                 Swal.fire({
                                     title: 'Invoice successfully restored!',
@@ -241,8 +236,11 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: $(this).attr('action'),
-                            type: $(this).attr('method'),
+                            url: "{{ route('invoices.permanent-delete', ['invoice' => $data['invoice']->id]) }}",
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
                             success: function () {
                                 Swal.fire({
                                     title: 'Invoice successfully permanently deleted!',

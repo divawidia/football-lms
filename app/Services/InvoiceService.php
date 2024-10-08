@@ -78,14 +78,10 @@ class InvoiceService extends Service
                                     Show Invoice
                                 </a>
                                 ' . $statusButton . '
-                                <form action="'.route('invoices.destroy', $item->id).'" method="POST">
-                                    ' . method_field("PATCH") . '
-                                    ' . csrf_field() . '
-                                    <button type="button" class="dropdown-item deleteInvoice" id="' . $item->id . '">
-                                        <span class="material-icons text-danger">delete</span>
-                                        Archive Invoice
-                                    </button>
-                                </form>
+                                <button type="button" class="dropdown-item deleteInvoice" id="' . $item->id . '">
+                                    <span class="material-icons text-danger">delete</span>
+                                    Archive Invoice
+                                </button>
                         </div>';
             })
             ->editColumn('name', function ($item) {
@@ -388,22 +384,14 @@ class InvoiceService extends Service
                                 <span class="material-icons">visibility</span>
                                 Show Invoice
                             </a>
-                            <form action="'.route('invoices.restore', $item->id).'" method="POST">
-                                ' . method_field("PATCH") . '
-                                ' . csrf_field() . '
-                                <button type="button" class="dropdown-item restoreInvoice">
-                                    <span class="material-icons text-success">restore</span>
-                                    Restore Invoice
-                                </button>
-                            </form>
-                            <form action="'.route('invoices.permanent-delete', $item->id).'" method="POST">
-                                ' . method_field("DELETE") . '
-                                ' . csrf_field() . '
-                                <button type="button" class="dropdown-item forceDeleteInvoice">
-                                    <span class="material-icons text-danger">delete</span>
-                                    Permanently Delete Invoice
-                                </button>
-                            </form>
+                            <button type="button" class="dropdown-item restoreInvoice" id="'.$item->id.'">
+                                <span class="material-icons text-success">restore</span>
+                                Restore Invoice
+                            </button>
+                            <button type="button" class="dropdown-item forceDeleteInvoice" id="'.$item->id.'">
+                                <span class="material-icons text-danger">delete</span>
+                                Permanently Delete Invoice
+                            </button>
                         </div>';
             })
             ->editColumn('name', function ($item) {

@@ -173,11 +173,9 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
-        $this->invoiceService->destroy($invoice);
+        $result = $this->invoiceService->destroy($invoice);
 
-        $text = 'Invoice '.$invoice->invoiceNumber.' successfully archived';
-        Alert::success($text);
-        return redirect()->route('invoices.index');
+        return response()->json($result);
     }
 
     public function deletedData()
@@ -191,19 +189,15 @@ class InvoiceController extends Controller
 
     public function restoreData(string $id)
     {
-        $this->invoiceService->restoreData($id);
+        $result = $this->invoiceService->restoreData($id);
 
-        $text = 'Invoice successfully restored';
-        Alert::success($text);
-        return redirect()->route('invoices.index');
+        return response()->json($result);
     }
 
     public function permanentDeleteData(string $id)
     {
-        $this->invoiceService->permanentDeleteData($id);
+        $result = $this->invoiceService->permanentDeleteData($id);
 
-        $text = 'Invoice successfully permanently deleted';
-        Alert::success($text);
-        return redirect()->route('invoices.index');
+        return response()->json($result);
     }
 }
