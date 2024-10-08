@@ -259,7 +259,7 @@ class InvoiceService extends Service
                 'email' => $invoice->receiverUser->email
             ],
             'enabled_payments' => [
-                'gopay', 'bank_transfer'
+                'gopay', 'bank_transfer', "indomaret", "danamon_online", "akulaku", "shopeepay", "kredivo", "uob_ezpay","other_qris"
             ],
             'vtweb' => []
         ];
