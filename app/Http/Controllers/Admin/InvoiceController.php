@@ -10,6 +10,7 @@ use App\Models\Tax;
 use App\Models\User;
 use App\Services\InvoiceService;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class InvoiceController extends Controller
 {
@@ -116,9 +117,13 @@ class InvoiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(InvoiceRequest $request, Invoice $invoice)
     {
-        //
+        $data = $request->validated();
+        $result = $this->invoiceService->update($data, $invoice);
+        $text = 'Invoice '.$invoice->invoiceNumber.' successfully updated';
+        Alert::success($text);
+        return redirect()->route('invoices.show', $invoice->id);
     }
 
     /**
