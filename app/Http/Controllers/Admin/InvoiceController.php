@@ -178,7 +178,7 @@ class InvoiceController extends Controller
             return $this->invoiceService->deletedDataIndex();
         }
 
-        return view('pages.admins.payments.invoices.deleted-data');
+        return view('pages.admins.payments.invoices.archived');
     }
 
     public function restoreData(Invoice $invoice)

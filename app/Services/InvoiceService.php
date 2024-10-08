@@ -250,6 +250,17 @@ class InvoiceService extends Service
         return compact('invoice', 'createdAt', 'dueDate', 'updatedAt', 'createdDate');
     }
 
+    public function showArchived(Invoice $invoice)
+    {
+        $createdAt = $this->convertToDatetime($invoice->created_at);
+        $dueDate = $this->convertToDatetime($invoice->dueDate);
+        $updatedAt = $this->convertToDatetime($invoice->updated_at);
+        $createdDate = $this->convertToDate($invoice->created_at);
+        $invoice = Invoice::withTrashed()->findOrFail($invoice->id);
+
+        return compact('invoice', 'createdAt', 'dueDate', 'updatedAt', 'createdDate');
+    }
+
     public function midtransPayment(array $data, Invoice $invoice){
         $midtrans = [
             'transaction_details' => [
@@ -363,53 +374,25 @@ class InvoiceService extends Service
         $data = Invoice::onlyTrashed()->with('receiverUser', 'creatorUser')->latest();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                $paidButton =
-                    '<form action="" method="POST">
-                        ' . method_field("PATCH") . '
-                        ' . csrf_field() . '
-                        <button type="submit" class="dropdown-item">
-                            <span class="material-icons text-success">check_circle</span>
-                            Mark as Paid
-                        </button>
-                    </form>';
-                $uncollectibleButton =
-                    '<form action="" method="POST">
-                        ' . method_field("PATCH") . '
-                        ' . csrf_field() . '
-                        <button type="submit" class="dropdown-item">
-                            <span class="material-icons text-danger">check_circle</span>
-                            Mark as Uncollectible
-                        </button>
-                    </form>';
-
-                $statusButton = '';
-                if ($item->status == 'Open') {
-                    $statusButton = $paidButton. ''. $uncollectibleButton;
-                } elseif ($item->status == 'Paid') {
-                    $statusButton = $uncollectibleButton;
-                } elseif ($item->status == 'Uncollectible') {
-                    $statusButton = $paidButton;
-                }
                 return
                     '<div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                         <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
                                 more_vert
                             </span>
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item edit" href="' . route('invoices.edit',$item->id) . '" type="button">
-                                <span class="material-icons">edit</span>
-                                Edit Invoice
-                             </a>
-                             <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
+                         </button>
+                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
                                 <span class="material-icons">visibility</span>
                                 Show Invoice
-                             </a>
-                             ' . $statusButton . '
-                            <button type="button" class="dropdown-item deleteInvoice" id="' . $item->id . '">
+                            </a>
+                            <button type="button" class="dropdown-item restoreInvoice" id="' . $item->id . '">
+                                <span class="material-icons text-success">restore</span>
+                                Restore Invoice
+                            </button>
+                            <button type="button" class="dropdown-item forceDeleteInvoice" id="' . $item->id . '">
                                 <span class="material-icons text-danger">delete</span>
-                                Delete Invoice
+                                Permanently Delete Invoice
                             </button>
                         </div>';
             })
