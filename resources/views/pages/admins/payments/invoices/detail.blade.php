@@ -67,7 +67,7 @@
                                 <form action="{{ route('invoices.set-paid', $data['invoice']->id) }}" method="POST">
                                     @method("PATCH")
                                     @csrf
-                                    <button type="submit" class="dropdown-item" id="pay">
+                                    <button type="submit" class="dropdown-item">
                                         <span class="material-icons text-success">check_circle</span>
                                         Mark as Paid
                                     </button>
@@ -80,6 +80,10 @@
                                         Mark as Uncollectible
                                     </button>
                                 </form>
+                                <button type="button" class="dropdown-item" id="pay">
+                                    <span class="material-icons">payment</span>
+                                    Pay Invoice
+                                </button>
                             @elseif($data['invoice']->status == 'Paid')
                                 <form action="{{ route('invoices.set-uncollectible', $data['invoice']->id) }}" method="POST">
                                     @method("PATCH")
@@ -268,7 +272,7 @@
                                 'Ok!'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                location.reload();
+                                location.href = '{{ route('invoices.set-uncollectible', $data['invoice']->id) }}'
                             }
                         });
                     }

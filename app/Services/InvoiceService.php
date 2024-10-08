@@ -338,6 +338,12 @@ class InvoiceService extends Service
 
     public function open(Invoice $invoice)
     {
+        $data['invoiceNumber'] = $invoice->invoiceNumber;
+        $data['ammountDue'] = $invoice->ammountDue;
+
+        // refresh midtrans payment token
+        $this->midtransPayment($data, $invoice);
+
         return $invoice->update(['status' => 'Open']);
     }
     public function pastDue(Invoice $invoice)
