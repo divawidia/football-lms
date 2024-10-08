@@ -102,6 +102,13 @@ class InvoiceController extends Controller
         ]);
     }
 
+    public function showArchived(Invoice $invoice)
+    {
+        return view('pages.admins.payments.invoices.detail-archived', [
+            'data' => $this->invoiceService->showArchived($invoice)
+        ]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

@@ -352,7 +352,15 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::get('calculate-product-amount', [InvoiceController::class, 'calculateProductAmount'])->name('invoices.calculate-product-amount');
         Route::post('calculate-invoice-total', [InvoiceController::class, 'calculateInvoiceTotal'])->name('invoices.calculate-invoice-total');
         Route::post('store', [InvoiceController::class, 'store'])->name('invoices.store');
-        Route::get('archived', [InvoiceController::class, 'deletedData'])->name('invoices.archived');
+
+        Route::prefix('archived')->group(function () {
+            Route::get('', [InvoiceController::class, 'deletedData'])->name('invoices.archived');
+            Route::prefix('{invoice}')->group(function () {
+                Route::get('', [InvoiceController::class, 'showArchived'])->name('invoices.show-archived');
+                Route::put('restore', [InvoiceController::class, 'restoreData'])->name('invoices.restore');
+                Route::delete('permanent-delete', [InvoiceController::class, 'permanentDeleteData'])->name('invoices.permanent-delete');
+            });
+        });
 
         Route::prefix('{invoice}')->group(function () {
             Route::get('', [InvoiceController::class, 'show'])->name('invoices.show');
@@ -363,8 +371,6 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('set-open', [InvoiceController::class, 'setOpen'])->name('invoices.set-open');
             Route::patch('set-past-due', [InvoiceController::class, 'setPastDue'])->name('invoices.set-past-due');
             Route::patch('delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
-            Route::put('restore', [InvoiceController::class, 'restoreData'])->name('invoices.restore');
-            Route::delete('permanent-delete', [InvoiceController::class, 'permanentDeleteData'])->name('invoices.permanent-delete');
         });
     });
 });
