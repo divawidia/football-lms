@@ -37,6 +37,10 @@ class Product extends Model
     {
         return $this->belongsTo(ProductCategory::class, 'categoryId');
     }
+    public function subscritions()
+    {
+        return $this->hasMany(Subscription::class, 'productId');
+    }
     public function invoices()
     {
         return $this->belongsToMany(Invoice::class, 'productId', 'invoiceId')
