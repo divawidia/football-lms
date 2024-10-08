@@ -251,99 +251,29 @@
                 });
             });
 
-            // show edit product form modal when edit product button clicked
-            body.on('click', '.edit-product', function () {
-                const id = $(this).attr('id');
-                $.ajax({
-                    url: "{{ route('products.edit', ':id') }}".replace(':id', id),
-                    type: 'GET',
-                    success: function (res) {
-                        $('#editProductModal').modal('show');
-
-                        document.getElementById('product-title').textContent = 'Edit product ' + res.data.productName;
-                        $('#productId').val(res.data.id);
-                        $('#formEditProductModal #productName').val(res.data.productName);
-                        $('#formEditProductModal #price').val(res.data.price);
-                        $('#formEditProductModal #categoryId').val(res.data.categoryId);
-                        $('#formEditProductModal #description').val(res.data.description);
-                        $('#formEditProductModal #priceOption').val(res.data.priceOption);
-                        $('#formEditProductModal #subscriptionCycle').val(res.data.subscriptionCycle);
-                        subscriptionCycleDisplay('#formEditProductModal');
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            // update product data when form submitted
-            $('#formEditProductModal').on('submit', function (e) {
-                e.preventDefault();
-                const id = $('#productId').val()
-                $.ajax({
-                    url: "{{ route('products.update', ':id') }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#editTrainingVideoModal').modal('hide');
-                        Swal.fire({
-                            title: 'Product successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        console.log(response)
-                        $.each(response.errors, function (key, val) {
-                            $('#formEditProductModal span.' + key).text(val[0]);
-                            $("#formEditProductModal #" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
             // delete product data
-            body.on('click', '.delete-product', function () {
+            body.on('click', '.deleteInvoice', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
-                    title: "Are you sure to delete this product?",
+                    title: "Are you sure to archive this invoice?",
                     text: "You won't be able to revert this!",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#1ac2a1",
                     cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
+                    confirmButtonText: "Yes, archive it!"
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('products.destroy', ['product' => ':id']) }}".replace(':id', id),
+                            url: "{{ route('invoices.destroy', ['invoice' => ':id']) }}".replace(':id', id),
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
                             success: function (response) {
                                 Swal.fire({
-                                    title: 'Product successfully deleted!',
+                                    title: 'Invoice successfully archived!',
                                     icon: 'success',
                                     showCancelButton: false,
                                     confirmButtonColor: "#1ac2a1",
@@ -358,7 +288,7 @@
                             error: function (jqXHR, textStatus, errorThrown) {
                                 Swal.fire({
                                     icon: "error",
-                                    title: "Something went wrong when deleting data!",
+                                    title: "Something went wrong when archiving data!",
                                     text: errorThrown
                                 });
                             }

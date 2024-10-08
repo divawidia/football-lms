@@ -67,19 +67,23 @@ class InvoiceService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item edit" href="' . route('invoices.edit',$item->id) . '" type="button">
-                                <span class="material-icons">edit</span>
-                                Edit Invoice
-                             </a>
-                             <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
-                                <span class="material-icons">visibility</span>
-                                Show Invoice
-                             </a>
-                             ' . $statusButton . '
-                            <button type="button" class="dropdown-item deleteInvoice" id="' . $item->id . '">
-                                <span class="material-icons text-danger">delete</span>
-                                Delete Invoice
-                            </button>
+                                <a class="dropdown-item edit" href="' . route('invoices.edit',$item->id) . '" type="button">
+                                    <span class="material-icons">edit</span>
+                                    Edit Invoice
+                                </a>
+                                <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
+                                    <span class="material-icons">visibility</span>
+                                    Show Invoice
+                                </a>
+                                ' . $statusButton . '
+                                <form action="'.route('invoices.destroy', $item->id).'" method="POST">
+                                    ' . method_field("PATCH") . '
+                                    ' . csrf_field() . '
+                                    <button type="button" class="dropdown-item deleteInvoice" id="' . $item->id . '">
+                                        <span class="material-icons text-danger">delete</span>
+                                        Delete Invoice
+                                    </button>
+                                </form>
                         </div>';
             })
             ->editColumn('name', function ($item) {

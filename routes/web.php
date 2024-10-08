@@ -362,7 +362,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('set-uncollectible', [InvoiceController::class, 'setUncollectible'])->name('invoices.set-uncollectible');
             Route::patch('set-open', [InvoiceController::class, 'setOpen'])->name('invoices.set-open');
             Route::patch('set-past-due', [InvoiceController::class, 'setPastDue'])->name('invoices.set-past-due');
-            Route::delete('delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+            Route::patch('delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
             Route::put('restore', [InvoiceController::class, 'restoreData'])->name('invoices.restore');
             Route::delete('permanent-delete', [InvoiceController::class, 'permanentDeleteData'])->name('invoices.permanent-delete');
         });
