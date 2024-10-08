@@ -103,9 +103,14 @@ class InvoiceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Invoice $invoice)
     {
-        //
+        return view('pages.admins.payments.invoices.edit', [
+            'data' => $invoice,
+            'products' => $this->product->getAllProducts(),
+            'taxes' => $this->tax->getAllTax(),
+            'contacts' => $this->user->getAllUserWithoutLoggedUserData($this->getLoggedUserId())
+        ]);
     }
 
     /**

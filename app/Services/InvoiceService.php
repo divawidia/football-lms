@@ -66,10 +66,10 @@ class InvoiceService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <button class="dropdown-item edit" id="' . $item->id . '" type="button">
+                            <a class="dropdown-item edit" href="' . route('invoices.edit',$item->id) . '" type="button">
                                 <span class="material-icons">edit</span>
                                 Edit Invoice
-                             </button>
+                             </a>
                              <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
                                 <span class="material-icons">visibility</span>
                                 Show Invoice
