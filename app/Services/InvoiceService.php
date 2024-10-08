@@ -4,12 +4,10 @@ namespace App\Services;
 
 use App\Models\Invoice;
 use App\Models\Product;
-use App\Models\ProductCategory;
 use App\Models\Subscription;
 use App\Models\Tax;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -35,7 +33,7 @@ class InvoiceService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 $paidButton =
-                    '<form action="" method="POST">
+                    '<form action="'.route('invoices.set-paid', $item->id).'" method="POST">
                         ' . method_field("PATCH") . '
                         ' . csrf_field() . '
                         <button type="submit" class="dropdown-item">
@@ -44,7 +42,7 @@ class InvoiceService extends Service
                         </button>
                     </form>';
                 $uncollectibleButton =
-                    '<form action="" method="POST">
+                    '<form action="'.route('invoices.set-uncollectible', $item->id).'" method="POST">
                         ' . method_field("PATCH") . '
                         ' . csrf_field() . '
                         <button type="submit" class="dropdown-item">
@@ -129,7 +127,7 @@ class InvoiceService extends Service
                 }
                 return $badge;
             })
-            ->rawColumns(['action', 'email', 'ammount','dueDate', 'name', 'status', 'updatedAt'])
+            ->rawColumns(['action', 'email', 'ammount','dueDate', 'name', 'status', 'createdAt','updatedAt'])
             ->addIndexColumn()
             ->make();
     }
@@ -349,5 +347,117 @@ class InvoiceService extends Service
     public function destroy(Invoice $invoice)
     {
         return $invoice->delete();
+    }
+
+    public function deletedDataIndex(){
+        $data = Invoice::onlyTrashed()->with('receiverUser', 'creatorUser')->latest();
+        return Datatables::of($data)
+            ->addColumn('action', function ($item) {
+                $paidButton =
+                    '<form action="" method="POST">
+                        ' . method_field("PATCH") . '
+                        ' . csrf_field() . '
+                        <button type="submit" class="dropdown-item">
+                            <span class="material-icons text-success">check_circle</span>
+                            Mark as Paid
+                        </button>
+                    </form>';
+                $uncollectibleButton =
+                    '<form action="" method="POST">
+                        ' . method_field("PATCH") . '
+                        ' . csrf_field() . '
+                        <button type="submit" class="dropdown-item">
+                            <span class="material-icons text-danger">check_circle</span>
+                            Mark as Uncollectible
+                        </button>
+                    </form>';
+
+                $statusButton = '';
+                if ($item->status == 'Open') {
+                    $statusButton = $paidButton. ''. $uncollectibleButton;
+                } elseif ($item->status == 'Paid') {
+                    $statusButton = $uncollectibleButton;
+                } elseif ($item->status == 'Uncollectible') {
+                    $statusButton = $paidButton;
+                }
+                return
+                    '<div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="material-icons">
+                                more_vert
+                            </span>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item edit" href="' . route('invoices.edit',$item->id) . '" type="button">
+                                <span class="material-icons">edit</span>
+                                Edit Invoice
+                             </a>
+                             <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
+                                <span class="material-icons">visibility</span>
+                                Show Invoice
+                             </a>
+                             ' . $statusButton . '
+                            <button type="button" class="dropdown-item deleteInvoice" id="' . $item->id . '">
+                                <span class="material-icons text-danger">delete</span>
+                                Delete Invoice
+                            </button>
+                        </div>';
+            })
+            ->editColumn('name', function ($item) {
+                return '
+                            <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->receiverUser->foto) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->receiverUser->firstName . ' ' . $item->receiverUser->lastName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">' . $item->receiverUser->roles[0]['name'] . '</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('email', function ($item) {
+                return $item->receiverUser->email;
+            })
+            ->editColumn('ammount', function ($item) {
+                return $this->priceFormat($item->ammountDue);
+            })
+            ->editColumn('dueDate', function ($item) {
+                return $this->convertToDatetime($item->dueDate);
+            })
+            ->editColumn('deletedAt', function ($item) {
+                return $this->convertToDatetime($item->deleted_at);
+            })
+            ->editColumn('updatedAt', function ($item) {
+                return $this->convertToDatetime($item->updatedAt);
+            })
+            ->editColumn('status', function ($item) {
+                $badge = '';
+                if ($item->status == 'Open') {
+                    $badge = '<span class="badge badge-pill badge-info">'.$item->status.'</span>';
+                } elseif ($item->status == 'Paid') {
+                    $badge = '<span class="badge badge-pill badge-success">'.$item->status.'</span>';
+                } elseif ($item->status == 'Past Due') {
+                    $badge = '<span class="badge badge-pill badge-warning">'.$item->status.'</span>';
+                } elseif ($item->status == 'Uncollectible') {
+                    $badge = '<span class="badge badge-pill badge-danger">'.$item->status.'</span>';
+                }
+                return $badge;
+            })
+            ->rawColumns(['action', 'email', 'ammount','dueDate', 'name', 'status', 'deletedAt','updatedAt'])
+            ->addIndexColumn()
+            ->make();
+    }
+
+    public function restoreData(Invoice $invoice){
+        return $invoice->restore();
+    }
+
+    public function permanentDeleteData(Invoice $invoice){
+        return $invoice->forceDelete();
     }
 }

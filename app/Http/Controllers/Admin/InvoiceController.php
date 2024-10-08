@@ -165,9 +165,36 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
-        $invoice->delete();
+        $this->invoiceService->destroy($invoice);
 
         $text = 'Invoice '.$invoice->invoiceNumber.' successfully archived';
+        Alert::success($text);
+        return redirect()->route('invoices.index');
+    }
+
+    public function deletedData()
+    {
+        if (\request()->ajax()){
+            return $this->invoiceService->deletedDataIndex();
+        }
+
+        return view('pages.admins.payments.invoices.deleted-data');
+    }
+
+    public function restoreData(Invoice $invoice)
+    {
+        $this->invoiceService->restoreData($invoice);
+
+        $text = 'Invoice '.$invoice->invoiceNumber.' successfully restored';
+        Alert::success($text);
+        return redirect()->route('invoices.index');
+    }
+
+    public function permanentDeleteData(Invoice $invoice)
+    {
+        $this->invoiceService->permanentDeleteData($invoice);
+
+        $text = 'Invoice '.$invoice->invoiceNumber.' successfully permanently deleted';
         Alert::success($text);
         return redirect()->route('invoices.index');
     }

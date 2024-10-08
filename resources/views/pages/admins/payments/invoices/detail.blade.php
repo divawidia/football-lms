@@ -64,11 +64,15 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="{{ route('invoices.edit', $data['invoice']->id) }}"><span class="material-icons">edit</span> Edit Invoice</a>
                             @if($data['invoice']->status == 'Open')
+                                <form action="{{ route('invoices.set-paid', $data['invoice']->id) }}" method="POST">
+                                    @method("PATCH")
+                                    @csrf
                                     <button type="submit" class="dropdown-item" id="pay">
                                         <span class="material-icons text-success">check_circle</span>
                                         Mark as Paid
                                     </button>
-                                <form action="" method="POST">
+                                </form>
+                                <form action="{{ route('invoices.set-uncollectible', $data['invoice']->id) }}" method="POST">
                                     @method("PATCH")
                                     @csrf
                                     <button type="submit" class="dropdown-item">
@@ -77,7 +81,7 @@
                                     </button>
                                 </form>
                             @elseif($data['invoice']->status == 'Paid')
-                                <form action="" method="POST">
+                                <form action="{{ route('invoices.set-uncollectible', $data['invoice']->id) }}" method="POST">
                                     @method("PATCH")
                                     @csrf
                                     <button type="submit" class="dropdown-item">
@@ -86,12 +90,20 @@
                                     </button>
                                 </form>
                             @elseif($data['invoice']->status == 'Uncollectible')
-                                <form action="" method="POST">
+                                <form action="{{ route('invoices.set-paid', $data['invoice']->id) }}" method="POST">
                                     @method("PATCH")
                                     @csrf
                                     <button type="submit" class="dropdown-item">
                                         <span class="material-icons text-success">check_circle</span>
                                         Mark as Paid
+                                    </button>
+                                </form>
+                                <form action="{{ route('invoices.set-open', $data['invoice']->id) }}" method="POST">
+                                    @method("PATCH")
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <span class="material-icons text-info">check_circle</span>
+                                        Mark as Open
                                     </button>
                                 </form>
                             @endif
