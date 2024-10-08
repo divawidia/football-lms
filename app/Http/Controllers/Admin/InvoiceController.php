@@ -163,8 +163,12 @@ class InvoiceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Invoice $invoice)
     {
-        //
+        $invoice->delete();
+
+        $text = 'Invoice '.$invoice->invoiceNumber.' successfully archived';
+        Alert::success($text);
+        return redirect()->route('invoices.index');
     }
 }

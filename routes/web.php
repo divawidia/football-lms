@@ -357,8 +357,10 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::get('', [InvoiceController::class, 'show'])->name('invoices.show');
             Route::get('edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
             Route::put('update', [InvoiceController::class, 'update'])->name('invoices.update');
-//            Route::patch('deactivate', [ProductController::class, 'deactivate'])->name('products.deactivate');
-//            Route::patch('activate', [ProductController::class, 'activate'])->name('products.activate');
+            Route::patch('set-paid', [InvoiceController::class, 'setPaid'])->name('invoices.set-paid');
+            Route::patch('set-uncollectible', [InvoiceController::class, 'setUncollectible'])->name('invoices.set-uncollectible');
+            Route::patch('set-open', [InvoiceController::class, 'setOpen'])->name('invoices.set-open');
+            Route::patch('set-past-due', [InvoiceController::class, 'setPastDue'])->name('invoices.set-past-due');
 //            Route::delete('delete', [ProductController::class, 'destroy'])->name('products.destroy');
         });
     });
