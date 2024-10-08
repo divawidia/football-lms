@@ -66,14 +66,22 @@
                                 <span class="material-icons">file_download</span>
                                 Download Invoice
                             </a>
-                            <button type="button" class="dropdown-item restoreInvoice" id="{{$data['invoice']->id}}">
-                                <span class="material-icons text-success">restore</span>
-                                Restore Invoice
-                            </button>
-                            <button type="button" class="dropdown-item forceDeleteInvoice" id="{{$data['invoice']->id}}">
-                                <span class="material-icons text-danger">delete</span>
-                                Permanently Delete Invoice
-                            </button>
+                            <form action="{{ route('invoices.restore', ['invoice' => $data['invoice']->id]) }}" method="POST">
+                                @method('PATCH')
+                                @csrf
+                                <button type="button" class="dropdown-item restoreInvoice">
+                                    <span class="material-icons text-success">restore</span>
+                                    Restore Invoice
+                                </button>
+                            </form>
+                            <form action="{{ route('invoices.permanent-delete', ['invoice' => $data['invoice']->id]) }}" method="POST">
+                                @method('PATCH')
+                                @csrf
+                                <button type="button" class="dropdown-item forceDeleteInvoice">
+                                    <span class="material-icons text-danger">delete</span>
+                                    Permanently Delete Invoice
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -175,13 +183,10 @@
     </div>
 @endsection
 @push('addon-script')
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
     <script>
         $(document).ready(function () {
             // restore invoice
             $('.restoreInvoice').on('click', function () {
-                let id = $(this).attr('id');
-
                 Swal.fire({
                     title: "Are you sure to restore this invoice?",
                     text: "You won't be able to revert this!",
@@ -193,11 +198,8 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('invoices.restore', ['invoice' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
+                            url: $(this).attr('action'),
+                            type: $(this).attr('method'),
                             success: function () {
                                 Swal.fire({
                                     title: 'Invoice successfully restored!',
@@ -239,11 +241,8 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('invoices.permanent-delete', ['invoice' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
+                            url: $(this).attr('action'),
+                            type: $(this).attr('method'),
                             success: function () {
                                 Swal.fire({
                                     title: 'Invoice successfully permanently deleted!',

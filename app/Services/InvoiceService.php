@@ -17,7 +17,8 @@ class InvoiceService extends Service
 {
     private Product $product;
     private Tax $tax;
-    public function __construct(Product $product, Tax $tax)
+    private Invoice $invoice;
+    public function __construct(Product $product, Tax $tax, Invoice $invoice)
     {
         Config::$serverKey    = config('services.midtrans.serverKey');
         Config::$isProduction = config('services.midtrans.isProduction');
@@ -26,6 +27,7 @@ class InvoiceService extends Service
 
         $this->product = $product;
         $this->tax = $tax;
+        $this->invoice = $invoice;
     }
     public function index()
     {
@@ -81,7 +83,7 @@ class InvoiceService extends Service
                                     ' . csrf_field() . '
                                     <button type="button" class="dropdown-item deleteInvoice" id="' . $item->id . '">
                                         <span class="material-icons text-danger">delete</span>
-                                        Delete Invoice
+                                        Archive Invoice
                                     </button>
                                 </form>
                         </div>';
@@ -250,13 +252,13 @@ class InvoiceService extends Service
         return compact('invoice', 'createdAt', 'dueDate', 'updatedAt', 'createdDate');
     }
 
-    public function showArchived(Invoice $invoice)
+    public function showArchived(string $invoiceId)
     {
+        $invoice = $this->invoice->findDeletedData($invoiceId);
         $createdAt = $this->convertToDatetime($invoice->created_at);
         $dueDate = $this->convertToDatetime($invoice->dueDate);
         $updatedAt = $this->convertToDatetime($invoice->updated_at);
         $createdDate = $this->convertToDate($invoice->created_at);
-        $invoice = Invoice::withTrashed()->findOrFail($invoice->id);
 
         return compact('invoice', 'createdAt', 'dueDate', 'updatedAt', 'createdDate');
     }
@@ -382,18 +384,26 @@ class InvoiceService extends Service
                             </span>
                          </button>
                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
+                            <a class="dropdown-item edit" href="' . route('invoices.show-archived', $item->id) . '" type="button">
                                 <span class="material-icons">visibility</span>
                                 Show Invoice
                             </a>
-                            <button type="button" class="dropdown-item restoreInvoice" id="' . $item->id . '">
-                                <span class="material-icons text-success">restore</span>
-                                Restore Invoice
-                            </button>
-                            <button type="button" class="dropdown-item forceDeleteInvoice" id="' . $item->id . '">
-                                <span class="material-icons text-danger">delete</span>
-                                Permanently Delete Invoice
-                            </button>
+                            <form action="'.route('invoices.restore', $item->id).'" method="POST">
+                                ' . method_field("PATCH") . '
+                                ' . csrf_field() . '
+                                <button type="button" class="dropdown-item restoreInvoice">
+                                    <span class="material-icons text-success">restore</span>
+                                    Restore Invoice
+                                </button>
+                            </form>
+                            <form action="'.route('invoices.permanent-delete', $item->id).'" method="POST">
+                                ' . method_field("DELETE") . '
+                                ' . csrf_field() . '
+                                <button type="button" class="dropdown-item forceDeleteInvoice">
+                                    <span class="material-icons text-danger">delete</span>
+                                    Permanently Delete Invoice
+                                </button>
+                            </form>
                         </div>';
             })
             ->editColumn('name', function ($item) {
@@ -446,11 +456,13 @@ class InvoiceService extends Service
             ->make();
     }
 
-    public function restoreData(Invoice $invoice){
+    public function restoreData(string $invoiceId){
+        $invoice = $this->invoice->findDeletedData($invoiceId);
         return $invoice->restore();
     }
 
-    public function permanentDeleteData(Invoice $invoice){
+    public function permanentDeleteData(string $invoiceId){
+        $invoice = $this->invoice->findDeletedData($invoiceId);
         return $invoice->forceDelete();
     }
 }

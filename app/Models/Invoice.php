@@ -24,6 +24,11 @@ class Invoice extends Model
         'status',
     ];
 
+    public function findDeletedData($invoiceId)
+    {
+        return $this->withTrashed()->findOrFail($invoiceId);
+    }
+
     public function creatorUser()
     {
         return $this->belongsTo(User::class, 'creatorUserId');

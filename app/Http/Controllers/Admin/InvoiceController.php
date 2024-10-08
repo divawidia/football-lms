@@ -102,10 +102,11 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function showArchived(Invoice $invoice)
+    public function showArchived(string $id)
     {
+        $data = $this->invoiceService->showArchived($id);
         return view('pages.admins.payments.invoices.detail-archived', [
-            'data' => $this->invoiceService->showArchived($invoice)
+            'data' => $data
         ]);
     }
 
@@ -188,20 +189,20 @@ class InvoiceController extends Controller
         return view('pages.admins.payments.invoices.archived');
     }
 
-    public function restoreData(Invoice $invoice)
+    public function restoreData(string $id)
     {
-        $this->invoiceService->restoreData($invoice);
+        $this->invoiceService->restoreData($id);
 
-        $text = 'Invoice '.$invoice->invoiceNumber.' successfully restored';
+        $text = 'Invoice successfully restored';
         Alert::success($text);
         return redirect()->route('invoices.index');
     }
 
-    public function permanentDeleteData(Invoice $invoice)
+    public function permanentDeleteData(string $id)
     {
-        $this->invoiceService->permanentDeleteData($invoice);
+        $this->invoiceService->permanentDeleteData($id);
 
-        $text = 'Invoice '.$invoice->invoiceNumber.' successfully permanently deleted';
+        $text = 'Invoice successfully permanently deleted';
         Alert::success($text);
         return redirect()->route('invoices.index');
     }

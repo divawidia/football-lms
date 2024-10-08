@@ -259,8 +259,6 @@
 
             // delete product data
             body.on('click', '.deleteInvoice', function () {
-                let id = $(this).attr('id');
-
                 Swal.fire({
                     title: "Are you sure to archive this invoice?",
                     text: "You won't be able to revert this!",
@@ -272,12 +270,9 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('invoices.destroy', ['invoice' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (response) {
+                            url: $(this).attr('action'),
+                            type: $(this).attr('method'),
+                            success: function () {
                                 Swal.fire({
                                     title: 'Invoice successfully archived!',
                                     icon: 'success',

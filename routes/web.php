@@ -357,7 +357,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::get('', [InvoiceController::class, 'deletedData'])->name('invoices.archived');
             Route::prefix('{invoice}')->group(function () {
                 Route::get('', [InvoiceController::class, 'showArchived'])->name('invoices.show-archived');
-                Route::put('restore', [InvoiceController::class, 'restoreData'])->name('invoices.restore');
+                Route::patch('restore', [InvoiceController::class, 'restoreData'])->name('invoices.restore');
                 Route::delete('permanent-delete', [InvoiceController::class, 'permanentDeleteData'])->name('invoices.permanent-delete');
             });
         });
