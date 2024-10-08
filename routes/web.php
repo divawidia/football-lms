@@ -356,7 +356,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::prefix('{invoice}')->group(function () {
             Route::get('', [InvoiceController::class, 'show'])->name('invoices.show');
             Route::get('edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
-//            Route::put('update', [ProductController::class, 'update'])->name('products.update');
+            Route::put('update', [InvoiceController::class, 'update'])->name('invoices.update');
 //            Route::patch('deactivate', [ProductController::class, 'deactivate'])->name('products.deactivate');
 //            Route::patch('activate', [ProductController::class, 'activate'])->name('products.activate');
 //            Route::delete('delete', [ProductController::class, 'destroy'])->name('products.destroy');

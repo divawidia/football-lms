@@ -29,7 +29,7 @@
 
         <div class="container page__container page-section">
             <div class="list-group">
-                <form action="" method="post">
+                <form action="{{ route('invoices.update', $data->id) }}" method="post">
                     @method('PUT')
                     @csrf
                     <div class="list-group-item">

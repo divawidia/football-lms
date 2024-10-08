@@ -165,7 +165,7 @@ class InvoiceService extends Service
             $productDetail = $this->product->findProductById($product['productId']);
             if ($productDetail->priceOption == 'subscription'){
                 $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
-                $invoice->subscriptions->attach($subscription->id);
+                $invoice->subscriptions()->attach($subscription->id);
             }
         }
 
@@ -277,6 +277,7 @@ class InvoiceService extends Service
 
     public function update(array $data, Invoice $invoice)
     {
+        $data['subtotal'] = 0;
         foreach ($data['products'] as $product) {
             $data['subtotal'] = $data['subtotal'] + $product['ammount'];
         }
