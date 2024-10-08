@@ -64,14 +64,10 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="{{ route('invoices.edit', $data['invoice']->id) }}"><span class="material-icons">edit</span> Edit Invoice</a>
                             @if($data['invoice']->status == 'Open')
-                                <form action="" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
+                                    <button type="submit" class="dropdown-item" id="pay">
                                         <span class="material-icons text-success">check_circle</span>
                                         Mark as Paid
                                     </button>
-                                </form>
                                 <form action="" method="POST">
                                     @method("PATCH")
                                     @csrf
@@ -125,9 +121,17 @@
 
         <div class="card card-sm card-group-row__card">
             <div class="card-body flex-column">
-                <div class="d-flex align-items-center border-bottom">
-                    <div class="p-2"><p class="card-title mb-4pt">Payment link :</p></div>
-                    <div class="ml-auto p-2 text-muted"></div>
+                <div class="d-flex align-items-center">
+                    <div class="p-2"><p class="card-title mb-4pt">Invoice Status :</p></div>
+                    @if ($data['invoice']->status == 'Open')
+                        <span class="ml-auto p-2 badge badge-pill badge-info">{{ $data['invoice']->status }}</span>
+                    @elseif($data['invoice']->status == 'Paid')
+                        <span class="ml-auto p-2 badge badge-pill badge-success">{{ $data['invoice']->status }}</span>
+                    @elseif ($data['invoice']->status == 'Past Due')
+                        <span class="ml-auto p-2 badge badge-pill badge-warning">{{ $data['invoice']->status }}</span>
+                    @elseif ($data['invoice']->status == 'Uncollectible')
+                        <span class="ml-auto p-2 badge badge-pill badge-danger">{{ $data['invoice']->status }}</span>
+                    @endif
                 </div>
                 <div class="d-flex align-items-center border-bottom">
                     <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
@@ -200,9 +204,64 @@
     </div>
 @endsection
 @push('addon-script')
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
     <script>
         $(document).ready(function () {
+            $('#pay').on('click', function (e){
+                e.preventDefault();
+                snap.pay('{{ $data['invoice']->snapToken }}', {
+                    // Optional
+                    onSuccess: function(result){
+                        /* You may add your own js here, this is just example */
+                        console.log(result);
+                        Swal.fire({
+                            title: 'Invoice successfully paid!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
 
+                    },
+                    // Optional
+                    onPending: function(result){
+                        /* You may add your own js here, this is just example */
+                        Swal.fire({
+                            title: 'Invoice payment still pending!',
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    // Optional
+                    onError: function(result){
+                        /* You may add your own js here, this is just example */
+                        Swal.fire({
+                            title: 'Something wrong when processing Invoice payment!',
+                            icon: JSON.stringify(result, null, 2),
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            })
         });
     </script>
 @endpush

@@ -125,7 +125,7 @@ class InvoiceService extends Service
                 } elseif ($item->status == 'Past Due') {
                     $badge = '<span class="badge badge-pill badge-warning">'.$item->status.'</span>';
                 } elseif ($item->status == 'Uncollectible') {
-                    $badge = '<span class="badge badge-pill badge-warning">'.$item->status.'</span>';
+                    $badge = '<span class="badge badge-pill badge-danger">'.$item->status.'</span>';
                 }
                 return $badge;
             })
