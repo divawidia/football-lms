@@ -7,6 +7,7 @@ use App\Http\Requests\InvoiceRequest;
 use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Tax;
+use App\Models\Team;
 use App\Models\User;
 use App\Services\InvoiceService;
 use Illuminate\Http\Request;
@@ -121,9 +122,42 @@ class InvoiceController extends Controller
     {
         $data = $request->validated();
         $this->invoiceService->update($data, $invoice);
+
         $text = 'Invoice '.$invoice->invoiceNumber.' successfully updated';
         Alert::success($text);
         return redirect()->route('invoices.show', ['invoice'=>$invoice->id]);
+    }
+
+    public function setPaid(Invoice $invoice){
+        $this->invoiceService->paid($invoice);
+
+        $text = 'Invoice '.$invoice->invoiceNumber.' status successfully mark as paid';
+        Alert::success($text);
+        return redirect()->route('invoices.show', $invoice->id);
+    }
+
+    public function setUncollectible(Invoice $invoice){
+        $this->invoiceService->uncollectible($invoice);
+
+        $text = 'Invoice '.$invoice->invoiceNumber.' status successfully mark as uncollectible';
+        Alert::success($text);
+        return redirect()->route('invoices.show', $invoice->id);
+    }
+
+    public function setOpen(Invoice $invoice){
+        $this->invoiceService->open($invoice);
+
+        $text = 'Invoice '.$invoice->invoiceNumber.' status successfully mark as open';
+        Alert::success($text);
+        return redirect()->route('invoices.show', $invoice->id);
+    }
+
+    public function setPastDue(Invoice $invoice){
+        $this->invoiceService->pastDue($invoice);
+
+        $text = 'Invoice '.$invoice->invoiceNumber.' status successfully mark as past due';
+        Alert::success($text);
+        return redirect()->route('invoices.show', $invoice->id);
     }
 
     /**
