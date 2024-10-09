@@ -18,10 +18,14 @@ class SubscriptionService extends Service
     private Product $product;
     private Subscription $subscription;
     private Invoice $invoice;
-    public function __construct(Product $product, Subscription $subscription, Invoice $invoice)
+    private Tax $tax;
+    private InvoiceService $invoiceService;
+    public function __construct(Product $product, Subscription $subscription, Invoice $invoice, Tax $tax, InvoiceService $invoiceService)
     {
         $this->product = $product;
         $this->invoice = $invoice;
+        $this->tax = $tax;
+        $this->invoiceService = $invoiceService;
     }
     public function index()
     {
@@ -196,10 +200,34 @@ class SubscriptionService extends Service
         return $subscription->update(['status' => 'unsubscribed']);
     }
 
-    public function createNewInvoice(Subscription $subscription, $userId, $academyId)
+    public function createNewInvoice(Subscription $subscription, $creatorUserIdd, $academyId)
     {
         if ($subscription->status == 'scheduled'){
+            $data['creatorUserId'] = $creatorUserIdd;
+            $data['academyId'] = $academyId;
+            $data['invoiceNumber'] = $this->generateInvoiceNumber();
+            $data['subtotal'] = $subscription->product->price;
+            $data['ammountDue'] = $data['subtotal'];
 
+            if ($subscription->taxId != null){
+                $tax = $this->tax->getTaxDetail($subscription->taxId);
+                $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
+                $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
+            }else{
+                $data['taxId'] = null;
+                $data['totalTax'] = 0;
+            }
+
+            $invoice = Invoice::create($data);
+            $invoice->products()->attach($subscription->productId, [
+                'qty' => 1,
+                'ammount' => $data['subtotal']
+            ]);
+            $invoice->subscriptions()->attach($subscription->id);
+
+            $this->invoiceService->midtransPayment($data, $invoice);
+
+            return $invoice;
         }
     }
 }

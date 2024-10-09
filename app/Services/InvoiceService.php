@@ -151,6 +151,7 @@ class InvoiceService extends Service
             $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
         }else{
+            $data['taxId'] = null;
             $data['totalTax'] = 0;
         }
 
@@ -164,7 +165,7 @@ class InvoiceService extends Service
 
             $productDetail = $this->product->findProductById($product['productId']);
             if ($productDetail->priceOption == 'subscription'){
-                $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
+                $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId'], $data['taxId']);
                 $invoice->subscriptions()->attach($subscription->id);
             }
         }
@@ -211,13 +212,14 @@ class InvoiceService extends Service
         return $data;
     }
 
-    public function storeSubscription($userId, $ammount, $productId){
+    public function storeSubscription($userId, $ammount, $productId, $taxId){
         $data = [];
         $data['startDate'] = Carbon::now();
         $data['ammountDue'] = $ammount;
         $data['status'] = 'scheduled';
         $data['userId'] = $userId;
         $data['productId'] = $productId;
+        $data['taxId'] = $taxId;
 
         $product = $this->product->findProductById($productId);
 
