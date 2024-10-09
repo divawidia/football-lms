@@ -351,6 +351,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::get('', [InvoiceController::class, 'index'])->name('invoices.index');
         Route::get('calculate-product-amount', [InvoiceController::class, 'calculateProductAmount'])->name('invoices.calculate-product-amount');
         Route::post('calculate-invoice-total', [InvoiceController::class, 'calculateInvoiceTotal'])->name('invoices.calculate-invoice-total');
+        Route::get('create', [InvoiceController::class, 'create'])->name('invoices.create');
         Route::post('store', [InvoiceController::class, 'store'])->name('invoices.store');
 
         Route::prefix('archived')->group(function () {
