@@ -53,11 +53,7 @@ class SubscriptionService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item edit" href="' . route('invoices.edit',$item->id) . '" type="button">
-                                    <span class="material-icons">edit</span>
-                                    Edit Subscription
-                                </a>
-                                <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
+                                <a class="dropdown-item edit" href="' . route('subscriptions.show', $item->id) . '" type="button">
                                     <span class="material-icons">visibility</span>
                                     Show Subscription
                                 </a>

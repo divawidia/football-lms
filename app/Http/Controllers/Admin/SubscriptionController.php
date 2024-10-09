@@ -38,6 +38,13 @@ class SubscriptionController extends Controller
         ]);
     }
 
+    public function invoices(Subscription $subscription)
+    {
+        if (\request()->ajax()){
+            return $this->subscriptionService->invoices($subscription);
+        }
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

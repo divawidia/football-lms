@@ -381,7 +381,7 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
         Route::prefix('{subscription}')->group(function () {
             Route::get('', [SubscriptionController::class, 'show'])->name('subscriptions.show');
-            Route::get('invoices', [SubscriptionController::class, 'show'])->name('subscriptions.invoices');
+            Route::get('invoices', [SubscriptionController::class, 'invoices'])->name('subscriptions.invoices');
         });
 
     });
