@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Edit Invoice {{ $data->invoiceNumber }}
+    Edit Invoice {{ $data['invoice']->invoiceNumber }}
 @endsection
 @section('page-title')
     @yield('title')
