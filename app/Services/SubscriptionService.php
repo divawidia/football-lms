@@ -200,10 +200,10 @@ class SubscriptionService extends Service
         return $subscription->update(['status' => 'unsubscribed']);
     }
 
-    public function createNewInvoice(Subscription $subscription, $creatorUserIdd, $academyId)
+    public function createNewInvoice(Subscription $subscription, $creatorUserId, $academyId)
     {
         if ($subscription->status == 'scheduled'){
-            $data['creatorUserId'] = $creatorUserIdd;
+            $data['creatorUserId'] = $creatorUserId;
             $data['academyId'] = $academyId;
             $data['invoiceNumber'] = $this->generateInvoiceNumber();
             $data['subtotal'] = $subscription->product->price;

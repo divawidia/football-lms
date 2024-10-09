@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Subscription;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class SubscriptionController extends Controller
 {
@@ -43,6 +44,30 @@ class SubscriptionController extends Controller
         if (\request()->ajax()){
             return $this->subscriptionService->invoices($subscription);
         }
+    }
+
+    public function setScheduled(Subscription $subscription){
+        $this->subscriptionService->scheduled($subscription);
+
+        $text = $subscription->product->productName.' subscription of '.$subscription->user->firstName.' '.$subscription->user->lastName.' status successfully mark as scheduled';
+        Alert::success($text);
+        return redirect()->route('subscriptions.show', $subscription->id);
+    }
+
+    public function setUnsubscribed(Subscription $subscription){
+        $this->subscriptionService->unsubscribed($subscription);
+
+        $text = $subscription->product->productName.' subscription of '.$subscription->user->firstName.' '.$subscription->user->lastName.' status successfully mark as unsubscribed';
+        Alert::success($text);
+        return redirect()->route('subscriptions.show', $subscription->id);
+    }
+
+    public function createNewInvoice(Subscription $subscription){
+        $this->subscriptionService->createNewInvoice($subscription, $this->getLoggedUserId(), $this->getAcademyId());
+
+        $text = $subscription->product->productName.' subscription of '.$subscription->user->firstName.' '.$subscription->user->lastName.' status successfully mark as unsubscribed';
+        Alert::success($text);
+        return redirect()->route('subscriptions.show', $subscription->id);
     }
 
     /**

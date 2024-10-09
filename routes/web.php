@@ -382,6 +382,8 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
         Route::prefix('{subscription}')->group(function () {
             Route::get('', [SubscriptionController::class, 'show'])->name('subscriptions.show');
             Route::get('invoices', [SubscriptionController::class, 'invoices'])->name('subscriptions.invoices');
+            Route::patch('set-scheduled', [SubscriptionController::class, ''])->name('invoices.set-paid');
+            Route::patch('set-unsubscribed', [SubscriptionController::class, 'setUncollectible'])->name('invoices.set-uncollectible');
         });
 
     });
