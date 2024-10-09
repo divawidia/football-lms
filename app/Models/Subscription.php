@@ -12,6 +12,7 @@ class Subscription extends Model
 
     protected $fillable = [
         'userId',
+        'taxId',
         'productId',
         'cycle',
         'startDate',
@@ -33,5 +34,10 @@ class Subscription extends Model
     public function product()
     {
         return $this->belongsTo(Product::class, 'productId', 'id');
+    }
+
+    public function tax()
+    {
+        return $this->belongsTo(Tax::class, 'taxId', 'id');
     }
 }

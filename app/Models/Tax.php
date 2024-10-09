@@ -29,6 +29,11 @@ class Tax extends Model
         return $this->hasMany(Invoice::class, 'taxId');
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class, 'taxId');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'userId');
