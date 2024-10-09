@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Subscription;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 
@@ -26,28 +27,15 @@ class SubscriptionController extends Controller
         return view('pages.admins.payments.subscriptions.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Subscription $subscription)
     {
-        //
+        return view('pages.admins.payments.subscriptions.detail', [
+            'data' => $this->subscriptionService->show($subscription)
+        ]);
     }
 
     /**

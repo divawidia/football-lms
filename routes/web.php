@@ -378,6 +378,12 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
     Route::prefix('subscriptions')->group(function () {
         Route::get('', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+
+        Route::prefix('{subscription}')->group(function () {
+            Route::get('', [SubscriptionController::class, 'show'])->name('subscriptions.show');
+            Route::get('invoices', [SubscriptionController::class, 'show'])->name('subscriptions.invoices');
+        });
+
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {

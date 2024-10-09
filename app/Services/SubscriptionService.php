@@ -181,14 +181,14 @@ class SubscriptionService extends Service
             ->make();
     }
 
-    public function show(Invoice $invoice)
+    public function show(Subscription $subscription)
     {
-        $createdAt = $this->convertToDatetime($invoice->created_at);
-        $dueDate = $this->convertToDatetime($invoice->dueDate);
-        $updatedAt = $this->convertToDatetime($invoice->updated_at);
-        $createdDate = $this->convertToDate($invoice->created_at);
+        $createdAt = $this->convertToDatetime($subscription->created_at);
+        $nextDueDate = $this->convertToDatetime($subscription->nextDueDate);
+        $startDate = $this->convertToDatetime($subscription->startDate);
+        $updatedAt = $this->convertToDatetime($subscription->updated_at);
 
-        return compact('invoice', 'createdAt', 'dueDate', 'updatedAt', 'createdDate');
+        return compact('subscription', 'createdAt', 'nextDueDate', 'updatedAt', 'startDate');
     }
 
     public function showArchived(string $invoiceId)
