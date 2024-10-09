@@ -36,11 +36,7 @@ class InvoiceController extends Controller
             return $this->invoiceService->index();
         }
 
-        return view('pages.admins.payments.invoices.index', [
-            'products' => $this->product->getAllProducts(),
-            'taxes' => $this->tax->getAllTax(),
-            'contacts' => $this->user->getAllUserWithoutLoggedUserData($this->getLoggedUserId())
-        ]);
+        return view('pages.admins.payments.invoices.index');
     }
 
     /**
@@ -48,7 +44,11 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.admins.payments.invoices.create', [
+            'products' => $this->product->getAllProducts(),
+            'taxes' => $this->tax->getAllTax(),
+            'contacts' => $this->user->getAllUserWithoutLoggedUserData($this->getLoggedUserId())
+        ]);
     }
 
     /**
