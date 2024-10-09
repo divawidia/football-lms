@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\PlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TrainingVideoController;
@@ -373,6 +374,10 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
             Route::patch('set-past-due', [InvoiceController::class, 'setPastDue'])->name('invoices.set-past-due');
             Route::delete('delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
         });
+    });
+
+    Route::prefix('subscriptions')->group(function () {
+        Route::get('', [SubscriptionController::class, 'index'])->name('subscriptions.index');
     });
 });
 //Route::group(['middleware' => ['role:coach,web']], function () {

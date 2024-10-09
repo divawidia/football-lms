@@ -91,8 +91,8 @@ class SubscriptionService extends Service
             ->editColumn('product', function ($item) {
                 return $item->product->productName;
             })
-            ->editColumn('ammountDue', function ($item) {
-                return $this->priceFormat($item->startDate);
+            ->editColumn('amountDue', function ($item) {
+                return $this->priceFormat($item->ammountDue);
             })
             ->editColumn('startDate', function ($item) {
                 return $this->convertToDatetime($item->dueDate);
@@ -115,7 +115,7 @@ class SubscriptionService extends Service
                 }
                 return $badge;
             })
-            ->rawColumns(['action', 'email', 'name', 'product', 'ammountDue', 'startDate', 'nextDueDate','status', 'createdAt','updatedAt'])
+            ->rawColumns(['action', 'email', 'name', 'product', 'amountDue', 'startDate', 'nextDueDate','status', 'createdAt','updatedAt'])
             ->addIndexColumn()
             ->make();
     }

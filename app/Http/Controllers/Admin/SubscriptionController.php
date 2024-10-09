@@ -3,16 +3,27 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller
 {
+    private SubscriptionService $subscriptionService;
+
+    public function __construct(SubscriptionService $subscriptionService)
+    {
+        $this->subscriptionService = $subscriptionService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        if (\request()->ajax()){
+            return $this->subscriptionService->index();
+        }
+
+        return view('pages.admins.payments.subscriptions.index');
     }
 
     /**
