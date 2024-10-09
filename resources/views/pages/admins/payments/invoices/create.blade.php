@@ -28,7 +28,7 @@
 
     <div class="container page__container page-section" style="max-width: 1200px">
         <div class="list-group">
-            <form method="POST" action="{{ route('invoices.store', $data->id) }}">
+            <form method="POST" action="{{ route('invoices.store') }}">
                 @csrf
                 <div class="list-group-item">
                     <div role="group" aria-labelledby="label-question" class="m-0 form-group">
@@ -212,6 +212,7 @@
 
             let i = 1;
             $('#addProduct').click(function(){
+                i++;
                 $('#productsField').append(
                     '<div class="row" id="row'+i+'">'+
                         '<div class="col-auto d-flex align-items-center">' +
@@ -284,7 +285,6 @@
                         '</div>'+
                     '</div>'
                 );
-                i++;
             });
 
             body.on('click', '.btnRemoveProduct', function(){

@@ -60,11 +60,10 @@ class InvoiceController extends Controller
         $loggedUserId = $this->getLoggedUserId();
         $academyId = $this->getAcademyId();
         $result = $this->invoiceService->store($data, $loggedUserId, $academyId);
-        return response()->json([
-            'status' => 200,
-            'data' => $result,
-            'message'=> 'Success'
-        ]);
+
+        $text = 'Invoice '.$result->invoiceNumber.' successfully created';
+        Alert::success($text);
+        return redirect()->route('invoices.show', $result->id);
     }
 
     public function calculateProductAmount(Request $request){
