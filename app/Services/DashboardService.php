@@ -11,6 +11,7 @@ use App\Models\Player;
 use App\Models\Team;
 use App\Models\TeamMatch;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
@@ -57,4 +58,23 @@ class DashboardService
             'thisMonthTotalRevenues'
             );
     }
+
+    public function teamAgeDoughnutChart(){
+        $results = DB::table('teams')
+            ->select('ageGroup', DB::raw('COUNT(ageGroup) AS total'))
+            ->where('teamSide', '=', 'Academy Team')
+            ->groupBy('ageGroup')
+            ->get();
+
+        $label = [];
+        $data = [];
+        foreach ($results as $result){
+            $label[] = $result->ageGroup;
+            $data[] = $result->total;
+        }
+
+        return compact('label', 'data');
+    }
+
+
 }
