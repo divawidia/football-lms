@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Team;
 use App\Models\User;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -16,6 +17,10 @@ class Service
         $today   = new DateTime('today');
         $age = $dob->diff($today)->y;
         return $age;
+    }
+
+    public function getNowDate(){
+        return Carbon::now();
     }
 
     public function deleteImage($image): void

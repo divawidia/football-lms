@@ -114,7 +114,7 @@ class InvoiceService extends Service
                 return $this->convertToDatetime($item->created_at);
             })
             ->editColumn('updatedAt', function ($item) {
-                return $this->convertToDatetime($item->updatedAt);
+                return $this->convertToDatetime($item->updated_at);
             })
             ->editColumn('status', function ($item) {
                 $badge = '';
@@ -214,7 +214,7 @@ class InvoiceService extends Service
 
     public function storeSubscription($userId, $ammount, $productId, $taxId){
         $data = [];
-        $data['startDate'] = Carbon::now();
+        $data['startDate'] = $this->getNowDate();
         $data['ammountDue'] = $ammount;
         $data['status'] = 'scheduled';
         $data['userId'] = $userId;
@@ -225,16 +225,16 @@ class InvoiceService extends Service
 
         if ($product->subscriptionCycle == 'monthly'){
             $data['cycle'] =  'monthly';
-            $data['nextDueDate'] = Carbon::now()->addMonthsNoOverflow(1);
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(1);
         } elseif ($product->subscriptionCycle == 'quarterly'){
             $data['cycle'] =  'quarterly';
-            $data['nextDueDate'] = Carbon::now()->addMonthsNoOverflow(3);
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(3);
         } elseif ($product->subscriptionCycle == 'semianually'){
             $data['cycle'] =  'semianually';
-            $data['nextDueDate'] = Carbon::now()->addMonthsNoOverflow(6);
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(6);
         } elseif ($product->subscriptionCycle == 'anually'){
             $data['cycle'] =  'anually';
-            $data['nextDueDate'] = Carbon::now()->addMonthsNoOverflow(12);
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(12);
         }
 
         return Subscription::create($data);

@@ -104,7 +104,7 @@ class SubscriptionService extends Service
                 return $this->convertToDatetime($item->created_at);
             })
             ->editColumn('updatedAt', function ($item) {
-                return $this->convertToDatetime($item->updatedAt);
+                return $this->convertToDatetime($item->updated_at);
             })
             ->editColumn('status', function ($item) {
                 $badge = '';
@@ -190,9 +190,14 @@ class SubscriptionService extends Service
         return compact('subscription', 'createdAt', 'nextDueDate', 'updatedAt', 'startDate');
     }
 
-    public function scheduled(Subscription $subscription)
+    public function scheduled(Subscription $subscription, $creatorUserId, $academyId)
     {
-        return $subscription->update(['status' => 'scheduled']);
+        $subscription->update(['status' => 'scheduled']);
+
+        //create new invoice if the time where the subscription is set to scheduled is after the next due date
+        if ($this->getNowDate() > $subscription->nextDueDate){
+            $this->createNewInvoice($subscription, $creatorUserId, $academyId);
+        }
     }
 
     public function unsubscribed(Subscription $subscription)
@@ -224,6 +229,25 @@ class SubscriptionService extends Service
                 'ammount' => $data['subtotal']
             ]);
             $invoice->subscriptions()->attach($subscription->id);
+
+            $product = $this->product->findProductById($subscription->productId);
+
+            if ($product->subscriptionCycle == 'monthly'){
+                $data['cycle'] =  'monthly';
+                $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(1);
+            } elseif ($product->subscriptionCycle == 'quarterly'){
+                $data['cycle'] =  'quarterly';
+                $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(3);
+            } elseif ($product->subscriptionCycle == 'semianually'){
+                $data['cycle'] =  'semianually';
+                $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(6);
+            } elseif ($product->subscriptionCycle == 'anually'){
+                $data['cycle'] =  'anually';
+                $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(12);
+            }
+
+            $subscription['nextDueDate'] = $data['nextDueDate'];
+            $subscription->save();
 
             $this->invoiceService->midtransPayment($data, $invoice);
 
