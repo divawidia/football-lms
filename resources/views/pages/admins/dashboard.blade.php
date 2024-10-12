@@ -31,16 +31,14 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3"></div>
+                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalPlayers'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Total Players</div>
                                 <p class="card-subtitle text-50">
-                                    65
-                                    {{--                                    @if($overviewStats['thisMonthLosses'] >= 0)--}}
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    {{--                                    @else--}}
-                                    {{--                                        <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>--}}
-                                    {{--                                    @endif--}}
+                                    {{ $dataOverview['thisMonthTotalPlayers'] }}
+                                    @if($dataOverview['thisMonthTotalPlayers'] > 0)
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    @endif
                                     From Last Month
                                 </p>
                             </div>
@@ -53,16 +51,14 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3"></div>
+                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalCoaches'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Total Coaches</div>
                                 <p class="card-subtitle text-50">
-                                    65
-                                    {{--                                    @if($overviewStats['thisMonthLosses'] >= 0)--}}
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    {{--                                    @else--}}
-                                    {{--                                        <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>--}}
-                                    {{--                                    @endif--}}
+                                    {{ $dataOverview['thisMonthTotalCoaches'] }}
+                                    @if($dataOverview['thisMonthTotalCoaches'] > 0)
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    @endif
                                     From Last Month
                                 </p>
                             </div>
@@ -76,16 +72,14 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3"> </div>
+                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalTeams'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Total Teams</div>
                                 <p class="card-subtitle text-50">
-                                    65
-{{--                                    @if($overviewStats['thisMonthLosses'] >= 0)--}}
+                                    {{ $dataOverview['thisMonthTotalTeams'] }}
+                                    @if($dataOverview['thisMonthTotalTeams'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-{{--                                    @else--}}
-{{--                                        <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>--}}
-{{--                                    @endif--}}
+                                    @endif
                                     From Last Month
                                 </p>
                             </div>
@@ -100,16 +94,14 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3"></div>
+                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalAdmins'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Total Admins</div>
                                 <p class="card-subtitle text-50">
-                                    65
-                                    {{--                                    @if($overviewStats['thisMonthLosses'] >= 0)--}}
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    {{--                                    @else--}}
-                                    {{--                                        <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>--}}
-                                    {{--                                    @endif--}}
+                                    {{ $dataOverview['thisMonthTotalAdmins'] }}
+                                    @if($dataOverview['thisMonthTotalAdmins'] > 0)
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    @endif
                                     From Last Month
                                 </p>
                             </div>
@@ -122,16 +114,14 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3"></div>
+                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalCompetitions'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Competitions Joined</div>
                                 <p class="card-subtitle text-50">
-                                    65
-                                    {{--                                    @if($overviewStats['thisMonthLosses'] >= 0)--}}
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    {{--                                    @else--}}
-                                    {{--                                        <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>--}}
-                                    {{--                                    @endif--}}
+                                    {{ $dataOverview['thisMonthTotalCompetitions'] }}
+                                    @if($dataOverview['thisMonthTotalCompetitions'] > 0)
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    @endif
                                     From Last Month
                                 </p>
                             </div>
@@ -144,18 +134,9 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3"> </div>
+                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalUpcomingMatches'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Match Schedule</div>
-                                <p class="card-subtitle text-50">
-                                    65
-                                    {{--                                    @if($overviewStats['thisMonthLosses'] >= 0)--}}
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    {{--                                    @else--}}
-                                    {{--                                        <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>--}}
-                                    {{--                                    @endif--}}
-                                    From Last Month
-                                </p>
                             </div>
                         </div>
                         <i class='fa fa-calendar-day icon-24pt text-danger'></i>
@@ -168,18 +149,9 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3"></div>
+                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalUpcomingTrainings'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Training Schedules</div>
-                                <p class="card-subtitle text-50">
-                                    65
-                                    {{--                                    @if($overviewStats['thisMonthLosses'] >= 0)--}}
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    {{--                                    @else--}}
-                                    {{--                                        <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>--}}
-                                    {{--                                    @endif--}}
-                                    From Last Month
-                                </p>
                             </div>
                         </div>
                         <i class='fa fa-calendar-day icon-24pt text-danger'></i>
@@ -190,16 +162,14 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3"></div>
+                            <div class="h3 mb-0 mr-3">Rp. {{ $dataOverview['totalRevenues'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Total Revenue</div>
                                 <p class="card-subtitle text-50">
-                                    65
-                                    {{--                                    @if($overviewStats['thisMonthLosses'] >= 0)--}}
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    {{--                                    @else--}}
-                                    {{--                                        <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>--}}
-                                    {{--                                    @endif--}}
+                                    {{ $dataOverview['thisMonthTotalRevenues'] }}
+                                    @if($dataOverview['thisMonthTotalRevenues'] > 0)
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    @endif
                                     From Last Month
                                 </p>
                             </div>
@@ -212,16 +182,14 @@
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3"> </div>
+                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalTeams'] }}</div>
                             <div class="flex">
                                 <div class="card-title">Revenue Growth</div>
                                 <p class="card-subtitle text-50">
-                                    65
-                                    {{--                                    @if($overviewStats['thisMonthLosses'] >= 0)--}}
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    {{--                                    @else--}}
-                                    {{--                                        <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>--}}
-                                    {{--                                    @endif--}}
+                                    {{ $dataOverview['totalTeams'] }}
+                                    @if($dataOverview['thisMonthTotalPlayers'] > 0)
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    @endif
                                     From Last Month
                                 </p>
                             </div>
@@ -236,7 +204,7 @@
             <div class="col-md-7 card-group-row__col">
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex flex-row align-items-center flex-0">
-                        <div class="h2 mb-0 mr-3">Rp. 1.200.000</div>
+                        <div class="h2 mb-0 mr-3">Rp. {{ $dataOverview['totalRevenues'] }}</div>
                         <div class="flex">
                             <div class="card-title">Total Revenue</div>
                             <div class="card-subtitle text-50 d-flex align-items-center">2.6% <i class="material-icons text-accent icon-16pt ml-4pt">keyboard_arrow_up</i></div>
