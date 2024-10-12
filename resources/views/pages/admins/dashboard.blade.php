@@ -227,51 +227,37 @@
                             <small class="d-flex align-items-start text-muted mb-2">
                                 <span class="flex d-flex flex-column">
                                     <span class="text-body"><strong>Paid</strong></span>
-                                    5 Invoices
+                                    {{ $dataOverview['totalPaidInvoices'] }} Invoices
                                 </span>
-                                <span class="mx-3">Rp. 1.200.000</span>
+                                <span class="mx-3">Rp. {{ $dataOverview['sumPaidInvoices'] }}</span>
                             </small>
                             <small class="d-flex align-items-start text-muted mb-2">
                                 <span class="flex d-flex flex-column">
                                     <span class="text-body"><strong>Past Due</strong></span>
-                                    5 Invoices
+                                    {{ $dataOverview['totalPastDueInvoices'] }} Invoices
                                 </span>
-                                <span class="mx-3">Rp. 1.200.000</span>
+                                <span class="mx-3">Rp. {{ $dataOverview['sumPastDueInvoices'] }}</span>
                             </small>
                         </div>
                         <div class="col-6">
                             <small class="d-flex align-items-start text-muted mb-2">
                                 <span class="flex d-flex flex-column">
                                     <span class="text-body"><strong>Open</strong></span>
-                                    5 Invoices
+                                    {{ $dataOverview['totalOpenInvoices'] }} Invoices
                                 </span>
-                                <span class="mx-3">Rp. 1.200.000</span>
+                                <span class="mx-3">Rp. {{ $dataOverview['sumOpenInvoices'] }}</span>
                             </small>
                             <small class="d-flex align-items-start text-muted mb-2">
                                 <span class="flex d-flex flex-column">
                                     <span class="text-body"><strong>Uncollectible</strong></span>
-                                    5 Invoices
+                                    {{ $dataOverview['totalUncollectInvoices'] }} Invoices
                                 </span>
-                                <span class="mx-3">Rp. 1.200.000</span>
+                                <span class="mx-3">Rp. {{ $dataOverview['sumUncollectInvoices'] }}</span>
                             </small>
                         </div>
                     </div>
                     <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
-                        <div class="chart w-100"
-                             style="height: 150px;">
-                            <canvas class="chart-canvas js-update-chart-line js-update-chart-area"
-                                    id="totalSalesChart"
-                                    data-chart-legend="#totalSalesChartLegend"
-                                    data-chart-line-background-color="gradient:primary"
-                                    data-chart-line-background-opacity="0.24"
-                                    data-chart-line-border-color="primary"
-                                    data-chart-prefix="$"
-                                    data-chart-dark-mode="false">
-                                <span style="font-size: 1rem;"><strong>Total Sales</strong> chart goes here.</span>
-                            </canvas>
-                        </div>
-                        <div id="totalSalesChartLegend"
-                             class="chart-legend chart-legend--horizontal mt-16pt"></div>
+                        <canvas id="revenueChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -293,19 +279,7 @@
                         </div>
                     </div>
                     <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
-                        <div class="chart w-100"
-                             style="height: 200px;">
-                            <canvas class="chart-canvas js-update-chart-bar"
-                                    id="totalVisitorsChart"
-                                    data-chart-legend="#totalVisitorsChartLegend"
-                                    data-chart-line-background-color="gradient:primary"
-                                    data-chart-suffix="k"
-                                    data-chart-dark-mode="false">
-                                <span style="font-size: 1rem;"><strong>Total Visitors</strong> chart goes here.</span>
-                            </canvas>
-                        </div>
-                        <div id="totalVisitorsChartLegend"
-                             class="chart-legend chart-legend--horizontal mt-16pt"></div>
+                        <canvas id="teamAgeChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -622,6 +596,39 @@
                     },
                 ],
                 order: [[4, 'desc']]
+            });
+
+            const revenueChart = document.getElementById('revenueChart');
+            const teamAgeChart = document.getElementById('teamAgeChart');
+
+            new Chart(revenueChart, {
+                type: 'line',
+                data: {
+                    labels: @json($revenueChart['label']),
+                    datasets: [{
+                        label: 'Revenue',
+                        data: @json($revenueChart['data']),
+                        borderColor: '#20F4CB',
+                        tension: 0.4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                },
+            });
+            new Chart(teamAgeChart, {
+                type: 'doughnut',
+                data: {
+                    labels: @json($teamAgeChart['label']),
+                    datasets: [{
+                        label: '# of Player',
+                        data: @json($teamAgeChart['data']),
+                        backgroundColor: ['#20F4CB', '#E52534', '#F9B300', '#00122A']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                },
             });
         });
     </script>

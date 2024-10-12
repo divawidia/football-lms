@@ -16,8 +16,12 @@ class DashboardController extends Controller
     public function index()
     {
         $dataOverview = $this->dashboardService->overviewStats();
+        $revenueChart = $this->dashboardService->revenueChart();
+        $teamAgeChart = $this->dashboardService->teamAgeChart();
         return view('pages.admins.dashboard', [
             'dataOverview' => $dataOverview,
+            'revenueChart' => $revenueChart,
+            'teamAgeChart' => $teamAgeChart
         ]);
     }
 }

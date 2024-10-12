@@ -27,14 +27,22 @@ class DashboardService
         $totalRevenues = Number::forHumans($totalRevenues, abbreviate: true);
 
         $totalPaidInvoices = Invoice::where('status', 'Paid')->count();
+        $totalPaidInvoices = Number::format($totalPaidInvoices, locale: 'id');
         $totalOpenInvoices = Invoice::where('status', 'Open')->count();
+        $totalOpenInvoices = Number::format($totalOpenInvoices, locale: 'id');
         $totalPastDueInvoices = Invoice::where('status', 'Past Due')->count();
+        $totalPastDueInvoices = Number::format($totalPastDueInvoices, locale: 'id');
         $totalUncollectInvoices = Invoice::where('status', 'Uncollectible')->count();
+        $totalUncollectInvoices = Number::format($totalUncollectInvoices, locale: 'id');
 
         $sumPaidInvoices = Invoice::where('status', 'Paid')->sum('ammountDue');
+        $sumPaidInvoices = Number::format($sumPaidInvoices, locale: 'id');
         $sumOpenInvoices = Invoice::where('status', 'Open')->sum('ammountDue');
+        $sumOpenInvoices = Number::format($sumOpenInvoices, locale: 'id');
         $sumPastDueInvoices = Invoice::where('status', 'Past Due')->sum('ammountDue');
+        $sumPastDueInvoices = Number::format($sumPastDueInvoices, locale: 'id');
         $sumUncollectInvoices = Invoice::where('status', 'Uncollectible')->sum('ammountDue');
+        $sumUncollectInvoices = Number::format($sumUncollectInvoices, locale: 'id');
 
 
         $thisMonthTotalPlayers = Player::whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])->count();
@@ -64,11 +72,15 @@ class DashboardService
             'totalOpenInvoices',
             'totalPaidInvoices',
             'totalPastDueInvoices',
-            'totalUncollectInvoices'
+            'totalUncollectInvoices',
+            'sumOpenInvoices',
+            'sumPaidInvoices',
+            'sumPastDueInvoices',
+            'sumUncollectInvoices'
             );
     }
 
-    public function teamAgeDoughnutChart(){
+    public function teamAgeChart(){
         $results = DB::table('teams')
             ->select('ageGroup', DB::raw('COUNT(ageGroup) AS total'))
             ->where('teamSide', '=', 'Academy Team')
@@ -87,9 +99,9 @@ class DashboardService
 
     public function revenueChart(){
         $results = DB::table('invoices')
-            ->select(DB::raw('MONTHNAME(created_at) as month'), DB::raw('SUM(ammountDue) AS total_ammount'))
+            ->select(DB::raw('MONTHNAME(created_at) as month_revenue'), DB::raw('SUM(ammountDue) AS total_ammount'))
             ->where('status', '=', 'Paid')
-            ->groupBy(DB::raw('MONTHNAME(created_at) as month'))
+            ->groupBy(DB::raw('month_revenue'))
             ->get();
 
         $label = [];
