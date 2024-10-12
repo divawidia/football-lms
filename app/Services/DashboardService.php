@@ -124,5 +124,15 @@ class DashboardService
 
     }
 
+    public function upcomingTrainings(){
+        return EventSchedule::with('teams')
+            ->where('status', '1')
+            ->where('eventType', 'Training')
+            ->orderBy('date')
+            ->take(4)
+            ->get();
+
+    }
+
 
 }
