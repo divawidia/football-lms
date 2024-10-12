@@ -17,7 +17,7 @@ class DashboardController extends Controller
     {
         $dataOverview = $this->dashboardService->overviewStats();
         $revenueChart = $this->dashboardService->revenueChart();
-        $teamAgeChart = $this->dashboardService->teamAgeChart();
+        $teamAgeChart = $this->dashboardService->playerAgeChart();
         $upcomingMatches = $this->dashboardService->upcomingMatches();
         $upcomingTrainings = $this->dashboardService->upcomingTrainings();
 

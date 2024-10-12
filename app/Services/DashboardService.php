@@ -80,9 +80,10 @@ class DashboardService
             );
     }
 
-    public function teamAgeChart(){
+    public function playerAgeChart(){
         $results = DB::table('teams')
-            ->select('ageGroup', DB::raw('COUNT(ageGroup) AS total'))
+            ->join('player_teams as pt', 'teams.id', '=', 'pt.teamId')
+            ->select('ageGroup', DB::raw('COUNT(playerId) AS total_player'))
             ->where('teamSide', '=', 'Academy Team')
             ->groupBy('ageGroup')
             ->get();
@@ -91,7 +92,7 @@ class DashboardService
         $data = [];
         foreach ($results as $result){
             $label[] = $result->ageGroup;
-            $data[] = $result->total;
+            $data[] = $result->total_player;
         }
 
         return compact('label', 'data');
