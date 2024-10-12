@@ -114,5 +114,15 @@ class DashboardService
         return compact('label', 'data');
     }
 
+    public function upcomingMatches(){
+        return EventSchedule::with('teams')
+            ->where('status', '1')
+            ->where('eventType', 'Match')
+            ->orderBy('date')
+            ->take(5)
+            ->get();
+
+    }
+
 
 }

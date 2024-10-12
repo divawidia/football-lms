@@ -18,10 +18,13 @@ class DashboardController extends Controller
         $dataOverview = $this->dashboardService->overviewStats();
         $revenueChart = $this->dashboardService->revenueChart();
         $teamAgeChart = $this->dashboardService->teamAgeChart();
+        $upcomingMatches = $this->dashboardService->upcomingMatches();
+
         return view('pages.admins.dashboard', [
             'dataOverview' => $dataOverview,
             'revenueChart' => $revenueChart,
-            'teamAgeChart' => $teamAgeChart
+            'teamAgeChart' => $teamAgeChart,
+            'upcomingMatches' => $upcomingMatches
         ]);
     }
 }
