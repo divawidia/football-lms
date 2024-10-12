@@ -287,14 +287,14 @@
 
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
-                <a href="" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
+                <a href="{{ route('match-schedules.index') }}" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
                 View More
                     <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
         </div>
 
         @foreach($upcomingMatches as $match)
-            <a class="card" href="">
+            <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-4 d-flex flex-column flex-md-row align-items-center">
@@ -344,7 +344,7 @@
 
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Training</div>
-            <a href="" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
+            <a href="{{ route('training-schedules.index') }}" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
