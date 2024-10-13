@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coach;
 use DateTime;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -18,5 +19,9 @@ class Controller extends BaseController
 
     public function getLoggedUserId(){
         return Auth::user()->id;
+    }
+
+    public function getLoggedCoachUser(){
+        return Coach::where('userId', $this->getLoggedUserId())->select('id')->first();
     }
 }

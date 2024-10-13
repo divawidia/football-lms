@@ -6,10 +6,10 @@ use App\Models\Team;
 
 class CoachService
 {
-    public function managedTeams($coachId){
+    public function managedTeams($coach){
         return Team::with('coaches')
-            ->whereHas('coaches', function($q) use ($coachId) {
-                $q->where('coachId', $coachId->id);
+            ->whereHas('coaches', function($q) use ($coach) {
+                $q->where('coachId', $coach->id);
             })->get();
     }
 }

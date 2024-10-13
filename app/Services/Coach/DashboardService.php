@@ -17,13 +17,13 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardService extends CoachService
 {
-//    private $coachId;
-//    public function __construct($coachId){
-//        $this->coachId = $coachId;
-//    }
+    private $coach;
+    public function __construct($coach){
+        $this->coach = $coach;
+    }
 
-    public function overviewStats($coachId){
-        $teamsManaged = $this->managedTeams($coachId);
+    public function overviewStats(){
+        $teamsManaged = $this->managedTeams($this->coach);
 
         $totalMatchPlayed = 0;
         $totalGoals = 0;
@@ -103,11 +103,11 @@ class DashboardService extends CoachService
             );
     }
 
-    public function latestMatch($coachId){
+    public function latestMatch(){
 
         return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) use ($coachId) {
-                foreach ($this->managedTeams($coachId) as $team){
+            ->whereHas('teams', function($q) {
+                foreach ($this->managedTeams($this->coach) as $team){
                     $q->orWhere('teamId', $team->id);
                 }
             })
@@ -118,11 +118,11 @@ class DashboardService extends CoachService
             ->get();
     }
 
-    public function upcomingMatch($coachId){
+    public function upcomingMatch(){
 
         return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) use ($coachId) {
-                foreach ($this->managedTeams($coachId) as $team){
+            ->whereHas('teams', function($q) {
+                foreach ($this->managedTeams($this->coach) as $team){
                     $q->orWhere('teamId', $team->id);
                 }
             })
@@ -133,11 +133,11 @@ class DashboardService extends CoachService
             ->get();
     }
 
-    public function upcomingTraining($coachId){
+    public function upcomingTraining(){
 
         return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) use ($coachId) {
-                foreach ($this->managedTeams($coachId) as $team){
+            ->whereHas('teams', function($q) {
+                foreach ($this->managedTeams($this->coach) as $team){
                     $q->orWhere('teamId', $team->id);
                 }
             })
