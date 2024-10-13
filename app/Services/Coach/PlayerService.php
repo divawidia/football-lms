@@ -32,40 +32,12 @@ class PlayerService extends CoachService
 
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                if ($item->user->status == '1'){
-                    $statusButton = '<form action="' . route('deactivate-player', $item->userId) . '" method="POST">
-                                            '.method_field("PATCH").'
-                                            '.csrf_field().'
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons text-danger">block</span> Deactivate Player
-                                            </button>
-                                        </form>';
-                }else{
-                    $statusButton = '<form action="' . route('activate-player', $item->userId) . '" method="POST">
-                                            '.method_field("PATCH").'
-                                            '.csrf_field().'
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons text-success">check_circle</span> Activate Player
-                                            </button>
-                                        </form>';
-                }
                 return '
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('player-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Player</a>
-                            <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Player</a>
-                            '. $statusButton .'
-                            <a class="dropdown-item" href="' . route('player-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Player Password</a>
-                            <button type="button" class="dropdown-item delete-user" id="' . $item->userId . '">
-                                <span class="material-icons">delete</span> Delete Player
-                            </button>
-                          </div>
-                        </div>';
+                      <a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->userId) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                        <span class="material-icons">
+                            visibility
+                        </span>
+                      </a>';
             })
             ->editColumn('teams.name', function ($item) {
                 $playerTeam = '';
@@ -88,7 +60,9 @@ class PlayerService extends CoachService
                             <div class="media-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                                        <a href="' . route('player-managements.show', $item->userId) . '">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                                        </a>
                                         <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
                                     </div>
                                 </div>
