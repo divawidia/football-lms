@@ -41,4 +41,10 @@ class PlayerController extends Controller
         }
         return view('pages.coaches.managements.players.index');
     }
+
+    public function show(User $user){
+        return view('pages.coaches.managements.players.detail', [
+            'data' => $user
+        ]);
+    }
 }
