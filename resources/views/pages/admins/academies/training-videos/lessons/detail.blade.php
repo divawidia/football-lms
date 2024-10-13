@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     {{ $data->lessonTitle }} Lesson
 @endsection
@@ -16,9 +16,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('training-videos.show', $data->trainingVideoId) }}" class="nav-link text-70"><i
-                                class="material-icons icon--left">keyboard_backspace</i> Back
-                        to {{ $data->trainingVideo->trainingTitle }}</a>
+                    <a href="{{ route('training-videos.show', $data->trainingVideoId) }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to {{ $data->trainingVideo->trainingTitle }}</a>
                 </li>
             </ul>
         </div>
@@ -28,10 +26,7 @@
             <div class="js-player bg-primary embed-responsive embed-responsive-16by9 my-4">
                 <div class="player embed-responsive-item">
                     <div class="player__content">
-                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $data->videoId }}"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $data->videoId }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
@@ -48,8 +43,7 @@
                     Edit Lesson
                 </button>
                 @if($data->status == "1")
-                    <form action="{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->trainingVideoId, 'lesson'=>$data->id]) }}"
-                          method="POST">
+                    <form action="{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->trainingVideoId, 'lesson'=>$data->id]) }}" method="POST">
                         @method("PATCH")
                         @csrf
                         <button type="submit" class="btn btn-sm btn-white mx-2">
@@ -58,8 +52,7 @@
                         </button>
                     </form>
                 @else
-                    <form action="{{ route('training-videos.lessons-publish', ['trainingVideo'=>$data->trainingVideoId, 'lesson'=>$data->id]) }}"
-                          method="POST">
+                    <form action="{{ route('training-videos.lessons-publish', ['trainingVideo'=>$data->trainingVideoId, 'lesson'=>$data->id]) }}" method="POST">
                         @method("PATCH")
                         @csrf
                         <button type="submit" class="btn btn-sm btn-white mx-2">
@@ -105,7 +98,7 @@
     <div class="container page__container page-section">
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
-            {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
+{{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
         </div>
 
         <div class="row mb-3">
@@ -150,10 +143,10 @@
         {{--    Assigned Player    --}}
         <div class="page-separator">
             <div class="page-separator__text">Assigned Player(s)</div>
-            {{--            <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}" class="btn btn-primary btn-sm ml-auto">--}}
-            {{--                <span class="material-icons mr-2">add</span>--}}
-            {{--                Add Player--}}
-            {{--            </a>--}}
+{{--            <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}" class="btn btn-primary btn-sm ml-auto">--}}
+{{--                <span class="material-icons mr-2">add</span>--}}
+{{--                Add Player--}}
+{{--            </a>--}}
         </div>
         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
             <div class="card-body">
@@ -291,7 +284,6 @@
                     }
                 });
             }
-
             // show edit form modal when edit lesson button clicked
             body.on('click', '.editLesson', function (e) {
                 e.preventDefault();

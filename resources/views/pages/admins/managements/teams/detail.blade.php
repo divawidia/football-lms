@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     {{ $team->teamName  }} Profile
 @endsection
@@ -11,15 +11,13 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('team-managements.index') }}" class="nav-link text-70"><i
-                            class="material-icons icon--left">keyboard_backspace</i> Back to Team Lists</a>
+                    <a href="{{ route('team-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Team Lists</a>
                 </li>
             </ul>
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div
-            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($team->logo) }}"
                  width="104"
                  height="104"
@@ -30,16 +28,14 @@
                 <p class="lead text-white-50 d-flex align-items-center">{{ $team->ageGroup }}</p>
             </div>
             <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Action
                     <span class="material-icons ml-3">
                         keyboard_arrow_down
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('team-managements.edit', $team->id) }}"><span
-                            class="material-icons">edit</span> Edit Team Profile</a>
+                    <a class="dropdown-item" href="{{ route('team-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
                     @if($team->status == '1')
                         <form action="{{ route('deactivate-team', $team->id) }}" method="POST">
                             @method("PATCH")
@@ -251,13 +247,11 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
-                            <div
-                                class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->created_at)) }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->created_at)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
-                            <div
-                                class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->updated_at)) }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->updated_at)) }}</div>
                         </div>
                     </div>
                 </div>
@@ -352,7 +346,7 @@
 @endsection
 @push('addon-script')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             const playersTable = $('#playersTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -361,13 +355,13 @@
                     url: '{!! route('team-managements.teamPlayers', $team->id) !!}',
                 },
                 columns: [
-                    {data: 'name', name: 'name'},
-                    {data: 'strongFoot', name: 'strongFoot'},
-                    {data: 'age', name: 'age'},
-                    {data: 'appearance', name: 'appearance'},
-                    {data: 'goals', name: 'goals'},
-                    {data: 'assists', name: 'assists'},
-                    {data: 'cleanSheets', name: 'cleanSheets'},
+                    { data: 'name', name: 'name' },
+                    { data: 'strongFoot', name: 'strongFoot' },
+                    { data: 'age', name: 'age'},
+                    { data: 'appearance', name: 'appearance' },
+                    { data: 'goals', name: 'goals' },
+                    { data: 'assists', name: 'assists' },
+                    { data: 'cleanSheets', name: 'cleanSheets' },
                     {
                         data: 'action',
                         name: 'action',
@@ -385,10 +379,10 @@
                     url: '{!! route('team-managements.teamCoaches', $team->id) !!}',
                 },
                 columns: [
-                    {data: 'name', name: 'name'},
-                    {data: 'age', name: 'age'},
-                    {data: 'gender', name: 'gender'},
-                    {data: 'joinedDate', name: 'joinedDate'},
+                    { data: 'name', name: 'name' },
+                    { data: 'age', name: 'age' },
+                    { data: 'gender', name: 'gender' },
+                    { data: 'joinedDate', name: 'joinedDate'},
                     {
                         data: 'action',
                         name: 'action',
@@ -399,7 +393,7 @@
                 ]
             });
 
-            $('.delete-team').on('click', function () {
+            $('.delete-team').on('click', function() {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -418,7 +412,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function (response) {
+                            success: function(response) {
                                 Swal.fire({
                                     title: 'Team successfully deleted!',
                                     icon: 'success',
@@ -432,7 +426,7 @@
                                     }
                                 });
                             },
-                            error: function (error) {
+                            error: function(error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -444,7 +438,7 @@
                 });
             });
 
-            $('body').on('click', '.remove-player', function () {
+            $('body').on('click', '.remove-player', function() {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -463,14 +457,14 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function (response) {
+                            success: function(response) {
                                 Swal.fire({
                                     icon: "success",
                                     title: "Player successfully removed!",
                                 });
                                 playersTable.ajax.reload();
                             },
-                            error: function (error) {
+                            error: function(error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -482,7 +476,7 @@
                 });
             });
 
-            $('body').on('click', '.remove-coach', function () {
+            $('body').on('click', '.remove-coach', function() {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -501,14 +495,14 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function (response) {
+                            success: function(response) {
                                 Swal.fire({
                                     icon: "success",
                                     title: "Coach successfully removed!",
                                 });
                                 coachesTable.ajax.reload();
                             },
-                            error: function (error) {
+                            error: function(error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",

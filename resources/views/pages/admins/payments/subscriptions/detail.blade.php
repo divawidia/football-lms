@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     Subscription {{ $data['subscription']->product->productName }} of {{ $data['subscription']->user->firstName }} {{ $data['subscription']->user->lastName }}
 @endsection
@@ -11,8 +11,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('invoices.index') }}" class="nav-link text-70"><i
-                                class="material-icons icon--left">keyboard_backspace</i> Back to Subscription lists</a>
+                    <a href="{{ route('invoices.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Subscription lists</a>
                 </li>
             </ul>
         </div>
@@ -29,12 +28,10 @@
                  alt="instructor">
             <div class="flex mb-3 mb-md-0 ml-md-4">
                 <h2 class="text-white mb-0">{{ $data['subscription']->user->firstName }} {{ $data['subscription']->user->lastName }}</h2>
-                <p class="lead text-white-50 d-flex align-items-center">Player
-                    - {{ $data['subscription']->user->roles[0]->name }}</p>
+                <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data['subscription']->user->roles[0]->name }}</p>
             </div>
             <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Action
                     <span class="material-icons ml-3">
                         keyboard_arrow_down
@@ -133,8 +130,7 @@
     </div>
 @endsection
 @push('addon-script')
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
-            data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
     <script>
         $(document).ready(function () {
             $('#invoicesTable').DataTable({

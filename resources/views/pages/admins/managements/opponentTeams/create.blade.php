@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     Create Opponent Team
 @endsection
@@ -16,8 +16,7 @@
                     </h2>
                     <ol class="breadcrumb p-0 m-0">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('team-managements.index') }}">Teams Management</a>
-                        </li>
+                        <li class="breadcrumb-item"><a href="{{ route('team-managements.index') }}">Teams Management</a></li>
                         <li class="breadcrumb-item active">
                             @yield('title')
                         </li>
@@ -46,7 +45,7 @@
                                          width="54"
                                          height="54"
                                          id="preview"
-                                         class="mr-16pt rounded-circle img-object-fit-cover"/>
+                                         class="mr-16pt rounded-circle img-object-fit-cover" />
                                     <div class="media-body">
                                         <div class="custom-file">
                                             <input type="file"
@@ -83,8 +82,7 @@
                                 <div class="form-group">
                                     <label class="form-label" for="ageGroup">Age Group</label>
                                     <small class="text-danger">*</small>
-                                    <select class="form-control form-select @error('ageGroup') is-invalid @enderror"
-                                            id="ageGroup" name="ageGroup" required data-toggle="select">
+                                    <select class="form-control form-select @error('ageGroup') is-invalid @enderror" id="ageGroup" name="ageGroup" required data-toggle="select">
                                         <option disabled selected>Select player's age group</option>
                                         @foreach(['U-6', 'U-7', 'U-8', 'U-9', 'U-10', 'U-11', 'U-12', 'U-13', 'U-14', 'U-15', 'U-16', 'U-17', 'U-18', 'U-19', 'U-20', 'U-21'] AS $ageGroup)
                                             <option value="{{ $ageGroup }}" @selected(old('ageGroup') == $ageGroup)>{{ $ageGroup }}</option>
@@ -101,10 +99,8 @@
                     </div>
                 </div>
                 <div class="list-group-item d-flex justify-content-end">
-                    <a class="btn btn-secondary mx-2" href="{{ route('team-managements.index') }}"><span
-                                class="material-icons mr-2">close</span> Cancel</a>
-                    <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit
-                    </button>
+                    <a class="btn btn-secondary mx-2" href="{{ route('team-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                    <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                 </div>
             </form>
         </div>

@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     {{ $fullName  }} Profile
 @endsection
@@ -15,8 +15,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('player-managements.index') }}" class="nav-link text-70"><i
-                                class="material-icons icon--left">keyboard_backspace</i> Back to Player Lists</a>
+                    <a href="{{ route('player-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Player Lists</a>
                 </li>
             </ul>
         </div>
@@ -33,16 +32,14 @@
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $user->player->position->name }}</p>
             </div>
             <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Action
                     <span class="material-icons ml-3">
                         keyboard_arrow_down
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('player-managements.edit', $user->id) }}"><span
-                                class="material-icons">edit</span> Edit Player</a>
+                    <a class="dropdown-item" href="{{ route('player-managements.edit', $user->id) }}"><span class="material-icons">edit</span> Edit Player</a>
                     @if($user->status == '1')
                         <form action="{{ route('deactivate-player', $user->id) }}" method="POST">
                             @method("PATCH")
@@ -60,9 +57,7 @@
                             </button>
                         </form>
                     @endif
-                    <a class="dropdown-item"
-                       href="{{ route('player-managements.change-password-page', $user->id) }}"><span
-                                class="material-icons">lock</span> Change Player Password</a>
+                    <a class="dropdown-item" href="{{ route('player-managements.change-password-page', $user->id) }}"><span class="material-icons">lock</span> Change Player Password</a>
                     <button type="button" class="dropdown-item delete-user" id="{{$user->id}}">
                         <span class="material-icons">delete</span> Delete Player
                     </button>
@@ -341,7 +336,7 @@
 @endsection
 @push('addon-script')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             const parentsTable = $('#parentsTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -350,11 +345,11 @@
                     url: '{!! route('player-parents.index', $user->id) !!}',
                 },
                 columns: [
-                    {data: 'firstName', name: 'firstName'},
-                    {data: 'lastName', name: 'lastName'},
-                    {data: 'email', name: 'email'},
-                    {data: 'phoneNumber', name: 'phoneNumber'},
-                    {data: 'relations', name: 'relations'},
+                    { data: 'firstName', name: 'firstName' },
+                    { data: 'lastName', name: 'lastName' },
+                    { data: 'email', name: 'email'},
+                    { data: 'phoneNumber', name: 'phoneNumber' },
+                    { data: 'relations', name: 'relations' },
                     {
                         data: 'action',
                         name: 'action',
@@ -373,8 +368,8 @@
                     url: '{!! route('player-managements.playerTeams', $user->id) !!}',
                 },
                 columns: [
-                    {data: 'name', name: 'name'},
-                    {data: 'date', name: 'date'},
+                    { data: 'name', name: 'name' },
+                    { data: 'date', name: 'date' },
                     {
                         data: 'action',
                         name: 'action',
@@ -385,7 +380,7 @@
                 ]
             });
 
-            $('.delete-user').on('click', function () {
+            $('.delete-user').on('click', function() {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -404,7 +399,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function (response) {
+                            success: function(response) {
                                 Swal.fire({
                                     title: "Player's account successfully deleted!",
                                     icon: 'success',
@@ -418,7 +413,7 @@
                                     }
                                 });
                             },
-                            error: function (error) {
+                            error: function(error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -430,7 +425,7 @@
                 });
             });
 
-            $('body').on('click', '.delete-parent', function () {
+            $('body').on('click', '.delete-parent', function() {
                 let idParent = $(this).attr('id');
 
                 Swal.fire({
@@ -449,14 +444,14 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function (response) {
+                            success: function(response) {
                                 Swal.fire({
                                     icon: "success",
                                     title: "Player's parent/guardian successfully deleted!",
                                 });
                                 parentsTable.ajax.reload();
                             },
-                            error: function (error) {
+                            error: function(error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -468,7 +463,7 @@
                 });
             });
 
-            $('body').on('click', '.delete-team', function () {
+            $('body').on('click', '.delete-team', function() {
                 const idTeam = $(this).attr('id');
 
                 Swal.fire({
@@ -487,7 +482,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function (response) {
+                            success: function(response) {
                                 Swal.fire({
                                     title: "Team successfully removed from player!",
                                     icon: 'success',
@@ -501,7 +496,7 @@
                                     }
                                 });
                             },
-                            error: function (error) {
+                            error: function(error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -513,12 +508,12 @@
                 });
             });
 
-            $('#add-team').on('click', function (e) {
+            $('#add-team').on('click', function(e) {
                 e.preventDefault();
                 $('#addTeamModal').modal('show');
             });
 
-            $('#formAddTeam').on('submit', function (e) {
+            $('#formAddTeam').on('submit', function(e) {
                 e.preventDefault();
                 $.ajax({
                     url: "{{ route('player-managements.updateTeams', ['player' => $user->player->id]) }}",
@@ -526,7 +521,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function () {
+                    success: function() {
                         $('#addTeamModal').modal('hide');
                         Swal.fire({
                             title: "Team successfully added to player!",
@@ -541,9 +536,9 @@
                             }
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         const response = JSON.parse(xhr.responseText);
-                        $.each(response.errors, function (key, val) {
+                        $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("select#add_" + key).addClass('is-invalid');
                         });

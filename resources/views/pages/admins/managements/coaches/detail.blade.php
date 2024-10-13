@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     Coach {{ $fullName  }} Profile
 @endsection
@@ -15,15 +15,14 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('coach-managements.index') }}" class="nav-link text-70"><i
-                                class="material-icons icon--left">keyboard_backspace</i> Back to Coach Lists</a>
+                    <a href="{{ route('coach-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Coach Lists</a>
                 </li>
             </ul>
         </div>
     </nav>
     <div class="page-section bg-primary">
         <div
-                class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($user->foto) }}"
                  width="104"
                  height="104"
@@ -44,7 +43,7 @@
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('coach-managements.edit', $user->id) }}"><span
-                                class="material-icons">edit</span> Edit Coach Profile</a>
+                            class="material-icons">edit</span> Edit Coach Profile</a>
                     @if($user->status == '1')
                         <form action="{{ route('deactivate-coach', $user->id) }}" method="POST">
                             @method("PATCH")
@@ -64,7 +63,7 @@
                     @endif
                     <a class="dropdown-item"
                        href="{{ route('coach-managements.change-password-page', $user->id) }}"><span
-                                class="material-icons">lock</span> Change Coach's Account Password</a>
+                            class="material-icons">lock</span> Change Coach's Account Password</a>
                     <button type="button" class="dropdown-item delete-user" id="{{$user->id}}">
                         <span class="material-icons">delete</span> Delete Coach
                     </button>
@@ -292,22 +291,22 @@
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Hired Date :</p></div>
                             <div
-                                    class="ml-auto p-2 text-muted">{{ date('M d, Y', strtotime($user->coach->hireDate)) }}</div>
+                                class="ml-auto p-2 text-muted">{{ date('M d, Y', strtotime($user->coach->hireDate)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
                             <div
-                                    class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->created_at)) }}</div>
+                                class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->created_at)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
                             <div
-                                    class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->updated_at)) }}</div>
+                                class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->updated_at)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Seen :</p></div>
                             <div
-                                    class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->lastSeen)) }}</div>
+                                class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($user->lastSeen)) }}</div>
                         </div>
                     </div>
                 </div>

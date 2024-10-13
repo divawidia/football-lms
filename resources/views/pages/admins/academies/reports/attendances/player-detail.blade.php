@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     {{ $player->user->firstName  }} {{ $player->user->lastName  }} Event Attendance
 @endsection
@@ -11,8 +11,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('attendance-report.index') }}" class="nav-link text-70"><i
-                                class="material-icons icon--left">keyboard_backspace</i> Back to Attendance Report</a>
+                    <a href="{{ route('attendance-report.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Attendance Report</a>
                 </li>
             </ul>
         </div>
@@ -28,38 +27,38 @@
                 <h2 class="text-white mb-0">{{ $player->user->firstName  }} {{ $player->user->lastName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">{{ $player->position->name }}</p>
             </div>
-            {{--            <div class="dropdown">--}}
-            {{--                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--}}
-            {{--                    Action--}}
-            {{--                            <span class="material-icons ml-3">--}}
-            {{--                                keyboard_arrow_down--}}
-            {{--                            </span>--}}
-            {{--                </button>--}}
-            {{--                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">--}}
-            {{--                    <a class="dropdown-item" href="{{ route('player-managements.edit', $user->id) }}"><span class="material-icons">edit</span> Edit Player</a>--}}
-            {{--                    @if($user->status == '1')--}}
-            {{--                        <form action="{{ route('deactivate-player', $user->id) }}" method="POST">--}}
-            {{--                            @method("PATCH")--}}
-            {{--                            @csrf--}}
-            {{--                            <button type="submit" class="dropdown-item">--}}
-            {{--                                <span class="material-icons">block</span> Deactivate Player--}}
-            {{--                            </button>--}}
-            {{--                        </form>--}}
-            {{--                    @else--}}
-            {{--                        <form action="{{ route('activate-player', $user->id) }}" method="POST">--}}
-            {{--                            @method("PATCH")--}}
-            {{--                            @csrf--}}
-            {{--                            <button type="submit" class="dropdown-item">--}}
-            {{--                                <span class="material-icons">check_circle</span> Activate Player--}}
-            {{--                            </button>--}}
-            {{--                        </form>--}}
-            {{--                    @endif--}}
-            {{--                    <a class="dropdown-item" href="{{ route('player-managements.change-password-page', $user->id) }}"><span class="material-icons">lock</span> Change Player Password</a>--}}
-            {{--                    <button type="button" class="dropdown-item delete-user" id="{{$user->id}}">--}}
-            {{--                        <span class="material-icons">delete</span> Delete Player--}}
-            {{--                    </button>--}}
-            {{--                </div>--}}
-            {{--            </div>--}}
+{{--            <div class="dropdown">--}}
+{{--                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--}}
+{{--                    Action--}}
+{{--                            <span class="material-icons ml-3">--}}
+{{--                                keyboard_arrow_down--}}
+{{--                            </span>--}}
+{{--                </button>--}}
+{{--                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">--}}
+{{--                    <a class="dropdown-item" href="{{ route('player-managements.edit', $user->id) }}"><span class="material-icons">edit</span> Edit Player</a>--}}
+{{--                    @if($user->status == '1')--}}
+{{--                        <form action="{{ route('deactivate-player', $user->id) }}" method="POST">--}}
+{{--                            @method("PATCH")--}}
+{{--                            @csrf--}}
+{{--                            <button type="submit" class="dropdown-item">--}}
+{{--                                <span class="material-icons">block</span> Deactivate Player--}}
+{{--                            </button>--}}
+{{--                        </form>--}}
+{{--                    @else--}}
+{{--                        <form action="{{ route('activate-player', $user->id) }}" method="POST">--}}
+{{--                            @method("PATCH")--}}
+{{--                            @csrf--}}
+{{--                            <button type="submit" class="dropdown-item">--}}
+{{--                                <span class="material-icons">check_circle</span> Activate Player--}}
+{{--                            </button>--}}
+{{--                        </form>--}}
+{{--                    @endif--}}
+{{--                    <a class="dropdown-item" href="{{ route('player-managements.change-password-page', $user->id) }}"><span class="material-icons">lock</span> Change Player Password</a>--}}
+{{--                    <button type="button" class="dropdown-item delete-user" id="{{$user->id}}">--}}
+{{--                        <span class="material-icons">delete</span> Delete Player--}}
+{{--                    </button>--}}
+{{--                </div>--}}
+{{--            </div>--}}
         </div>
     </div>
 
@@ -148,17 +147,17 @@
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="trainingTable">
                         <thead>
-                        <tr>
-                            <th>Training/Practice</th>
-                            <th>Team</th>
-                            <th>training date</th>
-                            <th>Location</th>
-                            <th>Training Status</th>
-                            <th>Attendance Status</th>
-                            <th>Note</th>
-                            <th>Last Updated Attendance</th>
-                            <th>Action</th>
-                        </tr>
+                            <tr>
+                                <th>Training/Practice</th>
+                                <th>Team</th>
+                                <th>training date</th>
+                                <th>Location</th>
+                                <th>Training Status</th>
+                                <th>Attendance Status</th>
+                                <th>Note</th>
+                                <th>Last Updated Attendance</th>
+                                <th>Action</th>
+                            </tr>
                         </thead>
                         <tbody>
                         </tbody>
@@ -200,7 +199,7 @@
 @endsection
 @push('addon-script')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             const trainingTable = $('#trainingTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -209,14 +208,14 @@
                     url: '{!! route('attendance-report.trainingTable', $player->id) !!}',
                 },
                 columns: [
-                    {data: 'eventName', name: 'eventName'},
-                    {data: 'team', name: 'team'},
-                    {data: 'date', name: 'date'},
-                    {data: 'place', name: 'place'},
-                    {data: 'status', name: 'status'},
-                    {data: 'attendanceStatus', name: 'attendanceStatus'},
-                    {data: 'note', name: 'note'},
-                    {data: 'last_updated', name: 'last_updated'},
+                    { data: 'eventName', name: 'eventName' },
+                    { data: 'team', name: 'team' },
+                    { data: 'date', name: 'date' },
+                    { data: 'place', name: 'place'},
+                    { data: 'status', name: 'status' },
+                    { data: 'attendanceStatus', name: 'attendanceStatus' },
+                    { data: 'note', name: 'note' },
+                    { data: 'last_updated', name: 'last_updated' },
                     {
                         data: 'action',
                         name: 'action',
@@ -236,16 +235,16 @@
                     url: '{!! route('attendance-report.matchDatatable', $player->id) !!}',
                 },
                 columns: [
-                    {data: 'team', name: 'team'},
-                    {data: 'opponentTeam', name: 'opponentTeam'},
-                    {data: 'date', name: 'date'},
-                    {data: 'place', name: 'place'},
-                    {data: 'competition', name: 'competition'},
-                    {data: 'matchType', name: 'matchType'},
-                    {data: 'status', name: 'status'},
-                    {data: 'attendanceStatus', name: 'attendanceStatus'},
-                    {data: 'note', name: 'note'},
-                    {data: 'last_updated', name: 'last_updated'},
+                    { data: 'team', name: 'team' },
+                    { data: 'opponentTeam', name: 'opponentTeam' },
+                    { data: 'date', name: 'date' },
+                    { data: 'place', name: 'place'},
+                    { data: 'competition', name: 'competition'},
+                    { data: 'matchType', name: 'matchType'},
+                    { data: 'status', name: 'status' },
+                    { data: 'attendanceStatus', name: 'attendanceStatus' },
+                    { data: 'note', name: 'note' },
+                    { data: 'last_updated', name: 'last_updated' },
                     {
                         data: 'action',
                         name: 'action',

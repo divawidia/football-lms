@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     Create Team
 @endsection
@@ -16,8 +16,7 @@
                     </h2>
                     <ol class="breadcrumb p-0 m-0">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('team-managements.index') }}">Teams Management</a>
-                        </li>
+                        <li class="breadcrumb-item"><a href="{{ route('team-managements.index') }}">Teams Management</a></li>
                         <li class="breadcrumb-item active">
                             @yield('title')
                         </li>
@@ -32,10 +31,8 @@
             <form action="{{ route('team-managements.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="list-group-item d-flex justify-content-end">
-                    <a class="btn btn-secondary mx-2" href="{{ route('team-managements.index') }}"><span
-                                class="material-icons mr-2">close</span> Cancel</a>
-                    <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit
-                    </button>
+                    <a class="btn btn-secondary mx-2" href="{{ route('team-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                    <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                 </div>
                 <div class="list-group-item">
                     <div role="group" aria-labelledby="label-question" class="m-0 form-group">
@@ -52,7 +49,7 @@
                                          width="54"
                                          height="54"
                                          id="preview"
-                                         class="mr-16pt rounded-circle img-object-fit-cover"/>
+                                         class="mr-16pt rounded-circle img-object-fit-cover" />
                                     <div class="media-body">
                                         <div class="custom-file">
                                             <input type="file"
@@ -87,8 +84,7 @@
                                 <div class="form-group">
                                     <label class="form-label" for="ageGroup">Age Group</label>
                                     <small class="text-danger">*</small>
-                                    <select class="form-control form-select @error('ageGroup') is-invalid @enderror"
-                                            id="ageGroup" name="ageGroup" required data-toggle="select">
+                                    <select class="form-control form-select @error('ageGroup') is-invalid @enderror" id="ageGroup" name="ageGroup" required data-toggle="select">
                                         <option disabled selected>Select player's age group</option>
                                         @foreach(['U-6', 'U-7', 'U-8', 'U-9', 'U-10', 'U-11', 'U-12', 'U-13', 'U-14', 'U-15', 'U-16', 'U-17', 'U-18', 'U-19', 'U-20', 'U-21'] AS $ageGroup)
                                             <option value="{{ $ageGroup }}" @selected(old('ageGroup') == $ageGroup)>{{ $ageGroup }}</option>
@@ -112,8 +108,7 @@
                                                 <i class="material-icons mr-8pt">error_outline</i>
                                                 <div class="media-body"
                                                      style="min-width: 180px">
-                                                    <small class="text-black-100">Curently you haven't create any player
-                                                        in your academy, please create your team</small>
+                                                    <small class="text-black-100">Curently you haven't create any player in your academy, please create your team</small>
                                                 </div>
                                                 <div class="ml-8pt mt-2 mt-sm-0">
                                                     <a href="{{ route('team-managements.create') }}"
@@ -122,14 +117,11 @@
                                             </div>
                                         </div>
                                     @else
-                                        <select class="form-control form-select @error('players') is-invalid @enderror"
-                                                id="players" name="players[]" data-toggle="select" multiple>
+                                        <select class="form-control form-select @error('players') is-invalid @enderror" id="players" name="players[]" data-toggle="select" multiple>
                                             <option disabled>Select players to play in this team</option>
                                             @foreach($players as $player)
-                                                <option value="{{ $player->id }}"
-                                                        @selected(old('players') == $player->id) data-avatar-src="{{ Storage::url($player->user->foto) }}">
-                                                    {{ $player->user->firstName }} {{ $player->user->lastName }}
-                                                    - {{ $player->position->name }} -
+                                                <option value="{{ $player->id }}" @selected(old('players') == $player->id) data-avatar-src="{{ Storage::url($player->user->foto) }}">
+                                                    {{ $player->user->firstName }} {{ $player->user->lastName }} - {{ $player->position->name }} -
                                                     @if(count($player->teams) == 0)
                                                         No Team
                                                     @else
@@ -157,24 +149,20 @@
                                                 <i class="material-icons mr-8pt">error_outline</i>
                                                 <div class="media-body"
                                                      style="min-width: 180px">
-                                                    <small class="text-black-100">Curently you haven't create any coach
-                                                        in your academy, please create your team</small>
+                                                    <small class="text-black-100">Curently you haven't create any coach in your academy, please create your team</small>
                                                 </div>
-                                                {{--                                                <div class="ml-8pt mt-2 mt-sm-0">--}}
-                                                {{--                                                    <a href="{{ route('coach.managements.create') }}"--}}
-                                                {{--                                                       class="btn btn-link btn-sm">Create Now</a>--}}
-                                                {{--                                                </div>--}}
+{{--                                                <div class="ml-8pt mt-2 mt-sm-0">--}}
+{{--                                                    <a href="{{ route('coach.managements.create') }}"--}}
+{{--                                                       class="btn btn-link btn-sm">Create Now</a>--}}
+{{--                                                </div>--}}
                                             </div>
                                         </div>
                                     @else
-                                        <select class="form-control form-select @error('coaches') is-invalid @enderror"
-                                                id="coaches" name="coaches[]" data-toggle="select" multiple>
+                                        <select class="form-control form-select @error('coaches') is-invalid @enderror" id="coaches" name="coaches[]" data-toggle="select" multiple>
                                             <option disabled>Select coaches to manage this team</option>
                                             @foreach($coaches as $coach)
-                                                <option value="{{ $coach->id }}"
-                                                        @selected(old('players') == $coach->id) data-avatar-src="{{ Storage::url($coach->user->foto) }}">
-                                                    {{ $coach->user->firstName }} {{ $coach->user->lastName }}
-                                                    - {{ $coach->specializations->name }} -
+                                                <option value="{{ $coach->id }}" @selected(old('players') == $coach->id) data-avatar-src="{{ Storage::url($coach->user->foto) }}">
+                                                    {{ $coach->user->firstName }} {{ $coach->user->lastName }} - {{ $coach->specializations->name }} -
                                                     @if(count($coach->teams) == 0)
                                                         No Team
                                                     @else

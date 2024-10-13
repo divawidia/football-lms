@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     Training {{ $data['dataSchedule']->eventName  }}
 @endsection
@@ -8,8 +8,7 @@
 
 @section('modal')
     <!-- Modal edit player attendance -->
-    <div class="modal fade" id="editPlayerAttendanceModal" tabindex="-1"
-         aria-labelledby="editPlayerAttendanceModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editPlayerAttendanceModal" tabindex="-1" aria-labelledby="editPlayerAttendanceModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="post" id="formEditPlayerAttendanceModal">
@@ -26,8 +25,7 @@
                         <div class="form-group">
                             <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus"
-                                    required>
+                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
                                 <option value="null" disabled>Select player's attendance status</option>
                                 @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
                                     <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
@@ -40,8 +38,7 @@
                         <div class="form-group">
                             <label class="form-label" for="add_note">Note</label>
                             <small>(Optional)</small>
-                            <textarea class="form-control" id="add_note" name="note"
-                                      placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
+                            <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -57,8 +54,7 @@
     </div>
 
     <!-- Modal edit coach attendance -->
-    <div class="modal fade" id="editCoachAttendanceModal" tabindex="-1" aria-labelledby="editCoachAttendanceModalLabel"
-         aria-hidden="true">
+    <div class="modal fade" id="editCoachAttendanceModal" tabindex="-1" aria-labelledby="editCoachAttendanceModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="post" id="formEditCoachAttendanceModal">
@@ -75,8 +71,7 @@
                         <div class="form-group">
                             <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus"
-                                    required>
+                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
                                 <option value="null" disabled>Select player's attendance status</option>
                                 @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
                                     <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
@@ -89,8 +84,7 @@
                         <div class="form-group">
                             <label class="form-label" for="add_note">Note</label>
                             <small>(Optional)</small>
-                            <textarea class="form-control" id="add_note" name="note"
-                                      placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
+                            <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -106,16 +100,13 @@
     </div>
 
     <!-- Modal create note -->
-    <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel"
-         aria-hidden="true">
+    <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('training-schedules.create-note', $data['dataSchedule']->id) }}" method="post"
-                      id="formCreateNoteModal">
+                <form action="{{ route('training-schedules.create-note', $data['dataSchedule']->id) }}" method="post" id="formCreateNoteModal">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="coachName">Create note for {{ $data['dataSchedule']->eventName }}
-                            Session</h5>
+                        <h5 class="modal-title" id="coachName">Create note for {{ $data['dataSchedule']->eventName }} Session</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -124,8 +115,7 @@
                         <div class="form-group">
                             <label class="form-label" for="add_note">Note</label>
                             <small class="text-danger">*</small>
-                            <textarea class="form-control" id="add_note" name="note" placeholder="Input note here ..."
-                                      required>{{ old('note') }}</textarea>
+                            <textarea class="form-control" id="add_note" name="note" placeholder="Input note here ..." required>{{ old('note') }}</textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -148,8 +138,7 @@
                     @method('PUT')
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="coachName">Update note for {{ $data['dataSchedule']->eventName }}
-                            Session</h5>
+                        <h5 class="modal-title" id="coachName">Update note for {{ $data['dataSchedule']->eventName }} Session</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -159,8 +148,7 @@
                         <div class="form-group">
                             <label class="form-label" for="edit_note">Note</label>
                             <small class="text-danger">*</small>
-                            <textarea class="form-control" id="edit_note" name="note" placeholder="Input note here ..."
-                                      required></textarea>
+                            <textarea class="form-control" id="edit_note" name="note" placeholder="Input note here ..." required></textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -181,21 +169,17 @@
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex">
                 <h2 class="text-white mb-0">{{ $data['dataSchedule']->eventName  }}</h2>
-                <p class="lead text-white-50 d-flex align-items-center">{{ $data['dataSchedule']->eventType }}
-                    ~ {{ $data['dataSchedule']->teams[0]->teamName }}</p>
+                <p class="lead text-white-50 d-flex align-items-center">{{ $data['dataSchedule']->eventType }} ~ {{ $data['dataSchedule']->teams[0]->teamName }}</p>
             </div>
             <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Action
                     <span class="material-icons ml-3">
                         keyboard_arrow_down
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item"
-                       href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}"><span
-                                class="material-icons">edit</span> Edit Training Schedule</a>
+                    <a class="dropdown-item" href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}"><span class="material-icons">edit</span> Edit Training Schedule</a>
                     @if($data['dataSchedule']->status == '1')
                         <form action="{{ route('deactivate-training', $data['dataSchedule']->id) }}" method="POST">
                             @method("PATCH")
@@ -237,8 +221,7 @@
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }}
-                    - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
+                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }} - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -254,8 +237,7 @@
                         </span>
                         <div class="media-body">
                             <a class="card-title m-0"
-                               href="">Created
-                                by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
+                               href="">Created by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
                             <p class="text-50 lh-1 mb-0">Admin</p>
                         </div>
                     </div>
@@ -279,7 +261,7 @@
                                 <div class="card-title">Total Participants</div>
                             </div>
                         </div>
-                        <i class='bx bxs-group icon-32pt text-danger ml-8pt'></i>
+                        <i class='bx bxs-group icon-32pt text-danger ml-8pt' ></i>
                     </div>
                 </div>
             </div>
@@ -305,7 +287,7 @@
                                 <div class="card-title">Didn't Attended</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
                     </div>
                 </div>
             </div>
@@ -320,7 +302,7 @@
                                 <div class="card-title">Illness</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
                     </div>
                 </div>
             </div>
@@ -333,7 +315,7 @@
                                 <div class="card-title">Injured</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
                     </div>
                 </div>
             </div>
@@ -346,7 +328,7 @@
                                 <div class="card-title">Others</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
                     </div>
                 </div>
             </div>
@@ -371,8 +353,7 @@
         {{--    Training Note    --}}
         <div class="page-separator">
             <div class="page-separator__text">Training Note</div>
-            <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span
-                        class="material-icons mr-2">add</span> Add new note</a>
+            <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
         </div>
         @if(count($data['dataSchedule']->notes)==0)
             <small class="text-70 text-headings text-uppercase mr-3">You haven't create any note</small>
@@ -382,12 +363,10 @@
                     <div class="card-header d-flex align-items-center">
                         <div class="flex">
                             <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($note->created_at)) }}</h4>
-                            <div class="card-subtitle text-50">Last updated
-                                at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
+                            <div class="card-subtitle text-50">Last updated at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
                         </div>
                         <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
                                 more_vert
                             </span>
@@ -417,20 +396,20 @@
 @endsection
 @push('addon-script')
     <script>
-        $(document).ready(function () {
-            $('.playerAttendance').on('click', function (e) {
+        $(document).ready(function() {
+            $('.playerAttendance').on('click', function(e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
 
                 $.ajax({
                     url: "{{ route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
                     type: 'get',
-                    success: function (res) {
+                    success: function(res) {
                         $('#editPlayerAttendanceModal').modal('show');
 
                         const heading = document.getElementById('playerName');
-                        heading.textContent = 'Update Player ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
-                        if (res.data.playerAttendance.attendanceStatus === 'Required Action') {
+                        heading.textContent = 'Update Player '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
+                        if (res.data.playerAttendance.attendanceStatus === 'Required Action'){
                             $('#editPlayerAttendanceModal #add_attendanceStatus').val('null');
                         } else {
                             $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.playerAttendance.attendanceStatus);
@@ -438,7 +417,7 @@
                         $('#editPlayerAttendanceModal #add_note').val(res.data.playerAttendance.note);
                         $('#playerId').val(res.data.playerAttendance.playerId);
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    error: function(jqXHR, textStatus, errorThrown) {
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when deleting data!",
@@ -448,19 +427,19 @@
                 });
             });
 
-            $('.coachAttendance').on('click', function (e) {
+            $('.coachAttendance').on('click', function(e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
 
                 $.ajax({
                     url: "{{ route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
                     type: 'get',
-                    success: function (res) {
+                    success: function(res) {
                         $('#editCoachAttendanceModal').modal('show');
 
                         const heading = document.getElementById('coachName');
-                        heading.textContent = 'Update Coach ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
-                        if (res.data.coachAttendance.attendanceStatus === 'Required Action') {
+                        heading.textContent = 'Update Coach '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
+                        if (res.data.coachAttendance.attendanceStatus === 'Required Action'){
                             $('#editCoachAttendanceModal #add_attendanceStatus').val('null');
                         } else {
                             $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
@@ -468,7 +447,7 @@
                         $('#editCoachAttendanceModal #add_note').val(res.data.coachAttendance.note);
                         $('#coachId').val(res.data.coachAttendance.coachId);
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    error: function(jqXHR, textStatus, errorThrown) {
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when deleting data!",
@@ -478,26 +457,26 @@
                 });
             });
 
-            $('#addNewNote').on('click', function (e) {
+            $('#addNewNote').on('click', function(e) {
                 e.preventDefault();
                 $('#createNoteModal').modal('show');
             });
 
-            $('.edit-note').on('click', function (e) {
+            $('.edit-note').on('click', function(e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
 
                 $.ajax({
                     url: "{{ route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
                     type: 'get',
-                    success: function (res) {
+                    success: function(res) {
                         $('#editNoteModal').modal('show');
 
                         const heading = document.getElementById('edit_note');
                         heading.textContent = res.data.note;
                         $('#noteId').val(res.data.id);
                     },
-                    error: function (error) {
+                    error: function(error) {
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when deleting data!",
@@ -508,7 +487,7 @@
             });
 
             // update player attendance data
-            $('#formEditPlayerAttendanceModal').on('submit', function (e) {
+            $('#formEditPlayerAttendanceModal').on('submit', function(e) {
                 e.preventDefault();
                 const id = $('#playerId').val();
                 $.ajax({
@@ -517,7 +496,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function (res) {
+                    success: function(res) {
                         $('#editPlayerAttendanceModal').modal('hide');
                         Swal.fire({
                             title: 'Player attendance successfully updated!',
@@ -532,10 +511,10 @@
                             }
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         const response = JSON.parse(xhr.responseText);
                         console.log(response);
-                        $.each(response.errors, function (key, val) {
+                        $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#add_" + key).addClass('is-invalid');
                         });
@@ -544,7 +523,7 @@
             });
 
             // update coach attendance data
-            $('#formEditCoachAttendanceModal').on('submit', function (e) {
+            $('#formEditCoachAttendanceModal').on('submit', function(e) {
                 e.preventDefault();
                 const id = $('#coachId').val();
                 $.ajax({
@@ -553,7 +532,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function (res) {
+                    success: function(res) {
                         $('#editCoachAttendanceModal').modal('hide');
                         Swal.fire({
                             title: 'Coach attendance successfully updated!',
@@ -568,10 +547,10 @@
                             }
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         const response = JSON.parse(xhr.responseText);
                         console.log(response);
-                        $.each(response.errors, function (key, val) {
+                        $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#add_" + key).addClass('is-invalid');
                         });
@@ -580,7 +559,7 @@
             });
 
             // create schedule note data
-            $('#formCreateNoteModal').on('submit', function (e) {
+            $('#formCreateNoteModal').on('submit', function(e) {
                 e.preventDefault();
                 $.ajax({
                     url: $(this).attr('action'),
@@ -588,7 +567,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function (res) {
+                    success: function(res) {
                         $('#createNoteModal').modal('hide');
                         Swal.fire({
                             title: 'Training session note successfully added!',
@@ -603,10 +582,10 @@
                             }
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         const response = JSON.parse(xhr.responseText);
                         console.log(response);
-                        $.each(response.errors, function (key, val) {
+                        $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#add_" + key).addClass('is-invalid');
                         });
@@ -615,7 +594,7 @@
             });
 
             // update schedule note data
-            $('#formUpdateNoteModal').on('submit', function (e) {
+            $('#formUpdateNoteModal').on('submit', function(e) {
                 e.preventDefault();
                 const id = $('#noteId').val();
                 $.ajax({
@@ -624,7 +603,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function (res) {
+                    success: function(res) {
                         $('#editNoteModal').modal('hide');
                         Swal.fire({
                             title: 'Training session note successfully updated!',
@@ -639,10 +618,10 @@
                             }
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         const response = JSON.parse(xhr.responseText);
                         console.log(response);
-                        $.each(response.errors, function (key, val) {
+                        $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#edit_" + key).addClass('is-invalid');
                         });
@@ -651,7 +630,7 @@
             });
 
             // delete competition alert
-            $('body').on('click', '.delete', function () {
+            $('body').on('click', '.delete', function() {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -670,7 +649,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function () {
+                            success: function() {
                                 Swal.fire({
                                     title: 'Competition successfully deleted!',
                                     icon: 'success',
@@ -684,7 +663,7 @@
                                     }
                                 });
                             },
-                            error: function (error) {
+                            error: function(error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Something went wrong when deleting data!",
@@ -697,7 +676,7 @@
             });
 
             // delete schedule note alert
-            $('body').on('click', '.delete-note', function () {
+            $('body').on('click', '.delete-note', function() {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -716,7 +695,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function () {
+                            success: function() {
                                 Swal.fire({
                                     title: 'Competition successfully deleted!',
                                     icon: 'success',
@@ -730,7 +709,7 @@
                                     }
                                 });
                             },
-                            error: function (error) {
+                            error: function(error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Something went wrong when deleting data!",

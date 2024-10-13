@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     Create Match Schedule
 @endsection
@@ -34,15 +34,14 @@
                                 <div class="form-group">
                                     <label class="form-label" for="matchType">Match Type</label>
                                     <small class="text-danger">*</small>
-                                    <select class="form-control form-select matchType-form @error('matchType') is-invalid @enderror"
-                                            id="matchType" name="matchType" data-toggle="select" required>
+                                    <select class="form-control form-select matchType-form @error('matchType') is-invalid @enderror" id="matchType" name="matchType" data-toggle="select" required>
                                         <option disabled selected>Select match type</option>
                                         @foreach(['Friendly Match', 'Competition'] AS $type)
                                             <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
                                         @endforeach
                                     </select>
                                     @error('matchType')
-                                    <span class="invalid-feedback attendanceStatus_error" role="alert">
+                                        <span class="invalid-feedback attendanceStatus_error" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
@@ -56,9 +55,7 @@
                                                 <i class="material-icons text-warning mr-8pt">error_outline</i>
                                                 <div class="media-body"
                                                      style="min-width: 180px">
-                                                    <small class="text-black-100">Currently you haven't created any
-                                                        competition in your academy, please create competition
-                                                        first</small>
+                                                    <small class="text-black-100">Currently you haven't created any competition in your academy, please create competition first</small>
                                                 </div>
                                                 <div class="ml-8pt mt-2 mt-sm-0">
                                                     <a href="{{ route('competition-managements.create') }}"
@@ -67,17 +64,15 @@
                                             </div>
                                         </div>
                                     @else
-                                        <select class="form-control form-select @error('competitionId') is-invalid @enderror"
-                                                id="competitionId" name="competitionId">
+                                        <select class="form-control form-select @error('competitionId') is-invalid @enderror" id="competitionId" name="competitionId">
                                             <option value="null" disabled selected>Select match competition</option>
                                             @foreach($competitions AS $competition)
-                                                <option value="{{ $competition->id }}"
-                                                        data-avatar-src="{{ Storage::url($competition->logo) }}">{{ $competition->name }}</option>
+                                                <option value="{{ $competition->id }}" data-avatar-src="{{ Storage::url($competition->logo) }}">{{ $competition->name }}</option>
                                             @endforeach
                                         </select>
                                     @endif
                                     @error('competitionId')
-                                    <span class="invalid-feedback" role="alert">
+                                        <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
@@ -87,8 +82,7 @@
                                         <label class="form-label mb-0" for="teamId">Teams</label>
                                         <small class="text-danger">*</small>
                                     </div>
-                                    <select class="form-control form-select @error('teamId') is-invalid @enderror"
-                                            id="teamId" name="teamId" data-toggle="select">
+                                    <select class="form-control form-select @error('teamId') is-invalid @enderror" id="teamId" name="teamId" data-toggle="select">
                                     </select>
                                     @error('teamId')
                                     <span class="invalid-feedback" role="alert">
@@ -101,8 +95,7 @@
                                         <label class="form-label mb-0" for="opponentTeamId">Opponent Teams</label>
                                         <small class="text-danger">*</small>
                                     </div>
-                                    <select class="form-control form-select @error('opponentTeamId') is-invalid @enderror"
-                                            id="opponentTeamId" name="opponentTeamId" data-toggle="select">
+                                    <select class="form-control form-select @error('opponentTeamId') is-invalid @enderror" id="opponentTeamId" name="opponentTeamId" data-toggle="select">
                                     </select>
                                     @error('opponentTeamId')
                                     <span class="invalid-feedback" role="alert">
@@ -196,10 +189,8 @@
                     </div>
                 </div>
                 <div class="list-group-item d-flex justify-content-end">
-                    <a class="btn btn-secondary mx-2" href="{{ route('competition-managements.index') }}"><span
-                                class="material-icons mr-2">close</span> Cancel</a>
-                    <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit
-                    </button>
+                    <a class="btn btn-secondary mx-2" href="{{ route('competition-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                    <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                 </div>
             </form>
         </div>
@@ -214,13 +205,13 @@
             $('.matchType-form').on('change', function () {
                 const type = this.value;
 
-                if (type === 'Competition') {
+                if (type === 'Competition'){
                     $('#competitionId').val("null");
                     // $('#competitionId option[value="null"]').attr('selected', 'selected');
                     $('#teamId').html('');
                     $('#opponentTeamId').html('');
                     $('.competition-section').show();
-                } else if (type === 'Friendly Match') {
+                }else if (type === 'Friendly Match') {
                     $('.competition-section').hide();
                     $('#competitionId').val("null");
                     $.ajax({

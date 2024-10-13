@@ -38,6 +38,7 @@
         @include('includes.footer')
 
     </div>
+
     @include('includes.admins.sidebar')
 </div>
 

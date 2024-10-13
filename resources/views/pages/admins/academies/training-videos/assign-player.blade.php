@@ -1,4 +1,4 @@
-@extends('includes.admins.master')
+@extends('layouts.master')
 @section('title')
     Add Players to Training {{ $data->trainingTitle }}
 @endsection
@@ -16,11 +16,8 @@
                     </h2>
                     <ol class="breadcrumb p-0 m-0">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('training-videos.index') }}">Training Videos</a>
-                        </li>
-                        <li class="breadcrumb-item"><a
-                                    href="{{ route('training-videos.show', $data->id) }}">{{ $data->trainingTitle }}</a>
-                        </li>
+                        <li class="breadcrumb-item"><a href="{{ route('training-videos.index') }}">Training Videos</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('training-videos.show', $data->id) }}">{{ $data->trainingTitle }}</a></li>
                         <li class="breadcrumb-item active">
                             Add Players
                         </li>
@@ -47,8 +44,7 @@
                                         <i class="material-icons mr-8pt">error_outline</i>
                                         <div class="media-body"
                                              style="min-width: 180px">
-                                            <small class="text-black-100">Curently you haven't create any player in your
-                                                academy, please create your team</small>
+                                            <small class="text-black-100">Curently you haven't create any player in your academy, please create your team</small>
                                         </div>
                                         <div class="ml-8pt mt-2 mt-sm-0">
                                             <a href="{{ route('player-managements.create') }}"
@@ -57,14 +53,11 @@
                                     </div>
                                 </div>
                             @else
-                                <select class="form-control form-select @error('players') is-invalid @enderror"
-                                        id="players" name="players[]" data-toggle="select" multiple>
+                                <select class="form-control form-select @error('players') is-invalid @enderror" id="players" name="players[]" data-toggle="select" multiple>
                                     <option disabled>Select players to play in this team</option>
                                     @foreach($players as $player)
-                                        <option value="{{ $player->id }}"
-                                                data-avatar-src="{{ Storage::url($player->user->foto) }}">
-                                            {{ $player->user->firstName }} {{ $player->user->lastName }}
-                                            - {{ $player->position->name }} -
+                                        <option value="{{ $player->id }}" data-avatar-src="{{ Storage::url($player->user->foto) }}">
+                                            {{ $player->user->firstName }} {{ $player->user->lastName }} - {{ $player->position->name }} -
                                             @if(count($player->teams) == 0)
                                                 No Team
                                             @else
@@ -85,10 +78,8 @@
                     </div>
                 </div>
                 <div class="list-group-item d-flex justify-content-end">
-                    <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span>
-                        Cancel</a>
-                    <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">save</span> Save
-                    </button>
+                    <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                    <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">save</span> Save</button>
                 </div>
             </form>
         </div>
