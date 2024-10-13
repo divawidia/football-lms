@@ -266,15 +266,15 @@ Route::group(['middleware' => ['auth']], function () {
                 });
             });
 
-            Route::prefix('attendance-reports')->group(function () {
-                Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
-
-                Route::prefix('{player}')->group(function () {
-                    Route::get('', [AttendanceReportController::class, 'show'])->name('attendance-report.show');
-                    Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('attendance-report.trainingTable');
-                    Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('attendance-report.matchDatatable');
-                });
-            });
+//            Route::prefix('attendance-reports')->group(function () {
+//                Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
+//
+//                Route::prefix('{player}')->group(function () {
+//                    Route::get('', [AttendanceReportController::class, 'show'])->name('attendance-report.show');
+//                    Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('attendance-report.trainingTable');
+//                    Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('attendance-report.matchDatatable');
+//                });
+//            });
 
             Route::prefix('performance-reports')->group(function () {
                 Route::get('', [PerformanceReportController::class, 'index'])->name('performance-report.index');
@@ -417,16 +417,16 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('', [CoachPlayerController::class, 'index'])->name('coach.player-managements.index');
                 Route::prefix('{player}')->group(function () {
                     Route::get('', [CoachPlayerController::class, 'show'])->name('coach.player-managements.show');
-                    //                Route::get('edit', [CoachController::class, 'edit'])->name('coach-managements.edit');
-                    //                Route::put('update', [CoachController::class, 'update'])->name('coach-managements.update');
-                    //                Route::delete('destroy', [CoachController::class, 'destroy'])->name('coach-managements.destroy');
-                    //                Route::patch('deactivate', [CoachController::class, 'deactivate'])->name('deactivate-coach');
-                    //                Route::patch('activate', [CoachController::class, 'activate'])->name('activate-coach');
-                    //                Route::get('change-password', [CoachController::class, 'changePasswordPage'])->name('coach-managements.change-password-page');
-                    //                Route::patch('change-password', [CoachController::class, 'changePassword'])->name('coach-managements.change-password');
-                    //                Route::get('coach-teams', [CoachController::class, 'coachTeams'])->name('coach-managements.coach-teams');
-                    //                Route::put('update-teams', [CoachController::class, 'updateTeams'])->name('coach-managements.updateTeams');
-                    //                Route::delete('remove-team/{team}', [CoachController::class, 'removeTeam'])->name('coach-managements.removeTeam');
+                });
+            });
+
+            Route::prefix('attendance-reports')->group(function () {
+                Route::get('', [AttendanceReportController::class, 'index'])->name('coach.attendance-report.index');
+
+                Route::prefix('{player}')->group(function () {
+                    Route::get('', [AttendanceReportController::class, 'show'])->name('coach.attendance-report.show');
+                    Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('coach.attendance-report.trainingTable');
+                    Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('coach.attendance-report.matchDatatable');
                 });
             });
         });
