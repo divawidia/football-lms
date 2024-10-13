@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Coach;
 
 use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\Service;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;

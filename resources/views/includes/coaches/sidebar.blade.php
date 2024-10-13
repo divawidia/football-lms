@@ -29,7 +29,7 @@
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button"
-                           href="{{ route('admin.dashboard') }}">
+                           href="{{ route('coach.dashboard') }}">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">dashboard</span>
                             <span class="sidebar-menu-text">Dashboard</span>
                         </a>
