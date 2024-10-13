@@ -399,7 +399,7 @@ Route::group(['middleware' => ['role:coach,web', 'auth']], function () {
 
         Route::prefix('player-managements')->group(function () {
             Route::get('', [CoachPlayerController::class, 'index'])->name('coach.player-managements.index');
-            Route::prefix('{coach}')->group(function () {
+            Route::prefix('{player}')->group(function () {
                 Route::get('', [CoachPlayerController::class, 'show'])->name('coach.player-managements.show');
 //                Route::get('edit', [CoachController::class, 'edit'])->name('coach-managements.edit');
 //                Route::put('update', [CoachController::class, 'update'])->name('coach-managements.update');

@@ -42,9 +42,11 @@ class PlayerController extends Controller
         return view('pages.coaches.managements.players.index');
     }
 
-    public function show(User $user){
+    public function show(Player $player){
+        $overview = $this->playerService->show($player);
         return view('pages.coaches.managements.players.detail', [
-            'data' => $user
+            'data' => $player,
+            'overview' => $overview
         ]);
     }
 }

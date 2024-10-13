@@ -2,6 +2,7 @@
 
 namespace App\Services\Coach;
 
+use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
@@ -33,7 +34,7 @@ class PlayerService extends CoachService
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 return '
-                      <a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->userId) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                      <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
                         <span class="material-icons">
                             visibility
                         </span>
@@ -60,7 +61,7 @@ class PlayerService extends CoachService
                             <div class="media-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
-                                        <a href="' . route('player-managements.show', $item->userId) . '">
+                                        <a href="' . route('coach.player-managements.show', $item->id) . '">
                                             <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
                                         </a>
                                         <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
@@ -82,5 +83,59 @@ class PlayerService extends CoachService
             })
             ->rawColumns(['action', 'name','status', 'age', 'teams.name'])
             ->make();
+    }
+
+    public function show(Player $player)
+    {
+        $matchPlayed = $player->playerMatchStats()->where('minutesPlayed', '>', 0)->count();
+        $minutesPlayed = $player->playerMatchStats()->sum('minutesPlayed');
+        $fouls = $player->playerMatchStats()->sum('fouls');
+        $goals = $player->playerMatchStats()->sum('goals');
+        $assists = $player->playerMatchStats()->sum('assists');
+        $ownGoals = $player->playerMatchStats()->sum('ownGoal');
+        $wins = $player->schedules()
+            ->where('eventType', 'Match')
+            ->whereHas('teams', function ($q){
+                $q->where('resultStatus', 'Win');
+            })
+            ->count();
+        $losses = $player->schedules()
+            ->where('eventType', 'Match')
+            ->whereHas('teams', function ($q){
+                $q->where('resultStatus', 'Lose');
+            })
+            ->count();
+        $draws = $player->schedules()
+            ->where('eventType', 'Match')
+            ->whereHas('teams', function ($q){
+                $q->where('resultStatus', 'Draw');
+            })
+            ->count();
+
+        $upcomingMatches = $player->schedules()
+            ->where('eventType', 'Match')
+            ->where('status', '1')
+            ->take(2)
+            ->get();
+
+        $upcomingTrainings = $player->schedules()
+            ->where('eventType', 'Training')
+            ->where('status', '1')
+            ->take(2)
+            ->get();
+
+        return compact(
+            'matchPlayed',
+            'minutesPlayed',
+            'fouls',
+            'goals',
+            'assists',
+            'ownGoals',
+            'wins',
+            'losses',
+            'draws',
+            'upcomingMatches',
+            'upcomingTrainings'
+        );
     }
 }
