@@ -411,7 +411,7 @@ Route::group(['middleware' => ['role:coach,web', 'auth']], function () {
 //                Route::get('coach-teams', [CoachController::class, 'coachTeams'])->name('coach-managements.coach-teams');
 //                Route::put('update-teams', [CoachController::class, 'updateTeams'])->name('coach-managements.updateTeams');
 //                Route::delete('remove-team/{team}', [CoachController::class, 'removeTeam'])->name('coach-managements.removeTeam');
-//            });
+            });
         });
     });
 });
