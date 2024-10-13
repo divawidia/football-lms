@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AttendanceReportController;
 use App\Http\Controllers\Admin\CoachController;
 use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Coach\DashboardController as CoachDashboardController;
 use App\Http\Controllers\Admin\EventScheduleController;
 use App\Http\Controllers\Admin\GroupDivisionController;
 use App\Http\Controllers\Admin\InvoiceController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Admin\LeaderboardController;
 use App\Http\Controllers\Admin\OpponentTeamController;
 use App\Http\Controllers\Admin\PerformanceReportController;
 use App\Http\Controllers\Admin\PlayerController;
+use App\Http\Controllers\Coach\PlayerController as CoachPlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
@@ -393,7 +395,24 @@ Route::group(['middleware' => ['role:admin,web', 'auth']], function () {
 
 Route::group(['middleware' => ['role:coach,web', 'auth']], function () {
     Route::prefix('coach')->group(function () {
-        Route::get('dashboard', [App\Http\Controllers\Coach\DashboardController::class, 'index'])->name('coach.dashboard');
+        Route::get('dashboard', [CoachDashboardController::class, 'index'])->name('coach.dashboard');
+
+        Route::prefix('player-managements')->group(function () {
+            Route::get('', [CoachPlayerController::class, 'index'])->name('coach.player-managements.index');
+//            Route::prefix('{coach}')->group(function () {
+//                Route::get('', [CoachController::class, 'show'])->name('coach-managements.show');
+//                Route::get('edit', [CoachController::class, 'edit'])->name('coach-managements.edit');
+//                Route::put('update', [CoachController::class, 'update'])->name('coach-managements.update');
+//                Route::delete('destroy', [CoachController::class, 'destroy'])->name('coach-managements.destroy');
+//                Route::patch('deactivate', [CoachController::class, 'deactivate'])->name('deactivate-coach');
+//                Route::patch('activate', [CoachController::class, 'activate'])->name('activate-coach');
+//                Route::get('change-password', [CoachController::class, 'changePasswordPage'])->name('coach-managements.change-password-page');
+//                Route::patch('change-password', [CoachController::class, 'changePassword'])->name('coach-managements.change-password');
+//                Route::get('coach-teams', [CoachController::class, 'coachTeams'])->name('coach-managements.coach-teams');
+//                Route::put('update-teams', [CoachController::class, 'updateTeams'])->name('coach-managements.updateTeams');
+//                Route::delete('remove-team/{team}', [CoachController::class, 'removeTeam'])->name('coach-managements.removeTeam');
+//            });
+        });
     });
 });
 //Route::group(['middleware' => ['role:player,web']], function () {
