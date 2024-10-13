@@ -39,7 +39,13 @@
 
     </div>
 
-    @include('includes.admins.sidebar')
+    @if(Auth::user()->hasRole('admin'))
+        @include('includes.admins.sidebar')
+    @elseif(Auth::user()->hasRole('coach'))
+        @include('includes.coaches.sidebar')
+    @elseif(Auth::user()->hasRole('player'))
+        @include('includes.players.sidebar')
+    @endif
 </div>
 
 <!-- script -->
