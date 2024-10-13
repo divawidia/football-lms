@@ -14,11 +14,17 @@ use Illuminate\Support\Facades\Storage;
 use Nnjeim\World\World;
 use Yajra\DataTables\Facades\DataTables;
 
-class PlayerService extends Service
+class PlayerService extends CoachService
 {
-    public function index(): JsonResponse
+    public function index($coachId): JsonResponse
     {
-        $query = Player::with('user', 'teams', 'position')->get();
+        $query = Player::with('user', 'teams', 'position')
+            ->whereHas('teams', function($q) use ($coachId) {
+                foreach ($this->managedTeams($coachId) as $team){
+                    $q->orWhere('teamId', $team->id);
+                }
+            })->get();
+
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if ($item->user->status == '1'){

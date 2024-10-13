@@ -15,18 +15,13 @@ use Illuminate\Support\Number;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class DashboardService
+class DashboardService extends CoachService
 {
 //    private $coachId;
 //    public function __construct($coachId){
 //        $this->coachId = $coachId;
 //    }
-    public function managedTeams($coachId){
-        return Team::with('coaches')
-            ->whereHas('coaches', function($q) use ($coachId) {
-                $q->where('coachId', $coachId->id);
-            })->get();
-    }
+
     public function overviewStats($coachId){
         $teamsManaged = $this->managedTeams($coachId);
 
