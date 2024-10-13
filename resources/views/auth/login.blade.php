@@ -28,12 +28,12 @@
                             <span class="far fa-envelope"></span>
                         </div>
                     </div>
-                </div>
-                @error('email')
+                    @error('email')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
-                @enderror
+                    @enderror
+                </div>
             </div>
             <div class="form-group">
                 <label class="text-label" for="password_2">Password:</label>
@@ -44,12 +44,12 @@
                             <span class="fa fa-key"></span>
                         </div>
                     </div>
-                </div>
-                @error('password')
+                    @error('password')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
-                @enderror
+                    @enderror
+                </div>
             </div>
             <div class="form-group">
                 <button class="btn btn-block btn-primary" type="submit">Login</button>

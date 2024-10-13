@@ -12,20 +12,20 @@ class DashboardController extends Controller
 {
     private DashboardService $dashboardService;
 
-    public function __construct(){
-        $coachId = Coach::where('userId', $this->getLoggedUserId())->select('id')->first();
-        $this->dashboardService = new DashboardService($coachId);
+    public function __construct(DashboardService $service){
+        $this->dashboardService = $service;
     }
     public function index()
     {
-        $dataOverview = $this->dashboardService->overviewStats();
-        $latestMatch = $this->dashboardService->latestMatch();
-        $upcomingMatches = $this->dashboardService->upcomingMatch();
-        $upcomingTrainings = $this->dashboardService->upcomingTraining();
+        $coachId = Coach::where('userId', $this->getLoggedUserId())->select('id')->first();
+        $dataOverview = $this->dashboardService->overviewStats($coachId);
+        $latestMatches = $this->dashboardService->latestMatch($coachId);
+        $upcomingMatches = $this->dashboardService->upcomingMatch($coachId);
+        $upcomingTrainings = $this->dashboardService->upcomingTraining($coachId);
 
-        return view('pages.admins.dashboard', [
+        return view('pages.coaches.dashboard', [
             'dataOverview' => $dataOverview,
-            'lastestMatch' => $latestMatch,
+            'latestMatches' => $latestMatches,
             'upcomingMatches' => $upcomingMatches,
             'upcomingTrainings' => $upcomingTrainings
         ]);

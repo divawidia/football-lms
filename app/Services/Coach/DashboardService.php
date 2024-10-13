@@ -17,18 +17,18 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
-    private $coachId;
-    public function __construct($coachId){
-        $this->coachId = $coachId;
-    }
-    public function managedTeams(){
+//    private $coachId;
+//    public function __construct($coachId){
+//        $this->coachId = $coachId;
+//    }
+    public function managedTeams($coachId){
         return Team::with('coaches')
-            ->whereHas('coaches', function($q) {
-                $q->where('coachId', $this->coachId);
+            ->whereHas('coaches', function($q) use ($coachId) {
+                $q->where('coachId', $coachId->id);
             })->get();
     }
-    public function overviewStats(){
-        $teamsManaged = $this->managedTeams();
+    public function overviewStats($coachId){
+        $teamsManaged = $this->managedTeams($coachId);
 
         $totalMatchPlayed = 0;
         $totalGoals = 0;
@@ -108,10 +108,26 @@ class DashboardService
             );
     }
 
-    public function latestMatch(){
+    public function latestMatch($coachId){
         $match = [];
 
-        foreach ($this->managedTeams() as $team){
+        foreach ($this->managedTeams($coachId) as $team){
+            $match[] = EventSchedule::with('teams', 'competition')
+                ->whereHas('teams', function($q) use ($team) {
+                    $q->where('teamId', $team->id);
+                })
+                ->where('eventType', 'Match')
+                ->where('status', '0')
+                ->orderBy('date', 'desc')
+                ->get();
+        }
+        return $match;
+    }
+
+    public function upcomingMatch($coachId){
+        $match = [];
+
+        foreach ($this->managedTeams($coachId) as $team){
             $match[] = EventSchedule::with('teams', 'competition')
                 ->whereHas('teams', function($q) use ($team) {
                     $q->where('teamId', $team->id);
@@ -124,32 +140,16 @@ class DashboardService
         return $match;
     }
 
-    public function upcomingMatch(){
-        $match = [];
-
-        foreach ($this->managedTeams() as $team){
-            $match[] = EventSchedule::with('teams', 'competition')
-                ->whereHas('teams', function($q) use ($team) {
-                    $q->where('teamId', $team->id);
-                })
-                ->where('eventType', 'Match')
-                ->where('status', '0')
-                ->orderBy('date', 'desc')
-                ->get();
-        }
-        return $match;
-    }
-
-    public function upcomingTraining(){
+    public function upcomingTraining($coachId){
         $trainings = [];
 
-        foreach ($this->managedTeams() as $team){
+        foreach ($this->managedTeams($coachId) as $team){
             $trainings[] = EventSchedule::with('teams', 'competition')
                 ->whereHas('teams', function($q) use ($team) {
                     $q->where('teamId', $team->id);
                 })
                 ->where('eventType', 'Training')
-                ->where('status', '0')
+                ->where('status', '1')
                 ->orderBy('date', 'desc')
                 ->get();
         }

@@ -31,7 +31,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/login';
 
     /**
      * Create a new controller instance.
@@ -52,14 +52,14 @@ class LoginController extends Controller
         Cache::put('user-is-online-' . $user->id, true, Carbon::now()->addMinutes(10));
 
         if (Auth::user()->hasRole('admin')) {
-            Alert::toast('Selamat datang ' . Auth::user()->name, 'success');
+            Alert::toast('Selamat datang ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
             return redirect()->route('admin.dashboard');
         } else if (Auth::user()->hasRole('coach')) {
-            Alert::toast('Selamat datang ' . Auth::user()->name, 'success');
-            return redirect()->route('instruktur.dashboard');
+            Alert::toast('Selamat datang ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
+            return redirect()->route('coach.dashboard');
         } else  if (Auth::user()->hasRole('player')) {
-            Alert::toast('Selamat datang ' . Auth::user()->name, 'success');
-            return redirect()->route('mahasiswa.dashboard');
+            Alert::toast('Selamat datang ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
+            return redirect()->route('player.dashboard');
         }
     }
 }
