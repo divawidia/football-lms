@@ -494,10 +494,14 @@
                     <table class="table table-hover mb-0" id="trainingHistoryTable">
                         <thead>
                         <tr>
-                            <th>Training Date</th>
+                            <th>Training/Practice</th>
                             <th>Team</th>
+                            <th>training date</th>
+                            <th>Location</th>
+                            <th>Training Status</th>
                             <th>Attendance Status</th>
                             <th>Note</th>
+                            <th>Last Updated Attendance</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -518,7 +522,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('player-parents.index', $data->userId) !!}',
+                    url: '{!! route('coach.player-parents.index', $data->userId) !!}',
                 },
                 columns: [
                     { data: 'firstName', name: 'firstName' },
@@ -534,12 +538,39 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('player-managements.playerTeams', $data->userId) !!}',
+                    url: '{!! route('coach.player-managements.playerTeams', $data->userId) !!}',
                 },
                 columns: [
                     { data: 'name', name: 'name' },
                     { data: 'date', name: 'date' },
                 ]
+            });
+
+            $('#trainingHistoryTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! route('coach.attendance-report.trainingTable', $data->id) !!}',
+                },
+                columns: [
+                    { data: 'eventName', name: 'eventName' },
+                    { data: 'team', name: 'team' },
+                    { data: 'date', name: 'date' },
+                    { data: 'place', name: 'place'},
+                    { data: 'status', name: 'status' },
+                    { data: 'attendanceStatus', name: 'attendanceStatus' },
+                    { data: 'note', name: 'note' },
+                    { data: 'last_updated', name: 'last_updated' },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ],
+                order: [[2, 'desc']],
             });
         });
     </script>

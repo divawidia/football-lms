@@ -67,12 +67,6 @@ Route::middleware('prevent.back.history')->group(function (){
 //
 //require __DIR__.'/auth.php';
 Route::group(['middleware' => ['auth']], function () {
-    Route::prefix('player-managements')->group(function () {
-        Route::prefix('{player}')->group(function () {
-            Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('player-managements.playerTeams');
-            Route::get('parents', [PlayerParentController::class, 'index'])->name('player-parents.index');
-        });
-    });
 
     Route::group(['middleware' => ['role:admin,web']], function () {
 
@@ -266,15 +260,15 @@ Route::group(['middleware' => ['auth']], function () {
                 });
             });
 
-//            Route::prefix('attendance-reports')->group(function () {
-//                Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
-//
-//                Route::prefix('{player}')->group(function () {
-//                    Route::get('', [AttendanceReportController::class, 'show'])->name('attendance-report.show');
-//                    Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('attendance-report.trainingTable');
-//                    Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('attendance-report.matchDatatable');
-//                });
-//            });
+            Route::prefix('attendance-reports')->group(function () {
+                Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
+
+                Route::prefix('{player}')->group(function () {
+                    Route::get('', [AttendanceReportController::class, 'show'])->name('attendance-report.show');
+                    Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('attendance-report.trainingTable');
+                    Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('attendance-report.matchDatatable');
+                });
+            });
 
             Route::prefix('performance-reports')->group(function () {
                 Route::get('', [PerformanceReportController::class, 'index'])->name('performance-report.index');
@@ -417,6 +411,8 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('', [CoachPlayerController::class, 'index'])->name('coach.player-managements.index');
                 Route::prefix('{player}')->group(function () {
                     Route::get('', [CoachPlayerController::class, 'show'])->name('coach.player-managements.show');
+                    Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('coach.player-managements.playerTeams');
+                    Route::get('parents', [PlayerParentController::class, 'index'])->name('coach.player-parents.index');
                 });
             });
 
