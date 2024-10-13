@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('includes.admins.master')
 @section('title')
     {{ $data->trainingTitle }} Training Videos
 @endsection
@@ -24,7 +24,9 @@
                 <div class="container page__container">
                     <ul class="nav navbar-nav">
                         <li class="nav-item">
-                            <a href="{{ route('training-videos.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Training Video Lists</a>
+                            <a href="{{ route('training-videos.index') }}" class="nav-link text-70"><i
+                                        class="material-icons icon--left">keyboard_backspace</i> Back to Training Video
+                                Lists</a>
                         </li>
                     </ul>
                 </div>
@@ -67,7 +69,7 @@
                 </div>
             </div>
             <div
-                class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">
+                    class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">
                 <div class="container page__container">
                     <ul class="nav navbar-nav flex align-items-sm-center">
                         <li class="nav-item navbar-list__item">
@@ -123,7 +125,7 @@
     <div class="container page__container page-section">
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
-{{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
+            {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
         </div>
 
         <div class="row mb-3">
@@ -169,7 +171,7 @@
         <div class="page-separator">
             <div class="page-separator__text">Lesson(s)</div>
             <a href="" id="addLesson" class="btn btn-primary btn-sm ml-auto"><span
-                    class="material-icons mr-2">add</span> Add lesson</a>
+                        class="material-icons mr-2">add</span> Add lesson</a>
         </div>
         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
             <div class="card-body">
@@ -197,7 +199,8 @@
         {{--    Assigned Player    --}}
         <div class="page-separator">
             <div class="page-separator__text">Assigned Player(s)</div>
-            <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}" class="btn btn-primary btn-sm ml-auto">
+            <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}"
+               class="btn btn-primary btn-sm ml-auto">
                 <span class="material-icons mr-2">add</span>
                 Add Player
             </a>

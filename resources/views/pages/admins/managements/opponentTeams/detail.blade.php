@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('includes.admins.master')
 @section('title')
     Team {{ $team->teamName  }} Profile
 @endsection
@@ -11,7 +11,8 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('team-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Team Lists</a>
+                    <a href="{{ route('team-managements.index') }}" class="nav-link text-70"><i
+                                class="material-icons icon--left">keyboard_backspace</i> Back to Team Lists</a>
                 </li>
             </ul>
         </div>
@@ -28,14 +29,16 @@
                 <p class="lead text-white-50 d-flex align-items-center">{{ $team->ageGroup }}</p>
             </div>
             <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
                     Action
                     <span class="material-icons ml-3">
                         keyboard_arrow_down
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('opponentTeam-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
+                    <a class="dropdown-item" href="{{ route('opponentTeam-managements.edit', $team->id) }}"><span
+                                class="material-icons">edit</span> Edit Team Profile</a>
                     @if($team->status == '1')
                         <form action="{{ route('deactivate-team', $team->id) }}" method="POST">
                             @method("PATCH")
@@ -277,8 +280,8 @@
 @endsection
 @push('addon-script')
     <script>
-        $(document).ready(function() {
-            $('.delete-team').on('click', function() {
+        $(document).ready(function () {
+            $('.delete-team').on('click', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -297,7 +300,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 Swal.fire({
                                     title: "Team successfully deleted!",
                                     icon: 'success',
@@ -311,7 +314,7 @@
                                     }
                                 });
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",

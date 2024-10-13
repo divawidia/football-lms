@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('includes.admins.master')
 @section('title')
     Dashboard
 @endsection
@@ -24,7 +24,7 @@
         {{--    Overview    --}}
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
-{{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
+            {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
         </div>
         <div class="row card-group-row">
             <div class="col-lg-4 col-md-6 card-group-row__col">
@@ -43,7 +43,7 @@
                                 </p>
                             </div>
                         </div>
-                        <i class='fa fa-user icon-24pt text-danger' ></i>
+                        <i class='fa fa-user icon-24pt text-danger'></i>
                     </div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
                             </div>
                         </div>
                         <i class="fa fa-user-tie icon-24pt text-danger"></i>
-{{--                        <i class='bx bxs-user-check icon-32pt text-danger ml-8pt'></i>--}}
+                        {{--                        <i class='bx bxs-user-check icon-32pt text-danger ml-8pt'></i>--}}
                     </div>
                 </div>
             </div>
@@ -84,7 +84,7 @@
                                 </p>
                             </div>
                         </div>
-                        <i class='fa fa-users icon-24pt text-danger ml-8pt' ></i>
+                        <i class='fa fa-users icon-24pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -126,7 +126,7 @@
                                 </p>
                             </div>
                         </div>
-                        <i class='fa fa-trophy icon-24pt text-danger' ></i>
+                        <i class='fa fa-trophy icon-24pt text-danger'></i>
                     </div>
                 </div>
             </div>
@@ -207,7 +207,8 @@
                         <div class="h2 mb-0 mr-3">Rp. {{ $dataOverview['totalRevenues'] }}</div>
                         <div class="flex">
                             <div class="card-title">Total Revenue</div>
-                            <div class="card-subtitle text-50 d-flex align-items-center">2.6% <i class="material-icons text-accent icon-16pt ml-4pt">keyboard_arrow_up</i></div>
+                            <div class="card-subtitle text-50 d-flex align-items-center">2.6% <i
+                                        class="material-icons text-accent icon-16pt ml-4pt">keyboard_arrow_up</i></div>
                         </div>
                         <div class="ml-3 align-self-start">
                             <div class="dropdown mb-2">
@@ -287,9 +288,9 @@
 
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
-                <a href="{{ route('match-schedules.index') }}" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
+            <a href="{{ route('match-schedules.index') }}" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
                 View More
-                    <span class="material-icons ml-2 icon-16pt">chevron_right</span>
+                <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
         </div>
 
@@ -313,8 +314,8 @@
                         </div>
                         <div class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
                             <div class="mr-md-3 text-center text-md-right">
-                                    <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
-                                    <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
+                                <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
+                                <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
                             </div>
                             <img src="{{ Storage::url($match->teams[1]->logo) }}"
                                  width="50"
@@ -331,7 +332,8 @@
                         </div>
                         <div class="mr-2">
                             <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                            {{ date('h:i A', strtotime($match->startTime)) }} - {{ date('h:i A', strtotime($match->endTime)) }}
+                            {{ date('h:i A', strtotime($match->startTime)) }}
+                            - {{ date('h:i A', strtotime($match->endTime)) }}
                         </div>
                         <div>
                             <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -374,7 +376,8 @@
                                     </div>
                                     <div class="mr-2">
                                         <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                                        {{ date('h:i A', strtotime($training->startTime)) }} - {{ date('h:i A', strtotime($match->endTime)) }}
+                                        {{ date('h:i A', strtotime($training->startTime)) }}
+                                        - {{ date('h:i A', strtotime($match->endTime)) }}
                                     </div>
                                     <div>
                                         <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -458,7 +461,7 @@
 
 @push('addon-script')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#teamsLeaderboardTable').DataTable({
                 pageLength: 5,
                 processing: true,
@@ -468,16 +471,16 @@
                     url: '{!! route('leaderboards.teams') !!}',
                 },
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'name', name: 'name' },
-                    { data: 'match', name: 'match' },
-                    { data: 'won', name: 'won'},
-                    { data: 'drawn', name: 'drawn'},
-                    { data: 'lost', name: 'lost'},
-                    { data: 'goals', name: 'goals'},
-                    { data: 'goalsConceded', name: 'goalsConceded'},
-                    { data: 'cleanSheets', name: 'cleanSheets'},
-                    { data: 'ownGoals', name: 'ownGoals'},
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'name', name: 'name'},
+                    {data: 'match', name: 'match'},
+                    {data: 'won', name: 'won'},
+                    {data: 'drawn', name: 'drawn'},
+                    {data: 'lost', name: 'lost'},
+                    {data: 'goals', name: 'goals'},
+                    {data: 'goalsConceded', name: 'goalsConceded'},
+                    {data: 'cleanSheets', name: 'cleanSheets'},
+                    {data: 'ownGoals', name: 'ownGoals'},
                     {
                         data: 'action',
                         name: 'action',
@@ -498,19 +501,19 @@
                     url: '{!! route('leaderboards.players') !!}',
                 },
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'name', name: 'name' },
-                    { data: 'teams', name: 'teams' },
-                    { data: 'apps', name: 'apps'},
-                    { data: 'goals', name: 'goals'},
-                    { data: 'assists', name: 'assists'},
-                    { data: 'ownGoals', name: 'ownGoals'},
-                    { data: 'shots', name: 'shots'},
-                    { data: 'passes', name: 'passes'},
-                    { data: 'fouls', name: 'fouls'},
-                    { data: 'yellowCards', name: 'yellowCards'},
-                    { data: 'redCards', name: 'redCards'},
-                    { data: 'saves', name: 'saves'},
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'name', name: 'name'},
+                    {data: 'teams', name: 'teams'},
+                    {data: 'apps', name: 'apps'},
+                    {data: 'goals', name: 'goals'},
+                    {data: 'assists', name: 'assists'},
+                    {data: 'ownGoals', name: 'ownGoals'},
+                    {data: 'shots', name: 'shots'},
+                    {data: 'passes', name: 'passes'},
+                    {data: 'fouls', name: 'fouls'},
+                    {data: 'yellowCards', name: 'yellowCards'},
+                    {data: 'redCards', name: 'redCards'},
+                    {data: 'saves', name: 'saves'},
                     {
                         data: 'action',
                         name: 'action',

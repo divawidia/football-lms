@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('includes.admins.master')
 @section('title')
     Subscriptions
 @endsection

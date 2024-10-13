@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('includes.admins.master')
 @section('title')
     {{ $data->lessonTitle }} Lesson
 @endsection
@@ -11,7 +11,9 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('training-videos.show', $training->id) }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to {{ $training->trainingTitle }}</a>
+                    <a href="{{ route('training-videos.show', $training->id) }}" class="nav-link text-70"><i
+                                class="material-icons icon--left">keyboard_backspace</i> Back
+                        to {{ $training->trainingTitle }}</a>
                 </li>
             </ul>
         </div>

@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('includes.admins.master')
 @section('title')
     {{ $fullName  }} Profile
 @endsection
@@ -11,7 +11,8 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('admin-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Admin Lists</a>
+                    <a href="{{ route('admin-managements.index') }}" class="nav-link text-70"><i
+                                class="material-icons icon--left">keyboard_backspace</i> Back to Admin Lists</a>
                 </li>
             </ul>
         </div>

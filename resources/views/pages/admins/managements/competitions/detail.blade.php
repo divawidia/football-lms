@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('includes.admins.master')
 @section('title')
     {{ $competition->name  }}
 @endsection
@@ -51,7 +51,8 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('competition-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Competition Lists</a>
+                    <a href="{{ route('competition-managements.index') }}" class="nav-link text-70"><i
+                                class="material-icons icon--left">keyboard_backspace</i> Back to Competition Lists</a>
                 </li>
             </ul>
         </div>
@@ -68,14 +69,16 @@
                 <p class="lead text-white-50">{{ $competition->type }}</p>
             </div>
             <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
                     Action
                     <span class="material-icons ml-3">
                         keyboard_arrow_down
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('competition-managements.edit', $competition->id) }}"><span class="material-icons">edit</span> Edit Competition Info</a>
+                    <a class="dropdown-item" href="{{ route('competition-managements.edit', $competition->id) }}"><span
+                                class="material-icons">edit</span> Edit Competition Info</a>
                     @if($competition->status == '1')
                         <form action="{{ route('deactivate-competition', $competition->id) }}" method="POST">
                             @method("PATCH")
@@ -261,7 +264,8 @@
         </div>
         <div class="page-separator">
             <div class="page-separator__text">Group Divisions</div>
-            <a href="{{ route('division-managements.create', $competition->id) }}" class="btn btn-primary ml-auto btn-sm">
+            <a href="{{ route('division-managements.create', $competition->id) }}"
+               class="btn btn-primary ml-auto btn-sm">
                 <span class="material-icons mr-2">
                     add
                 </span>
@@ -272,219 +276,187 @@
             @foreach($competition->groups as $group)
                 @if(count($competition->groups) <= 1)
                     <div class="col-12">
-                @else
-                    <div class="col-lg-6">
-                @endif
+                        @else
+                            <div class="col-lg-6">
+                                @endif
+                                <div class="page-separator">
+                                    <div class="page-separator__text">{{ $group->groupName }}</div>
+                                    <div class="btn-toolbar ml-auto" role="toolbar"
+                                         aria-label="Toolbar with button groups">
+                                        <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#"
+                                           data-toggle="tooltip" data-placement="bottom" title="Edit Group">
+                                            <span class="material-icons">edit</span>
+                                        </a>
+                                        <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}"
+                                           class="btn btn-sm btn-white ml-1" data-toggle="tooltip"
+                                           data-placement="bottom" title="Add Team">
+                                            <span class="material-icons">add</span>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-white ml-1 delete-group"
+                                                id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom"
+                                                title="Delete Group">
+                                            <span class="material-icons">delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover mb-0" id="groupTable{{$group->id}}">
+                                                <thead>
+                                                <tr>
+                                                    <th>Team Name</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            @endforeach
+                    </div>
                     <div class="page-separator">
-                        <div class="page-separator__text">{{ $group->groupName }}</div>
-                        <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
-                                <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
+                        <div class="page-separator__text">Group Tables</div>
+                    </div>
+                    @foreach($competition->groups as $group)
+                        <div class="page-separator">
+                            <div class="page-separator__text">{{ $group->groupName }}</div>
+                            <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
+                                <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#"
+                                   data-toggle="tooltip" data-placement="bottom" title="Edit Group">
                                     <span class="material-icons">edit</span>
                                 </a>
-                                <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
+                                <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}"
+                                   class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom"
+                                   title="Add Team">
                                     <span class="material-icons">add</span>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
+                                <button type="button" class="btn btn-sm btn-white ml-1 delete-group"
+                                        id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom"
+                                        title="Delete Group">
                                     <span class="material-icons">delete</span>
                                 </button>
-                        </div>
-                    </div>
-                    <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0" id="groupTable{{$group->id}}">
-                                    <thead>
-                                    <tr>
-                                        <th>Team Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
                             </div>
                         </div>
-                    </div>
-
-                </div>
-            @endforeach
+                        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0" id="classTable{{$group->id}}">
+                                        <thead>
+                                        <tr>
+                                            <th>Team</th>
+                                            <th>Match Played</th>
+                                            <th>won</th>
+                                            <th>drawn</th>
+                                            <th>lost</th>
+                                            <th>goals For</th>
+                                            <th>goals Againts</th>
+                                            <th>goals Difference</th>
+                                            <th>red Cards</th>
+                                            <th>yellow Cards</th>
+                                            <th>points</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
         </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Group Tables</div>
-        </div>
-        @foreach($competition->groups as $group)
-            <div class="page-separator">
-                <div class="page-separator__text">{{ $group->groupName }}</div>
-                <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
-                    <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
-                        <span class="material-icons">edit</span>
-                    </a>
-                    <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
-                        <span class="material-icons">add</span>
-                    </a>
-                    <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
-                        <span class="material-icons">delete</span>
-                    </button>
-                </div>
-            </div>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="classTable{{$group->id}}">
-                            <thead>
-                            <tr>
-                                <th>Team</th>
-                                <th>Match Played</th>
-                                <th>won</th>
-                                <th>drawn</th>
-                                <th>lost</th>
-                                <th>goals For</th>
-                                <th>goals Againts</th>
-                                <th>goals Difference</th>
-                                <th>red Cards</th>
-                                <th>yellow Cards</th>
-                                <th>points</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
 
-@endsection
-@push('addon-script')
-    <script>
-        $(document).ready(function() {
-            @foreach($competition->groups as $group)
-                const groupTable{{$group->id}} = $('#groupTable{{$group->id}}').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ordering: true,
-                    ajax: {
-                        url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
-                    },
-                    columns: [
-                        { data: 'teams', name: 'teams' },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false,
-                            width: '15%'
+        @endsection
+        @push('addon-script')
+            <script>
+                $(document).ready(function () {
+                    @foreach($competition->groups as $group)
+                    const groupTable{{$group->id}} = $('#groupTable{{$group->id}}').DataTable({
+                        processing: true,
+                        serverSide: true,
+                        ordering: true,
+                        ajax: {
+                            url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
                         },
-                    ]
-                });
+                        columns: [
+                            {data: 'teams', name: 'teams'},
+                            {
+                                data: 'action',
+                                name: 'action',
+                                orderable: false,
+                                searchable: false,
+                                width: '15%'
+                            },
+                        ]
+                    });
 
-            const classTable{{$group->id}} = $('#classTable{{$group->id}}').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
-                },
-                columns: [
-                    { data: 'teams', name: 'teams' },
-                    { data: 'pivot.matchPlayed', name: 'pivot.matchPlayed' },
-                    { data: 'pivot.won', name: 'pivot.won' },
-                    { data: 'pivot.drawn', name: 'pivot.drawn' },
-                    { data: 'pivot.lost', name: 'pivot.lost' },
-                    { data: 'pivot.goalsFor', name: 'pivot.goalsFor' },
-                    { data: 'pivot.goalsAgaints', name: 'pivot.goalsAgaints' },
-                    { data: 'pivot.goalsDifference', name: 'pivot.goalsDifference' },
-                    { data: 'pivot.redCards', name: 'pivot.redCards' },
-                    { data: 'pivot.yellowCards', name: 'pivot.yellowCards' },
-                    { data: 'pivot.points', name: 'pivot.points' },
-                ]
-            });
-            @endforeach
+                    const classTable{{$group->id}} = $('#classTable{{$group->id}}').DataTable({
+                        processing: true,
+                        serverSide: true,
+                        ordering: true,
+                        ajax: {
+                            url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
+                        },
+                        columns: [
+                            {data: 'teams', name: 'teams'},
+                            {data: 'pivot.matchPlayed', name: 'pivot.matchPlayed'},
+                            {data: 'pivot.won', name: 'pivot.won'},
+                            {data: 'pivot.drawn', name: 'pivot.drawn'},
+                            {data: 'pivot.lost', name: 'pivot.lost'},
+                            {data: 'pivot.goalsFor', name: 'pivot.goalsFor'},
+                            {data: 'pivot.goalsAgaints', name: 'pivot.goalsAgaints'},
+                            {data: 'pivot.goalsDifference', name: 'pivot.goalsDifference'},
+                            {data: 'pivot.redCards', name: 'pivot.redCards'},
+                            {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                            {data: 'pivot.points', name: 'pivot.points'},
+                        ]
+                    });
+                    @endforeach
 
-            // show modal edit group data
-            $('body').on('click', '.edit-group', function(e) {
-                const id = $(this).attr('id');
-                e.preventDefault();
+                    // show modal edit group data
+                    $('body').on('click', '.edit-group', function (e) {
+                        const id = $(this).attr('id');
+                        e.preventDefault();
 
-                $.ajax({
-                    method: 'GET',
-                    url: "{{ route('division-managements.edit', ['competition' => $competition->id, 'group' => ':id']) }}".replace(':id', id),
-                    success: function(res) {
-                        $("#editGroupModal").modal('show');
-                        $('#groupId').val(id);
-                        $('#add_groupName').val(res.groupName);
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        Swal.fire({
-                            icon: 'error',
-                            html: response,
-                            allowOutsideClick: true,
-                        });
-                    }
-                });
-            });
-
-            // insert data opponent team
-            $('#formEditGroupModal').on('submit', function(e) {
-                e.preventDefault();
-                let id = $('#groupId').val();
-
-                $.ajax({
-                    method: $(this).attr('method'),
-                    url: "{{ route('division-managements.update', ['competition' => $competition->id, 'group' => ':id']) }}".replace(':id', id),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        $('#editGroupModal').modal('hide');
-                        Swal.fire({
-                            title: 'Group Division successfully added!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
+                        $.ajax({
+                            method: 'GET',
+                            url: "{{ route('division-managements.edit', ['competition' => $competition->id, 'group' => ':id']) }}".replace(':id', id),
+                            success: function (res) {
+                                $("#editGroupModal").modal('show');
+                                $('#groupId').val(id);
+                                $('#add_groupName').val(res.groupName);
+                            },
+                            error: function (xhr) {
+                                const response = JSON.parse(xhr.responseText);
+                                Swal.fire({
+                                    icon: 'error',
+                                    html: response,
+                                    allowOutsideClick: true,
+                                });
                             }
                         });
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("input#add_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
+                    });
 
-            $('.delete-group').on('click', function() {
-                let id = $(this).attr('id');
+                    // insert data opponent team
+                    $('#formEditGroupModal').on('submit', function (e) {
+                        e.preventDefault();
+                        let id = $('#groupId').val();
 
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('division-managements.destroy', ['competition' => $competition->id,'group' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function() {
+                            method: $(this).attr('method'),
+                            url: "{{ route('division-managements.update', ['competition' => $competition->id, 'group' => ':id']) }}".replace(':id', id),
+                            data: new FormData(this),
+                            contentType: false,
+                            processData: false,
+                            success: function (res) {
+                                $('#editGroupModal').modal('hide');
                                 Swal.fire({
-                                    icon: "success",
-                                    title: "Group division successfully deleted!",
+                                    title: 'Group Division successfully added!',
+                                    icon: 'success',
                                     showCancelButton: false,
                                     confirmButtonColor: "#1ac2a1",
                                     confirmButtonText:
@@ -495,63 +467,106 @@
                                     }
                                 });
                             },
-                            error: function(error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong",
-                                    text: error,
+                            error: function (xhr) {
+                                const response = JSON.parse(xhr.responseText);
+                                $.each(response.errors, function (key, val) {
+                                    $('span.' + key + '_error').text(val[0]);
+                                    $("input#add_" + key).addClass('is-invalid');
                                 });
                             }
                         });
-                    }
-                });
-            });
+                    });
 
-            // delete competition alert
-            $('body').on('click', '.delete', function() {
-                let id = $(this).attr('id');
+                    $('.delete-group').on('click', function () {
+                        let id = $(this).attr('id');
 
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('competition-managements.destroy', ['competition' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function() {
-                                Swal.fire({
-                                    title: 'Competition successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('competition-managements.index') }}";
+                        Swal.fire({
+                            title: "Are you sure?",
+                            text: "You won't be able to revert this!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#1ac2a1",
+                            cancelButtonColor: "#E52534",
+                            confirmButtonText: "Yes, delete it!"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: "{{ route('division-managements.destroy', ['competition' => $competition->id,'group' => ':id']) }}".replace(':id', id),
+                                    type: 'DELETE',
+                                    data: {
+                                        _token: "{{ csrf_token() }}"
+                                    },
+                                    success: function () {
+                                        Swal.fire({
+                                            icon: "success",
+                                            title: "Group division successfully deleted!",
+                                            showCancelButton: false,
+                                            confirmButtonColor: "#1ac2a1",
+                                            confirmButtonText:
+                                                'Ok!'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                location.reload();
+                                            }
+                                        });
+                                    },
+                                    error: function (error) {
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Something went wrong",
+                                            text: error,
+                                        });
                                     }
                                 });
-                            },
-                            error: function(error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: error,
+                            }
+                        });
+                    });
+
+                    // delete competition alert
+                    $('body').on('click', '.delete', function () {
+                        let id = $(this).attr('id');
+
+                        Swal.fire({
+                            title: "Are you sure?",
+                            text: "You won't be able to revert this!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#1ac2a1",
+                            cancelButtonColor: "#E52534",
+                            confirmButtonText: "Yes, delete it!"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: "{{ route('competition-managements.destroy', ['competition' => ':id']) }}".replace(':id', id),
+                                    type: 'DELETE',
+                                    data: {
+                                        _token: "{{ csrf_token() }}"
+                                    },
+                                    success: function () {
+                                        Swal.fire({
+                                            title: 'Competition successfully deleted!',
+                                            icon: 'success',
+                                            showCancelButton: false,
+                                            confirmButtonColor: "#1ac2a1",
+                                            confirmButtonText:
+                                                'Ok!'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = "{{ route('competition-managements.index') }}";
+                                            }
+                                        });
+                                    },
+                                    error: function (error) {
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Something went wrong when deleting data!",
+                                            text: error,
+                                        });
+                                    }
                                 });
                             }
                         });
-                    }
+                    });
                 });
-            });
-        });
-    </script>
-@endpush
+            </script>
+    @endpush

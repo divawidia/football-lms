@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('includes.admins.master')
 @section('title')
     Archived Invoices
 @endsection
@@ -129,7 +129,7 @@
             });
 
             // force delete invoice
-            body.on('click', '.forceDeleteInvoice',function (){
+            body.on('click', '.forceDeleteInvoice', function () {
                 const id = $(this).attr('id');
                 Swal.fire({
                     title: "Are you sure to permanently delete this invoice?",

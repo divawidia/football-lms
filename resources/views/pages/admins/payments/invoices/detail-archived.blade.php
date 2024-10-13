@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('includes.admins.master')
 @section('title')
     Invoices {{ $data['invoice']->invoiceNumber }}
 @endsection
@@ -11,7 +11,8 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('invoices.archived') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Archived Invoices</a>
+                    <a href="{{ route('invoices.archived') }}" class="nav-link text-70"><i
+                                class="material-icons icon--left">keyboard_backspace</i> Back to Archived Invoices</a>
                 </li>
             </ul>
         </div>
@@ -49,13 +50,15 @@
                 </div>
                 <div class="col-lg-3 text-lg-right d-flex flex-lg-column mb-24pt mb-lg-0 border-bottom border-lg-0 pb-16pt pb-lg-0">
                     <div class="flex">
-                        <p class="text-white-70 mb-8pt"><strong>Invoice {{ $data['invoice']->invoiceNumber }}</strong></p>
+                        <p class="text-white-70 mb-8pt"><strong>Invoice {{ $data['invoice']->invoiceNumber }}</strong>
+                        </p>
                         <p class="text-white-50">
                             {{ $data['createdDate'] }}
                         </p>
                     </div>
                     <div class="dropdown">
-                        <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-outline-white" type="button" id="dropdownMenuButton"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Action
                             <span class="material-icons ml-3">
                                 keyboard_arrow_down
@@ -130,23 +133,24 @@
         <div class="card table-responsive mb-24pt">
             <table class="table table-flush table--elevated">
                 <thead>
-                    <tr>
-                        <th>Products</th>
-                        <th class="text-center">Qty</th>
-                        <th style="width: 130px;"
-                            class="text-right">Amount</th>
-                    </tr>
+                <tr>
+                    <th>Products</th>
+                    <th class="text-center">Qty</th>
+                    <th style="width: 130px;"
+                        class="text-right">Amount
+                    </th>
+                </tr>
                 </thead>
                 <tbody>
-                    @foreach($data['invoice']->products as $product)
-                        <tr>
-                            <td>
-                                <p class="mb-0"><strong>{{ $product->productName }}</strong></p>
-                            </td>
-                            <td class="text-center"><strong>x {{ $product->pivot->qty }}</strong></td>
-                            <td class="text-right"><strong>Rp. {{ number_format($product->pivot->ammount) }}</strong></td>
-                        </tr>
-                    @endforeach
+                @foreach($data['invoice']->products as $product)
+                    <tr>
+                        <td>
+                            <p class="mb-0"><strong>{{ $product->productName }}</strong></p>
+                        </td>
+                        <td class="text-center"><strong>x {{ $product->pivot->qty }}</strong></td>
+                        <td class="text-right"><strong>Rp. {{ number_format($product->pivot->ammount) }}</strong></td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
 
@@ -159,7 +163,8 @@
                 </tr>
                 @if($data['invoice']->tax)
                     <tr>
-                        <td class="text-right text-70"><strong>Tax {{ $data['invoice']->tax->taxName }} ~ {{ $data['invoice']->tax->percentage }}% :</strong></td>
+                        <td class="text-right text-70"><strong>Tax {{ $data['invoice']->tax->taxName }}
+                                ~ {{ $data['invoice']->tax->percentage }}% :</strong></td>
                         <td style="width: 130px;"
                             class="text-right"><strong>Rp. {{ number_format($data['invoice']->totalTax) }}</strong></td>
                     </tr>
