@@ -16,11 +16,15 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PlayerService extends CoachService
 {
-    public function index($coachId): JsonResponse
+    private $coach;
+    public function __construct($coach){
+        $this->coach = $coach;
+    }
+    public function index(): JsonResponse
     {
         $query = Player::with('user', 'teams', 'position')
-            ->whereHas('teams', function($q) use ($coachId) {
-                foreach ($this->managedTeams($coachId) as $team){
+            ->whereHas('teams', function($q) {
+                foreach ($this->managedTeams($this->coach) as $team){
                     $q->orWhere('teamId', $team->id);
                 }
             })->get();
@@ -147,117 +151,5 @@ class PlayerService extends CoachService
             })
             ->rawColumns(['action', 'name','date'])
             ->make();
-    }
-
-
-
-    public function removeTeam(Player $player, Team $team)
-    {
-        $player->teams()->detach($team->id);
-        return $player;
-    }
-
-    public function updateTeams($teamData, Player $player)
-    {
-        $player->teams()->attach($teamData);
-        return $player;
-    }
-
-    public function create()
-    {
-        $action =  World::countries();
-        if ($action->success) {
-            $countries = $action->data;
-        }
-
-        $positions = PlayerPosition::all();
-        $teams = $this->getAcademyTeams();
-
-        return compact('countries', 'positions', 'teams');
-    }
-
-    public  function store(array $playerData, $academyId){
-
-        $playerData['password'] = bcrypt($playerData['password']);
-
-        if (array_key_exists('foto', $playerData)){
-            $playerData['foto'] = $playerData['foto']->store('assets/user-profile', 'public');
-        }else{
-            $playerData['foto'] = 'images/undefined-user.png';
-        }
-
-        $playerData['status'] = '1';
-        $playerData['academyId'] = $academyId;
-
-        $user = User::create($playerData);
-        $user->assignRole('player');
-
-        $playerData['userId'] = $user->id;
-
-        $player = Player::create($playerData);
-        $player->teams()->attach($playerData['team']);
-
-        PlayerParrent::create([
-            'firstName' => $playerData['firstName'],
-            'lastName' => $playerData['lastName'],
-            'relations' => $playerData['relations'],
-            'email' => $playerData['email'],
-            'phoneNumber' => $playerData['phoneNumber'],
-            'playerId' => $player->id,
-        ]);
-        return $player;
-    }
-
-    public function show(User $user)
-    {
-        $fullName = $this->getUserFullName($user);
-        $age = $this->getAge($user->dob);
-        $teams = Team::where('teamSide', 'Academy Team')
-                ->whereDoesntHave('players', function (Builder $query) use ($user) {
-                $query->where('playerId', $user->player->id);
-            })->get();
-
-        return compact('fullName', 'age', 'teams');
-    }
-
-    public function update(array $playerData, User $user): User
-    {
-        if (array_key_exists('foto', $playerData)){
-            $this->deleteImage($user->foto);
-            $playerData['foto'] = $playerData['foto']->store('assets/player-logo', 'public');
-        }else{
-            $playerData['foto'] = $user->foto;
-        }
-
-        $user->update($playerData);
-        $user->player->update($playerData);
-
-        return $user;
-    }
-    public function activate(User $user): User
-    {
-        $user->update(['status' => '1']);
-        return $user;
-    }
-
-    public function deactivate(User $user): User
-    {
-        $user->update(['status' => '0']);
-        return $user;
-    }
-
-    public function changePassword($data, User $user){
-        $user->update([
-            'password' => bcrypt($data)
-        ]);
-        return $user;
-    }
-
-    public function destroy(User $user): User
-    {
-        $this->deleteImage($user->foto);
-        $user->player->delete();
-        $user->delete();
-        return $user;
     }
 }
