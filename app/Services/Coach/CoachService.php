@@ -3,8 +3,9 @@
 namespace App\Services\Coach;
 
 use App\Models\Team;
+use App\Services\Service;
 
-class CoachService
+class CoachService extends Service
 {
     public function managedTeams($coach){
         return Team::with('coaches')
