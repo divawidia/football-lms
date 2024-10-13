@@ -124,6 +124,13 @@ class PlayerService extends CoachService
             ->take(2)
             ->get();
 
+        $playerAge = $this->getAge($player->user->dob);
+        $playerDob = $this->convertToDate($player->user->dob);
+        $playerJoinDate = $this->convertToDate($player->joinDate);
+        $playerCreatedAt = $this->convertToDate($player->user->created_at);
+        $playerUpdatedAt = $this->convertToDate($player->user->updated_at);
+        $playerLastSeen = $this->convertToDate($player->user->lastSeen);
+
         return compact(
             'matchPlayed',
             'minutesPlayed',
@@ -135,7 +142,13 @@ class PlayerService extends CoachService
             'losses',
             'draws',
             'upcomingMatches',
-            'upcomingTrainings'
+            'upcomingTrainings',
+            'playerAge',
+            'playerDob',
+            'playerJoinDate',
+            'playerCreatedAt',
+            'playerUpdatedAt',
+            'playerLastSeen'
         );
     }
 }
