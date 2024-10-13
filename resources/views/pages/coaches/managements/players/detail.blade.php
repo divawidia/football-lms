@@ -34,6 +34,7 @@
     </div>
 
     <div class="container page__container page-section">
+{{--        Overview Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
         </div>
@@ -143,7 +144,7 @@
                 </div>
             </div>
         </div>
-        <div class="row card-group-row">
+        <div class="row card-group-row mb-4">
             <div class="col-lg-4 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
@@ -199,62 +200,7 @@
 
         <div class="row card-group-row">
             <div class="col-sm-6 card-group-row__col flex-column">
-                <div class="page-separator">
-                    <div class="page-separator__text">Teams</div>
-                </div>
-                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="teamsTable">
-                                <thead>
-                                <tr>
-                                    <th>Team Name</th>
-                                    <th>Date Joined</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="page-separator">
-                    <div class="page-separator__text">Contact</div>
-                </div>
-                <div class="card card-sm card-group-row__card">
-                    <div class="card-body flex-column">
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Email :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->email }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Phone Number :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->phoneNumber }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Address :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->address }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Country :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->country->name }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">State :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->state->name }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">City :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->city->name }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Zip Code :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->zipCode }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 card-group-row__col flex-column">
+                {{--Profile Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Profile</div>
                 </div>
@@ -314,8 +260,84 @@
                         </div>
                     </div>
                 </div>
+
+                {{--Contact Section--}}
+                <div class="page-separator">
+                    <div class="page-separator__text">Contact</div>
+                </div>
+                <div class="card card-sm card-group-row__card">
+                    <div class="card-body flex-column">
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Email :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $data->user->email }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Phone Number :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $data->user->phoneNumber }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Address :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $data->user->address }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Country :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $data->user->country->name }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">State :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $data->user->state->name }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">City :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $data->user->city->name }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Zip Code :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $data->user->zipCode }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 card-group-row__col flex-column">
+                {{--Teams Section--}}
+                <div class="page-separator">
+                    <div class="page-separator__text">Teams</div>
+                </div>
+                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="teamsTable">
+                                <thead>
+                                <tr>
+                                    <th>Team Name</th>
+                                    <th>Date Joined</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                {{--Teams Section--}}
+                <div class="page-separator">
+                    <div class="page-separator__text">Skill Stats</div>
+                    <a href="" class="btn btn-outline-secondary btn-sm ml-auto">
+                        View More
+                        <span class="material-icons ml-2 icon-16pt">chevron_right</span>
+                    </a>
+                </div>
+                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                    <div class="card-body">
+
+                    </div>
+                </div>
+
             </div>
         </div>
+
+        {{--Parents/Guardians Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Parents/Guardians</div>
         </div>
@@ -338,18 +360,165 @@
                 </div>
             </div>
         </div>
+
+        {{--Upcoming Matches Section--}}
+        <div class="page-separator">
+            <div class="page-separator__text">Upcoming Matches</div>
+            <a href="" class="btn btn-outline-secondary btn-sm ml-auto">
+                View More
+                <span class="material-icons ml-2 icon-16pt">chevron_right</span>
+            </a>
+        </div>
+        @if(count($overview['upcomingMatches']) == 0)
+            <div class="alert alert-light border-left-accent" role="alert">
+                <div class="d-flex flex-wrap align-items-center">
+                    <i class="material-icons mr-8pt">error_outline</i>
+                    <div class="media-body"
+                         style="min-width: 180px">
+                        <small class="text-black-100">There are no matches scheduled at this time</small>
+                    </div>
+                </div>
+            </div>
+        @endif
+        @foreach($overview['upcomingMatches'] as $match)
+            <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4 d-flex flex-column flex-md-row align-items-center">
+                            <img src="{{ Storage::url($match->teams[0]->logo) }}"
+                                 width="50"
+                                 height="50"
+                                 class="rounded-circle img-object-fit-cover"
+                                 alt="team-logo">
+                            <div class="ml-md-3 text-center text-md-left">
+                                <h5 class="mb-0">{{$match->teams[0]->teamName}}</h5>
+                                <p class="text-50 lh-1 mb-0">{{$match->teams[0]->ageGroup}}</p>
+                            </div>
+                        </div>
+                        <div class="col-4 text-center">
+                            <h2 class="mb-0">Vs.</h2>
+                        </div>
+                        <div class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
+                            <div class="mr-md-3 text-center text-md-right">
+                                <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
+                                <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
+                            </div>
+                            <img src="{{ Storage::url($match->teams[1]->logo) }}"
+                                 width="50"
+                                 height="50"
+                                 class="rounded-circle img-object-fit-cover"
+                                 alt="team-logo">
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-center mt-3">
+                        <div class="mr-2">
+                            <i class="material-icons text-danger icon--left icon-16pt">event</i>
+                            {{ date('D, M d Y', strtotime($match->date)) }}
+                        </div>
+                        <div class="mr-2">
+                            <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
+                            {{ date('h:i A', strtotime($match->startTime)) }} - {{ date('h:i A', strtotime($match->endTime)) }}
+                        </div>
+                        <div>
+                            <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
+                            {{ $match->place }}
+                        </div>
+                    </div>
+                </div>
+            </a>
+        @endforeach
+
+        {{--Upcoming Trainings Section--}}
+        <div class="page-separator">
+            <div class="page-separator__text">Upcoming Trainings</div>
+            <a href="" class="btn btn-outline-secondary btn-sm ml-auto">
+                View More
+                <span class="material-icons ml-2 icon-16pt">chevron_right</span>
+            </a>
+        </div>
+        @if(count($overview['upcomingTrainings']) == 0)
+            <div class="alert alert-light border-left-accent" role="alert">
+                <div class="d-flex flex-wrap align-items-center">
+                    <i class="material-icons mr-8pt">error_outline</i>
+                    <div class="media-body"
+                         style="min-width: 180px">
+                        <small class="text-black-100">There are no trainings scheduled at this time</small>
+                    </div>
+                </div>
+            </div>
+        @endif
+        @foreach($overview['upcomingTrainings'] as $training)
+            <div class="col-lg-6">
+                <a class="card" href="{{ route('training-schedules.show', $training->id) }}">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 d-flex flex-column flex-md-row align-items-center">
+                                <img src="{{ Storage::url($training->teams[0]->logo) }}"
+                                     width="50"
+                                     height="50"
+                                     class="rounded-circle img-object-fit-cover"
+                                     alt="team-logo">
+                                <div class="ml-md-3 text-center text-md-left">
+                                    <h5 class="mb-0">{{$training->teams[0]->teamName}}</h5>
+                                    <p class="text-50 lh-1 mb-0">{{$training->teams[0]->ageGroup}}</p>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex flex-column">
+                                <div class="mr-2">
+                                    <i class="material-icons text-danger icon--left icon-16pt">event</i>
+                                    {{ date('D, M d Y', strtotime($training->date)) }}
+                                </div>
+                                <div class="mr-2">
+                                    <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
+                                    {{ date('h:i A', strtotime($training->startTime)) }} - {{ date('h:i A', strtotime($training->endTime)) }}
+                                </div>
+                                <div>
+                                    <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
+                                    {{ $training->place }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        @endforeach
+
+        {{--Trainings History Section--}}
+        <div class="page-separator">
+            <div class="page-separator__text">Trainings History</div>
+        </div>
+        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="trainingHistoryTable">
+                        <thead>
+                        <tr>
+                            <th>Training Date</th>
+                            <th>Team</th>
+                            <th>Attendance Status</th>
+                            <th>Note</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
 @endsection
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            const parentsTable = $('#parentsTable').DataTable({
+            $('#parentsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('player-parents.index', $data->user->id) !!}',
+                    url: '{!! route('player-parents.index', $data->userId) !!}',
                 },
                 columns: [
                     { data: 'firstName', name: 'firstName' },
@@ -360,12 +529,12 @@
                 ]
             });
 
-            const teamsTable = $('#teamsTable').DataTable({
+            $('#teamsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('player-managements.playerTeams', $data->user->id) !!}',
+                    url: '{!! route('player-managements.playerTeams', $data->userId) !!}',
                 },
                 columns: [
                     { data: 'name', name: 'name' },

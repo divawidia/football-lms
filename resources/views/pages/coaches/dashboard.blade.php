@@ -297,12 +297,22 @@
 
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
-                <a href="{{ route('match-schedules.index') }}" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
+            <a href="{{ route('match-schedules.index') }}" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
                 View More
-                    <span class="material-icons ml-2 icon-16pt">chevron_right</span>
+                <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
         </div>
-
+        @if(count($upcomingMatches) == 0)
+            <div class="alert alert-light border-left-accent" role="alert">
+                <div class="d-flex flex-wrap align-items-center">
+                    <i class="material-icons mr-8pt">error_outline</i>
+                    <div class="media-body"
+                         style="min-width: 180px">
+                        <small class="text-black-100">There are no matches scheduled at this time</small>
+                    </div>
+                </div>
+            </div>
+        @endif
         @foreach($upcomingMatches as $match)
             <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
                 <div class="card-body">
@@ -359,7 +369,17 @@
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
         </div>
-
+        @if(count($upcomingTrainings) == 0)
+            <div class="alert alert-light border-left-accent" role="alert">
+                <div class="d-flex flex-wrap align-items-center">
+                    <i class="material-icons mr-8pt">error_outline</i>
+                    <div class="media-body"
+                         style="min-width: 180px">
+                        <small class="text-black-100">There are no trainings scheduled at this time</small>
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="row">
             @foreach($upcomingTrainings as $training)
                 <div class="col-lg-6">
@@ -384,7 +404,7 @@
                                     </div>
                                     <div class="mr-2">
                                         <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                                        {{ date('h:i A', strtotime($training->startTime)) }} - {{ date('h:i A', strtotime($match->endTime)) }}
+                                        {{ date('h:i A', strtotime($training->startTime)) }} - {{ date('h:i A', strtotime($training->endTime)) }}
                                     </div>
                                     <div>
                                         <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
