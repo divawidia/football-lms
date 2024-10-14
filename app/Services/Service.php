@@ -80,4 +80,11 @@ class Service
         $numbers = mt_rand(00000, 999999);
         return 'INV-'.$numbers;
     }
+
+    public function coachManagedTeams($coach){
+        return Team::with('coaches')
+            ->whereHas('coaches', function($q) use ($coach) {
+                $q->where('coachId', $coach->id);
+            })->get();
+    }
 }

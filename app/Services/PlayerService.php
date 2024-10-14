@@ -98,6 +98,70 @@ class PlayerService extends Service
             ->make();
     }
 
+    // retrieve player data based on coach managed teams
+    public function coachPlayerIndex($coach): JsonResponse
+    {
+        $query = Player::with('user', 'teams', 'position')
+            ->whereHas('teams', function($q) use($coach){
+                foreach ($this->coachManagedTeams($coach) as $team){
+                    $q->orWhere('teamId', $team->id);
+                }
+            })->get();
+
+        return Datatables::of($query)
+            ->addColumn('action', function ($item) {
+                return '
+                      <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                        <span class="material-icons">
+                            visibility
+                        </span>
+                      </a>';
+            })
+            ->editColumn('teams.name', function ($item) {
+                $playerTeam = '';
+                if(count($item->teams) === 0){
+                    $playerTeam = 'No Team';
+                }else{
+                    foreach ($item->teams as $team){
+                        $playerTeam .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
+                    }
+                }
+                return $playerTeam;
+            })
+            ->editColumn('name', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                             style="white-space: nowrap;">
+                            <div class="avatar avatar-sm mr-8pt">
+                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
+                            </div>
+                            <div class="media-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex d-flex flex-column">
+                                        <a href="' . route('coach.player-managements.show', $item->id) . '">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                                        </a>
+                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>';
+            })
+            ->editColumn('status', function ($item){
+                if ($item->user->status == '1') {
+                    return '<span class="badge badge-pill badge-success">Aktif</span>';
+                }elseif ($item->user->status == '0'){
+                    return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
+                }
+            })
+            ->editColumn('age', function ($item){
+                return $this->getAge($item->user->dob);
+            })
+            ->rawColumns(['action', 'name','status', 'age', 'teams.name'])
+            ->make();
+    }
+
     public function playerTeams(Player $player): JsonResponse
     {
         return Datatables::of($player->teams)
@@ -141,51 +205,6 @@ class PlayerService extends Service
             ->rawColumns(['action', 'name','date'])
             ->make();
     }
-
-    public function player(Player $player): JsonResponse
-    {
-        return Datatables::of($player->teams)
-            ->addColumn('action', function ($item) {
-                return '
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="'.route('team-managements.edit', $item->id).'"><span class="material-icons">edit</span> Edit Team</a>
-                            <a class="dropdown-item" href="'.route('team-managements.show', $item->id).'"><span class="material-icons">visibility</span> View Team</a>
-                            <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
-                                <span class="material-icons">delete</span> Remove Player from Team
-                            </button>
-                          </div>
-                        </div>';
-            })
-            ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->division . ' - '.$item->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-            })
-            ->editColumn('date', function ($item){
-                return date('M d, Y', strtotime($item->pivot->created_at));
-            })
-            ->rawColumns(['action', 'name','date'])
-            ->make();
-    }
-
 
 
     public function removeTeam(Player $player, Team $team)
