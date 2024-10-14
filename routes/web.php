@@ -81,8 +81,8 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::patch('change-password', [AdminController::class, 'changePassword'])->name('admin-managements.change-password');
             });
 
+            Route::resource('player-managements', PlayerController::class);
             Route::prefix('player-managements')->group(function () {
-                Route::resource('', PlayerController::class)->parameter('','player_management');
 
                 Route::prefix('{player}')->group(function () {
                     Route::patch('deactivate', [PlayerController::class, 'deactivate'])->name('deactivate-player');
