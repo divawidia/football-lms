@@ -45,6 +45,11 @@ class PlayerController extends Controller
         return view('pages.admins.managements.players.index');
     }
 
+    public function coachPlayerIndex()
+    {
+        return $this->playerService->coachPlayerIndex($this->getLoggedCoachUser());
+    }
+
     public function playerTeams(User $player)
     {
         if (request()->ajax()) {
