@@ -264,16 +264,80 @@ class PlayerService extends Service
         return $player;
     }
 
-    public function show(User $user)
+    public function show(Player $player)
     {
-        $fullName = $this->getUserFullName($user);
-        $age = $this->getAge($user->dob);
-        $teams = Team::where('teamSide', 'Academy Team')
-                ->whereDoesntHave('players', function (Builder $query) use ($user) {
-                $query->where('playerId', $user->player->id);
-            })->get();
+        $matchPlayed = $player->playerMatchStats()->where('minutesPlayed', '>', 0)->count();
+        $minutesPlayed = $player->playerMatchStats()->sum('minutesPlayed');
+        $fouls = $player->playerMatchStats()->sum('fouls');
+        $goals = $player->playerMatchStats()->sum('goals');
+        $assists = $player->playerMatchStats()->sum('assists');
+        $ownGoals = $player->playerMatchStats()->sum('ownGoal');
+        $wins = $player->schedules()
+            ->where('eventType', 'Match')
+            ->whereHas('teams', function ($q){
+                $q->where('resultStatus', 'Win');
+            })
+            ->count();
+        $losses = $player->schedules()
+            ->where('eventType', 'Match')
+            ->whereHas('teams', function ($q){
+                $q->where('resultStatus', 'Lose');
+            })
+            ->count();
+        $draws = $player->schedules()
+            ->where('eventType', 'Match')
+            ->whereHas('teams', function ($q){
+                $q->where('resultStatus', 'Draw');
+            })
+            ->count();
 
-        return compact('fullName', 'age', 'teams');
+        $upcomingMatches = $player->schedules()
+            ->where('eventType', 'Match')
+            ->where('status', '1')
+            ->take(2)
+            ->get();
+
+        $upcomingTrainings = $player->schedules()
+            ->where('eventType', 'Training')
+            ->where('status', '1')
+            ->take(2)
+            ->get();
+
+        $playerAge = $this->getAge($player->user->dob);
+        $playerDob = $this->convertToDate($player->user->dob);
+        $playerJoinDate = $this->convertToDate($player->joinDate);
+        $playerCreatedAt = $this->convertToDate($player->user->created_at);
+        $playerUpdatedAt = $this->convertToDate($player->user->updated_at);
+        $playerLastSeen = $this->convertToDate($player->user->lastSeen);
+
+        return compact(
+            'matchPlayed',
+            'minutesPlayed',
+            'fouls',
+            'goals',
+            'assists',
+            'ownGoals',
+            'wins',
+            'losses',
+            'draws',
+            'upcomingMatches',
+            'upcomingTrainings',
+            'playerAge',
+            'playerDob',
+            'playerJoinDate',
+            'playerCreatedAt',
+            'playerUpdatedAt',
+            'playerLastSeen'
+        );
+    }
+
+    // retrieve teams data that the player hasn't joined for add player to another team purpose
+    public function hasntJoinedTeams(Player $player)
+    {
+        return Team::where('teamSide', 'Academy Team')
+            ->whereDoesntHave('players', function (Builder $query) use ($player) {
+                $query->where('playerId', $player->id);
+            })->get();
     }
 
     public function update(array $playerData, User $user): User
