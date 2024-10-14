@@ -41,7 +41,7 @@
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button"
-                           href="{{ route('coach.player-managements.index') }}">
+                           href="{{ route('player-managements.index') }}">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">person</span>
                             <span class="sidebar-menu-text">Players Management</span>
                         </a>

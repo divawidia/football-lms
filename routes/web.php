@@ -68,6 +68,15 @@ Route::middleware('prevent.back.history')->group(function (){
 //require __DIR__.'/auth.php';
 Route::group(['middleware' => ['auth']], function () {
 
+//    Route::group(['middleware' => ['role:admin|coach,web']], function () {
+//        Route::prefix('player-managements')->group(function () {
+//            Route::get('', [PlayerController::class, 'index'])->name('player-managements.index');
+//            Route::prefix('{player}')->group(function () {
+//                Route::get('', [PlayerController::class, 'index'])->name('player-managements.index');
+//            });
+//        });
+//    });
+
     Route::group(['middleware' => ['role:admin,web']], function () {
 
         Route::prefix('admin')->group(function () {
@@ -81,20 +90,26 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::patch('change-password', [AdminController::class, 'changePassword'])->name('admin-managements.change-password');
             });
 
-            Route::resource('player-managements', PlayerController::class);
             Route::prefix('player-managements')->group(function () {
+                Route::get('admin-index', [PlayerController::class, 'adminPlayerIndex'])->name('admin.player-managements.index');
+                Route::post('', [PlayerController::class, 'store'])->name('player-managements.store');
+                Route::get('create', [PlayerController::class, 'create'])->name('player-managements.create');
 
                 Route::prefix('{player}')->group(function () {
+                    Route::get('edit', [PlayerController::class, 'edit'])->name('player-managements.edit');
+                    Route::put('', [PlayerController::class, 'update'])->name('player-managements.update');
+                    Route::delete('', [PlayerController::class, 'destroy'])->name('player-managements.destroy');
+
                     Route::patch('deactivate', [PlayerController::class, 'deactivate'])->name('deactivate-player');
                     Route::patch('activate', [PlayerController::class, 'activate'])->name('activate-player');
                     Route::get('change-password', [PlayerController::class, 'changePasswordPage'])->name('player-managements.change-password-page');
                     Route::patch('change-password', [PlayerController::class, 'changePassword'])->name('player-managements.change-password');
-//                    Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('player-managements.playerTeams');
+                    Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('player-managements.playerTeams');
                     Route::put('update-teams', [PlayerController::class, 'updateTeams'])->name('player-managements.updateTeams');
                     Route::delete('remove-team/{team}', [PlayerController::class, 'removeTeam'])->name('player-managements.removeTeam');
 
                     Route::prefix('parents')->group(function () {
-//                        Route::get('', [PlayerParentController::class, 'index'])->name('player-parents.index');
+                        Route::get('', [PlayerParentController::class, 'index'])->name('player-parents.index');
                         Route::get('create', [PlayerParentController::class, 'create'])->name('player-parents.create');
                         Route::post('store', [PlayerParentController::class, 'store'])->name('player-parents.store');
                         Route::prefix('{parent}')->group(function () {
@@ -404,13 +419,14 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['role:coach,web']], function () {
+
         Route::prefix('coach')->group(function () {
             Route::get('dashboard', [CoachDashboardController::class, 'index'])->name('coach.dashboard');
 
             Route::prefix('player-managements')->group(function () {
                 Route::get('', [CoachPlayerController::class, 'index'])->name('coach.player-managements.index');
                 Route::prefix('{player}')->group(function () {
-                    Route::get('', [CoachPlayerController::class, 'show'])->name('coach.player-managements.show');
+                    Route::get('', [PlayerController::class, 'show'])->name('coach.player-managements.show');
                     Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('coach.player-managements.playerTeams');
                     Route::get('parents', [PlayerParentController::class, 'index'])->name('coach.player-parents.index');
                 });

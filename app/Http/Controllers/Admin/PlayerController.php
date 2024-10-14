@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Services\PlayerService;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -39,10 +40,12 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->playerService->index();
-        }
         return view('pages.admins.managements.players.index');
+    }
+
+    public function adminPlayerIndex(): JsonResponse
+    {
+        return $this->playerService->index();
     }
 
     public function coachPlayerIndex()
@@ -92,15 +95,12 @@ class PlayerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $player_management)
+    public function show(Player $player)
     {
-        $data = $this->playerService->show($player_management);
-
-        return view('pages.admins.managements.players.detail', [
-            'user' => $player_management,
-            'fullName' => $data['fullName'],
-            'age' => $data['age'],
-            'teams' => $data['teams'],
+        $overview = $this->playerService->show($player);
+        return view('pages.coaches.managements.players.detail', [
+            'data' => $player,
+            'overview' => $overview
         ]);
     }
 
