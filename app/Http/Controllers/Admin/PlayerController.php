@@ -91,7 +91,7 @@ class PlayerController extends Controller
     public function show(Player $player)
     {
         $overview = $this->playerService->show($player);
-        return view('pages.coaches.managements.players.detail', [
+        return view('pages.admin.managements.players.detail', [
             'data' => $player,
             'overview' => $overview
         ]);
