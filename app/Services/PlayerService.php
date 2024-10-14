@@ -101,10 +101,18 @@ class PlayerService extends Service
     // retrieve player data based on coach managed teams
     public function coachPlayerIndex($coach): JsonResponse
     {
+        $teams = $this->coachManagedTeams($coach);
+
+        // query player data that included in teams that managed by logged in coach
         $query = Player::with('user', 'teams', 'position')
-            ->whereHas('teams', function($q) use($coach){
-                foreach ($this->coachManagedTeams($coach) as $team){
-                    $q->orWhere('teamId', $team->id);
+            ->whereHas('teams', function($q) use($teams){
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
                 }
             })->get();
 
