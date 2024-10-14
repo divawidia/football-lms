@@ -10,7 +10,7 @@ use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
-use App\Services\Coach\PlayerService;
+use App\Services\PlayerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -23,12 +23,9 @@ class PlayerController extends Controller
 {
     private PlayerService $playerService;
 
-    public function __construct()
+    public function __construct(PlayerService $playerService)
     {
-        $this->middleware(function ($request, $next) {
-            $this->playerService = new PlayerService($this->getLoggedCoachUser());
-            return $next($request);
-        });
+        $this->playerService = $playerService;
     }
 
     /**
@@ -37,7 +34,7 @@ class PlayerController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            return $this->playerService->index();
+            return $this->playerService->coachPlayerIndex($this->getLoggedCoachUser());
         }
         return view('pages.coaches.managements.players.index');
     }
