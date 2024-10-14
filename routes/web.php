@@ -91,7 +91,7 @@ Route::group(['middleware' => ['auth']], function () {
             });
 
             Route::prefix('player-managements')->group(function () {
-                Route::get('admin-index', [PlayerController::class, 'adminPlayerIndex'])->name('admin.player-managements.index');
+                Route::get('', [PlayerController::class, 'index'])->name('player-managements.index');
                 Route::post('', [PlayerController::class, 'store'])->name('player-managements.store');
                 Route::get('create', [PlayerController::class, 'create'])->name('player-managements.create');
 
