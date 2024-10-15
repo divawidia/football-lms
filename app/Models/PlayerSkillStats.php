@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PlayerSkillStats extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
+    protected $table = 'player_skills_stats';
     protected $fillable = [
         'playerId',
         'coachId',

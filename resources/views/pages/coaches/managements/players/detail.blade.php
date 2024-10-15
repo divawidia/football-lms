@@ -328,10 +328,11 @@
                         <span class="material-icons ml-2 icon-16pt">chevron_right</span>
                     </a>
                 </div>
-                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                    <div class="card-body">
-
-                    </div>
+                <div class="card">
+                    <canvas id="skillStatsChart"></canvas>
+{{--                    <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">--}}
+{{--                        <canvas id="skillStatsChart"></canvas>--}}
+{{--                    </div>--}}
                 </div>
 
             </div>
@@ -678,6 +679,23 @@
                     },
                 ],
                 order: [[2, 'desc']],
+            });
+
+            const skillStatsChart = document.getElementById('skillStatsChart');
+            new Chart(skillStatsChart, {
+                type: 'radar',
+                data: {
+                    labels: @json($playerSkillStats['label']),
+                    datasets: [{
+                        label: 'Skill Stats',
+                        data: @json($playerSkillStats['data']),
+                        borderColor: '#E52534',
+                        backgroundColor: 'rgba(229, 37, 52, 0.5)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                },
             });
         });
     </script>

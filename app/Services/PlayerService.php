@@ -366,18 +366,20 @@ class PlayerService extends Service
             'OffensivePlay',
             'DefensivePlay'
         ];
-        $data['Controlling'] = $results->controlling;
-        $data['Receiving'] = $results->recieving;
-        $data['Dribbling'] = $results->dribbling;
-        $data['Passing'] = $results->passing;
-        $data['Shooting'] = $results->shooting;
-        $data['Crossing'] = $results->crossing;
-        $data['Turning'] = $results->turning;
-        $data['BallHandling'] = $results->ballHandling;
-        $data['PowerKicking'] = $results->powerKicking;
-        $data['GoalKeeping'] = $results->goalKeeping;
-        $data['OffensivePlay'] = $results->offensivePlay;
-        $data['DefensivePlay'] = $results->defensivePlay;
+        $data = [
+            $results->controlling,
+            $results->recieving,
+            $results->dribbling,
+            $results->passing,
+            $results->shooting,
+            $results->crossing,
+            $results->turning,
+            $results->ballHandling,
+            $results->powerKicking,
+            $results->goalKeeping,
+            $results->offensivePlay,
+            $results->defensivePlay,
+        ];
 
         return compact('label', 'data');
     }
