@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Coach;
 use App\Http\Controllers\Controller;
 use App\Models\Player;
 use App\Services\PlayerService;
+use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
@@ -48,13 +49,25 @@ class PlayerController extends Controller
         $allSkills = $this->playerService->getSkillStats($player)->first();
 
 
-//        dd($skillStatsHistory);
-
         return view('pages.coaches.managements.players.skill-detail', [
             'data' => $player,
             'skillStats' => $skillStats,
             'skillStatsHistory' => $skillStatsHistory,
-            'allSkills' => $allSkills
+            'allSkills' => $allSkills,
+        ]);
+    }
+
+    public function filterSkillStatsHistory(Request $request){
+        $skill = $request->query('skill');
+        $startDate = $request->query('startDate');
+        $endDate = $request->query('endDate');
+
+        $data = $this->playerService->filterSkillStatsHistory($skill, $startDate, $endDate);
+
+        return response()->json([
+            'status' => 200,
+            'data' => $data,
+            'message' => 'Success'
         ]);
     }
 }

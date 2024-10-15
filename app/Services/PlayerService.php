@@ -352,6 +352,27 @@ class PlayerService extends Service
     public function getSkillStats(Player $player){
         return $player->playerSkillStats()->latest();
     }
+
+    public function skillStatsLabel()
+    {
+        $label = [
+            'Controlling' => 'controlling',
+            'Receiving' => 'recieving',
+            'Dribbling' => 'dribbling',
+            'Passing' => 'passing',
+            'Shooting' => 'shooting',
+            'Crossing' => 'crossing',
+            'Turning' => 'turning',
+            'Ball Handling' => 'ballHandling',
+            'Power Kicking' => 'powerKicking',
+            'Goal Keeping' => 'goalKeeping',
+            'Offensive Play' => 'offensivePlay',
+            'Defensive Play' => 'defensivePlay',
+        ];
+
+        return $label;
+    }
+
     public function skillStatsChart(Player $player){
         $results = $this->getSkillStats($player)->first();
 
@@ -432,7 +453,7 @@ class PlayerService extends Service
     }
 
     public function skillStatsHistoryChart(Player $player){
-        $results =  $this->getSkillStats($player)->take(6)->get();
+        $results =  $this->getSkillStats($player)->get();
 
         $label = [];
         $data = [];
@@ -441,79 +462,100 @@ class PlayerService extends Service
             $label[] = $this->convertToDate($result->created_at);
         }
 
-        if ($player->position->category == 'Forward'){
-            $data['label'] = [
-                'Controlling',
-                'Receiving',
-                'Dribbling',
-                'Shooting',
-                'Power Kicking',
-                'Offensive Play',
-            ];
-            foreach ($results as $result){
-                $data['Controlling'][] = $result->controlling;
-                $data['Receiving'][] = $result->recieving;
-                $data['Dribbling'][] = $result->dribbling;
-                $data['Shooting'][] = $result->shooting;
-                $data['Power Kicking'][] = $result->powerKicking;
-                $data['Offensive Play'][] = $result->offensivePlay;
-            }
-        }
-        elseif ($player->position->category == 'Midfielder'){
-            $data['label'] = [
-                'Controlling',
-                'Receiving',
-                'Dribbling',
-                'Passing',
-                'Ball Handling',
-                'Offensive Play',
-            ];
+        $skills = [
+            'Controlling' => 'controlling',
+            'Receiving' => 'recieving',
+            'Dribbling' => 'dribbling',
+            'Passing' => 'passing',
+            'Shooting' => 'shooting',
+            'Crossing' => 'crossing',
+            'Turning' => 'turning',
+            'Ball Handling' => 'ballHandling',
+            'Power Kicking' => 'powerKicking',
+            'Goal Keeping' => 'goalKeeping',
+            'Offensive Play' => 'offensivePlay',
+            'Defensive Play' => 'defensivePlay',
+        ];
 
-            foreach ($results as $result){
-                $data['Controlling'][] = $result->controlling;
-                $data['Receiving'][] = $result->recieving;
-                $data['Dribbling'][] = $result->dribbling;
-                $data['Passing'][] = $result->passing;
-                $data['Ball Handling'][] = $result->ballHandling;
-                $data['Offensive Play'][] = $result->offensivePlay;
+        foreach ($results as $result) {
+            foreach ($skills as $skill => $value) {
+                $data[$skill][] = $result[$value];
             }
         }
-        elseif ($player->position->category == 'Defender'){
-            $data['label'] = [
-                'Controlling',
-                'Receiving',
-                'Turning',
-                'Passing',
-                'Ball Handling',
-                'Defensive Play',
-            ];
-            foreach ($results as $result){
-                $data['Controlling'][] = $result->controlling;
-                $data['Receiving'][] = $result->recieving;
-                $data['Turning'][] = $result->turning;
-                $data['Passing'][] = $result->passing;
-                $data['Ball Handling'][] = $result->ballHandling;
-                $data['Defensive Play'][] = $result->defensivePlay;
-            }
-        }
-        elseif ($player->position->category == 'Defender' && $player->position->name == 'Goalkeeper (GK)' ){
-            $data['label'] = [
-                'Controlling',
-                'Receiving',
-                'Ball Handling',
-                'Passing',
-                'GoalKeeping',
-                'Defensive Play',
-            ];
-            foreach ($results as $result){
-                $data['Controlling'][] = $result->controlling;
-                $data['Receiving'][] = $result->recieving;
-                $data['Ball Handling'][] = $result->ballHandling;
-                $data['Passing'][] = $result->passing;
-                $data['GoalKeeping'][] = $result->goalKeeping;
-                $data['Defensive Play'][] = $result->defensivePlay;
-            }
-        }
+
+//        if ($player->position->category == 'Forward'){
+//            $data['label'] = [
+//                'Controlling',
+//                'Receiving',
+//                'Dribbling',
+//                'Shooting',
+//                'Power Kicking',
+//                'Offensive Play',
+//            ];
+//            foreach ($results as $result){
+//                $data['Controlling'][] = $result->controlling;
+//                $data['Receiving'][] = $result->recieving;
+//                $data['Dribbling'][] = $result->dribbling;
+//                $data['Shooting'][] = $result->shooting;
+//                $data['Power Kicking'][] = $result->powerKicking;
+//                $data['Offensive Play'][] = $result->offensivePlay;
+//            }
+//        }
+//        elseif ($player->position->category == 'Midfielder'){
+//            $data['label'] = [
+//                'Controlling',
+//                'Receiving',
+//                'Dribbling',
+//                'Passing',
+//                'Ball Handling',
+//                'Offensive Play',
+//            ];
+//
+//            foreach ($results as $result){
+//                $data['Controlling'][] = $result->controlling;
+//                $data['Receiving'][] = $result->recieving;
+//                $data['Dribbling'][] = $result->dribbling;
+//                $data['Passing'][] = $result->passing;
+//                $data['Ball Handling'][] = $result->ballHandling;
+//                $data['Offensive Play'][] = $result->offensivePlay;
+//            }
+//        }
+//        elseif ($player->position->category == 'Defender'){
+//            $data['label'] = [
+//                'Controlling',
+//                'Receiving',
+//                'Turning',
+//                'Passing',
+//                'Ball Handling',
+//                'Defensive Play',
+//            ];
+//            foreach ($results as $result){
+//                $data['Controlling'][] = $result->controlling;
+//                $data['Receiving'][] = $result->recieving;
+//                $data['Turning'][] = $result->turning;
+//                $data['Passing'][] = $result->passing;
+//                $data['Ball Handling'][] = $result->ballHandling;
+//                $data['Defensive Play'][] = $result->defensivePlay;
+//            }
+//        }
+//        elseif ($player->position->category == 'Defender' && $player->position->name == 'Goalkeeper (GK)' ){
+//            $data['label'] = [
+//                'Controlling',
+//                'Receiving',
+//                'Ball Handling',
+//                'Passing',
+//                'GoalKeeping',
+//                'Defensive Play',
+//            ];
+//            foreach ($results as $result){
+//                $data['Controlling'][] = $result->controlling;
+//                $data['Receiving'][] = $result->recieving;
+//                $data['Ball Handling'][] = $result->ballHandling;
+//                $data['Passing'][] = $result->passing;
+//                $data['GoalKeeping'][] = $result->goalKeeping;
+//                $data['Defensive Play'][] = $result->defensivePlay;
+//            }
+//        }
 
         return compact('label', 'data');
     }

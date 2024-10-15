@@ -34,253 +34,315 @@
     </div>
 
     <div class="container page__container page-section">
-        <div class="row">
-            <div class="col-sm-5">
-                {{--Skill Stats Radar Section--}}
-                <div class="page-separator">
-                    <div class="page-separator__text">Skill Stats</div>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <canvas id="skillStatsChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-7">
-                {{--Skill Stats History Section--}}
-                <div class="page-separator">
-                    <div class="page-separator__text">Skill Stats History</div>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <canvas id="skillStatsHistoryChart"></canvas>
-                    </div>
-                </div>
+        <div class="page-separator">
+            <div class="page-separator__text">Skill Stats</div>
+        </div>
+        <div class="card align-items-center">
+            <div class="card-body">
+                <canvas id="skillStatsChart" height="400"></canvas>
             </div>
         </div>
 
+        {{--Skill Stats History Section--}}
+        <div class="page-separator">
+            <div class="page-separator__text">Skill Stats History</div>
+{{--            <div class="ml-auto mr-2 form-group">--}}
+{{--                <label class="form-label mb-0" for="skill">Filter by skill</label>--}}
+{{--                <select class="form-control form-select" id="skill" name="skill">--}}
+{{--                    <option disabled selected>Select skill stats</option>--}}
+{{--                    @foreach($skillLabels as $label => $value)--}}
+{{--                        <option value="{{ $value }}">--}}
+{{--                            {{ $label }}--}}
+{{--                        </option>--}}
+{{--                    @endforeach--}}
+{{--                </select>--}}
+{{--            </div>--}}
+{{--            <div class="form-group mr-1">--}}
+{{--                <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>--}}
+{{--                <input id="startDateFilter"--}}
+{{--                    type="text"--}}
+{{--                    class="form-control"--}}
+{{--                    placeholder="Start Date"--}}
+{{--                   onfocus="(this.type='date')"--}}
+{{--                   onblur="(this.type='text')"/>--}}
+{{--            </div>--}}
+{{--            <div class="form-group">--}}
+{{--                <label class="form-label mb-0" for="endDateFilter"></label>--}}
+{{--                <input id="endDateFilter"--}}
+{{--                       type="text"--}}
+{{--                       class="form-control"--}}
+{{--                       placeholder="End Date"--}}
+{{--                       onfocus="(this.type='date')"--}}
+{{--                       onblur="(this.type='text')"/>--}}
+{{--            </div>--}}
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <canvas id="skillStatsHistoryChart"></canvas>
+            </div>
+        </div>
+{{--        <div class="row">--}}
+{{--            <div class="col-sm-5">--}}
+{{--                --}}{{--Skill Stats Radar Section--}}
+{{--                <div class="page-separator">--}}
+{{--                    <div class="page-separator__text">Skill Stats</div>--}}
+{{--                </div>--}}
+{{--                <div class="card">--}}
+{{--                    <div class="card-body">--}}
+{{--                        <canvas id="skillStatsChart"></canvas>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--            <div class="col-sm-7">--}}
+{{--                --}}{{--Skill Stats History Section--}}
+{{--                <div class="page-separator">--}}
+{{--                    <div class="page-separator__text">Skill Stats History</div>--}}
+{{--                    <select class="ml-auto mr-2 form-control form-select" id="skill" name="skill">--}}
+{{--                        <option disabled selected>Filter by skill</option>--}}
+{{--                        @foreach($skillLabels as $label => $value)--}}
+{{--                            <option value="{{ $value }}">--}}
+{{--                                {{ $label }}--}}
+{{--                            </option>--}}
+{{--                        @endforeach--}}
+{{--                    </select>--}}
+{{--                    <input--}}
+{{--                        id="startDateFilter"--}}
+{{--                        type="date"--}}
+{{--                        class="form-control"--}}
+{{--                        placeholder="Input start date"--}}
+{{--                    />--}}
+{{--                </div>--}}
+{{--                <div class="card">--}}
+{{--                    <div class="card-body">--}}
+{{--                        <canvas id="skillStatsHistoryChart"></canvas>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+
+        {{--All Skill Stats Section--}}
         <div class="card">
             <div class="card-Header d-flex align-items-center p-3">
                 <h4 class="card-title">SKILLS</h4>
                 <div class="card-subtitle text-50 ml-auto">Last updated at {{ date('D, M d Y h:i A', strtotime($allSkills->updated_at)) }}</div>
             </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Controlling</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->controlling }}%;">
-                                        </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Controlling</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->controlling }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Receiving</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->recieving }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Receiving</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->recieving }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Dribbling</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->dribbling }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Dribbling</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->dribbling }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Passing</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->passing }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Passing</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->passing }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Shooting</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->shooting }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Shooting</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->shooting }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Crossing</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->crossing }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Crossing</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->crossing }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Turning</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->turning }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Turning</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->turning }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Ball Handling</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->ballHandling }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Ball Handling</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->ballHandling }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Power Kicking</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->powerKicking }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Power Kicking</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->powerKicking }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Goal Keeping</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->goalKeeping }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Goal Keeping</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->goalKeeping }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Offensive Play</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->offensivePlay }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Offensive Play</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->offensivePlay }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <strong class="flex">Defensive Play</strong>
-                            </div>
-                            <div class="col-9">
-                                <div class="flex" style="max-width: 100%">
-                                    <div class="progress"
-                                         style="height: 8px;">
-                                        <div class="progress-bar bg-primary"
-                                             role="progressbar"
-                                             style="width: {{ $allSkills->defensivePlay }}%;">
-                                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <strong class="flex">Defensive Play</strong>
+                        </div>
+                        <div class="col-9">
+                            <div class="flex" style="max-width: 100%">
+                                <div class="progress"
+                                     style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ $allSkills->defensivePlay }}%;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </li>
-                </ul>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 
@@ -290,6 +352,8 @@
         $(document).ready(function() {
             const skillStatsChart = document.getElementById('skillStatsChart');
             const skillStatsHistoryChart = document.getElementById('skillStatsHistoryChart');
+
+            // alert($('#rangeDateFilter').val())
 
             new Chart(skillStatsChart, {
                 type: 'radar',
@@ -321,10 +385,10 @@
                 data: {
                     labels: @json($skillStatsHistory['label']),
                     datasets: [
-                        @foreach($skillStatsHistory['data']['label'] as $data)
+                        @foreach($skillStatsHistory['data'] as $key => $value)
                             {
-                                label: '{{ $data }}',
-                                data: @json($skillStatsHistory['data'][$data]),
+                                label: '{{ $key }}',
+                                data: @json($value),
                                 tension: 0.4,
                             },
                         @endforeach
@@ -334,6 +398,8 @@
                     responsive: true,
                 },
             });
+
+
         });
     </script>
 @endpush
