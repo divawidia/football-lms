@@ -92,23 +92,43 @@
             </div>
         </div>
         <div class="row card-group-row">
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['goals'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Goals</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
+            @if($data->position->name == 'Goalkeeper (GK)')
+                <div class="col-lg-4 card-group-row__col flex-column">
+                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex d-flex align-items-center">
+                                <div class="h2 mb-0 mr-3">{{ $overview['saves'] }}</div>
+                                <div class="ml-auto text-right">
+                                    <div class="card-title">Saves</div>
+                                    <p class="card-subtitle text-50">
+                                        4
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @else
+                <div class="col-lg-4 card-group-row__col flex-column">
+                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex d-flex align-items-center">
+                                <div class="h2 mb-0 mr-3">{{ $overview['goals'] }}</div>
+                                <div class="ml-auto text-right">
+                                    <div class="card-title">Goals</div>
+                                    <p class="card-subtitle text-50">
+                                        4
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
             <div class="col-lg-4 card-group-row__col flex-column">
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
