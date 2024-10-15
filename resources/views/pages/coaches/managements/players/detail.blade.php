@@ -715,6 +715,15 @@
                 },
                 options: {
                     responsive: true,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: false
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
                 },
             });
         });
