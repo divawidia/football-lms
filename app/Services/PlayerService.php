@@ -349,8 +349,11 @@ class PlayerService extends Service
             })->get();
     }
 
+    public function getSkillStats(Player $player){
+        return $player->playerSkillStats()->latest();
+    }
     public function skillStatsChart(Player $player){
-        $results = $player->playerSkillStats()->latest()->first();
+        $results = $this->getSkillStats($player)->first();
 
         if ($player->position->category == 'Forward'){
             $label = [
@@ -429,7 +432,7 @@ class PlayerService extends Service
     }
 
     public function skillStatsHistoryChart(Player $player){
-        $results = $player->playerSkillStats()->latest()->take(6);
+        $results =  $this->getSkillStats($player)->take(6);
 
         $label = [];
         $data = [];

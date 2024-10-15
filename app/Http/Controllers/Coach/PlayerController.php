@@ -39,4 +39,19 @@ class PlayerController extends Controller
             'playerSkillStats' => $playerSkillStats
         ]);
     }
+
+    public function skillStatsDetail(Player $player)
+    {
+
+        $skillStats =$this->playerService->skillStatsChart($player);
+        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
+        $allSkills = $this->playerService->getSkillStats($player)->first();
+
+        return view('pages.coaches.managements.players.skill-detail', [
+            'data' => $player,
+            'skillStats' => $skillStats,
+            'skillStatsHistory' => $skillStatsHistory,
+            'allSkills' => $allSkills
+        ]);
+    }
 }
