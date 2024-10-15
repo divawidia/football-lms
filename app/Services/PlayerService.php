@@ -9,6 +9,7 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Nnjeim\World\World;
 use Yajra\DataTables\Facades\DataTables;
@@ -346,6 +347,39 @@ class PlayerService extends Service
             ->whereDoesntHave('players', function (Builder $query) use ($player) {
                 $query->where('playerId', $player->id);
             })->get();
+    }
+
+    public function skillStatsChart(Player $player){
+        $results = $player->playerSkillStats()->latest()->first();
+
+        $label = [
+            'Controlling',
+            'Receiving',
+            'Dribbling',
+            'Passing',
+            'Shooting',
+            'Crossing',
+            'Turning',
+            'BallHandling',
+            'PowerKicking',
+            'GoalKeeping',
+            'OffensivePlay',
+            'DefensivePlay'
+        ];
+        $data['Controlling'] = $results->controlling;
+        $data['Receiving'] = $results->recieving;
+        $data['Dribbling'] = $results->dribbling;
+        $data['Passing'] = $results->passing;
+        $data['Shooting'] = $results->shooting;
+        $data['Crossing'] = $results->crossing;
+        $data['Turning'] = $results->turning;
+        $data['BallHandling'] = $results->ballHandling;
+        $data['PowerKicking'] = $results->powerKicking;
+        $data['GoalKeeping'] = $results->goalKeeping;
+        $data['OffensivePlay'] = $results->offensivePlay;
+        $data['DefensivePlay'] = $results->defensivePlay;
+
+        return compact('label', 'data');
     }
 
     public function update(array $playerData, User $user): User
