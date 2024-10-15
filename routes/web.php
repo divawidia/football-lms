@@ -96,6 +96,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('create', [PlayerController::class, 'create'])->name('player-managements.create');
 
                 Route::prefix('{player}')->group(function () {
+                    Route::get('', [PlayerController::class, 'show'])->name('player-managements.show');
                     Route::get('edit', [PlayerController::class, 'edit'])->name('player-managements.edit');
                     Route::put('', [PlayerController::class, 'update'])->name('player-managements.update');
                     Route::delete('', [PlayerController::class, 'destroy'])->name('player-managements.destroy');
@@ -426,7 +427,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::prefix('player-managements')->group(function () {
                 Route::get('', [CoachPlayerController::class, 'index'])->name('coach.player-managements.index');
                 Route::prefix('{player}')->group(function () {
-                    Route::get('', [PlayerController::class, 'show'])->name('coach.player-managements.show');
+                    Route::get('', [CoachPlayerController::class, 'show'])->name('coach.player-managements.show');
                     Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('coach.player-managements.playerTeams');
                     Route::get('parents', [PlayerParentController::class, 'index'])->name('coach.player-parents.index');
                 });
