@@ -428,6 +428,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('', [CoachPlayerController::class, 'index'])->name('coach.player-managements.index');
                 Route::prefix('{player}')->group(function () {
                     Route::get('', [CoachPlayerController::class, 'show'])->name('coach.player-managements.show');
+                    Route::get('skill-stats', [CoachPlayerController::class, 'skillStatsDetail'])->name('coach.player-managements.skill-stats');
                     Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('coach.player-managements.playerTeams');
                     Route::get('parents', [PlayerParentController::class, 'index'])->name('coach.player-parents.index');
                 });
