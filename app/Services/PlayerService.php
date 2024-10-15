@@ -453,7 +453,7 @@ class PlayerService extends Service
     }
 
     public function skillStatsHistoryChart(Player $player){
-        $results =  $this->getSkillStats($player)->get();
+        $results =  $this->getSkillStats($player)->take(10)->get();
 
         $label = [];
         $data = [];
