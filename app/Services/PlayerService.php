@@ -428,6 +428,61 @@ class PlayerService extends Service
         return compact('label', 'data');
     }
 
+    public function skillStatsHistoryChart(Player $player){
+        $results = $player->playerSkillStats()->latest()->take(6);
+
+        $label = [];
+        $data = [];
+
+        if ($player->position->category == 'Forward'){
+            foreach ($results as $result){
+                $data['controlling'] = $result->controlling;
+                $data['recieving'] = $result->recieving;
+                $data['dribbling'] = $result->dribbling;
+                $data['shooting'] = $result->shooting;
+                $data['powerKicking'] = $result->powerKicking;
+                $data['offensivePlay'] = $result->offensivePlay;
+            }
+        }
+        elseif ($player->position->category == 'Midfielder'){
+            foreach ($results as $result){
+                $data['controlling'] = $result->controlling;
+                $data['recieving'] = $result->recieving;
+                $data['dribbling'] = $result->dribbling;
+                $data['passing'] = $result->passing;
+                $data['ballHandling'] = $result->ballHandling;
+                $data['offensivePlay'] = $result->offensivePlay;
+            }
+        }
+        elseif ($player->position->category == 'Defender'){
+            foreach ($results as $result){
+                $data['controlling'] = $result->controlling;
+                $data['recieving'] = $result->recieving;
+                $data['turning'] = $result->turning;
+                $data['passing'] = $result->passing;
+                $data['ballHandling'] = $result->ballHandling;
+                $data['defensivePlay'] = $result->defensivePlay;
+            }
+        }
+        elseif ($player->position->category == 'Defender' && $player->position->name == 'Goalkeeper (GK)' ){
+            foreach ($results as $result){
+                $data['controlling'] = $result->controlling;
+                $data['recieving'] = $result->recieving;
+                $data['ballHandling'] = $result->ballHandling;
+                $data['passing'] = $result->passing;
+                $data['goalKeeping'] = $result->goalKeeping;
+                $data['defensivePlay'] = $result->defensivePlay;
+            }
+        }
+
+        foreach ($results as $result){
+            $label[] = $result->created_at;
+        }
+
+        return compact('label', 'data');
+    }
+
+
     public function update(array $playerData, User $user): User
     {
         if (array_key_exists('foto', $playerData)){
