@@ -432,54 +432,87 @@ class PlayerService extends Service
     }
 
     public function skillStatsHistoryChart(Player $player){
-        $results =  $this->getSkillStats($player)->take(6);
+        $results =  $this->getSkillStats($player)->take(6)->get();
 
         $label = [];
         $data = [];
 
+        foreach ($results as $result){
+            $label[] = $this->convertToDate($result->created_at);
+        }
+
         if ($player->position->category == 'Forward'){
+            $data['label'] = [
+                'Controlling',
+                'Receiving',
+                'Dribbling',
+                'Shooting',
+                'Power Kicking',
+                'Offensive Play',
+            ];
             foreach ($results as $result){
-                $data['controlling'] = $result->controlling;
-                $data['recieving'] = $result->recieving;
-                $data['dribbling'] = $result->dribbling;
-                $data['shooting'] = $result->shooting;
-                $data['powerKicking'] = $result->powerKicking;
-                $data['offensivePlay'] = $result->offensivePlay;
+                $data['Controlling'][] = $result->controlling;
+                $data['Receiving'][] = $result->recieving;
+                $data['Dribbling'][] = $result->dribbling;
+                $data['Shooting'][] = $result->shooting;
+                $data['Power Kicking'][] = $result->powerKicking;
+                $data['Offensive Play'][] = $result->offensivePlay;
             }
         }
         elseif ($player->position->category == 'Midfielder'){
+            $data['label'] = [
+                'Controlling',
+                'Receiving',
+                'Dribbling',
+                'Passing',
+                'Ball Handling',
+                'Offensive Play',
+            ];
+
             foreach ($results as $result){
-                $data['controlling'] = $result->controlling;
-                $data['recieving'] = $result->recieving;
-                $data['dribbling'] = $result->dribbling;
-                $data['passing'] = $result->passing;
-                $data['ballHandling'] = $result->ballHandling;
-                $data['offensivePlay'] = $result->offensivePlay;
+                $data['Controlling'][] = $result->controlling;
+                $data['Receiving'][] = $result->recieving;
+                $data['Dribbling'][] = $result->dribbling;
+                $data['Passing'][] = $result->passing;
+                $data['Ball Handling'][] = $result->ballHandling;
+                $data['Offensive Play'][] = $result->offensivePlay;
             }
         }
         elseif ($player->position->category == 'Defender'){
+            $data['label'] = [
+                'Controlling',
+                'Receiving',
+                'Turning',
+                'Passing',
+                'Ball Handling',
+                'Defensive Play',
+            ];
             foreach ($results as $result){
-                $data['controlling'] = $result->controlling;
-                $data['recieving'] = $result->recieving;
-                $data['turning'] = $result->turning;
-                $data['passing'] = $result->passing;
-                $data['ballHandling'] = $result->ballHandling;
-                $data['defensivePlay'] = $result->defensivePlay;
+                $data['Controlling'][] = $result->controlling;
+                $data['Receiving'][] = $result->recieving;
+                $data['Turning'][] = $result->turning;
+                $data['Passing'][] = $result->passing;
+                $data['Ball Handling'][] = $result->ballHandling;
+                $data['Defensive Play'][] = $result->defensivePlay;
             }
         }
         elseif ($player->position->category == 'Defender' && $player->position->name == 'Goalkeeper (GK)' ){
+            $data['label'] = [
+                'Controlling',
+                'Receiving',
+                'Ball Handling',
+                'Passing',
+                'GoalKeeping',
+                'Defensive Play',
+            ];
             foreach ($results as $result){
-                $data['controlling'] = $result->controlling;
-                $data['recieving'] = $result->recieving;
-                $data['ballHandling'] = $result->ballHandling;
-                $data['passing'] = $result->passing;
-                $data['goalKeeping'] = $result->goalKeeping;
-                $data['defensivePlay'] = $result->defensivePlay;
+                $data['Controlling'][] = $result->controlling;
+                $data['Receiving'][] = $result->recieving;
+                $data['Ball Handling'][] = $result->ballHandling;
+                $data['Passing'][] = $result->passing;
+                $data['GoalKeeping'][] = $result->goalKeeping;
+                $data['Defensive Play'][] = $result->defensivePlay;
             }
-        }
-
-        foreach ($results as $result){
-            $label[] = $result->created_at;
         }
 
         return compact('label', 'data');

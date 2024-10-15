@@ -47,6 +47,8 @@ class PlayerController extends Controller
         $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
         $allSkills = $this->playerService->getSkillStats($player)->first();
 
+//        dd($skillStatsHistory);
+
         return view('pages.coaches.managements.players.skill-detail', [
             'data' => $player,
             'skillStats' => $skillStats,

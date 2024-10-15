@@ -343,7 +343,7 @@
                 {{--Teams Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
-                    <a href="" class="btn btn-outline-secondary btn-sm ml-auto">
+                    <a href="{{ route('coach.player-managements.skill-stats', $data->id) }}" class="btn btn-outline-secondary btn-sm ml-auto">
                         View More
                         <span class="material-icons ml-2 icon-16pt">chevron_right</span>
                     </a>
