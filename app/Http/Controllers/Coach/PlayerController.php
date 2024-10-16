@@ -75,7 +75,7 @@ class PlayerController extends Controller
 
         return view('pages.coaches.managements.players.upcoming-trainings', [
             'data' => $player,
-            'matchCalendar' => $this->playerService->playerTrainingCalendar($player)
+            'trainingCalendar' => $this->playerService->playerTrainingCalendar($player)
         ]);
     }
 }
