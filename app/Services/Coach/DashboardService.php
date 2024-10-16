@@ -103,12 +103,18 @@ class DashboardService extends CoachService
             );
     }
 
-    public function latestMatch(){
-
+    public function latestMatch()
+    {
+        $teams = $this->managedTeams($this->coach);
         return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) {
-                foreach ($this->managedTeams($this->coach) as $team){
-                    $q->orWhere('teamId', $team->id);
+            ->whereHas('teams', function($q) use ($teams){
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
                 }
             })
             ->where('eventType', 'Match')
@@ -118,12 +124,18 @@ class DashboardService extends CoachService
             ->get();
     }
 
-    public function upcomingMatch(){
-
+    public function upcomingMatch()
+    {
+        $teams = $this->managedTeams($this->coach);
         return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) {
-                foreach ($this->managedTeams($this->coach) as $team){
-                    $q->orWhere('teamId', $team->id);
+            ->whereHas('teams', function($q) use($teams) {
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
                 }
             })
             ->where('eventType', 'Match')
@@ -133,12 +145,18 @@ class DashboardService extends CoachService
             ->get();
     }
 
-    public function upcomingTraining(){
-
+    public function upcomingTraining()
+    {
+        $teams = $this->managedTeams($this->coach);
         return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) {
-                foreach ($this->managedTeams($this->coach) as $team){
-                    $q->orWhere('teamId', $team->id);
+            ->whereHas('teams', function($q) use ($teams) {
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
                 }
             })
             ->where('eventType', 'Training')
