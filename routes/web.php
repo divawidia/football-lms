@@ -440,6 +440,10 @@ Route::group(['middleware' => ['auth']], function () {
             Route::prefix('team-managements')->group(function () {
                 Route::get('', [TeamController::class, 'index'])->name('coach.team-managements.index');
                 Route::get('coach-teams', [TeamController::class, 'coachTeamsData'])->name('coach.team-managements.coach-teams');
+
+                Route::prefix('{team}')->group(function () {
+                    Route::get('', [TeamController::class, 'show'])->name('coach.team-managements.show');
+                });
             });
 
             Route::prefix('attendance-reports')->group(function () {

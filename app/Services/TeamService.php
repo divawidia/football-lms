@@ -22,7 +22,7 @@ class TeamService extends Service
                 $actionButton = '';
                 if (Auth::user()->hasRole('coach')){
                     $actionButton =  '
-                          <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                          <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.team-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
                             <span class="material-icons">
                                 visibility
                             </span>
