@@ -37,10 +37,17 @@ class TeamController extends Controller
 
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->teamService->index();
-        }
         return view('pages.admins.managements.teams.index');
+    }
+
+    public function adminTeamsData()
+    {
+        return $this->teamService->index();
+    }
+
+    public function coachTeamsData()
+    {
+        return $this->teamService->coachTeamsIndex($this->getLoggedCoachUser());
     }
 
     public function teamPlayers(Team $team){
