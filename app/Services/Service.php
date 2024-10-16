@@ -82,7 +82,7 @@ class Service
     }
 
     public function coachManagedTeams($coach){
-        return Team::with('coaches')
+        return Team::with('coaches', 'players')
             ->whereHas('coaches', function($q) use ($coach) {
                 $q->where('coachId', $coach->id);
             })->get();

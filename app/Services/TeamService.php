@@ -104,6 +104,12 @@ class TeamService extends Service
         return $this->indexDatatables($query);
     }
 
+    public function coachTeamsIndex($coach)
+    {
+        $teams = $this->coachManagedTeams($coach);
+        return $this->indexDatatables($teams);
+    }
+
     public function teamPlayers(Team $team){
         $query = $team->players()->get();
         return Datatables::of($query)
