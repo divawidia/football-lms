@@ -385,7 +385,7 @@
         {{--Upcoming Matches Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
-            <a href="" class="btn btn-white border btn-sm ml-auto">
+            <a href="{{ route('coach.player-parents.upcoming-matches', $data->id) }}" class="btn btn-white border btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
@@ -453,7 +453,7 @@
         {{--Upcoming Trainings Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Trainings</div>
-            <a href="" class="btn btn-white border btn-sm ml-auto">
+            <a href="}" class="btn btn-white border btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
