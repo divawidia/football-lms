@@ -273,7 +273,8 @@ class TeamService extends Service
             ->editColumn('gender', function ($item) {
                 return $item->user->gender;
             })
-            ->rawColumns(['action', 'name', 'age', 'gender','joinedDate'])
+            ->rawColumns(['action', 'name', 'age', 'gender','joinedDate']
+            ->addIndexColumn()
             ->make();
     }
 
@@ -373,6 +374,7 @@ class TeamService extends Service
                 return $item->competition->location;
             })
             ->rawColumns(['action', 'name', 'divisions', 'date', 'contact', 'status', 'location'])
+            ->addIndexColumn()
             ->make();
     }
 
@@ -543,6 +545,49 @@ class TeamService extends Service
             ->latest('date')
             ->take(2)
             ->get();
+    }
+
+    public function teamTrainingHistories(Team $team){
+        $data = $team->schedules()
+            ->where('eventType', 'Training')
+            ->where('status', '0')
+            ->latest('date')
+            ->get();
+
+        return Datatables::of($data)
+            ->addColumn('action', function ($item) {
+                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('training-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View training detail">
+                            <span class="material-icons">visibility</span>
+                        </a>';
+            })
+            ->editColumn('date', function ($item) {
+                $date = date('M d, Y', strtotime($item->date));
+                $startTime = date('h:i A', strtotime($item->startTime));
+                $endTime = date('h:i A', strtotime($item->endTime));
+                return $date.' ('.$startTime.' - '.$endTime.')';
+            })
+            ->editColumn('status', function ($item) {
+                $badge = '';
+                if ($item->status == '1') {
+                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
+                } elseif ($item->status == '0') {
+                    $badge = '<span class="badge badge-pill badge-danger">Ended</span>';
+                }
+                return $badge;
+            })
+            ->editColumn('note', function ($item) {
+                if ($item->pivot->note == null) {
+                    return 'No note added';
+                } else {
+                    return $item->pivot->note;
+                }
+            })
+            ->editColumn('last_updated', function ($item) {
+                return date('M d, Y ~ h:i A', strtotime($item->pivot->updated_at));
+            })
+            ->rawColumns(['action','date','status', 'last_updated', 'note'])
+            ->addIndexColumn()
+            ->make();
     }
 
     public  function store(array $teamData, $academyId){

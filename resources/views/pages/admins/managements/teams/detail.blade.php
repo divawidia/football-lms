@@ -561,10 +561,10 @@
         </div>
 
         <div class="page-separator">
-            <div class="page-separator__text">Match History</div>
+            <div class="page-separator__text">Match Histories</div>
         </div>
         <div class="page-separator">
-            <div class="page-separator__text">Training History</div>
+            <div class="page-separator__text">Training Histories</div>
         </div>
     </div>
 
