@@ -57,17 +57,11 @@ class PlayerController extends Controller
         ]);
     }
 
-    public function filterSkillStatsHistory(Request $request){
-        $skill = $request->query('skill');
-        $startDate = $request->query('startDate');
-        $endDate = $request->query('endDate');
+    public function upcomingMatches(Player $player){
+        if (\request()->ajax()){
+            return $this->playerService->playerUpcomingMatches($player);
+        }
 
-        $data = $this->playerService->filterSkillStatsHistory($skill, $startDate, $endDate);
-
-        return response()->json([
-            'status' => 200,
-            'data' => $data,
-            'message' => 'Success'
-        ]);
+        return view('pages.coaches.managements.players.upcoming-matches');
     }
 }
