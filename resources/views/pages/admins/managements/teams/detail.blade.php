@@ -406,6 +406,7 @@
                     <table class="table table-hover mb-0" id="coachesTable">
                         <thead>
                         <tr>
+                            <th>#</th>
                             <th>Name</th>
                             <th>Age</th>
                             <th>Gender</th>
@@ -429,6 +430,7 @@
                     <table class="table table-hover mb-0" id="competitionsTable">
                         <thead>
                         <tr>
+                            <th>#</th>
                             <th>Name</th>
                             <th>Group Division</th>
                             <th>Competition Date</th>
@@ -566,6 +568,28 @@
         <div class="page-separator">
             <div class="page-separator__text">Training Histories</div>
         </div>
+        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="trainingHistoryTable">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Training/Practice</th>
+                            <th>training date</th>
+                            <th>Location</th>
+                            <th>Training Status</th>
+                            <th>Note</th>
+                            <th>Last Updated</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
 @endsection
@@ -621,6 +645,7 @@
                     @endif
                 },
                 columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'name', name: 'name' },
                     { data: 'age', name: 'age' },
                     { data: 'gender', name: 'gender' },
@@ -647,12 +672,43 @@
                     @endif
                 },
                 columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'name', name: 'name' },
                     { data: 'divisions', name: 'divisions' },
                     { data: 'date', name: 'date'},
                     { data: 'location', name: 'location'},
                     { data: 'contact', name: 'contact' },
                     { data: 'status', name: 'status' },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ],
+                order: [[3, 'desc']],
+            });
+
+            $('#trainingHistoryTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    @if(Auth::user()->hasRole('admin'))
+                        url: '{!! url()->route('team-managements.training-histories', $team->id) !!}',
+                    @elseif(Auth::user()->hasRole('coach'))
+                        url: '{!! url()->route('coach.team-managements.training-histories', $team->id) !!}',
+                    @endif
+                },
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'eventName', name: 'eventName' },
+                    { data: 'date', name: 'date' },
+                    { data: 'place', name: 'place'},
+                    { data: 'status', name: 'status' },
+                    { data: 'note', name: 'note' },
+                    { data: 'last_updated', name: 'last_updated' },
                     {
                         data: 'action',
                         name: 'action',
