@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Models\Coach;
+use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\Team;
+use App\Models\TeamMatch;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -214,6 +217,131 @@ class TeamService extends Service
             })
             ->rawColumns(['action', 'name', 'age', 'gender','joinedDate'])
             ->make();
+    }
+
+    public function teamOverviewStats(Team $team)
+    {
+        $matchPlayed = EventSchedule::whereHas('teams', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->where('status', '0')
+            ->where('eventType', 'Match')
+            ->count();
+        $thisMonthMatchPlayed = EventSchedule::whereHas('teams', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->where('status', '0')
+            ->where('eventType', 'Match')
+            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
+            ->count();
+
+        $goals = TeamMatch::whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })->sum('teamScore');
+        $thisMonthGoals = TeamMatch::whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
+            ->sum('teamScore');
+
+        $goalsConceded = TeamMatch::whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Opponent Team');
+                $q->where('teamId', $team->id);
+            })
+            ->sum('teamScore');
+        $thisMonthGoalsConceded = TeamMatch::whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Opponent Team');
+                $q->where('teamId', $team->id);
+            })
+            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
+            ->sum('teamScore');
+
+        $cleanSheets = TeamMatch::whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->sum('cleanSheets');
+        $thisMonthCleanSheets = TeamMatch::whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
+            ->sum('cleanSheets');
+
+        $ownGoals = TeamMatch::whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->sum('teamOwnGoal');
+        $thisMonthOwnGoals = TeamMatch::whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
+            ->sum('teamOwnGoal');
+
+        $wins = TeamMatch::where('resultStatus', 'Win')
+            ->whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })->count();
+        $thisMonthWins = TeamMatch::where('resultStatus', 'Win')
+            ->whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
+            ->count();
+
+        $losses = TeamMatch::where('resultStatus', 'Lose')
+            ->whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->count();
+        $thisMonthLosses = TeamMatch::where('resultStatus', 'Lose')
+            ->whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
+            ->count();
+
+        $draws = TeamMatch::where('resultStatus', 'Draw')
+            ->whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })->count();
+        $thisMonthDraws = TeamMatch::where('resultStatus', 'Draw')
+            ->whereHas('team', function($q) use ($team) {
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $team->id);
+            })
+            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
+            ->count();
+
+        return compact(
+            'matchPlayed',
+            'thisMonthMatchPlayed',
+            'goals',
+            'thisMonthGoals',
+            'goalsConceded',
+            'thisMonthGoalsConceded',
+            'cleanSheets',
+            'thisMonthCleanSheets',
+            'ownGoals',
+            'thisMonthOwnGoals',
+            'wins',
+            'thisMonthWins',
+            'losses',
+            'thisMonthLosses',
+            'draws',
+            'thisMonthDraws'
+        );
     }
 
     public  function store(array $teamData, $academyId){

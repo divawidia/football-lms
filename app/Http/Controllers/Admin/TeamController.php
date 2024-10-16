@@ -32,7 +32,6 @@ class TeamController extends Controller
     public function __construct(TeamService $teamService)
     {
         $this->teamService = $teamService;
-//        $this->academyId = Auth::user()->academyId;
     }
 
     public function index()
