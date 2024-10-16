@@ -109,6 +109,7 @@ class TeamController extends Controller
     {
         return view('pages.admins.managements.teams.detail', [
             'team' => $team,
+            'overview' => $this->teamService->teamOverviewStats($team),
         ]);
     }
 
