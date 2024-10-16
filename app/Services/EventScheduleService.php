@@ -79,32 +79,24 @@ class EventScheduleService extends Service
     {
         return Datatables::of($trainingData)
             ->addColumn('action', function ($item) {
-                if (Auth::user()->hasRole('coach')){
-                    return '
-                        <a class="btn btn-sm btn-outline-secondary" href="' . route('training-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Training Detail">
-                            <span class="material-icons">
-                                visibility
-                            </span>
-                        </a>';
-                } elseif (Auth::user()->hasRole('admin')){
-                    if ($item->status == '1') {
-                        $statusButton = '<form action="' . route('deactivate-training', $item->id) . '" method="POST">
+                if ($item->status == '1') {
+                    $statusButton = '<form action="' . route('deactivate-training', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
                                                     <span class="material-icons">block</span> End Training
                                                 </button>
                                             </form>';
-                    } else {
-                        $statusButton = '<form action="' . route('activate-training', $item->id) . '" method="POST">
+                } else {
+                    $statusButton = '<form action="' . route('activate-training', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
                                                     <span class="material-icons">check_circle</span> Start Training
                                                 </button>
                                             </form>';
-                    }
-                    return '
+                }
+                return '
                         <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
@@ -120,7 +112,6 @@ class EventScheduleService extends Service
                             </button>
                           </div>
                         </div>';
-                }
             })
             ->editColumn('team', function ($item) {
                 return '
@@ -139,45 +130,6 @@ class EventScheduleService extends Service
                                 </div>
                             </div>';
             })
-            ->editColumn('opponentTeam', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[1]->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[1]->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->teams[1]->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-            })
-            ->editColumn('competition', function ($item) {
-                if ($item->competition){
-                    $competition = '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->competition->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->competition->name . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->competition->type.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-                }else{
-                    $competition = 'No Competition';
-                }
-                return $competition;
-            })
             ->editColumn('date', function ($item) {
                 $date = date('M d, Y', strtotime($item->date));
                 $startTime = date('h:i A', strtotime($item->startTime));
@@ -191,7 +143,7 @@ class EventScheduleService extends Service
                     return '<span class="badge badge-pill badge-danger">Ended</span>';
                 }
             })
-            ->rawColumns(['action','team', 'competition','opponentTeam','date','status'])
+            ->rawColumns(['action','team','date','status'])
             ->make();
     }
 
