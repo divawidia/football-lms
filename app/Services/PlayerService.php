@@ -585,9 +585,16 @@ class PlayerService extends Service
 
     public function playerMatchCalendar(Player $player)
     {
-        $matches = $this->getPlayerUpcomingMatches($player);
+        $data = $this->getPlayerUpcomingMatches($player);
 
-        return $this->eventScheduleService->makeMatchCalendar($matches);
+        return $this->eventScheduleService->makeMatchCalendar($data);
+    }
+
+    public function playerTrainingCalendar(Player $player)
+    {
+        $data = $this->getPlayerUpcomingTraining($player);
+
+        return $this->eventScheduleService->makeTrainingCalendar($data);
     }
 
 

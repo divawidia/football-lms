@@ -33,10 +33,6 @@ class EventScheduleService extends Service
             ->get();
     }
 
-    public function getAcademyTeams(){
-        return Team::where('teamSide', 'Academy Team')->get();
-    }
-
     public function makeMatchCalendar($matchesData)
     {
         $events = [];
