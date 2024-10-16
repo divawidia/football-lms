@@ -161,13 +161,18 @@ class TeamService extends Service
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
                                             <a href="' . route('coach.player-managements.show', $item->id) . '">
-                                                <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' '.$item->user->lastName.'</strong></p>
+                                                <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
                                             </a>
                                             <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>';
+            })
+            ->addColumn('minutesPlayed', function ($item) use ($team){
+                return $item->playerMatchStats()
+                    ->where('teamId', $team->id)
+                    ->sum('minutesPlayed');
             })
             ->addColumn('apps', function ($item) use ($team){
                 return $item->playerMatchStats()
@@ -206,6 +211,7 @@ class TeamService extends Service
                 'action',
                 'age',
                 'name',
+                'minutesPlayed',
                 'apps',
                 'goals',
                 'assists',

@@ -367,13 +367,21 @@
                     <table class="table table-hover mb-0" id="playersTable">
                         <thead>
                         <tr>
+                            <th>Pos.</th>
                             <th>Name</th>
                             <th>Strong Foot</th>
                             <th>Age</th>
-                            <th>Appearances</th>
+                            <th>Minutes Played</th>
+                            <th>Apps</th>
                             <th>Goals</th>
                             <th>Assists</th>
-                            <th>Clean Sheets</th>
+                            <th>Own Goals</th>
+                            <th>Shots</th>
+                            <th>Passes</th>
+                            <th>Fouls Conceded</th>
+                            <th>Yellow Cards</th>
+                            <th>Red Cards</th>
+                            <th>Saves</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -546,16 +554,28 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('team-managements.teamPlayers', $team->id) !!}',
+                    @if(Auth::user()->hasRole('admin'))
+                        url: '{!! url()->route('team-managements.teamPlayers', $team->id) !!}',
+                    @elseif(Auth::user()->hasRole('coach'))
+                        url: '{!! url()->route('coach.team-managements.teamPlayers', $team->id) !!}',
+                    @endif
                 },
                 columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'name', name: 'name' },
                     { data: 'strongFoot', name: 'strongFoot' },
                     { data: 'age', name: 'age'},
-                    { data: 'appearance', name: 'appearance' },
-                    { data: 'goals', name: 'goals' },
-                    { data: 'assists', name: 'assists' },
-                    { data: 'cleanSheets', name: 'cleanSheets' },
+                    { data: 'minutesPlayed', name: 'minutesPlayed'},
+                    { data: 'apps', name: 'apps'},
+                    { data: 'goals', name: 'goals'},
+                    { data: 'assists', name: 'assists'},
+                    { data: 'ownGoals', name: 'ownGoals'},
+                    { data: 'shots', name: 'shots'},
+                    { data: 'passes', name: 'passes'},
+                    { data: 'fouls', name: 'fouls'},
+                    { data: 'yellowCards', name: 'yellowCards'},
+                    { data: 'redCards', name: 'redCards'},
+                    { data: 'saves', name: 'saves'},
                     {
                         data: 'action',
                         name: 'action',
@@ -563,14 +583,19 @@
                         searchable: false,
                         width: '15%'
                     },
-                ]
+                ],
+                order: [[5, 'desc']]
             });
             const coachesTable = $('#coachesTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('team-managements.teamCoaches', $team->id) !!}',
+                    @if(Auth::user()->hasRole('admin'))
+                        url: '{!! url()->route('team-managements.teamCoaches', $team->id) !!}',
+                    @elseif(Auth::user()->hasRole('coach'))
+                        url: '{!! url()->route('coach.team-managements.teamCoaches', $team->id) !!}',
+                    @endif
                 },
                 columns: [
                     { data: 'name', name: 'name' },

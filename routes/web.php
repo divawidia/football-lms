@@ -149,6 +149,7 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('create', [TeamController::class, 'create'])->name('team-managements.create');
                     Route::post('store', [TeamController::class, 'store'])->name('team-managements.store');
                     Route::post('api/store', [TeamController::class, 'apiStore'])->name('team-managements.apiStore');
+
                     Route::prefix('{team}')->group(function () {
                         Route::get('', [TeamController::class, 'show'])->name('team-managements.show');
                         Route::get('edit', [TeamController::class, 'edit'])->name('team-managements.edit');
@@ -443,6 +444,8 @@ Route::group(['middleware' => ['auth']], function () {
 
                 Route::prefix('{team}')->group(function () {
                     Route::get('', [TeamController::class, 'show'])->name('coach.team-managements.show');
+                    Route::get('players', [TeamController::class, 'teamPlayers'])->name('coach.team-managements.teamPlayers');
+                    Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('coach.team-managements.teamCoaches');
                 });
             });
 

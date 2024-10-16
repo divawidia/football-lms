@@ -50,15 +50,11 @@ class TeamController extends Controller
     }
 
     public function teamPlayers(Team $team){
-        if (request()->ajax()) {
-            return $this->teamService->teamPlayers($team);
-        }
+        return $this->teamService->teamPlayers($team);
     }
 
     public function teamCoaches(Team $team){
-        if (request()->ajax()) {
-            return $this->teamService->teamCoaches($team);
-        }
+        return $this->teamService->teamCoaches($team);
     }
 
     /**
