@@ -12,6 +12,7 @@ class PlayerMatchStats extends Model
     protected $fillable = [
         'playerId',
         'eventId',
+        'teamId',
         'minutesPlayed',
         'goals',
         'assists',
@@ -31,5 +32,10 @@ class PlayerMatchStats extends Model
     public function event()
     {
         return $this->belongsTo(EventSchedule::class, 'eventId', 'id');
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class, 'teamId', 'id');
     }
 }
