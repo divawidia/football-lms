@@ -260,6 +260,9 @@ class TeamService extends Service
             ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
             ->sum('teamScore');
 
+        $goalsDifference = $goals - $goalsConceded;
+        $thisMonthGoalDifference = $thisMonthGoals - $thisMonthGoalsConceded;
+
         $cleanSheets = TeamMatch::whereHas('team', function($q) use ($team) {
                 $q->where('teamSide', 'Academy Team');
                 $q->where('teamId', $team->id);
@@ -331,6 +334,8 @@ class TeamService extends Service
             'thisMonthGoals',
             'goalsConceded',
             'thisMonthGoalsConceded',
+            'goalsDifference',
+            'thisMonthGoalDifference',
             'cleanSheets',
             'thisMonthCleanSheets',
             'ownGoals',

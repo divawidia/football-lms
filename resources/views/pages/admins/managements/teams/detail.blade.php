@@ -11,7 +11,17 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('team-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Team Lists</a>
+                    @if(Auth::user()->hasRole('admin'))
+                        <a href="{{ route('team-managements.index') }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back to Team Lists
+                        </a>
+                    @elseif(Auth::user()->hasRole('coach'))
+                        <a href="{{ route('coach.team-managements.index') }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back to Team Lists
+                        </a>
+                    @endif
                 </li>
             </ul>
         </div>
@@ -27,37 +37,40 @@
                 <h2 class="text-white mb-0">{{ $team->teamName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">{{ $team->ageGroup }}</p>
             </div>
-            <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Action
-                    <span class="material-icons ml-3">
+
+            @if(Auth::user()->hasRole('admin'))
+                <div class="dropdown">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Action
+                        <span class="material-icons ml-3">
                         keyboard_arrow_down
                     </span>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('team-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
-                    @if($team->status == '1')
-                        <form action="{{ route('deactivate-team', $team->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons">block</span> Deactivate Team
-                            </button>
-                        </form>
-                    @else
-                        <form action="{{ route('activate-team', $team->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons">check_circle</span> Activate Team
-                            </button>
-                        </form>
-                    @endif
-                    <button type="button" class="dropdown-item delete-team" id="{{$team->id}}">
-                        <span class="material-icons">delete</span> Delete Team
                     </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{{ route('team-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
+                        @if($team->status == '1')
+                            <form action="{{ route('deactivate-team', $team->id) }}" method="POST">
+                                @method("PATCH")
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <span class="material-icons">block</span> Deactivate Team
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('activate-team', $team->id) }}" method="POST">
+                                @method("PATCH")
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <span class="material-icons">check_circle</span> Activate Team
+                                </button>
+                            </form>
+                        @endif
+                        <button type="button" class="dropdown-item delete-team" id="{{$team->id}}">
+                            <span class="material-icons">delete</span> Delete Team
+                        </button>
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 
@@ -70,14 +83,16 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $overview['matchPlayed'] }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title">Match Played</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
+                                @if($overview['thisMonthMatchPlayed'] > 0)
+                                    <p class="card-subtitle text-50">
+                                        {{ $overview['thisMonthMatchPlayed'] }}
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -87,14 +102,16 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $overview['goals'] }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title">Goals</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
+                                @if($overview['thisMonthGoals'] > 0)
+                                    <p class="card-subtitle text-50">
+                                        {{ $overview['thisMonthGoals'] }}
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -104,14 +121,16 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $overview['goalsConceded'] }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title text-capitalize">goals conceded</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
+                                @if($overview['thisMonthGoalsConceded'] > 0)
+                                    <p class="card-subtitle text-50">
+                                        {{ $overview['thisMonthGoalsConceded'] }}
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -121,14 +140,16 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $overview['goalsDifference'] }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title text-capitalize">goal difference</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
+                                @if($overview['thisMonthGoalDifference'] > 0)
+                                    <p class="card-subtitle text-50">
+                                        {{ $overview['thisMonthGoalDifference'] }}
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -138,14 +159,16 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $overview['cleanSheets'] }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title text-capitalize">clean sheets</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
+                                @if($overview['thisMonthCleanSheets'] > 0)
+                                    <p class="card-subtitle text-50">
+                                        {{ $overview['thisMonthCleanSheets'] }}
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -155,14 +178,16 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $overview['ownGoals'] }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title text-capitalize">own goals</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
+                                @if($overview['thisMonthOwnGoals'] > 0)
+                                    <p class="card-subtitle text-50">
+                                        {{ $overview['thisMonthOwnGoals'] }}
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -172,14 +197,16 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $overview['wins'] }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title text-capitalize">wins</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
+                                @if($overview['thisMonthWins'] > 0)
+                                    <p class="card-subtitle text-50">
+                                        {{ $overview['thisMonthWins'] }}
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -189,14 +216,16 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $overview['losses'] }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title text-capitalize">losses</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
+                                @if($overview['thisMonthLosses'] > 0)
+                                    <p class="card-subtitle text-50">
+                                        {{ $overview['thisMonthLosses'] }}
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -206,14 +235,16 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
+                            <div class="h2 mb-0 mr-3">{{ $overview['draws'] }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title text-capitalize">draws</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
+                                @if($overview['thisMonthDraws'] > 0)
+                                    <p class="card-subtitle text-50">
+                                        {{ $overview['thisMonthDraws'] }}
+                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                        From Last Month
+                                    </p>
+                                @endif
                             </div>
                         </div>
                     </div>
