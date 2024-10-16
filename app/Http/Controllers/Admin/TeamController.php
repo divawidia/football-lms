@@ -39,22 +39,29 @@ class TeamController extends Controller
         return view('pages.admins.managements.teams.index');
     }
 
-    public function adminTeamsData()
+    public function adminTeamsData(): JsonResponse
     {
         return $this->teamService->index();
     }
 
-    public function coachTeamsData()
+    public function coachTeamsData(): JsonResponse
     {
         return $this->teamService->coachTeamsIndex($this->getLoggedCoachUser());
     }
 
-    public function teamPlayers(Team $team){
+    public function teamPlayers(Team $team): JsonResponse
+    {
         return $this->teamService->teamPlayers($team);
     }
 
-    public function teamCoaches(Team $team){
+    public function teamCoaches(Team $team): JsonResponse
+    {
         return $this->teamService->teamCoaches($team);
+    }
+
+    public function teamCompetitions(Team $team): JsonResponse
+    {
+        return $this->teamService->teamCompetition($team);
     }
 
     /**

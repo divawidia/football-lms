@@ -361,7 +361,7 @@
                 Add New
             </a>
         </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+        <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="playersTable">
@@ -400,7 +400,7 @@
                 Add New
             </a>
         </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+        <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="coachesTable">
@@ -419,9 +419,32 @@
                 </div>
             </div>
         </div>
+
         <div class="page-separator">
             <div class="page-separator__text">Competitions/Events</div>
         </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="competitionsTable">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Group Division</th>
+                            <th>Competition Date</th>
+                            <th>Location</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
         </div>
@@ -602,6 +625,34 @@
                     { data: 'age', name: 'age' },
                     { data: 'gender', name: 'gender' },
                     { data: 'joinedDate', name: 'joinedDate'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ]
+            });
+
+            $('#competitionsTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    @if(Auth::user()->hasRole('admin'))
+                        url: '{!! url()->route('team-managements.teamCompetitions', $team->id) !!}',
+                    @elseif(Auth::user()->hasRole('coach'))
+                        url: '{!! url()->route('coach.team-managements.teamCompetitions', $team->id) !!}',
+                    @endif
+                },
+                columns: [
+                    { data: 'name', name: 'name' },
+                    { data: 'divisions', name: 'divisions' },
+                    { data: 'date', name: 'date'},
+                    { data: 'location', name: 'location'},
+                    { data: 'contact', name: 'contact' },
+                    { data: 'status', name: 'status' },
                     {
                         data: 'action',
                         name: 'action',

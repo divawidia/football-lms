@@ -277,6 +277,105 @@ class TeamService extends Service
             ->make();
     }
 
+    public function teamCompetition(Team $team){
+        $query = $team->divisions;
+
+        return Datatables::of($query)
+            ->addColumn('action', function ($item) {
+                $actionButton = '';
+                if (Auth::user()->hasRole('coach')){
+                    $actionButton =  '
+                          <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.show', $item->competitionId) . '" data-toggle="tooltips" data-placement="bottom" title="View Competition">
+                            <span class="material-icons">
+                                visibility
+                            </span>
+                          </a>';
+                } elseif (Auth::user()->hasRole('admin')){
+                    if ($item->status == '1') {
+                        $statusButton = '<form action="' . route('deactivate-competition', $item->competitionId) . '" method="POST">
+                                            ' . method_field("PATCH") . '
+                                            ' . csrf_field() . '
+                                            <button type="submit" class="dropdown-item">
+                                                <span class="material-icons">block</span> Deactivate Competition
+                                            </button>
+                                        </form>';
+                    } else {
+                        $statusButton = '<form action="' . route('activate-competition', $item->competitionId) . '" method="POST">
+                                            ' . method_field("PATCH") . '
+                                            ' . csrf_field() . '
+                                            <button type="submit" class="dropdown-item">
+                                                <span class="material-icons">check_circle</span> Activate Competition
+                                            </button>
+                                        </form>';
+                    }
+                    $actionButton =  '
+                            <div class="dropdown">
+                              <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="material-icons">
+                                    more_vert
+                                </span>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="' . route('competition-managements.edit', $item->competitionId) . '"><span class="material-icons">edit</span> Edit Competition</a>
+                                <a class="dropdown-item" href="' . route('competition-managements.show', $item->competitionId) . '"><span class="material-icons">visibility</span> View Competition</a>
+                                ' . $statusButton . '
+                                <button type="button" class="dropdown-item delete" id="' . $item->competitionId . '">
+                                    <span class="material-icons">delete</span> Delete Competition
+                                </button>
+                              </div>
+                            </div>';
+                }
+                return $actionButton;
+            })
+            ->editColumn('divisions', function ($item) {
+                return '<span class="badge badge-pill badge-danger">'.$item->groupName.'</span>';
+            })
+            ->editColumn('name', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                             style="white-space: nowrap;">
+                            <div class="avatar avatar-sm mr-8pt">
+                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->competition->logo) . '" alt="profile-pic"/>
+                            </div>
+                            <div class="media-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex d-flex flex-column">
+                                        <p class="mb-0"><strong class="js-lists-values-lead">' . $item->competition->name . '</strong></p>
+                                        <small class="js-lists-values-email text-50">' . $item->competition->type . '</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+            })
+            ->editColumn('date', function ($item) {
+                $startDate = $this->convertToDate($item->startDate);
+                $endDate = $this->convertToDate($item->endDate);
+                return $startDate.' - '.$endDate;
+            })
+            ->editColumn('contact', function ($item) {
+                if ($item->contactName != null && $item->contactPhone != null){
+                    $contact = $item->contactName. ' ~ '.$item->contactPhone;
+                }else{
+                    $contact = 'No cantact added';
+                }
+                return $contact;
+            })
+            ->editColumn('status', function ($item) {
+                $badge = '';
+                if ($item->competition->status == '1') {
+                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
+                } elseif ($item->competition->status == '0') {
+                    $badge = '<span class="badge badge-pill badge-danger">Ended</span>';
+                }
+                return $badge;
+            })
+            ->editColumn('location', function ($item) {
+                return $item->competition->location;
+            })
+            ->rawColumns(['action', 'name', 'divisions', 'date', 'contact', 'status', 'location'])
+            ->make();
+    }
+
     public function teamOverviewStats(Team $team)
     {
         $matchPlayed = EventSchedule::whereHas('teams', function($q) use ($team) {
