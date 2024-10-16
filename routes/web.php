@@ -143,6 +143,7 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('team-managements')->group(function () {
                 Route::get('', [TeamController::class, 'index'])->name('team-managements.index');
+                Route::get('admin-teams', [TeamController::class, 'adminTeamsData'])->name('team-managements.admin-teams');
 
                 Route::prefix('our-teams')->group(function () {
                     Route::get('create', [TeamController::class, 'create'])->name('team-managements.create');
@@ -434,6 +435,11 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('upcoming-matches', [CoachPlayerController::class, 'upcomingMatches'])->name('coach.player-parents.upcoming-matches');
                     Route::get('upcoming-trainings', [CoachPlayerController::class, 'upcomingTrainings'])->name('coach.player-parents.upcoming-trainings');
                 });
+            });
+
+            Route::prefix('team-managements')->group(function () {
+                Route::get('', [TeamController::class, 'index'])->name('coach.team-managements.index');
+                Route::get('coach-teams', [TeamController::class, 'coachTeamsData'])->name('coach.team-managements.coach-teams');
             });
 
             Route::prefix('attendance-reports')->group(function () {
