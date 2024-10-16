@@ -64,6 +64,11 @@ class TeamController extends Controller
         return $this->teamService->teamCompetition($team);
     }
 
+    public function teamTrainingHistories(Team $team): JsonResponse
+    {
+        return $this->teamService->teamTrainingHistories($team);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
