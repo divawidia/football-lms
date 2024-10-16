@@ -117,6 +117,7 @@ class TeamService extends Service
 
     public function teamPlayers(Team $team){
         $query = $team->players()->get();
+
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 $actionButton = '';
@@ -168,19 +169,55 @@ class TeamService extends Service
                                 </div>
                             </div>';
             })
-            ->editColumn('appearance', function ($item) {
-                return 0;
+            ->addColumn('apps', function ($item) use ($team){
+                return $item->playerMatchStats()
+                    ->where('teamId', $team->id)
+                    ->where('minutesPlayed', '>', '0')
+                    ->count();
             })
-            ->editColumn('goals', function ($item) {
-                return 0;
+            ->addColumn('goals', function ($item) use ($team){
+                return $item->playerMatchStats()->where('teamId', $team->id)->sum('goals');
             })
-            ->editColumn('assists', function ($item) {
-                return 0;
+            ->addColumn('assists', function ($item) use ($team){
+                return $item->playerMatchStats()->where('teamId', $team->id)->sum('assists');
             })
-            ->editColumn('cleanSheets', function ($item) {
-                return 0;
+            ->addColumn('ownGoals', function ($item) use ($team){
+                return $item->playerMatchStats()->where('teamId', $team->id)->sum('ownGoal');
             })
-            ->rawColumns(['action', 'name', 'age', 'appearance', 'goals', 'assists','cleanSheets'])
+            ->addColumn('shots', function ($item) use ($team){
+                return $item->playerMatchStats()->where('teamId', $team->id)->sum('shots');
+            })
+            ->addColumn('passes', function ($item) use ($team){
+                return $item->playerMatchStats()->where('teamId', $team->id)->sum('passes');
+            })
+            ->addColumn('fouls', function ($item) use ($team){
+                return $item->playerMatchStats()->where('teamId', $team->id)->sum('fouls');
+            })
+            ->addColumn('yellowCards', function ($item) use ($team){
+                return $item->playerMatchStats()->where('teamId', $team->id)->sum('yellowCards');
+            })
+            ->addColumn('redCards', function ($item) use ($team){
+                return $item->playerMatchStats()->where('teamId', $team->id)->sum('redCards');
+            })
+            ->addColumn('saves', function ($item) use ($team){
+                return $item->playerMatchStats()->where('teamId', $team->id)->sum('saves');
+            })
+            ->rawColumns([
+                'action',
+                'age',
+                'name',
+                'apps',
+                'goals',
+                'assists',
+                'ownGoals',
+                'shots',
+                'passes',
+                'fouls',
+                'yellowCards',
+                'redCards',
+                'saves',
+            ])
+            ->addIndexColumn()
             ->make();
     }
 
