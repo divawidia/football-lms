@@ -37,21 +37,6 @@ class EventScheduleService extends Service
         return Team::where('teamSide', 'Academy Team')->get();
     }
 
-    public function trainingCalendar(){
-        $trainings = $this->indexTraining();
-        $events = [];
-        foreach ($trainings as $training) {
-            $events[] = [
-                'id' => $training->id,
-                'title' => $training->teams[0]->teamName.' - '.$training->eventName,
-                'start' => $training->date.' '.$training->startTime,
-                'end' => $training->date.' '.$training->endTime,
-                'className' => 'bg-warning'
-            ];
-        }
-        return $events;
-    }
-
     public function makeMatchCalendar($matchesData)
     {
         $events = [];
@@ -66,10 +51,32 @@ class EventScheduleService extends Service
         }
         return $events;
     }
+
+    public function makeTrainingCalendar($trainingsData)
+    {
+        $events = [];
+        foreach ($trainingsData as $training) {
+            $events[] = [
+                'id' => $training->id,
+                'title' => $training->teams[0]->teamName.' - '.$training->eventName,
+                'start' => $training->date.' '.$training->startTime,
+                'end' => $training->date.' '.$training->endTime,
+                'className' => 'bg-warning'
+            ];
+        }
+        return $events;
+    }
+
     public function matchCalendar(){
         $matches = $this->indexMatch();
 
         return $this->makeMatchCalendar($matches);
+    }
+
+    public function trainingCalendar(){
+        $trainings = $this->indexTraining();
+
+        return $this->makeTrainingCalendar($trainings);
     }
 
     public function makeDataTablesTraining($trainingData)
