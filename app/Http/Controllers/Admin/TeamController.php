@@ -110,6 +110,9 @@ class TeamController extends Controller
         return view('pages.admins.managements.teams.detail', [
             'team' => $team,
             'overview' => $this->teamService->teamOverviewStats($team),
+            'latestMatches' => $this->teamService->teamLatestMatch($team),
+            'upcomingMatches' => $this->teamService->teamUpcomingMatch($team),
+            'upcomingTrainings' => $this->teamService->teamUpcomingTraining($team),
         ]);
     }
 
