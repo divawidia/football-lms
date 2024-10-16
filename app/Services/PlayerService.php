@@ -561,11 +561,26 @@ class PlayerService extends Service
             ->get();
     }
 
+    public function getPlayerUpcomingTraining(Player $player)
+    {
+        return $player->schedules()->with('teams', 'competition')
+            ->where('eventType', 'Training')
+            ->where('status', '1')
+            ->get();
+    }
+
     public function playerUpcomingMatches(Player $player)
     {
         $data = $this->getPlayerUpcomingMatches($player);
 
         return $this->eventScheduleService->makeDataTablesMatch($data);
+    }
+
+    public function playerUpcomingTraining(Player $player)
+    {
+        $data = $this->getPlayerUpcomingTraining($player);
+
+        return $this->eventScheduleService->makeDataTablesTraining($data);
     }
 
     public function playerMatchCalendar(Player $player)
