@@ -432,6 +432,7 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('coach.player-managements.playerTeams');
                     Route::get('parents', [PlayerParentController::class, 'index'])->name('coach.player-parents.index');
                     Route::get('upcoming-matches', [CoachPlayerController::class, 'upcomingMatches'])->name('coach.player-parents.upcoming-matches');
+                    Route::get('upcoming-trainings', [CoachPlayerController::class, 'upcomingTrainings'])->name('coach.player-parents.upcoming-trainings');
                 });
             });
 

@@ -67,4 +67,15 @@ class PlayerController extends Controller
             'matchCalendar' => $this->playerService->playerMatchCalendar($player)
         ]);
     }
+
+    public function upcomingTrainings(Player $player){
+        if (\request()->ajax()){
+            return $this->playerService->playerUpcomingTraining($player);
+        }
+
+        return view('pages.coaches.managements.players.upcoming-trainings', [
+            'data' => $player,
+            'matchCalendar' => $this->playerService->playerTrainingCalendar($player)
+        ]);
+    }
 }
