@@ -387,11 +387,13 @@ class EventScheduleService extends Service
         $schedule =  EventSchedule::create($data);
 
         $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
+
         $schedule->teams()->attach($data['teamId']);
         $schedule->teams()->attach($data['opponentTeamId']);
         $schedule->players()->attach($team->players);
-        $schedule->playerMatchStats()->attach($team->players);
+        $schedule->playerMatchStats()->attach($team->players, ['teamId' => $team->id]);
         $schedule->coaches()->attach($team->coaches);
+
         return $schedule;
     }
 
