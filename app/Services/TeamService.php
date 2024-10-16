@@ -362,6 +362,32 @@ class TeamService extends Service
             ->get();
     }
 
+    public function teamUpcomingMatch(Team $team)
+    {
+        return EventSchedule::with('teams', 'competition')
+            ->whereHas('teams', function($q) use ($team){
+                $q->where('teamId', $team->id);
+            })
+            ->where('eventType', 'Match')
+            ->where('status', '1')
+            ->latest('date')
+            ->take(2)
+            ->get();
+    }
+
+    public function teamUpcomingTraining(Team $team)
+    {
+        return EventSchedule::with('teams', 'competition')
+            ->whereHas('teams', function($q) use ($team){
+                $q->where('teamId', $team->id);
+            })
+            ->where('eventType', 'Training')
+            ->where('status', '1')
+            ->latest('date')
+            ->take(2)
+            ->get();
+    }
+
     public  function store(array $teamData, $academyId){
 
         if (array_key_exists('logo', $teamData)){
