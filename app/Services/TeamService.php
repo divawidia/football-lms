@@ -273,7 +273,7 @@ class TeamService extends Service
             ->editColumn('gender', function ($item) {
                 return $item->user->gender;
             })
-            ->rawColumns(['action', 'name', 'age', 'gender','joinedDate']
+            ->rawColumns(['action', 'name', 'age', 'gender','joinedDate'])
             ->addIndexColumn()
             ->make();
     }
