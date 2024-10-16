@@ -48,7 +48,7 @@
                     </li>
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button"
-                           href="">
+                           href="{{ route('coach.team-managements.index') }}">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">group</span>
                             <span class="sidebar-menu-text">Teams Management</span>
                         </a>
