@@ -159,6 +159,8 @@ Route::group(['middleware' => ['auth']], function () {
                         Route::patch('activate', [TeamController::class, 'activate'])->name('activate-team');
                         Route::get('players', [TeamController::class, 'teamPlayers'])->name('team-managements.teamPlayers');
                         Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('team-managements.teamCoaches');
+                        Route::get('competitions', [TeamController::class, 'teamCompetitions'])->name('team-managements.teamCompetitions');
+                        Route::get('training-histories', [TeamController::class, 'teamTrainingHistories'])->name('team-managements.training-histories');
                         Route::get('edit-players', [TeamController::class, 'addPlayerTeam'])->name('team-managements.addPlayerTeam');
                         Route::put('update-players', [TeamController::class, 'updatePlayerTeam'])->name('team-managements.updatePlayerTeam');
                         Route::get('edit-coaches', [TeamController::class, 'addCoachesTeam'])->name('team-managements.addCoachesTeam');
