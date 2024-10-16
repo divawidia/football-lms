@@ -447,6 +447,7 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('players', [TeamController::class, 'teamPlayers'])->name('coach.team-managements.teamPlayers');
                     Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('coach.team-managements.teamCoaches');
                     Route::get('competitions', [TeamController::class, 'teamCompetitions'])->name('coach.team-managements.teamCompetitions');
+                    Route::get('training-histories', [TeamController::class, 'teamTrainingHistories'])->name('coach.team-managements.training-histories');
                 });
             });
 
