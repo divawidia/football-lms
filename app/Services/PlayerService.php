@@ -381,80 +381,82 @@ class PlayerService extends Service
 
     public function skillStatsChart(Player $player){
         $results = $this->getSkillStats($player)->first();
-
-        if ($player->position->category == 'Forward'){
-            $label = [
-                'Controlling',
-                'Receiving',
-                'Dribbling',
-                'Shooting',
-                'PowerKicking',
-                'OffensivePlay',
-            ];
-            $data = [
-                $results->controlling,
-                $results->recieving,
-                $results->dribbling,
-                $results->shooting,
-                $results->powerKicking,
-                $results->offensivePlay,
-            ];
+        $label = [];
+        $data = [];
+        if ($results != null){
+            if ($player->position->category == 'Forward'){
+                $label = [
+                    'Controlling',
+                    'Receiving',
+                    'Dribbling',
+                    'Shooting',
+                    'PowerKicking',
+                    'OffensivePlay',
+                ];
+                $data = [
+                    $results->controlling,
+                    $results->recieving,
+                    $results->dribbling,
+                    $results->shooting,
+                    $results->powerKicking,
+                    $results->offensivePlay,
+                ];
+            }
+            elseif ($player->position->category == 'Midfielder'){
+                $label = [
+                    'Controlling',
+                    'Receiving',
+                    'Dribbling',
+                    'Passing',
+                    'BallHandling',
+                    'OffensivePlay',
+                ];
+                $data = [
+                    $results->controlling,
+                    $results->recieving,
+                    $results->dribbling,
+                    $results->passing,
+                    $results->ballHandling,
+                    $results->offensivePlay,
+                ];
+            }
+            elseif ($player->position->category == 'Defender'){
+                $label = [
+                    'Controlling',
+                    'Receiving',
+                    'Turning',
+                    'Passing',
+                    'BallHandling',
+                    'DefensivePlay',
+                ];
+                $data = [
+                    $results->controlling,
+                    $results->recieving,
+                    $results->turning,
+                    $results->passing,
+                    $results->ballHandling,
+                    $results->defensivePlay,
+                ];
+            }
+            elseif ($player->position->category == 'Defender' && $player->position->name == 'Goalkeeper (GK)' ){
+                $label = [
+                    'Controlling',
+                    'Receiving',
+                    'PowerKicking',
+                    'Passing',
+                    'GoalKeeping',
+                    'DefensivePlay',
+                ];
+                $data = [
+                    $results->controlling,
+                    $results->recieving,
+                    $results->powerKicking,
+                    $results->passing,
+                    $results->goalKeeping,
+                    $results->defensivePlay,
+                ];
+            }
         }
-        elseif ($player->position->category == 'Midfielder'){
-            $label = [
-                'Controlling',
-                'Receiving',
-                'Dribbling',
-                'Passing',
-                'BallHandling',
-                'OffensivePlay',
-            ];
-            $data = [
-                $results->controlling,
-                $results->recieving,
-                $results->dribbling,
-                $results->passing,
-                $results->ballHandling,
-                $results->offensivePlay,
-            ];
-        }
-        elseif ($player->position->category == 'Defender'){
-            $label = [
-                'Controlling',
-                'Receiving',
-                'Turning',
-                'Passing',
-                'BallHandling',
-                'DefensivePlay',
-            ];
-            $data = [
-                $results->controlling,
-                $results->recieving,
-                $results->turning,
-                $results->passing,
-                $results->ballHandling,
-                $results->defensivePlay,
-            ];
-        }
-        elseif ($player->position->category == 'Defender' && $player->position->name == 'Goalkeeper (GK)' ){
-            $label = [
-                'Controlling',
-                'Receiving',
-                'PowerKicking',
-                'Passing',
-                'GoalKeeping',
-                'DefensivePlay',
-            ];
-            $data = [
-                $results->controlling,
-                $results->recieving,
-                $results->powerKicking,
-                $results->passing,
-                $results->goalKeeping,
-                $results->defensivePlay,
-            ];
-        }
-
         return compact('label', 'data');
     }
 
@@ -464,17 +466,18 @@ class PlayerService extends Service
         $label = [];
         $data = [];
 
-        foreach ($results as $result){
-            $label[] = $this->convertToDate($result->created_at);
-        }
-
-        $skills = $this->skillStatsLabel();
-
-        foreach ($results as $result) {
-            foreach ($skills as $skill => $value) {
-                $data[$skill][] = $result[$value];
+        if ($results != null){
+            foreach ($results as $result){
+                $label[] = $this->convertToDate($result->created_at);
             }
-        }
+
+            $skills = $this->skillStatsLabel();
+
+            foreach ($results as $result) {
+                foreach ($skills as $skill => $value) {
+                    $data[$skill][] = $result[$value];
+                }
+            }
 
 //        if ($player->position->category == 'Forward'){
 //            $data['label'] = [
@@ -550,6 +553,7 @@ class PlayerService extends Service
 //            }
 //        }
 
+        }
         return compact('label', 'data');
     }
 
