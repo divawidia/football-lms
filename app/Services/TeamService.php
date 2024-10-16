@@ -349,6 +349,19 @@ class TeamService extends Service
         );
     }
 
+    public function teamLatestMatch(Team $team)
+    {
+        return EventSchedule::with('teams', 'competition')
+            ->whereHas('teams', function($q) use ($team){
+                $q->where('teamId', $team->id);
+            })
+            ->where('eventType', 'Match')
+            ->where('status', '0')
+            ->latest('date')
+            ->take(2)
+            ->get();
+    }
+
     public  function store(array $teamData, $academyId){
 
         if (array_key_exists('logo', $teamData)){
