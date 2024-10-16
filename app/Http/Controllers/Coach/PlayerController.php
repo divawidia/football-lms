@@ -62,6 +62,8 @@ class PlayerController extends Controller
             return $this->playerService->playerUpcomingMatches($player);
         }
 
-        return view('pages.coaches.managements.players.upcoming-matches');
+        return view('pages.coaches.managements.players.upcoming-matches', [
+            'data' => $player
+        ]);
     }
 }
