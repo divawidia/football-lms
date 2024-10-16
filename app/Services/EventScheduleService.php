@@ -11,6 +11,7 @@ use App\Models\ScheduleNote;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use function PHPUnit\Framework\isFalse;
@@ -51,19 +52,24 @@ class EventScheduleService extends Service
         return $events;
     }
 
-    public function matchCalendar(){
-        $matches = $this->indexMatch();
+    public function makeMatchCalendar($matchesData)
+    {
         $events = [];
-        foreach ($matches as $match) {
+        foreach ($matchesData as $match) {
             $events[] = [
                 'id' => $match->id,
                 'title' => $match->teams[0]->teamName .' Vs. '.$match->teams[1]->teamName,
                 'start' => $match->date.' '.$match->startTime,
                 'end' => $match->date.' '.$match->endTime,
-                'className' => 'bg-primary'
+                'className' => 'bg-primary text-white'
             ];
         }
         return $events;
+    }
+    public function matchCalendar(){
+        $matches = $this->indexMatch();
+
+        return $this->makeMatchCalendar($matches);
     }
 
     public function dataTablesTraining(){
@@ -138,28 +144,36 @@ class EventScheduleService extends Service
             ->make();
     }
 
-    public function dataTablesMatch(){
-        $data = $this->indexMatch();
-        return Datatables::of($data)
+    public function makeDataTablesMatch($matchData)
+    {
+        return Datatables::of($matchData)
             ->addColumn('action', function ($item) {
-                if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('end-match', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">block</span> End Match
-                                                </button>
-                                            </form>';
-                } else {
-                    $statusButton = '<form action="' . route('activate-match', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">check_circle</span> Start Match
-                                                </button>
-                                            </form>';
-                }
-                return '
+                if (Auth::user()->hasRole('coach')){
+                    return '
+                        <a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                            <span class="material-icons">
+                                visibility
+                            </span>
+                        </a>';
+                } elseif (Auth::user()->hasRole('admin')){
+                    if ($item->status == '1') {
+                        $statusButton = '<form action="' . route('end-match', $item->id) . '" method="POST">
+                                            ' . method_field("PATCH") . '
+                                            ' . csrf_field() . '
+                                            <button type="submit" class="dropdown-item">
+                                                <span class="material-icons">block</span> End Match
+                                            </button>
+                                        </form>';
+                    } else {
+                        $statusButton = '<form action="' . route('activate-match', $item->id) . '" method="POST">
+                                            ' . method_field("PATCH") . '
+                                            ' . csrf_field() . '
+                                            <button type="submit" class="dropdown-item">
+                                                <span class="material-icons">check_circle</span> Start Match
+                                            </button>
+                                        </form>';
+                    }
+                    return '
                         <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
@@ -175,6 +189,7 @@ class EventScheduleService extends Service
                             </button>
                           </div>
                         </div>';
+                }
             })
             ->editColumn('team', function ($item) {
                 return '
@@ -247,6 +262,11 @@ class EventScheduleService extends Service
             })
             ->rawColumns(['action','team', 'competition','opponentTeam','date','status'])
             ->make();
+    }
+
+    public function dataTablesMatch(){
+        $data = $this->indexMatch();
+        return $this->makeDataTablesMatch($data);
     }
 
     public function dataTablesPlayerStats(EventSchedule $schedule){

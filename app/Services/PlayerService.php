@@ -9,6 +9,7 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Nnjeim\World\World;
@@ -16,6 +17,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PlayerService extends Service
 {
+    private EventScheduleService $eventScheduleService;
+    public function __construct(EventScheduleService $eventScheduleService)
+    {
+        $this->eventScheduleService = $eventScheduleService;
+    }
     public function index(): JsonResponse
     {
         $query = Player::with('user', 'teams', 'position')->get();
@@ -547,120 +553,26 @@ class PlayerService extends Service
         return compact('label', 'data');
     }
 
-    public function playerUpcomingMatches(Player $player)
+    public function getPlayerUpcomingMatches(Player $player)
     {
-        $data = $player->schedules()->with('teams', 'competition')
+        return $player->schedules()->with('teams', 'competition')
             ->where('eventType', 'Match')
             ->where('status', '1')
             ->get();
+    }
 
-        return Datatables::of($data)
-            ->addColumn('action', function ($item) {
-                if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('end-match', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">block</span> End Match
-                                                </button>
-                                            </form>';
-                } else {
-                    $statusButton = '<form action="' . route('activate-match', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">check_circle</span> Start Match
-                                                </button>
-                                            </form>';
-                }
-                return '
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('match-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Schedule</a>
-                            <a class="dropdown-item" href="' . route('match-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Schedule</a>
-                            ' . $statusButton . '
-                            <button type="button" class="dropdown-item delete" id="' . $item->id . '">
-                                <span class="material-icons">delete</span> Delete Schedule
-                            </button>
-                          </div>
-                        </div>';
-            })
-            ->editColumn('team', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->teams[0]->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-            })
-            ->editColumn('opponentTeam', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[1]->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[1]->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->teams[1]->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-            })
-            ->editColumn('competition', function ($item) {
-                if ($item->competition){
-                    $competition = '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->competition->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->competition->name . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->competition->type.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-                }else{
-                    $competition = 'No Competition';
-                }
-                return $competition;
-            })
-            ->editColumn('date', function ($item) {
-                $date = date('M d, Y', strtotime($item->date));
-                $startTime = date('h:i A', strtotime($item->startTime));
-                $endTime = date('h:i A', strtotime($item->endTime));
-                return $date.' ('.$startTime.' - '.$endTime.')';
-            })
-            ->editColumn('status', function ($item) {
-                if ($item->status == '1') {
-                    return '<span class="badge badge-pill badge-success">Active</span>';
-                } elseif ($item->status == '0') {
-                    return '<span class="badge badge-pill badge-danger">Ended</span>';
-                }
-            })
-            ->rawColumns(['action','team', 'competition','opponentTeam','date','status'])
-            ->make();
+    public function playerUpcomingMatches(Player $player)
+    {
+        $data = $this->getPlayerUpcomingMatches($player);
+
+        return $this->eventScheduleService->makeDataTablesMatch($data);
+    }
+
+    public function playerMatchCalendar(Player $player)
+    {
+        $matches = $this->getPlayerUpcomingMatches($player);
+
+        return $this->eventScheduleService->makeMatchCalendar($matches);
     }
 
 
