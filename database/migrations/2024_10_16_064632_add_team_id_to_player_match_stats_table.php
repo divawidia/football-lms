@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('player_skills_stats', function (Blueprint $table) {
+        Schema::table('player_match_stats', function (Blueprint $table) {
             $table->foreignId('teamId')->nullable()->constrained('teams')->nullOnDelete();
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('player_skills_stats', function (Blueprint $table) {
+        Schema::table('player_match_stats', function (Blueprint $table) {
             $table->dropConstrainedForeignId('teamId');
         });
     }
