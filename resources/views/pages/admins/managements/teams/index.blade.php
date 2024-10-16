@@ -91,7 +91,11 @@
                     serverSide: true,
                     ordering: true,
                     ajax: {
-                        url: '{!! url()->current() !!}',
+                        @if(Auth::user()->hasRole('admin'))
+                            url: '{!! url()->route('team-managements.admin-teams') !!}',
+                        @elseif(Auth::user()->hasRole('coach'))
+                            url: '{!! url()->route('coach.team-managements.coach-teams') !!}',
+                        @endif
                     },
                     columns: [
                         { data: 'name', name: 'name' },
