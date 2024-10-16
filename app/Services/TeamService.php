@@ -22,7 +22,7 @@ class TeamService extends Service
                 $actionButton = '';
                 if (Auth::user()->hasRole('coach')){
                     $actionButton =  '
-                          <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.team-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                          <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.team-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Team">
                             <span class="material-icons">
                                 visibility
                             </span>
@@ -80,7 +80,9 @@ class TeamService extends Service
                                 <div class="media-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
+                                            <a href="' . route('coach.team-managements.show', $item->id) . '">
+                                                <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
+                                            </a>
                                             <small class="js-lists-values-email text-50">'.$item->ageGroup.'</small>
                                         </div>
                                     </div>
@@ -117,7 +119,16 @@ class TeamService extends Service
         $query = $team->players()->get();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                return '
+                $actionButton = '';
+                if (Auth::user()->hasRole('coach')){
+                    $actionButton =  '
+                          <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                            <span class="material-icons">
+                                visibility
+                            </span>
+                          </a>';
+                } elseif (Auth::user()->hasRole('admin')){
+                    $actionButton =  '
                                 <div class="dropdown">
                                   <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="material-icons">
@@ -132,6 +143,8 @@ class TeamService extends Service
                                     </button>
                                   </div>
                                 </div>';
+                }
+                return $actionButton;
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
@@ -146,7 +159,9 @@ class TeamService extends Service
                                 <div class="media-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' '.$item->user->lastName.'</strong></p>
+                                            <a href="' . route('coach.player-managements.show', $item->id) . '">
+                                                <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' '.$item->user->lastName.'</strong></p>
+                                            </a>
                                             <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
                                         </div>
                                     </div>
