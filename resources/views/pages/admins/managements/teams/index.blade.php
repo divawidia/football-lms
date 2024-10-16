@@ -8,34 +8,34 @@
 
     @section('content')
         <div class="pt-32pt">
-            <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-                <div class="flex d-flex flex-column flex-sm-row align-items-center mb-24pt mb-md-0">
-                    <div class="mb-24pt mb-sm-0 w-100">
-                        <div class="d-flex flex-row">
-                            <h2 class="mb-0 text-left">@yield('title')</h2>
-                        </div>
-                        <ol class="breadcrumb p-0 m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item active">
-                                @yield('title')
-                            </li>
-                        </ol>
-                    </div>
-                </div>
+            <div class="container">
+                <h2 class="mb-0 text-left">@yield('title')</h2>
+                <ol class="breadcrumb p-0 m-0">
+                    @if(Auth::user()->hasRole('admin'))
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                    @elseif(Auth::user()->hasRole('coach'))
+                        <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
+                    @endif
+                    <li class="breadcrumb-item active">
+                        @yield('title')
+                    </li>
+                </ol>
             </div>
         </div>
 
-        <div class="container page__container page-section">
+        <div class="container page-section">
             <div class="page-separator">
                 <div class="page-separator__text">Our Teams</div>
-                <a href="{{  route('team-managements.create') }}" class="btn btn-sm btn-primary ml-auto " id="add-new">
-                <span class="material-icons mr-2">
-                    add
-                </span>
-                    Add New Team
-                </a>
+                @if(Auth::user()->hasRole('admin'))
+                    <a href="{{  route('team-managements.create') }}" class="btn btn-sm btn-primary ml-auto " id="add-new">
+                        <span class="material-icons mr-2">
+                            add
+                        </span>
+                        Add New Team
+                    </a>
+                @endif
             </div>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="table">
@@ -55,32 +55,34 @@
                 </div>
             </div>
 
-            <div class="page-separator">
-                <div class="page-separator__text">Opponent Teams</div>
-                <a href="{{  route('opponentTeam-managements.create') }}" class="btn btn-sm btn-primary ml-auto " id="add-new">
-                <span class="material-icons mr-2">
-                    add
-                </span>
-                    Add New Team
-                </a>
-            </div>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="opponentTable">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+            @if(Auth::user()->hasRole('admin'))
+                <div class="page-separator">
+                    <div class="page-separator__text">Opponent Teams</div>
+                    <a href="{{  route('opponentTeam-managements.create') }}" class="btn btn-sm btn-primary ml-auto " id="add-new">
+                        <span class="material-icons mr-2">
+                            add
+                        </span>
+                        Add New Team
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="opponentTable">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
     @endsection
     @push('addon-script')
@@ -111,102 +113,103 @@
                         },
                     ]
                 });
-
-                const opponentTable = $('#opponentTable').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ordering: true,
-                    ajax: {
-                        url: '{!! route('opponentTeam-managements.index') !!}',
-                    },
-                    columns: [
-                        { data: 'name', name: 'name' },
-                        { data: 'status', name: 'status', width: '15%' },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false,
-                            width: '15%'
+                @if(Auth::user()->hasRole('admin'))
+                    const opponentTable = $('#opponentTable').DataTable({
+                        processing: true,
+                        serverSide: true,
+                        ordering: true,
+                        ajax: {
+                            url: '{!! route('opponentTeam-managements.index') !!}',
                         },
-                    ]
-                });
-
-                $('body').on('click', '.delete-team', function() {
-                    let id = $(this).attr('id');
-
-                    Swal.fire({
-                        title: "Are you sure?",
-                        text: "You won't be able to revert this!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#1ac2a1",
-                        cancelButtonColor: "#E52534",
-                        confirmButtonText: "Yes, delete it!"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: "{{ route('team-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
-                                type: 'DELETE',
-                                data: {
-                                    _token: "{{ csrf_token() }}"
-                                },
-                                success: function(response) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "Team successfully deleted!",
-                                    });
-                                    datatable.ajax.reload();
-                                },
-                                error: function(error) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "Oops...",
-                                        text: "Something went wrong when deleting data!",
-                                    });
-                                }
-                            });
-                        }
+                        columns: [
+                            { data: 'name', name: 'name' },
+                            { data: 'status', name: 'status', width: '15%' },
+                            {
+                                data: 'action',
+                                name: 'action',
+                                orderable: false,
+                                searchable: false,
+                                width: '15%'
+                            },
+                        ]
                     });
-                });
 
-                $('body').on('click', '.delete-opponentTeam', function() {
-                    let id = $(this).attr('id');
+                    $('body').on('click', '.delete-team', function() {
+                        let id = $(this).attr('id');
 
-                    Swal.fire({
-                        title: "Are you sure?",
-                        text: "You won't be able to revert this!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#1ac2a1",
-                        cancelButtonColor: "#E52534",
-                        confirmButtonText: "Yes, delete it!"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: "{{ route('opponentTeam-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
-                                type: 'DELETE',
-                                data: {
-                                    _token: "{{ csrf_token() }}"
-                                },
-                                success: function(response) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "Team successfully deleted!",
-                                    });
-                                    opponentTable.ajax.reload();
-                                },
-                                error: function(error) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "Oops...",
-                                        text: "Something went wrong when deleting data!",
-                                    });
-                                }
-                            });
-                        }
+                        Swal.fire({
+                            title: "Are you sure?",
+                            text: "You won't be able to revert this!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#1ac2a1",
+                            cancelButtonColor: "#E52534",
+                            confirmButtonText: "Yes, delete it!"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: "{{ route('team-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
+                                    type: 'DELETE',
+                                    data: {
+                                        _token: "{{ csrf_token() }}"
+                                    },
+                                    success: function(response) {
+                                        Swal.fire({
+                                            icon: "success",
+                                            title: "Team successfully deleted!",
+                                        });
+                                        datatable.ajax.reload();
+                                    },
+                                    error: function(error) {
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Oops...",
+                                            text: "Something went wrong when deleting data!",
+                                        });
+                                    }
+                                });
+                            }
+                        });
                     });
-                });
+
+                    $('body').on('click', '.delete-opponentTeam', function() {
+                        let id = $(this).attr('id');
+
+                        Swal.fire({
+                            title: "Are you sure?",
+                            text: "You won't be able to revert this!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#1ac2a1",
+                            cancelButtonColor: "#E52534",
+                            confirmButtonText: "Yes, delete it!"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: "{{ route('opponentTeam-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
+                                    type: 'DELETE',
+                                    data: {
+                                        _token: "{{ csrf_token() }}"
+                                    },
+                                    success: function(response) {
+                                        Swal.fire({
+                                            icon: "success",
+                                            title: "Team successfully deleted!",
+                                        });
+                                        opponentTable.ajax.reload();
+                                    },
+                                    error: function(error) {
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Oops...",
+                                            text: "Something went wrong when deleting data!",
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    });
+                @endif
             });
         </script>
     @endpush
