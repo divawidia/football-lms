@@ -660,7 +660,8 @@
                         searchable: false,
                         width: '15%'
                     },
-                ]
+                ],
+                order: [[2, 'desc']],
             });
 
             $('.delete-team').on('click', function() {

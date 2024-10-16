@@ -348,13 +348,13 @@ class TeamService extends Service
                         </div>';
             })
             ->editColumn('date', function ($item) {
-                $startDate = $this->convertToDate($item->startDate);
-                $endDate = $this->convertToDate($item->endDate);
+                $startDate = $this->convertToDate($item->competition->startDate);
+                $endDate = $this->convertToDate($item->competition->endDate);
                 return $startDate.' - '.$endDate;
             })
             ->editColumn('contact', function ($item) {
-                if ($item->contactName != null && $item->contactPhone != null){
-                    $contact = $item->contactName. ' ~ '.$item->contactPhone;
+                if ($item->competition->contactName != null && $item->competition->contactPhone != null){
+                    $contact = $item->competition->contactName. ' ~ '.$item->competition->contactPhone;
                 }else{
                     $contact = 'No cantact added';
                 }
