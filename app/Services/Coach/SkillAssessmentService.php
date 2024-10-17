@@ -96,10 +96,22 @@ class SkillAssessmentService extends Service
             ->make();
     }
 
-    public function update(array $data, Player $player, $coachId, )
+    public function create(array $data, Player $player, $coachId)
     {
         $data['playerId'] = $player->id;
         $data['coachId'] = $coachId;
         return PlayerSkillStats::create($data);
+    }
+
+    public function update(array $data, Player $player, PlayerSkillStats $playerSkillStats, $coachId)
+    {
+        $data['playerId'] = $player->id;
+        $data['coachId'] = $coachId;
+        return $playerSkillStats->update($data);
+    }
+
+    public function destroy(PlayerSkillStats $playerSkillStats)
+    {
+        return $playerSkillStats->delete();
     }
 }
