@@ -38,7 +38,7 @@ class SkillAssessmentService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('coach.player-managements.skill-stats', $item->userId) . '"><span class="material-icons">edit</span> View Skill Player</a>
+                            <a class="dropdown-item" href="' . route('coach.skill-assessments.skill-stats', $item->id) . '"><span class="material-icons">edit</span> View Skill Player</a>
                             <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> Update Player Skill</a>
                             <button type="button" class="dropdown-item add-performance-review" id="' . $item->userId . '">
                                 <span class="material-icons">add</span>
@@ -68,7 +68,7 @@ class SkillAssessmentService extends Service
                             <div class="media-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
-                                        <a href="' . route('coach.player-managements.show', $item->id) . '">
+                                        <a href="' . route('coach.skill-assessments.skill-stats', $item->id) . '">
                                             <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
                                         </a>
                                         <small class="js-lists-values-email text-50">' . $item->position->name . '</small>

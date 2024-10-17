@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Coach;
 
 use App\Http\Controllers\Controller;
+use App\Models\Player;
 use App\Services\Coach\SkillAssessmentService;
 use Illuminate\Http\Request;
 
@@ -21,5 +22,11 @@ class SkillAssessmentController extends Controller
             return $this->skillAssessmentService->index($this->getLoggedCoachUser());
         }
         return view('pages.coaches.academies.skill-assessments.index');
+    }
+
+    public function edit(Player $player){
+        return view('pages.coaches.academies.skill-assessments.edit', [
+            'data' => $player,
+        ]);
     }
 }

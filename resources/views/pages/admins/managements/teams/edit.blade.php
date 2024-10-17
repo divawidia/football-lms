@@ -56,9 +56,9 @@
                                                        id="foto">
                                                 <label class="custom-file-label" for="foto">Choose file</label>
                                                 @error('logo')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
                                                 @enderror
                                             </div>
                                         </div>

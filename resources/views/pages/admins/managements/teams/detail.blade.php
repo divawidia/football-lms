@@ -70,6 +70,13 @@
                         </button>
                     </div>
                 </div>
+            @elseif(Auth::user()->hasRole('coach'))
+                <a class="btn btn-outline-white">
+                    <span class="material-icons mr-3">
+                        edit
+                    </span>
+                    Action
+                </a>
             @endif
         </div>
     </div>

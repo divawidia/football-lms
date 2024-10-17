@@ -11,10 +11,17 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('coach.player-managements.show', $data->id) }}" class="nav-link text-70">
-                        <i class="material-icons icon--left">keyboard_backspace</i>
-                        Back to Player Profile
-                    </a>
+                    @if( url()->previous() == route('coach.player-managements.show', $data->id))
+                        <a href="{{ route('coach.player-managements.show', $data->id) }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back to Player Profile
+                        </a>
+                    @else
+                        <a href="{{ route('coach.skill-assessments.index') }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back to Player List
+                        </a>
+                    @endif
                 </li>
             </ul>
         </div>
@@ -30,6 +37,14 @@
                 <h2 class="text-white mb-0">{{ $data->user->firstName  }} {{ $data->user->lastName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data->position->name }}</p>
             </div>
+            @if(Auth::user()->hasRole('coach'))
+                <a class="btn btn-outline-white" href="{{ route('coach.skill-assessments.edit', $data->id) }}">
+                    <span class="material-icons mr-2">
+                        edit
+                    </span>
+                    Update Skills
+                </a>
+            @endif
         </div>
     </div>
 
