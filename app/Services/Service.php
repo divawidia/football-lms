@@ -63,6 +63,10 @@ class Service
         return date('M d, Y', strtotime($timestamp));
     }
 
+    public function convertToTime($timestamp){
+        return date('h:i A', strtotime($timestamp));
+    }
+
     public function priceFormat($price){
         return 'Rp. ' . number_format($price);
     }
