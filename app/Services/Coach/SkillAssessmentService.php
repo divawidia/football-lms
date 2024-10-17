@@ -42,7 +42,7 @@ class SkillAssessmentService extends Service
                             <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> Update Player Skill</a>
                             <button type="button" class="dropdown-item add-performance-review" id="' . $item->userId . '">
                                 <span class="material-icons">add</span>
-                                add performance review
+                                Add Performance Review
                             </button>
                           </div>
                         </div>';
@@ -83,9 +83,15 @@ class SkillAssessmentService extends Service
             })
             ->editColumn('lastUpdated', function ($item) {
                 $data = $item->playerSkillStats()->latest()->first();
-                return $this->convertToDatetime($data->created_at);
+                if ($data){
+                    $date = $this->convertToDatetime($data->created_at);
+                } else{
+                    $date = "Haven't assessed yet";
+                }
+                return $date;
             })
             ->rawColumns(['action', 'name', 'lastUpdated', 'age', 'teams.name'])
+            ->addIndexColumn()
             ->make();
     }
 }

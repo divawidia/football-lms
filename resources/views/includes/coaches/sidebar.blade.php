@@ -59,7 +59,7 @@
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button"
-                           href="">
+                           href="{{ route('coach.skill-assessments.index') }}">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">tune</span>
                             <span class="sidebar-menu-text">Skill Assessments</span>
                         </a>

@@ -20,6 +20,6 @@ class SkillAssessmentController extends Controller
         if (\request()->ajax()){
             return $this->skillAssessmentService->index($this->getLoggedCoachUser());
         }
-        return view('pages.coach.academies.skill-assessment.index');
+        return view('pages.coaches.academies.skill-assessments.index');
     }
 }

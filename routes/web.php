@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TrainingVideoController;
 use App\Http\Controllers\Admin\TrainingVideoLessonController;
+use App\Http\Controllers\Coach\SkillAssessmentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -453,6 +454,18 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('training-histories', [TeamController::class, 'teamTrainingHistories'])->name('coach.team-managements.training-histories');
                     Route::get('match-histories', [TeamController::class, 'teamMatchHistories'])->name('coach.team-managements.match-histories');
                 });
+            });
+
+            Route::prefix('skill-assessments')->group(function () {
+                Route::get('', [SkillAssessmentController::class, 'index'])->name('coach.skill-assessments.index');
+//                Route::prefix('{player}')->group(function () {
+//                    Route::get('', [CoachPlayerController::class, 'show'])->name('coach.player-managements.show');
+//                    Route::get('skill-stats', [CoachPlayerController::class, 'skillStatsDetail'])->name('coach.player-managements.skill-stats');
+//                    Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('coach.player-managements.playerTeams');
+//                    Route::get('parents', [PlayerParentController::class, 'index'])->name('coach.player-parents.index');
+//                    Route::get('upcoming-matches', [CoachPlayerController::class, 'upcomingMatches'])->name('coach.player-parents.upcoming-matches');
+//                    Route::get('upcoming-trainings', [CoachPlayerController::class, 'upcomingTrainings'])->name('coach.player-parents.upcoming-trainings');
+//                });
             });
 
             Route::prefix('attendance-reports')->group(function () {
