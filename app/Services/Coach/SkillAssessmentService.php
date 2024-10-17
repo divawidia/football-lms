@@ -3,6 +3,7 @@
 namespace App\Services\Coach;
 
 use App\Models\Player;
+use App\Models\PlayerSkillStats;
 use App\Services\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -93,5 +94,12 @@ class SkillAssessmentService extends Service
             ->rawColumns(['action', 'name', 'lastUpdated', 'age', 'teams.name'])
             ->addIndexColumn()
             ->make();
+    }
+
+    public function update(array $data, Player $player, $coachId, )
+    {
+        $data['playerId'] = $player->id;
+        $data['coachId'] = $coachId;
+        return PlayerSkillStats::create($data);
     }
 }

@@ -32,7 +32,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="controlling">Controlling</label>
+                                    <label class="form-label" for="controlling">Controlling : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -49,7 +49,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="recieving">Receiving</label>
+                                    <label class="form-label" for="recieving">Receiving : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -66,7 +66,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="dribbling">Dribbling</label>
+                                    <label class="form-label" for="dribbling">Dribbling : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -83,7 +83,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="passing">Passing</label>
+                                    <label class="form-label" for="passing">Passing : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -100,7 +100,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="shooting">Shooting</label>
+                                    <label class="form-label" for="shooting">Shooting : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -117,7 +117,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="crossing">Crossing</label>
+                                    <label class="form-label" for="crossing">Crossing : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -134,7 +134,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="turning">Turning</label>
+                                    <label class="form-label" for="turning">Turning : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -151,7 +151,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="ballHandling">Ball Handling</label>
+                                    <label class="form-label" for="ballHandling">Ball Handling : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -168,7 +168,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="powerKicking">Power Kicking</label>
+                                    <label class="form-label" for="powerKicking">Power Kicking : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -185,7 +185,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="goalKeeping">Goal Keeping</label>
+                                    <label class="form-label" for="goalKeeping">Goal Keeping : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -202,7 +202,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="offensivePlay">Offensive Play</label>
+                                    <label class="form-label" for="offensivePlay">Offensive Play : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -219,7 +219,7 @@
                         <div class="form-group">
                             <div class="row d-flex flex-row align-items-center mb-2">
                                 <div class="col-md-3">
-                                    <label class="form-label" for="defensivePlay">Defensive Play</label>
+                                    <label class="form-label" for="defensivePlay">Defensive Play : </label>
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
@@ -239,7 +239,6 @@
                     <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
                     <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                 </div>
-
             </form>
         </div>
     </div>
