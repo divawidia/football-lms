@@ -622,7 +622,7 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            const playersTable = $('#playersTable').DataTable({
+            $('#playersTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,

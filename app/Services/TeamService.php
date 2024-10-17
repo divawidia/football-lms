@@ -231,21 +231,32 @@ class TeamService extends Service
         $query = $team->coaches()->get();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                return '
-                                <div class="dropdown">
-                                  <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="material-icons">
-                                        more_vert
-                                    </span>
-                                  </button>
-                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="' . route('coach-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Coach</a>
-                                    <a class="dropdown-item" href="' . route('coach-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Coach</a>
-                                    <button type="button" class="dropdown-item remove-coach" id="' . $item->id . '">
-                                        <span class="material-icons">delete</span> Remove Coach From Team
-                                    </button>
-                                  </div>
-                                </div>';
+                $actionButton = '';
+                if (Auth::user()->hasRole('coach')){
+                    $actionButton =  '
+                        <a class="btn btn-sm btn-outline-secondary" href="' . route('coach-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                            <span class="material-icons">
+                                visibility
+                            </span>
+                        </a>';
+                } elseif (Auth::user()->hasRole('admin')){
+                    $actionButton =  '
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="material-icons">
+                                more_vert
+                            </span>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="' . route('coach-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Coach</a>
+                            <a class="dropdown-item" href="' . route('coach-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Coach</a>
+                            <button type="button" class="dropdown-item remove-coach" id="' . $item->id . '">
+                                <span class="material-icons">delete</span> Remove Coach From Team
+                            </button>
+                          </div>
+                        </div>';
+                }
+                return $actionButton;
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
