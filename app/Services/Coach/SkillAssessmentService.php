@@ -41,7 +41,7 @@ class SkillAssessmentService extends Service
                             <a class="dropdown-item" href="' . route('coach.player-managements.skill-stats', $item->userId) . '"><span class="material-icons">edit</span> View Skill Player</a>
                             <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> Update Player Skill</a>
                             <button type="button" class="dropdown-item add-performance-review" id="' . $item->userId . '">
-                                <span class="material-icons">delete</span>
+                                <span class="material-icons">add</span>
                                 add performance review
                             </button>
                           </div>
