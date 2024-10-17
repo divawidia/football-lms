@@ -658,10 +658,10 @@ class TeamService extends Service
                 }
                 return $badge;
             })
-            ->editColumn('Team Score', function ($item) {
+            ->editColumn('teamScore', function ($item) {
                 return $item->teams[0]->pivot->teamScore;
             })
-            ->editColumn('Opponent Team Score', function ($item) {
+            ->editColumn('opponentTeamScore', function ($item) {
                 return $item->teams[1]->pivot->teamScore;
             })
             ->editColumn('note', function ($item) {
@@ -675,7 +675,7 @@ class TeamService extends Service
             ->editColumn('last_updated', function ($item) {
                 return date('M d, Y ~ h:i A', strtotime($item->pivot->updated_at));
             })
-            ->rawColumns(['action','team', 'competition','opponentTeam','date','status', 'attendanceStatus', 'last_updated', 'note'])
+            ->rawColumns(['action', 'competition','opponentTeam','date','status', 'teamScore', 'opponentTeamScore', 'last_updated', 'note'])
             ->addIndexColumn()
             ->make();
     }

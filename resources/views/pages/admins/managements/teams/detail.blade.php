@@ -565,6 +565,32 @@
         <div class="page-separator">
             <div class="page-separator__text">Match Histories</div>
         </div>
+        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="matchHistoryTable">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Opponent Team</th>
+                            <th>competition</th>
+                            <th>Match Date</th>
+                            <th>Team Score</th>
+                            <th>Opponent Team Score</th>
+                            <th>Location</th>
+                            <th>Note</th>
+                            <th>Match Status</th>
+                            <th>Last Updated</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div class="page-separator">
             <div class="page-separator__text">Training Histories</div>
         </div>
@@ -633,7 +659,7 @@
                 ],
                 order: [[5, 'desc']]
             });
-            const coachesTable = $('#coachesTable').DataTable({
+            $('#coachesTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -706,6 +732,39 @@
                     { data: 'eventName', name: 'eventName' },
                     { data: 'date', name: 'date' },
                     { data: 'place', name: 'place'},
+                    { data: 'status', name: 'status' },
+                    { data: 'note', name: 'note' },
+                    { data: 'last_updated', name: 'last_updated' },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ],
+                order: [[2, 'desc']],
+            });
+
+            $('#matchHistoryTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    @if(Auth::user()->hasRole('admin'))
+                        url: '{!! url()->route('team-managements.match-histories', $team->id) !!}',
+                    @elseif(Auth::user()->hasRole('coach'))
+                        url: '{!! url()->route('coach.team-managements.match-histories', $team->id) !!}',
+                    @endif
+                },
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'opponentTeam', name: 'opponentTeam' },
+                    { data: 'competition', name: 'competition' },
+                    { data: 'date', name: 'date' },
+                    { data: 'teamScore', name: 'teamScore' },
+                    { data: 'opponentTeamScore', name: 'opponentTeamScore' },
+                    { data: 'place', name: 'place' },
                     { data: 'status', name: 'status' },
                     { data: 'note', name: 'note' },
                     { data: 'last_updated', name: 'last_updated' },
