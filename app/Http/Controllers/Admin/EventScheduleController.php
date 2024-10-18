@@ -47,6 +47,20 @@ class EventScheduleController extends Controller
         ]);
     }
 
+    public function coachIndexTraining()
+    {
+        $coach = $this->getLoggedCoachUser();
+        if (request()->ajax()){
+            return $this->eventScheduleService->coachTeamsDataTablesTraining($coach);
+        }
+
+        $events = $this->eventScheduleService->coachTeamsTrainingCalendar($coach);
+
+        return view('pages.admins.academies.schedules.trainings.index', [
+            'events' => $events
+        ]);
+    }
+
     public function indexMatch()
     {
         if (request()->ajax()){

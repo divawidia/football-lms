@@ -95,6 +95,12 @@ class EventScheduleService extends Service
         return $this->makeTrainingCalendar($trainings);
     }
 
+    public function coachTeamsTrainingCalendar(Coach $coach){
+        $trainings = $this->coachTeamsIndexTraining($coach);
+
+        return $this->makeTrainingCalendar($trainings);
+    }
+
     public function makeDataTablesTraining($trainingData)
     {
         return Datatables::of($trainingData)
