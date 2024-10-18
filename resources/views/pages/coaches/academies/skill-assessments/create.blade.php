@@ -22,10 +22,9 @@
             </ol>
         </div>
     </div>
-
     <div class="container page__container page-section">
         <div class="list-group">
-            <form method="POST" action="">
+            <form method="POST" action="{{ route('coach.skill-assessments.store',$data->id) }}">
                 @csrf
                 <div class="list-group-item">
                     <div role="group" aria-labelledby="label-question" class="m-0 form-group">
@@ -36,7 +35,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="controlling" name="controlling" class="skills-range-slider" value="{{ old('controlling') }}" />
+                                    <input type="text" id="controlling" name="controlling" class="skills-range-slider" value="{{ old('controlling') }}" required/>
                                 </div>
                             </div>
                             @error('controlling')
@@ -53,7 +52,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="recieving" name="recieving" class="skills-range-slider" value="{{ old('recieving') }}" />
+                                    <input type="text" id="recieving" name="recieving" class="skills-range-slider" value="{{ old('recieving') }}" required/>
                                 </div>
                             </div>
                             @error('recieving')
@@ -70,7 +69,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="dribbling" name="dribbling" class="skills-range-slider" value="{{ old('dribbling') }}" />
+                                    <input type="text" id="dribbling" name="dribbling" class="skills-range-slider" value="{{ old('dribbling') }}" required/>
                                 </div>
                             </div>
                             @error('dribbling')
@@ -87,7 +86,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="passing" name="passing" class="skills-range-slider" value="{{ old('passing') }}" />
+                                    <input type="text" id="passing" name="passing" class="skills-range-slider" value="{{ old('passing') }}" required/>
                                 </div>
                             </div>
                             @error('passing')
@@ -104,7 +103,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="shooting" name="shooting" class="skills-range-slider" value="{{ old('shooting') }}" />
+                                    <input type="text" id="shooting" name="shooting" class="skills-range-slider" value="{{ old('shooting') }}" required/>
                                 </div>
                             </div>
                             @error('shooting')
@@ -121,7 +120,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="crossing" name="crossing" class="skills-range-slider" value="{{ old('crossing') }}" />
+                                    <input type="text" id="crossing" name="crossing" class="skills-range-slider" value="{{ old('crossing') }}" required/>
                                 </div>
                             </div>
                             @error('crossing')
@@ -138,7 +137,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="turning" name="turning" class="skills-range-slider" value="{{ old('turning') }}" />
+                                    <input type="text" id="turning" name="turning" class="skills-range-slider" value="{{ old('turning') }}" required/>
                                 </div>
                             </div>
                             @error('turning')
@@ -155,7 +154,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="ballHandling" name="ballHandling" class="skills-range-slider" value="{{ old('ballHandling') }}" />
+                                    <input type="text" id="ballHandling" name="ballHandling" class="skills-range-slider" value="{{ old('ballHandling') }}" required/>
                                 </div>
                             </div>
                             @error('ballHandling')
@@ -172,7 +171,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="powerKicking" name="powerKicking" class="skills-range-slider" value="{{ old('powerKicking') }}" />
+                                    <input type="text" id="powerKicking" name="powerKicking" class="skills-range-slider" value="{{ old('powerKicking') }}" required/>
                                 </div>
                             </div>
                             @error('powerKicking')
@@ -189,7 +188,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="goalKeeping" name="goalKeeping" class="skills-range-slider" value="{{ old('goalKeeping') }}" />
+                                    <input type="text" id="goalKeeping" name="goalKeeping" class="skills-range-slider" value="{{ old('goalKeeping') }}" required/>
                                 </div>
                             </div>
                             @error('goalKeeping')
@@ -206,7 +205,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="offensivePlay" name="offensivePlay" class="skills-range-slider" value="{{ old('offensivePlay') }}" />
+                                    <input type="text" id="offensivePlay" name="offensivePlay" class="skills-range-slider" value="{{ old('offensivePlay') }}" required/>
                                 </div>
                             </div>
                             @error('offensivePlay')
@@ -223,7 +222,7 @@
                                     <small class="text-danger">*</small>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" id="defensivePlay" name="defensivePlay" class="skills-range-slider" value="{{ old('defensivePlay') }}" />
+                                    <input type="text" id="defensivePlay" name="defensivePlay" class="skills-range-slider" value="{{ old('defensivePlay') }}" required/>
                                 </div>
                             </div>
                             @error('defensivePlay')

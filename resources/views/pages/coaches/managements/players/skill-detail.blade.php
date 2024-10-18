@@ -6,6 +6,10 @@
     @yield('title')
 @endsection
 
+@section('modal')
+    @include('pages.coaches.academies.skill-assessments.form-modal.create')
+@endsection
+
 @section('content')
     <nav class="navbar navbar-light border-bottom border-top px-0">
         <div class="container page__container">
@@ -38,7 +42,7 @@
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data->position->name }}</p>
             </div>
             @if(Auth::user()->hasRole('coach'))
-                <a class="btn btn-outline-white" href="{{ route('coach.skill-assessments.edit', $data->id) }}">
+                <a class="btn btn-outline-white" id="addSkills" href="{{ route('coach.skill-assessments.create', $data->id) }}">
                     <span class="material-icons mr-2">
                         edit
                     </span>
@@ -375,11 +379,13 @@
 
 @endsection
 @push('addon-script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
     <script>
         $(document).ready(function() {
-            const skillStatsChart = document.getElementById('skillStatsChart');
-            const skillStatsHistoryChart = document.getElementById('skillStatsHistoryChart');
-
+            const skillStatsChart = $('#skillStatsChart');
+            const skillStatsHistoryChart = $('#skillStatsHistoryChart');
+            const body = $('body');
             // alert($('#rangeDateFilter').val())
 
             new Chart(skillStatsChart, {
@@ -426,7 +432,57 @@
                 },
             });
 
+            $(".skills-range-slider").ionRangeSlider({
+                grid: true,
+                values: [
+                    "Poor", "Needs Work", "Average Fair", "Good", "Excellent"
+                ]
+            });
 
+            // show add skill stats form modal when update skill button clicked
+            $('#addSkills').on('click', function (e) {
+                e.preventDefault();
+                $('#addSkillStatsModal').modal('show');
+            });
+
+            // store skill stats data when form submitted
+            $('#formAddSkillStatsModal').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ route('coach.skill-assessments.store', $data->id) }}",
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function () {
+                        $('#addSkillStatsModal').modal('hide');
+                        Swal.fire({
+                            title: 'Player skill stats successfully added!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        const response = JSON.parse(jqXHR.responseText);
+                        $.each(response.errors, function (key, val) {
+                            $('#formAddSkillStatsModal span.' + key).text(val[0]);
+                            $("#formAddSkillStatsModal #" + key).addClass('is-invalid');
+                        });
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when creating data!",
+                            text: errorThrown,
+                        });
+                    }
+                });
+            });
         });
     </script>
 @endpush

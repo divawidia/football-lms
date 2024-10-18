@@ -2,6 +2,7 @@
 
 namespace App\Services\Coach;
 
+use App\Models\Coach;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
 use App\Services\Service;
@@ -96,15 +97,35 @@ class SkillAssessmentService extends Service
             ->make();
     }
 
-    public function create(array $data, Player $player, $coachId)
+    public function convertInputData(array $data)
     {
+        foreach ($data as $key => $value){
+            if ($value == 'Poor'){
+                $data[$key] = 0;
+            } elseif ($value == 'Needs Work'){
+                $data[$key] = 25;
+            } elseif ($value == 'Average Fair'){
+                $data[$key] = 50;
+            } elseif ($value == 'Good'){
+                $data[$key] = 75;
+            } elseif ($value == 'Excellent'){
+                $data[$key] = 100;
+            }
+        }
+        return $data;
+    }
+
+    public function store(array $data, Player $player, Coach $coach)
+    {
+        $data = $this->convertInputData($data);
         $data['playerId'] = $player->id;
-        $data['coachId'] = $coachId;
+        $data['coachId'] = $coach->id;
         return PlayerSkillStats::create($data);
     }
 
     public function update(array $data, Player $player, PlayerSkillStats $playerSkillStats, $coachId)
     {
+        $data = $this->convertInputData($data);
         $data['playerId'] = $player->id;
         $data['coachId'] = $coachId;
         return $playerSkillStats->update($data);

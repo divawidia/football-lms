@@ -460,7 +460,15 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('', [SkillAssessmentController::class, 'index'])->name('coach.skill-assessments.index');
                 Route::prefix('{player}')->group(function () {
                     Route::get('', [CoachPlayerController::class, 'skillStatsDetail'])->name('coach.skill-assessments.skill-stats');
-                    Route::get('Update', [SkillAssessmentController::class, 'edit'])->name('coach.skill-assessments.edit');
+                    Route::get('create', [SkillAssessmentController::class, 'create'])->name('coach.skill-assessments.create');
+                    Route::post('store', [SkillAssessmentController::class, 'store'])->name('coach.skill-assessments.store');
+
+                    Route::prefix('{skillStats}')->group(function () {
+                        Route::get('', [SkillAssessmentController::class, 'edit'])->name('coach.skill-assessments.edit');
+                        Route::put('update', [SkillAssessmentController::class, 'update'])->name('coach.skill-assessments.update');
+                        Route::delete('destroy', [SkillAssessmentController::class, 'destroy'])->name('coach.skill-assessments.destroy');
+
+                    });
                 });
             });
 

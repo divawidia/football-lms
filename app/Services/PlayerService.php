@@ -462,6 +462,7 @@ class PlayerService extends Service
 
     public function skillStatsHistoryChart(Player $player){
         $results =  $this->getSkillStats($player)->take(10)->get();
+        $results = $results->sortBy('created_at');
 
         $label = [];
         $data = [];

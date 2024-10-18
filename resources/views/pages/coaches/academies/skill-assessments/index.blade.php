@@ -6,6 +6,8 @@
     @yield('title')
 @endsection
 
+
+
     @section('content')
         <div class="pt-32pt">
             <div class="container">
