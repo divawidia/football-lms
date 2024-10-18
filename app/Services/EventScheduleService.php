@@ -33,6 +33,26 @@ class EventScheduleService extends Service
             ->get();
     }
 
+    public function coachTeamsIndexTraining(Coach $coach): Collection
+    {
+        $teams = $this->coachManagedTeams($coach);
+        return EventSchedule::with('teams', 'competition')
+            ->whereHas('teams', function($q) use ($teams) {
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->where('eventType', 'Training')
+            ->where('status', '1')
+            ->orderBy('date', 'desc')
+            ->get();
+    }
+
     public function makeMatchCalendar($matchesData)
     {
         $events = [];
@@ -149,6 +169,11 @@ class EventScheduleService extends Service
 
     public function dataTablesTraining(){
         $data = $this->indexTraining();
+        return $this->makeDataTablesTraining($data);
+    }
+
+    public function coachTeamsDataTablesTraining(Coach $coach){
+        $data = $this->coachTeamsIndexTraining($coach);
         return $this->makeDataTablesTraining($data);
     }
 
