@@ -8,7 +8,8 @@
 
 @section('modal')
     <!-- Modal edit player attendance -->
-    <div class="modal fade" id="editPlayerAttendanceModal" tabindex="-1" aria-labelledby="editPlayerAttendanceModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editPlayerAttendanceModal" tabindex="-1"
+         aria-labelledby="editPlayerAttendanceModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="post" id="formEditPlayerAttendanceModal">
@@ -25,10 +26,12 @@
                         <div class="form-group">
                             <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
+                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus"
+                                    required>
                                 <option disabled selected>Select player's attendance status</option>
                                 @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
-                                    <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
+                                    <option
+                                        value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
                                 @endforeach
                             </select>
                             <span class="invalid-feedback attendanceStatus_error" role="alert">
@@ -38,7 +41,8 @@
                         <div class="form-group">
                             <label class="form-label" for="add_note">Note</label>
                             <small>(Optional)</small>
-                            <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
+                            <textarea class="form-control" id="add_note" name="note"
+                                      placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -54,7 +58,8 @@
     </div>
 
     <!-- Modal edit coach attendance -->
-    <div class="modal fade" id="editCoachAttendanceModal" tabindex="-1" aria-labelledby="editCoachAttendanceModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editCoachAttendanceModal" tabindex="-1" aria-labelledby="editCoachAttendanceModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="post" id="formEditCoachAttendanceModal">
@@ -71,7 +76,8 @@
                         <div class="form-group">
                             <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
+                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus"
+                                    required>
                                 <option disabled selected>Select Coach's attendance status</option>
                                 @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
                                     <option value="{{ $type }}">{{ $type }}</option>
@@ -84,7 +90,8 @@
                         <div class="form-group">
                             <label class="form-label" for="add_note">Note</label>
                             <small>(Optional)</small>
-                            <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
+                            <textarea class="form-control" id="add_note" name="note"
+                                      placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -100,7 +107,8 @@
     </div>
 
     <!-- Modal create note -->
-    <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
+    <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="@if(Auth::user()->hasRole('admin'))
@@ -110,7 +118,8 @@
                     @endif" method="post" id="formCreateNoteModal">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="coachName">Create note for {{ $data['dataSchedule']->eventName }} Session</h5>
+                        <h5 class="modal-title" id="coachName">Create note for {{ $data['dataSchedule']->eventName }}
+                            Session</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -119,7 +128,8 @@
                         <div class="form-group">
                             <label class="form-label" for="add_note">Note</label>
                             <small class="text-danger">*</small>
-                            <textarea class="form-control" id="add_note" name="note" placeholder="Input note here ..." required>{{ old('note') }}</textarea>
+                            <textarea class="form-control" id="add_note" name="note" placeholder="Input note here ..."
+                                      required>{{ old('note') }}</textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -142,7 +152,8 @@
                     @method('PUT')
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="coachName">Update note for {{ $data['dataSchedule']->eventName }} Session</h5>
+                        <h5 class="modal-title" id="coachName">Update note for {{ $data['dataSchedule']->eventName }}
+                            Session</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -152,7 +163,8 @@
                         <div class="form-group">
                             <label class="form-label" for="edit_note">Note</label>
                             <small class="text-danger">*</small>
-                            <textarea class="form-control" id="edit_note" name="note" placeholder="Input note here ..." required></textarea>
+                            <textarea class="form-control" id="edit_note" name="note" placeholder="Input note here ..."
+                                      required></textarea>
                             <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -168,7 +180,8 @@
     </div>
 
     <!-- Modal add team scorer -->
-    <div class="modal fade" id="createTeamScorerModal" tabindex="-1" aria-labelledby="createTeamScorerModal" aria-hidden="true">
+    <div class="modal fade" id="createTeamScorerModal" tabindex="-1" aria-labelledby="createTeamScorerModal"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="@if(Auth::user()->hasRole('admin'))
@@ -187,11 +200,12 @@
                         <div class="form-group">
                             <label class="form-label" for="add_playerId">Player Name</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_playerId" name="playerId" data-toggle="select" required>
+                            <select class="form-control form-select" id="add_playerId" name="playerId" required>
                                 <option disabled selected>Select team player who scored goal</option>
                                 @foreach($data['dataSchedule']->players as $player)
-                                    <option value="{{ $player->id }}" @selected(old('playerId') == $player->id) data-avatar-src="{{ Storage::url($player->user->foto) }}">
-                                        {{  $player->user->firstName }} {{  $player->user->lastName }} ~ {{ $player->position->name }}
+                                    <option value="{{ $player->id }}">
+                                        {{  $player->user->firstName }} {{  $player->user->lastName }}
+                                        ~ {{ $player->position->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -202,7 +216,7 @@
                         <div class="form-group">
                             <label class="form-label" for="add_assistPlayerId">Assist Player Name</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_assistPlayerId" name="assistPlayerId" data-toggle="select" required>
+                            <select class="form-control form-select" id="add_assistPlayerId" name="assistPlayerId">
                             </select>
                             <span class="invalid-feedback assistPlayerId_error" role="alert">
                                 <strong></strong>
@@ -219,7 +233,7 @@
                                    max="160"
                                    value="{{ old('minuteScored') }}"
                                    placeholder="Pick minutes the player scored the goal. Eg : 60"
-                                    required>
+                                   required>
                             <span class="invalid-feedback minuteScored_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -235,7 +249,8 @@
     </div>
 
     <!-- Modal add own goal -->
-    <div class="modal fade" id="createTeamOwnGoalModal" tabindex="-1" aria-labelledby="createTeamOwnGoalModal" aria-hidden="true">
+    <div class="modal fade" id="createTeamOwnGoalModal" tabindex="-1" aria-labelledby="createTeamOwnGoalModal"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="@if(Auth::user()->hasRole('admin'))
@@ -254,11 +269,12 @@
                         <div class="form-group">
                             <label class="form-label" for="add_playerId">Player Name</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_playerId" name="playerId" data-toggle="select" required>
+                            <select class="form-control form-select" id="add_playerId" name="playerId" required>
                                 <option disabled selected>Select team player who scored own goal</option>
                                 @foreach($data['dataSchedule']->players as $player)
-                                    <option value="{{ $player->id }}" @selected(old('playerId') == $player->id) data-avatar-src="{{ Storage::url($player->user->foto) }}">
-                                        {{  $player->user->firstName }} {{  $player->user->lastName }} ~ {{ $player->position->name }}
+                                    <option value="{{ $player->id }}">
+                                        {{  $player->user->firstName }} {{  $player->user->lastName }}
+                                        ~ {{ $player->position->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -292,8 +308,9 @@
     </div>
 
     <!-- Modal add team match stats -->
-    <div class="modal fade" id="teamMatchStatsModal" tabindex="-1" aria-labelledby="teamMatchStatsModal" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="teamMatchStatsModal" tabindex="-1" aria-labelledby="teamMatchStatsModal"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <form action="@if(Auth::user()->hasRole('admin'))
                 {{ route('match-schedules.update-match-stats', $data['dataSchedule']->id) }}
@@ -316,10 +333,12 @@
                                  height="50"
                                  class="rounded-circle img-object-fit-cover mr-3"
                                  alt="team-logo">
-                            <div class="page-separator__text">{{ $data['dataSchedule']->teams[0]->teamName }} Match Stats</div>
+                            <div class="page-separator__text">{{ $data['dataSchedule']->teams[0]->teamName }} Match
+                                Stats
+                            </div>
                         </div>
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamAPossession">Possession</label>
                                     <small class="text-danger">*</small>
@@ -364,6 +383,8 @@
                                         <strong></strong>
                                     </span>
                                 </div>
+                            </div>
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamATouches">Touches</label>
                                     <small class="text-danger">*</small>
@@ -410,7 +431,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamAClearances">Clearances</label>
                                     <small class="text-danger">*</small>
@@ -456,6 +477,8 @@
                                         <strong></strong>
                                     </span>
                                 </div>
+                            </div>
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamAYellowCards">Yellow Cards</label>
                                     <small class="text-danger">*</small>
@@ -509,10 +532,12 @@
                                  height="50"
                                  class="rounded-circle img-object-fit-cover mr-3"
                                  alt="team-logo">
-                            <div class="page-separator__text">{{ $data['dataSchedule']->teams[1]->teamName }} Match Stats</div>
+                            <div class="page-separator__text">{{ $data['dataSchedule']->teams[1]->teamName }} Match
+                                Stats
+                            </div>
                         </div>
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamBTeamScore">Team Score</label>
                                     <small class="text-danger">*</small>
@@ -557,6 +582,8 @@
                                         <strong></strong>
                                     </span>
                                 </div>
+                            </div>
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamBShotOnTarget">Shot on Target</label>
                                     <small class="text-danger">*</small>
@@ -617,7 +644,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamBTackles">Tackles</label>
                                     <small class="text-danger">*</small>
@@ -663,6 +690,8 @@
                                         <strong></strong>
                                     </span>
                                 </div>
+                            </div>
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamBOffsides">Offsides</label>
                                     <small class="text-danger">*</small>
@@ -736,7 +765,8 @@
     </div>
 
     <!-- Modal update player match stats -->
-    <div class="modal fade" id="playerMatchStatsModal" tabindex="-1" aria-labelledby="playerMatchStatsModal" aria-hidden="true">
+    <div class="modal fade" id="playerMatchStatsModal" tabindex="-1" aria-labelledby="playerMatchStatsModal"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="post" id="formPlayerMatchStats">
@@ -831,7 +861,7 @@
                                            class="form-control"
                                            id="redCards"
                                            name="redCards"
-{{--                                           min="0"--}}
+                                           {{--                                           min="0"--}}
                                            value="{{ old('redCards') }}"
                                            placeholder="Input team Clearances">
                                     <span class="invalid-feedback redCards_error" role="alert">
@@ -845,7 +875,7 @@
                                            class="form-control"
                                            id="saves"
                                            name="saves"
-{{--                                           min="0"--}}
+                                           {{--                                           min="0"--}}
                                            value="{{ old('saves') }}"
                                            placeholder="Input team Corners">
                                     <span class="invalid-feedback saves_error" role="alert">
@@ -871,9 +901,9 @@
             <ul class="nav navbar-nav">
                 <li class="nav-item">
                     <a href="@if(Auth::user()->hasRole('admin'))
-                    {{ route('player-managements.index') }}
+                    {{ route('match-schedules.index') }}
                     @elseif(Auth::user()->hasRole('coach'))
-                    {{ route('coach.player-managements.index') }}
+                    {{ route('coach.match-schedules.index') }}
                     @endif" class="nav-link text-70">
                         <i class="material-icons icon--left">keyboard_backspace</i>
                         Back to Match Schedule Lists
@@ -883,9 +913,11 @@
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div
+            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex mb-3 mb-md-0">
-                <h2 class="text-white mb-0">Match {{ $data['dataSchedule']->teams[0]->teamName }} Vs {{ $data['dataSchedule']->teams[1]->teamName }}</h2>
+                <h2 class="text-white mb-0">Match {{ $data['dataSchedule']->teams[0]->teamName }}
+                    Vs {{ $data['dataSchedule']->teams[1]->teamName }}</h2>
                 <p class="lead text-white-50">
                     {{ $data['dataSchedule']->eventType }} ~ {{ $data['dataSchedule']->matchType }}
                     @if($data['dataSchedule']->competition)
@@ -893,16 +925,19 @@
                     @endif
                 </p>
             </div>
-            <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Action
-                    <span class="material-icons ml-3">
-                        keyboard_arrow_down
-                    </span>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    @if(Auth::user()->hasRole('admin'))
-                        <a class="dropdown-item" href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}"><span class="material-icons">edit</span> Edit Match Schedule</a>
+            @if(Auth::user()->hasRole('admin'))
+                <div class="dropdown">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        Action
+                        <span class="material-icons ml-3">
+                            keyboard_arrow_down
+                        </span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item"
+                           href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}"><span
+                                class="material-icons">edit</span> Edit Match Schedule</a>
                         @if($data['dataSchedule']->status == '1')
                             <form action="{{ route('end-match', $data['dataSchedule']->id) }}" method="POST">
                                 @method("PATCH")
@@ -923,9 +958,9 @@
                         <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
                             <span class="material-icons">delete</span> Delete Match
                         </button>
-                    @endif
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 
@@ -945,7 +980,8 @@
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }} - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
+                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }}
+                    - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -961,7 +997,8 @@
                         </span>
                         <div class="media-body">
                             <a class="card-title m-0"
-                               href="">Created by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
+                               href="">Created
+                                by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
                             <p class="text-50 lh-1 mb-0">Admin</p>
                         </div>
                     </div>
@@ -987,7 +1024,8 @@
                         </div>
                     </div>
                     <div class="col-4 text-center">
-                        <h2 class="mb-0">{{ $data['dataSchedule']->teams[0]->pivot->teamScore }} - {{ $data['dataSchedule']->teams[1]->pivot->teamScore }}</h2>
+                        <h2 class="mb-0">{{ $data['dataSchedule']->teams[0]->pivot->teamScore }}
+                            - {{ $data['dataSchedule']->teams[1]->pivot->teamScore }}</h2>
                     </div>
                     <div class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
                         <div class="mr-md-3 text-center text-md-right">
@@ -1007,8 +1045,10 @@
         {{--    Match Scorer    --}}
         <div class="page-separator">
             <div class="page-separator__text">Scorer(s)</div>
-            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add team scorer</a>
-            <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span class="material-icons mr-2">add</span> Add own goal</a>
+            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span
+                    class="material-icons mr-2">add</span> Add team scorer</a>
+            <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span class="material-icons mr-2">add</span>
+                Add own goal</a>
         </div>
         @if(count($data['dataSchedule']->matchScores)==0)
             <div class="alert alert-light border-left-accent" role="alert">
@@ -1032,15 +1072,20 @@
                                      class="rounded-circle img-object-fit-cover"
                                      alt="instructor">
                                 <div class="flex ml-3">
-                                    <h5 class="mb-0 d-flex">{{ $matchScore->player->user->firstName  }} {{ $matchScore->player->user->lastName  }} <p class="text-50 ml-2 mb-0">({{ $matchScore->minuteScored }}')</p></h5>
+                                    <h5 class="mb-0 d-flex">{{ $matchScore->player->user->firstName  }} {{ $matchScore->player->user->lastName  }}
+                                        <p class="text-50 ml-2 mb-0">({{ $matchScore->minuteScored }}')</p></h5>
                                     <p class="text-50 lh-1 mb-0">{{ $matchScore->player->position->name }}</p>
                                     @if($matchScore->isOwnGoal == 1)
                                         <p class="text-50 lh-1 mb-0"><strong>Own Goal</strong></p>
                                     @else
-                                        <p class="text-50 lh-1 mb-0">Assist : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
+                                        <p class="text-50 lh-1 mb-0">Assist
+                                            : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
                                     @endif
                                 </div>
-                                <button class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif" type="button" id="{{ $matchScore->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete scorer">
+                                <button
+                                    class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif"
+                                    type="button" id="{{ $matchScore->id }}" data-toggle="tooltip"
+                                    data-placement="bottom" title="Delete scorer">
                                     <span class="material-icons">
                                         close
                                     </span>
@@ -1055,7 +1100,8 @@
         {{--    Match Stats    --}}
         <div class="page-separator">
             <div class="page-separator__text">Match Stats</div>
-            <a href="" id="updateMatchStats" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Update match stats</a>
+            <a href="" id="updateMatchStats" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span>
+                Update match stats</a>
         </div>
         <div class="card">
             <div class="card-header">
@@ -1229,13 +1275,15 @@
                 <li class="list-group-item">
                     <div class="row text-center">
                         <div class="col-4">
-                            <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamFoulsConceded }}</strong>
+                            <strong
+                                class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamFoulsConceded }}</strong>
                         </div>
                         <div class="col-4">
                             <strong class="flex">Fouls conceded</strong>
                         </div>
                         <div class="col-4">
-                            <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamFoulsConceded }}</strong>
+                            <strong
+                                class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamFoulsConceded }}</strong>
                         </div>
                     </div>
                 </li>
@@ -1288,7 +1336,7 @@
                                 <div class="card-title">Total Participants</div>
                             </div>
                         </div>
-                        <i class='bx bxs-group icon-32pt text-danger ml-8pt' ></i>
+                        <i class='bx bxs-group icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -1314,7 +1362,7 @@
                                 <div class="card-title">Didn't Attended</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -1329,7 +1377,7 @@
                                 <div class="card-title">Illness</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -1342,7 +1390,7 @@
                                 <div class="card-title">Injured</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -1355,7 +1403,7 @@
                                 <div class="card-title">Others</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -1380,7 +1428,8 @@
         {{--    Training Note    --}}
         <div class="page-separator">
             <div class="page-separator__text">Match Note</div>
-            <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+            <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span
+                    class="material-icons mr-2">add</span> Add new note</a>
         </div>
         @if(count($data['dataSchedule']->notes)==0)
             <div class="alert alert-light border-left-accent" role="alert">
@@ -1398,10 +1447,12 @@
                     <div class="card-header d-flex align-items-center">
                         <div class="flex">
                             <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($note->created_at)) }}</h4>
-                            <div class="card-subtitle text-50">Last updated at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
+                            <div class="card-subtitle text-50">Last updated
+                                at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
                         </div>
                         <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
                                 more_vert
                             </span>
@@ -1431,7 +1482,7 @@
 @endsection
 @push('addon-script')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#playerStatTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -1483,7 +1534,7 @@
                         const heading = document.getElementById('playerName');
                         heading.textContent = 'Update Player ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
 
-                        if (res.data.playerAttendance.attendanceStatus !== 'Required Action'){
+                        if (res.data.playerAttendance.attendanceStatus !== 'Required Action') {
                             $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.playerAttendance.attendanceStatus);
                         }
 
@@ -1507,9 +1558,9 @@
                 $.ajax({
                     @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
-                        @elseif(Auth::user()->hasRole('coach'))
-                        url: "{{ route('coach.match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
-                        @endif
+                    @elseif(Auth::user()->hasRole('coach'))
+                    url: "{{ route('coach.match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
+                    @endif
                     type: 'get',
                     success: function (res) {
                         // console.log(res);
@@ -1518,7 +1569,7 @@
                         const heading = document.getElementById('coachName');
                         heading.textContent = 'Update Coach ' + res.data.user.firstName + ' ' + res.data.user.lastName + ' Attendance';
 
-                        if (res.data.coachAttendance.attendanceStatus !== 'Required Action'){
+                        if (res.data.coachAttendance.attendanceStatus !== 'Required Action') {
                             $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
                         }
 
@@ -1547,9 +1598,9 @@
                 $.ajax({
                     @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                        @elseif(Auth::user()->hasRole('coach'))
-                        url: "{{ route('coach.match-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                        @endif
+                    @elseif(Auth::user()->hasRole('coach'))
+                    url: "{{ route('coach.match-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
+                    @endif
                     type: 'get',
                     success: function (res) {
                         $('#editNoteModal').modal('show');
@@ -1575,9 +1626,9 @@
                 $.ajax({
                     @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-                        @elseif(Auth::user()->hasRole('coach'))
-                        url: "{{ route('coach.match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-                        @endif
+                    @elseif(Auth::user()->hasRole('coach'))
+                    url: "{{ route('coach.match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                    @endif
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -1615,9 +1666,9 @@
                 $.ajax({
                     @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
-                        @elseif(Auth::user()->hasRole('coach'))
-                        url: "{{ route('coach.match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
-                        @endif
+                    @elseif(Auth::user()->hasRole('coach'))
+                    url: "{{ route('coach.match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
+                    @endif
 
                     type: $(this).attr('method'),
                     data: new FormData(this),
@@ -1691,9 +1742,9 @@
                 $.ajax({
                     @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                        @elseif(Auth::user()->hasRole('coach'))
-                        url: "{{ route('coach.match-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                        @endif
+                    @elseif(Auth::user()->hasRole('coach'))
+                    url: "{{ route('coach.match-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
+                    @endif
 
                     type: $(this).attr('method'),
                     data: new FormData(this),
@@ -1742,7 +1793,7 @@
                         $.ajax({
                             @if(Auth::user()->hasRole('admin'))
                             url: "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
-                                @endif
+                            @endif
 
                             type: 'DELETE',
                             data: {
@@ -1791,9 +1842,9 @@
                         $.ajax({
                             @if(Auth::user()->hasRole('admin'))
                             url: "{{ route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
-                                @elseif(Auth::user()->hasRole('coach'))
-                                url: "{{ route('coach.match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
-                                @endif
+                            @elseif(Auth::user()->hasRole('coach'))
+                            url: "{{ route('coach.match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
+                            @endif
 
                             type: 'DELETE',
                             data: {
@@ -1837,9 +1888,9 @@
                 $.ajax({
                     @if(Auth::user()->hasRole('admin'))
                     url: "{{route('get-assist-player', ['schedule' => $data['dataSchedule']->id,'player'=>':id']) }}".replace(':id', id),
-                        @elseif(Auth::user()->hasRole('coach'))
-                        url: "{{route('coach.get-assist-player', ['schedule' => $data['dataSchedule']->id,'player'=>':id']) }}".replace(':id', id),
-                        @endif
+                    @elseif(Auth::user()->hasRole('coach'))
+                    url: "{{route('coach.get-assist-player', ['schedule' => $data['dataSchedule']->id,'player'=>':id']) }}".replace(':id', id),
+                    @endif
 
                     type: 'GET',
                     dataType: 'json',
@@ -1904,9 +1955,9 @@
                         $.ajax({
                             @if(Auth::user()->hasRole('admin'))
                             url: "{{ route('match-schedules.destroy-match-scorer', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
-                                @elseif(Auth::user()->hasRole('coach'))
-                                url: "{{ route('coach.match-schedules.destroy-match-scorer', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
-                                @endif
+                            @elseif(Auth::user()->hasRole('coach'))
+                            url: "{{ route('coach.match-schedules.destroy-match-scorer', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
+                            @endif
 
                             type: 'DELETE',
                             data: {
@@ -1938,6 +1989,7 @@
                 });
             });
 
+            // delete own goal player with alert
             $('body').on('click', '.delete-own-goal', function () {
                 let id = $(this).attr('id');
 
@@ -1954,9 +2006,9 @@
                         $.ajax({
                             @if(Auth::user()->hasRole('admin'))
                             url: "{{ route('match-schedules.destroy-own-goal', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
-                                @elseif(Auth::user()->hasRole('coach'))
-                                url: "{{ route('match-schedules.destroy-own-goal', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
-                                @endif
+                            @elseif(Auth::user()->hasRole('coach'))
+                            url: "{{ route('coach.match-schedules.destroy-own-goal', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
+                            @endif
 
                             type: 'DELETE',
                             data: {
@@ -2078,9 +2130,9 @@
                 $.ajax({
                     @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.show-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-                        @elseif(Auth::user()->hasRole('coach'))
-                        url: "{{ route('coach.match-schedules.show-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-                        @endif
+                    @elseif(Auth::user()->hasRole('coach'))
+                    url: "{{ route('coach.match-schedules.show-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                    @endif
 
                     type: 'get',
                     success: function (res) {
@@ -2091,7 +2143,7 @@
                         heading.textContent = 'Update Player ' + res.data.playerData.firstName + ' ' + res.data.playerData.lastName + ' Stats';
 
                         $.each(res.data.statsData, function (key, val) {
-                            $('#' + key ).val(val);
+                            $('#' + key).val(val);
                         });
 
                         $('#playerStatsId').val(res.data.statsData.playerId);
@@ -2114,9 +2166,9 @@
                 $.ajax({
                     @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.update-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-                        @elseif(Auth::user()->hasRole('coach'))
-                        url: "{{ route('coach.match-schedules.update-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-                        @endif
+                    @elseif(Auth::user()->hasRole('coach'))
+                    url: "{{ route('coach.match-schedules.update-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                    @endif
 
                     method: $(this).attr('method'),
                     data: new FormData(this),
