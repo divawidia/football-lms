@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\EventSchedule;
+use App\Models\Player;
 use App\Models\Team;
 use App\Models\TeamMatch;
 use Carbon\Carbon;
@@ -115,6 +116,259 @@ class PerformanceReportService extends Service
             ->sum('teamOwnGoal');
         $thisMonthOwnGoals = TeamMatch::whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
+            })
+            ->whereHas('match', function($q) {
+                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
+            })
+            ->sum('teamOwnGoal');
+
+        return compact(
+            'wins',
+            'thisMonthWins',
+            'losses',
+            'thisMonthLosses',
+            'draws',
+            'thisMonthDraws',
+            'matchPlayed',
+            'thisMonthMatchPlayed',
+            'goals',
+            'thisMonthGoals',
+            'goalsConceded',
+            'thisMonthGoalsConceded',
+            'goalsDifference',
+            'thisMonthGoalsDifference',
+            'cleanSheets',
+            'thisMonthCleanSheets',
+            'ownGoals',
+            'thisMonthOwnGoals');
+    }
+    public function coachOverviewStats($coach){
+        $teams = $this->coachManagedTeams($coach);
+
+        $wins = TeamMatch::where('resultStatus', 'Win')
+            ->whereHas('team', function($q)  use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })->count();
+
+        $thisMonthWins = TeamMatch::where('resultStatus', 'Win')
+            ->whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->whereHas('match', function($q) {
+                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
+            })->count();
+//        $winsDiff = $thisMonthWins - $prevMonthWins;
+
+        $losses = TeamMatch::where('resultStatus', 'Lose')
+            ->whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })->count();
+        $thisMonthLosses = TeamMatch::where('resultStatus', 'Lose')
+            ->whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->whereHas('match', function($q) use($teams){
+                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
+            })->count();
+
+        $draws = TeamMatch::where('resultStatus', 'Draw')
+            ->whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })->count();
+        $thisMonthDraws = TeamMatch::where('resultStatus', 'Draw')
+            ->whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->whereHas('match', function($q) use($teams){
+                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
+            })->count();
+
+        $matchPlayed = EventSchedule::whereHas('teams', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->where('status', '0')
+            ->where('eventType', 'Match')
+            ->count();
+        $thisMonthMatchPlayed = EventSchedule::whereHas('teams', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()])
+            ->where('status', '0')
+            ->where('eventType', 'Match')
+            ->count();
+
+        $goals = TeamMatch::whereHas('team', function($q) use($teams){
+            $q->where('teamSide', 'Academy Team');
+            $q->where('teamId', $teams[0]->id);
+
+            // if teams are more than 1 then iterate more
+            if (count($teams)>1){
+                for ($i = 1; $i < count($teams); $i++){
+                    $q->orWhere('teamId', $teams[$i]->id);
+                }
+            }
+        })->sum('teamScore');
+        $thisMonthGoals = TeamMatch::whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->whereHas('match', function($q) {
+                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
+            })
+            ->sum('teamScore');
+
+        $goalsConceded = TeamMatch::whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Opponent Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->sum('teamScore');
+        $thisMonthGoalsConceded = TeamMatch::whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Opponent Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->whereHas('match', function($q) {
+                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
+            })
+            ->sum('teamScore');
+
+        $goalsDifference = $goals - $goalsConceded;
+        $thisMonthGoalsDifference = $thisMonthGoals - $thisMonthGoalsConceded;
+
+        $cleanSheets = TeamMatch::whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->sum('cleanSheets');
+        $thisMonthCleanSheets = TeamMatch::whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->whereHas('match', function($q) {
+                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
+            })
+            ->sum('cleanSheets');
+
+        $ownGoals = TeamMatch::whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->sum('teamOwnGoal');
+        $thisMonthOwnGoals = TeamMatch::whereHas('team', function($q) use($teams){
+                $q->where('teamSide', 'Academy Team');
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
             })
             ->whereHas('match', function($q) {
                 $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);

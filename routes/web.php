@@ -78,7 +78,7 @@ Route::group(['middleware' => ['auth']], function () {
 //        });
 //    });
 
-    Route::group(['middleware' => ['role:admin,web']], function () {
+    Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
 
         Route::prefix('admin')->group(function () {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
@@ -98,6 +98,7 @@ Route::group(['middleware' => ['auth']], function () {
 
                 Route::prefix('{player}')->group(function () {
                     Route::get('', [PlayerController::class, 'show'])->name('player-managements.show');
+                    Route::get('skill-stats', [CoachPlayerController::class, 'skillStatsDetail'])->name('player-managements.skill-stats');
                     Route::get('edit', [PlayerController::class, 'edit'])->name('player-managements.edit');
                     Route::put('', [PlayerController::class, 'update'])->name('player-managements.update');
                     Route::delete('', [PlayerController::class, 'destroy'])->name('player-managements.destroy');
@@ -109,6 +110,9 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('player-managements.playerTeams');
                     Route::put('update-teams', [PlayerController::class, 'updateTeams'])->name('player-managements.updateTeams');
                     Route::delete('remove-team/{team}', [PlayerController::class, 'removeTeam'])->name('player-managements.removeTeam');
+
+                    Route::get('upcoming-matches', [CoachPlayerController::class, 'upcomingMatches'])->name('player-managements.upcoming-matches');
+                    Route::get('upcoming-trainings', [CoachPlayerController::class, 'upcomingTrainings'])->name('player-managements.upcoming-trainings');
 
                     Route::prefix('parents')->group(function () {
                         Route::get('', [PlayerParentController::class, 'index'])->name('player-parents.index');
@@ -437,8 +441,8 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('skill-stats', [CoachPlayerController::class, 'skillStatsDetail'])->name('coach.player-managements.skill-stats');
                     Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('coach.player-managements.playerTeams');
                     Route::get('parents', [PlayerParentController::class, 'index'])->name('coach.player-parents.index');
-                    Route::get('upcoming-matches', [CoachPlayerController::class, 'upcomingMatches'])->name('coach.player-parents.upcoming-matches');
-                    Route::get('upcoming-trainings', [CoachPlayerController::class, 'upcomingTrainings'])->name('coach.player-parents.upcoming-trainings');
+                    Route::get('upcoming-matches', [CoachPlayerController::class, 'upcomingMatches'])->name('coach.player-managements.upcoming-matches');
+                    Route::get('upcoming-trainings', [CoachPlayerController::class, 'upcomingTrainings'])->name('coach.player-managements.upcoming-trainings');
                 });
             });
 

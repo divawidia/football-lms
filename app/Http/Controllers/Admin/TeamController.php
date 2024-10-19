@@ -104,15 +104,11 @@ class TeamController extends Controller
 
     public function apiStore(TeamRequest $request): JsonResponse
     {
-        try {
-            $data = $request->validated();
+        $data = $request->validated();
 
-            $team = $this->teamService->store($data, Auth::user()->academyId);
+        $team = $this->teamService->store($data, Auth::user()->academyId);
 
-            return response()->json($team, 201);
-        }catch (\Illuminate\Validation\ValidationException $e){
-            return response()->json($e->errors(), 422);
-        }
+        return response()->json($team, 201);
     }
 
     /**

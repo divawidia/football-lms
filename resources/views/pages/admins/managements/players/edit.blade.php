@@ -17,7 +17,7 @@
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('player-managements.index') }}">Players Management</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('player-managements.show', $player->id) }}">{{ $fullname }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('player-managements.show', ['player' => $player->id]) }}">{{ $fullname }}</a></li>
                             <li class="breadcrumb-item active">
                                 @yield('title')
                             </li>
@@ -29,7 +29,7 @@
 
         <div class="container page__container page-section">
             <div class="list-group">
-                <form action="{{ route('player-managements.update', ['player_management' => $player]) }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('player-managements.update', ['player' => $player]) }}" method="post" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
                     <div class="list-group-item d-flex justify-content-end">

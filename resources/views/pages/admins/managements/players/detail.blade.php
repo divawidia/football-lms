@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    {{ $fullName  }} Profile
+    {{ $data->user->firstName  }} {{ $data->user->lastName  }} Profile
 @endsection
 @section('page-title')
     @yield('title')

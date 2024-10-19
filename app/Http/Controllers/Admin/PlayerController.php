@@ -91,18 +91,23 @@ class PlayerController extends Controller
     public function show(Player $player)
     {
         $overview = $this->playerService->show($player);
-        return view('pages.admin.managements.players.detail', [
+        $performanceReviews = $player->playerPerformanceReview;
+        $playerSkillStats =$this->playerService->skillStatsChart($player);
+
+        return view('pages.coaches.managements.players.detail', [
             'data' => $player,
-            'overview' => $overview
+            'overview' => $overview,
+            'performanceReviews' => $performanceReviews,
+            'playerSkillStats' => $playerSkillStats
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $player_management)
+    public function edit(User $player)
     {
-        $fullname = $player_management->firstName . ' ' . $player_management->lastName;
+        $fullname = $player->firstName . ' ' . $player->lastName;
         $positions = PlayerPosition::all();
         $teams = Team::all();
         $action =  World::countries();
@@ -110,7 +115,7 @@ class PlayerController extends Controller
             $countries = $action->data;
         }
         return view('pages.admins.managements.players.edit',[
-            'player' => $player_management,
+            'player' => $player,
             'fullname' => $fullname,
             'positions' => $positions,
             'teams' => $teams,
@@ -121,15 +126,15 @@ class PlayerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PlayerRequest $request, User $player_management)
+    public function update(PlayerRequest $request, User $player)
     {
         $data = $request->validated();
 
-        $this->playerService->update($data, $player_management);
+        $this->playerService->update($data, $player);
 
-        $text = $player_management->firstName.' successfully updated!';
+        $text = $player->firstName.' successfully updated!';
         Alert::success($text);
-        return redirect()->route('player-managements.show', $player_management->id);
+        return redirect()->route('player-managements.show', $player->id);
     }
 
     public function updateTeams(Request $request, Player $player)
@@ -188,9 +193,9 @@ class PlayerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $player_management)
+    public function destroy(User $player)
     {
-        $this->playerService->destroy($player_management);
+        $this->playerService->destroy($player);
 
         return response()->json(['success' => true]);
     }

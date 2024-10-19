@@ -28,7 +28,7 @@ class PlayerRequest extends FormRequest
         return [
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->player_management)],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->player)],
             'password' => ['string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols(), 'nullable'],
             'gender' => ['required', 'string', Rule::in('male', 'female')],
             'dob' => ['required', 'date'],

@@ -97,7 +97,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: "{{ route('player-managements.destroy', ['player_management' => ':id']) }}".replace(':id', id),
+                                url: "{{ route('player-managements.destroy', ['player' => ':id']) }}".replace(':id', id),
                                 type: 'DELETE',
                                 data: {
                                     _token: "{{ csrf_token() }}"

@@ -39,7 +39,7 @@
 
     </div>
 
-    @if(Auth::user()->hasRole('admin'))
+    @if(Auth::user()->hasRole('admin|Super-Admin'))
         @include('includes.admins.sidebar')
     @elseif(Auth::user()->hasRole('coach'))
         @include('includes.coaches.sidebar')

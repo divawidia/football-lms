@@ -11,7 +11,11 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('coach.player-managements.index') }}" class="nav-link text-70">
+                    <a href="@if(Auth::user()->hasRole('admin'))
+                    {{ route('player-managements.index') }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                    {{ route('coach.player-managements.index') }}
+                    @endif" class="nav-link text-70">
                         <i class="material-icons icon--left">keyboard_backspace</i>
                         Back to Player Lists
                     </a>
@@ -20,7 +24,8 @@
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div
+            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($data->user->foto) }}"
                  width="104"
                  height="104"
@@ -30,11 +35,45 @@
                 <h2 class="text-white mb-0">{{ $data->user->firstName  }} {{ $data->user->lastName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data->position->name }}</p>
             </div>
+            @if(Auth::user()->hasRole('admin'))
+                <div class="dropdown">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Action
+                        <span class="material-icons ml-3">
+                        keyboard_arrow_down
+                    </span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{{ route('player-managements.edit', $data->id) }}"><span class="material-icons">edit</span> Edit Player</a>
+                        @if($data->status == '1')
+                            <form action="{{ route('deactivate-player', $data->id) }}" method="POST">
+                                @method("PATCH")
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <span class="material-icons">block</span> Deactivate Player
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('activate-player', $data->id) }}" method="POST">
+                                @method("PATCH")
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <span class="material-icons">check_circle</span> Activate Player
+                                </button>
+                            </form>
+                        @endif
+                        <a class="dropdown-item" href="{{ route('player-managements.change-password-page', $data->id) }}"><span class="material-icons">lock</span> Change Player Password</a>
+                        <button type="button" class="dropdown-item delete-user" id="{{$data->id}}">
+                            <span class="material-icons">delete</span> Delete Player
+                        </button>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 
     <div class="container page__container page-section">
-{{--        Overview Section--}}
+        {{--        Overview Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
         </div>
@@ -331,6 +370,9 @@
                                 <tr>
                                     <th>Team Name</th>
                                     <th>Date Joined</th>
+                                    @if(Auth::user()->hasRole('admin'))
+                                        <th>Action</th>
+                                    @endif
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -343,16 +385,20 @@
                 {{--Teams Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
-                    <a href="{{ route('coach.player-managements.skill-stats', $data->id) }}" class="btn btn-white border btn-sm ml-auto">
+                    <a href="@if(Auth::user()->hasRole('admin'))
+                    {{ route('player-managements.skill-stats', $data->id) }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                    {{ route('coach.player-managements.skill-stats', $data->id) }}
+                    @endif" class="btn btn-white border btn-sm ml-auto">
                         View More
                         <span class="material-icons ml-2 icon-16pt">chevron_right</span>
                     </a>
                 </div>
                 <div class="card">
                     <canvas id="skillStatsChart"></canvas>
-{{--                    <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">--}}
-{{--                        <canvas id="skillStatsChart"></canvas>--}}
-{{--                    </div>--}}
+                    {{--                    <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">--}}
+                    {{--                        <canvas id="skillStatsChart"></canvas>--}}
+                    {{--                    </div>--}}
                 </div>
 
             </div>
@@ -373,6 +419,9 @@
                             <th>Email</th>
                             <th>Phone Number</th>
                             <th>Relation</th>
+                            @if(Auth::user()->hasRole('admin'))
+                                <th>Action</th>
+                            @endif
                         </tr>
                         </thead>
                         <tbody>
@@ -385,7 +434,11 @@
         {{--Upcoming Matches Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
-            <a href="{{ route('coach.player-parents.upcoming-matches', $data->id) }}" class="btn btn-white border btn-sm ml-auto">
+            <a href="@if(Auth::user()->hasRole('admin'))
+                    {{ route('player-managements.upcoming-matches', $data->id) }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                    {{ route('coach.player-managements.upcoming-matches', $data->id) }}
+                    @endif" class="btn btn-white border btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
@@ -402,7 +455,11 @@
             </div>
         @endif
         @foreach($overview['upcomingMatches'] as $match)
-            <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
+            <a class="card" href="@if(Auth::user()->hasRole('admin'))
+                    {{ route('match-schedules.show', $match->id) }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                    {{ route('coach.match-schedules.show', $match->id) }}
+                    @endif">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-4 d-flex flex-column flex-md-row align-items-center">
@@ -419,7 +476,8 @@
                         <div class="col-4 text-center">
                             <h2 class="mb-0">Vs.</h2>
                         </div>
-                        <div class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
+                        <div
+                            class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
                             <div class="mr-md-3 text-center text-md-right">
                                 <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
                                 <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
@@ -439,7 +497,8 @@
                         </div>
                         <div class="mr-2">
                             <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                            {{ date('h:i A', strtotime($match->startTime)) }} - {{ date('h:i A', strtotime($match->endTime)) }}
+                            {{ date('h:i A', strtotime($match->startTime)) }}
+                            - {{ date('h:i A', strtotime($match->endTime)) }}
                         </div>
                         <div>
                             <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -453,7 +512,11 @@
         {{--Upcoming Trainings Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Trainings</div>
-            <a href="{{ route('coach.player-parents.upcoming-trainings', $data->id) }}" class="btn btn-white border btn-sm ml-auto">
+            <a href="@if(Auth::user()->hasRole('admin'))
+                    {{ route('player-managements.upcoming-trainings', $data->id) }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                    {{ route('coach.player-managements.upcoming-trainings', $data->id) }}
+                    @endif" class="btn btn-white border btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
@@ -471,7 +534,11 @@
         @endif
         @foreach($overview['upcomingTrainings'] as $training)
             <div class="col-lg-6">
-                <a class="card" href="{{ route('training-schedules.show', $training->id) }}">
+                <a class="card" href="@if(Auth::user()->hasRole('admin'))
+                    {{ route('training-schedules.show', $training->id) }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                    {{ route('coach.training-schedules.show', $training->id) }}
+                    @endif">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-6 d-flex flex-column flex-md-row align-items-center">
@@ -492,7 +559,8 @@
                                 </div>
                                 <div class="mr-2">
                                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                                    {{ date('h:i A', strtotime($training->startTime)) }} - {{ date('h:i A', strtotime($training->endTime)) }}
+                                    {{ date('h:i A', strtotime($training->startTime)) }}
+                                    - {{ date('h:i A', strtotime($training->endTime)) }}
                                 </div>
                                 <div>
                                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -573,7 +641,8 @@
                     <i class="material-icons mr-8pt">error_outline</i>
                     <div class="media-body"
                          style="min-width: 180px">
-                        <small class="text-black-100">You haven't added any note performance review to this player yet</small>
+                        <small class="text-black-100">You haven't added any note performance review to this player
+                            yet</small>
                     </div>
                 </div>
             </div>
@@ -583,10 +652,12 @@
                 <div class="card-header d-flex align-items-center">
                     <div class="flex">
                         <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($review->created_at)) }}</h4>
-                        <div class="card-subtitle text-50">Last updated at {{ date('D, M d Y h:i A', strtotime($review->updated_at)) }}</div>
+                        <div class="card-subtitle text-50">Last updated
+                            at {{ date('D, M d Y h:i A', strtotime($review->updated_at)) }}</div>
                     </div>
                     <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="material-icons">
                             more_vert
                         </span>
@@ -615,20 +686,33 @@
 @endsection
 @push('addon-script')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#parentsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
+                    @if(Auth::user()->hasRole('admin'))
+                    url: '{!! route('player-parents.index', $data->userId) !!}',
+                    @elseif(Auth::user()->hasRole('coach'))
                     url: '{!! route('coach.player-parents.index', $data->userId) !!}',
+                    @endif
                 },
                 columns: [
-                    { data: 'firstName', name: 'firstName' },
-                    { data: 'lastName', name: 'lastName' },
-                    { data: 'email', name: 'email'},
-                    { data: 'phoneNumber', name: 'phoneNumber' },
-                    { data: 'relations', name: 'relations' },
+                    {data: 'firstName', name: 'firstName'},
+                    {data: 'lastName', name: 'lastName'},
+                    {data: 'email', name: 'email'},
+                    {data: 'phoneNumber', name: 'phoneNumber'},
+                    {data: 'relations', name: 'relations'},
+                    @if(Auth::user()->hasRole('admin'))
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                    @endif
                 ]
             });
 
@@ -637,12 +721,25 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
+                    @if(Auth::user()->hasRole('admin'))
+                    url: '{!! route('player-managements.playerTeams', $data->userId) !!}',
+                    @elseif(Auth::user()->hasRole('coach'))
                     url: '{!! route('coach.player-managements.playerTeams', $data->userId) !!}',
+                    @endif
                 },
                 columns: [
-                    { data: 'name', name: 'name' },
-                    { data: 'date', name: 'date' },
-                ]
+                    {data: 'name', name: 'name'},
+                    {data: 'date', name: 'date'},
+                    @if(Auth::user()->hasRole('admin'))
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                    @endif
+                ],
             });
 
             $('#trainingHistoryTable').DataTable({
@@ -650,17 +747,21 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
+                    @if(Auth::user()->hasRole('admin'))
+                    url: '{!! route('attendance-report.trainingTable', $data->id) !!}',
+                    @elseif(Auth::user()->hasRole('coach'))
                     url: '{!! route('coach.attendance-report.trainingTable', $data->id) !!}',
+                    @endif
                 },
                 columns: [
-                    { data: 'eventName', name: 'eventName' },
-                    { data: 'team', name: 'team' },
-                    { data: 'date', name: 'date' },
-                    { data: 'place', name: 'place'},
-                    { data: 'status', name: 'status' },
-                    { data: 'attendanceStatus', name: 'attendanceStatus' },
-                    { data: 'note', name: 'note' },
-                    { data: 'last_updated', name: 'last_updated' },
+                    {data: 'eventName', name: 'eventName'},
+                    {data: 'team', name: 'team'},
+                    {data: 'date', name: 'date'},
+                    {data: 'place', name: 'place'},
+                    {data: 'status', name: 'status'},
+                    {data: 'attendanceStatus', name: 'attendanceStatus'},
+                    {data: 'note', name: 'note'},
+                    {data: 'last_updated', name: 'last_updated'},
                     {
                         data: 'action',
                         name: 'action',
@@ -677,19 +778,23 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
+                    @if(Auth::user()->hasRole('admin'))
+                    url: '{!! route('attendance-report.matchDatatable', $data->id) !!}',
+                    @elseif(Auth::user()->hasRole('coach'))
                     url: '{!! route('coach.attendance-report.matchDatatable', $data->id) !!}',
+                    @endif
                 },
                 columns: [
-                    { data: 'team', name: 'team' },
-                    { data: 'opponentTeam', name: 'opponentTeam' },
-                    { data: 'date', name: 'date' },
-                    { data: 'place', name: 'place'},
-                    { data: 'competition', name: 'competition'},
-                    { data: 'matchType', name: 'matchType'},
-                    { data: 'status', name: 'status' },
-                    { data: 'attendanceStatus', name: 'attendanceStatus' },
-                    { data: 'note', name: 'note' },
-                    { data: 'last_updated', name: 'last_updated' },
+                    {data: 'team', name: 'team'},
+                    {data: 'opponentTeam', name: 'opponentTeam'},
+                    {data: 'date', name: 'date'},
+                    {data: 'place', name: 'place'},
+                    {data: 'competition', name: 'competition'},
+                    {data: 'matchType', name: 'matchType'},
+                    {data: 'status', name: 'status'},
+                    {data: 'attendanceStatus', name: 'attendanceStatus'},
+                    {data: 'note', name: 'note'},
+                    {data: 'last_updated', name: 'last_updated'},
                     {
                         data: 'action',
                         name: 'action',
@@ -726,6 +831,174 @@
                     }
                 },
             });
+
+            @if(Auth::user()->hasRole('admin'))
+            $('.delete-user').on('click', function() {
+                let id = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('player-managements.destroy', ['player' => ':id']) }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    title: "Player's account successfully deleted!",
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "{{ route('player-managements.index') }}";
+                                    }
+                                });
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "Something went wrong when deleting data!",
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('body').on('click', '.delete-parent', function() {
+                let idParent = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert after delete this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('player-parents.destroy', ['player' => $data->id,'parent' => ':idParent']) }}".replace(':idParent', idParent),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Player's parent/guardian successfully deleted!",
+                                });
+                                parentsTable.ajax.reload();
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "Something went wrong when deleting data!",
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('body').on('click', '.delete-team', function() {
+                const idTeam = $(this).attr('id');
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert after delete this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, remove team!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('player-managements.removeTeam', ['player' => $data->id, 'team' => ':idTeam']) }}".replace(':idTeam', idTeam),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    title: "Team successfully removed from player!",
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            },
+                            error: function(error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "Something went wrong when deleting data!",
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('#add-team').on('click', function(e) {
+                e.preventDefault();
+                $('#addTeamModal').modal('show');
+            });
+
+            $('#formAddTeam').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ route('player-managements.updateTeams', ['player' => $data->id]) }}",
+                    method: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function() {
+                        $('#addTeamModal').modal('hide');
+                        Swal.fire({
+                            title: "Team successfully added to player!",
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        $.each(response.errors, function(key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("select#add_" + key).addClass('is-invalid');
+                        });
+                    }
+                });
+            });
+            @endif
         });
     </script>
 @endpush
