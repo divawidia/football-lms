@@ -11,7 +11,12 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('coach.player-managements.show', $data->id) }}" class="nav-link text-70">
+                    <a href="
+                    @if(Auth::user()->hasRole('admin'))
+                        {{ route('player-managements.show', $data->id) }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                        {{ route('coach.player-managements.show', $data->id) }}
+                    @endif" class="nav-link text-70">
                         <i class="material-icons icon--left">keyboard_backspace</i>
                         Back to Player Profile
                     </a>
