@@ -54,7 +54,6 @@ class EventScheduleService extends Service
             ->orderBy('date', 'desc')
             ->get();
     }
-
     public function coachTeamsIndexMatch(Coach $coach): Collection
     {
         $teams = $this->coachManagedTeams($coach);
@@ -89,7 +88,6 @@ class EventScheduleService extends Service
         }
         return $events;
     }
-
     public function makeTrainingCalendar($trainingsData): array
     {
         $events = [];
@@ -110,7 +108,6 @@ class EventScheduleService extends Service
 
         return $this->makeMatchCalendar($matches);
     }
-
     public function trainingCalendar(){
         $trainings = $this->indexTraining();
 
@@ -122,7 +119,6 @@ class EventScheduleService extends Service
 
         return $this->makeTrainingCalendar($trainings);
     }
-
     public function coachTeamsMatchCalendar(Coach $coach){
         $data = $this->coachTeamsIndexMatch($coach);
 
@@ -236,24 +232,13 @@ class EventScheduleService extends Service
             ->rawColumns(['action','team','date','status'])
             ->make();
     }
-
-    public function dataTablesTraining(){
-        $data = $this->indexTraining();
-        return $this->makeDataTablesTraining($data);
-    }
-
-    public function coachTeamsDataTablesTraining(Coach $coach){
-        $data = $this->coachTeamsIndexTraining($coach);
-        return $this->makeDataTablesTraining($data);
-    }
-
     public function makeDataTablesMatch($matchData)
     {
         return Datatables::of($matchData)
             ->addColumn('action', function ($item) {
                 if (Auth::user()->hasRole('coach')){
                     return '
-                        <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                        <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
                             <span class="material-icons">
                                 visibility
                             </span>
@@ -367,11 +352,20 @@ class EventScheduleService extends Service
             ->make();
     }
 
+    public function dataTablesTraining(){
+        $data = $this->indexTraining();
+        return $this->makeDataTablesTraining($data);
+    }
     public function dataTablesMatch(){
         $data = $this->indexMatch();
         return $this->makeDataTablesMatch($data);
     }
 
+
+    public function coachTeamsDataTablesTraining(Coach $coach){
+        $data = $this->coachTeamsIndexTraining($coach);
+        return $this->makeDataTablesTraining($data);
+    }
     public function coachTeamsDataTablesMatch(Coach $coach){
         $data = $this->coachTeamsIndexMatch($coach);
         return $this->makeDataTablesMatch($data);
@@ -478,8 +472,6 @@ class EventScheduleService extends Service
 
         return $schedule;
     }
-
-
     public function storeMatch(array $data, $userId){
         $data['userId'] = $userId;
         $data['eventType'] = 'Match';
@@ -508,7 +500,6 @@ class EventScheduleService extends Service
         }
         return $schedule;
     }
-
     public function updateMatch(array $data, EventSchedule $schedule){
         $schedule->update($data);
 
@@ -523,7 +514,6 @@ class EventScheduleService extends Service
     {
         return $schedule->update(['status' => '1']);
     }
-
     public function deactivate(EventSchedule $schedule)
     {
         return $schedule->update(['status' => '0']);
@@ -657,7 +647,6 @@ class EventScheduleService extends Service
     {
         return $schedule->players()->find($player->id);
     }
-
     public function getCoachAttendance(EventSchedule $schedule, Coach $coach)
     {
         return $schedule->coaches()->find($coach->id);
@@ -674,7 +663,6 @@ class EventScheduleService extends Service
         $data['scheduleId'] = $schedule->id;
         return ScheduleNote::create($data);
     }
-
     public function updateNote($data, EventSchedule $schedule, ScheduleNote $note){
         return $note->update($data);
     }
@@ -700,7 +688,6 @@ class EventScheduleService extends Service
         $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['teamScore' => $teamScore]);
         return $schedule;
     }
-
     public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer)
     {
         $player = $schedule->playerMatchStats()->find($scorer->playerId);
@@ -731,7 +718,6 @@ class EventScheduleService extends Service
         $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['teamScore' => $teamScore]);
         return $schedule;
     }
-
     public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer)
     {
         $player = $schedule->playerMatchStats()->find($scorer->playerId);
@@ -781,7 +767,6 @@ class EventScheduleService extends Service
 
         return $schedule;
     }
-
     public function getPlayerStats(EventSchedule $schedule, Player $player)
     {
         $data = $schedule->playerMatchStats()->find($player->id);
@@ -789,7 +774,6 @@ class EventScheduleService extends Service
         $statsData = $data->pivot;
         return compact('playerData', 'statsData');
     }
-
     public function updatePlayerStats(array $data, EventSchedule $schedule, Player $player)
     {
 //        $schedule->playerMatchStats()->updateExistingPivot($player->id, [
