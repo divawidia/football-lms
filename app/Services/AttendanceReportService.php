@@ -158,6 +158,41 @@ class AttendanceReportService extends Service
         return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage', 'lineChart', 'doughnutChart');
     }
 
+    public function coachIndex(){
+        $player = Player::with('schedules', 'user')
+            ->whereHas('teams', function($q) use($teams){
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })->get();
+
+        $mostAttended = $player->withCount(['schedules', 'schedules as attended_count' => function ($query){
+                $query->where('attendanceStatus', 'Attended');
+            }])->orderBy('attended_count', 'desc')->first();
+
+        $mostAttendedPercentage = $mostAttended->attended_count / count($mostAttended->schedules) * 100;
+        $mostAttendedPercentage = round($mostAttendedPercentage, 1);
+
+        $mostDidntAttend = $player->withCount(['schedules', 'schedules as didnt_attended_count' => function ($query){
+                $query->where('attendanceStatus', 'Illness')
+                    ->orWhere('attendanceStatus', 'Injured')
+                    ->orWhere('attendanceStatus', 'Other');
+            }])->orderBy('didnt_attended_count', 'desc')->first();
+
+        $mostDidntAttendPercentage = $mostDidntAttend->didnt_attended_count / count($mostDidntAttend->schedules) * 100;
+        $mostDidntAttendPercentage = round($mostDidntAttendPercentage, 1);
+
+        $lineChart = $this->attendanceLineChart();
+        $doughnutChart = $this->attendanceDoughnutChart();
+
+        return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage', 'lineChart', 'doughnutChart');
+    }
+
     public function attendanceLineChart(){
         $attendedData = DB::table('event_schedules as es')
             ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
