@@ -206,15 +206,11 @@ class TeamController extends Controller
 
     public function updateCoachTeam(Request $request, Team $team)
     {
-        $validator = Validator::make($request->all(), [
+        $data = $request->validate([
             'coaches' => ['required', Rule::exists('coaches', 'id')]
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator);
-        }
-
-        $this->teamService->updateCoachTeam((array)$validator, $team);
+        $this->teamService->updateCoachTeam($data, $team);
 
         $text = 'Team '.$team->teamName.' Coaches successfully updated!';
         Alert::success($text);

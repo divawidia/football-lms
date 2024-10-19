@@ -735,7 +735,7 @@ class TeamService extends Service
 
     public function updateCoachTeam(array $teamData, Team $team): Team
     {
-        $team->coaches()->sync($teamData['coaches']);
+        $team->coaches()->attach($teamData['coaches']);
         return $team;
     }
 
