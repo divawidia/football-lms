@@ -533,7 +533,7 @@ Route::group(['middleware' => ['auth']], function () {
             });
 
             Route::prefix('attendance-reports')->group(function () {
-                Route::get('', [AttendanceReportController::class, 'index'])->name('coach.attendance-report.index');
+                Route::get('', [AttendanceReportController::class, 'coachIndex'])->name('coach.attendance-report.index');
 
                 Route::prefix('{player}')->group(function () {
                     Route::get('', [AttendanceReportController::class, 'show'])->name('coach.attendance-report.show');

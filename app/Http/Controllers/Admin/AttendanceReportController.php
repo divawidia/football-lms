@@ -31,6 +31,22 @@ class AttendanceReportController extends Controller
         ]);
     }
 
+    public function coachIndex(){
+        if (\request()->ajax()){
+            return $this->attendanceReportService->coachAttendanceDatatables();
+        }
+        $data = $this->attendanceReportService->coachIndex();
+
+        return view('pages.admins.academies.reports.attendances.index', [
+            'mostDidntAttend' => $data['mostDidntAttend'],
+            'mostAttended' => $data['mostAttended'],
+            'mostAttendedPercentage' => $data['mostAttendedPercentage'],
+            'mostDidntAttendPercentage' => $data['mostDidntAttendPercentage'],
+            'lineChart' => $data['lineChart'],
+            'doughnutChart' => $data['doughnutChart'],
+        ]);
+    }
+
     public function show(Player $player){
         $data = $this->attendanceReportService->show($player);
         return view('pages.admins.academies.reports.attendances.player-detail', [

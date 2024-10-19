@@ -158,7 +158,8 @@ class AttendanceReportService extends Service
         return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage', 'lineChart', 'doughnutChart');
     }
 
-    public function coachIndex(){
+    public function coachIndex($coach){
+        $teams = $this->coachManagedTeams($coach);
         $player = Player::with('schedules', 'user')
             ->whereHas('teams', function($q) use($teams){
                 $q->where('teamId', $teams[0]->id);
