@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Coach;
 use App\Models\Player;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -14,9 +15,18 @@ class AttendanceReportService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('attendance-report.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player attendance detail">
+                if (Auth::user()->hasRole('admin')){
+                    $viwwButton = '
+                        <a class="btn btn-sm btn-outline-secondary" href="' . route('attendance-report.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player attendance detail">
                             <span class="material-icons">visibility</span>
                         </a>';
+                } elseif (Auth::user()->hasRole('admin')){
+                    $viwwButton = '
+                        <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.attendance-report.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player attendance detail">
+                            <span class="material-icons">visibility</span>
+                        </a>';
+                }
+                return $viwwButton;
             })
             ->editColumn('teams', function ($item) {
                 $playerTeam = '';
@@ -170,7 +180,7 @@ class AttendanceReportService extends Service
                         $q->orWhere('teamId', $teams[$i]->id);
                     }
                 }
-            })->get();
+            });
 
         $mostAttended = $player->withCount(['schedules', 'schedules as attended_count' => function ($query){
                 $query->where('attendanceStatus', 'Attended');
@@ -187,9 +197,6 @@ class AttendanceReportService extends Service
 
         $mostDidntAttendPercentage = $mostDidntAttend->didnt_attended_count / count($mostDidntAttend->schedules) * 100;
         $mostDidntAttendPercentage = round($mostDidntAttendPercentage, 1);
-
-        $lineChart = $this->attendanceLineChart();
-        $doughnutChart = $this->attendanceDoughnutChart();
 
         return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage', 'lineChart', 'doughnutChart');
     }

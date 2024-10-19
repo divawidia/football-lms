@@ -26,24 +26,25 @@ class AttendanceReportController extends Controller
             'mostAttended' => $data['mostAttended'],
             'mostAttendedPercentage' => $data['mostAttendedPercentage'],
             'mostDidntAttendPercentage' => $data['mostDidntAttendPercentage'],
-            'lineChart' => $data['lineChart'],
-            'doughnutChart' => $data['doughnutChart'],
+            'lineChart' => $this->attendanceReportService->attendanceLineChart(),
+            'doughnutChart' => $this->attendanceReportService->attendanceDoughnutChart(),
         ]);
     }
 
     public function coachIndex(){
+        $coach = $this->getLoggedCoachUser();
         if (\request()->ajax()){
-            return $this->attendanceReportService->coachAttendanceDatatables();
+            return $this->attendanceReportService->coachAttendanceDatatables($coach);
         }
-        $data = $this->attendanceReportService->coachIndex();
+        $data = $this->attendanceReportService->coachIndex($coach);
 
         return view('pages.admins.academies.reports.attendances.index', [
             'mostDidntAttend' => $data['mostDidntAttend'],
             'mostAttended' => $data['mostAttended'],
             'mostAttendedPercentage' => $data['mostAttendedPercentage'],
             'mostDidntAttendPercentage' => $data['mostDidntAttendPercentage'],
-            'lineChart' => $data['lineChart'],
-            'doughnutChart' => $data['doughnutChart'],
+            'lineChart' => $this->attendanceReportService->attendanceLineChart(),
+            'doughnutChart' => $this->attendanceReportService->attendanceDoughnutChart(),
         ]);
     }
 
