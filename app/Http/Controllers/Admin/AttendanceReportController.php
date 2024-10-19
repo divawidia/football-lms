@@ -43,8 +43,8 @@ class AttendanceReportController extends Controller
             'mostAttended' => $data['mostAttended'],
             'mostAttendedPercentage' => $data['mostAttendedPercentage'],
             'mostDidntAttendPercentage' => $data['mostDidntAttendPercentage'],
-            'lineChart' => $this->attendanceReportService->attendanceLineChart(),
-            'doughnutChart' => $this->attendanceReportService->attendanceDoughnutChart(),
+            'lineChart' => $this->attendanceReportService->coachAttendanceLineChart($coach),
+            'doughnutChart' => $this->attendanceReportService->coachAttendanceDoughnutChart($coach),
         ]);
     }
 
