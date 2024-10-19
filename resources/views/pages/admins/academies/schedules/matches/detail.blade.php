@@ -1,6 +1,5 @@
 @extends('layouts.master')
 @section('title')
-{{--    @dd($data['dataSchedule']->teams)--}}
     Match {{ $data['dataSchedule']->teams[0]->teamName }} Vs {{ $data['dataSchedule']->teams[1]->teamName }}
 @endsection
 @section('page-title')
@@ -104,7 +103,11 @@
     <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('match-schedules.create-note', $data['dataSchedule']->id) }}" method="post" id="formCreateNoteModal">
+                <form action="@if(Auth::user()->hasRole('admin'))
+                        {{ route('match-schedules.create-note', $data['dataSchedule']->id) }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                        {{ route('coach.match-schedules.create-note', $data['dataSchedule']->id) }}
+                    @endif" method="post" id="formCreateNoteModal">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="coachName">Create note for {{ $data['dataSchedule']->eventName }} Session</h5>
@@ -168,7 +171,11 @@
     <div class="modal fade" id="createTeamScorerModal" tabindex="-1" aria-labelledby="createTeamScorerModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('match-schedules.store-match-scorer', $data['dataSchedule']->id) }}" method="post" id="formAddScorerModal">
+                <form action="@if(Auth::user()->hasRole('admin'))
+                        {{ route('match-schedules.store-match-scorer', $data['dataSchedule']->id) }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                        {{ route('coach.match-schedules.store-match-scorer', $data['dataSchedule']->id) }}
+                    @endif" method="post" id="formAddScorerModal">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="coachName">Add team scorer of this match</h5>
@@ -231,7 +238,11 @@
     <div class="modal fade" id="createTeamOwnGoalModal" tabindex="-1" aria-labelledby="createTeamOwnGoalModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('match-schedules.store-own-goal', $data['dataSchedule']->id) }}" method="post" id="formAddOwnGoalModal">
+                <form action="@if(Auth::user()->hasRole('admin'))
+                        {{ route('match-schedules.store-own-goal', $data['dataSchedule']->id) }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                    {{ route('coach.match-schedules.store-own-goal', $data['dataSchedule']->id) }}
+                    @endif" method="post" id="formAddOwnGoalModal">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="coachName">Add own goal of this match</h5>
@@ -284,7 +295,11 @@
     <div class="modal fade" id="teamMatchStatsModal" tabindex="-1" aria-labelledby="teamMatchStatsModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('match-schedules.update-match-stats', $data['dataSchedule']->id) }}" method="post" id="formTeamMatchStats">
+                <form action="@if(Auth::user()->hasRole('admin'))
+                {{ route('match-schedules.update-match-stats', $data['dataSchedule']->id) }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                    {{ route('coach.match-schedules.update-match-stats', $data['dataSchedule']->id) }}
+                    @endif" method="post" id="formTeamMatchStats">
                     @method('PUT')
                     @csrf
                     <div class="modal-header">
@@ -851,16 +866,23 @@
 @endsection
 
 @section('content')
+    <nav class="navbar navbar-light border-bottom border-top px-0">
+        <div class="container page__container">
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a href="@if(Auth::user()->hasRole('admin'))
+                    {{ route('player-managements.index') }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                    {{ route('coach.player-managements.index') }}
+                    @endif" class="nav-link text-70">
+                        <i class="material-icons icon--left">keyboard_backspace</i>
+                        Back to Match Schedule Lists
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="page-section bg-primary">
-{{--        <div class="container page__container page-section py-2">--}}
-{{--            <ol class="breadcrumb p-0 m-0">--}}
-{{--                <li class="breadcrumb-item text-white"><a href="{{ route('admin.dashboard') }}">Home</a></li>--}}
-{{--                <li class="breadcrumb-item text-white"><a href="{{ route('match-schedules.index') }}">Match</a></li>--}}
-{{--                <li class="breadcrumb-item text-white active">--}}
-{{--                    @yield('title')--}}
-{{--                </li>--}}
-{{--            </ol>--}}
-{{--        </div>--}}
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex mb-3 mb-md-0">
                 <h2 class="text-white mb-0">Match {{ $data['dataSchedule']->teams[0]->teamName }} Vs {{ $data['dataSchedule']->teams[1]->teamName }}</h2>
@@ -879,27 +901,29 @@
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}"><span class="material-icons">edit</span> Edit Match Schedule</a>
-                    @if($data['dataSchedule']->status == '1')
-                        <form action="{{ route('end-match', $data['dataSchedule']->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons">block</span> End Match
-                            </button>
-                        </form>
-                    @else
-                        <form action="{{ route('activate-match', $data['dataSchedule']->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons">check_circle</span> Start Match
-                            </button>
-                        </form>
+                    @if(Auth::user()->hasRole('admin'))
+                        <a class="dropdown-item" href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}"><span class="material-icons">edit</span> Edit Match Schedule</a>
+                        @if($data['dataSchedule']->status == '1')
+                            <form action="{{ route('end-match', $data['dataSchedule']->id) }}" method="POST">
+                                @method("PATCH")
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <span class="material-icons">block</span> End Match
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('activate-match', $data['dataSchedule']->id) }}" method="POST">
+                                @method("PATCH")
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <span class="material-icons">check_circle</span> Start Match
+                                </button>
+                            </form>
+                        @endif
+                        <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
+                            <span class="material-icons">delete</span> Delete Match
+                        </button>
                     @endif
-                    <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
-                        <span class="material-icons">delete</span> Delete Match
-                    </button>
                 </div>
             </div>
         </div>
@@ -1408,12 +1432,16 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            const playerStatTable = $('#playerStatTable').DataTable({
+            $('#playerStatTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
+                    @if(Auth::user()->hasRole('admin'))
                     url: '{!! route('match-schedules.index-player-match-stats', $data['dataSchedule']->id) !!}',
+                    @elseif(Auth::user()->hasRole('coach'))
+                    url: '{!! route('coach.match-schedules.index-player-match-stats', $data['dataSchedule']->id) !!}',
+                    @endif
                 },
                 columns: [
                     {data: 'name', name: 'name'},
@@ -1443,7 +1471,11 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
+                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                    @elseif(Auth::user()->hasRole('coach'))
+                    url: "{{ route('coach.match-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                    @endif
                     type: 'get',
                     success: function (res) {
                         // console.log(res);
@@ -1473,7 +1505,11 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
+                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
+                        @elseif(Auth::user()->hasRole('coach'))
+                        url: "{{ route('coach.match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
+                        @endif
                     type: 'get',
                     success: function (res) {
                         // console.log(res);
@@ -1509,7 +1545,11 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
+                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
+                        @elseif(Auth::user()->hasRole('coach'))
+                        url: "{{ route('coach.match-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
+                        @endif
                     type: 'get',
                     success: function (res) {
                         $('#editNoteModal').modal('show');
@@ -1533,7 +1573,11 @@
                 e.preventDefault();
                 const id = $('#playerId').val();
                 $.ajax({
+                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                        @elseif(Auth::user()->hasRole('coach'))
+                        url: "{{ route('coach.match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                        @endif
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -1569,7 +1613,12 @@
                 e.preventDefault();
                 const id = $('#coachId').val();
                 $.ajax({
+                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
+                        @elseif(Auth::user()->hasRole('coach'))
+                        url: "{{ route('coach.match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
+                        @endif
+
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -1640,7 +1689,12 @@
                 e.preventDefault();
                 const id = $('#noteId').val();
                 $.ajax({
+                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
+                        @elseif(Auth::user()->hasRole('coach'))
+                        url: "{{ route('coach.match-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
+                        @endif
+
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -1686,7 +1740,10 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
+                            @if(Auth::user()->hasRole('admin'))
                             url: "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
+                                @endif
+
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"
@@ -1732,7 +1789,12 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
+                            @if(Auth::user()->hasRole('admin'))
                             url: "{{ route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
+                                @elseif(Auth::user()->hasRole('coach'))
+                                url: "{{ route('coach.match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
+                                @endif
+
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"
@@ -1773,7 +1835,12 @@
             $('#add_playerId').on('change', function () {
                 const id = this.value;
                 $.ajax({
+                    @if(Auth::user()->hasRole('admin'))
                     url: "{{route('get-assist-player', ['schedule' => $data['dataSchedule']->id,'player'=>':id']) }}".replace(':id', id),
+                        @elseif(Auth::user()->hasRole('coach'))
+                        url: "{{route('coach.get-assist-player', ['schedule' => $data['dataSchedule']->id,'player'=>':id']) }}".replace(':id', id),
+                        @endif
+
                     type: 'GET',
                     dataType: 'json',
                     success: function (result) {
@@ -1835,7 +1902,12 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
+                            @if(Auth::user()->hasRole('admin'))
                             url: "{{ route('match-schedules.destroy-match-scorer', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
+                                @elseif(Auth::user()->hasRole('coach'))
+                                url: "{{ route('coach.match-schedules.destroy-match-scorer', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
+                                @endif
+
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"
@@ -1880,7 +1952,12 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
+                            @if(Auth::user()->hasRole('admin'))
                             url: "{{ route('match-schedules.destroy-own-goal', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
+                                @elseif(Auth::user()->hasRole('coach'))
+                                url: "{{ route('match-schedules.destroy-own-goal', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
+                                @endif
+
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"
@@ -1999,7 +2076,12 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
+                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.show-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                        @elseif(Auth::user()->hasRole('coach'))
+                        url: "{{ route('coach.match-schedules.show-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                        @endif
+
                     type: 'get',
                     success: function (res) {
                         console.log(res)
@@ -2030,7 +2112,12 @@
                 const id = $('#playerStatsId').val();
 
                 $.ajax({
+                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('match-schedules.update-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                        @elseif(Auth::user()->hasRole('coach'))
+                        url: "{{ route('coach.match-schedules.update-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
+                        @endif
+
                     method: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
