@@ -375,6 +375,11 @@ class EventScheduleService extends Service
         $data = $schedule->playerMatchStats;
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
+                if (Auth::user()->hasRole('admin')){
+                    $showPlayer = '<a class="dropdown-item" href="' . route('player-managements.show', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player</a>';
+                }elseif (Auth::user()->hasRole('coach')){
+                    $showPlayer = '<a class="dropdown-item" href="' . route('coach.player-managements.show', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player</a>';
+                }
                 return '
                         <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -384,7 +389,7 @@ class EventScheduleService extends Service
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item edit-player-stats" href="" id="'.$item->id.'"><span class="material-icons">edit</span> Edit Player Stats</a>
-                            <a class="dropdown-item" href="' . route('player-managements.show', ['player_management'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player</a>
+                            '.$showPlayer.'
                           </div>
                         </div>';
             })
