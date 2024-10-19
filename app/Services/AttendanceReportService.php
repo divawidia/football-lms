@@ -172,7 +172,8 @@ class AttendanceReportService extends Service
 
     public function coachIndex($coach){
         $teams = $this->coachManagedTeams($coach);
-        $player = Player::with('schedules', 'user')
+
+        $mostAttended = Player::with('schedules', 'user')
             ->whereHas('teams', function($q) use($teams){
                 $q->where('teamId', $teams[0]->id);
 
@@ -182,22 +183,34 @@ class AttendanceReportService extends Service
                         $q->orWhere('teamId', $teams[$i]->id);
                     }
                 }
-            });
-
-        $mostAttended = $player->withCount(['schedules', 'schedules as attended_count' => function ($query){
+            })
+            ->withCount(['schedules', 'schedules as attended_count' => function ($query) use($teams){
                 $query->where('attendanceStatus', 'Attended');
-            }])->orderBy('attended_count', 'desc')->first();
+            }])
+            ->orderBy('attended_count', 'desc')->first();
 
-        $mostAttendedPercentage = $mostAttended->attended_count / count($mostAttended->schedules) * 100;
+        $mostAttendedPercentage = $mostAttended['attended_count'] / count($mostAttended->schedules) * 100;
         $mostAttendedPercentage = round($mostAttendedPercentage, 1);
 
-        $mostDidntAttend = $player->withCount(['schedules', 'schedules as didnt_attended_count' => function ($query){
+        $mostDidntAttend = Player::with('schedules', 'user')
+            ->whereHas('teams', function($q) use($teams){
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->withCount(['schedules', 'schedules as didnt_attended_count' => function ($query) use($teams){
                 $query->where('attendanceStatus', 'Illness')
                     ->orWhere('attendanceStatus', 'Injured')
                     ->orWhere('attendanceStatus', 'Other');
-            }])->orderBy('didnt_attended_count', 'desc')->first();
+            }])
+            ->orderBy('didnt_attended_count', 'desc')->first();
 
-        $mostDidntAttendPercentage = $mostDidntAttend->didnt_attended_count / count($mostDidntAttend->schedules) * 100;
+        $mostDidntAttendPercentage = $mostDidntAttend['didnt_attended_count'] / count($mostDidntAttend->schedules) * 100;
         $mostDidntAttendPercentage = round($mostDidntAttendPercentage, 1);
 
         return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage');
