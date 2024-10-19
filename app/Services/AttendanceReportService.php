@@ -10,9 +10,9 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AttendanceReportService extends Service
 {
-    public function attendanceDatatables(){
-        $query = Player::all();
-        return Datatables::of($query)
+    public function makeAttendanceDatatables($data)
+    {
+        return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return '<a class="btn btn-sm btn-outline-secondary" href="' . route('attendance-report.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player attendance detail">
                             <span class="material-icons">visibility</span>
@@ -109,6 +109,28 @@ class AttendanceReportService extends Service
             })
             ->rawColumns(['action','teams', 'name','totalEvent', 'match', 'training', 'attended', 'absent', 'illness', 'injured', 'others'])
             ->make();
+    }
+    public function attendanceDatatables(){
+        $query = Player::all();
+        return $this->makeAttendanceDatatables($query);
+    }
+    public function coachAttendanceDatatables($coach){
+        $teams = $this->coachManagedTeams($coach);
+
+        // query player data that included in teams that managed by logged in coach
+        $query = Player::with('user', 'teams', 'position')
+            ->whereHas('teams', function($q) use($teams){
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })->get();
+
+        return $this->makeAttendanceDatatables($query);
     }
 
     public function index(){

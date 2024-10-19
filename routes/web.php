@@ -541,6 +541,10 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('coach.attendance-report.matchDatatable');
                 });
             });
+
+            Route::prefix('performance-reports')->group(function () {
+                Route::get('', [PerformanceReportController::class, 'index'])->name('coach.performance-report.index');
+            });
         });
     });
 });
