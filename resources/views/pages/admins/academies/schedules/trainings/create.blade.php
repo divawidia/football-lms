@@ -8,27 +8,37 @@
 
     @section('content')
         <div class="pt-32pt">
-            <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-                <div class="flex d-flex flex-column flex-sm-row align-items-center">
-                    <div class="mb-24pt mb-sm-0 mr-sm-24pt text-sm-start">
-                        <h2 class="mb-0">
-                            @yield('title')
-                        </h2>
-                        <ol class="breadcrumb p-0 m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('training-schedules.index') }}">Training Schedule</a></li>
-                            <li class="breadcrumb-item active">
-                                @yield('title')
-                            </li>
-                        </ol>
-                    </div>
-                </div>
+            <div class="container">
+                <h2 class="mb-0">
+                    @yield('title')
+                </h2>
+                <ol class="breadcrumb p-0 m-0">
+                    @if(Auth::user()->hasRole('admin'))
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('training-schedules.index') }}">Training Schedule</a></li>
+                    @elseif(Auth::user()->hasRole('coach'))
+                        <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('coach.training-schedules.index') }}">Training Schedule</a></li>
+                    @endif
+                    <li class="breadcrumb-item active">
+                        @yield('title')
+                    </li>
+                </ol>
             </div>
         </div>
 
-        <div class="container page__container page-section">
+        <div class="container page-section">
             <div class="list-group">
-                <form action="{{ route('training-schedules.store') }}" method="post">
+                @if(Auth::user()->hasRole('admin'))
+                @elseif(Auth::user()->hasRole('coach'))
+                @endif
+                <form action="
+                    @if(Auth::user()->hasRole('admin'))
+                        {{ route('training-schedules.store') }}
+                    @elseif(Auth::user()->hasRole('coach'))
+                        {{ route('coach.training-schedules.store') }}
+                    @endif"
+                      method="post">
                     @csrf
                     <div class="list-group-item">
                         <div role="group" aria-labelledby="label-question" class="m-0 form-group">
@@ -75,7 +85,7 @@
                                                     <i class="material-icons mr-8pt">error_outline</i>
                                                     <div class="media-body"
                                                          style="min-width: 180px">
-                                                        <small class="text-black-100">Curently you haven't create any team in your academy, please create your team</small>
+                                                        <small class="text-black-100">Currently you haven't create any team in your academy, please create your team</small>
                                                     </div>
                                                     <div class="ml-8pt mt-2 mt-sm-0">
                                                         <a href="{{ route('team-managements.create') }}"
@@ -170,7 +180,7 @@
                         </div>
                     </div>
                     <div class="list-group-item d-flex justify-content-end">
-                        <a class="btn btn-secondary mx-2" href="{{ route('training-schedules.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
                         <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                     </div>
                 </form>

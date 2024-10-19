@@ -23,12 +23,14 @@ class EventScheduleService extends Service
         return EventSchedule::with('teams', 'competition')
             ->where('eventType', 'Match')
             ->where('status', '1')
+            ->orderBy('date')
             ->get();
     }
     public function indexTraining(): Collection
     {
         return EventSchedule::with('teams')
             ->where('eventType', 'Training')
+            ->where('status', '1')
             ->orderBy('date')
             ->get();
     }
@@ -53,7 +55,27 @@ class EventScheduleService extends Service
             ->get();
     }
 
-    public function makeMatchCalendar($matchesData)
+    public function coachTeamsIndexMatch(Coach $coach): Collection
+    {
+        $teams = $this->coachManagedTeams($coach);
+        return EventSchedule::with('teams', 'competition')
+            ->whereHas('teams', function($q) use ($teams) {
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->where('eventType', 'Match')
+            ->where('status', '1')
+            ->orderBy('date', 'desc')
+            ->get();
+    }
+
+    public function makeMatchCalendar($matchesData): array
     {
         $events = [];
         foreach ($matchesData as $match) {
@@ -68,7 +90,7 @@ class EventScheduleService extends Service
         return $events;
     }
 
-    public function makeTrainingCalendar($trainingsData)
+    public function makeTrainingCalendar($trainingsData): array
     {
         $events = [];
         foreach ($trainingsData as $training) {
@@ -101,28 +123,35 @@ class EventScheduleService extends Service
         return $this->makeTrainingCalendar($trainings);
     }
 
+    public function coachTeamsMatchCalendar(Coach $coach){
+        $data = $this->coachTeamsIndexMatch($coach);
+
+        return $this->makeMatchCalendar($data);
+    }
+
     public function makeDataTablesTraining($trainingData)
     {
         return Datatables::of($trainingData)
             ->addColumn('action', function ($item) {
-                if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('deactivate-training', $item->id) . '" method="POST">
+                if (Auth::user()->hasRole('admin')){
+                    if ($item->status == '1') {
+                        $statusButton = '<form action="' . route('deactivate-training', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
                                                     <span class="material-icons">block</span> End Training
                                                 </button>
                                             </form>';
-                } else {
-                    $statusButton = '<form action="' . route('activate-training', $item->id) . '" method="POST">
+                    } else {
+                        $statusButton = '<form action="' . route('activate-training', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
                                                     <span class="material-icons">check_circle</span> Start Training
                                                 </button>
                                             </form>';
-                }
-                return '
+                    }
+                    return '
                         <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
@@ -138,6 +167,41 @@ class EventScheduleService extends Service
                             </button>
                           </div>
                         </div>';
+                } elseif (Auth::user()->hasRole('coach')){
+                    if ($item->status == '1') {
+                        $statusButton = '<form action="' . route('coach.deactivate-training', $item->id) . '" method="POST">
+                                                ' . method_field("PATCH") . '
+                                                ' . csrf_field() . '
+                                                <button type="submit" class="dropdown-item">
+                                                    <span class="material-icons">block</span> End Training
+                                                </button>
+                                            </form>';
+                    } else {
+                        $statusButton = '<form action="' . route('coach.activate-training', $item->id) . '" method="POST">
+                                                ' . method_field("PATCH") . '
+                                                ' . csrf_field() . '
+                                                <button type="submit" class="dropdown-item">
+                                                    <span class="material-icons">check_circle</span> Start Training
+                                                </button>
+                                            </form>';
+                    }
+                    return '
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="material-icons">
+                                more_vert
+                            </span>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="' . route('coach.training-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Schedule</a>
+                            <a class="dropdown-item" href="' . route('coach.training-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Schedule</a>
+                            ' . $statusButton . '
+                            <button type="button" class="dropdown-item delete" id="' . $item->id . '">
+                                <span class="material-icons">delete</span> Delete Schedule
+                            </button>
+                          </div>
+                        </div>';
+                }
             })
             ->editColumn('team', function ($item) {
                 return '
@@ -189,7 +253,7 @@ class EventScheduleService extends Service
             ->addColumn('action', function ($item) {
                 if (Auth::user()->hasRole('coach')){
                     return '
-                        <a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                        <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
                             <span class="material-icons">
                                 visibility
                             </span>
@@ -305,6 +369,11 @@ class EventScheduleService extends Service
 
     public function dataTablesMatch(){
         $data = $this->indexMatch();
+        return $this->makeDataTablesMatch($data);
+    }
+
+    public function coachTeamsDataTablesMatch(Coach $coach){
+        $data = $this->coachTeamsIndexMatch($coach);
         return $this->makeDataTablesMatch($data);
     }
 

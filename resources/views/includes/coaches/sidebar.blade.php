@@ -72,12 +72,12 @@
                         </a>
                         <ul class="collapse sm-indent" id="scheduleMenu">
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="{{ route('training-schedules.index') }}">
+                                <a class="sidebar-menu-button" href="{{ route('coach.training-schedules.index') }}">
                                     <span class="sidebar-menu-text">Training</span>
                                 </a>
                             </li>
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="{{ route('match-schedules.index') }}">
+                                <a class="sidebar-menu-button" href="{{ route('coach.match-schedules.index') }}">
                                     <span class="sidebar-menu-text">Match</span>
                                 </a>
                             </li>

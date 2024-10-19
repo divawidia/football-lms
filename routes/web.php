@@ -472,6 +472,66 @@ Route::group(['middleware' => ['auth']], function () {
                 });
             });
 
+            Route::prefix('training-schedules')->group(function () {
+                Route::get('', [EventScheduleController::class, 'coachIndexTraining'])->name('coach.training-schedules.index');
+                Route::get('create', [EventScheduleController::class, 'createTraining'])->name('coach.training-schedules.create');
+                Route::post('store', [EventScheduleController::class, 'storeTraining'])->name('coach.training-schedules.store');
+
+                Route::prefix('{schedule}')->group(function () {
+                    Route::get('', [EventScheduleController::class, 'showTraining'])->name('coach.training-schedules.show');
+                    Route::get('edit', [EventScheduleController::class, 'editTraining'])->name('coach.training-schedules.edit');
+                    Route::put('update', [EventScheduleController::class, 'updateTraining'])->name('coach.training-schedules.update');
+                    Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('coach.training-schedules.destroy');
+                    Route::patch('deactivate', [EventScheduleController::class, 'deactivateTraining'])->name('coach.deactivate-training');
+                    Route::patch('activate', [EventScheduleController::class, 'activateTraining'])->name('coach.activate-training');
+
+                    Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('coach.training-schedules.player');
+                    Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('coach.training-schedules.update-player');
+
+                    Route::get('edit-coach-attendance/{coach}', [EventScheduleController::class, 'getCoachAttendance'])->name('coach.training-schedules.coach');
+                    Route::put('update-coach-attendance/{coach}', [EventScheduleController::class, 'updateCoachAttendance'])->name('coach.training-schedules.update-coach');
+
+                    Route::post('create-note', [EventScheduleController::class, 'createNote'])->name('coach.training-schedules.create-note');
+                    Route::get('edit-note/{note}', [EventScheduleController::class, 'editNote'])->name('coach.training-schedules.edit-note');
+                    Route::put('update-note/{note}', [EventScheduleController::class, 'updateNote'])->name('coach.training-schedules.update-note');
+                    Route::delete('delete-note/{note}', [EventScheduleController::class, 'destroyNote'])->name('coach.training-schedules.destroy-note');
+                });
+            });
+
+            Route::prefix('match-schedules')->group(function () {
+                Route::get('', [EventScheduleController::class, 'coachIndexMatch'])->name('coach.match-schedules.index');
+
+                Route::prefix('{schedule}')->group(function () {
+                    Route::get('', [EventScheduleController::class, 'showMatch'])->name('coach.match-schedules.show');
+                    Route::get('get-assisted-player/{player}', [EventScheduleController::class, 'getAssistPlayer'])->name('coach.get-assist-player');
+
+                    Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('coach.match-schedules.player');
+                    Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('coach.match-schedules.update-player');
+
+                    Route::get('edit-coach-attendance/{coach}', [EventScheduleController::class, 'getCoachAttendance'])->name('coach.match-schedules.coach');
+                    Route::put('update-coach-attendance/{coach}', [EventScheduleController::class, 'updateCoachAttendance'])->name('coach.match-schedules.update-coach');
+
+                    Route::post('match-scorer', [EventScheduleController::class, 'storeMatchScorer'])->name('coach.match-schedules.store-match-scorer');
+                    Route::delete('match-scorer/{scorer}/destroy', [EventScheduleController::class, 'destroyMatchScorer'])->name('coach.match-schedules.destroy-match-scorer');
+
+                    Route::post('create-note', [EventScheduleController::class, 'createNote'])->name('coach.match-schedules.create-note');
+                    Route::get('edit-note/{note}', [EventScheduleController::class, 'editNote'])->name('coach.match-schedules.edit-note');
+                    Route::put('update-note/{note}', [EventScheduleController::class, 'updateNote'])->name('coach.match-schedules.update-note');
+                    Route::delete('delete-note/{note}', [EventScheduleController::class, 'destroyNote'])->name('coach.match-schedules.destroy-note');
+
+                    Route::post('own-goal', [EventScheduleController::class, 'storeOwnGoal'])->name('coach.match-schedules.store-own-goal');
+                    Route::delete('own-goal/{scorer}/destroy', [EventScheduleController::class, 'destroyOwnGoal'])->name('coach.match-schedules.destroy-own-goal');
+
+                    Route::put('update-match-stats', [EventScheduleController::class, 'updateMatchStats'])->name('coach.match-schedules.update-match-stats');
+
+                    Route::prefix('player-match-stats')->group(function () {
+                        Route::get('', [EventScheduleController::class, 'indexPlayerMatchStats'])->name('coach.match-schedules.index-player-match-stats');
+                        Route::get('{player}', [EventScheduleController::class, 'getPlayerStats'])->name('coach.match-schedules.show-player-match-stats');
+                        Route::put('{player}/update', [EventScheduleController::class, 'updatePlayerStats'])->name('coach.match-schedules.update-player-match-stats');
+                    });
+                });
+            });
+
             Route::prefix('attendance-reports')->group(function () {
                 Route::get('', [AttendanceReportController::class, 'index'])->name('coach.attendance-report.index');
 

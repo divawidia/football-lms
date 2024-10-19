@@ -10,7 +10,11 @@
         <div class="container page__container d-flex flex-column pt-32pt">
             <h2 class="mb-0">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                @if(Auth::user()->hasRole('admin'))
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                @elseif(Auth::user()->hasRole('coach'))
+                    <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
+                @endif
                 <li class="breadcrumb-item active">
                     @yield('title')
                 </li>
@@ -18,13 +22,15 @@
         </div>
 
         <div class="container page__container page-section">
-            <a href="{{  route('match-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">
-                <span class="material-icons mr-2">
-                    add
-                </span>
-                Add New
-            </a>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            @if(Auth::user()->hasRole('admin'))
+                <a href="{{  route('match-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">
+                    <span class="material-icons mr-2">
+                        add
+                    </span>
+                    Add New
+                </a>
+            @endif
+            <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="table">
@@ -46,7 +52,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Calendar</h4>
                 </div>
@@ -99,7 +105,9 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
+                                @if(Auth::user()->hasRole('admin'))
                                 url: "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
+                                @endif
                                 type: 'DELETE',
                                 data: {
                                     _token: "{{ csrf_token() }}"

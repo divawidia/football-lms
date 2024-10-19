@@ -74,14 +74,35 @@ class EventScheduleController extends Controller
         ]);
     }
 
+    public function coachIndexMatch()
+    {
+        $coach = $this->getLoggedCoachUser();
+        if (request()->ajax()){
+            return $this->eventScheduleService->coachTeamsDataTablesMatch($coach);
+        }
+
+        $events = $this->eventScheduleService->coachTeamsMatchCalendar($coach);
+
+        return view('pages.admins.academies.schedules.matches.index', [
+            'events' => $events
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
     public function createTraining()
     {
-        return view('pages.admins.academies.schedules.trainings.create', [
-            'teams' => $this->eventScheduleService->getAcademyTeams(),
-        ]);
+        if (Auth::user()->hasRole('admin')){
+            $view = view('pages.admins.academies.schedules.trainings.create', [
+                'teams' => $this->eventScheduleService->getAcademyTeams(),
+            ]);
+        } elseif (Auth::user()->hasRole('coach')){
+            $view = view('pages.admins.academies.schedules.trainings.create', [
+                'teams' => $this->eventScheduleService->coachManagedTeams($this->getLoggedCoachUser()),
+            ]);
+        }
+        return $view;
     }
 
     public function createMatch()
@@ -102,7 +123,13 @@ class EventScheduleController extends Controller
 
         $text = 'Training schedule successfully added!';
         Alert::success($text);
-        return redirect()->route('training-schedules.index');
+
+        if (Auth::user()->hasRole('admin')){
+            $redirect = redirect()->route('training-schedules.index');
+        } elseif (Auth::user()->hasRole('coach')){
+            $redirect = redirect()->route('coach.training-schedules.index');
+        }
+        return $redirect;
     }
 
     public function storeMatch(MatchScheduleRequest $request)

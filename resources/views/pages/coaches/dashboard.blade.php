@@ -225,7 +225,7 @@
                             <div class="ml-auto text-right">
                                 <div class="card-title text-capitalize">draws</div>
                                 <p class="card-subtitle text-50">
-                                    4{{ $dataOverview['totalDraws'] }}
+                                    {{ $dataOverview['totalDraws'] }}
                                     @if($dataOverview['totalDraws'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
