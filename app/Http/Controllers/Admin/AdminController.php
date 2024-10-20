@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Models\Admin;
 use App\Models\User;
 use App\Services\AdminService;
@@ -71,22 +72,16 @@ class AdminController extends Controller
         ]);
     }
 
-    public function changePassword(Request $request, string $id){
-        $validator = Validator::make($request->all(), [
-            'password' => ['required', 'string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols()]
+    public function changePassword(ChangePasswordRequest $request, Admin $admin)
+    {
+        $data = $request->validated();
+        $result = $this->adminService->changePassword($data, $admin);
+
+        return response()->json([
+            'status' => 200,
+            'data' => $result,
+            'message' => 'Successfully change password'
         ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator);
-        }
-
-        $user = User::findOrFail($id);
-
-        $user->update([
-            'password' => bcrypt($validator->getData()['password'])
-        ]);
-        Alert::success($user->firstName.' account password successfully updated!');
-        return redirect()->route('admin-managements.index');
     }
 
     /**

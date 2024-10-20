@@ -156,11 +156,11 @@ class AdminService extends Service
         return $user;
     }
 
-    public function changePassword($data, User $user){
-        $user->update([
+    public function changePassword($data, Admin $admin){
+        $admin->user()->update([
             'password' => bcrypt($data)
         ]);
-        return $user;
+        return $admin;
     }
 
     public function destroy(User $user): User
