@@ -118,19 +118,12 @@ class PlayerController extends Controller
      */
     public function edit(Player $player)
     {
-        $fullname = $player->firstName . ' ' . $player->lastName;
-        $positions = PlayerPosition::all();
-        $teams = Team::all();
-        $action = World::countries();
-        if ($action->success) {
-            $countries = $action->data;
-        }
         return view('pages.managements.players.edit', [
-            'player' => $player,
-            'fullname' => $fullname,
-            'positions' => $positions,
-            'teams' => $teams,
-            'countries' => $countries
+            'data' => $player,
+            'fullName' => $this->playerService->getUserFullName($player->user),
+            'positions' => $this->playerService->getPlayerPosition(),
+            'teams' => $this->playerService->getAcademyTeams(),
+            'countries' => $this->playerService->getCountryData()
         ]);
     }
 
@@ -143,7 +136,7 @@ class PlayerController extends Controller
 
         $this->playerService->update($data, $player);
 
-        $text = $player->firstName . ' successfully updated!';
+        $text =  $data['firstName'].' '.$data['lastName'].' successfully updated!';
         Alert::success($text);
         return redirect()->route('player-managements.show', $player->id);
     }
