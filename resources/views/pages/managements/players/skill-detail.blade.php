@@ -15,8 +15,12 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    @if( url()->previous() == route('coach.player-managements.show', $data->id))
-                        <a href="{{ route('coach.player-managements.show', $data->id) }}" class="nav-link text-70">
+                    @if( url()->previous() == route('coach.player-managements.show', $data->id) || url()->previous() == route('player-managements.show', $data->id))
+                        <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
+                            {{ route('player-managements.show', $data->id) }}
+                            @elseif(Auth::user()->hasRole('coach'))
+                            {{ route('coach.player-managements.show', $data->id) }}
+                            @endif" class="nav-link text-70">
                             <i class="material-icons icon--left">keyboard_backspace</i>
                             Back to Player Profile
                         </a>
@@ -31,7 +35,8 @@
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div
+            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($data->user->foto) }}"
                  width="104"
                  height="104"
@@ -42,7 +47,8 @@
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data->position->name }}</p>
             </div>
             @if(Auth::user()->hasRole('coach'))
-                <a class="btn btn-outline-white" id="addSkills" href="{{ route('coach.skill-assessments.create', $data->id) }}">
+                <a class="btn btn-outline-white" id="addSkills"
+                   href="{{ route('coach.skill-assessments.create', $data->id) }}">
                     <span class="material-icons mr-2">
                         edit
                     </span>
@@ -65,79 +71,79 @@
         {{--Skill Stats History Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Skill Stats History</div>
-{{--            <div class="ml-auto mr-2 form-group">--}}
-{{--                <label class="form-label mb-0" for="skill">Filter by skill</label>--}}
-{{--                <select class="form-control form-select" id="skill" name="skill">--}}
-{{--                    <option disabled selected>Select skill stats</option>--}}
-{{--                    @foreach($skillLabels as $label => $value)--}}
-{{--                        <option value="{{ $value }}">--}}
-{{--                            {{ $label }}--}}
-{{--                        </option>--}}
-{{--                    @endforeach--}}
-{{--                </select>--}}
-{{--            </div>--}}
-{{--            <div class="form-group mr-1">--}}
-{{--                <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>--}}
-{{--                <input id="startDateFilter"--}}
-{{--                    type="text"--}}
-{{--                    class="form-control"--}}
-{{--                    placeholder="Start Date"--}}
-{{--                   onfocus="(this.type='date')"--}}
-{{--                   onblur="(this.type='text')"/>--}}
-{{--            </div>--}}
-{{--            <div class="form-group">--}}
-{{--                <label class="form-label mb-0" for="endDateFilter"></label>--}}
-{{--                <input id="endDateFilter"--}}
-{{--                       type="text"--}}
-{{--                       class="form-control"--}}
-{{--                       placeholder="End Date"--}}
-{{--                       onfocus="(this.type='date')"--}}
-{{--                       onblur="(this.type='text')"/>--}}
-{{--            </div>--}}
+            {{--            <div class="ml-auto mr-2 form-group">--}}
+            {{--                <label class="form-label mb-0" for="skill">Filter by skill</label>--}}
+            {{--                <select class="form-control form-select" id="skill" name="skill">--}}
+            {{--                    <option disabled selected>Select skill stats</option>--}}
+            {{--                    @foreach($skillLabels as $label => $value)--}}
+            {{--                        <option value="{{ $value }}">--}}
+            {{--                            {{ $label }}--}}
+            {{--                        </option>--}}
+            {{--                    @endforeach--}}
+            {{--                </select>--}}
+            {{--            </div>--}}
+            {{--            <div class="form-group mr-1">--}}
+            {{--                <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>--}}
+            {{--                <input id="startDateFilter"--}}
+            {{--                    type="text"--}}
+            {{--                    class="form-control"--}}
+            {{--                    placeholder="Start Date"--}}
+            {{--                   onfocus="(this.type='date')"--}}
+            {{--                   onblur="(this.type='text')"/>--}}
+            {{--            </div>--}}
+            {{--            <div class="form-group">--}}
+            {{--                <label class="form-label mb-0" for="endDateFilter"></label>--}}
+            {{--                <input id="endDateFilter"--}}
+            {{--                       type="text"--}}
+            {{--                       class="form-control"--}}
+            {{--                       placeholder="End Date"--}}
+            {{--                       onfocus="(this.type='date')"--}}
+            {{--                       onblur="(this.type='text')"/>--}}
+            {{--            </div>--}}
         </div>
         <div class="card">
             <div class="card-body">
                 <canvas id="skillStatsHistoryChart"></canvas>
             </div>
         </div>
-{{--        <div class="row">--}}
-{{--            <div class="col-sm-5">--}}
-{{--                --}}{{--Skill Stats Radar Section--}}
-{{--                <div class="page-separator">--}}
-{{--                    <div class="page-separator__text">Skill Stats</div>--}}
-{{--                </div>--}}
-{{--                <div class="card">--}}
-{{--                    <div class="card-body">--}}
-{{--                        <canvas id="skillStatsChart"></canvas>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--            <div class="col-sm-7">--}}
-{{--                --}}{{--Skill Stats History Section--}}
-{{--                <div class="page-separator">--}}
-{{--                    <div class="page-separator__text">Skill Stats History</div>--}}
-{{--                    <select class="ml-auto mr-2 form-control form-select" id="skill" name="skill">--}}
-{{--                        <option disabled selected>Filter by skill</option>--}}
-{{--                        @foreach($skillLabels as $label => $value)--}}
-{{--                            <option value="{{ $value }}">--}}
-{{--                                {{ $label }}--}}
-{{--                            </option>--}}
-{{--                        @endforeach--}}
-{{--                    </select>--}}
-{{--                    <input--}}
-{{--                        id="startDateFilter"--}}
-{{--                        type="date"--}}
-{{--                        class="form-control"--}}
-{{--                        placeholder="Input start date"--}}
-{{--                    />--}}
-{{--                </div>--}}
-{{--                <div class="card">--}}
-{{--                    <div class="card-body">--}}
-{{--                        <canvas id="skillStatsHistoryChart"></canvas>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
+        {{--        <div class="row">--}}
+        {{--            <div class="col-sm-5">--}}
+        {{--                --}}{{--Skill Stats Radar Section--}}
+        {{--                <div class="page-separator">--}}
+        {{--                    <div class="page-separator__text">Skill Stats</div>--}}
+        {{--                </div>--}}
+        {{--                <div class="card">--}}
+        {{--                    <div class="card-body">--}}
+        {{--                        <canvas id="skillStatsChart"></canvas>--}}
+        {{--                    </div>--}}
+        {{--                </div>--}}
+        {{--            </div>--}}
+        {{--            <div class="col-sm-7">--}}
+        {{--                --}}{{--Skill Stats History Section--}}
+        {{--                <div class="page-separator">--}}
+        {{--                    <div class="page-separator__text">Skill Stats History</div>--}}
+        {{--                    <select class="ml-auto mr-2 form-control form-select" id="skill" name="skill">--}}
+        {{--                        <option disabled selected>Filter by skill</option>--}}
+        {{--                        @foreach($skillLabels as $label => $value)--}}
+        {{--                            <option value="{{ $value }}">--}}
+        {{--                                {{ $label }}--}}
+        {{--                            </option>--}}
+        {{--                        @endforeach--}}
+        {{--                    </select>--}}
+        {{--                    <input--}}
+        {{--                        id="startDateFilter"--}}
+        {{--                        type="date"--}}
+        {{--                        class="form-control"--}}
+        {{--                        placeholder="Input start date"--}}
+        {{--                    />--}}
+        {{--                </div>--}}
+        {{--                <div class="card">--}}
+        {{--                    <div class="card-body">--}}
+        {{--                        <canvas id="skillStatsHistoryChart"></canvas>--}}
+        {{--                    </div>--}}
+        {{--                </div>--}}
+        {{--            </div>--}}
+        {{--        </div>--}}
 
         {{--All Skill Stats Section--}}
         @if($allSkills == null)
@@ -154,7 +160,8 @@
             <div class="card">
                 <div class="card-Header d-flex align-items-center p-3">
                     <h4 class="card-title">SKILLS</h4>
-                    <div class="card-subtitle text-50 ml-auto">Last updated at {{ date('D, M d Y h:i A', strtotime($allSkills->updated_at)) }}</div>
+                    <div class="card-subtitle text-50 ml-auto">Last updated
+                        at {{ date('D, M d Y h:i A', strtotime($allSkills->updated_at)) }}</div>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
@@ -382,7 +389,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             const skillStatsChart = $('#skillStatsChart');
             const skillStatsHistoryChart = $('#skillStatsHistoryChart');
             const body = $('body');
@@ -418,12 +425,12 @@
                 data: {
                     labels: @json($skillStatsHistory['label']),
                     datasets: [
-                        @foreach($skillStatsHistory['data'] as $key => $value)
-                            {
-                                label: '{{ $key }}',
-                                data: @json($value),
-                                tension: 0.4,
-                            },
+                            @foreach($skillStatsHistory['data'] as $key => $value)
+                        {
+                            label: '{{ $key }}',
+                            data: @json($value),
+                            tension: 0.4,
+                        },
                         @endforeach
                     ]
                 },
