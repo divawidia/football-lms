@@ -42,6 +42,7 @@
                     <table class="table table-hover mb-0" id="table">
                         <thead>
                         <tr>
+                            <th>#</th>
                             <th>Name</th>
                             <th>Team</th>
                             <th>Email</th>
@@ -71,6 +72,7 @@
                     url: '{!! url()->current() !!}',
                 },
                 columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     {data: 'name', name: 'name'},
                     {data: 'teams.name', name: 'teams.name'},
                     {data: 'user.email', name: 'user.email'},
@@ -78,12 +80,7 @@
                     {data: 'age', name: 'age'},
                     {data: 'user.gender', name: 'user.gender'},
                     {data: 'status', name: 'status'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
+                    {data: 'action', name: 'action', orderable: false, searchable: false, width: '15%'
                     },
                 ]
             });
