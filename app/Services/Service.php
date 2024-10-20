@@ -58,6 +58,16 @@ class Service
         return  $data[$arrayKey];
     }
 
+    public function updateImage(array $data, string $arrayKey, string $storePath, string $previousImage){
+        if (array_key_exists($arrayKey, $data)){
+            $this->deleteImage($previousImage);
+            $data[$arrayKey] = $data[$arrayKey]->store($storePath, 'public');
+        }else{
+            $data[$arrayKey] = $previousImage;
+        }
+        return  $data[$arrayKey];
+    }
+
     public function secondToMinute($seconds){
         $minutes = floor($seconds / 60);  // Get the number of whole minutes
         $remaining_seconds = $seconds % 60;  // Get the remaining seconds

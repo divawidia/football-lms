@@ -130,44 +130,37 @@ class AdminService extends Service
         return compact('countries', 'certifications', 'specializations', 'fullname', 'coach');
     }
 
-    public function update(array $playerData, User $user): User
+    public function update(array $data, Admin $admin): Admin
     {
-        if (array_key_exists('foto', $playerData)){
-            $this->deleteImage($user->foto);
-            $playerData['foto'] = $playerData['foto']->store('assets/player-logo', 'public');
-        }else{
-            $playerData['foto'] = $user->foto;
-        }
-
-        $user->update($playerData);
-        $user->player->update($playerData);
-
-        return $user;
-    }
-    public function activate(User $user): User
-    {
-        $user->update(['status' => '1']);
-        return $user;
-    }
-
-    public function deactivate(User $user): User
-    {
-        $user->update(['status' => '0']);
-        return $user;
-    }
-
-    public function changePassword($data, Admin $admin){
-        $admin->user()->update([
-            'password' => bcrypt($data)
-        ]);
+        $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $admin->user->foto);
+        $admin->update($data);
+        $admin->user()->update($data);
         return $admin;
     }
 
-    public function destroy(User $user): User
+    public function activate(Admin $admin)
     {
-        $this->deleteImage($user->foto);
-        $user->player->delete();
-        $user->delete();
-        return $user;
+        return $admin->user()->update(['status' => '1']);
+    }
+
+    public function deactivate(Admin $admin)
+    {
+        return $admin->user()->update(['status' => '0']);
+    }
+
+    public function changePassword($data, Admin $admin)
+    {
+        return $admin->user()->update([
+            'password' => bcrypt($data)
+        ]);
+    }
+
+    public function destroy(Admin $admin)
+    {
+        $this->deleteImage($admin->user->foto);
+        $admin->delete();
+        $admin->user->roles()->detach();
+        $admin->user()->delete();
+        return $admin;
     }
 }

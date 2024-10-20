@@ -87,78 +87,53 @@ class AdminController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Admin $admin)
     {
-        $user = User::with('admin')->findOrFail($id);
-        $fullName = $user->firstName . ' ' . $user->lastName;
-        $action =  World::countries();
-        if ($action->success) {
-            $countries = $action->data;
-        }
-
         return view('pages.admins.managements.admins.edit',[
-            'user' => $user,
-            'fullName' => $fullName,
-            'countries' => $countries
+            'data' => $admin,
+            'fullName' => $this->adminService->getUserFullName($admin->user),
+            'countries' => $this->adminService->getCountryData()
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(AdminRequest $request, User $admin_management)
+    public function update(AdminRequest $request, Admin $admin)
     {
         $data = $request->validated();
-        $user = User::findOrFail($admin_management->id);
-        $admin = Admin::findOrFail($admin_management->admin->id);
+        $this->adminService->update($data, $admin);
 
-        if ($request->hasFile('foto')){
-            $data['foto'] = $data['foto']->store('assets/user-profile', 'public');
-        }
-
-        $user->update($data);
-
-        $admin->update($data);
-        $text = $user->firstName.' account successfully updated!';
-
+        $text = $data['firstName'].' '.$data['lastName'].' account successfully updated!';
         Alert::success($text);
         return redirect()->route('admin-managements.index');
     }
 
-    public function deactivate(string $id){
-        $user = User::findOrFail($id);
-        $user->update([
-            'status' => '0'
-        ]);
-        Alert::success($user->firstName.' account status successfully deactivated!');
-        return redirect()->route('admin-managements.index');
+    public function deactivate(Admin $admin)
+    {
+        $this->adminService->deactivate($admin);
+        $text = $admin->user->firstName.' '.$admin->user->lastName.' account status successfully updated!';
+        Alert::success($text);
+        return redirect()->route('admin-managements.show', $admin->id);
     }
 
-    public function activate(string $id){
-        $user = User::findOrFail($id);
-        $user->update([
-            'status' => '1'
-        ]);
-        Alert::success($user->firstName.' account status successfully activated!');
-        return redirect()->route('admin-managements.index');
+    public function activate(Admin $admin){
+        $this->adminService->activate($admin);
+        $text = $admin->user->firstName.' '.$admin->user->lastName.' account status successfully updated!';
+        Alert::success($text);
+        return redirect()->route('admin-managements.show', $admin->id);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Admin $admin)
     {
-        $user = User::with('admin')->findOrFail($id);
-
-        if (File::exists($user->foto) && $user->foto != 'images/undefined-user.png'){
-            File::delete($user->foto);
-        }
-
-        $user->admin->delete();
-        $user->delete();
-        $user->roles()->detach();
-
-        Alert::success($user->firstName.' account successfully deleted!');
-        return redirect()->route('admin-managements.index');
+        $result = $this->adminService->destroy($admin);
+        return response()->json([
+            'status' => 200,
+            'data' => $result,
+            'message' => 'Successfully delete admin'
+        ]);
     }
 }
