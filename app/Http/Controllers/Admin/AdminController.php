@@ -46,7 +46,7 @@ class AdminController extends Controller
                     }
                     return '
                         <div class="dropdown">
-                          <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
                                 more_vert
                             </span>
@@ -56,13 +56,9 @@ class AdminController extends Controller
                             <a class="dropdown-item" href="' . route('admin-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Admin</a>
                             '. $statusButton .'
                             <a class="dropdown-item" href="' . route('admin-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Admin Password</a>
-                            <form action="' . route('admin-managements.destroy', $item->userId) . '" method="POST">
-                                '.method_field("DELETE").'
-                                '.csrf_field().'
-                                <button type="submit" class="dropdown-item">
-                                    <span class="material-icons">delete</span> Delete Admin
-                                </button>
-                            </form>
+                            <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->userId.'">
+                                <span class="material-icons">delete</span> Delete Admin
+                            </button>
                           </div>
                         </div>';
                 })

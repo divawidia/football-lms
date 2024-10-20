@@ -8,28 +8,25 @@
 
     @section('content')
         <div class="pt-32pt">
-            <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-                <div class="flex d-flex flex-column flex-sm-row align-items-center mb-24pt mb-md-0">
-                    <div class="mb-24pt mb-sm-0 mr-sm-24pt">
-                        <h2 class="mb-0">Admins Management</h2>
-                        <ol class="breadcrumb p-0 m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item active">
-                                Admins Management
-                            </li>
-                        </ol>
-                    </div>
-                </div>
+            <div class="container">
+                <h2 class="mb-0">Admins Management</h2>
+                <ol class="breadcrumb p-0 m-0">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item active">
+                        Admins Management
+                    </li>
+                </ol>
             </div>
         </div>
 
-        <div class="container page__container page-section">
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                <div class="card-header">
-                    <a href="{{  route('admin-managements.create') }}" class="btn btn-primary" id="add-new">
-                        + Add New Admin
-                    </a>
-                </div>
+        <div class="container page-section">
+            <a href="{{  route('admin-managements.create') }}" class="btn btn-primary mb-3" id="add-new">
+                <span class="material-icons mr-2">
+                    add
+                </span>
+                Add New Admin
+            </a>
+            <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="table">
@@ -55,7 +52,7 @@
     @push('addon-script')
         <script>
             // AJAX DataTable
-            var datatable = $('#table').DataTable({
+            $('#table').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -79,19 +76,49 @@
                 ]
             });
 
-            // $('.delete-user').on('click', function () {
-            //     const id = $(this).attr('id');
-            //     Swal.fire({
-            //         title: "Are you sure?",
-            //         text: "You won't be able to revert this!",
-            //         icon: "warning",
-            //         showCancelButton: true,
-            //         confirmButtonText: "Yes, delete it!"
-            //     }).then((result) => {
-            //         if (result.isConfirmed) {
-            //             $(document).find('#delete-'+id).submit();
-            //         }
-            //     });
-            // });
+            // delete data alert
+            $('body').on('click', '.deleteAdmin', function () {
+                const id = $(this).attr('id');
+                Swal.fire({
+                    title: "Are you sure to delete this admin account?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#1ac2a1",
+                    cancelButtonColor: "#E52534",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('admin-managements.destroy', ['admin' => ':id']) }}".replace(':id', id),
+                            type: 'DELETE',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function () {
+                                Swal.fire({
+                                    title: 'Admin successfully archived!',
+                                    icon: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText:
+                                        'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Something went wrong when deleting data!",
+                                    text: errorThrown
+                                });
+                            }
+                        });
+                    }
+                });
+            });
         </script>
     @endpush

@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="pt-32pt">
-        <div class="container page__container d-flex flex-column">
+        <div class="container">
             <h2 class="mb-0 text-left">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div class="container page__container page-section">
+    <div class="container page-section">
         <div class="page-separator">
             <div class="page-separator__text">Invoices</div>
             <a href="{{ route('invoices.archived') }}" class="btn btn-sm btn-danger ml-auto ">
