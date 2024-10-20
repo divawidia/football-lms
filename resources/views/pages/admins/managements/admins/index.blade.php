@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    @include('pages.admins.managements.admins.form-modal.change-password')
+    @include('pages.managements.form-modal.change-password')
 @endsection
 
 @section('content')
@@ -82,7 +82,7 @@
                 ]
             });
 
-            body.on('click', '.changePassword',function (e) {
+            body.on('click', '.changePassword', function (e) {
                 const id = $(this).attr('id');
                 e.preventDefault();
                 $('#changePasswordModal').modal('show');

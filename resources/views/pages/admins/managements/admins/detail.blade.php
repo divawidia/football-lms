@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    @include('pages.admins.managements.admins.form-modal.change-password')
+    @include('pages.managements.form-modal.change-password')
 @endsection
 
 @section('content')
@@ -15,13 +15,15 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('admin-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Admin Lists</a>
+                    <a href="{{ route('admin-managements.index') }}" class="nav-link text-70"><i
+                            class="material-icons icon--left">keyboard_backspace</i> Back to Admin Lists</a>
                 </li>
             </ul>
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div
+            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($data->user->foto) }}"
                  width="104"
                  height="104"
@@ -94,7 +96,8 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Seen :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($data->user->lastSeen)) }}</div>
+                            <div
+                                class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($data->user->lastSeen)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Date of Birth :</p></div>
@@ -110,7 +113,8 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($data->user->created_at)) }}</div>
+                            <div
+                                class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($data->user->created_at)) }}</div>
                         </div>
                     </div>
                 </div>
@@ -148,7 +152,8 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($data->user->updated_at)) }}</div>
+                            <div
+                                class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($data->user->updated_at)) }}</div>
                         </div>
                     </div>
                 </div>
@@ -162,7 +167,7 @@
         $(document).ready(function () {
             const body = $('body');
 
-            body.on('click', '.changePassword',function (e) {
+            body.on('click', '.changePassword', function (e) {
                 const id = $(this).attr('id');
                 e.preventDefault();
                 $('#changePasswordModal').modal('show');
