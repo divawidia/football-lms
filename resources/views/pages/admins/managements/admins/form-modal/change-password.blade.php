@@ -1,9 +1,9 @@
 <!-- Modal edit player attendance -->
-<div class="modal fade" id="changePasswordAdminModal" tabindex="-1"
-     aria-labelledby="changePasswordAdminModalLabel" aria-hidden="true">
+<div class="modal fade" id="changePasswordModal" tabindex="-1"
+     aria-labelledby="changePasswordModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form action="" method="post" id="formChangePasswordAdminModal">
+            <form action="" method="post" id="formChangePasswordModal">
                 @method('PATCH')
                 @csrf
                 <div class="modal-header">
@@ -29,15 +29,15 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="add_password-confirm">Confirm Password</label>
-                        <small>(Optional)</small>
+                        <small class="text-danger">*</small>
                         <input type="password"
                                class="form-control"
                                name="password_confirmation" required id="add_password-confirm"
                                placeholder="Retype inputted password ...">
                     </div>
                     <span class="invalid-feedback password-confirm_error" role="alert">
-                                <strong></strong>
-                            </span>
+                        <strong></strong>
+                    </span>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

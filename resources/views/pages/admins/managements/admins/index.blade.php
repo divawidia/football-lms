@@ -85,11 +85,11 @@
             body.on('click', '.changePassword',function (e) {
                 const id = $(this).attr('id');
                 e.preventDefault();
-                $('#changePasswordAdminModal').modal('show');
+                $('#changePasswordModal').modal('show');
                 $('#userId').val(id);
             })
             // update admin password
-            $('#formChangePasswordAdminModal').on('submit', function (e) {
+            $('#formChangePasswordModal').on('submit', function (e) {
                 e.preventDefault();
                 const id = $('#userId').val();
                 $.ajax({
@@ -99,7 +99,7 @@
                     contentType: false,
                     processData: false,
                     success: function () {
-                        $('#changePasswordAdminModal').modal('hide');
+                        $('#changePasswordModal').modal('hide');
                         Swal.fire({
                             title: 'Accounts password successfully updated!',
                             icon: 'success',
