@@ -5,15 +5,12 @@ use App\Http\Controllers\Admin\AttendanceReportController;
 use App\Http\Controllers\Admin\CoachController;
 use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Coach\DashboardController as CoachDashboardController;
 use App\Http\Controllers\Admin\EventScheduleController;
 use App\Http\Controllers\Admin\GroupDivisionController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\LeaderboardController;
 use App\Http\Controllers\Admin\OpponentTeamController;
 use App\Http\Controllers\Admin\PerformanceReportController;
-use App\Http\Controllers\Admin\PlayerController;
-use App\Http\Controllers\Coach\PlayerController as CoachPlayerController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
@@ -22,7 +19,10 @@ use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TrainingVideoController;
 use App\Http\Controllers\Admin\TrainingVideoLessonController;
+use App\Http\Controllers\Coach\DashboardController as CoachDashboardController;
+use App\Http\Controllers\Coach\PlayerController as CoachPlayerController;
 use App\Http\Controllers\Coach\SkillAssessmentController;
+use App\Http\Controllers\PlayerController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -443,7 +443,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('dashboard', [CoachDashboardController::class, 'index'])->name('coach.dashboard');
 
             Route::prefix('player-managements')->group(function () {
-                Route::get('', [CoachPlayerController::class, 'index'])->name('coach.player-managements.index');
+                Route::get('', [PlayerController::class, 'coachIndex'])->name('coach.player-managements.index');
                 Route::prefix('{player}')->group(function () {
                     Route::get('', [CoachPlayerController::class, 'show'])->name('coach.player-managements.show');
                     Route::get('skill-stats', [CoachPlayerController::class, 'skillStatsDetail'])->name('coach.player-managements.skill-stats');

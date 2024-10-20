@@ -11,7 +11,15 @@
         <div class="container">
             <h2 class="mb-0">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item">
+                    <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
+                        {{ route('admin.dashboard') }}
+                        @elseif(Auth::user()->hasRole('coach'))
+                        {{ route('coach.dashboard') }}
+                        @endif">
+                        Home
+                    </a>
+                </li>
                 <li class="breadcrumb-item active">
                     @yield('title')
                 </li>
@@ -20,12 +28,14 @@
     </div>
 
     <div class="container page-section">
-        <a href="{{  route('player-managements.create') }}" class="btn btn-primary mb-3" id="add-new">
+        @if(Auth::user()->hasRole('admin|Super-Admin'))
+            <a href="{{  route('player-managements.create') }}" class="btn btn-primary mb-3" id="add-new">
                 <span class="material-icons mr-2">
                     add
                 </span>
-            Add New Player
-        </a>
+                Add New Player
+            </a>
+        @endif
         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
             <div class="card-body">
                 <div class="table-responsive">
@@ -77,6 +87,8 @@
                     },
                 ]
             });
+
+            @if(Auth::user()->hasRole('admin|Super-Admin'))
             $('body').on('click', '.delete-user', function () {
                 let id = $(this).attr('id');
 
@@ -114,6 +126,7 @@
                     }
                 });
             });
+            @endif
         });
     </script>
 @endpush

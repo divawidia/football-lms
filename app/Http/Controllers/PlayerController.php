@@ -1,30 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerRequest;
-use App\Models\Admin;
 use App\Models\Player;
-use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\PlayerService;
-use DateTime;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Nnjeim\World\World;
 use RealRashid\SweetAlert\Facades\Alert;
-use Yajra\DataTables\Facades\DataTables;
-use function PHPUnit\Framework\isEmpty;
 
 class PlayerController extends Controller
 {
@@ -43,7 +33,14 @@ class PlayerController extends Controller
         if (\request()->ajax()){
             return $this->playerService->index();
         }
-        return view('pages.admins.managements.players.index');
+        return view('pages.managements.players.index');
+    }
+    public function coachIndex()
+    {
+        if (request()->ajax()) {
+            return $this->playerService->coachPlayerIndex($this->getLoggedCoachUser());
+        }
+        return view('pages.managements.players.index');
     }
 
     public function playerTeams(User $player)
