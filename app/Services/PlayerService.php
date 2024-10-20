@@ -234,17 +234,9 @@ class PlayerService extends Service
         return $player;
     }
 
-    public function create()
+    public function getPlayerPosition()
     {
-        $action =  World::countries();
-        if ($action->success) {
-            $countries = $action->data;
-        }
-
-        $positions = PlayerPosition::all();
-        $teams = $this->getAcademyTeams();
-
-        return compact('countries', 'positions', 'teams');
+        return PlayerPosition::all();
     }
 
     public  function store(array $playerData, $academyId){

@@ -30,11 +30,12 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        if (\request()->ajax()){
+        if (\request()->ajax()) {
             return $this->playerService->index();
         }
         return view('pages.managements.players.index');
     }
+
     public function coachIndex()
     {
         if (request()->ajax()) {
@@ -45,9 +46,7 @@ class PlayerController extends Controller
 
     public function playerTeams(User $player)
     {
-        if (request()->ajax()) {
-            return $this->playerService->playerTeams($player->player);
-        }
+        return $this->playerService->playerTeams($player->player);
     }
 
     public function removeTeam(User $player, Team $team)
@@ -60,12 +59,10 @@ class PlayerController extends Controller
      */
     public function create()
     {
-        $data = $this->playerService->create();
-
-        return view('pages.admins.managements.players.create', [
-            'countries' => $data['countries'],
-            'positions' => $data['positions'],
-            'teams' => $data['teams']
+        return view('pages.managements.players.create', [
+            'countries' => $this->playerService->getCountryData(),
+            'positions' => $this->playerService->getPlayerPosition(),
+            'teams' => $this->playerService->getAcademyTeams(),
         ]);
     }
 
@@ -77,7 +74,7 @@ class PlayerController extends Controller
         $data = $request->validated();
         $this->playerService->store($data, Auth::user()->academyId);
 
-        $text = $data['firstName'].' account successfully added!';
+        $text = $data['firstName'] . ' account successfully added!';
         Alert::success($text);
         return redirect()->route('player-managements.index');
     }
@@ -89,7 +86,7 @@ class PlayerController extends Controller
     {
         $overview = $this->playerService->show($player);
         $performanceReviews = $player->playerPerformanceReview;
-        $playerSkillStats =$this->playerService->skillStatsChart($player);
+        $playerSkillStats = $this->playerService->skillStatsChart($player);
 
         return view('pages.coaches.managements.players.detail', [
             'data' => $player,
@@ -107,11 +104,11 @@ class PlayerController extends Controller
         $fullname = $player->firstName . ' ' . $player->lastName;
         $positions = PlayerPosition::all();
         $teams = Team::all();
-        $action =  World::countries();
+        $action = World::countries();
         if ($action->success) {
             $countries = $action->data;
         }
-        return view('pages.admins.managements.players.edit',[
+        return view('pages.admins.managements.players.edit', [
             'player' => $player,
             'fullname' => $fullname,
             'positions' => $positions,
@@ -129,7 +126,7 @@ class PlayerController extends Controller
 
         $this->playerService->update($data, $player);
 
-        $text = $player->firstName.' successfully updated!';
+        $text = $player->firstName . ' successfully updated!';
         Alert::success($text);
         return redirect()->route('player-managements.show', $player->player->id);
     }
@@ -145,7 +142,7 @@ class PlayerController extends Controller
                 'status' => 422,
                 'errors' => $validator->errors()->toArray()
             ]);
-        }else{
+        } else {
             $player = $this->playerService->updateTeams($validator->getData()['teams'], $player);
             return response()->json($player, 204);
         }
@@ -155,24 +152,26 @@ class PlayerController extends Controller
     {
         $this->playerService->deactivate($player);
 
-        Alert::success($player->firstName.' account status successfully deactivated!');
+        Alert::success($player->firstName . ' account status successfully deactivated!');
         return redirect()->route('player-managements.index');
     }
 
     public function activate(User $player)
     {
         $this->playerService->activate($player);
-        Alert::success($player->firstName.' account status successfully activated!');
+        Alert::success($player->firstName . ' account status successfully activated!');
         return redirect()->route('player-managements.index');
     }
 
-    public function changePasswordPage(Player $player){
-        return view('pages.admins.managements.players.change-password',[
+    public function changePasswordPage(Player $player)
+    {
+        return view('pages.admins.managements.players.change-password', [
             'data' => $player,
         ]);
     }
 
-    public function changePassword(Request $request, User $player){
+    public function changePassword(Request $request, User $player)
+    {
         $validator = Validator::make($request->all(), [
             'password' => ['required', 'string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols()]
         ]);
@@ -182,7 +181,7 @@ class PlayerController extends Controller
         }
 
         $this->playerService->changePassword($validator->getData()['password'], $player);
-        Alert::success($player->firstName.' account password successfully updated!');
+        Alert::success($player->firstName . ' account password successfully updated!');
         return redirect()->route('player-managements.index');
     }
 
