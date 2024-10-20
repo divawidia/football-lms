@@ -83,12 +83,20 @@ Route::group(['middleware' => ['auth']], function () {
         Route::prefix('admin')->group(function () {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-            Route::resource('admin-managements', AdminController::class);
-            Route::prefix('admin-managements/{admin}')->group(function () {
-                Route::patch('deactivate', [AdminController::class, 'deactivate'])->name('deactivate-admin');
-                Route::patch('activate', [AdminController::class, 'activate'])->name('activate-admin');
-                Route::get('change-password', [AdminController::class, 'changePasswordPage'])->name('admin-managements.change-password-page');
-                Route::patch('change-password', [AdminController::class, 'changePassword'])->name('admin-managements.change-password');
+            Route::prefix('admin-managements')->group(function () {
+                Route::get('', [AdminController::class, 'index'])->name('admin-managements.index');
+                Route::post('', [AdminController::class, 'store'])->name('admin-managements.store');
+                Route::get('create', [AdminController::class, 'create'])->name('admin-managements.create');
+
+                Route::prefix('{admin}')->group(function () {
+                    Route::get('', [AdminController::class, 'show'])->name('admin-managements.show');
+                    Route::patch('deactivate', [AdminController::class, 'deactivate'])->name('deactivate-admin');
+                    Route::patch('activate', [AdminController::class, 'activate'])->name('activate-admin');
+                    Route::patch('change-password', [AdminController::class, 'changePassword'])->name('admin-managements.change-password');
+                    Route::get('edit', [AdminController::class, 'edit'])->name('admin-managements.edit');
+                    Route::put('', [AdminController::class, 'update'])->name('admin-managements.update');
+                    Route::delete('', [AdminController::class, 'destroy'])->name('admin-managements.destroy');
+                });
             });
 
             Route::prefix('player-managements')->group(function () {

@@ -6,6 +6,10 @@
     Admins Management
 @endsection
 
+@section('modal')
+    @include('pages.admins.managements.admins.form-modal.change-password')
+@endsection
+
     @section('content')
         <div class="pt-32pt">
             <div class="container">
@@ -20,7 +24,7 @@
         </div>
 
         <div class="container page-section">
-            <a href="{{  route('admin-managements.create') }}" class="btn btn-primary mb-3" id="add-new">
+            <a href="{{ route('admin-managements.create') }}" class="btn btn-primary mb-3">
                 <span class="material-icons mr-2">
                     add
                 </span>
@@ -51,74 +55,118 @@
     @endsection
     @push('addon-script')
         <script>
-            // AJAX DataTable
-            $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! url()->current() !!}',
-                },
-                columns: [
-                    { data: 'name', name: 'name' },
-                    { data: 'user.email', name: 'user.email'},
-                    { data: 'user.phoneNumber', name: 'user.phoneNumber' },
-                    { data: 'age', name: 'age' },
-                    { data: 'user.gender', name: 'user.gender' },
-                    { data: 'status', name: 'status' },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
+            $(document).ready(function () {
+                const body = $('body');
+                // AJAX DataTable
+                $('#table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{!! url()->current() !!}',
                     },
-                ]
-            });
+                    columns: [
+                        {data: 'name', name: 'name'},
+                        {data: 'user.email', name: 'user.email'},
+                        {data: 'user.phoneNumber', name: 'user.phoneNumber'},
+                        {data: 'age', name: 'age'},
+                        {data: 'user.gender', name: 'user.gender'},
+                        {data: 'status', name: 'status'},
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            width: '15%'
+                        },
+                    ]
+                });
 
-            // delete data alert
-            $('body').on('click', '.deleteAdmin', function () {
-                const id = $(this).attr('id');
-                Swal.fire({
-                    title: "Are you sure to delete this admin account?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('admin-managements.destroy', ['admin' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Admin successfully archived!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    allowOutsideClick: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
+                body.on('click', 'changePassoword',function (e) {
+                    e.preventDefault();
+                    $('#changePasswordAdminModal').modal('show');
+                })
+                // update admin password
+                $('#formChangePasswordAdminModal').on('submit', function (e) {
+                    e.preventDefault();
+                    const id = $('#userId').val();
+                    $.ajax({
+                        url: "{{ route('admin-managements.change-password', ['admin' => ":id"]) }}".replace(':id', id),
+                        type: $(this).attr('method'),
+                        data: new FormData(this),
+                        contentType: false,
+                        processData: false,
+                        success: function () {
+                            $('#changePasswordAdminModal').modal('hide');
+                            Swal.fire({
+                                title: 'Player attendance successfully updated!',
+                                icon: 'success',
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                confirmButtonColor: "#1ac2a1",
+                                confirmButtonText:
+                                    'Ok!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function (xhr) {
+                            const response = JSON.parse(xhr.responseText);
+                            console.log(response);
+                            $.each(response.errors, function (key, val) {
+                                $('span.' + key + '_error').text(val[0]);
+                                $("#add_" + key).addClass('is-invalid');
+                            });
+                        }
+                    });
+                });
+
+                // delete data alert
+                body.on('click', '.deleteAdmin', function () {
+                    const id = $(this).attr('id');
+                    Swal.fire({
+                        title: "Are you sure to delete this admin account?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#1ac2a1",
+                        cancelButtonColor: "#E52534",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('admin-managements.destroy', ['admin' => ':id']) }}".replace(':id', id),
+                                type: 'DELETE',
+                                data: {
+                                    _token: "{{ csrf_token() }}"
+                                },
+                                success: function () {
+                                    Swal.fire({
+                                        title: 'Admin successfully archived!',
+                                        icon: 'success',
+                                        showCancelButton: false,
+                                        allowOutsideClick: false,
+                                        confirmButtonColor: "#1ac2a1",
+                                        confirmButtonText:
+                                            'Ok!'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            location.reload();
+                                        }
+                                    });
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Something went wrong when deleting data!",
+                                        text: errorThrown
+                                    });
+                                }
+                            });
+                        }
+                    });
                 });
             });
         </script>
