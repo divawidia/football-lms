@@ -121,8 +121,24 @@ class AdminService extends Service
     public function update(array $data, Admin $admin): Admin
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $admin->user->foto);
-        $admin->update($data);
-        $admin->user()->update($data);
+        $admin->update([
+            'position'=> $data['position'],
+            'hireDate'=> $data['hireDate'],
+        ]);
+        $admin->user()->update([
+            'firstName' => $data['firstName'],
+            'lastName'=> $data['lastName'],
+            'email'=> $data['email'],
+            'foto'=> $data['foto'],
+            'dob'=> $data['dob'],
+            'gender'=> $data['gender'],
+            'address'=> $data['address'],
+            'state_id'=> $data['state_id'],
+            'city_id'=> $data['city_id'],
+            'country_id'=> $data['country_id'],
+            'zipCode'=> $data['zipCode'],
+            'phoneNumber'=> $data['phoneNumber'],
+        ]);
         return $admin;
     }
 

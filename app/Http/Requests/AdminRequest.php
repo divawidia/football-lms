@@ -27,19 +27,19 @@ class AdminRequest extends FormRequest
         return [
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->admin_management)],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->admin->user)],
             'password' => ['string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols(), 'nullable'],
             'gender' => ['required', 'string', Rule::in('male', 'female')],
-            'dob' => ['required', 'date'],
+            'dob' => ['required', 'date', 'before:today'],
             'address' => ['required', 'string'],
             'phoneNumber' => ['required', 'string'],
             'zipCode' => ['required', 'numeric'],
-            'foto' => ['image', 'nullable'],
-            'country_id' => ['required'],
+            'foto' => ['image', 'max:1024', 'nullable'],
+            'country_id' => ['required', Rule::exists('countries', 'id')],
             'status' => [Rule::in('1'), 'nullable'],
-            'state_id' => ['required'],
-            'city_id' => ['required'],
-            'hireDate' => ['required', 'date'],
+            'state_id' => ['required', Rule::exists('states', 'id')],
+            'city_id' => ['required', Rule::exists('cities', 'id')],
+            'hireDate' => ['required', 'date', 'before_or_equal:today'],
             'position' => ['required', 'string']
         ];
     }

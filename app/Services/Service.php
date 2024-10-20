@@ -60,7 +60,9 @@ class Service
 
     public function updateImage(array $data, string $arrayKey, string $storePath, string $previousImage){
         if (array_key_exists($arrayKey, $data)){
-            $this->deleteImage($previousImage);
+            if ($previousImage != 'images/undefined-user.png' || $previousImage != 'images/video-preview.png'){
+                $this->deleteImage($previousImage);
+            }
             $data[$arrayKey] = $data[$arrayKey]->store($storePath, 'public');
         }else{
             $data[$arrayKey] = $previousImage;

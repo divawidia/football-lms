@@ -396,14 +396,42 @@
                         $('#city_id option[value="' + idCity + '"]').attr('selected', 'selected');
                     }
                 });
-                foto.onchange = evt => {
-                    preview = document.getElementById('preview');
-                    preview.style.display = 'block';
-                    const [file] = foto.files
-                    if (file) {
-                        preview.src = URL.createObjectURL(file)
-                    }
-                }
+
+                $('.country-form').on('change', function () {
+                    const idCountry = this.value;
+                    $.ajax({
+                        url: "{{url('api/states')}}",
+                        data: {
+                            fields: 'states',
+                            "filters[country_id]": idCountry,
+                        },
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (result) {
+                            $('#state_id').html('<option disabled selected>Select State</option>');
+                            $.each(result.data, function (key, value) {
+                                $('#state_id').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        }
+                    });
+                });
+                $('#state_id').on('change', function () {
+                    var idState = this.value;
+                    $.ajax({
+                        url: "{{url('api/cities')}}",
+                        data: {
+                            fields: 'cities',
+                            "filters[state_id]": idState,
+                        },
+                        dataType: 'json',
+                        success: function (result) {
+                            $('#city_id').html('<option disabled selected>Select City</option>');
+                            $.each(result.data, function (key, value) {
+                                $('#city_id').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        }
+                    });
+                });
             });
         </script>
     @endpush

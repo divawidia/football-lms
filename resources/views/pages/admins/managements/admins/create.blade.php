@@ -336,14 +336,6 @@
                     }
                 });
             });
-            foto.onchange = evt => {
-                preview = document.getElementById('preview');
-                preview.style.display = 'block';
-                const [file] = foto.files
-                if (file) {
-                    preview.src = URL.createObjectURL(file)
-                }
-            }
         });
     </script>
 @endpush

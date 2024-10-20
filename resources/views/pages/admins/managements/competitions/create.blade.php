@@ -542,21 +542,6 @@
         <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>
         <script>
             $(document).ready(function () {
-                function imagePreview(inputId, imageId){
-                    document.getElementById(inputId).onchange = evt => {
-                        preview = document.getElementById(imageId);
-                        preview.style.display = 'block';
-                        const [file] = document.getElementById(inputId).files
-                        if (file) {
-                            preview.src = URL.createObjectURL(file)
-                        }
-                    }
-                }
-
-                imagePreview('logo', 'preview');
-                imagePreview('add_logo', 'opponentTeamPreview');
-                imagePreview('add_logoTeam', 'teamPreview');
-
                 $('#addNewOpponentTeam').on('click', function(e) {
                     e.preventDefault();
                     $('#createNewOpponentTeamModal').modal('show');
