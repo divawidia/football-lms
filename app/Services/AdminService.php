@@ -2,25 +2,13 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\Controller;
 use App\Models\Admin;
-use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
-use App\Models\Player;
-use App\Models\PlayerParrent;
-use App\Models\PlayerPosition;
-use App\Models\Team;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
 use Nnjeim\World\World;
-use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
 class AdminService extends Service
@@ -35,7 +23,7 @@ class AdminService extends Service
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">block</span> Deactivate Admin</a>
+                                                <span class="material-icons mr-2 text-danger">block</span> Deactivate Admin</a>
                                             </button>
                                         </form>';
                 }else{
@@ -43,7 +31,7 @@ class AdminService extends Service
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">check_circle</span> Activate Admin</a>
+                                                <span class="material-icons mr-2 text-danger">check_circle</span> Activate Admin</a>
                                             </button>
                                         </form>';
                 }
@@ -55,12 +43,12 @@ class AdminService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('admin-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Admin</a>
-                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Admin</a>
+                            <a class="dropdown-item" href="' . route('admin-managements.edit', $item->id) . '"><span class="material-icons mr-2">edit</span> Edit Admin</a>
+                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons mr-2">visibility</span> View Admin</a>
                             '. $statusButton .'
-                            <a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons">lock</span> Change Admin Password</a>
+                            <a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons mr-2">lock</span> Change Admin Password</a>
                             <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->id.'">
-                                <span class="material-icons">delete</span> Delete Admin
+                                <span class="material-icons mr-2 text-danger">delete</span> Delete Admin
                             </button>
                           </div>
                         </div>';

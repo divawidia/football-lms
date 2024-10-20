@@ -41,7 +41,7 @@
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('admin-managements.edit', $data->id) }}">
-                        <span class="material-icons mr-2 text-primary">edit</span>
+                        <span class="material-icons mr-2 ">edit</span>
                         Edit admin profile
                     </a>
                     @if($data->user->status == '1')
@@ -62,7 +62,7 @@
                         </form>
                     @endif
                     <a class="dropdown-item changePassword" id="{{ $data->id }}">
-                        <span class="material-icons mr-2 text-primary">lock</span>
+                        <span class="material-icons mr-2 ">lock</span>
                         Change admins Account Password
                     </a>
                     <button type="button" class="dropdown-item deleteAdmin" id="{{$data->id}}">
