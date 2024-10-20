@@ -45,7 +45,7 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="{{ route('player-managements.edit', $data->id) }}"><span class="material-icons">edit</span> Edit Player</a>
-                        @if($data->status == '1')
+                        @if($data->user->status == '1')
                             <form action="{{ route('deactivate-player', $data->id) }}" method="POST">
                                 @method("PATCH")
                                 @csrf
@@ -532,6 +532,7 @@
                 </div>
             </div>
         @endif
+        <div class="row">
         @foreach($overview['upcomingTrainings'] as $training)
             <div class="col-lg-6">
                 <a class="card" href="@if(Auth::user()->hasRole('admin'))
@@ -572,6 +573,7 @@
                 </a>
             </div>
         @endforeach
+        </div>
 
         {{--Training Histories Section--}}
         <div class="page-separator">

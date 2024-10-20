@@ -134,7 +134,7 @@ class PlayerController extends Controller
 
         $text = $player->firstName.' successfully updated!';
         Alert::success($text);
-        return redirect()->route('player-managements.show', $player->id);
+        return redirect()->route('player-managements.show', $player->player->id);
     }
 
     public function updateTeams(Request $request, Player $player)
@@ -154,25 +154,24 @@ class PlayerController extends Controller
         }
     }
 
-    public function deactivate(User $player){
+    public function deactivate(User $player)
+    {
         $this->playerService->deactivate($player);
 
         Alert::success($player->firstName.' account status successfully deactivated!');
         return redirect()->route('player-managements.index');
     }
 
-    public function activate(User $player){
+    public function activate(User $player)
+    {
         $this->playerService->activate($player);
         Alert::success($player->firstName.' account status successfully activated!');
         return redirect()->route('player-managements.index');
     }
 
-    public function changePasswordPage(User $player){
-        $fullName = $player->firstName . ' ' . $player->lastName;
-
+    public function changePasswordPage(Player $player){
         return view('pages.admins.managements.players.change-password',[
-            'user' => $player,
-            'fullName' => $fullName
+            'data' => $player,
         ]);
     }
 
