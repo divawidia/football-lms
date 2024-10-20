@@ -60,14 +60,10 @@ class AttendanceReportController extends Controller
     }
 
     public function matchDatatable(Player $player){
-        if (\request()->ajax()){
             return $this->attendanceReportService->dataTablesMatch($player);
-        }
     }
 
     public function trainingTable(Player $player){
-        if (\request()->ajax()){
             return $this->attendanceReportService->dataTablesTraining($player);
-        }
     }
 }

@@ -6,6 +6,10 @@
     @yield('title')
 @endsection
 
+@section('modal')
+    @include('pages.managements.form-modal.change-password')
+@endsection
+
 @section('content')
     <nav class="navbar navbar-light border-bottom border-top px-0">
         <div class="container page__container">
@@ -37,14 +41,16 @@
             </div>
             @if(Auth::user()->hasRole('admin|Super-Admin'))
                 <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
                         Action
                         <span class="material-icons ml-3">
                         keyboard_arrow_down
                     </span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('player-managements.edit', $data->id) }}"><span class="material-icons">edit</span> Edit Player</a>
+                        <a class="dropdown-item" href="{{ route('player-managements.edit', $data->id) }}"><span
+                                class="material-icons">edit</span> Edit Player</a>
                         @if($data->user->status == '1')
                             <form action="{{ route('deactivate-player', $data->id) }}" method="POST">
                                 @method("PATCH")
@@ -62,7 +68,8 @@
                                 </button>
                             </form>
                         @endif
-                        <a class="dropdown-item changePassword" id="{{ $data->id }}"><span class="material-icons">lock</span> Change Player Password</a>
+                        <a class="dropdown-item changePassword" id="{{ $data->id }}"><span
+                                class="material-icons">lock</span> Change Player Password</a>
                         <button type="button" class="dropdown-item delete-user" id="{{$data->id}}">
                             <span class="material-icons text-danger">delete</span> Delete Player
                         </button>
@@ -407,6 +414,14 @@
         {{--Parents/Guardians Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Parents/Guardians</div>
+            @if(Auth::user()->hasRole('admin|Super-Admin'))
+                <a href="{{  route('player-parents.create', $data->id) }}" class="btn btn-sm btn-primary ml-auto" id="add-new">
+                <span class="material-icons mr-2">
+                    add
+                </span>
+                    Add New
+                </a>
+            @endif
         </div>
         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
             <div class="card-body">
@@ -533,46 +548,46 @@
             </div>
         @endif
         <div class="row">
-        @foreach($overview['upcomingTrainings'] as $training)
-            <div class="col-lg-6">
-                <a class="card" href="@if(Auth::user()->hasRole('admin|Super-Admin'))
+            @foreach($overview['upcomingTrainings'] as $training)
+                <div class="col-lg-6">
+                    <a class="card" href="@if(Auth::user()->hasRole('admin|Super-Admin'))
                     {{ route('training-schedules.show', $training->id) }}
                     @elseif(Auth::user()->hasRole('coach'))
                     {{ route('coach.training-schedules.show', $training->id) }}
                     @endif">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-6 d-flex flex-column flex-md-row align-items-center">
-                                <img src="{{ Storage::url($training->teams[0]->logo) }}"
-                                     width="50"
-                                     height="50"
-                                     class="rounded-circle img-object-fit-cover"
-                                     alt="team-logo">
-                                <div class="ml-md-3 text-center text-md-left">
-                                    <h5 class="mb-0">{{$training->teams[0]->teamName}}</h5>
-                                    <p class="text-50 lh-1 mb-0">{{$training->teams[0]->ageGroup}}</p>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6 d-flex flex-column flex-md-row align-items-center">
+                                    <img src="{{ Storage::url($training->teams[0]->logo) }}"
+                                         width="50"
+                                         height="50"
+                                         class="rounded-circle img-object-fit-cover"
+                                         alt="team-logo">
+                                    <div class="ml-md-3 text-center text-md-left">
+                                        <h5 class="mb-0">{{$training->teams[0]->teamName}}</h5>
+                                        <p class="text-50 lh-1 mb-0">{{$training->teams[0]->ageGroup}}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6 d-flex flex-column">
-                                <div class="mr-2">
-                                    <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                                    {{ date('D, M d Y', strtotime($training->date)) }}
-                                </div>
-                                <div class="mr-2">
-                                    <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                                    {{ date('h:i A', strtotime($training->startTime)) }}
-                                    - {{ date('h:i A', strtotime($training->endTime)) }}
-                                </div>
-                                <div>
-                                    <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                                    {{ $training->place }}
+                                <div class="col-6 d-flex flex-column">
+                                    <div class="mr-2">
+                                        <i class="material-icons text-danger icon--left icon-16pt">event</i>
+                                        {{ date('D, M d Y', strtotime($training->date)) }}
+                                    </div>
+                                    <div class="mr-2">
+                                        <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
+                                        {{ date('h:i A', strtotime($training->startTime)) }}
+                                        - {{ date('h:i A', strtotime($training->endTime)) }}
+                                    </div>
+                                    <div>
+                                        <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
+                                        {{ $training->place }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </a>
-            </div>
-        @endforeach
+                    </a>
+                </div>
+            @endforeach
         </div>
 
         {{--Training Histories Section--}}
@@ -707,7 +722,7 @@
                     {data: 'email', name: 'email'},
                     {data: 'phoneNumber', name: 'phoneNumber'},
                     {data: 'relations', name: 'relations'},
-                    @if(Auth::user()->hasRole('admin|Super-Admin'))
+                        @if(Auth::user()->hasRole('admin|Super-Admin'))
                     {
                         data: 'action',
                         name: 'action',
@@ -733,7 +748,7 @@
                 columns: [
                     {data: 'name', name: 'name'},
                     {data: 'date', name: 'date'},
-                    @if(Auth::user()->hasRole('admin|Super-Admin'))
+                        @if(Auth::user()->hasRole('admin|Super-Admin'))
                     {
                         data: 'action',
                         name: 'action',
@@ -836,7 +851,7 @@
             });
 
             @if(Auth::user()->hasRole('admin|Super-Admin'))
-            $('.delete-user').on('click', function() {
+            $('.delete-user').on('click', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -855,7 +870,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function() {
+                            success: function () {
                                 Swal.fire({
                                     title: "Player's account successfully deleted!",
                                     icon: 'success',
@@ -925,7 +940,7 @@
                 });
             });
 
-            body.on('click', '.delete-parent', function() {
+            body.on('click', '.delete-parent', function () {
                 let idParent = $(this).attr('id');
 
                 Swal.fire({
@@ -944,14 +959,14 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 Swal.fire({
                                     icon: "success",
                                     title: "Player's parent/guardian successfully deleted!",
                                 });
                                 parentsTable.ajax.reload();
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -963,7 +978,7 @@
                 });
             });
 
-            body.on('click', '.delete-team', function() {
+            body.on('click', '.delete-team', function () {
                 const idTeam = $(this).attr('id');
 
                 Swal.fire({
@@ -982,7 +997,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 Swal.fire({
                                     title: "Team successfully removed from player!",
                                     icon: 'success',
@@ -996,7 +1011,7 @@
                                     }
                                 });
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -1008,12 +1023,12 @@
                 });
             });
 
-            $('#add-team').on('click', function(e) {
+            $('#add-team').on('click', function (e) {
                 e.preventDefault();
                 $('#addTeamModal').modal('show');
             });
 
-            $('#formAddTeam').on('submit', function(e) {
+            $('#formAddTeam').on('submit', function (e) {
                 e.preventDefault();
                 $.ajax({
                     url: "{{ route('player-managements.updateTeams', ['player' => $data->id]) }}",
@@ -1021,7 +1036,7 @@
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function() {
+                    success: function () {
                         $('#addTeamModal').modal('hide');
                         Swal.fire({
                             title: "Team successfully added to player!",
@@ -1036,9 +1051,9 @@
                             }
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         const response = JSON.parse(xhr.responseText);
-                        $.each(response.errors, function(key, val) {
+                        $.each(response.errors, function (key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("select#add_" + key).addClass('is-invalid');
                         });

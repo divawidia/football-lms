@@ -169,7 +169,6 @@ class AttendanceReportService extends Service
 
         return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage', 'lineChart', 'doughnutChart');
     }
-
     public function coachIndex($coach){
         $teams = $this->coachManagedTeams($coach);
 
@@ -376,7 +375,11 @@ class AttendanceReportService extends Service
     }
 
     public function dataTablesTraining(Player $player){
-        return Datatables::of($player->schedules()->where('eventType', 'Training')->get())
+        $data = $player->schedules()
+            ->where('eventType', 'Training')
+            ->where('status', '0')
+            ->get();
+        return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return '<a class="btn btn-sm btn-outline-secondary" href="' . route('training-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View training detail">
                             <span class="material-icons">visibility</span>
@@ -432,9 +435,12 @@ class AttendanceReportService extends Service
             ->rawColumns(['action','team','date','status', 'attendanceStatus', 'last_updated', 'note'])
             ->make();
     }
-
     public function dataTablesMatch(Player $player){
-        return Datatables::of($player->schedules()->where('eventType', 'Match')->get())
+        $data = $player->schedules()
+            ->where('eventType', 'Match')
+            ->where('status', '0')
+            ->get();
+        return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View match detail">
                             <span class="material-icons">visibility</span>

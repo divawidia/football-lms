@@ -4,97 +4,76 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerParentRequest;
+use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\User;
+use App\Services\PlayerParentService;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
 class PlayerParentController extends Controller
 {
-    public function index(User $player)
-    {
+    private PlayerParentService $playerParentService;
 
-        if (request()->ajax()) {
-            $query = PlayerParrent::where('playerId', $player->player->id);
-            return Datatables::of($query)
-                ->addColumn('action', function ($item) use ($player) {
-                    return '
-                        <div class="dropdown">
-                          <button class="btn btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('player-parents.edit', ['player'=>$player->id,'parent'=>$item->id]) . '"><span class="material-icons">edit</span> Edit Parent/Guardian</a>
-                            <button type="button" class="dropdown-item delete-parent" id="' . $item->id . '">
-                                <span class="material-icons">delete</span> Delete Parent/Guardian
-                            </button>
-                          </div>
-                        </div>';
-                })
-                ->rawColumns(['action'])
-                ->make();
-        }
-        return view('pages.admins.managements.players.detail');
+    public function __construct(PlayerParentService $playerParentService)
+    {
+        $this->playerParentService = $playerParentService;
     }
 
-    public function create(string $id)
+    public function index(Player $player)
     {
-        $user = User::findOrFail($id);
-        $fullname = $user->firstName . ' ' . $user->lastName;
-        return view('pages.admins.managements.players.player-parents.create',[
-            'user' => $user,
-            'fullname' => $fullname
+
+        return $this->playerParentService->index($player);
+    }
+
+    public function create(Player $player)
+    {
+        return view('pages.managements.players.player-parents.create', [
+            'data' => $player,
+            'fullName' => $this->playerParentService->getUserFullName($player->user)
         ]);
     }
 
-    public function store(PlayerParentRequest $request, string $id)
+    public function store(PlayerParentRequest $request, Player $player)
     {
-        $user = User::with('player')->findOrFail($id);
         $data = $request->validated();
-        $data['playerId'] = $user->player->id;
-
-        PlayerParrent::create($data);
+        $playerId = $player->id;
+        $this->playerParentService->store($data, $playerId);
 
         $text = "Player's parent/guardian successfully added!";
         Alert::success($text);
-
-        return redirect()->route('player-managements.show', $id);
+        return redirect()->route('player-managements.show', $playerId);
     }
 
-    public function edit(User $player, PlayerParrent $parent)
+    public function edit(Player $player, PlayerParrent $parent)
     {
-        $parent = PlayerParrent::findOrFail($parent->id);
-        $fullname = $player->firstName . ' ' . $player->lastName;
-        return view('pages.admins.managements.players.player-parents.edit',[
+        return view('pages.managements.players.player-parents.edit', [
             'parent' => $parent,
             'player' => $player,
-            'fullname' => $fullname
+            'fullName' => $this->playerParentService->getUserFullName($player->user)
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PlayerParentRequest $request, User $player, PlayerParrent $parent)
+    public function update(PlayerParentRequest $request, Player $player, PlayerParrent $parent)
     {
         $data = $request->validated();
-        $parent = PlayerParrent::findOrFail($parent->id);
-
-        $parent->update($data);
-
-        $text = $parent->firstName.' successfully updated!';
+        $this->playerParentService->update($data, $parent);
+        $text = $data['firstName'].' '.$data['lastName'].' successfully updated!';
         Alert::success($text);
         return redirect()->route('player-managements.show', $player->id);
     }
 
     public function destroy(PlayerParrent $parent)
     {
-        $parent = PlayerParrent::with('player')->findOrFail($parent->id);
+        $result = $this->playerParentService->destroy($parent);
 
-        $parent->delete();
-
-        return response()->json(['success' => true]);
+        return response()->json([
+            'status' => 200,
+            'data' => $result,
+            'message' => 'Successfully deleted players parent'
+        ]);
     }
 }

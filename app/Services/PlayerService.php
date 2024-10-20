@@ -242,6 +242,7 @@ class PlayerService extends Service
         $matchPlayed = $player->playerMatchStats()->where('minutesPlayed', '>', 0)->count();
         $minutesPlayed = $player->playerMatchStats()->sum('minutesPlayed');
         $fouls = $player->playerMatchStats()->sum('fouls');
+        $saves = $player->playerMatchStats()->sum('saves');
         $goals = $player->playerMatchStats()->sum('goals');
         $assists = $player->playerMatchStats()->sum('assists');
         $ownGoals = $player->playerMatchStats()->sum('ownGoal');
@@ -287,6 +288,7 @@ class PlayerService extends Service
             'matchPlayed',
             'minutesPlayed',
             'fouls',
+            'saves',
             'goals',
             'assists',
             'ownGoals',
@@ -573,7 +575,7 @@ class PlayerService extends Service
 
     public function changePassword($data, Player $player){
         return $player->user()->update([
-            'password' => bcrypt($data)
+            'password' => bcrypt($data['password'])
         ]);
     }
 
