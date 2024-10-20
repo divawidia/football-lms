@@ -100,6 +100,7 @@
                                     title: 'Admin successfully archived!',
                                     icon: 'success',
                                     showCancelButton: false,
+                                    allowOutsideClick: false,
                                     confirmButtonColor: "#1ac2a1",
                                     confirmButtonText:
                                         'Ok!'
