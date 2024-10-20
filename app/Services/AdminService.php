@@ -55,11 +55,11 @@ class AdminService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('admin-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Admin</a>
-                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Admin</a>
+                            <a class="dropdown-item" href="' . route('admin-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Admin</a>
+                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Admin</a>
                             '. $statusButton .'
-                            <a class="dropdown-item" href="' . route('admin-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Admin Password</a>
-                            <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->userId.'">
+                            <a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons">lock</span> Change Admin Password</a>
+                            <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->id.'">
                                 <span class="material-icons">delete</span> Delete Admin
                             </button>
                           </div>
@@ -151,7 +151,7 @@ class AdminService extends Service
     public function changePassword($data, Admin $admin)
     {
         return $admin->user()->update([
-            'password' => bcrypt($data)
+            'password' => bcrypt($data['password'])
         ]);
     }
 

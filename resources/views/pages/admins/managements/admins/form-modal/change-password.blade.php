@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form action="" method="post" id="formChangePasswordAdminModal">
-                @method('PUT')
+                @method('PATCH')
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Change Account's Password</h5>
@@ -19,7 +19,7 @@
                         <small class="text-danger">*</small>
                         <input type="password"
                                class="form-control"
-                               id="password"
+                               id="add_password"
                                name="password"
                                required
                                placeholder="Input account's new password ...">
@@ -32,12 +32,12 @@
                         <small>(Optional)</small>
                         <input type="password"
                                class="form-control"
-                               name="password_confirmation" required id="password-confirm"
+                               name="password_confirmation" required id="add_password-confirm"
                                placeholder="Retype inputted password ...">
-                        <span class="invalid-feedback password-confirm_error" role="alert">
+                    </div>
+                    <span class="invalid-feedback password-confirm_error" role="alert">
                                 <strong></strong>
                             </span>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
