@@ -11,7 +11,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="@if(Auth::user()->hasRole('admin'))
+                    <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
                     {{ route('player-managements.index') }}
                     @elseif(Auth::user()->hasRole('coach'))
                     {{ route('coach.player-managements.index') }}
@@ -35,7 +35,7 @@
                 <h2 class="text-white mb-0">{{ $data->user->firstName  }} {{ $data->user->lastName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data->position->name }}</p>
             </div>
-            @if(Auth::user()->hasRole('admin'))
+            @if(Auth::user()->hasRole('admin|Super-Admin'))
                 <div class="dropdown">
                     <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Action
@@ -50,7 +50,7 @@
                                 @method("PATCH")
                                 @csrf
                                 <button type="submit" class="dropdown-item">
-                                    <span class="material-icons">block</span> Deactivate Player
+                                    <span class="material-icons text-danger">block</span> Deactivate Player
                                 </button>
                             </form>
                         @else
@@ -58,13 +58,13 @@
                                 @method("PATCH")
                                 @csrf
                                 <button type="submit" class="dropdown-item">
-                                    <span class="material-icons">check_circle</span> Activate Player
+                                    <span class="material-icons text-success">check_circle</span> Activate Player
                                 </button>
                             </form>
                         @endif
-                        <a class="dropdown-item" href="{{ route('player-managements.change-password-page', $data->id) }}"><span class="material-icons">lock</span> Change Player Password</a>
+                        <a class="dropdown-item changePassword" id="{{ $data->id }}"><span class="material-icons">lock</span> Change Player Password</a>
                         <button type="button" class="dropdown-item delete-user" id="{{$data->id}}">
-                            <span class="material-icons">delete</span> Delete Player
+                            <span class="material-icons text-danger">delete</span> Delete Player
                         </button>
                     </div>
                 </div>
@@ -370,7 +370,7 @@
                                 <tr>
                                     <th>Team Name</th>
                                     <th>Date Joined</th>
-                                    @if(Auth::user()->hasRole('admin'))
+                                    @if(Auth::user()->hasRole('admin|Super-Admin'))
                                         <th>Action</th>
                                     @endif
                                 </tr>
@@ -385,7 +385,7 @@
                 {{--Teams Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
-                    <a href="@if(Auth::user()->hasRole('admin'))
+                    <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
                     {{ route('player-managements.skill-stats', $data->id) }}
                     @elseif(Auth::user()->hasRole('coach'))
                     {{ route('coach.player-managements.skill-stats', $data->id) }}
@@ -419,7 +419,7 @@
                             <th>Email</th>
                             <th>Phone Number</th>
                             <th>Relation</th>
-                            @if(Auth::user()->hasRole('admin'))
+                            @if(Auth::user()->hasRole('admin|Super-Admin'))
                                 <th>Action</th>
                             @endif
                         </tr>
@@ -434,7 +434,7 @@
         {{--Upcoming Matches Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
-            <a href="@if(Auth::user()->hasRole('admin'))
+            <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
                     {{ route('player-managements.upcoming-matches', $data->id) }}
                     @elseif(Auth::user()->hasRole('coach'))
                     {{ route('coach.player-managements.upcoming-matches', $data->id) }}
@@ -455,7 +455,7 @@
             </div>
         @endif
         @foreach($overview['upcomingMatches'] as $match)
-            <a class="card" href="@if(Auth::user()->hasRole('admin'))
+            <a class="card" href="@if(Auth::user()->hasRole('admin|Super-Admin'))
                     {{ route('match-schedules.show', $match->id) }}
                     @elseif(Auth::user()->hasRole('coach'))
                     {{ route('coach.match-schedules.show', $match->id) }}
@@ -512,7 +512,7 @@
         {{--Upcoming Trainings Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Trainings</div>
-            <a href="@if(Auth::user()->hasRole('admin'))
+            <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
                     {{ route('player-managements.upcoming-trainings', $data->id) }}
                     @elseif(Auth::user()->hasRole('coach'))
                     {{ route('coach.player-managements.upcoming-trainings', $data->id) }}
@@ -535,7 +535,7 @@
         <div class="row">
         @foreach($overview['upcomingTrainings'] as $training)
             <div class="col-lg-6">
-                <a class="card" href="@if(Auth::user()->hasRole('admin'))
+                <a class="card" href="@if(Auth::user()->hasRole('admin|Super-Admin'))
                     {{ route('training-schedules.show', $training->id) }}
                     @elseif(Auth::user()->hasRole('coach'))
                     {{ route('coach.training-schedules.show', $training->id) }}
@@ -689,12 +689,13 @@
 @push('addon-script')
     <script>
         $(document).ready(function () {
+            const body = $('body');
             $('#parentsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin'))
+                    @if(Auth::user()->hasRole('admin|Super-Admin'))
                     url: '{!! route('player-parents.index', $data->userId) !!}',
                     @elseif(Auth::user()->hasRole('coach'))
                     url: '{!! route('coach.player-parents.index', $data->userId) !!}',
@@ -706,7 +707,7 @@
                     {data: 'email', name: 'email'},
                     {data: 'phoneNumber', name: 'phoneNumber'},
                     {data: 'relations', name: 'relations'},
-                    @if(Auth::user()->hasRole('admin'))
+                    @if(Auth::user()->hasRole('admin|Super-Admin'))
                     {
                         data: 'action',
                         name: 'action',
@@ -723,7 +724,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin'))
+                    @if(Auth::user()->hasRole('admin|Super-Admin'))
                     url: '{!! route('player-managements.playerTeams', $data->userId) !!}',
                     @elseif(Auth::user()->hasRole('coach'))
                     url: '{!! route('coach.player-managements.playerTeams', $data->userId) !!}',
@@ -732,7 +733,7 @@
                 columns: [
                     {data: 'name', name: 'name'},
                     {data: 'date', name: 'date'},
-                    @if(Auth::user()->hasRole('admin'))
+                    @if(Auth::user()->hasRole('admin|Super-Admin'))
                     {
                         data: 'action',
                         name: 'action',
@@ -749,7 +750,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin'))
+                    @if(Auth::user()->hasRole('admin|Super-Admin'))
                     url: '{!! route('attendance-report.trainingTable', $data->id) !!}',
                     @elseif(Auth::user()->hasRole('coach'))
                     url: '{!! route('coach.attendance-report.trainingTable', $data->id) !!}',
@@ -780,7 +781,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin'))
+                    @if(Auth::user()->hasRole('admin|Super-Admin'))
                     url: '{!! route('attendance-report.matchDatatable', $data->id) !!}',
                     @elseif(Auth::user()->hasRole('coach'))
                     url: '{!! route('coach.attendance-report.matchDatatable', $data->id) !!}',
@@ -834,12 +835,12 @@
                 },
             });
 
-            @if(Auth::user()->hasRole('admin'))
+            @if(Auth::user()->hasRole('admin|Super-Admin'))
             $('.delete-user').on('click', function() {
                 let id = $(this).attr('id');
 
                 Swal.fire({
-                    title: "Are you sure?",
+                    title: "Are you sure to delete this player?",
                     text: "You won't be able to revert this!",
                     icon: "warning",
                     showCancelButton: true,
@@ -854,11 +855,12 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(response) {
+                            success: function() {
                                 Swal.fire({
                                     title: "Player's account successfully deleted!",
                                     icon: 'success',
                                     showCancelButton: false,
+                                    allowOutsideClick: false,
                                     confirmButtonColor: "#1ac2a1",
                                     confirmButtonText:
                                         'Ok!'
@@ -868,11 +870,11 @@
                                     }
                                 });
                             },
-                            error: function(error) {
+                            error: function (jqXHR, textStatus, errorThrown) {
                                 Swal.fire({
                                     icon: "error",
-                                    title: "Oops...",
-                                    text: "Something went wrong when deleting data!",
+                                    title: "Something went wrong when deleting data!",
+                                    text: errorThrown
                                 });
                             }
                         });
@@ -880,7 +882,50 @@
                 });
             });
 
-            $('body').on('click', '.delete-parent', function() {
+            body.on('click', '.changePassword', function (e) {
+                const id = $(this).attr('id');
+                e.preventDefault();
+                $('#changePasswordModal').modal('show');
+                $('#userId').val(id);
+            })
+            // update admin password
+            $('#formChangePasswordModal').on('submit', function (e) {
+                e.preventDefault();
+                const id = $('#userId').val();
+                $.ajax({
+                    url: "{{ route('player-managements.change-password', ['player' => ":id"]) }}".replace(':id', id),
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function () {
+                        $('#changePasswordModal').modal('hide');
+                        Swal.fire({
+                            title: 'Accounts password successfully updated!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            allowOutsideClick: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        const response = JSON.parse(xhr.responseText);
+                        console.log(response);
+                        $.each(response.errors, function (key, val) {
+                            $('span.' + key + '_error').text(val[0]);
+                            $("#add_" + key).addClass('is-invalid');
+                        });
+                    }
+                });
+            });
+
+            body.on('click', '.delete-parent', function() {
                 let idParent = $(this).attr('id');
 
                 Swal.fire({
@@ -918,7 +963,7 @@
                 });
             });
 
-            $('body').on('click', '.delete-team', function() {
+            body.on('click', '.delete-team', function() {
                 const idTeam = $(this).attr('id');
 
                 Swal.fire({

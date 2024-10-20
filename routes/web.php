@@ -20,7 +20,6 @@ use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TrainingVideoController;
 use App\Http\Controllers\Admin\TrainingVideoLessonController;
 use App\Http\Controllers\Coach\DashboardController as CoachDashboardController;
-use App\Http\Controllers\Coach\PlayerController as CoachPlayerController;
 use App\Http\Controllers\Coach\SkillAssessmentController;
 use App\Http\Controllers\PlayerController;
 use Illuminate\Support\Facades\Auth;
@@ -106,7 +105,7 @@ Route::group(['middleware' => ['auth']], function () {
 
                 Route::prefix('{player}')->group(function () {
                     Route::get('', [PlayerController::class, 'show'])->name('player-managements.show');
-                    Route::get('skill-stats', [CoachPlayerController::class, 'skillStatsDetail'])->name('player-managements.skill-stats');
+                    Route::get('skill-stats', [PlayerController::class, 'skillStatsDetail'])->name('player-managements.skill-stats');
                     Route::get('edit', [PlayerController::class, 'edit'])->name('player-managements.edit');
                     Route::put('', [PlayerController::class, 'update'])->name('player-managements.update');
                     Route::delete('', [PlayerController::class, 'destroy'])->name('player-managements.destroy');
@@ -119,8 +118,8 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::put('update-teams', [PlayerController::class, 'updateTeams'])->name('player-managements.updateTeams');
                     Route::delete('remove-team/{team}', [PlayerController::class, 'removeTeam'])->name('player-managements.removeTeam');
 
-                    Route::get('upcoming-matches', [CoachPlayerController::class, 'upcomingMatches'])->name('player-managements.upcoming-matches');
-                    Route::get('upcoming-trainings', [CoachPlayerController::class, 'upcomingTrainings'])->name('player-managements.upcoming-trainings');
+                    Route::get('upcoming-matches', [PlayerController::class, 'upcomingMatches'])->name('player-managements.upcoming-matches');
+                    Route::get('upcoming-trainings', [PlayerController::class, 'upcomingTrainings'])->name('player-managements.upcoming-trainings');
 
                     Route::prefix('parents')->group(function () {
                         Route::get('', [PlayerParentController::class, 'index'])->name('player-parents.index');
@@ -445,12 +444,12 @@ Route::group(['middleware' => ['auth']], function () {
             Route::prefix('player-managements')->group(function () {
                 Route::get('', [PlayerController::class, 'coachIndex'])->name('coach.player-managements.index');
                 Route::prefix('{player}')->group(function () {
-                    Route::get('', [CoachPlayerController::class, 'show'])->name('coach.player-managements.show');
-                    Route::get('skill-stats', [CoachPlayerController::class, 'skillStatsDetail'])->name('coach.player-managements.skill-stats');
+                    Route::get('', [PlayerController::class, 'show'])->name('coach.player-managements.show');
+                    Route::get('skill-stats', [PlayerController::class, 'skillStatsDetail'])->name('coach.player-managements.skill-stats');
                     Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('coach.player-managements.playerTeams');
                     Route::get('parents', [PlayerParentController::class, 'index'])->name('coach.player-parents.index');
-                    Route::get('upcoming-matches', [CoachPlayerController::class, 'upcomingMatches'])->name('coach.player-managements.upcoming-matches');
-                    Route::get('upcoming-trainings', [CoachPlayerController::class, 'upcomingTrainings'])->name('coach.player-managements.upcoming-trainings');
+                    Route::get('upcoming-matches', [PlayerController::class, 'upcomingMatches'])->name('coach.player-managements.upcoming-matches');
+                    Route::get('upcoming-trainings', [PlayerController::class, 'upcomingTrainings'])->name('coach.player-managements.upcoming-trainings');
                 });
             });
 
@@ -471,7 +470,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::prefix('skill-assessments')->group(function () {
                 Route::get('', [SkillAssessmentController::class, 'index'])->name('coach.skill-assessments.index');
                 Route::prefix('{player}')->group(function () {
-                    Route::get('', [CoachPlayerController::class, 'skillStatsDetail'])->name('coach.skill-assessments.skill-stats');
+                    Route::get('', [PlayerController::class, 'skillStatsDetail'])->name('coach.skill-assessments.skill-stats');
                     Route::get('create', [SkillAssessmentController::class, 'create'])->name('coach.skill-assessments.create');
                     Route::post('store', [SkillAssessmentController::class, 'store'])->name('coach.skill-assessments.store');
 

@@ -29,7 +29,7 @@ class PlayerService extends Service
             ->addColumn('action', function ($item) {
                 if (Auth::user()->hasRole('admin|Super-Admin')){
                     if ($item->user->status == '1'){
-                        $statusButton = '<form action="' . route('deactivate-player', $item->userId) . '" method="POST">
+                        $statusButton = '<form action="' . route('deactivate-player', $item->id) . '" method="POST">
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
@@ -37,7 +37,7 @@ class PlayerService extends Service
                                             </button>
                                         </form>';
                     }else{
-                        $statusButton = '<form action="' . route('activate-player', $item->userId) . '" method="POST">
+                        $statusButton = '<form action="' . route('activate-player', $item->id) . '" method="POST">
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
@@ -53,11 +53,11 @@ class PlayerService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('player-managements.edit', $item->userId) . '"><span class="material-icons">edit</span>Edit Player</a>
+                            <a class="dropdown-item" href="' . route('player-managements.edit', $item->id) . '"><span class="material-icons">edit</span>Edit Player</a>
                             <a class="dropdown-item" href="' . route('player-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Player</a>
                             '. $statusButton .'
-                            <a class="dropdown-item" href="' . route('player-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Player Password</a>
-                            <button type="button" class="dropdown-item delete-user" id="' . $item->userId . '">
+                            <a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons">lock</span> Change Player Password</a>
+                            <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
                                 <span class="material-icons text-danger">delete</span> Delete Player
                             </button>
                           </div>
@@ -84,6 +84,16 @@ class PlayerService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
+                $name = '';
+                if (Auth::user()->hasRole('admin|Super-Admin')){
+                    $name = '<a href="'.route('player-managements.show', $item->id).'">
+                                <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                            </a>';
+                }elseif (Auth::user()->hasRole('coach')){
+                    $name = '<a href="'.route('coach.player-managements.show', $item->id).'">
+                                <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                            </a>';
+                }
                 return '
                         <div class="media flex-nowrap align-items-center"
                              style="white-space: nowrap;">
@@ -93,7 +103,7 @@ class PlayerService extends Service
                             <div class="media-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                                        '.$name.'
                                         <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
                                     </div>
                                 </div>
@@ -102,11 +112,13 @@ class PlayerService extends Service
                         </div>';
             })
             ->editColumn('status', function ($item){
+                $badge = '';
                 if ($item->user->status == '1') {
-                    return '<span class="badge badge-pill badge-success">Aktif</span>';
+                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
                 }elseif ($item->user->status == '0'){
-                    return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
+                    $badge = '<span class="badge badge-pill badge-danger">Non-Active</span>';
                 }
+                return $badge;
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
@@ -120,7 +132,6 @@ class PlayerService extends Service
         $query = Player::with('user', 'teams', 'position')->get();
         return $this->makePlayerDatatables($query);
     }
-
     // retrieve player data based on coach managed teams
     public function coachPlayerIndex($coach): JsonResponse
     {
@@ -185,14 +196,11 @@ class PlayerService extends Service
             ->rawColumns(['action', 'name','date'])
             ->make();
     }
-
-
     public function removeTeam(Player $player, Team $team)
     {
         $player->teams()->detach($team->id);
         return $player;
     }
-
     public function updateTeams($teamData, Player $player)
     {
         $player->teams()->attach($teamData);
@@ -204,33 +212,26 @@ class PlayerService extends Service
         return PlayerPosition::all();
     }
 
-    public  function store(array $playerData, $academyId){
+    public  function store(array $data, $academyId){
 
-        $playerData['password'] = bcrypt($playerData['password']);
+        $data['foto'] = $this->storeImage($data, 'foto', 'assets/user-profile', 'images/undefined-user.png');
+        $data['password'] = bcrypt($data['password']);
+        $data['status'] = '1';
+        $data['academyId'] = $academyId;
 
-        if (array_key_exists('foto', $playerData)){
-            $playerData['foto'] = $playerData['foto']->store('assets/user-profile', 'public');
-        }else{
-            $playerData['foto'] = 'images/undefined-user.png';
-        }
-
-        $playerData['status'] = '1';
-        $playerData['academyId'] = $academyId;
-
-        $user = User::create($playerData);
+        $user = User::create($data);
         $user->assignRole('player');
 
-        $playerData['userId'] = $user->id;
-
-        $player = Player::create($playerData);
-        $player->teams()->attach($playerData['team']);
+        $data['userId'] = $user->id;
+        $player = Player::create($data);
+        $player->teams()->attach($data['team']);
 
         PlayerParrent::create([
-            'firstName' => $playerData['firstName'],
-            'lastName' => $playerData['lastName'],
-            'relations' => $playerData['relations'],
-            'email' => $playerData['email'],
-            'phoneNumber' => $playerData['phoneNumber'],
+            'firstName' => $data['firstName'],
+            'lastName' => $data['lastName'],
+            'relations' => $data['relations'],
+            'email' => $data['email'],
+            'phoneNumber' => $data['phoneNumber'],
             'playerId' => $player->id,
         ]);
         return $player;
@@ -522,7 +523,6 @@ class PlayerService extends Service
             ->where('status', '1')
             ->get();
     }
-
     public function getPlayerUpcomingTraining(Player $player)
     {
         return $player->schedules()->with('teams', 'competition')
@@ -534,70 +534,55 @@ class PlayerService extends Service
     public function playerUpcomingMatches(Player $player)
     {
         $data = $this->getPlayerUpcomingMatches($player);
-
         return $this->eventScheduleService->makeDataTablesMatch($data);
     }
-
     public function playerUpcomingTraining(Player $player)
     {
         $data = $this->getPlayerUpcomingTraining($player);
-
         return $this->eventScheduleService->makeDataTablesTraining($data);
     }
 
     public function playerMatchCalendar(Player $player)
     {
         $data = $this->getPlayerUpcomingMatches($player);
-
         return $this->eventScheduleService->makeMatchCalendar($data);
     }
-
     public function playerTrainingCalendar(Player $player)
     {
         $data = $this->getPlayerUpcomingTraining($player);
-
         return $this->eventScheduleService->makeTrainingCalendar($data);
     }
 
 
-    public function update(array $playerData, User $user): User
+    public function update(array $data, Player $player)
     {
-        if (array_key_exists('foto', $playerData)){
-            $this->deleteImage($user->foto);
-            $playerData['foto'] = $playerData['foto']->store('assets/player-logo', 'public');
-        }else{
-            $playerData['foto'] = $user->foto;
-        }
-
-        $user->update($playerData);
-        $user->player->update($playerData);
-
-        return $user;
+        $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $player->user->foto);
+        $player->update($data);
+        $player->user->update($data);
+        return $player;
     }
-    public function activate(User $user): User
+    public function activate(Player $player)
     {
-        $user->update(['status' => '1']);
-        return $user;
+        return $player->user()->update(['status' => '1']);
     }
 
-    public function deactivate(User $user): User
+    public function deactivate(Player $player)
     {
-        $user->update(['status' => '0']);
-        return $user;
+        return $player->user()->update(['status' => '0']);
     }
 
-    public function changePassword($data, User $user){
-        $user->update([
+    public function changePassword($data, Player $player){
+        return $player->user()->update([
             'password' => bcrypt($data)
         ]);
-        return $user;
     }
 
-    public function destroy(User $user): User
+    public function destroy(Player $player)
     {
-        $this->deleteImage($user->foto);
-        $user->player->delete();
-        $user->delete();
-        return $user;
+        $this->deleteImage($player->user->foto);
+        $player->delete();
+        $player->user->roles()->detach();
+        $player->user()->delete();
+        return $player;
     }
 }

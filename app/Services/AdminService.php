@@ -105,19 +105,6 @@ class AdminService extends Service
         return $admin;
     }
 
-    public function edit(User $coach){
-        $action =  World::countries();
-        if ($action->success) {
-            $countries = $action->data;
-        }
-
-        $certifications = CoachCertification::all();
-        $specializations = CoachSpecialization::all();
-        $fullname = $coach->firstName . ' ' . $coach->lastName;
-
-        return compact('countries', 'certifications', 'specializations', 'fullname', 'coach');
-    }
-
     public function update(array $data, Admin $admin): Admin
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $admin->user->foto);
