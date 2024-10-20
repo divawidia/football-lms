@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Nnjeim\World\World;
 
 class Service
 {
@@ -21,6 +22,15 @@ class Service
 
     public function getNowDate(){
         return Carbon::now();
+    }
+
+    public function getCountryData()
+    {
+        $action =  World::countries();
+        if ($action->success) {
+            $countries = $action->data;
+        }
+        return $countries;
     }
 
     public function deleteImage($image): void
