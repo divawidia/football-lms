@@ -8,7 +8,6 @@
         <span class="material-icons">short_text</span>
     </button>
 
-    <!-- // END Navbar Toggler -->
 
     <!-- Navbar Brand -->
 
@@ -18,8 +17,7 @@
         {{ route('coach.dashboard') }}
         @elseif(isPlayer())
         {{ route('player.dashboard') }}
-        @endif"
-       class="navbar-brand mr-16pt d-lg-none">
+        @endif" class="navbar-brand mr-16pt d-lg-none">
             <span class="avatar avatar-sm navbar-brand-icon mr-0 mr-lg-8pt">
                 <span class="avatar-title rounded bg-primary">
                     @if(academyData()->logo)
@@ -30,8 +28,6 @@
                 </span>
             </span>
     </a>
-
-    <!-- // END Navbar Brand -->
 
     <div class="flex"></div>
 
