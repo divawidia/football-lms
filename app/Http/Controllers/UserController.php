@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
+use App\Services\Coach\DashboardService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class UserController extends Controller
@@ -25,6 +28,19 @@ class UserController extends Controller
         ]);
     }
 
+    public function checkRoleRedirect()
+    {
+        $route = '';
+        if ($this->isAllAdmin()){
+            $route = 'admin.dashboard';
+        } elseif ($this->isCoach()){
+            $route = 'coach.dashboard';
+        } elseif ($this->isPlayer()){
+            $route = 'player.dashboard';
+        }
+        return $route;
+    }
+
     public function update(UserRequest $request)
     {
         $user = $this->getLoggedUser();
@@ -34,14 +50,22 @@ class UserController extends Controller
         $text = $data['firstName'].' '.$data['lastName'].' account successfully updated!';
         Alert::success($text);
 
-        if ($this->isAllAdmin()){
-            $route = 'admin.dashboard';
-        } elseif ($this->isCoach()){
-            $route = 'coach.dashboard';
-        } elseif ($this->isPlayer()){
-            $route = 'player.dashboard';
-        }
+        return redirect()->route($this->checkRoleRedirect());
+    }
 
-        return redirect()->route($route);
+    public function resetPassword()
+    {
+        return view('pages.user-profile.reset-password');
+    }
+
+    public function updatePassword(ResetPasswordRequest $request)
+    {
+        $user = $this->getLoggedUser();
+        $data = $request->validated();
+        if (!Hash::check($request->current_password, Auth::user()->password)) {
+            return back()->with('error', 'Current password is incorrect.');
+        }
+        $this->userService->updatePassword($data, $user);
+        return redirect()->route($this->checkRoleRedirect());
     }
 }
