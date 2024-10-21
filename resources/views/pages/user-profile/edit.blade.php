@@ -24,7 +24,7 @@
     <div class="container page-section">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('edit-profile.update') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('edit-account.update') }}" method="POST" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
                     <div class="page-separator">

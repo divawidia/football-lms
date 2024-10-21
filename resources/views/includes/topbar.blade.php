@@ -12,7 +12,13 @@
 
     <!-- Navbar Brand -->
 
-    <a href="index.html"
+    <a href="@if(isAllAdmin())
+        {{ route('admin.dashboard') }}
+        @elseif(isCoach())
+        {{ route('coach.dashboard') }}
+        @elseif(isPlayer())
+        {{ route('player.dashboard') }}
+        @endif"
        class="navbar-brand mr-16pt d-lg-none">
             <span class="avatar avatar-sm navbar-brand-icon mr-0 mr-lg-8pt">
                 <span class="avatar-title rounded bg-primary">
