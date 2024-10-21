@@ -63,10 +63,12 @@ class UserController extends Controller
     {
         $user = $this->getLoggedUser();
         $data = $request->validated();
-        if (!Hash::check($request->current_password, Auth::user()->password)) {
+        if (!Hash::check($request->old_password, Auth::user()->password)) {
             return back()->with('error', 'Current password is incorrect.');
         }
         $this->userService->changePassword($data, $user);
+        $text = $data['firstName'].' '.$data['lastName'].' accounts password successfully updated!';
+        Alert::success($text);
         return redirect()->route($this->checkRoleRedirect());
     }
 }

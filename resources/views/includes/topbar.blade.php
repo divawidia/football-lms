@@ -62,7 +62,7 @@
             <div class="dropdown-menu dropdown-menu-right">
                 <div class="dropdown-header"><strong>Account</strong></div>
                 <a class="dropdown-item" href="{{ route('edit-account.edit') }}">Edit Account</a>
-                <a class="dropdown-item" href="{{ route('edit-account.edit') }}">Reset Password</a>
+                <a class="dropdown-item" href="{{ route('reset-password.edit') }}">Reset Password</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button class="dropdown-item" type="submit">Logout</button>

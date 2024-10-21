@@ -36,24 +36,22 @@
                             <div class="form-group">
                                 <label class="form-label" for="old_password">Current Password</label>
                                 <small class="text-danger">*</small>
-                                <input type="text"
+                                <input type="password"
                                        class="form-control @error('old_password') is-invalid @enderror"
                                        id="old_password"
                                        name="old_password"
                                        required
                                        placeholder="Input your current password ...">
-                                @error('old_password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
                             </div>
+                            @if (session('error'))
+                                <div class="alert alert-danger">{{ session('error') }}</div>
+                            @endif
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label class="form-label" for="password">New Password</label>
                                 <small class="text-danger">*</small>
-                                <input type="text"
+                                <input type="password"
                                        class="form-control @error('password') is-invalid @enderror"
                                        id="password"
                                        name="password"
@@ -68,21 +66,28 @@
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label class="form-label" for="confirm_password">Confirm Password</label>
+                                <label class="form-label" for="password_confirmation">Confirm Password</label>
                                 <small class="text-danger">*</small>
-                                <input type="text"
-                                       class="form-control @error('confirm_password') is-invalid @enderror"
-                                       id="confirm_password"
-                                       name="confirm_password"
+                                <input type="password"
+                                       class="form-control @error('password_confirmation') is-invalid @enderror"
+                                       id="password_confirmation"
+                                       name="password_confirmation"
                                        required
                                        placeholder="Retype your new password ...">
-                                @error('confirm_password')
+                                @error('password_confirmation')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                 @enderror
                             </div>
                         </div>
+                    </div>
+                    <div class="page-separator"></div>
+                    <div class="d-flex justify-content-end">
+                        <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span
+                                class="material-icons mr-2">close</span> Cancel</a>
+                        <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">save</span> Save
+                        </button>
                     </div>
                 </form>
             </div>
