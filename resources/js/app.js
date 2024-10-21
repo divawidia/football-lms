@@ -40,10 +40,8 @@ import './player'
 
     imagePreview('previewPhoto', 'preview');
 
-    // create/edit admin page
     imagePreview('foto', 'preview');
 
-    // create/edit competition page
     imagePreview('logo', 'preview');
     imagePreview('add_logo', 'opponentTeamPreview');
     imagePreview('add_logoTeam', 'teamPreview');

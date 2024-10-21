@@ -23,7 +23,7 @@
                                             <i class="material-icons mr-8pt">error_outline</i>
                                             <div class="media-body"
                                                  style="min-width: 180px">
-                                                <small class="text-black-100">Curently you haven't create any player in your academy, please create your team</small>
+                                                <small class="text-black-100">Currently there is no team available in your academy, please create your team</small>
                                             </div>
                                             <div class="ml-8pt mt-2 mt-sm-0">
                                                 <a href="{{ route('team-managements.create') }}"

@@ -35,7 +35,7 @@ class CoachService extends Service
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">block</span> Deactivate Coach
+                                                    <span class="material-icons text-danger">block</span> Deactivate Coach
                                                 </button>
                                             </form>';
                 } else {
@@ -43,7 +43,7 @@ class CoachService extends Service
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">check_circle</span> Activate Coach
+                                                    <span class="material-icons text-success">check_circle</span> Activate Coach
                                                 </button>
                                             </form>';
                 }
@@ -58,9 +58,9 @@ class CoachService extends Service
                                 <a class="dropdown-item" href="' . route('coach-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Coach Profile</a>
                                 <a class="dropdown-item" href="' . route('coach-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Coach</a>
                                 ' . $statusButton . '
-                                <a class="dropdown-item" href="' . route('coach-managements.change-password-page', $item->userId) . '"><span class="material-icons">lock</span> Change Coach Password</a>
+                                <a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons">lock</span> Change Coach Password</a>
                                 <button type="button" class="dropdown-item delete-user" id="' . $item->userId . '">
-                                    <span class="material-icons">delete</span> Delete Coach
+                                    <span class="material-icons text-danger">delete</span> Delete Coach
                                 </button>
                               </div>
                             </div>';
@@ -86,7 +86,9 @@ class CoachService extends Service
                             <div class="media-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                                    <a href="' . route('coach-managements.show', $item->id) . '">
+                                        <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
+                                    </a>
                                         <small class="js-lists-values-email text-50">' . $item->specializations->name . '</small>
                                     </div>
                                 </div>
@@ -95,11 +97,13 @@ class CoachService extends Service
                         </div>';
             })
             ->editColumn('status', function ($item){
+                $badge = '';
                 if ($item->user->status == '1') {
-                    return '<span class="badge badge-pill badge-success">Aktif</span>';
+                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
                 }elseif ($item->user->status == '0'){
-                    return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
+                    $badge = '<span class="badge badge-pill badge-danger">Non-Active</span>';
                 }
+                return $badge;
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
@@ -200,13 +204,14 @@ class CoachService extends Service
         $coach->teams()->attach($data['team']);
         return $coach;
     }
-    public function show(User $user)
+    public function show(Coach $coach)
     {
-        $fullName = $this->getUserFullName($user);
-        $age = $this->getAge($user->dob);
+        $fullName = $this->getUserFullName($coach->user);
+        $age = $this->getAge($coach->user->dob);
+
         $teams = Team::where('teamSide', 'Academy Team')
-            ->whereDoesntHave('coaches', function (Builder $query) use ($user) {
-                $query->where('coachId', $user->coach->id);
+            ->whereDoesntHave('coaches', function (Builder $query) use ($coach) {
+                $query->where('coachId', $coach->id);
             })->get();
 
         return compact('fullName', 'age', 'teams');

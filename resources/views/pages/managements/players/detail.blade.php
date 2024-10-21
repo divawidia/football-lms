@@ -711,9 +711,9 @@
                 ordering: true,
                 ajax: {
                     @if(Auth::user()->hasRole('admin|Super-Admin'))
-                    url: '{!! route('player-parents.index', $data->userId) !!}',
+                    url: '{!! route('player-parents.index', $data->id) !!}',
                     @elseif(Auth::user()->hasRole('coach'))
-                    url: '{!! route('coach.player-parents.index', $data->userId) !!}',
+                    url: '{!! route('coach.player-parents.index', $data->id) !!}',
                     @endif
                 },
                 columns: [
@@ -740,9 +740,9 @@
                 ordering: true,
                 ajax: {
                     @if(Auth::user()->hasRole('admin|Super-Admin'))
-                    url: '{!! route('player-managements.playerTeams', $data->userId) !!}',
+                    url: '{!! route('player-managements.playerTeams', $data->id) !!}',
                     @elseif(Auth::user()->hasRole('coach'))
-                    url: '{!! route('coach.player-managements.playerTeams', $data->userId) !!}',
+                    url: '{!! route('coach.player-managements.playerTeams', $data->id) !!}',
                     @endif
                 },
                 columns: [

@@ -170,6 +170,25 @@
 @endsection
 
 @section('content')
+    <nav class="navbar navbar-light border-bottom border-top px-0">
+        <div class="container page__container">
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    @if(Auth::user()->hasRole('admin'))
+                        <a href="{{ route('training-schedules.index') }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back to Training Schedules
+                        </a>
+                    @elseif(Auth::user()->hasRole('coach'))
+                        <a href="{{ route('coach.training-schedules.index') }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back to Training Schedules
+                        </a>
+                    @endif
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex">
@@ -381,40 +400,58 @@
             <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
         </div>
         @if(count($data['dataSchedule']->notes)==0)
-            <small class="text-70 text-headings text-uppercase mr-3">You haven't create any note</small>
+            <div class="alert alert-light border-left-accent" role="alert">
+                <div class="d-flex flex-wrap align-items-center">
+                    <i class="material-icons mr-8pt">error_outline</i>
+                    <div class="media-body"
+                         style="min-width: 180px">
+                        <small class="text-black-100">You haven't created any note</small>
+                    </div>
+                </div>
+            </div>
         @else
-            @foreach($data['dataSchedule']->notes as $note)
-                <div class="card">
-                    <div class="card-header d-flex align-items-center">
-                        <div class="flex">
-                            <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($note->created_at)) }}</h4>
-                            <div class="card-subtitle text-50">Last updated at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
-                        </div>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="row">
+                @foreach($data['dataSchedule']->notes as $note)
+                    @if(count($data['dataSchedule']->notes)==1)
+                    <div class="col-12">
+                        @else
+                            <div class="col-md-4">
+                        @endif
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="flex">
+                                    <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($note->created_at)) }}</h4>
+                                    <div class="card-subtitle text-50">Last updated at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
                                 more_vert
                             </span>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item edit-note" id="{{ $note->id }}" href="">
-                                    <span class="material-icons">edit</span>
-                                    Edit Note
-                                </a>
-                                <button type="button" class="dropdown-item delete-note" id="{{ $note->id }}">
-                                    <span class="material-icons">delete</span>
-                                    Delete Note
-                                </button>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item edit-note" id="{{ $note->id }}" href="">
+                                            <span class="material-icons">edit</span>
+                                            Edit Note
+                                        </a>
+                                        <button type="button" class="dropdown-item delete-note" id="{{ $note->id }}">
+                                            <span class="material-icons">delete</span>
+                                            Delete Note
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @php
+                                    echo $note->note
+                                @endphp
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        @php
-                            echo $note->note
-                        @endphp
-                    </div>
-                </div>
-            @endforeach
+
+                @endforeach
+            </div>
+
         @endif
     </div>
 
@@ -422,6 +459,7 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
+            const body = $('body');
             $('.playerAttendance').on('click', function(e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
@@ -543,6 +581,7 @@
                             title: 'Player attendance successfully updated!',
                             icon: 'success',
                             showCancelButton: false,
+                            allowOutsideClick: false,
                             confirmButtonColor: "#1ac2a1",
                             confirmButtonText:
                                 'Ok!'
@@ -583,6 +622,7 @@
                             title: 'Coach attendance successfully updated!',
                             icon: 'success',
                             showCancelButton: false,
+                            allowOutsideClick: false,
                             confirmButtonColor: "#1ac2a1",
                             confirmButtonText:
                                 'Ok!'
@@ -618,6 +658,7 @@
                             title: 'Training session note successfully added!',
                             icon: 'success',
                             showCancelButton: false,
+                            allowOutsideClick: false,
                             confirmButtonColor: "#1ac2a1",
                             confirmButtonText:
                                 'Ok!'
@@ -658,6 +699,7 @@
                             title: 'Training session note successfully updated!',
                             icon: 'success',
                             showCancelButton: false,
+                            allowOutsideClick: false,
                             confirmButtonColor: "#1ac2a1",
                             confirmButtonText:
                                 'Ok!'
@@ -679,7 +721,7 @@
             });
 
             // delete competition alert
-            $('body').on('click', '.delete', function() {
+            body.on('click', '.delete', function() {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -704,9 +746,10 @@
                             },
                             success: function() {
                                 Swal.fire({
-                                    title: 'Competition successfully deleted!',
+                                    title: 'Training schedule successfully deleted!',
                                     icon: 'success',
                                     showCancelButton: false,
+                                    allowOutsideClick: false,
                                     confirmButtonColor: "#1ac2a1",
                                     confirmButtonText:
                                         'Ok!'
@@ -729,7 +772,7 @@
             });
 
             // delete schedule note alert
-            $('body').on('click', '.delete-note', function() {
+            body.on('click', '.delete-note', function() {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -754,9 +797,10 @@
                             },
                             success: function() {
                                 Swal.fire({
-                                    title: 'Competition successfully deleted!',
+                                    title: 'Training note successfully deleted!',
                                     icon: 'success',
                                     showCancelButton: false,
+                                    allowOutsideClick: false,
                                     confirmButtonColor: "#1ac2a1",
                                     confirmButtonText:
                                         'Ok!'

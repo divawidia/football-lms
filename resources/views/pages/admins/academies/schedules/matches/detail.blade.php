@@ -1077,7 +1077,7 @@
                                     <p class="text-50 lh-1 mb-0">{{ $matchScore->player->position->name }}</p>
                                     @if($matchScore->isOwnGoal == 1)
                                         <p class="text-50 lh-1 mb-0"><strong>Own Goal</strong></p>
-                                    @else
+                                    @elseif($matchScore->assistPlayer)
                                         <p class="text-50 lh-1 mb-0">Assist
                                             : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
                                     @endif

@@ -73,7 +73,7 @@
                             <div class="ml-auto text-right">
                                 <div class="card-title">Event Attended</div>
                                 <p class="card-subtitle text-50">
-                                    {{ $mostAttendedPercentage }}& of total event
+                                    {{ $mostAttendedPercentage }}% of total event
                                 </p>
                             </div>
                         </div>
@@ -98,7 +98,7 @@
                             <div class="ml-auto text-right">
                                 <div class="card-title">Event Absent</div>
                                 <p class="card-subtitle text-50">
-                                    {{ $mostDidntAttendPercentage }}& of total event
+                                    {{ $mostDidntAttendPercentage }}% of total event
                                 </p>
                             </div>
                         </div>

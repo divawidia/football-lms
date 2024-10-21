@@ -43,9 +43,8 @@ class CoachController extends Controller
 
     public function coachTeams(Coach $coach)
     {
-        if (request()->ajax()) {
             return $this->coachService->coachTeams($coach);
-        }
+
     }
 
     public function updateTeams(Request $request, Coach $coach)
@@ -102,12 +101,12 @@ class CoachController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $coach)
+    public function show(Coach $coach)
     {
         $data = $this->coachService->show($coach);
 
         return view('pages.admins.managements.coaches.detail', [
-            'user' => $coach,
+            'data' => $coach,
             'fullName' => $data['fullName'],
             'age' => $data['age'],
             'teams' => $data['teams'],

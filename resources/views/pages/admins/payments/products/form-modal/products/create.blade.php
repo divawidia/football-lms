@@ -28,7 +28,7 @@
                         <label class="form-label" for="price">Price</label>
                         <small class="text-danger">*</small>
                         <div class="input-group input-group-merge">
-                            <div class="input-group-append">
+                            <div class="input-group-prepend">
                                 <div class="input-group-text">
                                     Rp.
                                 </div>

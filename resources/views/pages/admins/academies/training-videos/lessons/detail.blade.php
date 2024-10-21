@@ -61,7 +61,7 @@
                         </button>
                     </form>
                 @endif
-                <button type="button" class="btn btn-sm btn-white delete-lesson" id="{{ $data->id }}">
+                <button type="button" class="btn btn-sm btn-white deleteLesson" id="{{ $data->id }}">
                     <span class="material-icons mr-2">delete</span>
                     Delete Lesson
                 </button>

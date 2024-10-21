@@ -2,13 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Admin;
-use App\Models\PlayerPosition;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-class PlayerRequest extends FormRequest
+class UpdatePlayerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,7 +26,7 @@ class PlayerRequest extends FormRequest
         return [
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
-            'email' => ['required', 'email', Rule::unique('users', 'email')],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->player->user)],
             'password' => ['string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols(), 'nullable'],
             'gender' => ['required', 'string', Rule::in('male', 'female')],
             'dob' => ['required', 'date', 'before:today'],
@@ -46,12 +44,6 @@ class PlayerRequest extends FormRequest
             'strongFoot' => ['required', 'string', Rule::in('left', 'right')],
             'height' => ['required', 'numeric', 'min:0'],
             'weight' => ['required', 'numeric', 'min:0'],
-            'firstName2' => ['string', 'required'],
-            'lastName2' => ['string', 'required'],
-            'email2' => ['email', 'required'],
-            'phoneNumber2' => ['string', 'required'],
-            'relations' => ['string', 'required', Rule::in('Father', 'Mother', 'Brother', 'Sister', 'Others')],
-            'team' => ['nullable', 'required', Rule::exists('teams', 'id')],
         ];
     }
 }
