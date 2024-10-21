@@ -33,46 +33,48 @@
                 <h2 class="text-white mb-0">{{ $fullName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">{{ $data->position }}</p>
             </div>
-            <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    Action
-                    <span class="material-icons ml-3">
+            @if(isSuperAdmin())
+                <div class="dropdown">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        Action
+                        <span class="material-icons ml-3">
                         keyboard_arrow_down
                     </span>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('admin-managements.edit', $data->id) }}">
-                        <span class="material-icons mr-2 ">edit</span>
-                        Edit admin profile
-                    </a>
-                    @if($data->user->status == '1')
-                        <form action="{{ route('deactivate-admin', $data->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons mr-2 text-danger">block</span> Deactivate admin
-                            </button>
-                        </form>
-                    @else
-                        <form action="{{ route('activate-admin', $data->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons mr-2 text-success">check_circle</span> Activate admin
-                            </button>
-                        </form>
-                    @endif
-                    <a class="dropdown-item changePassword" id="{{ $data->id }}">
-                        <span class="material-icons mr-2 ">lock</span>
-                        Change admins Account Password
-                    </a>
-                    <button type="button" class="dropdown-item deleteAdmin" id="{{$data->id}}">
-                        <span class="material-icons mr-2 text-danger">delete</span>
-                        Delete admin
                     </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{{ route('admin-managements.edit', $data->id) }}">
+                            <span class="material-icons mr-2 ">edit</span>
+                            Edit admin profile
+                        </a>
+                        @if($data->user->status == '1')
+                            <form action="{{ route('deactivate-admin', $data->id) }}" method="POST">
+                                @method("PATCH")
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <span class="material-icons mr-2 text-danger">block</span> Deactivate admin
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('activate-admin', $data->id) }}" method="POST">
+                                @method("PATCH")
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <span class="material-icons mr-2 text-success">check_circle</span> Activate admin
+                                </button>
+                            </form>
+                        @endif
+                        <a class="dropdown-item changePassword" id="{{ $data->id }}">
+                            <span class="material-icons mr-2 ">lock</span>
+                            Change admins Account Password
+                        </a>
+                        <button type="button" class="dropdown-item deleteAdmin" id="{{$data->id}}">
+                            <span class="material-icons mr-2 text-danger">delete</span>
+                            Delete admin
+                        </button>
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 
