@@ -19,7 +19,7 @@ class UserService extends Service
         return $user->update($data);
     }
 
-    public function changePassword($data, User $user)
+    public function changePassword($data, $user)
     {
         return $user->update([
             'password' => bcrypt($data['password'])

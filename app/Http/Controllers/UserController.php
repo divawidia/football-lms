@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Services\Coach\DashboardService;
@@ -65,7 +66,7 @@ class UserController extends Controller
         if (!Hash::check($request->current_password, Auth::user()->password)) {
             return back()->with('error', 'Current password is incorrect.');
         }
-        $this->userService->updatePassword($data, $user);
+        $this->userService->changePassword($data, $user);
         return redirect()->route($this->checkRoleRedirect());
     }
 }
