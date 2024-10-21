@@ -13,7 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserService extends Service
 {
-    public function update(array $data, User $user)
+    public function update(array $data, $user)
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $user->foto);
         return $user->update($data);

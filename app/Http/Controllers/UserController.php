@@ -34,7 +34,7 @@ class UserController extends Controller
         $text = $data['firstName'].' '.$data['lastName'].' account successfully updated!';
         Alert::success($text);
 
-        if ($this->isAdmin()){
+        if ($this->isAllAdmin()){
             $route = 'admin.dashboard';
         } elseif ($this->isCoach()){
             $route = 'coach.dashboard';

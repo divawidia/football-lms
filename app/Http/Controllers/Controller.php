@@ -31,15 +31,23 @@ class Controller extends BaseController
 
     public function isAdmin()
     {
-        return Auth::user()->hasRole('admin|SUper-Admin');
+        return $this->getLoggedUser()->hasRole('admin');
+    }
+    public function isASuperdmin()
+    {
+        return $this->getLoggedUser()->hasRole('Super-Admin');
+    }
+    public function isAllAdmin()
+    {
+        return $this->getLoggedUser()->hasRole('admin|Super-Admin');
     }
     public function isCoach()
     {
-        return Auth::user()->hasRole('coach');
+        return $this->getLoggedUser()->hasRole('coach');
     }
     public function isPlayer()
     {
-        return Auth::user()->hasRole('player');
+        return $this->getLoggedUser()->hasRole('player');
     }
 
 }
