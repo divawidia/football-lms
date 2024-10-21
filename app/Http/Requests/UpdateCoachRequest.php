@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-class UpdateAdminRequest extends FormRequest
+class UpdateCoachRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,22 +24,26 @@ class UpdateAdminRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'foto' => ['image', 'nullable'],
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->admin->user)],
+            'dob' => ['required', 'date'],
+            'team' => [Rule::exists('teams', 'id'), 'nullable'],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->coach->user)],
             'password' => ['string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols(), 'nullable'],
             'gender' => ['required', 'string', Rule::in('male', 'female')],
-            'dob' => ['required', 'date', 'before:today'],
+            'hireDate' => ['required', 'date'],
             'address' => ['required', 'string'],
             'phoneNumber' => ['required', 'string'],
             'zipCode' => ['required', 'numeric'],
-            'foto' => ['image', 'max:1024', 'nullable'],
-            'country_id' => ['required', Rule::exists('countries', 'id')],
-            'status' => [Rule::in('1'), 'nullable'],
-            'state_id' => ['required', Rule::exists('states', 'id')],
-            'city_id' => ['required', Rule::exists('cities', 'id')],
-            'hireDate' => ['required', 'date', 'before_or_equal:today'],
-            'position' => ['required', 'string']
+            'country_id' => ['required'],
+            'state_id' => ['required'],
+            'city_id' => ['required'],
+            'certificationLevel' => ['required', Rule::exists('coach_certifications', 'id')],
+            'specialization' => ['required', Rule::exists('coach_specializations', 'id')],
+            'height' => ['required', 'numeric'],
+            'weight' => ['required', 'numeric'],
+            'status' => [Rule::in('1', '0'), 'nullable'],
         ];
     }
 }
