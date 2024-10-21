@@ -24,12 +24,14 @@
     </div>
 
     <div class="container page-section">
-        <a href="{{ route('admin-managements.create') }}" class="btn btn-primary mb-3">
+        @if(Auth::user()->hasRole('Super-Admin'))
+            <a href="{{ route('admin-managements.create') }}" class="btn btn-primary mb-3">
             <span class="material-icons mr-2">
                 add
             </span>
-            Add New Admin
-        </a>
+                Add New Admin
+            </a>
+        @endif
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
@@ -82,6 +84,7 @@
                 ]
             });
 
+            @if(Auth::user()->hasRole('Super-Admin'))
             body.on('click', '.changePassword', function (e) {
                 const id = $(this).attr('id');
                 e.preventDefault();
@@ -170,6 +173,7 @@
                     }
                 });
             });
+            @endif
         });
     </script>
 @endpush
