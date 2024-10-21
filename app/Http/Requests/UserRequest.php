@@ -3,10 +3,11 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-class UpdatePlayerRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +27,7 @@ class UpdatePlayerRequest extends FormRequest
         return [
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->player->user)],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore(Auth::user()->id)],
             'gender' => ['required', 'string', Rule::in('male', 'female')],
             'dob' => ['required', 'date', 'before:today'],
             'address' => ['required', 'string'],
@@ -37,12 +38,6 @@ class UpdatePlayerRequest extends FormRequest
             'status' => [Rule::in('1'), 'nullable'],
             'state_id' => ['required', Rule::exists('states', 'id')],
             'city_id' => ['required', Rule::exists('cities', 'id')],
-            'joinDate' => ['required', 'date', 'before_or_equal:today'],
-            'positionId' => ['required', Rule::exists('player_positions', 'id')],
-            'skill' => ['required', 'string', Rule::in('Beginner', 'Intermediate', 'Advance')],
-            'strongFoot' => ['required', 'string', Rule::in('left', 'right')],
-            'height' => ['required', 'numeric', 'min:0'],
-            'weight' => ['required', 'numeric', 'min:0'],
         ];
     }
 }

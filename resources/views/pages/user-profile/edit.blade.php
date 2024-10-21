@@ -34,7 +34,7 @@
                         <div class="col-lg-6">
                             <label class="form-label">Profile photo</label>
                             <div class="media align-items-center mb-2">
-                                <img src="{{ Storage::url($data->user->foto) }}"
+                                <img src="{{ Storage::url($data->foto) }}"
                                      alt="people"
                                      width="54"
                                      height="54"
@@ -62,7 +62,7 @@
                                        id="firstName"
                                        name="firstName"
                                        required
-                                       value="{{ old('firstName', $data->user->firstName) }}"
+                                       value="{{ old('firstName', $data->firstName) }}"
                                        placeholder="Input account's first name ...">
                                 @error('firstName')
                                 <span class="invalid-feedback" role="alert">
@@ -77,7 +77,7 @@
                                        id="lastName"
                                        name="lastName"
                                        required
-                                       value="{{ old('lastName', $data->user->lastName) }}"
+                                       value="{{ old('lastName', $data->lastName) }}"
                                        placeholder="Input account's last name ...">
                                 @error('lastName')
                                 <span class="invalid-feedback" role="alert">
@@ -92,7 +92,7 @@
                                        id="dob"
                                        name="dob"
                                        required
-                                       value="{{ old('dob', $data->user->dob) }}"
+                                       value="{{ old('dob', $data->dob) }}"
                                        placeholder="Input account's date of birth">
                                 @error('dob')
                                 <span class="invalid-feedback" role="alert">
@@ -108,7 +108,7 @@
                                        id="email"
                                        name="email"
                                        required
-                                       value="{{ old('email', $data->user->email) }}"
+                                       value="{{ old('email', $data->email) }}"
                                        class="form-control @error('email') is-invalid @enderror"
                                        placeholder="Input account's email address ...">
                                 @error('email')
@@ -124,7 +124,7 @@
                                     <option disabled selected>Select Gender</option>
                                     @foreach(['male' => 'Male', 'female' => 'Female', 'others' => 'Others'] AS $jenisKelamin => $jenisKelaminLabel)
                                         <option
-                                            value="{{ $jenisKelamin }}" @selected(old('gender', $data->user->gender) == $jenisKelamin)>{{ $jenisKelaminLabel }}</option>
+                                            value="{{ $jenisKelamin }}" @selected(old('gender', $data->gender) == $jenisKelamin)>{{ $jenisKelaminLabel }}</option>
                                     @endforeach
                                 </select>
                                 @error('gender')
@@ -139,7 +139,7 @@
                                        id="hireDate"
                                        name="hireDate"
                                        required
-                                       value="{{ \Carbon\Carbon::parse(old('hireDate', $data->user->hireDate))->format('Y-m-d') }}"
+                                       value="{{ \Carbon\Carbon::parse(old('hireDate', $data->hireDate))->format('Y-m-d') }}"
                                        class="form-control @error('hireDate') is-invalid @enderror"
                                        placeholder="Input account's hire date ...">
                                 @error('hireDate')
@@ -162,7 +162,7 @@
                                     name="address"
                                     id="address"
                                     required
-                                    placeholder="Input account's address ...">{{old('address', $data->user->address)}}</textarea>
+                                    placeholder="Input account's address ...">{{old('address', $data->address)}}</textarea>
                                 @error('address')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -175,7 +175,7 @@
                                        id="phoneNumber"
                                        name="phoneNumber"
                                        required
-                                       value="{{ old('phoneNumber', $data->user->phoneNumber) }}"
+                                       value="{{ old('phoneNumber', $data->phoneNumber) }}"
                                        class="form-control @error('phoneNumber') is-invalid @enderror"
                                        placeholder="Input account's phone number ...">
                                 @error('phoneNumber')
@@ -190,7 +190,7 @@
                                        id="zipCode"
                                        name="zipCode"
                                        required
-                                       value="{{ old('zipCode', $data->user->zipCode) }}"
+                                       value="{{ old('zipCode', $data->zipCode) }}"
                                        class="form-control @error('zipCode') is-invalid @enderror"
                                        placeholder="Input address zip code ...">
                                 @error('zipCode')
@@ -209,7 +209,7 @@
                                     <option selected disabled>Select Country</option>
                                     @foreach($countries as $country)
                                         <option
-                                            value="{{ $country['id'] }}" @selected($data->user->country_id == $country['id'])>{{ $country['name'] }}</option>
+                                            value="{{ $country['id'] }}" @selected($data->country_id == $country['id'])>{{ $country['name'] }}</option>
                                     @endforeach
                                 </select>
                                 @error('country')
@@ -261,8 +261,8 @@
     <script>
         $(document).ready(function () {
             const idCountry = $('.country-form option:selected').val();
-            const idState = {{ $data->user->state_id }};
-            const idCity = {{ $data->user->city_id }};
+            const idState = {{ $data->state_id }};
+            const idCity = {{ $data->city_id }};
             $.ajax({
                 url: "{{url('api/states')}}",
                 data: {

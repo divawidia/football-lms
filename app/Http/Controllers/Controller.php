@@ -17,11 +17,29 @@ class Controller extends BaseController
         return Auth::user()->academyId;
     }
 
+    public function getLoggedUser(){
+        return Auth::user();
+    }
+
     public function getLoggedUserId(){
-        return Auth::user()->id;
+        return $this->getLoggedUser()->id;
     }
 
     public function getLoggedCoachUser(){
         return Coach::where('userId', $this->getLoggedUserId())->select('id')->first();
     }
+
+    public function isAdmin()
+    {
+        return Auth::user()->hasRole('admin|SUper-Admin');
+    }
+    public function isCoach()
+    {
+        return Auth::user()->hasRole('coach');
+    }
+    public function isPlayer()
+    {
+        return Auth::user()->hasRole('player');
+    }
+
 }

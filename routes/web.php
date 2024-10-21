@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\TrainingVideoLessonController;
 use App\Http\Controllers\Coach\DashboardController as CoachDashboardController;
 use App\Http\Controllers\Coach\SkillAssessmentController;
 use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -67,6 +68,11 @@ Route::middleware('prevent.back.history')->group(function (){
 //
 //require __DIR__.'/auth.php';
 Route::group(['middleware' => ['auth']], function () {
+
+    Route::prefix('edit-account')->group(function () {
+        Route::get('', [UserController::class, 'edit'])->name('edit-account.edit');
+        Route::put('', [UserController::class, 'update'])->name('edit-account.update');
+    });
 
     Route::group(['middleware' => ['role:Super-Admin,web']], function () {
         Route::prefix('admin')->group(function () {
