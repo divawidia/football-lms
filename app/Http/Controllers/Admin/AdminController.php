@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\UpdateAdminRequest;
 use App\Models\Admin;
 use App\Models\User;
 use App\Services\AdminService;
@@ -99,7 +100,7 @@ class AdminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(AdminRequest $request, Admin $admin)
+    public function update(UpdateAdminRequest $request, Admin $admin)
     {
         $data = $request->validated();
         $this->adminService->update($data, $admin);

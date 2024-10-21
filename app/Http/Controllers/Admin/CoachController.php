@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CoachRequest;
+use App\Http\Requests\UpdateCoachRequest;
 use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
@@ -90,7 +91,6 @@ class CoachController extends Controller
     public function store(CoachRequest $request)
     {
         $data = $request->validated();
-
         $this->coachService->store($data, $this->getAcademyId());
 
         $text = 'Coach '.$data['firstName'].' '.$data['lastName'].' successfully added!';
@@ -131,7 +131,7 @@ class CoachController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CoachRequest $request, User $coach)
+    public function update(UpdateCoachRequest $request, User $coach)
     {
         $data = $request->validated();
 

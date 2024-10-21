@@ -18,24 +18,25 @@ class AdminService extends Service
         $query = Admin::with('user')->get();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                if ($item->user->status == '1'){
-                    $statusButton = '<form action="' . route('deactivate-admin', $item->userId) . '" method="POST">
+                if (isSuperAdmin()){
+                    if ($item->user->status == '1'){
+                        $statusButton = '<form action="' . route('deactivate-admin', $item->userId) . '" method="POST">
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
                                                 <span class="material-icons mr-2 text-danger">block</span> Deactivate Admin</a>
                                             </button>
                                         </form>';
-                }else{
-                    $statusButton = '<form action="' . route('activate-admin', $item->userId) . '" method="POST">
+                    }else{
+                        $statusButton = '<form action="' . route('activate-admin', $item->userId) . '" method="POST">
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
                                                 <span class="material-icons mr-2 text-danger">check_circle</span> Activate Admin</a>
                                             </button>
                                         </form>';
-                }
-                return '
+                    }
+                    return '
                         <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
@@ -52,6 +53,9 @@ class AdminService extends Service
                             </button>
                           </div>
                         </div>';
+                } elseif (isAdmin()){
+                    return '<a class="btn btn-sm btn-outline-secondary" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons">visibility</span></a>';
+                }
             })
             ->editColumn('name', function ($item) {
                 return '

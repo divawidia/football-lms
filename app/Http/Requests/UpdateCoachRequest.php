@@ -29,7 +29,7 @@ class UpdateCoachRequest extends FormRequest
             'lastName' => ['required', 'string'],
             'dob' => ['required', 'date'],
             'team' => [Rule::exists('teams', 'id'), 'nullable'],
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->coach->user)],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->user)],
             'password' => ['string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols(), 'nullable'],
             'gender' => ['required', 'string', Rule::in('male', 'female')],
             'hireDate' => ['required', 'date'],
