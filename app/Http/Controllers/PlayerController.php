@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\PlayerRequest;
+use App\Http\Requests\PlayerTeamRequest;
+use App\Http\Requests\UpdatePlayerRequest;
 use App\Models\Player;
 use App\Models\PlayerPosition;
 use App\Models\Team;
@@ -130,7 +132,7 @@ class PlayerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PlayerRequest $request, Player $player)
+    public function update(UpdatePlayerRequest $request, Player $player)
     {
         $data = $request->validated();
 
@@ -141,21 +143,11 @@ class PlayerController extends Controller
         return redirect()->route('player-managements.show', $player->id);
     }
 
-    public function updateTeams(Request $request, Player $player)
+    public function updateTeams(PlayerTeamRequest $request, Player $player)
     {
-        $validator = Validator::make($request->all(), [
-            'teams' => ['required', Rule::exists('teams', 'id')]
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 422,
-                'errors' => $validator->errors()->toArray()
-            ]);
-        } else {
-            $player = $this->playerService->updateTeams($validator->getData()['teams'], $player);
-            return response()->json($player, 204);
-        }
+        $data = $request->validated();
+        $player = $this->playerService->updateTeams($data, $player);
+        return response()->json($player, 204);
     }
 
     public function upcomingMatches(Player $player){
