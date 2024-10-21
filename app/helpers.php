@@ -29,3 +29,16 @@ function isPlayer()
 {
     return getLoggedUser()->hasRole('player');
 }
+
+function checkRoleDashboardRoute()
+{
+    $route = '';
+    if (isAllAdmin()){
+        $route = route('admin.dashboard');
+    } elseif (isCoach()) {
+        $route = route('coach.dashboard');
+    } elseif (isPlayer()) {
+        $route = route('player.dashboard');
+    }
+    return $route;
+}
