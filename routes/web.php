@@ -52,6 +52,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('', [UserController::class, 'edit'])->name('edit-account.edit');
         Route::put('', [UserController::class, 'update'])->name('edit-account.update');
     });
+    Route::prefix('reset-password')->group(function () {
+        Route::get('', [UserController::class, 'resetPassword'])->name('reset-password.edit');
+        Route::put('', [UserController::class, 'updatePassword'])->name('reset-password.update');
+    });
     Route::prefix('edit-academy')->group(function () {
         Route::get('', [AcademyController::class, 'edit'])->name('edit-academy.edit');
         Route::put('', [AcademyController::class, 'update'])->name('edit-academy.update');
