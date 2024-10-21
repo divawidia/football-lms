@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AcademyController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AttendanceReportController;
 use App\Http\Controllers\Admin\CoachController;
@@ -43,35 +44,17 @@ Route::get('/', function () {
 
 Route::middleware('prevent.back.history')->group(function (){
     Auth::routes();
-
-//    Route::group(['middleware' => ['auth', 'web']], function () {
-//        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-//
-//        Route::group(['prefix' => 'akun', 'as' => 'profile.'], function () {
-//            Route::get('/profile', [ProfileController::class, 'index'])->name('index');
-//            Route::post('/update-photo', [ProfileController::class, 'updatePhoto'])->name('update.photo');
-//            Route::put('/update-password', [ProfileController::class, 'updatePassword'])->name('update.password');
-//            Route::put('/delete-photo', [ProfileController::class, 'deletePhoto'])->name('delete.photo');
-//        });
-//    });
 });
 
-//Route::get('/dashboard', function () {
-//    return view('pages.admins.dashboard');
-//})->middleware(['auth', 'verified'])->name('dashboard');
-//
-//Route::middleware('auth')->group(function () {
-//    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-//});
-//
-//require __DIR__.'/auth.php';
 Route::group(['middleware' => ['auth']], function () {
 
     Route::prefix('edit-account')->group(function () {
         Route::get('', [UserController::class, 'edit'])->name('edit-account.edit');
         Route::put('', [UserController::class, 'update'])->name('edit-account.update');
+    });
+    Route::prefix('edit-academy')->group(function () {
+        Route::get('', [AcademyController::class, 'edit'])->name('edit-academy.edit');
+        Route::put('', [AcademyController::class, 'update'])->name('edit-academy.update');
     });
 
     Route::group(['middleware' => ['role:Super-Admin,web']], function () {
@@ -96,6 +79,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
 
         Route::prefix('admin')->group(function () {
+
             Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
             Route::prefix('admin-managements')->group(function () {

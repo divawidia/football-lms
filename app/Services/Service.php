@@ -35,7 +35,7 @@ class Service
 
     public function deleteImage($image): void
     {
-        if (Storage::disk('public')->exists($image) && $image != 'images/undefined-user.png'){
+        if (Storage::disk('public')->exists($image) && $image != 'images/undefined-user.png' && $image != 'images/video-preview.png'){
             Storage::disk('public')->delete($image);
         }
     }
@@ -58,10 +58,12 @@ class Service
         return  $data[$arrayKey];
     }
 
-    public function updateImage(array $data, string $arrayKey, string $storePath, string $previousImage){
+    public function updateImage(array $data, string $arrayKey, string $storePath, $previousImage){
         if (array_key_exists($arrayKey, $data)){
-            if ($previousImage != 'images/undefined-user.png' || $previousImage != 'images/video-preview.png'){
-                $this->deleteImage($previousImage);
+            if ($previousImage != null){
+                if ($previousImage != 'images/undefined-user.png' || $previousImage != 'images/video-preview.png'){
+                    $this->deleteImage($previousImage);
+                }
             }
             $data[$arrayKey] = $data[$arrayKey]->store($storePath, 'public');
         }else{

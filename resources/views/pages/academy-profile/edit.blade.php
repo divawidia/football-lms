@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Edit Account
+    Edit Academy Profile
 @endsection
 @section('page-title')
     @yield('title')
@@ -24,18 +24,18 @@
     <div class="container page-section">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('edit-profile.update') }}" method="POST" enctype="multipart/form-data">
+                <form action="" method="POST" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
                     <div class="page-separator">
-                        <div class="page-separator__text">Account Profile</div>
+                        <div class="page-separator__text">Academy Profile</div>
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
-                            <label class="form-label">Profile photo</label>
+                            <label class="form-label">Academy Logo</label>
                             <small class="text-black-100">(Optional)</small>
                             <div class="media align-items-center mb-2">
-                                <img src="{{ Storage::url($data->foto) }}"
+                                <img src="{{ Storage::url($data->logo) }}"
                                      alt="people"
                                      width="54"
                                      height="54"
@@ -44,61 +44,29 @@
                                 <div class="media-body">
                                     <div class="custom-file">
                                         <input type="file"
-                                               class="custom-file-input @error('foto') is-invalid @enderror"
-                                               name="foto"
-                                               id="foto">
-                                        <label class="custom-file-label" for="foto">Choose file</label>
+                                               class="custom-file-input @error('logo') is-invalid @enderror"
+                                               name="logo"
+                                               id="logo">
+                                        <label class="custom-file-label" for="logo">Choose file</label>
                                     </div>
                                 </div>
-                                @error('foto')
+                                @error('logo')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="firstName">First name</label>
+                                <label class="form-label" for="academyName">Academy name</label>
                                 <small class="text-danger">*</small>
                                 <input type="text"
-                                       class="form-control @error('firstName') is-invalid @enderror"
-                                       id="firstName"
-                                       name="firstName"
+                                       class="form-control @error('academyName') is-invalid @enderror"
+                                       id="academyName"
+                                       name="academyName"
                                        required
-                                       value="{{ old('firstName', $data->firstName) }}"
-                                       placeholder="Input account's first name ...">
-                                @error('firstName')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="lastName">Last name</label>
-                                <small class="text-danger">*</small>
-                                <input type="text"
-                                       class="form-control @error('lastName') is-invalid @enderror"
-                                       id="lastName"
-                                       name="lastName"
-                                       required
-                                       value="{{ old('lastName', $data->lastName) }}"
-                                       placeholder="Input account's last name ...">
-                                @error('lastName')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="dob">Date of Birth</label>
-                                <small class="text-danger">*</small>
-                                <input type="date"
-                                       class="form-control @error('dob') is-invalid @enderror"
-                                       id="dob"
-                                       name="dob"
-                                       required
-                                       value="{{ old('dob', $data->dob) }}"
-                                       placeholder="Input account's date of birth">
-                                @error('dob')
+                                       value="{{ old('academyName', $data->academyName) }}"
+                                       placeholder="Input academy's first name ...">
+                                @error('academyName')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -115,41 +83,24 @@
                                        required
                                        value="{{ old('email', $data->email) }}"
                                        class="form-control @error('email') is-invalid @enderror"
-                                       placeholder="Input account's email address ...">
+                                       placeholder="Input academy's email address ...">
                                 @error('email')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                 @enderror
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="gender">Gender</label>
-                                <small class="text-danger">*</small>
-                                <select class="form-control form-select @error('gender') is-invalid @enderror"
-                                        id="gender" name="gender" required>
-                                    <option disabled selected>Select Gender</option>
-                                    @foreach(['male' => 'Male', 'female' => 'Female', 'others' => 'Others'] AS $jenisKelamin => $jenisKelaminLabel)
-                                        <option
-                                            value="{{ $jenisKelamin }}" @selected(old('gender', $data->gender) == $jenisKelamin)>{{ $jenisKelaminLabel }}</option>
-                                    @endforeach
-                                </select>
-                                @error('gender')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="hireDate">Hire Date</label>
-                                <small class="text-danger">*</small>
-                                <input type="date"
-                                       id="hireDate"
-                                       name="hireDate"
+                            <div class="form-group mb-4">
+                                <label class="form-label" for="directorName">Director Name</label>
+                                <small class="text-black-100">(Optional)</small>
+                                <input type="text"
+                                       id="directorName"
+                                       name="directorName"
                                        required
-                                       value="{{ \Carbon\Carbon::parse(old('hireDate', $data->hireDate))->format('Y-m-d') }}"
-                                       class="form-control @error('hireDate') is-invalid @enderror"
-                                       placeholder="Input account's hire date ...">
-                                @error('hireDate')
+                                       value="{{ old('directorName', $data->directorName) }}"
+                                       class="form-control @error('directorName') is-invalid @enderror"
+                                       placeholder="Input academy's directorName address ...">
+                                @error('directorName')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -170,7 +121,7 @@
                                     name="address"
                                     id="address"
                                     required
-                                    placeholder="Input account's address ...">{{old('address', $data->address)}}</textarea>
+                                    placeholder="Input academy's address ...">{{old('address', $data->address)}}</textarea>
                                 @error('address')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -186,7 +137,7 @@
                                        required
                                        value="{{ old('phoneNumber', $data->phoneNumber) }}"
                                        class="form-control @error('phoneNumber') is-invalid @enderror"
-                                       placeholder="Input account's phone number ...">
+                                       placeholder="Input academy's phone number ...">
                                 @error('phoneNumber')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>

@@ -13,7 +13,7 @@ class AcademyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class AcademyRequest extends FormRequest
             'address' => ['required', 'string'],
             'phoneNumber' => ['required', 'string'],
             'zipCode' => ['required', 'numeric'],
-            'directorName' => ['required', 'numeric'],
+            'directorName' => ['required', 'string'],
             'logo' => ['image', 'max:1024', 'nullable'],
             'country_id' => ['required', Rule::exists('countries', 'id')],
             'state_id' => ['required', Rule::exists('states', 'id')],

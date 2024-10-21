@@ -4,7 +4,7 @@
             <!-- Sidebar Content -->
 
             <div class="d-flex align-items-center navbar-height">
-                <form action="index.html" class="search-form search-form--black mx-16pt pr-0 pl-16pt">
+                <form action="" class="search-form search-form--black mx-16pt pr-0 pl-16pt">
                     <input type="text" class="form-control pl-0" placeholder="Search">
                     <button class="btn" type="submit"><i class="material-icons">search</i></button>
                 </form>
@@ -13,13 +13,12 @@
             <!-- LOGO -->
             <div class="navbar-brand-box">
                 <a href="{{ route('admin.dashboard') }}" class="logo logo-dark sidebar-brand my-3">
-{{--                    <span class="logo-sm">--}}
-{{--                        LOGO--}}
-{{--                        <img src="{{ URL::asset('img/logo-sm.png') }}" alt="" height="30">--}}
-{{--                    </span>--}}
                     <span class="logo-lg">
-                        LOGO
-{{--                        <img src="{{ URL::asset('img/logo-2.png') }}" alt="" height="75">--}}
+                        @if(academyData()->logo)
+                            <img src="{{ Storage::url(academyData()->logo) }}" alt="" height="75">
+                        @else
+                            LOGO
+                        @endif
                     </span>
                 </a>
             </div>
@@ -39,6 +38,13 @@
                 <div class="sidebar-heading">Management</div>
 
                 <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a class="sidebar-menu-button"
+                           href="{{ route('edit-academy.edit') }}">
+                            <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">school</span>
+                            <span class="sidebar-menu-text">Academy Profile</span>
+                        </a>
+                    </li>
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button"
                            href="{{ route('admin-managements.index') }}">

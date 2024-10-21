@@ -1,9 +1,13 @@
 <?php
 
+use App\Models\Academy;
 use Illuminate\Support\Facades\Auth;
 
 function getLoggedUser(){
     return Auth::user();
+}
+function academyData(){
+    return Academy::first();
 }
 function isSuperAdmin()
 {

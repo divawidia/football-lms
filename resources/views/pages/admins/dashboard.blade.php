@@ -33,7 +33,7 @@
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['thisMonthTotalPlayers'] }}
                                     @if($dataOverview['thisMonthTotalPlayers'] > 0)
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
                                 </p>
@@ -53,7 +53,7 @@
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['thisMonthTotalCoaches'] }}
                                     @if($dataOverview['thisMonthTotalCoaches'] > 0)
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
                                 </p>
@@ -74,7 +74,7 @@
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['thisMonthTotalTeams'] }}
                                     @if($dataOverview['thisMonthTotalTeams'] > 0)
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
                                 </p>
@@ -96,7 +96,7 @@
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['thisMonthTotalAdmins'] }}
                                     @if($dataOverview['thisMonthTotalAdmins'] > 0)
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
                                 </p>
@@ -116,7 +116,7 @@
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['thisMonthTotalCompetitions'] }}
                                     @if($dataOverview['thisMonthTotalCompetitions'] > 0)
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
                                 </p>
@@ -164,7 +164,7 @@
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['thisMonthTotalRevenues'] }}
                                     @if($dataOverview['thisMonthTotalRevenues'] > 0)
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
                                 </p>
@@ -184,7 +184,7 @@
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['totalTeams'] }}
                                     @if($dataOverview['thisMonthTotalPlayers'] > 0)
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
                                 </p>
@@ -204,7 +204,7 @@
                         <div class="flex">
                             <div class="card-title">Total Revenue</div>
                             <div class="card-subtitle text-50 d-flex align-items-center">2.6% <i
-                                    class="material-icons text-accent icon-16pt ml-4pt">keyboard_arrow_up</i></div>
+                                class="material-icons text-accent icon-16pt ml-4pt">keyboard_arrow_up</i></div>
                         </div>
                         <div class="ml-3 align-self-start">
                             <div class="dropdown mb-2">
@@ -291,54 +291,54 @@
         </div>
 
         @foreach($upcomingMatches as $match)
-            <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-4 d-flex flex-column flex-md-row align-items-center">
-                            <img src="{{ Storage::url($match->teams[0]->logo) }}"
-                                 width="50"
-                                 height="50"
-                                 class="rounded-circle img-object-fit-cover"
-                                 alt="team-logo">
-                            <div class="ml-md-3 text-center text-md-left">
-                                <h5 class="mb-0">{{$match->teams[0]->teamName}}</h5>
-                                <p class="text-50 lh-1 mb-0">{{$match->teams[0]->ageGroup}}</p>
-                            </div>
-                        </div>
-                        <div class="col-4 text-center">
-                            <h2 class="mb-0">Vs.</h2>
-                        </div>
-                        <div
-                            class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
-                            <div class="mr-md-3 text-center text-md-right">
-                                <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
-                                <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
-                            </div>
-                            <img src="{{ Storage::url($match->teams[1]->logo) }}"
-                                 width="50"
-                                 height="50"
-                                 class="rounded-circle img-object-fit-cover"
-                                 alt="team-logo">
+        <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-4 d-flex flex-column flex-md-row align-items-center">
+                        <img src="{{ Storage::url($match->teams[0]->logo) }}"
+                             width="50"
+                             height="50"
+                             class="rounded-circle img-object-fit-cover"
+                             alt="team-logo">
+                        <div class="ml-md-3 text-center text-md-left">
+                            <h5 class="mb-0">{{$match->teams[0]->teamName}}</h5>
+                            <p class="text-50 lh-1 mb-0">{{$match->teams[0]->ageGroup}}</p>
                         </div>
                     </div>
-
-                    <div class="row justify-content-center mt-3">
-                        <div class="mr-2">
-                            <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                            {{ date('D, M d Y', strtotime($match->date)) }}
+                    <div class="col-4 text-center">
+                        <h2 class="mb-0">Vs.</h2>
+                    </div>
+                    <div
+                        class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
+                        <div class="mr-md-3 text-center text-md-right">
+                            <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
+                            <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
                         </div>
-                        <div class="mr-2">
-                            <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                            {{ date('h:i A', strtotime($match->startTime)) }}
-                            - {{ date('h:i A', strtotime($match->endTime)) }}
-                        </div>
-                        <div>
-                            <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                            {{ $match->place }}
-                        </div>
+                        <img src="{{ Storage::url($match->teams[1]->logo) }}"
+                             width="50"
+                             height="50"
+                             class="rounded-circle img-object-fit-cover"
+                             alt="team-logo">
                     </div>
                 </div>
-            </a>
+
+                <div class="row justify-content-center mt-3">
+                    <div class="mr-2">
+                        <i class="material-icons text-danger icon--left icon-16pt">event</i>
+                        {{ date('D, M d Y', strtotime($match->date)) }}
+                    </div>
+                    <div class="mr-2">
+                        <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
+                        {{ date('h:i A', strtotime($match->startTime)) }}
+                        - {{ date('h:i A', strtotime($match->endTime)) }}
+                    </div>
+                    <div>
+                        <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
+                        {{ $match->place }}
+                    </div>
+                </div>
+            </div>
+        </a>
         @endforeach
 
         <div class="page-separator">
@@ -351,105 +351,99 @@
 
         <div class="row">
             @foreach($upcomingTrainings as $training)
-                <div class="col-lg-6">
-                    <a class="card" href="{{ route('training-schedules.show', $training->id) }}">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6 d-flex flex-column flex-md-row align-items-center">
-                                    <img src="{{ Storage::url($training->teams[0]->logo) }}"
-                                         width="50"
-                                         height="50"
-                                         class="rounded-circle img-object-fit-cover"
-                                         alt="team-logo">
-                                    <div class="ml-md-3 text-center text-md-left">
-                                        <h5 class="mb-0">{{$training->teams[0]->teamName}}</h5>
-                                        <p class="text-50 lh-1 mb-0">{{$training->teams[0]->ageGroup}}</p>
-                                    </div>
+            <div class="col-lg-6">
+                <a class="card" href="{{ route('training-schedules.show', $training->id) }}">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 d-flex flex-column flex-md-row align-items-center">
+                                <img src="{{ Storage::url($training->teams[0]->logo) }}"
+                                     width="50"
+                                     height="50"
+                                     class="rounded-circle img-object-fit-cover"
+                                     alt="team-logo">
+                                <div class="ml-md-3 text-center text-md-left">
+                                    <h5 class="mb-0">{{$training->teams[0]->teamName}}</h5>
+                                    <p class="text-50 lh-1 mb-0">{{$training->teams[0]->ageGroup}}</p>
                                 </div>
-                                <div class="col-6 d-flex flex-column">
-                                    <div class="mr-2">
-                                        <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                                        {{ date('D, M d Y', strtotime($training->date)) }}
-                                    </div>
-                                    <div class="mr-2">
-                                        <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                                        {{ date('h:i A', strtotime($training->startTime)) }}
-                                        - {{ date('h:i A', strtotime($match->endTime)) }}
-                                    </div>
-                                    <div>
-                                        <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                                        {{ $training->place }}
-                                    </div>
+                            </div>
+                            <div class="col-6 d-flex flex-column">
+                                <div class="mr-2">
+                                    <i class="material-icons text-danger icon--left icon-16pt">event</i>
+                                    {{ date('D, M d Y', strtotime($training->date)) }}
+                                </div>
+                                <div class="mr-2">
+                                    <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
+                                    {{ date('h:i A', strtotime($training->startTime)) }}
+                                    - {{ date('h:i A', strtotime($match->endTime)) }}
+                                </div>
+                                <div>
+                                    <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
+                                    {{ $training->place }}
                                 </div>
                             </div>
                         </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
+            </div>
             @endforeach
         </div>
 
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="page-separator">
-                    <div class="page-separator__text">Team Leaderboard</div>
-                </div>
-                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="teamsLeaderboardTable">
-                                <thead>
-                                <tr>
-                                    <th>Pos.</th>
-                                    <th>Teams</th>
-                                    <th>Match Played</th>
-                                    <th>Won</th>
-                                    <th>Drawn</th>
-                                    <th>Lost</th>
-                                    <th>Goals</th>
-                                    <th>Goals Conceded</th>
-                                    <th>Clean Sheets</th>
-                                    <th>Own Goal</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+        <div class="page-separator">
+            <div class="page-separator__text">Team Leaderboard</div>
+        </div>
+        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="teamsLeaderboardTable">
+                        <thead>
+                        <tr>
+                            <th>Pos.</th>
+                            <th>Teams</th>
+                            <th>Match Played</th>
+                            <th>Won</th>
+                            <th>Drawn</th>
+                            <th>Lost</th>
+                            <th>Goals</th>
+                            <th>Goals Conceded</th>
+                            <th>Clean Sheets</th>
+                            <th>Own Goal</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="page-separator">
-                    <div class="page-separator__text">Player Leaderboard</div>
-                </div>
-                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="playersLeaderboardTable">
-                                <thead>
-                                <tr>
-                                    <th>Pos.</th>
-                                    <th>Name</th>
-                                    <th>Team</th>
-                                    <th>Apps</th>
-                                    <th>Goals</th>
-                                    <th>Assists</th>
-                                    <th>Own Goals</th>
-                                    <th>Shots</th>
-                                    <th>Passes</th>
-                                    <th>Fouls Conceded</th>
-                                    <th>Yellow Cards</th>
-                                    <th>Red Cards</th>
-                                    <th>Saves</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+        </div>
+        <div class="page-separator">
+            <div class="page-separator__text">Player Leaderboard</div>
+        </div>
+        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="playersLeaderboardTable">
+                        <thead>
+                        <tr>
+                            <th>Pos.</th>
+                            <th>Name</th>
+                            <th>Team</th>
+                            <th>Apps</th>
+                            <th>Goals</th>
+                            <th>Assists</th>
+                            <th>Own Goals</th>
+                            <th>Shots</th>
+                            <th>Passes</th>
+                            <th>Fouls Conceded</th>
+                            <th>Yellow Cards</th>
+                            <th>Red Cards</th>
+                            <th>Saves</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

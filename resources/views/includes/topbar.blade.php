@@ -16,9 +16,11 @@
        class="navbar-brand mr-16pt d-lg-none">
             <span class="avatar avatar-sm navbar-brand-icon mr-0 mr-lg-8pt">
                 <span class="avatar-title rounded bg-primary">
-                    <img src=""
-                         alt="logo"
-                         class="img-fluid" />
+                    @if(academyData()->logo)
+                        <img src="{{ Storage::url(academyData()->logo) }}" alt="logo" class="img-fluid" height="75">
+                    @else
+                        LOGO
+                    @endif
                 </span>
             </span>
     </a>

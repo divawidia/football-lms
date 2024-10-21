@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('academies', function (Blueprint $table) {
-            //
+            $table->string('logo')->nullable();
+            $table->enum('status', ['0', '1'])->default('1')->change();
         });
     }
 
@@ -22,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('academies', function (Blueprint $table) {
-            //
+            $table->dropColumn('logo');
+            $table->enum('status', ['0', '1'])->change();
         });
     }
 };
