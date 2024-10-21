@@ -68,22 +68,9 @@ Route::middleware('prevent.back.history')->group(function (){
 //require __DIR__.'/auth.php';
 Route::group(['middleware' => ['auth']], function () {
 
-//    Route::group(['middleware' => ['role:admin|coach,web']], function () {
-//        Route::prefix('player-managements')->group(function () {
-//            Route::get('', [PlayerController::class, 'index'])->name('player-managements.index');
-//            Route::prefix('{player}')->group(function () {
-//                Route::get('', [PlayerController::class, 'index'])->name('player-managements.index');
-//            });
-//        });
-//    });
-
-    Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
-
+    Route::group(['middleware' => ['role:Super-Admin,web']], function () {
         Route::prefix('admin')->group(function () {
-            Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-
             Route::prefix('admin-managements')->group(function () {
-                Route::get('', [AdminController::class, 'index'])->name('admin-managements.index');
                 Route::post('', [AdminController::class, 'store'])->name('admin-managements.store');
                 Route::get('create', [AdminController::class, 'create'])->name('admin-managements.create');
 
@@ -95,6 +82,20 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('edit', [AdminController::class, 'edit'])->name('admin-managements.edit');
                     Route::put('', [AdminController::class, 'update'])->name('admin-managements.update');
                     Route::delete('', [AdminController::class, 'destroy'])->name('admin-managements.destroy');
+                });
+            });
+        });
+    });
+
+    Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
+
+        Route::prefix('admin')->group(function () {
+            Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+            Route::prefix('admin-managements')->group(function () {
+                Route::get('', [AdminController::class, 'index'])->name('admin-managements.index');
+                Route::prefix('{admin}')->group(function () {
+                    Route::get('', [AdminController::class, 'show'])->name('admin-managements.show');
                 });
             });
 
