@@ -75,11 +75,9 @@ class CoachController extends Controller
      */
     public function create()
     {
-        $data = $this->coachService->create();
-
         return view('pages.admins.managements.coaches.create', [
-            'countries' => $data['countries'],
-            'certifications' => $data['certifications'],
+            'countries' => $this->coachService->getCountryData(),
+            'certifications' => $this->coachService->get,
             'specializations' => $data['specializations'],
             'teams' => $data['teams'],
         ]);

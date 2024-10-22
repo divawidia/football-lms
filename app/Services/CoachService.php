@@ -12,6 +12,7 @@ use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
+use App\Repository\CoachRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,9 +26,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CoachService extends Service
 {
+    private CoachRepository $coachRepository;
+
+    public function __construct(CoachRepository $coachRepository)
+    {
+        $this->coachRepository = $coachRepository;
+    }
+
     public function index(): JsonResponse
     {
-        $query = Coach::with('user', 'teams')->get();
+        $query = $this->coachRepository->getAll();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if ($item->user->status == '1') {
