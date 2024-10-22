@@ -265,7 +265,7 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Certification Level :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->specializations->name }}</div>
+                            <div class="ml-auto p-2 text-muted">{{ $data->certification->name }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Height :</p></div>
