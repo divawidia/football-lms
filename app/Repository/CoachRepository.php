@@ -34,25 +34,27 @@ class CoachRepository
 
     public function find($id)
     {
-        return $this->post->findOrFail($id);
+        return $this->coach->findOrFail($id);
     }
 
     public function create(array $data)
     {
-        return $this->post->create($data);
+        $coach = $this->coach->create($data);
+        $coach->teams()->attach($data['team']);
+        return $coach;
     }
 
     public function update($id, array $data)
     {
-        $post = $this->find($id);
-        $post->update($data);
-        return $post;
+        $coach = $this->find($id);
+        $coach->update($data);
+        return $coach;
     }
 
     public function delete($id)
     {
-        $post = $this->find($id);
-        $post->delete();
-        return $post;
+        $coach = $this->find($id);
+        $coach->delete();
+        return $coach;
     }
 }

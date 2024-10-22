@@ -14,6 +14,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Repository\CoachRepository;
 use App\Repository\TeamRepository;
+use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,11 +30,13 @@ class CoachService extends Service
 {
     private CoachRepository $coachRepository;
     private TeamRepository $teamRepository;
+    private UserRepository $userRepository;
 
-    public function __construct(CoachRepository $coachRepository, TeamRepository $teamRepository)
+    public function __construct(CoachRepository $coachRepository, TeamRepository $teamRepository, UserRepository $userRepository)
     {
         $this->coachRepository = $coachRepository;
         $this->teamRepository = $teamRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function index(): JsonResponse
@@ -191,49 +194,28 @@ class CoachService extends Service
     public  function store(array $data, $academyId){
 
         $data['password'] = bcrypt($data['password']);
-
-        if (array_key_exists('foto', $data)){
-            $data['foto'] = $data['foto']->store('assets/user-profile', 'public');
-        }else{
-            $data['foto'] = 'images/undefined-user.png';
-        }
-
+        $data['foto'] = $this->storeImage($data, 'foto', 'assets/user-profile', 'images/undefined-user.png');
         $data['status'] = '1';
         $data['academyId'] = $academyId;
 
-        $user = User::create($data);
-        $user->assignRole('coach');
-
+        $user = $this->userRepository->createCoachUser($data);
         $data['userId'] = $user->id;
-
-        $coach = Coach::create($data);
-        $coach->teams()->attach($data['team']);
-        return $coach;
+        return $this->coachRepository->create($data);
     }
     public function show(Coach $coach)
     {
         $fullName = $this->getUserFullName($coach->user);
         $age = $this->getAge($coach->user->dob);
-
-        $teams = Team::where('teamSide', 'Academy Team')
-            ->whereDoesntHave('coaches', function (Builder $query) use ($coach) {
-                $query->where('coachId', $coach->id);
-            })->get();
+        $teams = $this->teamRepository->getTeamsHaventJoinedByCoach($coach);
 
         return compact('fullName', 'age', 'teams');
     }
 
-    public function edit(User $coach){
-        $action =  World::countries();
-        if ($action->success) {
-            $countries = $action->data;
-        }
+    public function edit(){
+        $certifications = $this->coachRepository->getAllCoachCertification();
+        $specializations = $this->coachRepository->getAllCoachSpecialization();
 
-        $certifications = CoachCertification::all();
-        $specializations = CoachSpecialization::all();
-        $fullname = $coach->firstName . ' ' . $coach->lastName;
-
-        return compact('countries', 'certifications', 'specializations', 'fullname', 'coach');
+        return compact('certifications', 'specializations');
     }
 
     public function update(array $playerData, User $user): User

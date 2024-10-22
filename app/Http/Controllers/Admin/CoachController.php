@@ -114,15 +114,15 @@ class CoachController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $coach)
+    public function edit(Coach $coach)
     {
-        $data = $this->coachService->edit($coach);
+        $data = $this->coachService->edit();
         return view('pages.admins.managements.coaches.edit',[
-            'coach' => $data['coach'],
-            'fullname' => $data['fullname'],
+            'data' => $coach,
+            'fullName' => $this->coachService->getUserFullName($coach->user),
             'certifications' => $data['certifications'],
             'specializations' => $data['specializations'],
-            'countries' => $data['countries']
+            'countries' => $this->coachService->getCountryData(),
         ]);
     }
 
