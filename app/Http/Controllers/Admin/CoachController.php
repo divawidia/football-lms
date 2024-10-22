@@ -92,8 +92,7 @@ class CoachController extends Controller
         $data = $request->validated();
         $this->coachService->store($data, $this->getAcademyId());
 
-        $text = 'Coach '.$data['firstName'].' '.$data['lastName'].' successfully added!';
-        Alert::success($text);
+        $this->successAlertAddUser($data);
         return redirect()->route('coach-managements.index');
     }
 

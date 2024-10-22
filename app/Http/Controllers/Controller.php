@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class Controller extends BaseController
 {
@@ -48,6 +49,12 @@ class Controller extends BaseController
     public function isPlayer()
     {
         return $this->getLoggedUser()->hasRole('player');
+    }
+
+    public function successAlertAddUser(array $data)
+    {
+        $text = $data['firstName'].' '.$data['lastName'].' successfully added!';
+        return Alert::success($text);
     }
 
 }
