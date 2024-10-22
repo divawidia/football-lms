@@ -23,7 +23,7 @@ class EventSchedule extends Model
         'status',
     ];
 
-    public function teams()
+        public function teams()
     {
         return $this->belongsToMany(Team::class, 'team_schedule', 'eventId', 'teamId')
             ->withPivot(
