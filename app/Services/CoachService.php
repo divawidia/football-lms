@@ -13,6 +13,7 @@ use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
 use App\Repository\CoachRepository;
+use App\Repository\TeamRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -27,10 +28,12 @@ use Yajra\DataTables\Facades\DataTables;
 class CoachService extends Service
 {
     private CoachRepository $coachRepository;
+    private TeamRepository $teamRepository;
 
-    public function __construct(CoachRepository $coachRepository)
+    public function __construct(CoachRepository $coachRepository, TeamRepository $teamRepository)
     {
         $this->coachRepository = $coachRepository;
+        $this->teamRepository = $teamRepository;
     }
 
     public function index(): JsonResponse
@@ -178,16 +181,11 @@ class CoachService extends Service
 
     public function create()
     {
-        $action =  World::countries();
-        if ($action->success) {
-            $countries = $action->data;
-        }
+        $certifications = $this->coachRepository->getAllCoachCertification();
+        $specializations = $this->coachRepository->getAllCoachSpecialization();
+        $teams = $this->teamRepository->getAcademyTeams();
 
-        $certifications = CoachCertification::all();
-        $specializations = CoachSpecialization::all();
-        $teams = Team::where('teamSide', 'Academy Team')->get();
-
-        return compact('countries', 'certifications', 'specializations', 'teams');
+        return compact('certifications', 'specializations', 'teams');
     }
 
     public  function store(array $data, $academyId){
