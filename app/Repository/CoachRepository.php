@@ -40,7 +40,9 @@ class CoachRepository
     public function create(array $data)
     {
         $coach = $this->coach->create($data);
-        $coach->teams()->attach($data['team']);
+        if (array_key_exists('team',$data)){
+            $coach->teams()->attach($data['team']);
+        }
         return $coach;
     }
 

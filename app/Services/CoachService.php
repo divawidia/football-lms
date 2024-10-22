@@ -45,7 +45,7 @@ class CoachService extends Service
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if ($item->user->status == '1') {
-                    $statusButton = '<form action="' . route('deactivate-coach', $item->userId) . '" method="POST">
+                    $statusButton = '<form action="' . route('deactivate-coach', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
@@ -53,7 +53,7 @@ class CoachService extends Service
                                                 </button>
                                             </form>';
                 } else {
-                    $statusButton = '<form action="' . route('activate-coach', $item->userId) . '" method="POST">
+                    $statusButton = '<form action="' . route('activate-coach', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
                                                 ' . csrf_field() . '
                                                 <button type="submit" class="dropdown-item">
@@ -69,11 +69,11 @@ class CoachService extends Service
                                 </span>
                               </button>
                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('coach-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Coach Profile</a>
-                                <a class="dropdown-item" href="' . route('coach-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Coach</a>
+                                <a class="dropdown-item" href="' . route('coach-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Coach Profile</a>
+                                <a class="dropdown-item" href="' . route('coach-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Coach</a>
                                 ' . $statusButton . '
                                 <a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons">lock</span> Change Coach Password</a>
-                                <button type="button" class="dropdown-item delete-user" id="' . $item->userId . '">
+                                <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
                                     <span class="material-icons text-danger">delete</span> Delete Coach
                                 </button>
                               </div>
