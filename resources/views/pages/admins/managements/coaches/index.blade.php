@@ -17,9 +17,10 @@
             <h2 class="mb-0 text-left">@yield('title')</h2>
 
             <ol class="breadcrumb p-0 m-0">
-                <li class="breadcrumb-item"><a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
+                <li class="breadcrumb-item">
+                    <a href="@if(isAllAdmin())
                         {{ route('admin.dashboard') }}
-                        @elseif(Auth::user()->hasRole('coach'))
+                        @elseif(isCoach())
                         {{ route('coach.dashboard') }}
                         @endif">Home</a></li>
                 <li class="breadcrumb-item active">
@@ -30,12 +31,14 @@
     </div>
 
     <div class="container page-section">
-        <a href="{{  route('coach-managements.create') }}" class="btn btn-primary mb-3" id="add-new">
+        @if(isAllAdmin())
+            <a href="{{  route('coach-managements.create') }}" class="btn btn-primary mb-3" id="add-new">
                 <span class="material-icons mr-2">
                     add
                 </span>
-            Add New Coach
-        </a>
+                Add New Coach
+            </a>
+        @endif
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
@@ -100,7 +103,7 @@
                 e.preventDefault();
                 const id = $('#userId').val();
                 $.ajax({
-                    url: "{{ route('player-managements.change-password', ['player' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('coach-managements.change-password', ['coach' => ":id"]) }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -158,11 +161,11 @@
                                 });
                                 datatable.ajax.reload();
                             },
-                            error: function (error) {
+                            error: function (jqXHR, textStatus, errorThrown) {
                                 Swal.fire({
                                     icon: "error",
-                                    title: "Oops...",
-                                    text: "Something went wrong when deleting data!",
+                                    title: "Something went wrong when deleting data!",
+                                    text: errorThrown
                                 });
                             }
                         });

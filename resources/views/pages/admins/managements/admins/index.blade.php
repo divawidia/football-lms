@@ -24,7 +24,7 @@
     </div>
 
     <div class="container page-section">
-        @if(Auth::user()->hasRole('Super-Admin'))
+        @if(isSuperAdmin())
             <a href="{{ route('admin-managements.create') }}" class="btn btn-primary mb-3">
             <span class="material-icons mr-2">
                 add
@@ -84,7 +84,7 @@
                 ]
             });
 
-            @if(Auth::user()->hasRole('Super-Admin'))
+            @if(isSuperAdmin())
             body.on('click', '.changePassword', function (e) {
                 const id = $(this).attr('id');
                 e.preventDefault();
