@@ -129,7 +129,7 @@ class CoachController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCoachRequest $request, User $coach)
+    public function update(UpdateCoachRequest $request, Coach $coach)
     {
         $data = $request->validated();
 
