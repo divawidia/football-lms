@@ -45,6 +45,11 @@ class Team extends Model
             )->withTimestamps();
     }
 
+    public function coachMatchStats()
+    {
+        return $this->hasMany(CoachMatchStat::class, 'teamId');
+    }
+
     public function matches(){
         return $this->hasMany(TeamMatch::class, 'teamId');
     }

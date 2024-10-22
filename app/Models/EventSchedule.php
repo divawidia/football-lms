@@ -47,6 +47,10 @@ class EventSchedule extends Model
     public function matches(){
         return $this->hasMany(TeamMatch::class, 'eventId');
     }
+    public function coachMatchStats()
+    {
+        return $this->hasMany(CoachMatchStat::class, 'eventId');
+    }
 
     public function user()
     {

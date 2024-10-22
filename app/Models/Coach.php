@@ -37,6 +37,10 @@ class Coach extends Model
                 'note'
             )->withTimestamps();
     }
+    public function matchStats()
+    {
+        return $this->hasMany(CoachMatchStat::class, 'coachId');
+    }
     public function playerSkillStats()
     {
         return $this->hasMany(PlayerSkillStats::class, 'coachId');
