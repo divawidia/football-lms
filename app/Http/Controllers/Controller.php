@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coach;
+use App\Models\User;
 use DateTime;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -51,9 +52,15 @@ class Controller extends BaseController
         return $this->getLoggedUser()->hasRole('player');
     }
 
-    public function successAlertAddUser(array $data)
+    public function successAlertAddUser(array $data, string $context)
     {
-        $text = $data['firstName'].' '.$data['lastName'].' successfully added!';
+        $text = $data['firstName'].' '.$data['lastName'].' successfully '.$context.'!';
+        return Alert::success($text);
+    }
+
+    public function successAlertStatusUser(User $user, string $context)
+    {
+        $text = $user->firstName.' '.$user->lasstName.' status successfully '.$context.'!';
         return Alert::success($text);
     }
 

@@ -172,8 +172,7 @@ class CoachService extends Service
 
     public function removeTeam(Coach $coach, Team $team)
     {
-        $coach->teams()->detach($team->id);
-        return $coach;
+        return $coach->teams()->detach($team->id);
     }
 
     public function updateTeams($teamData, Coach $coach)
@@ -207,55 +206,39 @@ class CoachService extends Service
         $fullName = $this->getUserFullName($coach->user);
         $age = $this->getAge($coach->user->dob);
         $teams = $this->teamRepository->getTeamsHaventJoinedByCoach($coach);
-
         return compact('fullName', 'age', 'teams');
     }
 
     public function edit(){
         $certifications = $this->coachRepository->getAllCoachCertification();
         $specializations = $this->coachRepository->getAllCoachSpecialization();
-
         return compact('certifications', 'specializations');
     }
 
-    public function update(array $playerData, User $user): User
+    public function update(array $data, Coach $coach)
     {
-        if (array_key_exists('foto', $playerData)){
-            $this->deleteImage($user->foto);
-            $playerData['foto'] = $playerData['foto']->store('assets/player-logo', 'public');
-        }else{
-            $playerData['foto'] = $user->foto;
-        }
-
-        $user->update($playerData);
-        $user->player->update($playerData);
-
-        return $user;
+        $data['foto'] = $this->updateImage($data, 'foto', 'user-profile', $coach->user->foto);
+        $this->coachRepository->update($coach, $data);
+        return $coach;
     }
-    public function activate(User $user): User
+    public function activate(Coach $coach)
     {
-        $user->update(['status' => '1']);
-        return $user;
+        return $this->coachRepository->activate($coach);
     }
 
-    public function deactivate(User $user): User
+    public function deactivate(Coach $coach)
     {
-        $user->update(['status' => '0']);
-        return $user;
+        return $this->coachRepository->deactivate($coach);
     }
 
-    public function changePassword($data, User $user){
-        $user->update([
-            'password' => bcrypt($data)
-        ]);
-        return $user;
+    public function changePassword($data, Coach $coach){
+        return $this->coachRepository->changePassword($data, $coach);
     }
 
-    public function destroy(User $user): User
+    public function destroy(Coach $coach)
     {
-        $this->deleteImage($user->foto);
-        $user->player->delete();
-        $user->delete();
-        return $user;
+        $this->deleteImage($coach->user->foto);
+        $this->coachRepository->delete($coach);
+        return $coach;
     }
 }

@@ -376,8 +376,8 @@
     <script>
         $(document).ready(function () {
             const idCountry = $('.country-form option:selected').val();
-            const idState = {{ $data->state_id }};
-            const idCity = {{ $data->city_id }};
+            const idState = {{ $data->user->state_id }};
+            const idCity = {{ $data->user->city_id }};
             $.ajax({
                 url: "{{url('api/states')}}",
                 data: {

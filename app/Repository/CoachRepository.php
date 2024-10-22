@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
+use App\Models\Team;
 
 class CoachRepository
 {
@@ -46,17 +47,35 @@ class CoachRepository
         return $coach;
     }
 
-    public function update($id, array $data)
+    public function update(Coach $coach, array $data)
     {
-        $coach = $this->find($id);
         $coach->update($data);
+        $coach->user->update($data);
         return $coach;
     }
 
-    public function delete($id)
+    public function activate(Coach $coach)
     {
-        $coach = $this->find($id);
+        return $coach->user()->update(['status' => '1']);
+    }
+
+    public function deactivate(Coach $coach)
+    {
+        return $coach->user()->update(['status' => '0']);
+    }
+
+    public function changePassword(array $data, Coach $coach)
+    {
+        return $coach->user()->update([
+                'password' => bcrypt($data['password'])
+            ]);
+    }
+
+    public function delete(Coach $coach)
+    {
         $coach->delete();
+        $coach->user->roles()->detach();
+        $coach->user()->delete();
         return $coach;
     }
 }

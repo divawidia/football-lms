@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\CoachRequest;
+use App\Http\Requests\PlayerTeamRequest;
 use App\Http\Requests\UpdateCoachRequest;
 use App\Models\Coach;
 use App\Models\CoachCertification;
@@ -48,21 +50,11 @@ class CoachController extends Controller
 
     }
 
-    public function updateTeams(Request $request, Coach $coach)
+    public function updateTeams(PlayerTeamRequest $request, Coach $coach)
     {
-        $validator = Validator::make($request->all(), [
-            'teams' => ['required', Rule::exists('teams', 'id')]
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 422,
-                'errors' => $validator->errors()->toArray()
-            ]);
-        }else{
-            $coach = $this->coachService->updateTeams($validator->getData()['teams'], $coach);
-            return response()->json($coach, 204);
-        }
+        $data = $request->validated();
+        $coach = $this->coachService->updateTeams($data, $coach);
+        return response()->json($coach, 204);
     }
 
     public function removeTeam(Coach $coach, Team $team)
@@ -91,8 +83,7 @@ class CoachController extends Controller
     {
         $data = $request->validated();
         $this->coachService->store($data, $this->getAcademyId());
-
-        $this->successAlertAddUser($data);
+        $this->successAlertAddUser($data, 'added');
         return redirect()->route('coach-managements.index');
     }
 
@@ -132,74 +123,43 @@ class CoachController extends Controller
     public function update(UpdateCoachRequest $request, Coach $coach)
     {
         $data = $request->validated();
-
-        if ($request->hasFile('foto')){
-            $data['foto'] = $request->file('foto')->store('assets/user-profile', 'public');
-        }else{
-            $data['foto'] = $coach->foto;
-        }
-
-        $coach->update($data);
-        $coach->coach->update($data);
-
-        $text = 'Coach '.$coach->firstName.' '.$coach->lastName.' successfully updated!';
-        Alert::success($text);
+        $this->coachService->update($data, $coach);
+        $this->successAlertAddUser($data, 'updated');
         return redirect()->route('coach-managements.show', $coach->id);
     }
 
-    public function deactivate(User $coach){
-        $coach->update([
-            'status' => '0'
-        ]);
-        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' status successfully deactivated!');
-        return redirect()->route('coach-managements.index');
+    public function deactivate(Coach $coach){
+        $this->coachService->deactivate($coach);
+        $this->successAlertStatusUser($coach->user, 'deactivated');
+        return redirect()->route('coach-managements.show', $coach->id);
     }
 
-    public function activate(User $coach){
-        $coach->update([
-            'status' => '1'
-        ]);
-        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' status successfully activated!');
-        return redirect()->route('coach-managements.index');
+    public function activate(Coach $coach){
+        $this->coachService->activate($coach);
+        $this->successAlertStatusUser($coach->user, 'activated');
+        return redirect()->route('coach-managements.show', $coach->id);
     }
 
-    public function changePasswordPage(User $coach){
-        $fullName = $coach->firstName . ' ' . $coach->lastName;
-
-        return view('pages.admins.managements.coaches.change-password',[
-            'user' => $coach,
-            'fullName' => $fullName
+    public function changePassword(ChangePasswordRequest $request, Coach $coach){
+        $data = $request->validated();
+        $result = $this->coachService->changePassword($data, $coach);
+        return response()->json([
+            'status' => 200,
+            'data' => $result,
+            'message' => 'Successfully change password'
         ]);
-    }
-
-    public function changePassword(Request $request, User $coach){
-        $validator = Validator::make($request->all(), [
-            'password' => ['required', 'string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols()]
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator);
-        }
-
-        $coach->update([
-            'password' => bcrypt($validator->getData()['password'])
-        ]);
-        Alert::success('Coach '.$coach->firstName.' '.$coach->lastName.' password successfully updated!');
-        return redirect()->route('coach-managements.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $coach)
+    public function destroy(Coach $coach)
     {
-        if (File::exists($coach->foto) && $coach->foto != 'images/undefined-user.png'){
-            File::delete($coach->foto);
-        }
-
-        $coach->coach->delete();
-        $coach->delete();
-
-        return response()->json(['success' => true]);
+        $result = $this->coachService->destroy($coach);
+        return response()->json([
+            'status' => 200,
+            'data' => $result,
+            'message' => 'Successfully delete admin'
+        ]);
     }
 }
