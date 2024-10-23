@@ -490,6 +490,7 @@ class EventScheduleService extends Service
         $schedule->players()->attach($team->players);
         $schedule->playerMatchStats()->attach($team->players, ['teamId' => $team->id]);
         $schedule->coaches()->attach($team->coaches);
+        $schedule->coachMatchStats()->attach($team->coaches, ['teamId' => $team->id]);
 
         return $schedule;
     }
@@ -536,7 +537,14 @@ class EventScheduleService extends Service
         $academyTeamGoalsDifference = $academyTeamScore - $opponentTeamScore;
         $opponentTeamGoalsDifference = $opponentTeamScore - $academyTeamScore;
 
+        // update match result data of each coach match stats
+        foreach ($schedule->coaches as $coach){
+            $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['goalConceded' => $opponentTeamScore]);
+        }
+
+        // chack if match is in competition
         if ($schedule->competition()->exists()){
+            //get group division data of our teams
             $groupDivision = $schedule->competition->groups()
                 ->whereRelation('teams','teamId', $schedule->teams[0]->id)
                 ->first();
@@ -545,9 +553,15 @@ class EventScheduleService extends Service
             $opponentTeam = $groupDivision->teams()->where('teamId', $schedule->teams[0]->id)->first();
         }
 
+        // if our teams win the match
         if ($academyTeamScore > $opponentTeamScore){
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Win']);
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Lose']);
+
+            // update match result data of each coach match stats
+            foreach ($schedule->coaches as $coach){
+                $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['resultStatus' => 'Win']);
+            }
 
             if ($schedule->competition()->exists()){
                 $groupDivision->teams()
@@ -578,6 +592,10 @@ class EventScheduleService extends Service
         } elseif ($academyTeamScore < $opponentTeamScore){
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Win']);
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Lose']);
+            // update match result data of each coach match stats
+            foreach ($schedule->coaches as $coach){
+                $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['resultStatus' => 'Lose']);
+            }
 
             if ($schedule->competition()->exists()){
                 $groupDivision->teams()
@@ -608,6 +626,10 @@ class EventScheduleService extends Service
         }elseif ($academyTeamScore == $opponentTeamScore){
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Draw']);
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Draw']);
+            // update match result data of each coach match stats
+            foreach ($schedule->coaches as $coach){
+                $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['resultStatus' => 'Draw']);
+            }
 
             if ($schedule->competition()->exists()){
                 $groupDivision->teams()
@@ -638,6 +660,11 @@ class EventScheduleService extends Service
 
         if ($academyTeamScore == 0){
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['cleanSheets'=> 1]);
+
+            // update clean sheets data of each coach match stats
+            foreach ($schedule->coaches as $coach){
+                $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['cleanSheets' => 1]);
+            }
         }
 
         if ($opponentTeamScore == 0){
@@ -691,6 +718,12 @@ class EventScheduleService extends Service
         $schedule->playerMatchStats()->updateExistingPivot($data['playerId'], ['goals' => $playerGoal]);
         $schedule->playerMatchStats()->updateExistingPivot($data['assistPlayerId'], ['assists' => $playerAssist]);
         $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['teamScore' => $teamScore]);
+
+        // update team score data of each coach match stats
+        foreach ($schedule->coaches as $coach){
+            $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['teamScore' => $teamScore]);
+        }
+
         return $schedule;
     }
     public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer)
@@ -706,6 +739,10 @@ class EventScheduleService extends Service
         $schedule->playerMatchStats()->updateExistingPivot($scorer->assistPlayerId, ['assists' => $playerAssist]);
         $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['teamScore' => $teamScore]);
 
+        // update team score data of each coach match stats
+        foreach ($schedule->coaches as $coach){
+            $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['teamScore' => $teamScore]);
+        }
         return $scorer->delete();
     }
 
@@ -716,29 +753,45 @@ class EventScheduleService extends Service
         MatchScore::create($data);
         $player = $schedule->playerMatchStats()->find($data['playerId']);
 
-        $playerGoal = $player->pivot->ownGoal + 1;
-        $teamScore = $schedule->teams[1]->pivot->teamScore + 1;
+        $playerOwnGoal = $player->pivot->ownGoal + 1;
+        $opponentTeamScore = $schedule->teams[1]->pivot->teamScore + 1;
+        $teamOwnGoal = $schedule->teams[0]->pivot->teamOwnGoal + 1;
 
-        $schedule->playerMatchStats()->updateExistingPivot($data['playerId'], ['ownGoal' => $playerGoal]);
-        $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['teamScore' => $teamScore]);
+        $schedule->playerMatchStats()->updateExistingPivot($data['playerId'], ['ownGoal' => $playerOwnGoal]);
+        $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['teamScore' => $opponentTeamScore]);
+        $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['teamOwnGoal' => $teamOwnGoal]);
+
+        // update own goal data of each coach match stats
+        foreach ($schedule->coaches as $coach){
+            $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['teamOwnGoal' => $teamOwnGoal]);
+        }
+
         return $schedule;
     }
+
     public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer)
     {
         $player = $schedule->playerMatchStats()->find($scorer->playerId);
 
-        $teamScore = $schedule->teams[1]->pivot->teamScore - 1;
-        $playerGoal = $player->pivot->ownGoal - 1;
+        $opponentTeamScore = $schedule->teams[1]->pivot->teamScore - 1;
+        $playerOwnGoal = $player->pivot->ownGoal - 1;
+        $teamOwnGoal = $schedule->teams[0]->pivot->teamOwnGoal - 1;
 
-        $schedule->playerMatchStats()->updateExistingPivot($scorer->playerId, ['ownGoal' => $playerGoal]);
-        $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['teamScore' => $teamScore]);
+        $schedule->playerMatchStats()->updateExistingPivot($scorer->playerId, ['ownGoal' => $playerOwnGoal]);
+        $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['teamScore' => $opponentTeamScore]);
+        $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['teamOwnGoal' => $teamOwnGoal]);
+
+        // update own goal data of each coach match stats
+        foreach ($schedule->coaches as $coach){
+            $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['teamOwnGoal' => $teamOwnGoal]);
+        }
 
         return $scorer->delete();
     }
 
     public function updateMatchStats(array $data, EventSchedule $schedule)
     {
-        $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, [
+        $schedule->coachMatchStats()->updateExistingPivot($schedule->teams[0]->id, [
                 'teamPossesion' => $data['teamAPossession'],
                 'teamShotOnTarget' => $data['teamAShotOnTarget'],
                 'teamShots' => $data['teamAShots'],
@@ -752,6 +805,21 @@ class EventScheduleService extends Service
                 'teamFoulsConceded' => $data['teamAFoulsConceded'],
                 'teamPasses' => $data['teamAPasses'],
             ]);
+
+        $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, [
+            'teamPossesion' => $data['teamAPossession'],
+            'teamShotOnTarget' => $data['teamAShotOnTarget'],
+            'teamShots' => $data['teamAShots'],
+            'teamTouches' => $data['teamATouches'],
+            'teamTackles' => $data['teamATackles'],
+            'teamClearances' => $data['teamAClearances'],
+            'teamCorners' => $data['teamACorners'],
+            'teamOffsides' => $data['teamAOffsides'],
+            'teamYellowCards' => $data['teamAYellowCards'],
+            'teamRedCards' => $data['teamARedCards'],
+            'teamFoulsConceded' => $data['teamAFoulsConceded'],
+            'teamPasses' => $data['teamAPasses'],
+        ]);
 
         $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, [
             'teamScore' => $data['teamBTeamScore'],
@@ -769,6 +837,24 @@ class EventScheduleService extends Service
             'teamFoulsConceded' => $data['teamBFoulsConceded'],
             'teamPasses' => $data['teamBPasses'],
         ]);
+
+        // update match stats data of each coach match stats
+        foreach ($schedule->coaches as $coach){
+            $schedule->coachMatchStats()->updateExistingPivot($coach->id, [
+                'teamPossesion' => $data['teamAPossession'],
+                'teamShotOnTarget' => $data['teamAShotOnTarget'],
+                'teamShots' => $data['teamAShots'],
+                'teamTouches' => $data['teamATouches'],
+                'teamTackles' => $data['teamATackles'],
+                'teamClearances' => $data['teamAClearances'],
+                'teamCorners' => $data['teamACorners'],
+                'teamOffsides' => $data['teamAOffsides'],
+                'teamYellowCards' => $data['teamAYellowCards'],
+                'teamRedCards' => $data['teamARedCards'],
+                'teamFoulsConceded' => $data['teamAFoulsConceded'],
+                'teamPasses' => $data['teamAPasses'],
+            ]);
+        }
 
         return $schedule;
     }

@@ -561,7 +561,7 @@
                                            id="teamBOwnGoal"
                                            name="teamBOwnGoal"
                                            min="0"
-                                           value="{{ old('teamBOwnGoal', $data['dataSchedule']->teams[0]->pivot->teamOwnGoal) }}"
+                                           value="{{ old('teamBOwnGoal', $data['dataSchedule']->teams[1]->pivot->teamOwnGoal) }}"
                                            placeholder="Input team own goal">
                                     <span class="invalid-feedback teamBOwnGoal_error" role="alert">
                                         <strong></strong>
@@ -636,7 +636,6 @@
                                            id="teamBPasses"
                                            name="teamBPasses"
                                            min="0"
-
                                            value="{{ old('teamBPasses', $data['dataSchedule']->teams[1]->pivot->teamPasses) }}"
                                            placeholder="Input team Passes">
                                     <span class="invalid-feedback teamBPasses_error" role="alert">

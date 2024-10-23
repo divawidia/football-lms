@@ -15,7 +15,6 @@ class CoachMatchStat extends Model
         'teamId',
         'eventId',
         'teamScore',
-        'opponentTeamScore',
         'teamOwnGoal',
         'teamPossesion',
         'teamShotOnTarget',
@@ -30,6 +29,8 @@ class CoachMatchStat extends Model
         'teamFoulsConceded',
         'resultStatus',
         'teamPasses',
+        'goalConceded',
+        'cleanSheets',
     ];
 
     public function coach()

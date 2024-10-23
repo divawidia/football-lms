@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('teamId')->nullable()->constrained('teams')->nullOnDelete();
             $table->foreignId('eventId')->constrained('event_schedules')->cascadeOnDelete();
             $table->integer('teamScore')->default(0);
-            $table->integer('opponentTeamScore')->default(0);
             $table->integer('teamOwnGoal')->default(0);
             $table->integer('teamPossesion')->default(0);
             $table->integer('teamShotOnTarget')->default(0);
@@ -30,7 +29,7 @@ return new class extends Migration
             $table->integer('teamYellowCards')->default(0);
             $table->integer('teamRedCards')->default(0);
             $table->integer('teamFoulsConceded')->default(0);
-            $table->integer('resultStatus')->default(0);
+            $table->enum('resultStatus', ['Win', 'Lose', 'Draw'])->nullable();
             $table->integer('teamPasses')->default(0);
             $table->integer('goalConceded')->default(0);
             $table->integer('cleanSheets')->default(0);
