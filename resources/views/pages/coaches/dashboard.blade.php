@@ -74,7 +74,7 @@
                                 <div class="card-title">Match Played</div>
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['totalMatchPlayed'] }}
-                                    @if($dataOverview['totalMatchPlayed'] > 0)
+                                    @if($dataOverview['thisMonthTotalMatchPlayed'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
@@ -93,7 +93,7 @@
                                 <div class="card-title">Goals</div>
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['totalGoals'] }}
-                                    @if($dataOverview['totalGoals'] > 0)
+                                    @if($dataOverview['thisMonthTotalGoals'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
@@ -112,7 +112,7 @@
                                 <div class="card-title text-capitalize">goals conceded</div>
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['totalGoalsConceded'] }}
-                                    @if($dataOverview['totalGoalsConceded'] > 0)
+                                    @if($dataOverview['thisMonthTotalGoalsConceded'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
@@ -131,7 +131,7 @@
                                 <div class="card-title text-capitalize">goal difference</div>
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['goalsDifference'] }}
-                                    @if($dataOverview['goalsDifference'] > 0)
+                                    @if($dataOverview['thisMonthGoalsDifference'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
@@ -150,7 +150,7 @@
                                 <div class="card-title text-capitalize">clean sheets</div>
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['totalCleanSheets'] }}
-                                    @if($dataOverview['totalCleanSheets'] > 0)
+                                    @if($dataOverview['thisMonthTotalCleanSheets'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
@@ -169,7 +169,7 @@
                                 <div class="card-title text-capitalize">own goals</div>
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['totalOwnGoals'] }}
-                                    @if($dataOverview['totalOwnGoals'] > 0)
+                                    @if($dataOverview['thisMonthTotalOwnGoals'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
@@ -188,7 +188,7 @@
                                 <div class="card-title text-capitalize">wins</div>
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['totalWins'] }}
-                                    @if($dataOverview['totalWins'] > 0)
+                                    @if($dataOverview['thisMonthTotalWins'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
@@ -207,7 +207,7 @@
                                 <div class="card-title text-capitalize">losses</div>
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['totalLosses'] }}
-                                    @if($dataOverview['totalLosses'] > 0)
+                                    @if($dataOverview['thisMonthTotalLosses'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
@@ -226,7 +226,7 @@
                                 <div class="card-title text-capitalize">draws</div>
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['totalDraws'] }}
-                                    @if($dataOverview['totalDraws'] > 0)
+                                    @if($dataOverview['thisMonthTotalDraws'] > 0)
                                         <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month

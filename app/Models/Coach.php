@@ -43,7 +43,6 @@ class Coach extends Model
             ->withPivot(
                 'teamId',
                 'teamScore',
-                'opponentTeamScore',
                 'teamOwnGoal',
                 'teamPossesion',
                 'teamShotOnTarget',

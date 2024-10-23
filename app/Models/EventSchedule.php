@@ -58,7 +58,6 @@ class EventSchedule extends Model
             ->withPivot(
                 'teamId',
                 'teamScore',
-                'opponentTeamScore',
                 'teamOwnGoal',
                 'teamPossesion',
                 'teamShotOnTarget',
