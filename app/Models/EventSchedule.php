@@ -23,7 +23,7 @@ class EventSchedule extends Model
         'status',
     ];
 
-        public function teams()
+    public function teams()
     {
         return $this->belongsToMany(Team::class, 'team_schedule', 'eventId', 'teamId')
             ->withPivot(
@@ -42,14 +42,40 @@ class EventSchedule extends Model
                 'teamFoulsConceded',
                 'resultStatus',
                 'teamPasses',
+                'goalConceded',
+                'cleanSheets',
             )->withTimestamps();
     }
-    public function matches(){
+
+    public function matches()
+    {
         return $this->hasMany(TeamMatch::class, 'eventId');
     }
+
     public function coachMatchStats()
     {
-        return $this->hasMany(CoachMatchStat::class, 'eventId');
+        return $this->belongsToMany(Coach::class, 'coach_match_stats', 'eventId', 'coachId')
+            ->withPivot(
+                'teamId',
+                'teamScore',
+                'opponentTeamScore',
+                'teamOwnGoal',
+                'teamPossesion',
+                'teamShotOnTarget',
+                'teamShots',
+                'teamTouches',
+                'teamTackles',
+                'teamClearances',
+                'teamCorners',
+                'teamOffsides',
+                'teamYellowCards',
+                'teamRedCards',
+                'teamFoulsConceded',
+                'resultStatus',
+                'teamPasses',
+                'goalConceded',
+                'cleanSheets',
+            )->withTimestamps();
     }
 
     public function user()
@@ -70,10 +96,12 @@ class EventSchedule extends Model
                 'note'
             )->withTimestamps();
     }
+
     public function matchScores()
     {
         return $this->hasMany(MatchScore::class, 'eventId');
     }
+
     public function players()
     {
         return $this->belongsToMany(Player::class, 'player_attendance', 'scheduleId', 'playerId')
@@ -87,6 +115,7 @@ class EventSchedule extends Model
     {
         return $this->hasMany(PlayerSkillStats::class, 'eventId');
     }
+
     public function playerMatchStats()
     {
         return $this->belongsToMany(Player::class, 'player_match_stats', 'eventId', 'playerId')
@@ -103,10 +132,12 @@ class EventSchedule extends Model
                 'saves',
             )->withTimestamps();
     }
+
     public function playerPerformanceReview()
     {
         return $this->hasMany(PlayerPerformanceReview::class, 'eventId');
     }
+
     public function notes()
     {
         return $this->hasMany(ScheduleNote::class, 'scheduleId');

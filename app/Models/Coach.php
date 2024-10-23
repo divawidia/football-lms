@@ -37,10 +37,32 @@ class Coach extends Model
                 'note'
             )->withTimestamps();
     }
-    public function matchStats()
+    public function coachMatchStats()
     {
-        return $this->hasMany(CoachMatchStat::class, 'coachId');
+        return $this->belongsToMany(EventSchedule::class, 'coach_match_stats', 'coachId', 'eventId')
+            ->withPivot(
+                'teamId',
+                'teamScore',
+                'opponentTeamScore',
+                'teamOwnGoal',
+                'teamPossesion',
+                'teamShotOnTarget',
+                'teamShots',
+                'teamTouches',
+                'teamTackles',
+                'teamClearances',
+                'teamCorners',
+                'teamOffsides',
+                'teamYellowCards',
+                'teamRedCards',
+                'teamFoulsConceded',
+                'resultStatus',
+                'teamPasses',
+                'goalConceded',
+                'cleanSheets',
+            )->withTimestamps();
     }
+
     public function playerSkillStats()
     {
         return $this->hasMany(PlayerSkillStats::class, 'coachId');
