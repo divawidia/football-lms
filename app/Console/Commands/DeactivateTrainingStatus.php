@@ -14,7 +14,7 @@ class DeactivateTrainingStatus extends Command
      *
      * @var string
      */
-    protected $signature = 'app:deactivate-training-status';
+    protected $signature = 'update:training-status-data';
 
     /**
      * The console command description.
@@ -39,9 +39,11 @@ class DeactivateTrainingStatus extends Command
         $now = Carbon::now();
 
         // Update records where end_date is less than the current date
-        EventSchedule::where('end_date', '<', $now)
-            ->update(['status' => 'expired']);  // Modify the fields you want to update
+        $trainings = EventSchedule::where('eventType', 'Training')->where('endDatetime', '<', $now)->get();
+        foreach ($trainings as $training){
+            $this->eventScheduleService->deactivate($training);
+        }
 
-        $this->info('Expired data updated successfully.');
+        $this->info('Active status training data updated successfully.');
     }
 }
