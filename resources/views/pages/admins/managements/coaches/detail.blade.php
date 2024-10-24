@@ -87,8 +87,8 @@
             @include('components.stats-card', ['data' => $dataOverview['totalLosses'], 'dataThisMonth' => $dataOverview['thisMonthTotalLosses']])
             @include('components.stats-card', ['data' => $dataOverview['totalDraws'], 'dataThisMonth' => $dataOverview['thisMonthTotalDraws']])
         </div>
-    <div class="row card-group-row">
-        <div class="col-sm-6 card-group-row__col flex-column">
+    <div class="row">
+        <div class="col-sm-6">
             <div class="page-separator">
                 <div class="page-separator__text">Teams Managed</div>
                 <a href="#" class="btn btn-sm btn-primary ml-auto" id="add-team">
@@ -98,7 +98,7 @@
                     Add New
                 </a>
             </div>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="teamsTable">
