@@ -467,6 +467,8 @@ class EventScheduleService extends Service
         $data['userId'] = $userId;
         $data['eventType'] = 'Training';
         $data['status'] = '1';
+        $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
+        $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule =  EventSchedule::create($data);
 
         $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
@@ -481,6 +483,8 @@ class EventScheduleService extends Service
         $data['userId'] = $userId;
         $data['eventType'] = 'Match';
         $data['status'] = '1';
+        $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
+        $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule =  EventSchedule::create($data);
 
         $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
@@ -496,6 +500,8 @@ class EventScheduleService extends Service
     }
 
     public function updateTraining(array $data, EventSchedule $schedule){
+        $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
+        $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule->update($data);
 
         if (array_key_exists('teamId', $data)){
@@ -507,6 +513,8 @@ class EventScheduleService extends Service
         return $schedule;
     }
     public function updateMatch(array $data, EventSchedule $schedule){
+        $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
+        $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule->update($data);
 
         $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->first();

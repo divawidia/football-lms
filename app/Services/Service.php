@@ -87,6 +87,11 @@ class Service
         return date('M d, Y', strtotime($timestamp));
     }
 
+    public function convertToTimestamp($date, $time)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i', $date . ' ' . $time);
+    }
+
     public function convertToTime($timestamp){
         return date('h:i A', strtotime($timestamp));
     }

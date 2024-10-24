@@ -18,8 +18,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-         $schedule->command('update:training-status-data')->hourly();
-        $schedule->command('update:end-match-status')->hourly();
+         $schedule->command('update:training-status-data')->everyFiveMinutes();
+         $schedule->command('update:end-match-status')->everyFiveMinutes();
     }
 
     /**
