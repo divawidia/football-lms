@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\DeactivateTrainingStatus;
+use App\Console\Commands\EndCompetitionStatus;
 use App\Console\Commands\EndMatchStatus;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -12,6 +13,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         DeactivateTrainingStatus::class,
         EndMatchStatus::class,
+        EndCompetitionStatus::class,
     ];
     /**
      * Define the application's command schedule.
@@ -20,6 +22,7 @@ class Kernel extends ConsoleKernel
     {
          $schedule->command('update:training-status-data')->everyFiveMinutes();
          $schedule->command('update:end-match-status')->everyFiveMinutes();
+         $schedule->command('update:end-competition-status')->everyFiveMinutes();
     }
 
     /**
