@@ -99,6 +99,7 @@ class CoachController extends Controller
             'fullName' => $data['fullName'],
             'age' => $data['age'],
             'teams' => $data['teams'],
+            'dataOverview' => $data,
         ]);
     }
 

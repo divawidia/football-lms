@@ -227,7 +227,7 @@
                                 <p class="card-subtitle text-50">
                                     {{ $dataOverview['totalDraws'] }}
                                     @if($dataOverview['thisMonthTotalDraws'] > 0)
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
+                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
                                     @endif
                                     From Last Month
                                 </p>
