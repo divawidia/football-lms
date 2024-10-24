@@ -71,23 +71,31 @@ class TeamService extends Service
                 return count($item->coaches).' Coach(es)';
             })
             ->editColumn('name', function ($item) {
+                $teamName = '';
+                if (isAllAdmin()){
+                    $teamName = '<a href="' . route('team-managements.show', $item->id) . '">
+                                    <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
+                                </a>';
+                } elseif (isCoach()){
+                    $teamName = '<a href="' . route('coach.team-managements.show', $item->id) . '">
+                                    <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
+                                </a>';
+                }
                 return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <a href="' . route('coach.team-managements.show', $item->id) . '">
-                                                <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
-                                            </a>
-                                            <small class="js-lists-values-email text-50">'.$item->ageGroup.'</small>
-                                        </div>
+                        <div class="media flex-nowrap align-items-center"
+                             style="white-space: nowrap;">
+                            <div class="avatar avatar-sm mr-8pt">
+                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
+                            </div>
+                            <div class="media-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex d-flex flex-column">
+                                        '.$teamName.'
+                                        <small class="js-lists-values-email text-50">'.$item->ageGroup.'</small>
                                     </div>
                                 </div>
-                            </div>';
+                            </div>
+                        </div>';
             })
             ->editColumn('status', function ($item) {
                 $badge = '';
