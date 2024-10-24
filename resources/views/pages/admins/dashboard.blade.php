@@ -289,7 +289,17 @@
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
         </div>
-
+        @if(count($upcomingMatches) == 0)
+            <div class="alert alert-light border-left-accent" role="alert">
+                <div class="d-flex flex-wrap align-items-center">
+                    <i class="material-icons mr-8pt">error_outline</i>
+                    <div class="media-body"
+                         style="min-width: 180px">
+                        <small class="text-black-100">There are no team matches scheduled at this time</small>
+                    </div>
+                </div>
+            </div>
+        @endif
         @foreach($upcomingMatches as $match)
         <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
             <div class="card-body">
@@ -325,12 +335,12 @@
                 <div class="row justify-content-center mt-3">
                     <div class="mr-2">
                         <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                        {{ date('D, M d Y', strtotime($match->date)) }}
+                        {{ date('D, M d Y', strtotime($match->startDatetime)) }}
                     </div>
                     <div class="mr-2">
                         <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                        {{ date('h:i A', strtotime($match->startTime)) }}
-                        - {{ date('h:i A', strtotime($match->endTime)) }}
+                        {{ date('h:i A', strtotime($match->startDatetime)) }}
+                        - {{ date('h:i A', strtotime($match->endDatetime)) }}
                     </div>
                     <div>
                         <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -348,7 +358,17 @@
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
         </div>
-
+        @if(count($upcomingTrainings) == 0)
+            <div class="alert alert-light border-left-accent" role="alert">
+                <div class="d-flex flex-wrap align-items-center">
+                    <i class="material-icons mr-8pt">error_outline</i>
+                    <div class="media-body"
+                         style="min-width: 180px">
+                        <small class="text-black-100">There are no trainings scheduled at this time</small>
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="row">
             @foreach($upcomingTrainings as $training)
             <div class="col-lg-6">
@@ -369,12 +389,12 @@
                             <div class="col-6 d-flex flex-column">
                                 <div class="mr-2">
                                     <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                                    {{ date('D, M d Y', strtotime($training->date)) }}
+                                    {{ date('D, M d Y', strtotime($training->startDatetime)) }}
                                 </div>
                                 <div class="mr-2">
                                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                                    {{ date('h:i A', strtotime($training->startTime)) }}
-                                    - {{ date('h:i A', strtotime($match->endTime)) }}
+                                    {{ date('h:i A', strtotime($training->startDatetime)) }}
+                                    - {{ date('h:i A', strtotime($training->endDatetime)) }}
                                 </div>
                                 <div>
                                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
