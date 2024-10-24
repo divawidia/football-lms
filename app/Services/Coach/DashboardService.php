@@ -11,6 +11,8 @@ use App\Models\Invoice;
 use App\Models\Player;
 use App\Models\Team;
 use App\Models\TeamMatch;
+use App\Repository\CoachMatchStatsRepository;
+use App\Repository\CoachRepository;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Number;
 use Carbon\Carbon;
@@ -18,57 +20,39 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardService extends CoachService
 {
-    private $coach;
-    public function __construct($coach){
+    private Coach $coach;
+    private CoachMatchStatsRepository $coachMatchStatsRepository;
+    public function __construct(Coach $coach, CoachMatchStatsRepository $coachMatchStatsRepository){
         $this->coach = $coach;
+        $this->coachMatchStatsRepository = $coachMatchStatsRepository;
     }
 
     public function overviewStats(){
         $teamsManaged = $this->managedTeams($this->coach);
 
-        $totalMatchPlayed = $this->coach->coachMatchStats()->count();
-        $thisMonthTotalMatchPlayed = CoachMatchStat::where('coachId', $this->coach->id)
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->count();
+        $totalMatchPlayed = $this->coachMatchStatsRepository->totalMatchPlayed($this->coach);
+        $thisMonthTotalMatchPlayed = $this->coachMatchStatsRepository->thisMonthTotalMatchPlayed($this->coach);
 
-        $totalGoals =  $this->coach->coachMatchStats()->sum('teamScore');
-        $thisMonthTotalGoals =  CoachMatchStat::where('coachId', $this->coach->id)
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->sum('teamScore');
+        $totalGoals =  $this->coachMatchStatsRepository->totalGoals($this->coach);
+        $thisMonthTotalGoals = $this->coachMatchStatsRepository->thisMonthTotalGoals($this->coach);
 
-        $totalGoalsConceded =  $this->coach->coachMatchStats()->sum('goalConceded');
-        $thisMonthTotalGoalsConceded =  CoachMatchStat::with('coach')
-            ->where('coachId', $this->coach)
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->sum('goalConceded');
+        $totalGoalsConceded = $this->coachMatchStatsRepository->totalGoalsConceded($this->coach);
+        $thisMonthTotalGoalsConceded = $this->coachMatchStatsRepository->thisMonthTotalGoalsConceded($this->coach);
 
-        $totalCleanSheets = $this->coach->coachMatchStats()->sum('cleanSheets');
-        $thisMonthTotalCleanSheets = CoachMatchStat::where('coachId', $this->coach->id)
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->sum('cleanSheets');
+        $totalCleanSheets = $this->coachMatchStatsRepository->totalCleanSheets($this->coach);
+        $thisMonthTotalCleanSheets = $this->coachMatchStatsRepository->thisMonthTotalCleanSheets($this->coach);
 
-        $totalOwnGoals = $this->coach->coachMatchStats()->sum('teamOwnGoal');
-        $thisMonthTotalOwnGoals = CoachMatchStat::where('coachId', $this->coach->id)
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->sum('teamOwnGoal');
+        $totalOwnGoals = $this->coachMatchStatsRepository->totalOwnGoals($this->coach);
+        $thisMonthTotalOwnGoals = $this->coachMatchStatsRepository->thisMonthTotalOwnGoals($this->coach);
 
-        $totalWins = $this->coach->coachMatchStats()->where('resultStatus', 'Win')->count();
-        $thisMonthTotalWins = CoachMatchStat::where('coachId', $this->coach->id)
-            ->where('resultStatus', 'Win')
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->count();
+        $totalWins = $this->coachMatchStatsRepository->totalWins($this->coach);
+        $thisMonthTotalWins = $this->coachMatchStatsRepository->thisMonthTotalWins($this->coach);
 
-        $totalLosses = $this->coach->coachMatchStats()->where('resultStatus', 'Lose')->count();
-        $thisMonthTotalLosses = CoachMatchStat::where('coachId', $this->coach->id)
-            ->where('resultStatus', 'Lose')
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->count();
+        $totalLosses = $this->coachMatchStatsRepository->totalLosses($this->coach);
+        $thisMonthTotalLosses = $this->coachMatchStatsRepository->thisMonthTotalLosses($this->coach);
 
-        $totalDraws = $this->coach->coachMatchStats()->where('resultStatus', 'Draw')->count();
-        $thisMonthTotalDraws = CoachMatchStat::where('coachId', $this->coach->id)
-            ->where('resultStatus', 'Draw')
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->count();
+        $totalDraws = $this->coachMatchStatsRepository->totalDraws($this->coach);
+        $thisMonthTotalDraws = $this->coachMatchStatsRepository->thisMonthTotalDraws($this->coach);
 
         $goalsDifference = $totalGoals - $totalGoalsConceded;
         $thisMonthGoalsDifference = $thisMonthTotalGoals - $thisMonthTotalGoalsConceded;
