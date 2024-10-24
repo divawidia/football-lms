@@ -18,6 +18,8 @@ class EventSchedule extends Model
         'date',
         'startTime',
         'endTime',
+        'startDatetime',
+        'endDatetime',
         'place',
         'note',
         'status',
