@@ -13,6 +13,7 @@ use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
+use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
@@ -33,12 +34,14 @@ class CoachService extends Service
     private CoachRepository $coachRepository;
     private TeamRepository $teamRepository;
     private UserRepository $userRepository;
+    private CoachMatchStatsRepository $coachMatchStatsRepository;
 
-    public function __construct(CoachRepository $coachRepository, TeamRepository $teamRepository, UserRepository $userRepository)
+    public function __construct(CoachRepository $coachRepository, TeamRepository $teamRepository, UserRepository $userRepository, CoachMatchStatsRepository $coachMatchStatsRepository)
     {
         $this->coachRepository = $coachRepository;
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
+        $this->coachMatchStatsRepository = $coachMatchStatsRepository;
     }
 
     public function index(): JsonResponse
@@ -208,7 +211,57 @@ class CoachService extends Service
         $fullName = $this->getUserFullName($coach->user);
         $age = $this->getAge($coach->user->dob);
         $teams = $this->teamRepository->getTeamsHaventJoinedByCoach($coach);
-        return compact('fullName', 'age', 'teams');
+
+        $totalMatchPlayed = $this->coachMatchStatsRepository->totalMatchPlayed($coach);
+        $thisMonthTotalMatchPlayed = $this->coachMatchStatsRepository->thisMonthTotalMatchPlayed($coach);
+
+        $totalGoals =  $this->coachMatchStatsRepository->totalGoals($coach);
+        $thisMonthTotalGoals = $this->coachMatchStatsRepository->thisMonthTotalGoals($coach);
+
+        $totalGoalsConceded = $this->coachMatchStatsRepository->totalGoalsConceded($coach);
+        $thisMonthTotalGoalsConceded = $this->coachMatchStatsRepository->thisMonthTotalGoalsConceded($coach);
+
+        $totalCleanSheets = $this->coachMatchStatsRepository->totalCleanSheets($coach);
+        $thisMonthTotalCleanSheets = $this->coachMatchStatsRepository->thisMonthTotalCleanSheets($coach);
+
+        $totalOwnGoals = $this->coachMatchStatsRepository->totalOwnGoals($coach);
+        $thisMonthTotalOwnGoals = $this->coachMatchStatsRepository->thisMonthTotalOwnGoals($coach);
+
+        $totalWins = $this->coachMatchStatsRepository->totalWins($coach);
+        $thisMonthTotalWins = $this->coachMatchStatsRepository->thisMonthTotalWins($coach);
+
+        $totalLosses = $this->coachMatchStatsRepository->totalLosses($coach);
+        $thisMonthTotalLosses = $this->coachMatchStatsRepository->thisMonthTotalLosses($coach);
+
+        $totalDraws = $this->coachMatchStatsRepository->totalDraws($coach);
+        $thisMonthTotalDraws = $this->coachMatchStatsRepository->thisMonthTotalDraws($coach);
+
+        $goalsDifference = $totalGoals - $totalGoalsConceded;
+        $thisMonthGoalsDifference = $thisMonthTotalGoals - $thisMonthTotalGoalsConceded;
+
+        return compact(
+            'fullName',
+            'age',
+            'teams',
+            'totalMatchPlayed',
+            'totalGoals',
+            'totalGoalsConceded',
+            'goalsDifference',
+            'totalCleanSheets',
+            'totalOwnGoals',
+            'totalWins',
+            'totalLosses',
+            'totalDraws',
+            'thisMonthTotalMatchPlayed',
+            'thisMonthTotalGoals',
+            'thisMonthTotalGoalsConceded',
+            'thisMonthGoalsDifference',
+            'thisMonthTotalCleanSheets',
+            'thisMonthTotalOwnGoals',
+            'thisMonthTotalWins',
+            'thisMonthTotalLosses',
+            'thisMonthTotalDraws',
+        );
     }
 
     public function edit(){
