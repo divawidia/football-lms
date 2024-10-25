@@ -25,15 +25,52 @@ class PlayerRepository
 
     public function getCoachsPLayers($teams)
     {
-        return $this->player->whereHas('teams', function ($q) use ($teams){
-            $q->where('teamId', $teams[0]->id);
-            // if teams are more than 1 then iterate more
-            if (count($teams)>1){
-                for ($i = 1; $i < count($teams); $i++){
-                    $q->orWhere('teamId', $teams[$i]->id);
-                }
-            }
-        })->get();
+        return $this->player->withTeams($teams)->get();
+    }
+
+    public function getMostAttendedPLayer()
+    {
+        return $this->player->with('schedules', 'user')
+            ->withCount(['schedules', 'schedules as attended_count' => function ($query){
+                $query->where('attendanceStatus', 'Attended');
+            }])
+            ->orderBy('attended_count', 'desc')
+            ->first();
+    }
+    public function getMostAttendedCoachsPLayer($teams)
+    {
+        return $this->player->with('schedules', 'user')
+            ->withTeams($teams)
+            ->withCount(['schedules', 'schedules as attended_count' => function ($query){
+                $query->where('attendanceStatus', 'Attended');
+            }])
+            ->orderBy('attended_count', 'desc')
+            ->first();
+    }
+
+    public function getMostDidntAttendPLayer()
+    {
+        return $this->player->with('schedules', 'user')
+            ->withCount(['schedules', 'schedules as didnt_attended_count' => function ($query){
+                $query->where('attendanceStatus', 'Illness')
+                    ->orWhere('attendanceStatus', 'Injured')
+                    ->orWhere('attendanceStatus', 'Other');
+            }])
+            ->orderBy('didnt_attended_count', 'desc')
+            ->first();
+    }
+
+    public function getMostDidntAttendCoachsPLayer($teams)
+    {
+        return $this->player->with('schedules', 'user')
+            ->withTeams($teams)
+            ->withCount(['schedules', 'schedules as didnt_attended_count' => function ($query){
+                $query->where('attendanceStatus', 'Illness')
+                    ->orWhere('attendanceStatus', 'Injured')
+                    ->orWhere('attendanceStatus', 'Other');
+            }])
+            ->orderBy('didnt_attended_count', 'desc')
+            ->first();
     }
 
     public function find($id)

@@ -74,4 +74,15 @@ class Player extends Model
             ->withPivot('completionStatus', 'completed_at')
             ->withTimestamps();
     }
+
+    // Define the scope to filter players based on teams
+    public function scopeWithTeams($query, $teams)
+    {
+        // Extract all team IDs from the $teams array
+        $teamIds = collect($teams)->pluck('id')->all();
+
+        return $query->whereHas('teams', function ($q) use ($teamIds) {
+            $q->whereIn('teamId', $teamIds);
+        });
+    }
 }

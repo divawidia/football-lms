@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Coach;
 use App\Models\Player;
+use App\Repository\PlayerRepository;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -12,11 +13,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AttendanceReportService extends Service
 {
+    private PlayerRepository $playerRepository;
+    public function __construct(PlayerRepository $playerRepository)
+    {
+        $this->playerRepository = $playerRepository;
+    }
+
     public function makeAttendanceDatatables($data)
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-//                $viewButton = '';
                 if (Auth::user()->hasRole('admin')){
                     $viewButton = '
                         <a class="btn btn-sm btn-outline-secondary" href="' . route('attendance-report.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player attendance detail">
@@ -123,43 +129,24 @@ class AttendanceReportService extends Service
             ->make();
     }
     public function attendanceDatatables(){
-        $query = Player::all();
+        $query = $this->playerRepository->getAll();
         return $this->makeAttendanceDatatables($query);
     }
     public function coachAttendanceDatatables($coach){
-        $teams = $this->coachManagedTeams($coach);
+        $teams = $coach->teams()->get();
 
         // query player data that included in teams that managed by logged in coach
-        $query = Player::with('user', 'teams', 'position')
-            ->whereHas('teams', function($q) use($teams){
-                $q->where('teamId', $teams[0]->id);
-
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $q->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })->get();
-
+        $query = $this->playerRepository->getCoachsPLayers($teams);
         return $this->makeAttendanceDatatables($query);
     }
 
     public function index(){
-        $mostAttended = Player::with('schedules', 'user')
-        ->withCount(['schedules', 'schedules as attended_count' => function ($query){
-            $query->where('attendanceStatus', 'Attended');
-        }])->orderBy('attended_count', 'desc')->first();
+        $mostAttended = $this->playerRepository->getMostAttendedPLayer();
 
         $mostAttendedPercentage = $mostAttended->attended_count / count($mostAttended->schedules) * 100;
         $mostAttendedPercentage = round($mostAttendedPercentage, 1);
 
-        $mostDidntAttend = Player::with('schedules', 'user')
-            ->withCount(['schedules', 'schedules as didnt_attended_count' => function ($query){
-                $query->where('attendanceStatus', 'Illness')
-                    ->orWhere('attendanceStatus', 'Injured')
-                    ->orWhere('attendanceStatus', 'Other');
-            }])->orderBy('didnt_attended_count', 'desc')->first();
+        $mostDidntAttend = $this->playerRepository->getMostDidntAttendPLayer();
 
         $mostDidntAttendPercentage = $mostDidntAttend->didnt_attended_count / count($mostDidntAttend->schedules) * 100;
         $mostDidntAttendPercentage = round($mostDidntAttendPercentage, 1);
@@ -170,44 +157,14 @@ class AttendanceReportService extends Service
         return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage', 'lineChart', 'doughnutChart');
     }
     public function coachIndex($coach){
-        $teams = $this->coachManagedTeams($coach);
+        $teams = $coach->teams()->get();
 
-        $mostAttended = Player::with('schedules', 'user')
-            ->whereHas('teams', function($q) use($teams){
-                $q->where('teamId', $teams[0]->id);
-
-                // if teams managed are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $q->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })
-            ->withCount(['schedules', 'schedules as attended_count' => function ($query) use($teams){
-                $query->where('attendanceStatus', 'Attended');
-            }])
-            ->orderBy('attended_count', 'desc')->first();
+        $mostAttended = $this->playerRepository->getMostAttendedCoachsPLayer($teams);
 
         $mostAttendedPercentage = $mostAttended['attended_count'] / count($mostAttended->schedules) * 100;
         $mostAttendedPercentage = round($mostAttendedPercentage, 1);
 
-        $mostDidntAttend = Player::with('schedules', 'user')
-            ->whereHas('teams', function($q) use($teams){
-                $q->where('teamId', $teams[0]->id);
-
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $q->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })
-            ->withCount(['schedules', 'schedules as didnt_attended_count' => function ($query) use($teams){
-                $query->where('attendanceStatus', 'Illness')
-                    ->orWhere('attendanceStatus', 'Injured')
-                    ->orWhere('attendanceStatus', 'Other');
-            }])
-            ->orderBy('didnt_attended_count', 'desc')->first();
+        $mostDidntAttend = $this->playerRepository->getMostDidntAttendCoachsPLayer($teams);
 
         $mostDidntAttendPercentage = $mostDidntAttend['didnt_attended_count'] / count($mostDidntAttend->schedules) * 100;
         $mostDidntAttendPercentage = round($mostDidntAttendPercentage, 1);
