@@ -13,7 +13,7 @@ class LeaderboardController extends Controller
         $this->leaderboardService = $leaderboardService;
     }
     public function index(){
-        return view('pages.admins.academies.leaderboards.index');
+        return view('pages.academies.leaderboards.index');
     }
 
     public function playerLeaderboard(){
@@ -25,5 +25,8 @@ class LeaderboardController extends Controller
 
     public function teamLeaderboard(){
         return $this->leaderboardService->teamLeaderboard();
+    }
+    public function coachTeamLeaderboard(){
+        return $this->leaderboardService->coachsTeamLeaderboards($this->getLoggedCoachUser());
     }
 }

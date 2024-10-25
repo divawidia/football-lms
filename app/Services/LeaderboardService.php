@@ -10,14 +10,17 @@ use App\Models\Team;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerRepository;
+use App\Repository\TeamRepository;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class LeaderboardService extends Service
 {
     private PlayerRepository $playerRepository;
-    public function __construct(PlayerRepository $playerRepository){
+    private TeamRepository $teamRepository;
+    public function __construct(PlayerRepository $playerRepository, TeamRepository $teamRepository){
         $this->playerRepository = $playerRepository;
+        $this->teamRepository = $teamRepository;
     }
 
     public function playerLeaderboardDatatables($data)
@@ -123,13 +126,20 @@ class LeaderboardService extends Service
         return $this->playerLeaderboardDatatables($query);
     }
 
-    public function teamLeaderboard(){
-        $query = Team::with('matches')->where('teamSide', 'Academy Team')->get();
-        return Datatables::of($query)
+    public function teamLeaderboardsDatatables($data)
+    {
+        return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('team-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View team">
+                if (isAllAdmin()){
+                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('team-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View team">
                             <span class="material-icons">visibility</span>
                         </a>';
+                } elseif(isCoach()){
+                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.team-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View team">
+                            <span class="material-icons">visibility</span>
+                        </a>';
+                }
+                return $btn;
             })
             ->editColumn('name', function ($item) {
                 return '
@@ -189,5 +199,16 @@ class LeaderboardService extends Service
             ])
             ->addIndexColumn()
             ->make();
+    }
+    public function teamLeaderboard()
+    {
+//        $query = Team::with('matches')->where('teamSide', 'Academy Team')->get();
+        $query = $this->teamRepository->getAcademyTeams();
+        return $this->teamLeaderboardsDatatables($query);
+    }
+    public function coachsTeamLeaderboards($coach)
+    {
+        $query = $coach->teams();
+        return $this->teamLeaderboardsDatatables($query);
     }
 }
