@@ -308,48 +308,6 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('players', [LeaderboardController::class, 'playerLeaderboard'])->name('leaderboards.players');
             });
 
-            Route::prefix('training-videos')->group(function () {
-                Route::get('', [TrainingVideoController::class, 'index'])->name('training-videos.index');
-                Route::get('create', [TrainingVideoController::class, 'create'])->name('training-videos.create');
-                Route::post('store', [TrainingVideoController::class, 'store'])->name('training-videos.store');
-
-                Route::prefix('{trainingVideo}')->group(function () {
-                    Route::get('', [TrainingVideoController::class, 'show'])->name('training-videos.show');
-                    Route::get('edit', [TrainingVideoController::class, 'edit'])->name('training-videos.edit');
-                    Route::put('update', [TrainingVideoController::class, 'update'])->name('training-videos.update');
-                    Route::patch('unpublish', [TrainingVideoController::class, 'unpublish'])->name('training-videos.unpublish');
-                    Route::patch('publish', [TrainingVideoController::class, 'publish'])->name('training-videos.publish');
-                    Route::get('assign-player', [TrainingVideoController::class, 'assignPlayer'])->name('training-videos.assign-player');
-                    Route::put('update-player', [TrainingVideoController::class, 'updatePlayers'])->name('training-videos.update-player');
-                    Route::delete('delete', [TrainingVideoController::class, 'destroy'])->name('training-videos.destroy');
-
-                    Route::prefix('players')->group(function () {
-                        Route::get('', [TrainingVideoController::class, 'players'])->name('training-videos.players');
-                        Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->name('training-videos.assign-players');
-                        Route::prefix('{player}')->group(function () {
-                            Route::get('', [TrainingVideoController::class, 'showPlayer'])->name('training-videos.show-player');
-                            Route::delete('remove', [TrainingVideoController::class, 'removePlayer'])->name('training-videos.remove-player');
-                            Route::get('lessons', [TrainingVideoController::class, 'playerLessons'])->name('training-videos.player-lessons');
-                        });
-                    });
-
-                    Route::prefix('lessons')->group(function () {
-                        Route::get('', [TrainingVideoLessonController::class, 'index'])->name('training-videos.lessons-index');
-                        Route::post('store', [TrainingVideoLessonController::class, 'store'])->name('training-videos.lessons-store');
-                        Route::prefix('{lesson}')->group(function () {
-                            Route::get('', [TrainingVideoLessonController::class, 'show'])->name('training-videos.lessons-show');
-                            Route::get('players', [TrainingVideoLessonController::class, 'players'])->name('training-videos.lessons-players');
-                            Route::get('edit', [TrainingVideoLessonController::class, 'edit'])->name('training-videos.lessons-edit');
-                            Route::put('update', [TrainingVideoLessonController::class, 'update'])->name('training-videos.lessons-update');
-                            Route::delete('destroy', [TrainingVideoLessonController::class, 'destroy'])->name('training-videos.lessons-destroy');
-                            Route::patch('unpublish', [TrainingVideoLessonController::class, 'unpublish'])->name('training-videos.lessons-unpublish');
-                            Route::patch('publish', [TrainingVideoLessonController::class, 'publish'])->name('training-videos.lessons-publish');
-                        });
-                    });
-
-                });
-            });
-
             Route::prefix('product-categories')->group(function () {
                 Route::get('', [ProductCategoryController::class, 'index'])->name('product-categories.index');
                 Route::post('store', [ProductCategoryController::class, 'store'])->name('product-categories.store');
@@ -570,6 +528,49 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('', [LeaderboardController::class, 'index'])->name('coach.leaderboards.index');
                 Route::get('teams', [LeaderboardController::class, 'coachTeamLeaderboard'])->name('coach.leaderboards.teams');
                 Route::get('players', [LeaderboardController::class, 'coachPlayerLeaderboard'])->name('coach.leaderboards.players');
+            });
+        });
+    });
+
+    Route::group(['middleware' => ['role:coach|admin|Super-Admin,web']], function () {
+        Route::prefix('training-videos')->group(function () {
+            Route::get('', [TrainingVideoController::class, 'index'])->name('training-videos.index');
+            Route::get('create', [TrainingVideoController::class, 'create'])->name('training-videos.create');
+            Route::post('store', [TrainingVideoController::class, 'store'])->name('training-videos.store');
+
+            Route::prefix('{trainingVideo}')->group(function () {
+                Route::get('', [TrainingVideoController::class, 'show'])->name('training-videos.show');
+                Route::get('edit', [TrainingVideoController::class, 'edit'])->name('training-videos.edit');
+                Route::put('update', [TrainingVideoController::class, 'update'])->name('training-videos.update');
+                Route::patch('unpublish', [TrainingVideoController::class, 'unpublish'])->name('training-videos.unpublish');
+                Route::patch('publish', [TrainingVideoController::class, 'publish'])->name('training-videos.publish');
+                Route::get('assign-player', [TrainingVideoController::class, 'assignPlayer'])->name('training-videos.assign-player');
+                Route::put('update-player', [TrainingVideoController::class, 'updatePlayers'])->name('training-videos.update-player');
+                Route::delete('delete', [TrainingVideoController::class, 'destroy'])->name('training-videos.destroy');
+
+                Route::prefix('players')->group(function () {
+                    Route::get('', [TrainingVideoController::class, 'players'])->name('training-videos.players');
+                    Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->name('training-videos.assign-players');
+                    Route::prefix('{player}')->group(function () {
+                        Route::get('', [TrainingVideoController::class, 'showPlayer'])->name('training-videos.show-player');
+                        Route::delete('remove', [TrainingVideoController::class, 'removePlayer'])->name('training-videos.remove-player');
+                        Route::get('lessons', [TrainingVideoController::class, 'playerLessons'])->name('training-videos.player-lessons');
+                    });
+                });
+
+                Route::prefix('lessons')->group(function () {
+                    Route::get('', [TrainingVideoLessonController::class, 'index'])->name('training-videos.lessons-index');
+                    Route::post('store', [TrainingVideoLessonController::class, 'store'])->name('training-videos.lessons-store');
+                    Route::prefix('{lesson}')->group(function () {
+                        Route::get('', [TrainingVideoLessonController::class, 'show'])->name('training-videos.lessons-show');
+                        Route::get('players', [TrainingVideoLessonController::class, 'players'])->name('training-videos.lessons-players');
+                        Route::get('edit', [TrainingVideoLessonController::class, 'edit'])->name('training-videos.lessons-edit');
+                        Route::put('update', [TrainingVideoLessonController::class, 'update'])->name('training-videos.lessons-update');
+                        Route::delete('destroy', [TrainingVideoLessonController::class, 'destroy'])->name('training-videos.lessons-destroy');
+                        Route::patch('unpublish', [TrainingVideoLessonController::class, 'unpublish'])->name('training-videos.lessons-unpublish');
+                        Route::patch('publish', [TrainingVideoLessonController::class, 'publish'])->name('training-videos.lessons-publish');
+                    });
+                });
             });
         });
     });
