@@ -565,6 +565,12 @@ Route::group(['middleware' => ['auth']], function () {
             Route::prefix('performance-reports')->group(function () {
                 Route::get('', [PerformanceReportController::class, 'coachIndex'])->name('coach.performance-report.index');
             });
+
+            Route::prefix('leaderboards')->group(function () {
+                Route::get('', [LeaderboardController::class, 'index'])->name('coach.leaderboards.index');
+                Route::get('teams', [LeaderboardController::class, 'coachTeamLeaderboard'])->name('coach.leaderboards.teams');
+                Route::get('players', [LeaderboardController::class, 'coachPlayerLeaderboard'])->name('coach.leaderboards.players');
+            });
         });
     });
 });
