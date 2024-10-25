@@ -176,7 +176,7 @@ class AttendanceReportService extends Service
             ->whereHas('teams', function($q) use($teams){
                 $q->where('teamId', $teams[0]->id);
 
-                // if teams are more than 1 then iterate more
+                // if teams managed are more than 1 then iterate more
                 if (count($teams)>1){
                     for ($i = 1; $i < count($teams); $i++){
                         $q->orWhere('teamId', $teams[$i]->id);
@@ -241,9 +241,6 @@ class AttendanceReportService extends Service
 //            $label[] = $days[$result->day];
 //            $attended[] = $result->total_attended_players;
 //        }
-//        foreach ($didntAttendData as $result){
-//            $didntAttend[] = $result->total_didnt_attend_players;
-//        }
         foreach ($attendedData as $result){
             $label[] = $result->date;
             $attended[] = $result->total_attended_players;
@@ -271,10 +268,10 @@ class AttendanceReportService extends Service
                     }
                 }
             })
-            ->select(DB::raw('weekday(es.date) as day'), DB::raw('COUNT(pa.playerId) as total_attended_players'))
+            ->select(DB::raw('es.date as date'), DB::raw('COUNT(pa.playerId) as total_attended_players'))
             ->where('pa.attendanceStatus', '=', 'Attended')
-            ->groupBy(DB::raw('weekday(es.date)'))
-            ->orderBy('day')
+            ->groupBy(DB::raw('date'))
+            ->orderBy('date')
             ->get();
         $didntAttendData = DB::table('event_schedules as es')
             ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
@@ -290,18 +287,22 @@ class AttendanceReportService extends Service
                     }
                 }
             })
-            ->select(DB::raw('weekday(es.date) as day'), DB::raw('COUNT(pa.playerId) as total_didnt_attend_players'))
+            ->select(DB::raw('es.date as date'), DB::raw('COUNT(pa.playerId) as total_didnt_attend_players'))
             ->where(DB::raw("pa.attendanceStatus = 'Illness' OR pa.attendanceStatus = 'Injured' OR pa.attendanceStatus = 'Other'"))
-            ->groupBy(DB::raw('weekday(es.date)'))
-            ->orderBy('day')
+            ->groupBy(DB::raw('date'))
+            ->orderBy('date')
             ->get();
 
         $label = [];
         $attended = [];
         $didntAttend = [];
-        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+//        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+//        foreach ($attendedData as $result){
+//            $label[] = $days[$result->day];
+//            $attended[] = $result->total_attended_players;
+//        }
         foreach ($attendedData as $result){
-            $label[] = $days[$result->day];
+            $label[] = $result->date;
             $attended[] = $result->total_attended_players;
         }
         foreach ($didntAttendData as $result){
