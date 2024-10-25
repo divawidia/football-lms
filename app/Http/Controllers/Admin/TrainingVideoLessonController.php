@@ -35,7 +35,7 @@ class TrainingVideoLessonController extends Controller
 
     public function show(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
-        return view('pages.admins.academies.training-videos.lessons.detail',[
+        return view('pages.academies.training-videos.lessons.detail',[
             'data' => $lesson,
             'totalDuration' => $this->trainingVideoLessonService->getTotalDuration($lesson)
         ]);

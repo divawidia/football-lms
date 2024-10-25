@@ -7,15 +7,19 @@
 @endsection
 
 @section('modal')
-    @include('pages.admins.academies.training-videos.form-modal.create')
+    @include('pages.academies.training-videos.form-modal.create')
 @endsection
 
 @section('content')
     <div class="pt-32pt">
-        <div class="container page__container d-flex flex-column">
+        <div class="container d-flex flex-column">
             <h2 class="mb-2">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                @if(isAllAdmin())
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                @elseif(isCoach())
+                    <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
+                @endif
                 <li class="breadcrumb-item active">
                     @yield('title')
                 </li>
@@ -23,7 +27,7 @@
         </div>
     </div>
 
-    <div class="container page__container page-section">
+    <div class="container page-section">
         <a href="" class="btn btn-primary mb-3" id="addTrainingVideo">
                 <span class="material-icons mr-2">
                     add

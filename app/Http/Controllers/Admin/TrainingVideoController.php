@@ -27,7 +27,7 @@ class TrainingVideoController extends Controller
      */
     public function index()
     {
-        return view('pages.admins.academies.training-videos.index',[
+        return view('pages.academies.training-videos.index',[
             'data' => $this->trainingVideoService->index()
         ]);
     }
@@ -37,7 +37,7 @@ class TrainingVideoController extends Controller
      */
     public function create()
     {
-        return view('pages.admins.academies.training-videos.create');
+        return view('pages.academies.training-videos.create');
     }
 
     /**
@@ -58,7 +58,7 @@ class TrainingVideoController extends Controller
      */
     public function show(TrainingVideo $trainingVideo)
     {
-        return view('pages.admins.academies.training-videos.detail',[
+        return view('pages.academies.training-videos.detail',[
             'data' => $trainingVideo,
             'totalDuration' => $this->trainingVideoService->getTotalDuration($trainingVideo)
         ]);
@@ -70,7 +70,7 @@ class TrainingVideoController extends Controller
 
     public function showPlayer(TrainingVideo $trainingVideo, Player $player)
     {
-        return view('pages.admins.academies.training-videos.players.detail',[
+        return view('pages.academies.training-videos.players.detail',[
             'data' => $player,
             'training' => $player->trainingVideos()->where('trainingVideoId', $trainingVideo->id)->first(),
             'totalCompleted' => $player->lessons()->where('completionStatus', '1')->count(),
@@ -126,7 +126,7 @@ class TrainingVideoController extends Controller
             $query->where('trainingVideoId', $trainingVideo->id);
         })->get();
 
-        return view('pages.admins.academies.training-videos.assign-player',[
+        return view('pages.academies.training-videos.assign-player',[
             'data' => $trainingVideo,
             'players' => $players,
         ]);

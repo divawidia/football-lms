@@ -13,7 +13,11 @@
                     @yield('title')
                 </h2>
                 <ol class="breadcrumb p-0 m-0">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                    @if(isAllAdmin())
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                    @elseif(isCoach())
+                        <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
+                    @endif
                     <li class="breadcrumb-item"><a href="{{ route('training-videos.create') }}">Training Videos</a></li>
                     <li class="breadcrumb-item active">
                         @yield('title')

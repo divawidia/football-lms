@@ -8,9 +8,9 @@
 
 
 @section('modal')
-    @include('pages.admins.academies.training-videos.lessons.form-modal.create')
-    @include('pages.admins.academies.training-videos.lessons.form-modal.edit')
-    @include('pages.admins.academies.training-videos.form-modal.edit')
+    @include('pages.academies.training-videos.lessons.form-modal.create')
+    @include('pages.academies.training-videos.lessons.form-modal.edit')
+    @include('pages.academies.training-videos.form-modal.edit')
 @endsection
 
 @section('content')
@@ -24,7 +24,9 @@
                 <div class="container page__container">
                     <ul class="nav navbar-nav">
                         <li class="nav-item">
-                            <a href="{{ route('training-videos.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Training Video Lists</a>
+                            <a href="{{ route('training-videos.index') }}" class="nav-link text-70"><i
+                                    class="material-icons icon--left">keyboard_backspace</i> Back to Training Video
+                                Lists</a>
                         </li>
                     </ul>
                 </div>
@@ -123,7 +125,7 @@
     <div class="container page__container page-section">
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
-{{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
+            {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
         </div>
 
         <div class="row mb-3">
@@ -143,7 +145,8 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data->players()->where('status', 'Completed')->count() }}</div>
+                            <div
+                                class="h2 mb-0 mr-3">{{ $data->players()->where('status', 'Completed')->count() }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title">Players Completed</div>
                             </div>
@@ -155,7 +158,8 @@
                 <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data->players()->where('status', 'On Progress')->count() }}</div>
+                            <div
+                                class="h2 mb-0 mr-3">{{ $data->players()->where('status', 'On Progress')->count() }}</div>
                             <div class="ml-auto text-right">
                                 <div class="card-title text-capitalize">Players on progress</div>
                             </div>
@@ -197,7 +201,8 @@
         {{--    Assigned Player    --}}
         <div class="page-separator">
             <div class="page-separator__text">Assigned Player(s)</div>
-            <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}" class="btn btn-primary btn-sm ml-auto">
+            <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}"
+               class="btn btn-primary btn-sm ml-auto">
                 <span class="material-icons mr-2">add</span>
                 Add Player
             </a>
