@@ -77,15 +77,15 @@
             <div class="page-separator__text">Overview</div>
         </div>
         <div class="row mb-4">
-            @include('components.stats-card', ['data' => $dataOverview['totalMatchPlayed'], 'dataThisMonth' => $dataOverview['thisMonthTotalMatchPlayed']])
-            @include('components.stats-card', ['data' => $dataOverview['totalGoals'], 'dataThisMonth' => $dataOverview['thisMonthTotalGoals']])
-            @include('components.stats-card', ['data' => $dataOverview['totalGoalsConceded'], 'dataThisMonth' => $dataOverview['thisMonthTotalGoalsConceded']])
-            @include('components.stats-card', ['data' => $dataOverview['goalsDifference'], 'dataThisMonth' => $dataOverview['thisMonthGoalsDifference']])
-            @include('components.stats-card', ['data' => $dataOverview['totalCleanSheets'], 'dataThisMonth' => $dataOverview['thisMonthTotalCleanSheets']])
-            @include('components.stats-card', ['data' => $dataOverview['totalOwnGoals'], 'dataThisMonth' => $dataOverview['thisMonthTotalOwnGoals']])
-            @include('components.stats-card', ['data' => $dataOverview['totalWins'], 'dataThisMonth' => $dataOverview['thisMonthTotalWins']])
-            @include('components.stats-card', ['data' => $dataOverview['totalLosses'], 'dataThisMonth' => $dataOverview['thisMonthTotalLosses']])
-            @include('components.stats-card', ['data' => $dataOverview['totalDraws'], 'dataThisMonth' => $dataOverview['thisMonthTotalDraws']])
+            @include('components.stats-card', ['title' => 'Match Played','data' => $dataOverview['totalMatchPlayed'], 'dataThisMonth' => $dataOverview['thisMonthTotalMatchPlayed']])
+            @include('components.stats-card', ['title' => 'Goals','data' => $dataOverview['totalGoals'], 'dataThisMonth' => $dataOverview['thisMonthTotalGoals']])
+            @include('components.stats-card', ['title' => 'Goal Conceded','data' => $dataOverview['totalGoalsConceded'], 'dataThisMonth' => $dataOverview['thisMonthTotalGoalsConceded']])
+            @include('components.stats-card', ['title' => 'Goal Differences','data' => $dataOverview['goalsDifference'], 'dataThisMonth' => $dataOverview['thisMonthGoalsDifference']])
+            @include('components.stats-card', ['title' => 'Clean Sheets','data' => $dataOverview['totalCleanSheets'], 'dataThisMonth' => $dataOverview['thisMonthTotalCleanSheets']])
+            @include('components.stats-card', ['title' => 'Own Goals','data' => $dataOverview['totalOwnGoals'], 'dataThisMonth' => $dataOverview['thisMonthTotalOwnGoals']])
+            @include('components.stats-card', ['title' => 'Wins','data' => $dataOverview['totalWins'], 'dataThisMonth' => $dataOverview['thisMonthTotalWins']])
+            @include('components.stats-card', ['title' => 'Losses','data' => $dataOverview['totalLosses'], 'dataThisMonth' => $dataOverview['thisMonthTotalLosses']])
+            @include('components.stats-card', ['title' => 'Draws','data' => $dataOverview['totalDraws'], 'dataThisMonth' => $dataOverview['thisMonthTotalDraws']])
         </div>
     <div class="row">
         <div class="col-sm-6">
