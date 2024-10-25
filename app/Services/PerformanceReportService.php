@@ -20,7 +20,7 @@ class PerformanceReportService extends Service
         $this->eventScheduleRepository = $eventScheduleRepository;
     }
     public function overviewStats(){
-        $wins = TeamMatch::where('resultStatus', 'Win')
+        $totalWins = TeamMatch::where('resultStatus', 'Win')
             ->whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })->count();
@@ -31,7 +31,7 @@ class PerformanceReportService extends Service
 //            ->whereHas('match', function($q) {
 //                $q->whereBetween('date',[Carbon::now()->startOfMonth()->subMonth(1),Carbon::now()->startOfMonth()]);
 //            })->count();
-        $thisMonthWins = TeamMatch::where('resultStatus', 'Win')
+        $thisMonthTotalWins = TeamMatch::where('resultStatus', 'Win')
             ->whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
@@ -40,23 +40,11 @@ class PerformanceReportService extends Service
             })->count();
 //        $winsDiff = $thisMonthWins - $prevMonthWins;
 
-        $losses = TeamMatch::where('resultStatus', 'Lose')
+        $totalLosses = TeamMatch::where('resultStatus', 'Lose')
             ->whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })->count();
-        $thisMonthLosses = TeamMatch::where('resultStatus', 'Lose')
-            ->whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->whereHas('match', function($q) {
-                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
-            })->count();
-
-        $draws = TeamMatch::where('resultStatus', 'Draw')
-            ->whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })->count();
-        $thisMonthDraws = TeamMatch::where('resultStatus', 'Draw')
+        $thisMonthTotalLosses = TeamMatch::where('resultStatus', 'Lose')
             ->whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
@@ -64,13 +52,25 @@ class PerformanceReportService extends Service
                 $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
             })->count();
 
-        $matchPlayed = EventSchedule::whereHas('teams', function($q) {
+        $totalDraws = TeamMatch::where('resultStatus', 'Draw')
+            ->whereHas('team', function($q) {
+                $q->where('teamSide', 'Academy Team');
+            })->count();
+        $thisMonthTotalDraws = TeamMatch::where('resultStatus', 'Draw')
+            ->whereHas('team', function($q) {
+                $q->where('teamSide', 'Academy Team');
+            })
+            ->whereHas('match', function($q) {
+                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
+            })->count();
+
+        $totalMatchPlayed = EventSchedule::whereHas('teams', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
             ->where('status', '0')
             ->where('eventType', 'Match')
             ->count();
-        $thisMonthMatchPlayed = EventSchedule::whereHas('teams', function($q) {
+        $thisMonthTotalMatchPlayed = EventSchedule::whereHas('teams', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
             ->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()])
@@ -78,10 +78,10 @@ class PerformanceReportService extends Service
             ->where('eventType', 'Match')
             ->count();
 
-        $goals = TeamMatch::whereHas('team', function($q) {
+        $totalGoals = TeamMatch::whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })->sum('teamScore');
-        $thisMonthGoals = TeamMatch::whereHas('team', function($q) {
+        $thisMonthTotalGoals = TeamMatch::whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
             ->whereHas('match', function($q) {
@@ -89,11 +89,11 @@ class PerformanceReportService extends Service
             })
             ->sum('teamScore');
 
-        $goalsConceded = TeamMatch::whereHas('team', function($q) {
+        $totalGoalsConceded = TeamMatch::whereHas('team', function($q) {
                 $q->where('teamSide', 'Opponent Team');
             })
             ->sum('teamScore');
-        $thisMonthGoalsConceded = TeamMatch::whereHas('team', function($q) {
+        $thisMonthTotalGoalsConceded = TeamMatch::whereHas('team', function($q) {
                 $q->where('teamSide', 'Opponent Team');
             })
             ->whereHas('match', function($q) {
@@ -101,14 +101,14 @@ class PerformanceReportService extends Service
             })
             ->sum('teamScore');
 
-        $goalsDifference = $goals - $goalsConceded;
-        $thisMonthGoalsDifference = $thisMonthGoals - $thisMonthGoalsConceded;
+        $goalsDifference = $totalGoals - $totalGoalsConceded;
+        $thisMonthGoalsDifference = $thisMonthTotalGoals - $thisMonthTotalGoalsConceded;
 
-        $cleanSheets = TeamMatch::whereHas('team', function($q) {
+        $totalCleanSheets = TeamMatch::whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
             ->sum('cleanSheets');
-        $thisMonthCleanSheets = TeamMatch::whereHas('team', function($q) {
+        $thisMonthTotalCleanSheets = TeamMatch::whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
             ->whereHas('match', function($q) {
@@ -116,11 +116,11 @@ class PerformanceReportService extends Service
             })
             ->sum('cleanSheets');
 
-        $ownGoals = TeamMatch::whereHas('team', function($q) {
+        $totalOwnGoals = TeamMatch::whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
             ->sum('teamOwnGoal');
-        $thisMonthOwnGoals = TeamMatch::whereHas('team', function($q) {
+        $thisMonthTotalOwnGoals = TeamMatch::whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
             ->whereHas('match', function($q) {
@@ -129,24 +129,25 @@ class PerformanceReportService extends Service
             ->sum('teamOwnGoal');
 
         return compact(
-            'wins',
-            'thisMonthWins',
-            'losses',
-            'thisMonthLosses',
-            'draws',
-            'thisMonthDraws',
-            'matchPlayed',
-            'thisMonthMatchPlayed',
-            'goals',
-            'thisMonthGoals',
-            'goalsConceded',
-            'thisMonthGoalsConceded',
+            'totalMatchPlayed',
+            'totalGoals',
+            'totalGoalsConceded',
             'goalsDifference',
+            'totalCleanSheets',
+            'totalOwnGoals',
+            'totalWins',
+            'totalLosses',
+            'totalDraws',
+            'thisMonthTotalMatchPlayed',
+            'thisMonthTotalGoals',
+            'thisMonthTotalGoalsConceded',
             'thisMonthGoalsDifference',
-            'cleanSheets',
-            'thisMonthCleanSheets',
-            'ownGoals',
-            'thisMonthOwnGoals');
+            'thisMonthTotalCleanSheets',
+            'thisMonthTotalOwnGoals',
+            'thisMonthTotalWins',
+            'thisMonthTotalLosses',
+            'thisMonthTotalDraws',
+        );
     }
 
     public function coachOverviewStats($coach){
