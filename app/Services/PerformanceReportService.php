@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Coach;
 use App\Models\EventSchedule;
 use App\Models\TeamMatch;
 use App\Repository\CoachMatchStatsRepository;
@@ -202,6 +203,27 @@ class PerformanceReportService extends Service
             ->take(2)
             ->get();
     }
+
+    public function coachLatestMatch(Coach $coach){
+        $teams = $this->coachManagedTeams($coach);
+        return EventSchedule::with('teams', 'competition')
+            ->whereHas('teams', function($q) use ($teams){
+                $q->where('teamId', $teams[0]->id);
+
+                // if teams are more than 1 then iterate more
+                if (count($teams)>1){
+                    for ($i = 1; $i < count($teams); $i++){
+                        $q->orWhere('teamId', $teams[$i]->id);
+                    }
+                }
+            })
+            ->where('eventType', 'Match')
+            ->where('status', '0')
+            ->orderBy('date', 'desc')
+            ->take(2)
+            ->get();
+    }
+
     public function matchHistory(){
         $data = EventSchedule::with('teams', 'competition')
             ->where('eventType', 'Match')

@@ -31,4 +31,21 @@ class PerformanceReportController extends Controller
             'competitions' => $competitions
         ]);
     }
+
+    public function coachIndex(){
+        $coach = $this->getLoggedCoachUser();
+        if (\request()->ajax()){
+            return $this->performanceReportService->matchHistory();
+        }
+        $latestMatches = $this->performanceReportService->latestMatch();
+        $overviewStats = $this->performanceReportService->coachOverviewStats($coach);
+        $competitions = $this->competitionService->index();
+
+        return view('pages.admins.academies.reports.performance.index', [
+            'latestMatches' => $latestMatches,
+            'overviewStats' => $overviewStats,
+            'competitions' => $competitions
+        ]);
+    }
+
 }
