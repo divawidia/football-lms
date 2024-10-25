@@ -25,7 +25,7 @@ class CompetitionRepository
     public function getCoachCompetition($teams)
     {
         return $this->competition->with('groups.teams')
-            ->whereHas('teams', function($q) use ($teams){
+            ->whereHas('groups.teams', function($q) use ($teams){
                 $q->where('teamId', $teams[0]->id);
 
                 // if teams are more than 1 then iterate more

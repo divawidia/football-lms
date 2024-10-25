@@ -462,6 +462,20 @@ Route::group(['middleware' => ['auth']], function () {
                 });
             });
 
+            Route::prefix('competition-managements')->group(function () {
+                Route::get('', [CompetitionController::class, 'index'])->name('coach.competition-managements.index');
+
+                Route::prefix('{competition}')->group(function () {
+                    Route::get('', [CompetitionController::class, 'show'])->name('coach.competition-managements.show');
+
+                    Route::prefix('group-division')->group(function () {
+                        Route::prefix('{group}')->group(function () {
+                            Route::get('', [GroupDivisionController::class, 'index'])->name('coach.division-managements.index');
+                        });
+                    });
+                });
+            });
+
             Route::prefix('skill-assessments')->group(function () {
                 Route::get('', [SkillAssessmentController::class, 'index'])->name('coach.skill-assessments.index');
                 Route::prefix('{player}')->group(function () {
@@ -549,7 +563,7 @@ Route::group(['middleware' => ['auth']], function () {
             });
 
             Route::prefix('performance-reports')->group(function () {
-                Route::get('', [PerformanceReportController::class, 'index'])->name('coach.performance-report.index');
+                Route::get('', [PerformanceReportController::class, 'coachIndex'])->name('coach.performance-report.index');
             });
         });
     });

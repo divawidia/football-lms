@@ -11,7 +11,11 @@
             <div class="container page__container d-flex flex-column">
                 <h2 class="mb-0">@yield('title')</h2>
                 <ol class="breadcrumb p-0 m-0">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                    @if(isAllAdmin())
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                    @elseif(isCoach())
+                        <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
+                    @endif
                     <li class="breadcrumb-item active">
                         @yield('title')
                     </li>
@@ -27,195 +31,15 @@
             </div>
 
             <div class="row mb-3">
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overviewStats['wins'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title">Wins</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ $overviewStats['thisMonthWins'] }}
-                                        @if($overviewStats['thisMonthWins'] >= 0)
-                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        @else
-                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
-                                        @endif
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overviewStats['losses'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title">Losses</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ $overviewStats['thisMonthLosses'] }}
-                                        @if($overviewStats['thisMonthLosses'] >= 0)
-                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        @else
-                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
-                                        @endif
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overviewStats['draws'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">Draws</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ $overviewStats['thisMonthDraws'] }}
-                                        @if($overviewStats['thisMonthDraws'] >= 0)
-                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        @else
-                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
-                                        @endif
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overviewStats['matchPlayed'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">match played</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ $overviewStats['thisMonthMatchPlayed'] }}
-                                        @if($overviewStats['thisMonthMatchPlayed'] >= 0)
-                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        @else
-                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
-                                        @endif
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overviewStats['goals'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">goals</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ $overviewStats['thisMonthGoals'] }}
-                                        @if($overviewStats['thisMonthGoals'] >= 0)
-                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        @else
-                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
-                                        @endif
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overviewStats['goalsConceded'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">goals conceded</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ $overviewStats['thisMonthGoalsConceded'] }}
-                                        @if($overviewStats['thisMonthGoalsConceded'] >= 0)
-                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        @else
-                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
-                                        @endif
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overviewStats['goalsDifference'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">goal difference</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ abs($overviewStats['thisMonthGoalsDifference']) }}
-                                        @if($overviewStats['thisMonthGoalsDifference'] >= 0)
-                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        @else
-                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
-                                        @endif
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overviewStats['cleanSheets'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">clean sheets</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ $overviewStats['thisMonthCleanSheets'] }}
-                                        @if($overviewStats['thisMonthCleanSheets'] >= 0)
-                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        @else
-                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
-                                        @endif
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overviewStats['ownGoals'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">own goals</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ $overviewStats['thisMonthOwnGoals'] }}
-                                        @if($overviewStats['thisMonthOwnGoals'] >= 0)
-                                            <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        @else
-                                            <i class="material-icons text-danger ml-4pt icon-16pt">keyboard_arrow_down</i>
-                                        @endif
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @include('components.stats-card', ['data' => $overviewStats['totalMatchPlayed'], 'dataThisMonth' => $overviewStats['thisMonthTotalMatchPlayed']])
+                @include('components.stats-card', ['data' => $overviewStats['totalGoals'], 'dataThisMonth' => $overviewStats['thisMonthTotalGoals']])
+                @include('components.stats-card', ['data' => $overviewStats['totalGoalsConceded'], 'dataThisMonth' => $overviewStats['thisMonthTotalGoalsConceded']])
+                @include('components.stats-card', ['data' => $overviewStats['goalsDifference'], 'dataThisMonth' => $overviewStats['thisMonthGoalsDifference']])
+                @include('components.stats-card', ['data' => $overviewStats['totalCleanSheets'], 'dataThisMonth' => $overviewStats['thisMonthTotalCleanSheets']])
+                @include('components.stats-card', ['data' => $overviewStats['totalOwnGoals'], 'dataThisMonth' => $overviewStats['thisMonthTotalOwnGoals']])
+                @include('components.stats-card', ['data' => $overviewStats['totalWins'], 'dataThisMonth' => $overviewStats['thisMonthTotalWins']])
+                @include('components.stats-card', ['data' => $overviewStats['totalLosses'], 'dataThisMonth' => $overviewStats['thisMonthTotalLosses']])
+                @include('components.stats-card', ['data' => $overviewStats['totalDraws'], 'dataThisMonth' => $overviewStats['thisMonthTotalDraws']])
             </div>
 
             <div class="page-separator">
