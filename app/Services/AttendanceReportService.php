@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Coach;
 use App\Models\Player;
 use App\Repository\PlayerRepository;
+use Carbon\Carbon;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -316,27 +317,28 @@ class AttendanceReportService extends Service
     }
 
     public function show(Player $player){
-        $playerAttended = $player->schedules()
-            ->where('attendanceStatus', 'Attended')
-            ->get();
+        $totalAttended = $this->playerRepository->playerAttendanceCount($player, 'Attended');
+        $thisMonthTotalAttended = $this->playerRepository->playerAttendanceCount($player, 'Attended', Carbon::now()->startOfMonth(), Carbon::now());
 
-        $playerIllness = $player->schedules()
-            ->where('attendanceStatus', 'Illness')
-            ->get();
-        $playerInjured = $player->schedules()
-            ->where('attendanceStatus', 'Injured')
-            ->get();
-        $playerOther = $player->schedules()
-            ->where('attendanceStatus', 'Other')
-            ->get();
+        $totalIllness = $this->playerRepository->playerAttendanceCount($player, 'Illness');
+        $thisMonthTotalIllness = $this->playerRepository->playerAttendanceCount($player, 'Illness', Carbon::now()->startOfMonth(), Carbon::now());
 
+        $totalInjured = $this->playerRepository->playerAttendanceCount($player, 'Injured');
+        $thisMonthTotalInjured = $this->playerRepository->playerAttendanceCount($player, 'Injured', Carbon::now()->startOfMonth(), Carbon::now());
 
-        $totalAttended = count($playerAttended);
-        $totalIllness = count($playerIllness);
-        $totalInjured = count($playerInjured);
-        $totalOther = count($playerOther);
+        $totalOther = $this->playerRepository->playerAttendanceCount($player, 'Other');
+        $thisMonthTotalOther = $this->playerRepository->playerAttendanceCount($player, 'Other', Carbon::now()->startOfMonth(), Carbon::now());
 
-        return compact('totalAttended', 'totalIllness', 'totalInjured', 'totalOther');
+        return compact(
+            'totalAttended',
+            'thisMonthTotalAttended',
+            'totalIllness',
+            'thisMonthTotalIllness',
+            'totalInjured',
+            'thisMonthTotalInjured',
+            'totalOther',
+            'thisMonthTotalOther',
+        );
     }
 
     public function dataTablesTraining(Player $player){

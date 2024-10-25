@@ -8,6 +8,7 @@ use App\Models\CoachSpecialization;
 use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\Team;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 class PlayerRepository
@@ -76,6 +77,18 @@ class PlayerRepository
     public function find($id)
     {
         return $this->player->findOrFail($id);
+    }
+
+    public function playerAttendanceCount(Player $player, $status = 'Attended', $startDate = null, $endDate = null)
+    {
+        $query = $player->schedules()->where('attendanceStatus', $status);
+
+        // If date range is provided, add a whereBetween clause
+        if ($startDate && $endDate) {
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
+        }
+
+        return $query->count();
     }
 
     public function create(array $data)
