@@ -6,6 +6,7 @@ use App\Models\Coach;
 use App\Models\EventSchedule;
 use App\Models\TeamMatch;
 use App\Repository\CoachMatchStatsRepository;
+use App\Repository\EventScheduleRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -13,8 +14,10 @@ use Yajra\DataTables\Facades\DataTables;
 class PerformanceReportService extends Service
 {
     private CoachMatchStatsRepository $coachMatchStatsRepository;
-    public function __construct(CoachMatchStatsRepository $coachMatchStatsRepository){
+    private EventScheduleRepository $eventScheduleRepository;
+    public function __construct(CoachMatchStatsRepository $coachMatchStatsRepository, EventScheduleRepository $eventScheduleRepository){
         $this->coachMatchStatsRepository = $coachMatchStatsRepository;
+        $this->eventScheduleRepository = $eventScheduleRepository;
     }
     public function overviewStats(){
         $wins = TeamMatch::where('resultStatus', 'Win')
@@ -205,23 +208,7 @@ class PerformanceReportService extends Service
     }
 
     public function coachLatestMatch(Coach $coach){
-        $teams = $this->coachManagedTeams($coach);
-        return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) use ($teams){
-                $q->where('teamId', $teams[0]->id);
-
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $q->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })
-            ->where('eventType', 'Match')
-            ->where('status', '0')
-            ->orderBy('date', 'desc')
-            ->take(2)
-            ->get();
+        return $this->eventScheduleRepository->getCoachMatchHistories($coach);
     }
 
     public function matchHistory(){

@@ -37,7 +37,7 @@ class PerformanceReportController extends Controller
         if (\request()->ajax()){
             return $this->performanceReportService->matchHistory();
         }
-        $latestMatches = $this->performanceReportService->latestMatch();
+        $latestMatches = $this->performanceReportService->coachLatestMatch($coach);
         $overviewStats = $this->performanceReportService->coachOverviewStats($coach);
         $competitions = $this->competitionService->index();
 
