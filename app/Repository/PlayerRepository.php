@@ -85,7 +85,7 @@ class PlayerRepository
 
         // If date range is provided, add a whereBetween clause
         if ($startDate && $endDate) {
-            $query->whereBetween('updated_at', [$startDate, $endDate]);
+            $query->whereBetween('player_attendance.updated_at', [$startDate, $endDate]);
         }
 
         return $query->count();

@@ -71,76 +71,10 @@
             <div class="page-separator__text">Overview</div>
         </div>
         <div class="row card-group-row mb-4">
-            <div class="col-lg-6 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $totalAttended }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Total Event Attended</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $totalIllness }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Total Illness</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row card-group-row mb-4">
-            <div class="col-lg-6 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $totalInjured }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Total Injured</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $totalOther }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Total Others</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @include('components.stats-card', ['title' => 'Total Attended','data' => $data['totalAttended'], 'dataThisMonth' => $data['thisMonthTotalAttended']])
+            @include('components.stats-card', ['title' => 'Total Illness','data' => $data['totalIllness'], 'dataThisMonth' => $data['thisMonthTotalIllness']])
+            @include('components.stats-card', ['title' => 'Total Injured','data' => $data['totalInjured'], 'dataThisMonth' => $data['thisMonthTotalInjured']])
+            @include('components.stats-card', ['title' => 'Total Other','data' => $data['totalOther'], 'dataThisMonth' => $data['thisMonthTotalOther']])
         </div>
 
         <div class="page-separator">
