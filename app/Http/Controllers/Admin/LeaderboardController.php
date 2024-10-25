@@ -19,6 +19,9 @@ class LeaderboardController extends Controller
     public function playerLeaderboard(){
         return $this->leaderboardService->playerLeaderboard();
     }
+    public function coachPlayerLeaderboard(){
+        return $this->leaderboardService->coachPLayerLeaderboard($this->getLoggedCoachUser());
+    }
 
     public function teamLeaderboard(){
         return $this->leaderboardService->teamLeaderboard();
