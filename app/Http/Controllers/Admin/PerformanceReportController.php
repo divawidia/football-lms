@@ -40,7 +40,7 @@ class PerformanceReportController extends Controller
         }
         $latestMatches = $this->performanceReportService->coachLatestMatch($coach);
         $overviewStats = $this->performanceReportService->coachOverviewStats($coach);
-        $competitions = $this->competitionService->index();
+        $competitions = $this->competitionService->coachTeamsIndex($coach);
 
         return view('pages.admins.academies.reports.performance.index', [
             'latestMatches' => $latestMatches,

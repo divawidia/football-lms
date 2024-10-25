@@ -2,9 +2,13 @@
 
 namespace App\Services;
 
+use App\Models\Coach;
 use App\Models\Competition;
 use App\Models\GroupDivision;
 use App\Models\Team;
+use App\Repository\CoachMatchStatsRepository;
+use App\Repository\CompetitionRepository;
+use App\Repository\EventScheduleRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -12,8 +16,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CompetitionService extends Service
 {
+    private CompetitionRepository $competitionRepository;
+    public function __construct(CompetitionRepository $competitionRepository){
+        $this->competitionRepository = $competitionRepository;
+    }
     public function index(){
-        return Competition::with('groups.teams')->get();
+        return $this->competitionRepository->getAll();
+    }
+    public function coachTeamsIndex(Coach $coach){
+        $teams = $this->coachManagedTeams($coach);
+        return $this->competitionRepository->getCoachCompetition($teams);
     }
     public function datatables(): JsonResponse
     {

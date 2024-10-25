@@ -22,7 +22,7 @@ class CompetitionRepository
     {
         return $this->competition->with('groups.teams')->get();
     }
-    public function getCoachCompetition(Team $teams)
+    public function getCoachCompetition($teams)
     {
         return $this->competition->with('groups.teams')
             ->whereHas('teams', function($q) use ($teams){
