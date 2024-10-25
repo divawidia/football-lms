@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Services\CompetitionService;
 use App\Services\PerformanceReportService;
-use Illuminate\Http\Request;
 
 class PerformanceReportController extends Controller
 {

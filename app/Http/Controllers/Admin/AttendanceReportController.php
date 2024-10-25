@@ -21,7 +21,7 @@ class AttendanceReportController extends Controller
         }
         $data = $this->attendanceReportService->index();
 
-        return view('pages.admins.academies.reports.attendances.index', [
+        return view('pages.academies.reports.attendances.index', [
             'mostDidntAttend' => $data['mostDidntAttend'],
             'mostAttended' => $data['mostAttended'],
             'mostAttendedPercentage' => $data['mostAttendedPercentage'],
@@ -38,7 +38,7 @@ class AttendanceReportController extends Controller
         }
         $data = $this->attendanceReportService->coachIndex($coach);
 
-        return view('pages.admins.academies.reports.attendances.index', [
+        return view('pages.academies.reports.attendances.index', [
             'mostDidntAttend' => $data['mostDidntAttend'],
             'mostAttended' => $data['mostAttended'],
             'mostAttendedPercentage' => $data['mostAttendedPercentage'],
@@ -50,7 +50,7 @@ class AttendanceReportController extends Controller
 
     public function show(Player $player){
         $data = $this->attendanceReportService->show($player);
-        return view('pages.admins.academies.reports.attendances.player-detail', [
+        return view('pages.academies.reports.attendances.player-detail', [
             'totalAttended' => $data['totalAttended'],
             'totalIllness' => $data['totalIllness'],
             'totalInjured' => $data['totalInjured'],
