@@ -204,7 +204,11 @@
                         serverSide: true,
                         ordering: true,
                         ajax: {
+                            @if(isAllAdmin())
                             url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
+                            @elseif(isCoach())
+                            url: '{!! route('coach.division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
+                            @endif
                         },
                         columns: [
                             { data: 'teams', name: 'teams' },
