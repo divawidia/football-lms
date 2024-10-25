@@ -211,7 +211,8 @@ class PerformanceReportService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return '
+                if (isAllAdmin()){
+                    $actionBtn ='
                         <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
@@ -226,6 +227,12 @@ class PerformanceReportService extends Service
                             </button>
                           </div>
                         </div>';
+                } elseif (isCoach()){
+                    $actionBtn = '<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
+                                        <span class="material-icons">visibility</span>
+                                  </a>';
+                }
+                return $actionBtn;
             })
             ->editColumn('team', function ($item) {
                 return '
@@ -287,9 +294,9 @@ class PerformanceReportService extends Service
                 return $competition;
             })
             ->editColumn('date', function ($item) {
-                $date = date('M d, Y', strtotime($item->date));
-                $startTime = date('h:i A', strtotime($item->startTime));
-                $endTime = date('h:i A', strtotime($item->endTime));
+                $date = $this->convertToDate($item->date);
+                $startTime = $this->convertToTime($item->startTime);
+                $endTime = $this->convertToTime($item->endTime);
                 return $date.' ('.$startTime.' - '.$endTime.')';
             })
             ->rawColumns(['action','team', 'score', 'competition','opponentTeam','date'])

@@ -523,7 +523,7 @@ Route::group(['middleware' => ['auth']], function () {
 
                 Route::prefix('{schedule}')->group(function () {
                     Route::get('', [EventScheduleController::class, 'showMatch'])->name('coach.match-schedules.show');
-                    Route::get('get-assisted-player/{player}', [EventScheduleController::class, 'getAssistPlayer'])->name('coach.get-assist-player');
+                    Route::get('get-assisted-player/{player}', [EventScheduleController::class, 'getAssistPlayer'])->name('coach    .get-assist-player');
 
                     Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('coach.match-schedules.player');
                     Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('coach.match-schedules.update-player');
