@@ -2,22 +2,38 @@
 
 namespace App\Services;
 
+use App\Models\Coach;
 use App\Models\GroupDivision;
 use App\Models\Player;
 use App\Models\PlayerMatchStats;
 use App\Models\Team;
+use App\Repository\CoachMatchStatsRepository;
+use App\Repository\EventScheduleRepository;
+use App\Repository\PlayerRepository;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class LeaderboardService extends Service
 {
-    public function playerLeaderboard(){
-        $query = Player::with('playerMatchStats','teams')->get();
-        return Datatables::of($query)
+    private PlayerRepository $playerRepository;
+    public function __construct(PlayerRepository $playerRepository){
+        $this->playerRepository = $playerRepository;
+    }
+
+    public function playerLeaderboardDatatables($data)
+    {
+        return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player">
+                if (isAllAdmin()){
+                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player">
                             <span class="material-icons">visibility</span>
                         </a>';
+                } elseif(isCoach()){
+                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player">
+                            <span class="material-icons">visibility</span>
+                        </a>';
+                }
+                return $btn;
             })
             ->editColumn('teams', function ($item) {
                 $playerTeam = '';
@@ -95,6 +111,16 @@ class LeaderboardService extends Service
             ])
             ->addIndexColumn()
             ->make();
+    }
+    public function playerLeaderboard(){
+        $query = $this->playerRepository->getAll();
+        return $this->playerLeaderboardDatatables($query);
+    }
+    public function coachPLayerLeaderboard(Coach $coach)
+    {
+        $teams = $coach->teams();
+        $query = $this->playerRepository->getCoachsPLayers($teams);
+        return $this->playerLeaderboardDatatables($query);
     }
 
     public function teamLeaderboard(){
