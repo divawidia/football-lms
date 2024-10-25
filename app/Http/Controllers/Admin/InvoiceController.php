@@ -44,10 +44,11 @@ class InvoiceController extends Controller
      */
     public function create()
     {
+        $data = $this->invoiceService->invoiceForms();
         return view('pages.admins.payments.invoices.create', [
-            'products' => $this->product->getAllProducts(),
-            'taxes' => $this->tax->getAllTax(),
-            'contacts' => $this->user->getAllUserWithoutLoggedUserData($this->getLoggedUserId())
+            'products' => $data['products'],
+            'taxes' => $data['taxes'],
+            'contacts' => $data['players'],
         ]);
     }
 
@@ -114,11 +115,12 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
+        $data = $this->invoiceService->invoiceForms();
         return view('pages.admins.payments.invoices.edit', [
             'data' => $invoice,
-            'products' => $this->product->getAllProducts(),
-            'taxes' => $this->tax->getAllTax(),
-            'contacts' => $this->user->getAllUserWithoutLoggedUserData($this->getLoggedUserId())
+            'products' => $data['products'],
+            'taxes' => $data['taxes'],
+            'contacts' => $data['players'],
         ]);
     }
 

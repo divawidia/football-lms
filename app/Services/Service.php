@@ -120,4 +120,9 @@ class Service
                 $q->where('coachId', $coach->id);
             })->get();
     }
+
+    public function getNextDayTimestamp()
+    {
+        return Carbon::now()->copy()->addDay();
+    }
 }

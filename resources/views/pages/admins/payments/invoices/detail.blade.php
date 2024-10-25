@@ -163,7 +163,10 @@
                 </div>
                 <div class="d-flex align-items-center">
                     <div class="p-2"><p class="card-title mb-4pt">Created by :</p></div>
-                    <div class="ml-auto p-2 text-muted">{{ $data['invoice']->creatorUser->firstName }} {{ $data['invoice']->creatorUser->lastName }}</div>
+                    @if($data['invoice']->creatorUser)
+                        <div class="ml-auto p-2 text-muted">{{ $data['invoice']->creatorUser->firstName }} {{ $data['invoice']->creatorUser->lastName }}</div>
+                        @endif
+
                 </div>
             </div>
         </div>

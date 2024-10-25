@@ -166,20 +166,6 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-lg-6">
-                                    <label class="form-label" for="dueDate">Due Date</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="date"
-                                           id="dueDate"
-                                           name="dueDate"
-                                           required
-                                           class="form-control"
-                                           placeholder="Input invoice's due date ..."
-                                            value="{{ \Carbon\Carbon::parse($data->dueDate)->format('Y-m-d') }}">
-                                    <span class="invalid-feedback dueDate" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group col-lg-6">
                                     <label class="form-label" for="taxId">Tax</label>
                                     <small>(Optional)</small>
                                     <select class="form-control form-select" id="taxId" name="taxId" required data-toggle="select">

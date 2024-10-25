@@ -20,6 +20,15 @@ class UserRepository
         return $this->user->all();
     }
 
+    public function getAllUserWithoutLoggedUserData($authUserId){
+        return $this->user->where('id', '!=', $authUserId)->get();
+    }
+
+    public function getAllPlayers()
+    {
+        return $this->user->role('player')->get();
+    }
+
     public function find($id)
     {
         return $this->user->findOrFail($id);

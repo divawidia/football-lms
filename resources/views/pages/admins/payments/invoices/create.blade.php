@@ -34,11 +34,11 @@
                     <div role="group" aria-labelledby="label-question" class="m-0 form-group">
                         <div class="form-group">
                             <div class="d-flex flex-row align-items-center mb-2">
-                                <label class="form-label" for="receiverUserId">User Contact</label>
+                                <label class="form-label" for="receiverUserId">Players Contact</label>
                                 <small class="text-danger">*</small>
                             </div>
                             <select class="form-control form-select" id="receiverUserId" name="receiverUserId" required data-toggle="select">
-                                <option disabled selected>Select users</option>
+                                <option disabled selected>Select player</option>
                                 @foreach($contacts AS $contact)
                                     <option value="{{ $contact->id }}" data-avatar-src="{{ Storage::url($contact->foto) }}">
                                         {{ $contact->firstName }} {{ $contact->lastName }} ~ {{ $contact->email }}
@@ -154,22 +154,6 @@
                             <div class="page-separator__text">General Info</div>
                         </div>
                         <div class="row">
-                            <div class="form-group col-lg-6">
-                                <label class="form-label" for="dueDate">Due Date</label>
-                                <small class="text-danger">*</small>
-                                <input type="date"
-                                       id="dueDate"
-                                       name="dueDate"
-                                       required
-                                       class="form-control"
-                                       placeholder="Input invoice's due date ..."
-                                       value="{{ old('dueDate') }}">
-                                @error('dueDate')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
                             <div class="form-group col-lg-6">
                                 <label class="form-label" for="taxId">Tax</label>
                                 <small>(Optional)</small>

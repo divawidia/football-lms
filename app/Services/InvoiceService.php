@@ -6,6 +6,9 @@ use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tax;
+use App\Repository\ProductRepository;
+use App\Repository\TaxRepository;
+use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
@@ -15,18 +18,20 @@ use Yajra\DataTables\Facades\DataTables;
 
 class InvoiceService extends Service
 {
-    private Product $product;
-    private Tax $tax;
+    private ProductRepository $productRepository;
+    private TaxRepository $taxRepository;
+    private UserRepository $userRepository;
     private Invoice $invoice;
-    public function __construct(Product $product, Tax $tax, Invoice $invoice)
+    public function __construct(ProductRepository $productRepository, TaxRepository $taxRepository, UserRepository $userRepository, Invoice $invoice)
     {
         Config::$serverKey    = config('services.midtrans.serverKey');
         Config::$isProduction = config('services.midtrans.isProduction');
         Config::$isSanitized  = config('services.midtrans.isSanitized');
         Config::$is3ds        = config('services.midtrans.is3ds');
 
-        $this->product = $product;
-        $this->tax = $tax;
+        $this->productRepository = $productRepository;
+        $this->taxRepository = $taxRepository;
+        $this->userRepository = $userRepository;
         $this->invoice = $invoice;
     }
     public function index()
@@ -52,6 +57,24 @@ class InvoiceService extends Service
                             Mark as Uncollectible
                         </button>
                     </form>';
+                $openButton =
+                    '<form action="'.route('invoices.set-open', $item->id).'" method="POST">
+                        ' . method_field("PATCH") . '
+                        ' . csrf_field() . '
+                        <button type="submit" class="dropdown-item">
+                            <span class="material-icons text-info">check_circle</span>
+                            Mark as Open
+                        </button>
+                    </form>';
+                $pastDueButton =
+                    '<form action="'.route('invoices.set-open', $item->id).'" method="POST">
+                        ' . method_field("PATCH") . '
+                        ' . csrf_field() . '
+                        <button type="submit" class="dropdown-item">
+                            <span class="material-icons text-warning">check_circle</span>
+                            Mark as Past Due
+                        </button>
+                    </form>';
 
                 $statusButton = '';
                 if ($item->status == 'Open') {
@@ -59,10 +82,11 @@ class InvoiceService extends Service
                 } elseif ($item->status == 'Paid') {
                     $statusButton = $uncollectibleButton;
                 } elseif ($item->status == 'Uncollectible') {
-                    $statusButton = $paidButton;
+                    $statusButton = $paidButton.''.$openButton;
+                } elseif ($item->status == 'Past Due') {
+                    $statusButton = $openButton.''.$uncollectibleButton;
                 }
-                return
-                    '<div class="dropdown">
+                return '<div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
                                 more_vert
@@ -134,11 +158,20 @@ class InvoiceService extends Service
             ->make();
     }
 
+    public function invoiceForms()
+    {
+        $players = $this->userRepository->getAllPlayers();
+        $taxes = $this->taxRepository->getAll();
+        $products = $this->productRepository->getAll();
+        return compact('players', 'taxes', 'products');
+    }
+
     public function store(array $data, $creatorUserIdd, $academyId)
     {
         $data['creatorUserId'] = $creatorUserIdd;
         $data['academyId'] = $academyId;
         $data['invoiceNumber'] = $this->generateInvoiceNumber();
+        $data['dueDate'] = $this->getNextDayTimestamp();
         $data['subtotal'] = 0;
 
         foreach ($data['products'] as $product) {
@@ -147,7 +180,7 @@ class InvoiceService extends Service
         $data['ammountDue'] = $data['subtotal'];
 
         if ($data['taxId']){
-            $tax = $this->tax->getTaxDetail($data['taxId']);
+            $tax = $this->taxRepository->find($data['taxId']);
             $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
         }else{
@@ -163,7 +196,7 @@ class InvoiceService extends Service
                 'ammount' => $product['ammount']
             ]);
 
-            $productDetail = $this->product->findProductById($product['productId']);
+            $productDetail = $this->productRepository->find($product['productId']);
             if ($productDetail->priceOption == 'subscription'){
                 $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId'], $data['taxId']);
                 $invoice->subscriptions()->attach($subscription->id);
@@ -175,7 +208,7 @@ class InvoiceService extends Service
     }
 
     public function calculateProductAmount(int $qty, $productId){
-        $product = $this->product->findProductById($productId);
+        $product = $this->productRepository->find($productId);
         $productPrice = $product->price;
         $amount = $qty * $productPrice;
         $cycle = $product->subscriptionCycle;
@@ -204,7 +237,7 @@ class InvoiceService extends Service
         $data['ammountDue'] = $data['subtotal'];
 
         if ($data['taxId']){
-            $tax = $this->tax->getTaxDetail($data['taxId']);
+            $tax = $this->taxRepository->find($data['taxId']);
             $data['totalTax'] = $data['subtotal'] * $tax->percentage;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
         }
@@ -221,7 +254,7 @@ class InvoiceService extends Service
         $data['productId'] = $productId;
         $data['taxId'] = $taxId;
 
-        $product = $this->product->findProductById($productId);
+        $product = $this->productRepository->find($productId);
 
         if ($product->subscriptionCycle == 'monthly'){
             $data['cycle'] =  'monthly';
@@ -295,6 +328,7 @@ class InvoiceService extends Service
     {
         $data['subtotal'] = 0;
         $data['invoiceNumber'] = $invoice->invoiceNumber;
+        $data['dueDate'] = $this->getNextDayTimestamp();
 
         foreach ($data['products'] as $product) {
             $data['subtotal'] = $data['subtotal'] + $product['ammount'];
@@ -302,7 +336,7 @@ class InvoiceService extends Service
         $data['ammountDue'] = $data['subtotal'];
 
         if ($data['taxId'] != null){
-            $tax = $this->tax->getTaxDetail($data['taxId']);
+            $tax = $this->taxRepository->find($data['taxId']);
             $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
         }else{
@@ -321,7 +355,7 @@ class InvoiceService extends Service
         }
 
         foreach ($data['products'] as $product){
-            $productDetail = $this->product->findProductById($product['productId']);
+            $productDetail = $this->productRepository->find($product['productId']);
 
             if ($productDetail->priceOption == 'subscription'){
                 if ($this->checkSubscriptionIsExist($product['productId'], $data['receiverUserId']) == null){
@@ -355,11 +389,15 @@ class InvoiceService extends Service
     {
         $data['invoiceNumber'] = $invoice->invoiceNumber;
         $data['ammountDue'] = $invoice->ammountDue;
+        $dueDate = $this->getNextDayTimestamp();
 
         // refresh midtrans payment token
         $this->midtransPayment($data, $invoice);
 
-        return $invoice->update(['status' => 'Open']);
+        return $invoice->update([
+            'status' => 'Open',
+            'dueDate' => $dueDate
+        ]);
     }
     public function pastDue(Invoice $invoice)
     {
