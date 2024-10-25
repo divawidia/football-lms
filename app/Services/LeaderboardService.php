@@ -3,12 +3,6 @@
 namespace App\Services;
 
 use App\Models\Coach;
-use App\Models\GroupDivision;
-use App\Models\Player;
-use App\Models\PlayerMatchStats;
-use App\Models\Team;
-use App\Repository\CoachMatchStatsRepository;
-use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
 use Illuminate\Support\Facades\Storage;
@@ -121,7 +115,7 @@ class LeaderboardService extends Service
     }
     public function coachPLayerLeaderboard(Coach $coach)
     {
-        $teams = $coach->teams();
+        $teams = $coach->teams()->get();
         $query = $this->playerRepository->getCoachsPLayers($teams);
         return $this->playerLeaderboardDatatables($query);
     }

@@ -8,7 +8,7 @@
 
     @section('content')
         <div class="pt-32pt">
-            <div class="container page__container d-flex flex-column">
+            <div class="container d-flex flex-column">
                 <h2 class="mb-0">@yield('title')</h2>
                 <ol class="breadcrumb p-0 m-0">
                     @if(isAllAdmin())
