@@ -3,15 +3,18 @@
         <div class="card-body d-flex align-items-center">
             <div class="h2 mb-0 mr-3">{{ $data }}</div>
             <div class="ml-auto text-right">
-                <div class="card-title">Match Played</div>
+                <div class="card-title">{{ $title }}</div>
                 <p class="card-subtitle text-50">
-                    {{ $dataThisMonth }}
+
                     @if($dataThisMonth > 0)
+                        {{ $dataThisMonth }}
                         <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>
+                        From Last Month
                     @elseif($dataThisMonth < 0)
+                        {{ $dataThisMonth }}
                         <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>
+                        From Last Month
                     @endif
-                    From Last Month
                 </p>
             </div>
         </div>

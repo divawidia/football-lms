@@ -51,10 +51,7 @@ class AttendanceReportController extends Controller
     public function show(Player $player){
         $data = $this->attendanceReportService->show($player);
         return view('pages.academies.reports.attendances.player-detail', [
-            'totalAttended' => $data['totalAttended'],
-            'totalIllness' => $data['totalIllness'],
-            'totalInjured' => $data['totalInjured'],
-            'totalOther' => $data['totalOther'],
+            'data' => $data,
             'player' => $player
         ]);
     }
