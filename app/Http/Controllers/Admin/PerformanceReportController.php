@@ -34,8 +34,9 @@ class PerformanceReportController extends Controller
 
     public function coachIndex(){
         $coach = $this->getLoggedCoachUser();
+
         if (\request()->ajax()){
-            return $this->performanceReportService->matchHistory();
+            return $this->performanceReportService->coachMatchHistory($coach);
         }
         $latestMatches = $this->performanceReportService->coachLatestMatch($coach);
         $overviewStats = $this->performanceReportService->coachOverviewStats($coach);

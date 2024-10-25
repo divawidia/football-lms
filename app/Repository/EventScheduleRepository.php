@@ -22,20 +22,37 @@ class EventScheduleRepository
         return $this->eventSchedule->all();
     }
 
-    public function getMatchHistories()
+    public function endedMatch()
     {
         return $this->eventSchedule->with('teams', 'competition')
             ->where('eventType', 'Match')
-            ->where('status', '0')
-            ->get();
+            ->where('status', '0');
+    }
+    public function endedCoachMatch(Coach $coach)
+    {
+        return $coach->schedules()->with('teams', 'competition')
+            ->where('eventType', 'Match')
+            ->where('status', '0');
+    }
+
+
+    public function getMatchHistories()
+    {
+        return $this->endedMatch()->get();
     }
 
     public function getCoachMatchHistories(Coach $coach)
     {
-        return $coach->schedules()->with('teams', 'competition')
-            ->where('eventType', 'Match')
-            ->where('status', '0')
-            ->get();
+        return $this->endedCoachMatch($coach)->get();
+    }
+
+    public function getLatestMatch()
+    {
+        return $this->endedMatch()->take(2)->get();
+    }
+    public function getCoachLatestMatch(Coach $coach)
+    {
+        return $this->endedCoachMatch($coach)->take(2)->get();
     }
 
     public function find($id)

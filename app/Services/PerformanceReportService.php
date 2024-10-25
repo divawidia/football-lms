@@ -199,24 +199,16 @@ class PerformanceReportService extends Service
         );
     }
     public function latestMatch(){
-        return EventSchedule::with('teams', 'competition')
-            ->where('eventType', 'Match')
-            ->where('status', '0')
-            ->orderBy('date', 'desc')
-            ->take(2)
-            ->get();
+        return $this->eventScheduleRepository->getLatestMatch();
     }
 
     public function coachLatestMatch(Coach $coach){
-        return $this->eventScheduleRepository->getCoachMatchHistories($coach);
+        return $this->eventScheduleRepository->getCoachLatestMatch($coach);
     }
 
-    public function matchHistory(){
-        $data = EventSchedule::with('teams', 'competition')
-            ->where('eventType', 'Match')
-            ->where('status', '0')
-            ->get();
 
+    public function matchHistoryDatatables($data)
+    {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return '
@@ -302,5 +294,13 @@ class PerformanceReportService extends Service
             })
             ->rawColumns(['action','team', 'score', 'competition','opponentTeam','date'])
             ->make();
+    }
+    public function matchHistory(){
+        $data = $this->eventScheduleRepository->getMatchHistories();
+        return $this->matchHistoryDatatables($data);
+    }
+    public function coachMatchHistory(Coach $coach){
+        $data = $this->eventScheduleRepository->getCoachMatchHistories($coach);
+        return $this->matchHistoryDatatables($data);
     }
 }
