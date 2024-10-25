@@ -143,7 +143,11 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
+                    @if(isAllAdmin())
                     url: '{!! route('attendance-report.trainingTable', $player->id) !!}',
+                    @elseif(isCoach())
+                    url: '{!! route('coach.attendance-report.trainingTable', $player->id) !!}',
+                    @endif
                 },
                 columns: [
                     { data: 'eventName', name: 'eventName' },
@@ -170,7 +174,11 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
+                    @if(isAllAdmin())
                     url: '{!! route('attendance-report.matchDatatable', $player->id) !!}',
+                    @elseif(isCoach())
+                    url: '{!! route('coach.attendance-report.matchDatatable', $player->id) !!}',
+                    @endif
                 },
                 columns: [
                     { data: 'team', name: 'team' },
