@@ -25,7 +25,7 @@ class PerformanceReportController extends Controller
         $overviewStats = $this->performanceReportService->overviewStats();
         $competitions = $this->competitionService->index();
 
-        return view('pages.admins.academies.reports.performance.index', [
+        return view('pages.academies.reports.performance.index', [
             'latestMatches' => $latestMatches,
             'overviewStats' => $overviewStats,
             'competitions' => $competitions
@@ -42,7 +42,7 @@ class PerformanceReportController extends Controller
         $overviewStats = $this->performanceReportService->coachOverviewStats($coach);
         $competitions = $this->competitionService->coachTeamsIndex($coach);
 
-        return view('pages.admins.academies.reports.performance.index', [
+        return view('pages.academies.reports.performance.index', [
             'latestMatches' => $latestMatches,
             'overviewStats' => $overviewStats,
             'competitions' => $competitions
