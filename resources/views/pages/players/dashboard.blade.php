@@ -88,8 +88,7 @@
                     </a>
                 </div>
                 <div class="card">
-                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
-                                                      :datas="$playerSkillStats['data']" chartId="uniqueChartId"/>
+                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']" :datas="$playerSkillStats['data']" chartId="uniqueChartId"/>
                 </div>
             </div>
             <div class="col-sm-6 flex-column">
@@ -120,8 +119,7 @@
                                 </div>
                             </div>
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="material-icons">
                                     more_vert
                                 </span>
