@@ -40,14 +40,14 @@
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button"
-                           href="{{ route('coach.player-managements.index') }}">
+                           href="{{ route('player-managements.index') }}">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">person</span>
                             <span class="sidebar-menu-text">Players Management</span>
                         </a>
                     </li>
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button"
-                           href="{{ route('coach.team-managements.index') }}">
+                           href="{{ route('team-managements.index') }}">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">group</span>
                             <span class="sidebar-menu-text">Teams Management</span>
                         </a>
@@ -58,7 +58,7 @@
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button"
-                           href="{{ route('coach.skill-assessments.index') }}">
+                           href="{{ route('skill-assessments.index') }}">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">tune</span>
                             <span class="sidebar-menu-text">Skill Assessments</span>
                         </a>
@@ -71,12 +71,12 @@
                         </a>
                         <ul class="collapse sm-indent" id="scheduleMenu">
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="{{ route('coach.training-schedules.index') }}">
+                                <a class="sidebar-menu-button" href="{{ route('training-schedules.index') }}">
                                     <span class="sidebar-menu-text">Training</span>
                                 </a>
                             </li>
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="{{ route('coach.match-schedules.index') }}">
+                                <a class="sidebar-menu-button" href="{{ route('match-schedules.index') }}">
                                     <span class="sidebar-menu-text">Match</span>
                                 </a>
                             </li>
@@ -91,19 +91,19 @@
                         <ul class="collapse sm-indent"
                             id="reportsMenu">
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="{{ route('coach.attendance-report.index') }}">
+                                <a class="sidebar-menu-button" href="{{ route('attendance-report.index') }}">
                                     <span class="sidebar-menu-text">Attendance</span>
                                 </a>
                             </li>
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="{{ route('coach.performance-report.index') }}">
+                                <a class="sidebar-menu-button" href="{{ route('performance-report.index') }}">
                                     <span class="sidebar-menu-text">Performance</span>
                                 </a>
                             </li>
                         </ul>
                     </li>
                     <li class="sidebar-menu-item">
-                        <a class="sidebar-menu-button" href="{{ route('coach.leaderboards.index') }}">
+                        <a class="sidebar-menu-button" href="{{ route('leaderboards.index') }}">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">bar_chart</span>
                             <span class="sidebar-menu-text">Leaderboards</span>
                         </a>

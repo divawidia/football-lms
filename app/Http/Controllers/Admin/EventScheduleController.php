@@ -36,56 +36,51 @@ class EventScheduleController extends Controller
      */
     public function indexTraining()
     {
-        if (request()->ajax()){
-            return $this->eventScheduleService->dataTablesTraining();
+        if ($this->isAllAdmin()){
+            $events = $this->eventScheduleService->trainingCalendar();
+        } elseif ($this->isCoach()){
+            $coach = $this->getLoggedCoachUser();
+            $events = $this->eventScheduleService->coachTeamsTrainingCalendar($coach);
         }
-
-        $events = $this->eventScheduleService->trainingCalendar();
 
         return view('pages.admins.academies.schedules.trainings.index', [
             'events' => $events
         ]);
+    }
+
+    public function adminIndexTraining()
+    {
+        return $this->eventScheduleService->dataTablesTraining();
     }
 
     public function coachIndexTraining()
     {
         $coach = $this->getLoggedCoachUser();
-        if (request()->ajax()){
-            return $this->eventScheduleService->coachTeamsDataTablesTraining($coach);
-        }
-
-        $events = $this->eventScheduleService->coachTeamsTrainingCalendar($coach);
-
-        return view('pages.admins.academies.schedules.trainings.index', [
-            'events' => $events
-        ]);
+        return $this->eventScheduleService->coachTeamsDataTablesTraining($coach);
     }
 
     public function indexMatch()
     {
-        if (request()->ajax()){
-            return $this->eventScheduleService->dataTablesMatch();
+        if ($this->isAllAdmin()){
+            $events = $this->eventScheduleService->matchCalendar();
+        } elseif ($this->isCoach()){
+            $coach = $this->getLoggedCoachUser();
+            $events = $this->eventScheduleService->coachTeamsMatchCalendar($coach);
         }
-
-        $events = $this->eventScheduleService->matchCalendar();
 
         return view('pages.admins.academies.schedules.matches.index', [
             'events' => $events
         ]);
     }
 
+    public function adminIndexMatch()
+    {
+        return $this->eventScheduleService->dataTablesTraining();
+    }
     public function coachIndexMatch()
     {
         $coach = $this->getLoggedCoachUser();
-        if (request()->ajax()){
             return $this->eventScheduleService->coachTeamsDataTablesMatch($coach);
-        }
-
-        $events = $this->eventScheduleService->coachTeamsMatchCalendar($coach);
-
-        return view('pages.admins.academies.schedules.matches.index', [
-            'events' => $events
-        ]);
     }
 
     /**

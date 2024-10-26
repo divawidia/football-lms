@@ -16,12 +16,17 @@ class PerformanceReportController extends Controller
         $this->competitionService = $competitionService;
     }
     public function index(){
-        if (\request()->ajax()){
-            return $this->performanceReportService->matchHistory();
+        if (isAllAdmin()){
+            $latestMatches = $this->performanceReportService->latestMatch();
+            $overviewStats = $this->performanceReportService->overviewStats();
+            $competitions = $this->competitionService->index();
+        } elseif (isCoach()){
+            $coach = $this->getLoggedCoachUser();
+            $latestMatches = $this->performanceReportService->coachLatestMatch($coach);
+            $overviewStats = $this->performanceReportService->coachOverviewStats($coach);
+            $competitions = $this->competitionService->coachTeamsIndex($coach);
         }
-        $latestMatches = $this->performanceReportService->latestMatch();
-        $overviewStats = $this->performanceReportService->overviewStats();
-        $competitions = $this->competitionService->index();
+
 
         return view('pages.academies.reports.performance.index', [
             'latestMatches' => $latestMatches,
@@ -30,21 +35,14 @@ class PerformanceReportController extends Controller
         ]);
     }
 
+    public function adminIndex()
+    {
+        return $this->performanceReportService->matchHistory();
+    }
+
     public function coachIndex(){
         $coach = $this->getLoggedCoachUser();
-
-        if (\request()->ajax()){
             return $this->performanceReportService->coachMatchHistory($coach);
-        }
-        $latestMatches = $this->performanceReportService->coachLatestMatch($coach);
-        $overviewStats = $this->performanceReportService->coachOverviewStats($coach);
-        $competitions = $this->competitionService->coachTeamsIndex($coach);
-
-        return view('pages.academies.reports.performance.index', [
-            'latestMatches' => $latestMatches,
-            'overviewStats' => $overviewStats,
-            'competitions' => $competitions
-        ]);
     }
 
 }

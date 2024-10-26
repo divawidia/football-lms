@@ -34,7 +34,7 @@ class PlayerService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                if (Auth::user()->hasRole('admin|Super-Admin')){
+                if (isAllAdmin()){
                     if ($item->user->status == '1'){
                         $statusButton = '<form action="' . route('deactivate-player', $item->id) . '" method="POST">
                                             '.method_field("PATCH").'
@@ -69,9 +69,9 @@ class PlayerService extends Service
                             </button>
                           </div>
                         </div>';
-                } elseif (Auth::user()->hasRole('coach')){
+                } elseif (isCoach()){
                     $actionBtn = '
-                      <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                      <a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
                         <span class="material-icons">
                             visibility
                         </span>
@@ -91,16 +91,6 @@ class PlayerService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                $name = '';
-                if (Auth::user()->hasRole('admin|Super-Admin')){
-                    $name = '<a href="'.route('player-managements.show', $item->id).'">
-                                <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
-                            </a>';
-                }elseif (Auth::user()->hasRole('coach')){
-                    $name = '<a href="'.route('coach.player-managements.show', $item->id).'">
-                                <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
-                            </a>';
-                }
                 return '
                         <div class="media flex-nowrap align-items-center"
                              style="white-space: nowrap;">
@@ -110,7 +100,9 @@ class PlayerService extends Service
                             <div class="media-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
-                                        '.$name.'
+                                        <a href="'.route('player-managements.show', $item->id).'">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                                        </a>
                                         <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
                                     </div>
                                 </div>
