@@ -6,6 +6,7 @@ use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
 use App\Models\EventSchedule;
+use App\Models\Player;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -53,6 +54,15 @@ class EventScheduleRepository
     public function getCoachLatestMatch(Coach $coach)
     {
         return $this->endedCoachMatch($coach)->take(2)->get();
+    }
+
+    public function playerUpcomingEvent(Player $player, $eventType, $take = 2)
+    {
+        return $player->schedules()
+            ->where('eventType', $eventType)
+            ->where('status', '1')
+            ->take($take)
+            ->get();
     }
 
     public function find($id)

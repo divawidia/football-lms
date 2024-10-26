@@ -85,183 +85,19 @@
             <div class="page-separator__text">Overview</div>
         </div>
         <div class="row card-group-row">
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['matchPlayed'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Match Appearance</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['minutesPlayed'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Minutes Played</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['fouls'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Fouls</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row card-group-row">
-            @if($data->position->name == 'Goalkeeper (GK)')
-                <div class="col-lg-4 card-group-row__col flex-column">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overview['saves'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title">Saves</div>
-                                    <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            @include('components.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['thisMonthMatchPlayed']])
+            @include('components.stats-card', ['title' => 'minutes Played','data' => $overview['minutesPlayed'], 'dataThisMonth' => $overview['thisMonthMinutesPlayed']])
+            @include('components.stats-card', ['title' => 'fouls','data' => $overview['fouls'], 'dataThisMonth' => $overview['thisMonthFouls']])
+            @if($data->position == 'Goalkeeper (GK)')
+                @include('components.stats-card', ['title' => 'saves','data' => $overview['saves'], 'dataThisMonth' => $overview['thisMonthSaves']])
             @else
-                <div class="col-lg-4 card-group-row__col flex-column">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $overview['goals'] }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title">Goals</div>
-                                    <p class="card-subtitle text-50">
-                                        4
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @include('components.stats-card', ['title' => 'Goals','data' => $overview['goals'], 'dataThisMonth' => $overview['thisMonthGoals']])
             @endif
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['assists'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Assists</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['ownGoals'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Own Goals</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row card-group-row mb-4">
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['wins'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Wins</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['losses'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Losses</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['draws'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Draws</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @include('components.stats-card', ['title' => 'assists','data' => $overview['assists'], 'dataThisMonth' => $overview['thisMonthAssists']])
+            @include('components.stats-card', ['title' => 'own Goals','data' => $overview['ownGoals'], 'dataThisMonth' => $overview['thisMonthOwnGoals']])
+            @include('components.stats-card', ['title' => 'Wins','data' => $overview['wins'], 'dataThisMonth' => $overview['thisMonthWins']])
+            @include('components.stats-card', ['title' => 'Losses','data' => $overview['losses'], 'dataThisMonth' => $overview['thisMonthLosses']])
+            @include('components.stats-card', ['title' => 'Draws','data' => $overview['draws'], 'dataThisMonth' => $overview['thisMonthDraws']])
         </div>
 
         <div class="row card-group-row">
@@ -415,7 +251,8 @@
         <div class="page-separator">
             <div class="page-separator__text">Parents/Guardians</div>
             @if(Auth::user()->hasRole('admin|Super-Admin'))
-                <a href="{{  route('player-parents.create', $data->id) }}" class="btn btn-sm btn-primary ml-auto" id="add-new">
+                <a href="{{  route('player-parents.create', $data->id) }}" class="btn btn-sm btn-primary ml-auto"
+                   id="add-new">
                 <span class="material-icons mr-2">
                     add
                 </span>

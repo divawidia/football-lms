@@ -91,6 +91,39 @@ class PlayerRepository
         return $query->count();
     }
 
+    public function playerMatchStatsSum(Player $player, $stats, $startDate = null, $endDate = null)
+    {
+        $query = $player->playerMatchStats();
+
+        // If date range is provided, add a whereBetween clause
+        if ($startDate && $endDate) {
+            $query->whereBetween('player_match_stats.updated_at', [$startDate, $endDate]);
+        }
+        return $query->sum($stats);
+    }
+
+    public function countMatchPlayed(Player $player, $startDate = null, $endDate = null)
+    {
+        $query = $player->playerMatchStats()->where('minutesPlayed', '>', 0);
+        if ($startDate && $endDate) {
+            $query->whereBetween('player_match_stats.updated_at', [$startDate, $endDate]);
+        }
+        return $query->count();
+    }
+
+    public function matchResults(Player $player, $result, $startDate = null, $endDate = null)
+    {
+        $query = $player->schedules()
+            ->where('eventType', 'Match')
+            ->whereHas('teams', function ($q) use ($result){
+                $q->where('resultStatus', $result);
+            });
+        if ($startDate && $endDate) {
+            $query->whereBetween('event_schedules.date', [$startDate, $endDate]);
+        }
+        return $query->count();
+    }
+
     public function create(array $data)
     {
         return $this->player->create($data);

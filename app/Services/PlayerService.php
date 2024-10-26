@@ -7,6 +7,9 @@ use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
+use App\Repository\EventScheduleRepository;
+use App\Repository\PlayerRepository;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -18,9 +21,13 @@ use Yajra\DataTables\Facades\DataTables;
 class PlayerService extends Service
 {
     private EventScheduleService $eventScheduleService;
-    public function __construct(EventScheduleService $eventScheduleService)
+    private PlayerRepository $playerRepository;
+    private EventScheduleRepository $eventScheduleRepository;
+    public function __construct(EventScheduleService $eventScheduleService, PlayerRepository $playerRepository, EventScheduleRepository $eventScheduleRepository)
     {
         $this->eventScheduleService = $eventScheduleService;
+        $this->playerRepository = $playerRepository;
+        $this->eventScheduleRepository = $eventScheduleRepository;
     }
 
     public function makePlayerDatatables($data)
@@ -239,43 +246,40 @@ class PlayerService extends Service
 
     public function show(Player $player)
     {
-        $matchPlayed = $player->playerMatchStats()->where('minutesPlayed', '>', 0)->count();
-        $minutesPlayed = $player->playerMatchStats()->sum('minutesPlayed');
-        $fouls = $player->playerMatchStats()->sum('fouls');
-        $saves = $player->playerMatchStats()->sum('saves');
-        $goals = $player->playerMatchStats()->sum('goals');
-        $assists = $player->playerMatchStats()->sum('assists');
-        $ownGoals = $player->playerMatchStats()->sum('ownGoal');
-        $wins = $player->schedules()
-            ->where('eventType', 'Match')
-            ->whereHas('teams', function ($q){
-                $q->where('resultStatus', 'Win');
-            })
-            ->count();
-        $losses = $player->schedules()
-            ->where('eventType', 'Match')
-            ->whereHas('teams', function ($q){
-                $q->where('resultStatus', 'Lose');
-            })
-            ->count();
-        $draws = $player->schedules()
-            ->where('eventType', 'Match')
-            ->whereHas('teams', function ($q){
-                $q->where('resultStatus', 'Draw');
-            })
-            ->count();
+        $matchPlayed = $this->playerRepository->countMatchPlayed($player);
+        $thisMonthMatchPlayed = $this->playerRepository->countMatchPlayed($player, Carbon::now()->startOfMonth(),Carbon::now());
 
-        $upcomingMatches = $player->schedules()
-            ->where('eventType', 'Match')
-            ->where('status', '1')
-            ->take(2)
-            ->get();
+        $minutesPlayed = $this->playerRepository->playerMatchStatsSum($player, 'minutesPlayed');
+        $thisMonthMinutesPlayed = $this->playerRepository->playerMatchStatsSum($player, 'minutesPlayed', Carbon::now()->startOfMonth(),Carbon::now());
 
-        $upcomingTrainings = $player->schedules()
-            ->where('eventType', 'Training')
-            ->where('status', '1')
-            ->take(2)
-            ->get();
+        $fouls = $this->playerRepository->playerMatchStatsSum($player, 'fouls');
+        $thisMonthFouls = $this->playerRepository->playerMatchStatsSum($player, 'fouls', Carbon::now()->startOfMonth(),Carbon::now());
+
+        $saves = $this->playerRepository->playerMatchStatsSum($player, 'saves');
+        $thisMonthSaves = $this->playerRepository->playerMatchStatsSum($player, 'saves', Carbon::now()->startOfMonth(),Carbon::now());
+
+        $goals = $this->playerRepository->playerMatchStatsSum($player, 'goals');
+        $thisMonthGoals = $this->playerRepository->playerMatchStatsSum($player, 'goals', Carbon::now()->startOfMonth(),Carbon::now());
+
+        $assists = $this->playerRepository->playerMatchStatsSum($player, 'assists');
+        $thisMonthAssists = $this->playerRepository->playerMatchStatsSum($player, 'assists', Carbon::now()->startOfMonth(),Carbon::now());
+
+        $ownGoals = $this->playerRepository->playerMatchStatsSum($player, 'ownGoal');
+        $thisMonthOwnGoals = $this->playerRepository->playerMatchStatsSum($player, 'ownGoal', Carbon::now()->startOfMonth(),Carbon::now());
+
+        $wins = $this->playerRepository->matchResults($player, 'Win');
+        $thisMonthWins = $this->playerRepository->matchResults($player, 'Win', Carbon::now()->startOfMonth(),Carbon::now());
+
+        $losses = $this->playerRepository->matchResults($player, 'Lose');
+        $thisMonthLosses = $this->playerRepository->matchResults($player, 'Lose', Carbon::now()->startOfMonth(),Carbon::now());
+
+        $draws = $this->playerRepository->matchResults($player, 'Draw');
+        $thisMonthDraws = $this->playerRepository->matchResults($player, 'Draw', Carbon::now()->startOfMonth(),Carbon::now());
+
+
+        $upcomingMatches = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Match');
+
+        $upcomingTrainings = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Training');
 
         $playerAge = $this->getAge($player->user->dob);
         $playerDob = $this->convertToDate($player->user->dob);
@@ -286,15 +290,25 @@ class PlayerService extends Service
 
         return compact(
             'matchPlayed',
+            'thisMonthMatchPlayed',
             'minutesPlayed',
+            'thisMonthMinutesPlayed',
             'fouls',
+            'thisMonthFouls',
             'saves',
+            'thisMonthSaves',
             'goals',
+            'thisMonthGoals',
             'assists',
+            'thisMonthAssists',
             'ownGoals',
+            'thisMonthOwnGoals',
             'wins',
+            'thisMonthWins',
             'losses',
+            'thisMonthLosses',
             'draws',
+            'thisMonthDraws',
             'upcomingMatches',
             'upcomingTrainings',
             'playerAge',
