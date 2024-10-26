@@ -72,6 +72,7 @@ class EventScheduleRepository
             ->where('eventType', $eventType)
             ->where('status', '0')
             ->take($take)
+            ->orderBy('date', 'desc')
             ->get();
     }
 
