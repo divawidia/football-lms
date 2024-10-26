@@ -15,9 +15,9 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
+                    <a href="@if(isAllAdmin())
                     {{ route('player-managements.index') }}
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                     {{ route('coach.player-managements.index') }}
                     @endif" class="nav-link text-70">
                         <i class="material-icons icon--left">keyboard_backspace</i>
@@ -39,7 +39,7 @@
                 <h2 class="text-white mb-0">{{ $data->user->firstName  }} {{ $data->user->lastName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data->position->name }}</p>
             </div>
-            @if(Auth::user()->hasRole('admin|Super-Admin'))
+            @if(isAllAdmin())
                 <div class="dropdown">
                     <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
@@ -213,7 +213,7 @@
                                 <tr>
                                     <th>Team Name</th>
                                     <th>Date Joined</th>
-                                    @if(Auth::user()->hasRole('admin|Super-Admin'))
+                                    @if(isAllAdmin())
                                         <th>Action</th>
                                     @endif
                                 </tr>
@@ -228,9 +228,9 @@
                 {{--Teams Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
-                    <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
+                    <a href="@if(isAllAdmin())
                     {{ route('player-managements.skill-stats', $data->id) }}
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                     {{ route('coach.player-managements.skill-stats', $data->id) }}
                     @endif" class="btn btn-white border btn-sm ml-auto">
                         View More
@@ -248,7 +248,7 @@
         {{--Parents/Guardians Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Parents/Guardians</div>
-            @if(Auth::user()->hasRole('admin|Super-Admin'))
+            @if(isAllAdmin())
                 <a href="{{  route('player-parents.create', $data->id) }}" class="btn btn-sm btn-primary ml-auto"
                    id="add-new">
                 <span class="material-icons mr-2">
@@ -258,35 +258,14 @@
                 </a>
             @endif
         </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="parentsTable">
-                        <thead>
-                        <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Relation</th>
-                            @if(Auth::user()->hasRole('admin|Super-Admin'))
-                                <th>Action</th>
-                            @endif
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <x-player-parents-tables :player="$data->id"/>
 
         {{--Upcoming Matches Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
-            <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
+            <a href="@if(isAllAdmin())
                     {{ route('player-managements.upcoming-matches', $data->id) }}
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                     {{ route('coach.player-managements.upcoming-matches', $data->id) }}
                     @endif" class="btn btn-white border btn-sm ml-auto">
                 View More
@@ -305,9 +284,9 @@
             </div>
         @endif
         @foreach($overview['upcomingMatches'] as $match)
-            <a class="card" href="@if(Auth::user()->hasRole('admin|Super-Admin'))
+            <a class="card" href="@if(isAllAdmin())
                     {{ route('match-schedules.show', $match->id) }}
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                     {{ route('coach.match-schedules.show', $match->id) }}
                     @endif">
                 <div class="card-body">
@@ -362,9 +341,9 @@
         {{--Upcoming Trainings Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Trainings</div>
-            <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
+            <a href="@if(isAllAdmin())
                     {{ route('player-managements.upcoming-trainings', $data->id) }}
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                     {{ route('coach.player-managements.upcoming-trainings', $data->id) }}
                     @endif" class="btn btn-white border btn-sm ml-auto">
                 View More
@@ -385,9 +364,9 @@
         <div class="row">
             @foreach($overview['upcomingTrainings'] as $training)
                 <div class="col-lg-6">
-                    <a class="card" href="@if(Auth::user()->hasRole('admin|Super-Admin'))
+                    <a class="card" href="@if(isAllAdmin())
                     {{ route('training-schedules.show', $training->id) }}
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                     {{ route('coach.training-schedules.show', $training->id) }}
                     @endif">
                         <div class="card-body">
@@ -540,50 +519,22 @@
     <script>
         $(document).ready(function () {
             const body = $('body');
-            $('#parentsTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    @if(Auth::user()->hasRole('admin|Super-Admin'))
-                    url: '{!! route('player-parents.index', $data->id) !!}',
-                    @elseif(Auth::user()->hasRole('coach'))
-                    url: '{!! route('coach.player-parents.index', $data->id) !!}',
-                    @endif
-                },
-                columns: [
-                    {data: 'firstName', name: 'firstName'},
-                    {data: 'lastName', name: 'lastName'},
-                    {data: 'email', name: 'email'},
-                    {data: 'phoneNumber', name: 'phoneNumber'},
-                    {data: 'relations', name: 'relations'},
-                        @if(Auth::user()->hasRole('admin|Super-Admin'))
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
-                    @endif
-                ]
-            });
 
             $('#teamsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin|Super-Admin'))
+                    @if(isAllAdmin())
                     url: '{!! route('player-managements.playerTeams', $data->id) !!}',
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                     url: '{!! route('coach.player-managements.playerTeams', $data->id) !!}',
                     @endif
                 },
                 columns: [
                     {data: 'name', name: 'name'},
                     {data: 'date', name: 'date'},
-                        @if(Auth::user()->hasRole('admin|Super-Admin'))
+                        @if(isAllAdmin())
                     {
                         data: 'action',
                         name: 'action',
@@ -600,9 +551,9 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin|Super-Admin'))
+                    @if(isAllAdmin())
                     url: '{!! route('attendance-report.trainingTable', $data->id) !!}',
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                     url: '{!! route('coach.attendance-report.trainingTable', $data->id) !!}',
                     @endif
                 },
@@ -631,9 +582,9 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin|Super-Admin'))
+                    @if(isAllAdmin())
                     url: '{!! route('attendance-report.matchDatatable', $data->id) !!}',
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                     url: '{!! route('coach.attendance-report.matchDatatable', $data->id) !!}',
                     @endif
                 },
@@ -659,7 +610,6 @@
                 order: [[2, 'desc']],
             });
 
-            @if(Auth::user()->hasRole('admin|Super-Admin'))
             $('.delete-user').on('click', function () {
                 let id = $(this).attr('id');
 
@@ -749,44 +699,6 @@
                 });
             });
 
-            body.on('click', '.delete-parent', function () {
-                let idParent = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert after delete this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('player-parents.destroy', ['player' => $data->id,'parent' => ':idParent']) }}".replace(':idParent', idParent),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (response) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Player's parent/guardian successfully deleted!",
-                                });
-                                parentsTable.ajax.reload();
-                            },
-                            error: function (error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Oops...",
-                                    text: "Something went wrong when deleting data!",
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
             body.on('click', '.delete-team', function () {
                 const idTeam = $(this).attr('id');
 
@@ -869,7 +781,6 @@
                     }
                 });
             });
-            @endif
         });
     </script>
 @endpush

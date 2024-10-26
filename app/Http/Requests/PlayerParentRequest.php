@@ -25,7 +25,7 @@ class PlayerParentRequest extends FormRequest
         return [
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', Rule::unique('player_parrents')],
             'phoneNumber' => ['required', 'string'],
             'relations' => ['required', 'string'],
         ];

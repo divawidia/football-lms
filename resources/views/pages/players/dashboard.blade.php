@@ -293,7 +293,7 @@
 
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
-            <a href="{{ route('match-schedules.index') }}" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
+            <a href="{{ route('match-schedules.index') }}" class="btn border btn-white btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
@@ -362,7 +362,7 @@
 
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Training</div>
-            <a href="{{ route('training-schedules.index') }}" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
+            <a href="{{ route('training-schedules.index') }}" class="btn border btn-white btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>

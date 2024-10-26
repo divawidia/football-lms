@@ -66,7 +66,7 @@ class PlayerParentController extends Controller
         return redirect()->route('player-managements.show', $player->id);
     }
 
-    public function destroy(PlayerParrent $parent)
+    public function destroy(Player $player, PlayerParrent $parent)
     {
         $result = $this->playerParentService->destroy($parent);
 
