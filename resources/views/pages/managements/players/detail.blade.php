@@ -270,15 +270,7 @@
             </a>
         </div>
         @if(count($overview['upcomingMatches']) == 0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">There are no matches scheduled at this time</small>
-                    </div>
-                </div>
-            </div>
+            @include('components.alerts.warning', ['text' => 'There are no matches scheduled at this time'])
         @endif
         @foreach($overview['upcomingMatches'] as $match)
             <a class="card" href="@if(isAllAdmin())
@@ -348,15 +340,7 @@
             </a>
         </div>
         @if(count($overview['upcomingTrainings']) == 0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">There are no trainings scheduled at this time</small>
-                    </div>
-                </div>
-            </div>
+            @include('components.alerts.warning', ['text' => 'There are no trainings scheduled at this time'])
         @endif
         <div class="row">
             @foreach($overview['upcomingTrainings'] as $training)
@@ -464,16 +448,7 @@
             <div class="page-separator__text">performance review</div>
         </div>
         @if(count($performanceReviews)==0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">You haven't added any note performance review to this player
-                            yet</small>
-                    </div>
-                </div>
-            </div>
+            @include('components.alerts.warning', ['text' => "You haven't added any note performance review to this player yet"])
         @endif
         @foreach($performanceReviews as $review)
             <div class="card">
