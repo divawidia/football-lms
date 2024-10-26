@@ -115,15 +115,16 @@
                         <div class="card-header d-flex align-items-center">
                             <div class="flex">
                                 <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($review->created_at)) }}</h4>
-                                <div class="card-subtitle text-50">Last updated
-                                    at {{ date('D, M d Y h:i A', strtotime($review->updated_at)) }}</div>
+                                <div class="card-subtitle text-50">
+                                    Last updated at {{ date('D, M d Y h:i A', strtotime($review->updated_at)) }}
+                                </div>
                             </div>
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="material-icons">
-                            more_vert
-                        </span>
+                                <span class="material-icons">
+                                    more_vert
+                                </span>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <a class="dropdown-item edit-note" id="{{ $review->id }}" href="">
@@ -288,25 +289,7 @@
         <div class="page-separator">
             <div class="page-separator__text">Parents/Guardians</div>
         </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="parentsTable">
-                        <thead>
-                        <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Relation</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <x-player-parents-tables :player="$data->id"/>
 
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>

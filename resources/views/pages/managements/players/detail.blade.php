@@ -238,10 +238,8 @@
                     </a>
                 </div>
                 <div class="card">
-                    <canvas id="skillStatsChart"></canvas>
-                    {{--                    <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">--}}
-                    {{--                        <canvas id="skillStatsChart"></canvas>--}}
-                    {{--                    </div>--}}
+                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
+                                                      :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
                 </div>
 
             </div>
@@ -659,32 +657,6 @@
                     },
                 ],
                 order: [[2, 'desc']],
-            });
-
-            const skillStatsChart = document.getElementById('skillStatsChart');
-            new Chart(skillStatsChart, {
-                type: 'radar',
-                data: {
-                    labels: @json($playerSkillStats['label']),
-                    datasets: [{
-                        label: 'Skill Stats',
-                        data: @json($playerSkillStats['data']),
-                        borderColor: '#E52534',
-                        backgroundColor: 'rgba(229, 37, 52, 0.5)',
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        r: {
-                            angleLines: {
-                                display: false
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 100
-                        }
-                    }
-                },
             });
 
             @if(Auth::user()->hasRole('admin|Super-Admin'))
