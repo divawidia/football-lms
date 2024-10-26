@@ -418,11 +418,3 @@
         </div>
     </div>
 @endsection
-
-@push('addon-script')
-    <script>
-        $(document).ready(function () {
-
-        });
-    </script>
-@endpush
