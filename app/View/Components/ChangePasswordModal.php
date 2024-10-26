@@ -22,6 +22,6 @@ class ChangePasswordModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.change-password-modal');
+        return view('components.modal.change-password-modal');
     }
 }

@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    @include('pages.managements.form-modal.change-password')
+    <x-change-password-modal :route="route('player-managements.change-password', ['player' => ':id'])"/>
 @endsection
 
 @section('content')
@@ -41,16 +41,14 @@
             </div>
             @if(isAllAdmin())
                 <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Action
                         <span class="material-icons ml-3">
-                        keyboard_arrow_down
-                    </span>
+                            keyboard_arrow_down
+                        </span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('player-managements.edit', $data->id) }}"><span
-                                class="material-icons">edit</span> Edit Player</a>
+                        <a class="dropdown-item" href="{{ route('player-managements.edit', $data->id) }}"><span class="material-icons">edit</span> Edit Player</a>
                         @if($data->user->status == '1')
                             <form action="{{ route('deactivate-player', $data->id) }}" method="POST">
                                 @method("PATCH")
@@ -68,8 +66,7 @@
                                 </button>
                             </form>
                         @endif
-                        <a class="dropdown-item changePassword" id="{{ $data->id }}"><span
-                                class="material-icons">lock</span> Change Player Password</a>
+                        <a class="dropdown-item changePassword" id="{{ $data->id }}"><span class="material-icons">lock</span> Change Player Password</a>
                         <button type="button" class="dropdown-item delete-user" id="{{$data->id}}">
                             <span class="material-icons text-danger">delete</span> Delete Player
                         </button>
@@ -651,49 +648,6 @@
                                     text: errorThrown
                                 });
                             }
-                        });
-                    }
-                });
-            });
-
-            body.on('click', '.changePassword', function (e) {
-                const id = $(this).attr('id');
-                e.preventDefault();
-                $('#changePasswordModal').modal('show');
-                $('#userId').val(id);
-            })
-            // update admin password
-            $('#formChangePasswordModal').on('submit', function (e) {
-                e.preventDefault();
-                const id = $('#userId').val();
-                $.ajax({
-                    url: "{{ route('player-managements.change-password', ['player' => ":id"]) }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#changePasswordModal').modal('hide');
-                        Swal.fire({
-                            title: 'Accounts password successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        console.log(response);
-                        $.each(response.errors, function (key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#add_" + key).addClass('is-invalid');
                         });
                     }
                 });

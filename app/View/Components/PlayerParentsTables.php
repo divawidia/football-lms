@@ -22,6 +22,6 @@ class PlayerParentsTables extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.player-parents-tables');
+        return view('components.tables.player-parents-tables');
     }
 }

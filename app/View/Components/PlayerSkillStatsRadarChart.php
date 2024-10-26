@@ -29,6 +29,6 @@ class PlayerSkillStatsRadarChart extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.player-skill-stats-radar-chart');
+        return view('components.chart.player-skill-stats-radar-chart');
     }
 }
