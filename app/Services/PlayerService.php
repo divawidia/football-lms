@@ -276,10 +276,9 @@ class PlayerService extends Service
         $draws = $this->playerRepository->matchResults($player, 'Draw');
         $thisMonthDraws = $this->playerRepository->matchResults($player, 'Draw', Carbon::now()->startOfMonth(),Carbon::now());
 
+        $upcomingMatches = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Match', 2);
 
-        $upcomingMatches = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Match');
-
-        $upcomingTrainings = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Training');
+        $upcomingTrainings = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Training', 2);
 
         $playerAge = $this->getAge($player->user->dob);
         $playerDob = $this->convertToDate($player->user->dob);
@@ -532,40 +531,25 @@ class PlayerService extends Service
         return compact('label', 'data');
     }
 
-    public function getPlayerUpcomingMatches(Player $player)
-    {
-        return $player->schedules()->with('teams', 'competition')
-            ->where('eventType', 'Match')
-            ->where('status', '1')
-            ->get();
-    }
-    public function getPlayerUpcomingTraining(Player $player)
-    {
-        return $player->schedules()->with('teams', 'competition')
-            ->where('eventType', 'Training')
-            ->where('status', '1')
-            ->get();
-    }
-
     public function playerUpcomingMatches(Player $player)
     {
-        $data = $this->getPlayerUpcomingMatches($player);
+        $data = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Match');
         return $this->eventScheduleService->makeDataTablesMatch($data);
     }
     public function playerUpcomingTraining(Player $player)
     {
-        $data = $this->getPlayerUpcomingTraining($player);
+        $data = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Training');
         return $this->eventScheduleService->makeDataTablesTraining($data);
     }
 
     public function playerMatchCalendar(Player $player)
     {
-        $data = $this->getPlayerUpcomingMatches($player);
+        $data = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Match');
         return $this->eventScheduleService->makeMatchCalendar($data);
     }
     public function playerTrainingCalendar(Player $player)
     {
-        $data = $this->getPlayerUpcomingTraining($player);
+        $data = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Training');
         return $this->eventScheduleService->makeTrainingCalendar($data);
     }
 

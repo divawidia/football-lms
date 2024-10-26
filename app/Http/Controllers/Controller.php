@@ -33,7 +33,7 @@ class Controller extends BaseController
     }
 
     public function getLoggedPLayerUser(){
-        return Player::where('userId', $this->getLoggedUserId())->select('id')->first();
+        return Player::where('userId', $this->getLoggedUserId())->first();
     }
 
     public function isAdmin()

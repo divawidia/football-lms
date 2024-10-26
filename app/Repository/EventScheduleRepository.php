@@ -56,13 +56,15 @@ class EventScheduleRepository
         return $this->endedCoachMatch($coach)->take(2)->get();
     }
 
-    public function playerUpcomingEvent(Player $player, $eventType, $take = 2)
+    public function playerUpcomingEvent(Player $player, $eventType, $take = null)
     {
-        return $player->schedules()
+        $query = $player->schedules()
             ->where('eventType', $eventType)
-            ->where('status', '1')
-            ->take($take)
-            ->get();
+            ->where('status', '1');
+        if ($take){
+            $query->take($take);
+        }
+            return $query->orderBy('date')->get();
     }
     public function playerLatestEvent(Player $player, $eventType, $take = 2)
     {

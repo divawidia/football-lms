@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Player;
 
 use App\Http\Controllers\Controller;
-use App\Models\Player;
-use App\Services\Coach\DashboardService;
 use App\Services\PlayerService;
 class DashboardController extends Controller
 {
@@ -20,8 +18,8 @@ class DashboardController extends Controller
         $performanceReviews = $player->playerPerformanceReview;
         $teams = $player->teams;
         $playerSkillStats = $this->playerService->skillStatsChart($player);
-        $latestMatch = $this->playerService->playerLatestMatch($player);
-        $latestTraining = $this->playerService->playerLatestTraining($player);
+        $latestMatches = $this->playerService->playerLatestMatch($player);
+        $latestTrainings = $this->playerService->playerLatestTraining($player);
 
         return view('pages.players.dashboard', [
             'data' => $player,
@@ -29,8 +27,8 @@ class DashboardController extends Controller
             'overview' => $overview,
             'performanceReviews' => $performanceReviews,
             'playerSkillStats' => $playerSkillStats,
-            'latestMatch' => $latestMatch,
-            'latestTraining' => $latestTraining,
+            'latestMatches' => $latestMatches,
+            'latestTrainings' => $latestTrainings,
         ]);
     }
 }

@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TrainingVideoController;
 use App\Http\Controllers\Admin\TrainingVideoLessonController;
 use App\Http\Controllers\Coach\DashboardController as CoachDashboardController;
+use App\Http\Controllers\Player\DashboardController as PlayerDashboardController;
 use App\Http\Controllers\Coach\SkillAssessmentController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\PerformanceReportController;
@@ -574,7 +575,8 @@ Route::group(['middleware' => ['auth']], function () {
             });
         });
     });
+
+    Route::group(['middleware' => ['role:player,web']], function () {
+        Route::get('dashboard', [PlayerDashboardController::class, 'index'])->name('player.dashboard');
+    });
 });
-//Route::group(['middleware' => ['role:player,web']], function () {
-//    Route::get('dashboard', [DashboardController::class, 'index'])->name('player.dashboard');
-//});
