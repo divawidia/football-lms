@@ -3,35 +3,28 @@
 namespace App\Http\Controllers\Player;
 
 use App\Http\Controllers\Controller;
-use App\Models\Coach;
-use App\Repository\CoachMatchStatsRepository;
+use App\Models\Player;
 use App\Services\Coach\DashboardService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
+use App\Services\PlayerService;
 class DashboardController extends Controller
 {
-    private DashboardService $dashboardService;
-
-    public function __construct(CoachMatchStatsRepository $coachMatchStatsRepository){
-        $this->coachMatchStatsRepository = $coachMatchStatsRepository;
-        $this->middleware(function ($request, $next) use ($coachMatchStatsRepository) {
-            $this->dashboardService = new DashboardService($this->getLoggedCoachUser(), $coachMatchStatsRepository);
-            return $next($request);
-        });
+    private PlayerService $playerService;
+    public function __construct(PlayerService $playerService){
+        $this->playerService = $playerService;
     }
     public function index()
     {
-        $dataOverview = $this->dashboardService->overviewStats();
-        $latestMatches = $this->dashboardService->latestMatch();
-        $upcomingMatches = $this->dashboardService->upcomingMatch();
-        $upcomingTrainings = $this->dashboardService->upcomingTraining();
+        $player = $this->getLoggedPLayerUser();
 
-        return view('pages.coaches.dashboard', [
-            'dataOverview' => $dataOverview,
-            'latestMatches' => $latestMatches,
-            'upcomingMatches' => $upcomingMatches,
-            'upcomingTrainings' => $upcomingTrainings
+        $overview = $this->playerService->show($player);
+        $performanceReviews = $player->playerPerformanceReview;
+        $playerSkillStats = $this->playerService->skillStatsChart($player);
+
+        return view('pages.players.dashboard', [
+            'data' => $player,
+            'overview' => $overview,
+            'performanceReviews' => $performanceReviews,
+            'playerSkillStats' => $playerSkillStats
         ]);
     }
 }

@@ -13,6 +13,7 @@ use App\Models\Team;
 use App\Models\TeamMatch;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
+use App\Repository\PlayerRepository;
 use App\Services\Coach\CoachService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Number;
@@ -21,11 +22,11 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardService extends CoachService
 {
-    private Coach $coach;
-    private CoachMatchStatsRepository $coachMatchStatsRepository;
-    public function __construct(Coach $coach, CoachMatchStatsRepository $coachMatchStatsRepository){
-        $this->coach = $coach;
-        $this->coachMatchStatsRepository = $coachMatchStatsRepository;
+    private Player $player;
+    private PlayerRepository $playerRepository;
+    public function __construct(PlayerRepository $playerRepository, Player $player){
+        $this->playerRepository = $playerRepository;
+        $this->player = $player;
     }
 
     public function overviewStats(){

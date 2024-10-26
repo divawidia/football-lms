@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coach;
+use App\Models\Player;
 use App\Models\User;
 use DateTime;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -29,6 +30,10 @@ class Controller extends BaseController
 
     public function getLoggedCoachUser(){
         return Coach::where('userId', $this->getLoggedUserId())->select('id')->first();
+    }
+
+    public function getLoggedPLayerUser(){
+        return Player::where('userId', $this->getLoggedUserId())->select('id')->first();
     }
 
     public function isAdmin()
