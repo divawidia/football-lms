@@ -18,13 +18,19 @@ class DashboardController extends Controller
 
         $overview = $this->playerService->show($player);
         $performanceReviews = $player->playerPerformanceReview;
+        $teams = $player->teams;
         $playerSkillStats = $this->playerService->skillStatsChart($player);
+        $latestMatch = $this->playerService->playerLatestMatch($player);
+        $latestTraining = $this->playerService->playerLatestTraining($player);
 
         return view('pages.players.dashboard', [
             'data' => $player,
+            'teams'=> $teams,
             'overview' => $overview,
             'performanceReviews' => $performanceReviews,
-            'playerSkillStats' => $playerSkillStats
+            'playerSkillStats' => $playerSkillStats,
+            'latestMatch' => $latestMatch,
+            'latestTraining' => $latestTraining,
         ]);
     }
 }

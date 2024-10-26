@@ -64,6 +64,14 @@ class EventScheduleRepository
             ->take($take)
             ->get();
     }
+    public function playerLatestEvent(Player $player, $eventType, $take = 2)
+    {
+        return $player->schedules()
+            ->where('eventType', $eventType)
+            ->where('status', '0')
+            ->take($take)
+            ->get();
+    }
 
     public function find($id)
     {

@@ -569,6 +569,14 @@ class PlayerService extends Service
         return $this->eventScheduleService->makeTrainingCalendar($data);
     }
 
+    public function playerLatestMatch(Player $player)
+    {
+        return $this->eventScheduleRepository->playerLatestEvent($player, 'Match');
+    }
+    public function playerLatestTraining(Player $player)
+    {
+        return $this->eventScheduleRepository->playerLatestEvent($player, 'Training');
+    }
 
     public function update(array $data, Player $player)
     {

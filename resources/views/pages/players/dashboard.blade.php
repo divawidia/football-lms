@@ -8,26 +8,21 @@
 
 @section('content')
     <div class="pt-32pt">
-        <div
-            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-            <div class="flex d-flex flex-column flex-sm-row align-items-center">
-                <div class="mr-sm-24pt text-sm-left">
-                    <h2 class="mb-0">@yield('title')</h2>
-                    <ol class="breadcrumb p-0 m-0">
-                        <li class="breadcrumb-item"><a href="{{ route('player.dashboard') }}">Home</a></li>
-                    </ol>
-                </div>
-            </div>
+        <div class="container">
+            <h2 class="mb-0">@yield('title')</h2>
+            <ol class="breadcrumb p-0 m-0">
+                <li class="breadcrumb-item"><a href="{{ route('player.dashboard') }}">Home</a></li>
+            </ol>
         </div>
     </div>
 
     <div class="container page__container page-section">
         <div class="page-separator">
-            <div class="page-separator__text">Teams</div>
+            <div class="page-separator__text">Joined Teams</div>
         </div>
 
         <div class="row">
-            @foreach($dataOverview['teams'] as $team)
+            @foreach($teams as $team)
                 <div class="col-lg-6">
                     <a class="card" href="">
                         <div class="card-body">
