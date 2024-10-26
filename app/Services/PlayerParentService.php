@@ -21,7 +21,8 @@ class PlayerParentService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($player) {
-                return '
+                if (isAllAdmin()){
+                    return '
                         <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
@@ -35,6 +36,7 @@ class PlayerParentService extends Service
                             </button>
                           </div>
                         </div>';
+                }
             })
             ->rawColumns(['action'])
             ->make();
