@@ -24,6 +24,6 @@ class TrainingTables extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.training-tables');
+        return view('components.tables.training-tables');
     }
 }
