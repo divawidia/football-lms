@@ -373,6 +373,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:player,web']], function () {
         Route::get('player-dashboard', [PlayerDashboardController::class, 'index'])->name('player.dashboard');
 
+        Route::get('skill-stats', [PlayerController::class, 'skillStatsDetail'])->name('player.skill-stats');
+
         Route::prefix('training-schedules')->group(function () {
             Route::get('players-trainings', [EventScheduleController::class, 'playerIndexTraining'])->name('player.training-schedules.index');
         });
@@ -544,8 +546,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:player|coach|admin|Super-Admin,web']], function () {
         Route::prefix('player-managements')->group(function () {
             Route::prefix('{player}')->group(function () {
-//                Route::get('skill-stats', [PlayerController::class, 'skillStatsDetail'])->name('player-managements.skill-stats');
-//                Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('player-managements.playerTeams');
                 Route::get('parents', [PlayerParentController::class, 'index'])->name('player-parents.index');
             });
         });

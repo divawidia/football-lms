@@ -15,10 +15,17 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
+                    @if(isAllAdmin() || isCoach())
                         <a href="{{ route('player-managements.show', $data->id) }}" class="nav-link text-70">
                             <i class="material-icons icon--left">keyboard_backspace</i>
                             Back to Player Profile
                         </a>
+                    @elseif(isPlayer())
+                        <a href="{{ route('player.dashboard') }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back to Dashboard
+                        </a>
+                    @endif
                 </li>
             </ul>
         </div>
