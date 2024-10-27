@@ -63,13 +63,16 @@ class EventScheduleController extends Controller
     {
         if ($this->isAllAdmin()){
             $events = $this->eventScheduleService->matchCalendar();
+            $tableRoute = url()->route('admin.match-schedules.index');
         } elseif ($this->isCoach()){
             $coach = $this->getLoggedCoachUser();
             $events = $this->eventScheduleService->coachTeamsMatchCalendar($coach);
+            $tableRoute = url()->route('coach.match-schedules.index');
         }
 
         return view('pages.admins.academies.schedules.matches.index', [
-            'events' => $events
+            'events' => $events,
+            'tableRoute' => $tableRoute,
         ]);
     }
 
