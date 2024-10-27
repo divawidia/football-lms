@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    @include('pages.managements.form-modal.change-password')
+    <x-change-password-modal :route="route('admin-managements.change-password', ['admin' => ':id'])"/>
 @endsection
 
 @section('content')
@@ -85,48 +85,6 @@
             });
 
             @if(isSuperAdmin())
-            body.on('click', '.changePassword', function (e) {
-                const id = $(this).attr('id');
-                e.preventDefault();
-                $('#changePasswordModal').modal('show');
-                $('#userId').val(id);
-            })
-            // update admin password
-            $('#formChangePasswordModal').on('submit', function (e) {
-                e.preventDefault();
-                const id = $('#userId').val();
-                $.ajax({
-                    url: "{{ route('admin-managements.change-password', ['admin' => ":id"]) }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#changePasswordModal').modal('hide');
-                        Swal.fire({
-                            title: 'Accounts password successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        console.log(response);
-                        $.each(response.errors, function (key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#add_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
 
             // delete data alert
             body.on('click', '.deleteAdmin', function () {
