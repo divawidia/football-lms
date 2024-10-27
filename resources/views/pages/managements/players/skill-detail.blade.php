@@ -15,21 +15,11 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    @if( url()->previous() == route('coach.player-managements.show', $data->id) || url()->previous() == route('player-managements.show', $data->id))
-                        <a href="@if(Auth::user()->hasRole('admin|Super-Admin'))
-                            {{ route('player-managements.show', $data->id) }}
-                            @elseif(Auth::user()->hasRole('coach'))
-                            {{ route('coach.player-managements.show', $data->id) }}
-                            @endif" class="nav-link text-70">
+                        <a href="{{ route('player-managements.show', $data->id) }}"
+                           class="nav-link text-70">
                             <i class="material-icons icon--left">keyboard_backspace</i>
                             Back to Player Profile
                         </a>
-                    @else
-                        <a href="{{ route('coach.skill-assessments.index') }}" class="nav-link text-70">
-                            <i class="material-icons icon--left">keyboard_backspace</i>
-                            Back to Player List
-                        </a>
-                    @endif
                 </li>
             </ul>
         </div>
@@ -46,12 +36,9 @@
                 <h2 class="text-white mb-0">{{ $data->user->firstName  }} {{ $data->user->lastName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data->position->name }}</p>
             </div>
-            @if(Auth::user()->hasRole('coach'))
-                <a class="btn btn-outline-white" id="addSkills"
-                   href="{{ route('coach.skill-assessments.create', $data->id) }}">
-                    <span class="material-icons mr-2">
-                        edit
-                    </span>
+            @if(isCoach())
+                <a class="btn btn-outline-white" id="addSkills" href="{{ route('coach.skill-assessments.create', $data->id) }}">
+                    <span class="material-icons mr-2">edit</span>
                     Update Skills
                 </a>
             @endif
@@ -64,7 +51,7 @@
         </div>
         <div class="card align-items-center">
             <div class="card-body">
-                <canvas id="skillStatsChart" height="400"></canvas>
+                <x-player-skill-stats-radar-chart :labels="$skillStats['label']" :datas="$skillStats['data']" chartId="skillStatsChart"/>
             </div>
         </div>
 
@@ -106,62 +93,15 @@
                 <canvas id="skillStatsHistoryChart"></canvas>
             </div>
         </div>
-        {{--        <div class="row">--}}
-        {{--            <div class="col-sm-5">--}}
-        {{--                --}}{{--Skill Stats Radar Section--}}
-        {{--                <div class="page-separator">--}}
-        {{--                    <div class="page-separator__text">Skill Stats</div>--}}
-        {{--                </div>--}}
-        {{--                <div class="card">--}}
-        {{--                    <div class="card-body">--}}
-        {{--                        <canvas id="skillStatsChart"></canvas>--}}
-        {{--                    </div>--}}
-        {{--                </div>--}}
-        {{--            </div>--}}
-        {{--            <div class="col-sm-7">--}}
-        {{--                --}}{{--Skill Stats History Section--}}
-        {{--                <div class="page-separator">--}}
-        {{--                    <div class="page-separator__text">Skill Stats History</div>--}}
-        {{--                    <select class="ml-auto mr-2 form-control form-select" id="skill" name="skill">--}}
-        {{--                        <option disabled selected>Filter by skill</option>--}}
-        {{--                        @foreach($skillLabels as $label => $value)--}}
-        {{--                            <option value="{{ $value }}">--}}
-        {{--                                {{ $label }}--}}
-        {{--                            </option>--}}
-        {{--                        @endforeach--}}
-        {{--                    </select>--}}
-        {{--                    <input--}}
-        {{--                        id="startDateFilter"--}}
-        {{--                        type="date"--}}
-        {{--                        class="form-control"--}}
-        {{--                        placeholder="Input start date"--}}
-        {{--                    />--}}
-        {{--                </div>--}}
-        {{--                <div class="card">--}}
-        {{--                    <div class="card-body">--}}
-        {{--                        <canvas id="skillStatsHistoryChart"></canvas>--}}
-        {{--                    </div>--}}
-        {{--                </div>--}}
-        {{--            </div>--}}
-        {{--        </div>--}}
 
         {{--All Skill Stats Section--}}
         @if($allSkills == null)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">This player has not added any skill stats yet</small>
-                    </div>
-                </div>
-            </div>
+            @include('components.alerts.warning', ['text' => 'This player has not added any skill stats yet'])
         @else
             <div class="card">
                 <div class="card-Header d-flex align-items-center p-3">
                     <h4 class="card-title">SKILLS</h4>
-                    <div class="card-subtitle text-50 ml-auto">Last updated
-                        at {{ date('D, M d Y h:i A', strtotime($allSkills->updated_at)) }}</div>
+                    <div class="card-subtitle text-50 ml-auto">Last updated at {{ date('D, M d Y h:i A', strtotime($allSkills->updated_at)) }}</div>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
@@ -390,36 +330,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
     <script>
         $(document).ready(function () {
-            const skillStatsChart = $('#skillStatsChart');
             const skillStatsHistoryChart = $('#skillStatsHistoryChart');
             const body = $('body');
-            // alert($('#rangeDateFilter').val())
-
-            new Chart(skillStatsChart, {
-                type: 'radar',
-                data: {
-                    labels: @json($skillStats['label']),
-                    datasets: [{
-                        label: 'Skill Stats',
-                        data: @json($skillStats['data']),
-                        borderColor: '#E52534',
-                        backgroundColor: 'rgba(229, 37, 52, 0.5)',
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        r: {
-                            angleLines: {
-                                display: false
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 100
-                        }
-                    }
-                },
-            });
-
             new Chart(skillStatsHistoryChart, {
                 type: 'line',
                 data: {
@@ -456,7 +368,7 @@
             $('#formAddSkillStatsModal').on('submit', function (e) {
                 e.preventDefault();
                 $.ajax({
-                    url: "{{ route('coach.skill-assessments.store', $data->id) }}",
+                    url: "{{ route('skill-assessments.store', $data->id) }}",
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,

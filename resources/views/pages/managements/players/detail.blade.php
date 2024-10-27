@@ -16,11 +16,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="@if(isAllAdmin())
-                    {{ route('player-managements.index') }}
-                    @elseif(isCoach())
-                    {{ route('coach.player-managements.index') }}
-                    @endif" class="nav-link text-70">
+                    <a href="{{ route('player-managements.index') }}" class="nav-link text-70">
                         <i class="material-icons icon--left">keyboard_backspace</i>
                         Back to Player Lists
                     </a>
@@ -234,18 +230,13 @@
                 {{--Teams Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
-                    <a href="@if(isAllAdmin())
-                    {{ route('player-managements.skill-stats', $data->id) }}
-                    @elseif(isCoach())
-                    {{ route('coach.player-managements.skill-stats', $data->id) }}
-                    @endif" class="btn btn-white border btn-sm ml-auto">
+                    <a href="{{ route('player-managements.skill-stats', $data->id) }}" class="btn btn-white border btn-sm ml-auto">
                         View More
                         <span class="material-icons ml-2 icon-16pt">chevron_right</span>
                     </a>
                 </div>
                 <div class="card">
-                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
-                                                      :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
+                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']" :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
                 </div>
 
             </div>
