@@ -129,7 +129,7 @@ class EventScheduleService extends Service
     {
         return Datatables::of($trainingData)
             ->addColumn('action', function ($item) {
-                if (Auth::user()->hasRole('admin')){
+                if (isAllAdmin()){
                     if ($item->status == '1') {
                         $statusButton = '<form action="' . route('deactivate-training', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
@@ -163,7 +163,7 @@ class EventScheduleService extends Service
                             </button>
                           </div>
                         </div>';
-                } elseif (Auth::user()->hasRole('coach')){
+                } elseif (isCoach()){
                     if ($item->status == '1') {
                         $statusButton = '<form action="' . route('coach.deactivate-training', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
@@ -236,14 +236,14 @@ class EventScheduleService extends Service
     {
         return Datatables::of($matchData)
             ->addColumn('action', function ($item) {
-                if (Auth::user()->hasRole('coach')){
+                if (isCoach()){
                     return '
                         <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
                             <span class="material-icons">
                                 visibility
                             </span>
                         </a>';
-                } elseif (Auth::user()->hasRole('admin')){
+                } elseif (isAllAdmin()){
                     if ($item->status == '1') {
                         $statusButton = '<form action="' . route('end-match', $item->id) . '" method="POST">
                                             ' . method_field("PATCH") . '
@@ -375,9 +375,9 @@ class EventScheduleService extends Service
         $data = $schedule->playerMatchStats;
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                if (Auth::user()->hasRole('admin')){
+                if (isAllAdmin()){
                     $showPlayer = '<a class="dropdown-item" href="' . route('player-managements.show', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player</a>';
-                }elseif (Auth::user()->hasRole('coach')){
+                }elseif (isCoach()){
                     $showPlayer = '<a class="dropdown-item" href="' . route('coach.player-managements.show', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player</a>';
                 }
                 return '

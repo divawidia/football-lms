@@ -75,7 +75,7 @@ class EventScheduleController extends Controller
 
     public function adminIndexMatch()
     {
-        return $this->eventScheduleService->dataTablesTraining();
+        return $this->eventScheduleService->dataTablesMatch();
     }
     public function coachIndexMatch()
     {

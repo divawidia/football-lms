@@ -10,11 +10,7 @@
         <div class="container page__container d-flex flex-column pt-32pt">
             <h2 class="mb-0">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
-                @if(Auth::user()->hasRole('admin'))
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                @elseif(Auth::user()->hasRole('coach'))
-                    <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
-                @endif
+                <li class="breadcrumb-item"><a href="{{ checkRoleDashboardRoute() }}">Home</a></li>
                 <li class="breadcrumb-item active">
                     @yield('title')
                 </li>
@@ -22,7 +18,7 @@
         </div>
 
         <div class="container page__container page-section">
-            @if(Auth::user()->hasRole('admin'))
+            @if(isAllAdmin())
                 <a href="{{  route('match-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">
                     <span class="material-icons mr-2">
                         add
@@ -65,12 +61,13 @@
     @push('addon-script')
         <script>
             $(document).ready(function() {
+                const matchIndexUrl = @if(isAllAdmin()) '{!! url()->route('admin.match-schedules.index') !!}'; @elseif(isCoach()) '{!! url()->route('coach.match-schedules.index') !!}'; @endif
                 const datatable = $('#table').DataTable({
                     processing: true,
                     serverSide: true,
                     ordering: true,
                     ajax: {
-                        url: '{!! url()->current() !!}',
+                        url: matchIndexUrl,
                     },
                     columns: [
                         { data: 'team', name: 'team' },
@@ -105,7 +102,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                @if(Auth::user()->hasRole('admin'))
+                                @if(isAllAdmin())
                                 url: "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
                                 @endif
                                 type: 'DELETE',
