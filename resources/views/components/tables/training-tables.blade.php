@@ -4,12 +4,10 @@
             <table class="table table-hover mb-0" id="{{ $tableId }}">
                 <thead>
                 <tr>
+                    <th>Training/Practice</th>
                     <th>Team</th>
-                    <th>Opponent</th>
-                    <th>Match Date</th>
+                    <th>training date</th>
                     <th>Location</th>
-                    <th>Competition</th>
-                    <th>Match Type</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -32,12 +30,10 @@
                     url: '{{ $route }}',
                 },
                 columns: [
+                    { data: 'eventName', name: 'eventName' },
                     { data: 'team', name: 'team' },
-                    { data: 'opponentTeam', name: 'opponentTeam' },
                     { data: 'date', name: 'date' },
                     { data: 'place', name: 'place'},
-                    { data: 'competition', name: 'competition'},
-                    { data: 'matchType', name: 'matchType'},
                     { data: 'status', name: 'status' },
                     {
                         data: 'action',
@@ -50,12 +46,11 @@
                 order: [[2, 'asc']]
             });
 
-            @if(isAllAdmin())
             $('body').on('click', '.delete', function() {
                 let id = $(this).attr('id');
 
                 Swal.fire({
-                    title: "Are you sure to delete this match?",
+                    title: "Are you sure to delete this training?",
                     text: "You won't be able to revert this!",
                     icon: "warning",
                     showCancelButton: true,
@@ -66,7 +61,7 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             @if(isAllAdmin())
-                            url: "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
+                            url: "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
                             @endif
                             type: 'DELETE',
                             data: {
@@ -75,7 +70,7 @@
                             success: function(response) {
                                 Swal.fire({
                                     icon: "success",
-                                    title: "Match successfully deleted!",
+                                    title: "Training successfully deleted!",
                                 });
                                 datatable.ajax.reload();
                             },
@@ -90,8 +85,6 @@
                     }
                 });
             });
-            @endif
-
         });
     </script>
 @endpush
