@@ -34,101 +34,15 @@
     </div>
 
     <div class="container page__container page-section">
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="table">
-                        <thead>
-                        <tr>
-                            <th>Team</th>
-                            <th>Opponent</th>
-                            <th>Match Date</th>
-                            <th>Location</th>
-                            <th>Competition</th>
-                            <th>Match Type</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <x-match-tables :route="url()->current()" tableId="tables"/>
 
         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
             <div class="card-header">
                 <h4 class="card-title">Calendar</h4>
             </div>
             <div class="card-body">
-                <div id='calendar'></div>
+                <x-schedule-calendar :events="$matchCalendar" calendarId="calendar"/>
             </div>
         </div>
     </div>
-
 @endsection
-@push('addon-script')
-    <script>
-        $(document).ready(function() {
-            $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! url()->current() !!}',
-                },
-                columns: [
-                    { data: 'team', name: 'team' },
-                    { data: 'opponentTeam', name: 'opponentTeam' },
-                    { data: 'date', name: 'date' },
-                    { data: 'place', name: 'place'},
-                    { data: 'competition', name: 'competition'},
-                    { data: 'matchType', name: 'matchType'},
-                    { data: 'status', name: 'status' },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
-                ],
-                order: [[2, 'asc']]
-            });
-
-            const calendarEl = document.getElementById('calendar');
-
-            function getInitialView() {
-                if (window.innerWidth >= 768 && window.innerWidth < 1200) {
-                    return 'timeGridWeek';
-                } else if (window.innerWidth <= 768) {
-                    return 'listMonth';
-                } else {
-                    return 'dayGridMonth';
-                }
-            }
-
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                timeZone: 'local',
-                editable: false,
-                droppable: false,
-                selectable: true,
-                initialView: getInitialView(),
-                themeSystem: 'bootstrap',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
-                },
-                // responsive
-                windowResize: function (view) {
-                    const newView = getInitialView();
-                    calendar.changeView(newView);
-                },
-                events: @json($matchCalendar)
-            });
-            calendar.render();
-        });
-    </script>
-@endpush
