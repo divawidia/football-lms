@@ -10,53 +10,10 @@
     @if(isAllAdmin() || isCoach())
         <x-edit-player-attendance-modal :routeGet="route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
                                         :routeUpdate="route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
-    @endif
 
-    <!-- Modal edit coach attendance -->
-    <div class="modal fade" id="editCoachAttendanceModal" tabindex="-1" aria-labelledby="editCoachAttendanceModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="post" id="formEditCoachAttendanceModal">
-                    @method('PUT')
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="coachName"></h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" id="coachId">
-                        <div class="form-group">
-                            <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
-                            <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
-                                <option value="null" disabled>Select player's attendance status</option>
-                                @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
-                                    <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
-                                @endforeach
-                            </select>
-                            <span class="invalid-feedback attendanceStatus_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="add_note">Note</label>
-                            <small>(Optional)</small>
-                            <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
-                            <span class="invalid-feedback note_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+        <x-edit-coach-attendance-modal :routeGet="route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
+                                        :routeUpdate="route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
+    @endif
 
     <!-- Modal create note -->
     <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
@@ -336,18 +293,12 @@
         {{--    Training Note    --}}
         <div class="page-separator">
             <div class="page-separator__text">Training Note</div>
-            <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+            @if(isAllAdmin() || isCoach())
+                <a href="#" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+            @endif
         </div>
         @if(count($data['dataSchedule']->notes)==0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">You haven't created any note</small>
-                    </div>
-                </div>
-            </div>
+            @include('components.alerts.warning', ['text' => "You haven't created any note for this training session"])
         @else
             <div class="row">
                 @foreach($data['dataSchedule']->notes as $note)
@@ -364,9 +315,9 @@
                                 </div>
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
+                                        <span class="material-icons">
+                                            more_vert
+                                        </span>
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         <a class="dropdown-item edit-note" id="{{ $note->id }}" href="">
@@ -387,77 +338,15 @@
                             </div>
                         </div>
                     </div>
-
                 @endforeach
             </div>
-
         @endif
     </div>
-
 @endsection
 @push('addon-script')
     <script>
         $(document).ready(function() {
             const body = $('body');
-            {{--$('.playerAttendance').on('click', function(e) {--}}
-            {{--    e.preventDefault();--}}
-            {{--    const id = $(this).attr('id');--}}
-
-            {{--    $.ajax({--}}
-            {{--        url: "{{ route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),--}}
-            {{--        type: 'get',--}}
-            {{--        success: function(res) {--}}
-            {{--            $('#editPlayerAttendanceModal').modal('show');--}}
-
-            {{--            const heading = $('#playerName');--}}
-            {{--            heading.textContent = 'Update Player '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';--}}
-            {{--            if (res.data.playerAttendance.attendanceStatus === 'Required Action'){--}}
-            {{--                $('#editPlayerAttendanceModal #add_attendanceStatus').val('null');--}}
-            {{--            } else {--}}
-            {{--                $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.playerAttendance.attendanceStatus);--}}
-            {{--            }--}}
-            {{--            $('#editPlayerAttendanceModal #add_note').val(res.data.playerAttendance.note);--}}
-            {{--            $('#playerId').val(res.data.playerAttendance.playerId);--}}
-            {{--        },--}}
-            {{--        error: function(jqXHR, textStatus, errorThrown) {--}}
-            {{--            Swal.fire({--}}
-            {{--                icon: "error",--}}
-            {{--                title: "Something went wrong when deleting data!",--}}
-            {{--                text: errorThrown,--}}
-            {{--            });--}}
-            {{--        }--}}
-            {{--    });--}}
-            {{--});--}}
-
-            $('.coachAttendance').on('click', function(e) {
-                e.preventDefault();
-                const id = $(this).attr('id');
-
-                $.ajax({
-                    url: "{{ route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
-                    type: 'get',
-                    success: function(res) {
-                        $('#editCoachAttendanceModal').modal('show');
-
-                        const heading = document.getElementById('coachName');
-                        heading.textContent = 'Update Coach '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
-                        if (res.data.coachAttendance.attendanceStatus === 'Required Action'){
-                            $('#editCoachAttendanceModal #add_attendanceStatus').val('null');
-                        } else {
-                            $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
-                        }
-                        $('#editCoachAttendanceModal #add_note').val(res.data.coachAttendance.note);
-                        $('#coachId').val(res.data.coachAttendance.coachId);
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when deleting data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
 
             $('#addNewNote').on('click', function(e) {
                 e.preventDefault();
@@ -483,80 +372,6 @@
                             icon: "error",
                             title: "Something went wrong when deleting data!",
                             text: error,
-                        });
-                    }
-                });
-            });
-
-            {{--// update player attendance data--}}
-            {{--$('#formEditPlayerAttendanceModal').on('submit', function(e) {--}}
-            {{--    e.preventDefault();--}}
-            {{--    const id = $('#playerId').val();--}}
-            {{--    $.ajax({--}}
-            {{--        url: "{{ route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),--}}
-            {{--        type: $(this).attr('method'),--}}
-            {{--        data: new FormData(this),--}}
-            {{--        contentType: false,--}}
-            {{--        processData: false,--}}
-            {{--        success: function(res) {--}}
-            {{--            $('#editPlayerAttendanceModal').modal('hide');--}}
-            {{--            Swal.fire({--}}
-            {{--                title: 'Player attendance successfully updated!',--}}
-            {{--                icon: 'success',--}}
-            {{--                showCancelButton: false,--}}
-            {{--                allowOutsideClick: false,--}}
-            {{--                confirmButtonColor: "#1ac2a1",--}}
-            {{--                confirmButtonText:--}}
-            {{--                    'Ok!'--}}
-            {{--            }).then((result) => {--}}
-            {{--                if (result.isConfirmed) {--}}
-            {{--                    location.reload();--}}
-            {{--                }--}}
-            {{--            });--}}
-            {{--        },--}}
-            {{--        error: function(xhr) {--}}
-            {{--            const response = JSON.parse(xhr.responseText);--}}
-            {{--            console.log(response);--}}
-            {{--            $.each(response.errors, function(key, val) {--}}
-            {{--                $('span.' + key + '_error').text(val[0]);--}}
-            {{--                $("#add_" + key).addClass('is-invalid');--}}
-            {{--            });--}}
-            {{--        }--}}
-            {{--    });--}}
-            {{--});--}}
-
-            // update coach attendance data
-            $('#formEditCoachAttendanceModal').on('submit', function(e) {
-                e.preventDefault();
-                const id = $('#coachId').val();
-                $.ajax({
-                    url: "{{ route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        $('#editCoachAttendanceModal').modal('hide');
-                        Swal.fire({
-                            title: 'Coach attendance successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        console.log(response);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#add_" + key).addClass('is-invalid');
                         });
                     }
                 });
@@ -603,11 +418,7 @@
                 e.preventDefault();
                 const id = $('#noteId').val();
                 $.ajax({
-                    @if(isAllAdmin())
                     url: "{{ route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                    @elseif(isCoach())
-                    url: "{{ route('coach.training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                    @endif
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -654,11 +465,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            @if(isAllAdmin())
                             url: "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
-                            @elseif(isCoach())
-                            url: "{{ route('coach.training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
-                            @endif
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"
@@ -705,11 +512,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            @if(isAllAdmin())
                             url: "{{ route('training-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
-                            @elseif(isCoach())
-                            url: "{{ route('coach.training-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
-                            @endif
                             type: 'DELETE',
                             data: {
                                 _token: "{{ csrf_token() }}"

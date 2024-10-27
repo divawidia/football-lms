@@ -12,7 +12,7 @@
                         <h5 class="mb-0">{{ $coach->user->firstName }} {{ $coach->user->lastName }}</h5>
                         <p class="text-50 lh-1 mb-0">{{ $coach->specializations->name }}</p>
                     </div>
-                    <a class="btn @if($coach->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($coach->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif coachAttendance" id="{{$coach->id}}" href="{{ route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => $coach->id]) }}">
+                    <a class="btn @if($coach->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($coach->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif coachAttendance" id="{{$coach->id}}" href="#">
                         <span class="material-icons mr-2">
                             @if($coach->pivot->attendanceStatus == 'Required Action') error
                             @elseif($coach->pivot->attendanceStatus == 'Attended') check_circle
