@@ -7,51 +7,10 @@
 @endsection
 
 @section('modal')
-    <!-- Modal edit player attendance -->
-    <div class="modal fade" id="editPlayerAttendanceModal" tabindex="-1" aria-labelledby="editPlayerAttendanceModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="post" id="formEditPlayerAttendanceModal">
-                    @method('PUT')
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="playerName"></h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" id="playerId">
-                        <div class="form-group">
-                            <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
-                            <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
-                                <option value="null" disabled>Select player's attendance status</option>
-                                @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
-                                    <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
-                                @endforeach
-                            </select>
-                            <span class="invalid-feedback attendanceStatus_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="add_note">Note</label>
-                            <small>(Optional)</small>
-                            <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
-                            <span class="invalid-feedback note_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    @if(isAllAdmin() || isCoach())
+        <x-edit-player-attendance-modal :routeGet="route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
+                                        :routeUpdate="route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
+    @endif
 
     <!-- Modal edit coach attendance -->
     <div class="modal fade" id="editCoachAttendanceModal" tabindex="-1" aria-labelledby="editCoachAttendanceModalLabel" aria-hidden="true">
@@ -104,9 +63,9 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="
-                    @if(Auth::user()->hasRole('admin'))
+                    @if(isAllAdmin())
                         {{ route('training-schedules.create-note', $data['dataSchedule']->id) }}
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                         {{ route('coach.training-schedules.create-note', $data['dataSchedule']->id) }}
                     @endif" method="post" id="formCreateNoteModal">
                     @csrf
@@ -174,17 +133,10 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    @if(Auth::user()->hasRole('admin'))
                         <a href="{{ route('training-schedules.index') }}" class="nav-link text-70">
                             <i class="material-icons icon--left">keyboard_backspace</i>
                             Back to Training Schedules
                         </a>
-                    @elseif(Auth::user()->hasRole('coach'))
-                        <a href="{{ route('coach.training-schedules.index') }}" class="nav-link text-70">
-                            <i class="material-icons icon--left">keyboard_backspace</i>
-                            Back to Training Schedules
-                        </a>
-                    @endif
                 </li>
             </ul>
         </div>
@@ -195,57 +147,44 @@
                 <h2 class="text-white mb-0">{{ $data['dataSchedule']->eventName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">{{ $data['dataSchedule']->eventType }} ~ {{ $data['dataSchedule']->teams[0]->teamName }}</p>
             </div>
-            <div class="dropdown">
-                <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Action
-                    <span class="material-icons ml-3">
-                        keyboard_arrow_down
-                    </span>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item"
-                        href="
-                        @if(Auth::user()->hasRole('admin'))
-                            {{ route('training-schedules.edit', $data['dataSchedule']->id) }}
-                        @elseif(Auth::user()->hasRole('coach'))
-                            {{ route('coach.training-schedules.edit', $data['dataSchedule']->id) }}
-                        @endif">
-                        <span class="material-icons">edit</span>
-                        Edit Training Schedule
-                    </a>
-
-                    @if($data['dataSchedule']->status == '1')
-                        <form action="
-                            @if(Auth::user()->hasRole('admin'))
-                                {{ route('deactivate-training', $data['dataSchedule']->id) }}
-                            @elseif(Auth::user()->hasRole('coach'))
-                                {{ route('coach.deactivate-training', $data['dataSchedule']->id) }}
-                            @endif" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons">block</span> End Training
-                            </button>
-                        </form>
-                    @else
-                        <form action="
-                            @if(Auth::user()->hasRole('admin'))
-                                {{ route('activate-training', $data['dataSchedule']->id) }}
-                            @elseif(Auth::user()->hasRole('coach'))
-                                {{ route('coach.activate-training', $data['dataSchedule']->id) }}
-                            @endif" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons">check_circle</span> Start Training
-                            </button>
-                        </form>
-                    @endif
-                    <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
-                        <span class="material-icons">delete</span> Delete Training
+            @if(isAllAdmin() || isCoach())
+                <div class="dropdown">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Action
+                        <span class="material-icons ml-3">
+                            keyboard_arrow_down
+                        </span>
                     </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item"
+                            href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}">
+                            <span class="material-icons">edit</span>
+                            Edit Training Schedule
+                        </a>
+
+                        @if($data['dataSchedule']->status == '1')
+                            <form action="{{ route('deactivate-training', $data['dataSchedule']->id) }}" method="POST">
+                                @method("PATCH")
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <span class="material-icons">block</span> End Training
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('activate-training', $data['dataSchedule']->id) }}" method="POST">
+                                @method("PATCH")
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <span class="material-icons">check_circle</span> Start Training
+                                </button>
+                            </form>
+                        @endif
+                        <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
+                            <span class="material-icons">delete</span> Delete Training
+                        </button>
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 
@@ -460,50 +399,42 @@
     <script>
         $(document).ready(function() {
             const body = $('body');
-            $('.playerAttendance').on('click', function(e) {
-                e.preventDefault();
-                const id = $(this).attr('id');
+            {{--$('.playerAttendance').on('click', function(e) {--}}
+            {{--    e.preventDefault();--}}
+            {{--    const id = $(this).attr('id');--}}
 
-                $.ajax({
-                    @if(Auth::user()->hasRole('admin'))
-                        url: "{{ route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-                    @elseif(Auth::user()->hasRole('coach'))
-                        url: "{{ route('coach.training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-                    @endif
-                    type: 'get',
-                    success: function(res) {
-                        $('#editPlayerAttendanceModal').modal('show');
+            {{--    $.ajax({--}}
+            {{--        url: "{{ route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),--}}
+            {{--        type: 'get',--}}
+            {{--        success: function(res) {--}}
+            {{--            $('#editPlayerAttendanceModal').modal('show');--}}
 
-                        const heading = $('#playerName');
-                        heading.textContent = 'Update Player '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';
-                        if (res.data.playerAttendance.attendanceStatus === 'Required Action'){
-                            $('#editPlayerAttendanceModal #add_attendanceStatus').val('null');
-                        } else {
-                            $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.playerAttendance.attendanceStatus);
-                        }
-                        $('#editPlayerAttendanceModal #add_note').val(res.data.playerAttendance.note);
-                        $('#playerId').val(res.data.playerAttendance.playerId);
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when deleting data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
+            {{--            const heading = $('#playerName');--}}
+            {{--            heading.textContent = 'Update Player '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance';--}}
+            {{--            if (res.data.playerAttendance.attendanceStatus === 'Required Action'){--}}
+            {{--                $('#editPlayerAttendanceModal #add_attendanceStatus').val('null');--}}
+            {{--            } else {--}}
+            {{--                $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.playerAttendance.attendanceStatus);--}}
+            {{--            }--}}
+            {{--            $('#editPlayerAttendanceModal #add_note').val(res.data.playerAttendance.note);--}}
+            {{--            $('#playerId').val(res.data.playerAttendance.playerId);--}}
+            {{--        },--}}
+            {{--        error: function(jqXHR, textStatus, errorThrown) {--}}
+            {{--            Swal.fire({--}}
+            {{--                icon: "error",--}}
+            {{--                title: "Something went wrong when deleting data!",--}}
+            {{--                text: errorThrown,--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
 
             $('.coachAttendance').on('click', function(e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
 
                 $.ajax({
-                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
-                    @elseif(Auth::user()->hasRole('coach'))
-                    url: "{{ route('coach.training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
-                    @endif
                     type: 'get',
                     success: function(res) {
                         $('#editCoachAttendanceModal').modal('show');
@@ -538,11 +469,7 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
-                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                    @elseif(Auth::user()->hasRole('coach'))
-                    url: "{{ route('coach.training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                    @endif
                     type: 'get',
                     success: function(res) {
                         $('#editNoteModal').modal('show');
@@ -561,57 +488,49 @@
                 });
             });
 
-            // update player attendance data
-            $('#formEditPlayerAttendanceModal').on('submit', function(e) {
-                e.preventDefault();
-                const id = $('#playerId').val();
-                $.ajax({
-                    @if(Auth::user()->hasRole('admin'))
-                    url: "{{ route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-                    @elseif(Auth::user()->hasRole('coach'))
-                    url: "{{ route('coach.training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-                    @endif
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        $('#editPlayerAttendanceModal').modal('hide');
-                        Swal.fire({
-                            title: 'Player attendance successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        console.log(response);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#add_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
+            {{--// update player attendance data--}}
+            {{--$('#formEditPlayerAttendanceModal').on('submit', function(e) {--}}
+            {{--    e.preventDefault();--}}
+            {{--    const id = $('#playerId').val();--}}
+            {{--    $.ajax({--}}
+            {{--        url: "{{ route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),--}}
+            {{--        type: $(this).attr('method'),--}}
+            {{--        data: new FormData(this),--}}
+            {{--        contentType: false,--}}
+            {{--        processData: false,--}}
+            {{--        success: function(res) {--}}
+            {{--            $('#editPlayerAttendanceModal').modal('hide');--}}
+            {{--            Swal.fire({--}}
+            {{--                title: 'Player attendance successfully updated!',--}}
+            {{--                icon: 'success',--}}
+            {{--                showCancelButton: false,--}}
+            {{--                allowOutsideClick: false,--}}
+            {{--                confirmButtonColor: "#1ac2a1",--}}
+            {{--                confirmButtonText:--}}
+            {{--                    'Ok!'--}}
+            {{--            }).then((result) => {--}}
+            {{--                if (result.isConfirmed) {--}}
+            {{--                    location.reload();--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        },--}}
+            {{--        error: function(xhr) {--}}
+            {{--            const response = JSON.parse(xhr.responseText);--}}
+            {{--            console.log(response);--}}
+            {{--            $.each(response.errors, function(key, val) {--}}
+            {{--                $('span.' + key + '_error').text(val[0]);--}}
+            {{--                $("#add_" + key).addClass('is-invalid');--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
 
             // update coach attendance data
             $('#formEditCoachAttendanceModal').on('submit', function(e) {
                 e.preventDefault();
                 const id = $('#coachId').val();
                 $.ajax({
-                    @if(Auth::user()->hasRole('admin'))
                     url: "{{ route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
-                    @elseif(Auth::user()->hasRole('coach'))
-                    url: "{{ route('coach.training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ":id"]) }}".replace(':id', id),
-                    @endif
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
@@ -684,9 +603,9 @@
                 e.preventDefault();
                 const id = $('#noteId').val();
                 $.ajax({
-                    @if(Auth::user()->hasRole('admin'))
+                    @if(isAllAdmin())
                     url: "{{ route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                    @elseif(Auth::user()->hasRole('coach'))
+                    @elseif(isCoach())
                     url: "{{ route('coach.training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
                     @endif
                     type: $(this).attr('method'),
@@ -735,9 +654,9 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            @if(Auth::user()->hasRole('admin'))
+                            @if(isAllAdmin())
                             url: "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
-                            @elseif(Auth::user()->hasRole('coach'))
+                            @elseif(isCoach())
                             url: "{{ route('coach.training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
                             @endif
                             type: 'DELETE',
@@ -786,9 +705,9 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            @if(Auth::user()->hasRole('admin'))
+                            @if(isAllAdmin())
                             url: "{{ route('training-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
-                            @elseif(Auth::user()->hasRole('coach'))
+                            @elseif(isCoach())
                             url: "{{ route('coach.training-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
                             @endif
                             type: 'DELETE',

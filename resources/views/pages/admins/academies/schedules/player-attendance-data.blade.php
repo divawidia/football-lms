@@ -12,7 +12,7 @@
                         <h5 class="mb-0">{{ $player->user->firstName  }} {{ $player->user->lastName  }}</h5>
                         <p class="text-50 lh-1 mb-0">{{ $player->position->name }}</p>
                     </div>
-                    <a class="btn @if($player->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($player->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif playerAttendance" id="{{$player->id}}" href="">
+                    <a class="btn @if($player->pivot->attendanceStatus == 'Required Action') btn-outline-warning text-warning @elseif($player->pivot->attendanceStatus == 'Attended') btn-outline-success text-success @else btn-outline-danger text-danger @endif playerAttendance" id="{{$player->id}}" href="#">
                         <span class="material-icons mr-2">
                             @if($player->pivot->attendanceStatus == 'Required Action') error
                             @elseif($player->pivot->attendanceStatus == 'Attended') check_circle

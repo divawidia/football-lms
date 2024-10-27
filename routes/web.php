@@ -552,10 +552,18 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::prefix('training-schedules')->group(function () {
             Route::get('', [EventScheduleController::class, 'indexTraining'])->name('training-schedules.index');
+
+            Route::prefix('{schedule}')->group(function () {
+                Route::get('', [EventScheduleController::class, 'showTraining'])->name('training-schedules.show');
+            });
         });
 
         Route::prefix('match-schedules')->group(function () {
             Route::get('', [EventScheduleController::class, 'indexMatch'])->name('match-schedules.index');
+
+            Route::prefix('{schedule}')->group(function () {
+                Route::get('', [EventScheduleController::class, 'showMatch'])->name('match-schedules.show');
+            });
         });
     });
 });
