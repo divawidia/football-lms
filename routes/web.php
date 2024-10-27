@@ -329,8 +329,6 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('team-managements')->group(function () {
                 Route::get('coach-teams', [TeamController::class, 'coachTeamsData'])->name('coach.team-managements.coach-teams');
-
-
             });
 
             Route::prefix('skill-assessments')->group(function () {
@@ -374,6 +372,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['role:player,web']], function () {
         Route::get('player-dashboard', [PlayerDashboardController::class, 'index'])->name('player.dashboard');
+
+        Route::prefix('training-schedules')->group(function () {
+            Route::get('players-trainings', [EventScheduleController::class, 'playerIndexTraining'])->name('player.training-schedules.index');
+        });
+
+        Route::prefix('match-schedules')->group(function () {
+            Route::get('players-matches', [EventScheduleController::class, 'playerIndexMatch'])->name('player.match-schedules.index');
+        });
     });
 
     Route::group(['middleware' => ['role:coach|admin|Super-Admin,web']], function () {
@@ -418,7 +424,6 @@ Route::group(['middleware' => ['auth']], function () {
         });
 
         Route::prefix('training-schedules')->group(function () {
-            Route::get('', [EventScheduleController::class, 'indexTraining'])->name('training-schedules.index');
             Route::get('create', [EventScheduleController::class, 'createTraining'])->name('training-schedules.create');
             Route::post('store', [EventScheduleController::class, 'storeTraining'])->name('training-schedules.store');
 
@@ -444,8 +449,6 @@ Route::group(['middleware' => ['auth']], function () {
         });
 
         Route::prefix('match-schedules')->group(function () {
-            Route::get('', [EventScheduleController::class, 'indexMatch'])->name('match-schedules.index');
-
             Route::prefix('{schedule}')->group(function () {
                 Route::get('', [EventScheduleController::class, 'showMatch'])->name('match-schedules.show');
 
@@ -546,6 +549,13 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('parents', [PlayerParentController::class, 'index'])->name('player-parents.index');
             });
         });
-    });
 
+        Route::prefix('training-schedules')->group(function () {
+            Route::get('', [EventScheduleController::class, 'indexTraining'])->name('training-schedules.index');
+        });
+
+        Route::prefix('match-schedules')->group(function () {
+            Route::get('', [EventScheduleController::class, 'indexMatch'])->name('match-schedules.index');
+        });
+    });
 });

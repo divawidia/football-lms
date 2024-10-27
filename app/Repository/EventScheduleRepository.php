@@ -59,11 +59,11 @@ class EventScheduleRepository
 //        return $this->endedCoachMatch($coach)->take(2)->get();
 //    }
 
-    public function playerUpcomingEvent(Player $player, $eventType, $take = null)
+    public function playerEvent(Player $player, $status, $eventType, $take = null)
     {
         $query = $player->schedules()
             ->where('eventType', $eventType)
-            ->where('status', '1');
+            ->where('status', $status);
         if ($take){
             $query->take($take);
         }

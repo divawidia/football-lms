@@ -46,6 +46,15 @@ class EventScheduleService extends Service
         return $this->eventScheduleRepository->coachEvent($coach, 'Match', '1');
     }
 
+    public function playerTeamsIndexTraining(Player $player): Collection
+    {
+        return $this->eventScheduleRepository->playerEvent($player, '1','Training', '1');
+    }
+    public function playerTeamsIndexMatch(Player $player): Collection
+    {
+        return $this->eventScheduleRepository->playerEvent($player, '1', 'Match', '1');
+    }
+
     public function makeMatchCalendar($matchesData): array
     {
         $events = [];
@@ -93,6 +102,15 @@ class EventScheduleService extends Service
         return $this->makeMatchCalendar($data);
     }
 
+    public function playerTeamsTrainingCalendar(Player $player){
+        $trainings = $this->playerTeamsIndexTraining($player);
+        return $this->makeTrainingCalendar($trainings);
+    }
+    public function playerTeamsMatchCalendar(Player $player){
+        $data = $this->playerTeamsIndexMatch($player);
+        return $this->makeMatchCalendar($data);
+    }
+
     public function makeDataTablesTraining($trainingData)
     {
         return Datatables::of($trainingData)
@@ -131,6 +149,12 @@ class EventScheduleService extends Service
                             </button>
                           </div>
                         </div>';
+                } elseif (isPlayer()){
+                    return '<a class="btn btn-sm btn-outline-secondary" href="' . route('training-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View training detail">
+                                <span class="material-icons">
+                                    visibility
+                                </span>
+                          </a>';
                 }
             })
             ->editColumn('team', function ($item) {
@@ -170,7 +194,7 @@ class EventScheduleService extends Service
     {
         return Datatables::of($matchData)
             ->addColumn('action', function ($item) {
-                if (isCoach()){
+                if (isCoach() || isPlayer()){
                     return '
                         <a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
                             <span class="material-icons">
@@ -304,14 +328,21 @@ class EventScheduleService extends Service
         return $this->makeDataTablesMatch($data);
     }
 
+    public function playerTeamsDataTablesTraining(Player $player){
+        $data = $this->playerTeamsIndexTraining($player);
+        return $this->makeDataTablesTraining($data);
+    }
+    public function playerTeamsDataTablesMatch(Player $player){
+        $data = $this->playerTeamsIndexMatch($player);
+        return $this->makeDataTablesMatch($data);
+    }
+
     public function dataTablesPlayerStats(EventSchedule $schedule){
         $data = $schedule->playerMatchStats;
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                if (isAllAdmin()){
+                if (isAllAdmin() || isCoach()){
                     $showPlayer = '<a class="dropdown-item" href="' . route('player-managements.show', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player</a>';
-                }elseif (isCoach()){
-                    $showPlayer = '<a class="dropdown-item" href="' . route('coach.player-managements.show', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player</a>';
                 }
                 return '
                         <div class="dropdown">

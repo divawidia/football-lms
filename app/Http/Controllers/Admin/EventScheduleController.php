@@ -42,7 +42,11 @@ class EventScheduleController extends Controller
         } elseif ($this->isCoach()){
             $coach = $this->getLoggedCoachUser();
             $events = $this->eventScheduleService->coachTeamsTrainingCalendar($coach);
-            $tableRoute = url()->route('admin.training-schedules.index');
+            $tableRoute = url()->route('coach.training-schedules.index');
+        } elseif ($this->isPlayer()){
+            $player = $this->getLoggedPLayerUser();
+            $events = $this->eventScheduleService->playerTeamsTrainingCalendar($player);
+            $tableRoute = url()->route('player.training-schedules.index');
         }
 
         return view('pages.admins.academies.schedules.trainings.index', [
@@ -61,6 +65,11 @@ class EventScheduleController extends Controller
         $coach = $this->getLoggedCoachUser();
         return $this->eventScheduleService->coachTeamsDataTablesTraining($coach);
     }
+    public function playerIndexTraining()
+    {
+        $player = $this->getLoggedPLayerUser();
+        return $this->eventScheduleService->playerTeamsDataTablesTraining($player);
+    }
 
     public function indexMatch()
     {
@@ -71,6 +80,10 @@ class EventScheduleController extends Controller
             $coach = $this->getLoggedCoachUser();
             $events = $this->eventScheduleService->coachTeamsMatchCalendar($coach);
             $tableRoute = url()->route('coach.match-schedules.index');
+        } elseif ($this->isPlayer()){
+            $player = $this->getLoggedPLayerUser();
+            $events = $this->eventScheduleService->playerTeamsMatchCalendar($player);
+            $tableRoute = url()->route('player.match-schedules.index');
         }
 
         return view('pages.admins.academies.schedules.matches.index', [
@@ -88,17 +101,22 @@ class EventScheduleController extends Controller
         $coach = $this->getLoggedCoachUser();
             return $this->eventScheduleService->coachTeamsDataTablesMatch($coach);
     }
+    public function playerIndexMatch()
+    {
+        $player = $this->getLoggedPLayerUser();
+        return $this->eventScheduleService->playerTeamsDataTablesMatch($player);
+    }
 
     /**
      * Show the form for creating a new resource.
      */
     public function createTraining()
     {
-        if (Auth::user()->hasRole('admin')){
+        if (isAllAdmin()){
             $view = view('pages.admins.academies.schedules.trainings.create', [
                 'teams' => $this->eventScheduleService->getAcademyTeams(),
             ]);
-        } elseif (Auth::user()->hasRole('coach')){
+        } elseif (isCoach()){
             $view = view('pages.admins.academies.schedules.trainings.create', [
                 'teams' => $this->eventScheduleService->coachManagedTeams($this->getLoggedCoachUser()),
             ]);

@@ -271,9 +271,9 @@ class PlayerService extends Service
         $draws = $this->playerRepository->matchResults($player, 'Draw');
         $thisMonthDraws = $this->playerRepository->matchResults($player, 'Draw', Carbon::now()->startOfMonth(),Carbon::now());
 
-        $upcomingMatches = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Match', 2);
+        $upcomingMatches = $this->eventScheduleRepository->playerEvent($player, '1','Match', 2);
 
-        $upcomingTrainings = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Training', 2);
+        $upcomingTrainings = $this->eventScheduleRepository->playerEvent($player, '1','Training', 2);
 
         $playerAge = $this->getAge($player->user->dob);
         $playerDob = $this->convertToDate($player->user->dob);
@@ -525,23 +525,23 @@ class PlayerService extends Service
 
     public function playerUpcomingMatches(Player $player)
     {
-        $data = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Match');
+        $data = $this->eventScheduleRepository->playerEvent($player, '1','Match');
         return $this->eventScheduleService->makeDataTablesMatch($data);
     }
     public function playerUpcomingTraining(Player $player)
     {
-        $data = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Training');
+        $data = $this->eventScheduleRepository->playerEvent($player, '1','Training');
         return $this->eventScheduleService->makeDataTablesTraining($data);
     }
 
     public function playerMatchCalendar(Player $player)
     {
-        $data = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Match');
+        $data = $this->eventScheduleRepository->playerEvent($player, '1','Match');
         return $this->eventScheduleService->makeMatchCalendar($data);
     }
     public function playerTrainingCalendar(Player $player)
     {
-        $data = $this->eventScheduleRepository->playerUpcomingEvent($player, 'Training');
+        $data = $this->eventScheduleRepository->playerEvent($player, '1','Training');
         return $this->eventScheduleService->makeTrainingCalendar($data);
     }
 
