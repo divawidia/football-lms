@@ -43,7 +43,7 @@
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data->position->name }}</p>
             </div>
             @if(isCoach())
-                <a class="btn btn-outline-white" id="addSkills" href="">
+                <a class="btn btn-outline-white addSkills" id="{{ $data->id }}" href="">
                     <span class="material-icons mr-2">edit</span>
                     Update Skills
                 </a>

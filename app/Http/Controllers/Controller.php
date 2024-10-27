@@ -29,7 +29,7 @@ class Controller extends BaseController
     }
 
     public function getLoggedCoachUser(){
-        return Coach::where('userId', $this->getLoggedUserId())->select('id')->first();
+        return Coach::where('userId', $this->getLoggedUserId())->first();
     }
 
     public function getLoggedPLayerUser(){

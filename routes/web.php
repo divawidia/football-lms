@@ -325,6 +325,18 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('player-managements')->group(function () {
                 Route::get('coaches-players', [PlayerController::class, 'coachIndex'])->name('coach.player-managements.index');
+
+                Route::prefix('{player}')->group(function () {
+                    Route::get('performance-reviews', [PlayerController::class, 'skillStatsDetail'])->name('coach.player-managements.performance-reviews');
+                    Route::get('create', [SkillAssessmentController::class, 'create'])->name('coach.performance-reviews.create');
+                    Route::post('store', [SkillAssessmentController::class, 'store'])->name('coach.performance-reviews.store');
+                });
+                
+                Route::prefix('performance-reviews/{review}')->group(function () {
+                    Route::get('', [SkillAssessmentController::class, 'edit'])->name('coach.performance-reviews.edit');
+                    Route::put('update', [SkillAssessmentController::class, 'update'])->name('coach.performance-reviews.update');
+                    Route::delete('destroy', [SkillAssessmentController::class, 'destroy'])->name('coach.performance-reviews.destroy');
+                });
             });
 
             Route::prefix('team-managements')->group(function () {
@@ -337,13 +349,12 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('', [PlayerController::class, 'skillStatsDetail'])->name('skill-assessments.skill-stats');
                     Route::get('create', [SkillAssessmentController::class, 'create'])->name('skill-assessments.create');
                     Route::post('store', [SkillAssessmentController::class, 'store'])->name('skill-assessments.store');
+                });
 
-                    Route::prefix('{skillStats}')->group(function () {
-                        Route::get('', [SkillAssessmentController::class, 'edit'])->name('skill-assessments.edit');
-                        Route::put('update', [SkillAssessmentController::class, 'update'])->name('skill-assessments.update');
-                        Route::delete('destroy', [SkillAssessmentController::class, 'destroy'])->name('skill-assessments.destroy');
-
-                    });
+                Route::prefix('skill-stats/{skillStats}')->group(function () {
+                    Route::get('', [SkillAssessmentController::class, 'edit'])->name('skill-assessments.edit');
+                    Route::put('update', [SkillAssessmentController::class, 'update'])->name('skill-assessments.update');
+                    Route::delete('destroy', [SkillAssessmentController::class, 'destroy'])->name('skill-assessments.destroy');
                 });
             });
 
@@ -374,6 +385,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('player-dashboard', [PlayerDashboardController::class, 'index'])->name('player.dashboard');
 
         Route::get('skill-stats', [PlayerController::class, 'skillStatsDetail'])->name('player.skill-stats');
+
+        Route::get('performance-reviews', [PlayerController::class, 'skillStatsDetail'])->name('player.performance-reviews');
 
         Route::prefix('training-schedules')->group(function () {
             Route::get('players-trainings', [EventScheduleController::class, 'playerIndexTraining'])->name('player.training-schedules.index');
@@ -436,6 +449,8 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('training-schedules.destroy');
                 Route::patch('deactivate', [EventScheduleController::class, 'deactivateTraining'])->name('deactivate-training');
                 Route::patch('activate', [EventScheduleController::class, 'activateTraining'])->name('activate-training');
+
+                Route::get('player-skills', [EventScheduleController::class, 'dataTablesPlayerSkills'])->name('training-schedules.player-skills');
 
                 Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('training-schedules.player');
                 Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('training-schedules.update-player');

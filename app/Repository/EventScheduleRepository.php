@@ -33,7 +33,7 @@ class EventScheduleRepository
         }
         return $query->orderBy('date')->get();
     }
-    public function coachEvent(Coach $coach, $status,$eventType, $take = null)
+    public function coachEvent(Coach $coach, $eventType, $status, $take = null)
     {
         $query = $coach->schedules()->with('teams', 'competition')
             ->where('eventType', $eventType)

@@ -1,18 +1,19 @@
 <!-- Modal add lesson -->
-<div class="modal fade" id="addSkillStatsModal" tabindex="-1" aria-labelledby="addSkillStatsModalLabel" aria-hidden="true">
+<div class="modal fade" id="editSkillStatsModal" tabindex="-1" aria-labelledby="editSkillStatsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <form method="POST" id="formAddSkillStatsModal">
+            <form method="POST" id="formEditSkillStatsModal">
+                @method('PUT')
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="training-title">Add Player Skill Stats</h5>
+                    <h5 class="modal-title" id="skill-assessment-title">Edit Player Skill Stats</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="eventId" name="eventId"/>
-                    <input type="hidden" id="playerId"/>
+                    <input type="hidden" id="skillStatsId"/>
                     <div class="form-group">
                         <div class="row d-flex flex-row align-items-center mb-2">
                             <div class="col-md-3">
@@ -185,7 +186,7 @@
                                 <small class="text-danger">*</small>
                             </div>
                             <div class="col-md-9">
-                                <input type="text" id="offensivePlay" name="defensivePlay" class="skills-range-slider" required/>
+                                <input type="text" id="defensivePlay" name="defensivePlay" class="skills-range-slider" required/>
                                 <span class="invalid-feedback defensivePlay" role="alert">
                                     <strong></strong>
                                 </span>
@@ -206,38 +207,53 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
     <script>
         $(document).ready(function (){
+            const modalId = '#editSkillStatsModal'
+
             $(".skills-range-slider").ionRangeSlider({
                 grid: true,
                 values: [
                     "Poor", "Needs Work", "Average Fair", "Good", "Excellent"
-                ]
+                ],
             });
 
             // show add skill stats form modal when update skill button clicked
-            $('body').on('click', '.addSkills', function (e) {
+            $('body').on('click', '.editSkills', function (e) {
                 e.preventDefault();
-                const playerId = $(this).attr('id');
                 const eventId = $(this).attr('data-eventId');
+                const skillStatsId = $(this).attr('data-statsId');
 
-                $('#addSkillStatsModal').modal('show');
-                $('#eventId').val(eventId);
-                $('#playerId').val(playerId);
+                $.ajax({
+                    url: "{!! url()->route('skill-assessments.edit', ['skillStats' => ':id']) !!}".replace(':id', skillStatsId),
+                    type: 'get',
+                    success: function (res) {
+                        $(modalId).modal('show');
+                        $(modalId+' #eventId').val(eventId);
+                        $(modalId+' #skillStatsId').val(skillStatsId);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when creating data!",
+                            text: errorThrown,
+                        });
+                    }
+                });
             });
 
             // store skill stats data when form submitted
-            $('#formAddSkillStatsModal').on('submit', function (e) {
+            $('#formEditSkillStatsModal').on('submit', function (e) {
                 e.preventDefault();
-                const playerId = $('#playerId').val();
+                const skillStatsId = $('#skillStatsId').val();
                 $.ajax({
-                    url: "{{ route('skill-assessments.store', ['player' => ':id']) }}".replace(':id', playerId),
+                    url: "{{ url()->route('skill-assessments.update', ['skillStats' => ':id']) }}".replace(':id', skillStatsId),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
                     success: function () {
-                        $('#addSkillStatsModal').modal('hide');
+                        $(modalId).modal('hide');
                         Swal.fire({
-                            title: 'Player skill stats successfully added!',
+                            title: 'Player skill stats successfully updated!',
                             icon: 'success',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",
@@ -252,8 +268,8 @@
                     error: function (jqXHR, textStatus, errorThrown) {
                         const response = JSON.parse(jqXHR.responseText);
                         $.each(response.errors, function (key, val) {
-                            $('#formAddSkillStatsModal span.' + key).text(val[0]);
-                            $("#formAddSkillStatsModal #" + key).addClass('is-invalid');
+                            $('#formEditSkillStatsModal span.' + key).text(val[0]);
+                            $("#formEditSkillStatsModal #" + key).addClass('is-invalid');
                         });
                         Swal.fire({
                             icon: "error",

@@ -8,47 +8,25 @@
 
 @section('modal')
     @if(isAllAdmin() || isCoach())
-        <x-edit-player-attendance-modal :routeGet="route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
-                                        :routeUpdate="route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
+        <x-edit-player-attendance-modal
+            :routeGet="route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
+            :routeUpdate="route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
 
-        <x-edit-coach-attendance-modal :routeGet="route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
-                                        :routeUpdate="route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
+        <x-edit-coach-attendance-modal
+            :routeGet="route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
+            :routeUpdate="route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
 
-        <x-create-schedule-note-modal :routeCreate="route('training-schedules.create-note', $data['dataSchedule']->id)" :eventName="$data['dataSchedule']->eventName"/>
+        <x-create-schedule-note-modal :routeCreate="route('training-schedules.create-note', $data['dataSchedule']->id)"
+                                      :eventName="$data['dataSchedule']->eventName"/>
+
+        <x-edit-schedule-note-modal
+            :routeEdit="route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
+            :routeUpdate="route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
+            :eventName="$data['dataSchedule']->eventName"/>
+
+        <x-skill-assessments-modal/>
+        <x-edit-skill-assessments-modal/>
     @endif
-
-    <!-- Modal edit note -->
-    <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="post" id="formUpdateNoteModal">
-                    @method('PUT')
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="coachName">Update note for {{ $data['dataSchedule']->eventName }} Session</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" id="noteId">
-                        <div class="form-group">
-                            <label class="form-label" for="edit_note">Note</label>
-                            <small class="text-danger">*</small>
-                            <textarea class="form-control" id="edit_note" name="note" placeholder="Input note here ..." required></textarea>
-                            <span class="invalid-feedback note_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('content')
@@ -56,23 +34,26 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                        <a href="{{ route('training-schedules.index') }}" class="nav-link text-70">
-                            <i class="material-icons icon--left">keyboard_backspace</i>
-                            Back to Training Schedules
-                        </a>
+                    <a href="{{ route('training-schedules.index') }}" class="nav-link text-70">
+                        <i class="material-icons icon--left">keyboard_backspace</i>
+                        Back to Training Schedules
+                    </a>
                 </li>
             </ul>
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div
+            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex">
                 <h2 class="text-white mb-0">{{ $data['dataSchedule']->eventName  }}</h2>
-                <p class="lead text-white-50 d-flex align-items-center">{{ $data['dataSchedule']->eventType }} ~ {{ $data['dataSchedule']->teams[0]->teamName }}</p>
+                <p class="lead text-white-50 d-flex align-items-center">{{ $data['dataSchedule']->eventType }}
+                    ~ {{ $data['dataSchedule']->teams[0]->teamName }}</p>
             </div>
             @if(isAllAdmin() || isCoach())
                 <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
                         Action
                         <span class="material-icons ml-3">
                             keyboard_arrow_down
@@ -80,7 +61,7 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item"
-                            href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}">
+                           href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}">
                             <span class="material-icons">edit</span>
                             Edit Training Schedule
                         </a>
@@ -127,7 +108,8 @@
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }} - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
+                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }}
+                    - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -143,7 +125,8 @@
                         </span>
                         <div class="media-body">
                             <a class="card-title m-0"
-                               href="">Created by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
+                               href="">Created
+                                by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
                             <p class="text-50 lh-1 mb-0">Admin</p>
                         </div>
                     </div>
@@ -167,7 +150,7 @@
                                 <div class="card-title">Total Participants</div>
                             </div>
                         </div>
-                        <i class='bx bxs-group icon-32pt text-danger ml-8pt' ></i>
+                        <i class='bx bxs-group icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -193,7 +176,7 @@
                                 <div class="card-title">Didn't Attended</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -208,7 +191,7 @@
                                 <div class="card-title">Illness</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -221,7 +204,7 @@
                                 <div class="card-title">Injured</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -234,7 +217,7 @@
                                 <div class="card-title">Others</div>
                             </div>
                         </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt' ></i>
+                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
                     </div>
                 </div>
             </div>
@@ -265,209 +248,195 @@
         </div>
         @if(count($data['dataSchedule']->notes)==0)
             @include('components.alerts.warning', ['text' => "You haven't created any note for this training session"])
-        @else
-            <div class="row">
-                @foreach($data['dataSchedule']->notes as $note)
-                    @if(count($data['dataSchedule']->notes)==1)
-                    <div class="col-12">
-                        @else
-                            <div class="col-md-4">
-                        @endif
-                        <div class="card">
-                            <div class="card-header d-flex align-items-center">
-                                <div class="flex">
-                                    <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($note->created_at)) }}</h4>
-                                    <div class="card-subtitle text-50">Last updated at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
-                                </div>
+        @endif
+        <div class="row">
+            @foreach($data['dataSchedule']->notes as $note)
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <div class="flex">
+                                <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($note->created_at)) }}</h4>
+                                <div class="card-subtitle text-50">Last updated at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
+                            </div>
+                            @if(isAllAdmin() || isCoach())
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="material-icons">
-                                            more_vert
-                                        </span>
+                                        <span class="material-icons">more_vert</span>
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         <a class="dropdown-item edit-note" id="{{ $note->id }}" href="">
-                                            <span class="material-icons">edit</span>
-                                            Edit Note
+                                            <span class="material-icons">edit</span>Edit Note
                                         </a>
                                         <button type="button" class="dropdown-item delete-note" id="{{ $note->id }}">
-                                            <span class="material-icons">delete</span>
-                                            Delete Note
+                                            <span class="material-icons">delete</span>Delete Note
                                         </button>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-body">
-                                @php
-                                    echo $note->note
-                                @endphp
-                            </div>
+                            @endif
+                        </div>
+                        <div class="card-body">
+                            @php
+                                echo $note->note
+                            @endphp
                         </div>
                     </div>
-                @endforeach
+                </div>
+            @endforeach
+        </div>
+
+        @if(isAllAdmin() || isCoach())
+            <div class="page-separator">
+                <div class="page-separator__text">player skill evaluation</div>
             </div>
+            <x-player-skill-event-tables
+                :route="route('training-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
+                tableId="playerSkillsTable"/>
         @endif
+
+{{--        @if(isPlayer())--}}
+{{--            --}}{{--    Performance Review    --}}
+{{--            <div class="page-separator">--}}
+{{--                <div class="page-separator__text">Performance Review</div>--}}
+{{--                @if(isAllAdmin() || isCoach())--}}
+{{--                    <a href="#" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>--}}
+{{--                @endif--}}
+{{--            </div>--}}
+{{--            @if(count($data['dataSchedule']->notes)==0)--}}
+{{--                @include('components.alerts.warning', ['text' => "You haven't created any note for this training session"])--}}
+{{--            @else--}}
+{{--                @foreach($data['dataSchedule']->notes as $note)--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="card-header d-flex align-items-center">--}}
+{{--                            <div class="flex">--}}
+{{--                                <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($note->created_at)) }}</h4>--}}
+{{--                                <div class="card-subtitle text-50">Last updated--}}
+{{--                                    at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>--}}
+{{--                            </div>--}}
+{{--                            @if(isAllAdmin() || isCoach())--}}
+{{--                                <div class="dropdown">--}}
+{{--                                    <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--}}
+{{--                                        <span class="material-icons">more_vert</span>--}}
+{{--                                    </button>--}}
+{{--                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">--}}
+{{--                                        <a class="dropdown-item edit-note" id="{{ $note->id }}" href="">--}}
+{{--                                            <span class="material-icons">edit</span>Edit Note--}}
+{{--                                        </a>--}}
+{{--                                        <button type="button" class="dropdown-item delete-note" id="{{ $note->id }}">--}}
+{{--                                            <span class="material-icons">delete</span>Delete Note--}}
+{{--                                        </button>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            @endif--}}
+{{--                        </div>--}}
+{{--                        <div class="card-body">--}}
+{{--                            @php--}}
+{{--                                echo $note->note--}}
+{{--                            @endphp--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                @endforeach--}}
+{{--            @endif--}}
+{{--       @endif--}}
     </div>
 @endsection
-@push('addon-script')
-    <script>
-        $(document).ready(function() {
-            const body = $('body');
+    @push('addon-script')
+        <script>
+            $(document).ready(function () {
+                const body = $('body');
 
-            $('.edit-note').on('click', function(e) {
-                e.preventDefault();
-                const id = $(this).attr('id');
+                // delete competition alert
+                body.on('click', '.delete', function () {
+                    let id = $(this).attr('id');
 
-                $.ajax({
-                    url: "{{ route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                    type: 'get',
-                    success: function(res) {
-                        $('#editNoteModal').modal('show');
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#1ac2a1",
+                        cancelButtonColor: "#E52534",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
+                                type: 'DELETE',
+                                data: {
+                                    _token: "{{ csrf_token() }}"
+                                },
+                                success: function () {
+                                    Swal.fire({
+                                        title: 'Training schedule successfully deleted!',
+                                        icon: 'success',
+                                        showCancelButton: false,
+                                        allowOutsideClick: false,
+                                        confirmButtonColor: "#1ac2a1",
+                                        confirmButtonText:
+                                            'Ok!'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = "{{ route('training-schedules.index') }}";
+                                        }
+                                    });
+                                },
+                                error: function (error) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Something went wrong when deleting data!",
+                                        text: error,
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
 
-                        const heading = document.getElementById('edit_note');
-                        heading.textContent = res.data.note;
-                        $('#noteId').val(res.data.id);
-                    },
-                    error: function(error) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when deleting data!",
-                            text: error,
-                        });
-                    }
+                // delete schedule note alert
+                body.on('click', '.delete-note', function () {
+                    let id = $(this).attr('id');
+
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#1ac2a1",
+                        cancelButtonColor: "#E52534",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('training-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
+                                type: 'DELETE',
+                                data: {
+                                    _token: "{{ csrf_token() }}"
+                                },
+                                success: function () {
+                                    Swal.fire({
+                                        title: 'Training note successfully deleted!',
+                                        icon: 'success',
+                                        showCancelButton: false,
+                                        allowOutsideClick: false,
+                                        confirmButtonColor: "#1ac2a1",
+                                        confirmButtonText:
+                                            'Ok!'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            location.reload();
+                                        }
+                                    });
+                                },
+                                error: function (error) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Something went wrong when deleting data!",
+                                        text: error,
+                                    });
+                                }
+                            });
+                        }
+                    });
                 });
             });
-
-            // update schedule note data
-            $('#formUpdateNoteModal').on('submit', function(e) {
-                e.preventDefault();
-                const id = $('#noteId').val();
-                $.ajax({
-                    url: "{{ route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        $('#editNoteModal').modal('hide');
-                        Swal.fire({
-                            title: 'Training session note successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        console.log(response);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#edit_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
-
-            // delete competition alert
-            body.on('click', '.delete', function() {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function() {
-                                Swal.fire({
-                                    title: 'Training schedule successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    allowOutsideClick: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('training-schedules.index') }}";
-                                    }
-                                });
-                            },
-                            error: function(error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: error,
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            // delete schedule note alert
-            body.on('click', '.delete-note', function() {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('training-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function() {
-                                Swal.fire({
-                                    title: 'Training note successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    allowOutsideClick: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function(error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: error,
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-@endpush
+        </script>
+    @endpush

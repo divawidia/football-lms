@@ -6,13 +6,14 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class SkillAssessmentsModal extends Component
+class AddPerformanceReviewModal extends Component
 {
     /**
      * Create a new component instance.
      */
     public function __construct()
     {
+        //
     }
 
     /**
@@ -20,6 +21,6 @@ class SkillAssessmentsModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.skill-assessments-modal');
+        return view('components.add-performance-review-modal');
     }
 }

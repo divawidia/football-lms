@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SkillAssessmentRequest extends FormRequest
 {
@@ -34,6 +35,7 @@ class SkillAssessmentRequest extends FormRequest
             'goalKeeping' => ['string', 'required'],
             'offensivePlay' => ['string', 'required'],
             'defensivePlay' => ['string', 'required'],
+            'eventId' => ['nullable', 'numeric', Rule::exists('event_schedules', 'id')]
         ];
     }
 }

@@ -99,17 +99,22 @@ class SkillAssessmentService extends Service
 
     public function convertInputData(array $data)
     {
+        $conversionMap = [
+            'Poor' => 0,
+            'Needs Work' => 25,
+            'Average Fair' => 50,
+            'Good' => 75,
+            'Excellent' => 100,
+            0 => 'Poor',
+            25 => 'Needs Work',
+            50 => 'Average Fair',
+            75 => 'Good',
+            100 => 'Excellent',
+        ];
+
         foreach ($data as $key => $value){
-            if ($value == 'Poor'){
-                $data[$key] = 0;
-            } elseif ($value == 'Needs Work'){
-                $data[$key] = 25;
-            } elseif ($value == 'Average Fair'){
-                $data[$key] = 50;
-            } elseif ($value == 'Good'){
-                $data[$key] = 75;
-            } elseif ($value == 'Excellent'){
-                $data[$key] = 100;
+            if (array_key_exists($value, $conversionMap)) {
+                $data[$key] = $conversionMap[$value];
             }
         }
         return $data;
@@ -123,11 +128,10 @@ class SkillAssessmentService extends Service
         return PlayerSkillStats::create($data);
     }
 
-    public function update(array $data, Player $player, PlayerSkillStats $playerSkillStats, $coachId)
+    public function update(array $data, PlayerSkillStats $playerSkillStats, $coachId)
     {
         $data = $this->convertInputData($data);
-        $data['playerId'] = $player->id;
-        $data['coachId'] = $coachId;
+        $data['coachId'] = $coachId->id;
         return $playerSkillStats->update($data);
     }
 

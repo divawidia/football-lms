@@ -7,6 +7,7 @@ use App\Http\Requests\SkillAssessmentRequest;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
 use App\Services\Coach\SkillAssessmentService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SkillAssessmentController extends Controller
@@ -32,7 +33,7 @@ class SkillAssessmentController extends Controller
         ]);
     }
 
-    public function edit(Player $player, PlayerSkillStats $skillStats)
+    public function edit(PlayerSkillStats $skillStats): JsonResponse
     {
         return response()->json([
             'status' => '200',
@@ -51,12 +52,12 @@ class SkillAssessmentController extends Controller
         return response()->json($response);
     }
 
-    public function update(SkillAssessmentRequest $request,Player $player, PlayerSkillStats $skillStats)
+    public function update(SkillAssessmentRequest $request, PlayerSkillStats $skillStats)
     {
         $data = $request->validated();
         $coachId = $this->getLoggedCoachUser();
 
-        $response = $this->skillAssessmentService->update($data, $player, $skillStats,$coachId);
+        $response = $this->skillAssessmentService->update($data, $skillStats,$coachId);
 
         return response()->json($response);
     }
