@@ -21,7 +21,7 @@ class PlayerRepository
 
     public function getAll()
     {
-        return $this->player->all();
+        return $this->player->with('user', 'teams')->get();
     }
 
     public function getCoachsPLayers($teams)

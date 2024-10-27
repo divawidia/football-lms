@@ -9,6 +9,8 @@ use App\Models\Player;
 use App\Models\PlayerMatchStats;
 use App\Models\ScheduleNote;
 use App\Models\Team;
+use App\Repository\EventScheduleRepository;
+use App\Repository\TeamRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -18,60 +20,30 @@ use function PHPUnit\Framework\isFalse;
 
 class EventScheduleService extends Service
 {
+    private EventScheduleRepository $eventScheduleRepository;
+    private TeamRepository $teamRepository;
+    public function __construct(EventScheduleRepository $eventScheduleRepository, TeamRepository $teamRepository)
+    {
+        $this->eventScheduleRepository = $eventScheduleRepository;
+        $this->teamRepository = $teamRepository;
+    }
+
     public function indexMatch(): Collection
     {
-        return EventSchedule::with('teams', 'competition')
-            ->where('eventType', 'Match')
-            ->where('status', '1')
-            ->orderBy('date')
-            ->get();
+        return $this->eventScheduleRepository->getEvent('Match', '1');
     }
     public function indexTraining(): Collection
     {
-        return EventSchedule::with('teams')
-            ->where('eventType', 'Training')
-            ->where('status', '1')
-            ->orderBy('date')
-            ->get();
+        return $this->eventScheduleRepository->getEvent('Training', '1');
     }
 
     public function coachTeamsIndexTraining(Coach $coach): Collection
     {
-        $teams = $this->coachManagedTeams($coach);
-        return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) use ($teams) {
-                $q->where('teamId', $teams[0]->id);
-
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $q->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })
-            ->where('eventType', 'Training')
-            ->where('status', '1')
-            ->orderBy('date', 'desc')
-            ->get();
+        return $this->eventScheduleRepository->coachEvent($coach, 'Training', '1');
     }
     public function coachTeamsIndexMatch(Coach $coach): Collection
     {
-        $teams = $this->coachManagedTeams($coach);
-        return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) use ($teams) {
-                $q->where('teamId', $teams[0]->id);
-
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $q->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })
-            ->where('eventType', 'Match')
-            ->where('status', '1')
-            ->orderBy('date', 'desc')
-            ->get();
+        return $this->eventScheduleRepository->coachEvent($coach, 'Match', '1');
     }
 
     public function makeMatchCalendar($matchesData): array
@@ -105,23 +77,19 @@ class EventScheduleService extends Service
 
     public function matchCalendar(){
         $matches = $this->indexMatch();
-
         return $this->makeMatchCalendar($matches);
     }
     public function trainingCalendar(){
         $trainings = $this->indexTraining();
-
         return $this->makeTrainingCalendar($trainings);
     }
 
     public function coachTeamsTrainingCalendar(Coach $coach){
         $trainings = $this->coachTeamsIndexTraining($coach);
-
         return $this->makeTrainingCalendar($trainings);
     }
     public function coachTeamsMatchCalendar(Coach $coach){
         $data = $this->coachTeamsIndexMatch($coach);
-
         return $this->makeMatchCalendar($data);
     }
 
@@ -129,7 +97,7 @@ class EventScheduleService extends Service
     {
         return Datatables::of($trainingData)
             ->addColumn('action', function ($item) {
-                if (isAllAdmin()){
+                if (isAllAdmin() || isCoach()){
                     if ($item->status == '1') {
                         $statusButton = '<form action="' . route('deactivate-training', $item->id) . '" method="POST">
                                                 ' . method_field("PATCH") . '
@@ -163,40 +131,6 @@ class EventScheduleService extends Service
                             </button>
                           </div>
                         </div>';
-                } elseif (isCoach()){
-                    if ($item->status == '1') {
-                        $statusButton = '<form action="' . route('coach.deactivate-training', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">block</span> End Training
-                                                </button>
-                                            </form>';
-                    } else {
-                        $statusButton = '<form action="' . route('coach.activate-training', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">check_circle</span> Start Training
-                                                </button>
-                                            </form>';
-                    }
-                    return '
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('coach.training-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Schedule</a>
-                            <a class="dropdown-item" href="' . route('coach.training-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Schedule</a>
-                            ' . $statusButton . '
-                            <button type="button" class="dropdown-item delete" id="' . $item->id . '">
-                                <span class="material-icons">delete</span> Delete Schedule
-                            </button>
-                          </div>
-                        </div>';
                 }
             })
             ->editColumn('team', function ($item) {
@@ -217,9 +151,9 @@ class EventScheduleService extends Service
                             </div>';
             })
             ->editColumn('date', function ($item) {
-                $date = date('M d, Y', strtotime($item->date));
-                $startTime = date('h:i A', strtotime($item->startTime));
-                $endTime = date('h:i A', strtotime($item->endTime));
+                $date = $this->convertToDate($item->date);
+                $startTime = $this->convertToTime($item->startTime);
+                $endTime = $this->convertToTime($item->endTime);
                 return $date.' ('.$startTime.' - '.$endTime.')';
             })
             ->editColumn('status', function ($item) {
@@ -238,7 +172,7 @@ class EventScheduleService extends Service
             ->addColumn('action', function ($item) {
                 if (isCoach()){
                     return '
-                        <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
+                        <a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
                             <span class="material-icons">
                                 visibility
                             </span>
@@ -336,9 +270,9 @@ class EventScheduleService extends Service
                 return $competition;
             })
             ->editColumn('date', function ($item) {
-                $date = date('M d, Y', strtotime($item->date));
-                $startTime = date('h:i A', strtotime($item->startTime));
-                $endTime = date('h:i A', strtotime($item->endTime));
+                $date = $this->convertToDate($item->date);
+                $startTime = $this->convertToTime($item->startTime);
+                $endTime = $this->convertToTime($item->endTime);
                 return $date.' ('.$startTime.' - '.$endTime.')';
             })
             ->editColumn('status', function ($item) {
@@ -360,7 +294,6 @@ class EventScheduleService extends Service
         $data = $this->indexMatch();
         return $this->makeDataTablesMatch($data);
     }
-
 
     public function coachTeamsDataTablesTraining(Coach $coach){
         $data = $this->coachTeamsIndexTraining($coach);
@@ -469,10 +402,10 @@ class EventScheduleService extends Service
         $data['status'] = '1';
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
-        $schedule =  EventSchedule::create($data);
+        $schedule =  $this->eventScheduleRepository->create($data);
 
-        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
-
+//        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
+        $team = $this->teamRepository->find($data['teamId']);
         $schedule->teams()->attach($data['teamId']);
         $schedule->players()->attach($team->players);
         $schedule->coaches()->attach($team->coaches);
@@ -485,9 +418,10 @@ class EventScheduleService extends Service
         $data['status'] = '1';
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
-        $schedule =  EventSchedule::create($data);
+        $schedule =  $this->eventScheduleRepository->create($data);
 
-        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
+//        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
+        $team = $this->teamRepository->find($data['teamId']);
 
         $schedule->teams()->attach($data['teamId']);
         $schedule->teams()->attach($data['opponentTeamId']);
@@ -517,20 +451,20 @@ class EventScheduleService extends Service
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule->update($data);
 
-        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->first();
-        $schedule->teams()->sync([$data['teamId'], $data['opponentTeamId']]);
-        $schedule->players()->sync($team->players);
-        $schedule->coaches()->sync($team->coaches);
+//        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->first();
+//        $schedule->teams()->sync([$data['teamId'], $data['opponentTeamId']]);
+//        $schedule->players()->sync($team->players);
+//        $schedule->coaches()->sync($team->coaches);
         return $schedule;
     }
 
     public function activate(EventSchedule $schedule)
     {
-        return $schedule->update(['status' => '1']);
+        return $this->eventScheduleRepository->updateStatus($schedule, '1');
     }
     public function deactivate(EventSchedule $schedule)
     {
-        return $schedule->update(['status' => '0']);
+        return $this->eventScheduleRepository->updateStatus($schedule, '0');
     }
 
     public function endMatch(EventSchedule $schedule)

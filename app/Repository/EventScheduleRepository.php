@@ -23,38 +23,41 @@ class EventScheduleRepository
         return $this->eventSchedule->all();
     }
 
-    public function endedMatch()
+    public function getEvent($eventType, $status, $take = null)
     {
-        return $this->eventSchedule->with('teams', 'competition')
-            ->where('eventType', 'Match')
-            ->where('status', '0');
+        $query = $this->eventSchedule->with('teams', 'competition')
+            ->where('eventType', $eventType)
+            ->where('status', $status);
+        if ($take){
+            $query->take($take);
+        }
+        return $query->orderBy('date')->get();
     }
-    public function endedCoachMatch(Coach $coach)
+    public function coachEvent(Coach $coach, $status,$eventType, $take = null)
     {
-        return $coach->schedules()->with('teams', 'competition')
-            ->where('eventType', 'Match')
-            ->where('status', '0');
-    }
-
-
-    public function getMatchHistories()
-    {
-        return $this->endedMatch()->get();
-    }
-
-    public function getCoachMatchHistories(Coach $coach)
-    {
-        return $this->endedCoachMatch($coach)->get();
+        $query = $coach->schedules()->with('teams', 'competition')
+            ->where('eventType', $eventType)
+            ->where('status', $status);
+        if ($take){
+            $query->take($take);
+        }
+        return $query->orderBy('date')->get();
     }
 
-    public function getLatestMatch()
-    {
-        return $this->endedMatch()->take(2)->get();
-    }
-    public function getCoachLatestMatch(Coach $coach)
-    {
-        return $this->endedCoachMatch($coach)->take(2)->get();
-    }
+
+//    public function getCoachMatchHistories(Coach $coach)
+//    {
+//        return $this->endedCoachMatch($coach)->get();
+//    }
+//
+//    public function getLatestMatch()
+//    {
+//        return $this->endedMatch()->take(2)->get();
+//    }
+//    public function getCoachLatestMatch(Coach $coach)
+//    {
+//        return $this->endedCoachMatch($coach)->take(2)->get();
+//    }
 
     public function playerUpcomingEvent(Player $player, $eventType, $take = null)
     {
@@ -91,6 +94,11 @@ class EventScheduleRepository
         $post = $this->find($id);
         $post->update($data);
         return $post;
+    }
+
+    public function updateStatus(EventSchedule $schedule, $status)
+    {
+        return $schedule->update(['status' => $status]);
     }
 
     public function delete($id)
