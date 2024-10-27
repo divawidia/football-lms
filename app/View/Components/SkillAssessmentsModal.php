@@ -8,12 +8,13 @@ use Illuminate\View\Component;
 
 class SkillAssessmentsModal extends Component
 {
+    public $route;
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($route)
     {
-        //
+        $this->route = $route;
     }
 
     /**

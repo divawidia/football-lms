@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    <x-skill-assessments-modal/>
+    <x-skill-assessments-modal :route="route('skill-assessments.store', $data->id)"/>
 @endsection
 
 @section('content')

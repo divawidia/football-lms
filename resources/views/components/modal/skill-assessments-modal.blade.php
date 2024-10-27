@@ -222,7 +222,7 @@
             $('#formAddSkillStatsModal').on('submit', function (e) {
                 e.preventDefault();
                 $.ajax({
-                    url: "{{ route('skill-assessments.store', $data->id) }}",
+                    url: "{{ $route }}",
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
