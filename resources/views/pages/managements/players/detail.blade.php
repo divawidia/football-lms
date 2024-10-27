@@ -260,11 +260,7 @@
         {{--Upcoming Matches Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
-            <a href="@if(isAllAdmin())
-                    {{ route('player-managements.upcoming-matches', $data->id) }}
-                    @elseif(isCoach())
-                    {{ route('coach.player-managements.upcoming-matches', $data->id) }}
-                    @endif" class="btn btn-white border btn-sm ml-auto">
+            <a href="{{ route('player-managements.upcoming-matches', $data->id) }}" class="btn btn-white border btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
@@ -330,11 +326,7 @@
         {{--Upcoming Trainings Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Trainings</div>
-            <a href="@if(isAllAdmin())
-                    {{ route('player-managements.upcoming-trainings', $data->id) }}
-                    @elseif(isCoach())
-                    {{ route('coach.player-managements.upcoming-trainings', $data->id) }}
-                    @endif" class="btn btn-white border btn-sm ml-auto">
+            <a href="{{ route('player-managements.upcoming-trainings', $data->id) }}" class="btn btn-white border btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
@@ -345,11 +337,7 @@
         <div class="row">
             @foreach($overview['upcomingTrainings'] as $training)
                 <div class="col-lg-6">
-                    <a class="card" href="@if(isAllAdmin())
-                    {{ route('training-schedules.show', $training->id) }}
-                    @elseif(isCoach())
-                    {{ route('coach.training-schedules.show', $training->id) }}
-                    @endif">
+                    <a class="card" href="{{ route('training-schedules.show', $training->id) }}f">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-6 d-flex flex-column flex-md-row align-items-center">

@@ -15,8 +15,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                        <a href="{{ route('player-managements.show', $data->id) }}"
-                           class="nav-link text-70">
+                        <a href="{{ route('player-managements.show', $data->id) }}" class="nav-link text-70">
                             <i class="material-icons icon--left">keyboard_backspace</i>
                             Back to Player Profile
                         </a>
@@ -37,7 +36,7 @@
                 <p class="lead text-white-50 d-flex align-items-center">Player - {{ $data->position->name }}</p>
             </div>
             @if(isCoach())
-                <a class="btn btn-outline-white" id="addSkills" href="{{ route('coach.skill-assessments.create', $data->id) }}">
+                <a class="btn btn-outline-white" id="addSkills" href="">
                     <span class="material-icons mr-2">edit</span>
                     Update Skills
                 </a>
