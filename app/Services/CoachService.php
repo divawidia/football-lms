@@ -202,7 +202,7 @@ class CoachService extends Service
         $data['status'] = '1';
         $data['academyId'] = $academyId;
 
-        $user = $this->userRepository->createCoachUser($data);
+        $user = $this->userRepository->createUserWithRole($data, 'coach');
         $data['userId'] = $user->id;
         return $this->coachRepository->create($data);
     }

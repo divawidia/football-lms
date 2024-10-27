@@ -34,11 +34,23 @@ class UserRepository
         return $this->user->findOrFail($id);
     }
 
-    public function createCoachUser(array $data)
+    public function createUserWithRole(array $data, $role)
     {
         $user = $this->user->create($data);
-        $user->assignRole('coach');
+        $user->assignRole($role);
         return $user;
+    }
+
+    public function updateUserStatus($userModel, $status = ['1', '0'])
+    {
+        return $userModel->user()->update(['status' => $status]);
+    }
+
+    public function changePassword($data, $userModel)
+    {
+        return $userModel->user()->update([
+            'password' => bcrypt($data['password'])
+        ]);
     }
 
     public function update(array $data)
@@ -46,8 +58,10 @@ class UserRepository
         return $this->user->update($data);
     }
 
-    public function delete()
+    public function delete($userModel)
     {
-        return $this->user->delete();
+        $userModel->delete();
+        $userModel->user->roles()->detach();
+        return $userModel->user()->delete();
     }
 }

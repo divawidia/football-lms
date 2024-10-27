@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
+use App\Models\Player;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -38,15 +39,22 @@ class TeamRepository
                 $query->where('coachId', $coach->id);
             })->get();
     }
+    public function getTeamsHaventJoinedByPLayer(Player $player)
+    {
+        return $this->team->where('teamSide', 'Academy Team')
+            ->whereDoesntHave('players', function (Builder $query) use ($player) {
+                $query->where('playerId', $player->id);
+            })->get();
+    }
 
     public function find($id)
     {
-        return $this->post->findOrFail($id);
+        return $this->team->findOrFail($id);
     }
 
     public function create(array $data)
     {
-        return $this->post->create($data);
+        return $this->team->create($data);
     }
 
     public function update($id, array $data)

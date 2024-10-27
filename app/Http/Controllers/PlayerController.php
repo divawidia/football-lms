@@ -87,12 +87,14 @@ class PlayerController extends Controller
         $overview = $this->playerService->show($player);
         $performanceReviews = $player->playerPerformanceReview;
         $playerSkillStats = $this->playerService->skillStatsChart($player);
+        $hasntJoinedTeams = $this->playerService->hasntJoinedTeams($player);
 
         return view('pages.managements.players.detail', [
             'data' => $player,
             'overview' => $overview,
             'performanceReviews' => $performanceReviews,
-            'playerSkillStats' => $playerSkillStats
+            'playerSkillStats' => $playerSkillStats,
+            '$hasntJoinedTeams' => $hasntJoinedTeams
         ]);
     }
 

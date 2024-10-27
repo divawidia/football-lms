@@ -8,7 +8,10 @@ use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
 use App\Repository\EventScheduleRepository;
+use App\Repository\PlayerPositionRepository;
 use App\Repository\PlayerRepository;
+use App\Repository\TeamRepository;
+use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -22,12 +25,25 @@ class PlayerService extends Service
 {
     private EventScheduleService $eventScheduleService;
     private PlayerRepository $playerRepository;
+    private TeamRepository $teamRepository;
     private EventScheduleRepository $eventScheduleRepository;
-    public function __construct(EventScheduleService $eventScheduleService, PlayerRepository $playerRepository, EventScheduleRepository $eventScheduleRepository)
+    private PlayerPositionRepository $playerPositionRepository;
+    private UserRepository $userRepository;
+    public function __construct(
+        EventScheduleService $eventScheduleService,
+        PlayerRepository $playerRepository,
+        EventScheduleRepository $eventScheduleRepository,
+        TeamRepository $teamRepository,
+        PlayerPositionRepository $playerPositionRepository,
+        UserRepository $userRepository
+    )
     {
         $this->eventScheduleService = $eventScheduleService;
         $this->playerRepository = $playerRepository;
         $this->eventScheduleRepository = $eventScheduleRepository;
+        $this->teamRepository = $teamRepository;
+        $this->playerPositionRepository = $playerPositionRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function makePlayerDatatables($data)
@@ -128,7 +144,7 @@ class PlayerService extends Service
     }
     public function index(): JsonResponse
     {
-        $query = Player::with('user', 'teams', 'position')->get();
+        $query = $this->playerRepository->getAll();
         return $this->makePlayerDatatables($query);
     }
     // retrieve player data based on coach managed teams
@@ -137,18 +153,7 @@ class PlayerService extends Service
         $teams = $this->coachManagedTeams($coach);
 
         // query player data that included in teams that managed by logged in coach
-        $query = Player::with('user', 'teams', 'position')
-            ->whereHas('teams', function($q) use($teams){
-                $q->where('teamId', $teams[0]->id);
-
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $q->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })->get();
-
+        $query = $this->playerRepository->getCoachsPLayers($teams);
         return $this->makePlayerDatatables($query);
     }
 
@@ -208,7 +213,7 @@ class PlayerService extends Service
 
     public function getPlayerPosition()
     {
-        return PlayerPosition::all();
+        return $this->playerPositionRepository->getAll();
     }
 
     public  function store(array $data, $academyId){
@@ -218,19 +223,17 @@ class PlayerService extends Service
         $data['status'] = '1';
         $data['academyId'] = $academyId;
 
-        $user = User::create($data);
-        $user->assignRole('player');
+        $user = $this->userRepository->createUserWithRole($data, 'player');
 
         $data['userId'] = $user->id;
-        $player = Player::create($data);
-        $player->teams()->attach($data['team']);
+        $player = $this->playerRepository->create($data);
 
         PlayerParrent::create([
-            'firstName' => $data['firstName'],
-            'lastName' => $data['lastName'],
+            'firstName' => $data['firstName2'],
+            'lastName' => $data['lastName2'],
             'relations' => $data['relations'],
-            'email' => $data['email'],
-            'phoneNumber' => $data['phoneNumber'],
+            'email' => $data['email2'],
+            'phoneNumber' => $data['phoneNumber2'],
             'playerId' => $player->id,
         ]);
         return $player;
@@ -314,10 +317,7 @@ class PlayerService extends Service
     // retrieve teams data that the player hasn't joined for add player to another team purpose
     public function hasntJoinedTeams(Player $player)
     {
-        return Team::where('teamSide', 'Academy Team')
-            ->whereDoesntHave('players', function (Builder $query) use ($player) {
-                $query->where('playerId', $player->id);
-            })->get();
+        return $this->teamRepository->getTeamsHaventJoinedByPLayer($player);
     }
 
     public function getSkillStats(Player $player){
@@ -557,32 +557,25 @@ class PlayerService extends Service
     public function update(array $data, Player $player)
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $player->user->foto);
-        $player->update($data);
-        $player->user->update($data);
-        return $player;
+        return $this->playerRepository->update($player, $data);
     }
     public function activate(Player $player)
     {
-        return $player->user()->update(['status' => '1']);
+        return $this->userRepository->updateUserStatus($player, '1');
     }
 
     public function deactivate(Player $player)
     {
-        return $player->user()->update(['status' => '0']);
+        return $this->userRepository->updateUserStatus($player, '0');
     }
 
     public function changePassword($data, Player $player){
-        return $player->user()->update([
-            'password' => bcrypt($data['password'])
-        ]);
+        return $this->userRepository->changePassword($data, $player);
     }
 
     public function destroy(Player $player)
     {
         $this->deleteImage($player->user->foto);
-        $player->delete();
-        $player->user->roles()->detach();
-        $player->user()->delete();
-        return $player;
+        return $this->userRepository->delete($player);
     }
 }

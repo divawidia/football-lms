@@ -126,14 +126,18 @@ class PlayerRepository
 
     public function create(array $data)
     {
-        return $this->player->create($data);
+        $coach = $this->player->create($data);
+        if (array_key_exists('team',$data)){
+            $coach->teams()->attach($data['team']);
+        }
+        return $coach;
     }
 
-    public function update($id, array $data)
+    public function update(Player $player, array $data)
     {
-        $post = $this->find($id);
-        $post->update($data);
-        return $post;
+        $player->update($data);
+        $player->user->update($data);
+        return $player;
     }
 
     public function delete($id)

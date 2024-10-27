@@ -201,6 +201,15 @@
                 {{--Teams Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Teams</div>
+                    @if(isAllAdmin())
+                        <a href="" class="btn btn-sm btn-primary ml-auto"
+                           id="add-new">
+                            <span class="material-icons mr-2">
+                                add
+                            </span>
+                            Add Team
+                        </a>
+                    @endif
                 </div>
                 <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                     <div class="card-body">
@@ -497,11 +506,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(isAllAdmin())
                     url: '{!! route('player-managements.playerTeams', $data->id) !!}',
-                    @elseif(isCoach())
-                    url: '{!! route('coach.player-managements.playerTeams', $data->id) !!}',
-                    @endif
                 },
                 columns: [
                     {data: 'name', name: 'name'},
@@ -523,11 +528,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(isAllAdmin())
                     url: '{!! route('attendance-report.trainingTable', $data->id) !!}',
-                    @elseif(isCoach())
-                    url: '{!! route('coach.attendance-report.trainingTable', $data->id) !!}',
-                    @endif
                 },
                 columns: [
                     {data: 'eventName', name: 'eventName'},
@@ -554,11 +555,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(isAllAdmin())
                     url: '{!! route('attendance-report.matchDatatable', $data->id) !!}',
-                    @elseif(isCoach())
-                    url: '{!! route('coach.attendance-report.matchDatatable', $data->id) !!}',
-                    @endif
                 },
                 columns: [
                     {data: 'team', name: 'team'},
