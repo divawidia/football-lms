@@ -151,15 +151,7 @@
             <div class="page-separator__text">Latest Trainings</div>
         </div>
         @if(count($latestTrainings) == 0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">There are no latest matches at this momment</small>
-                    </div>
-                </div>
-            </div>
+            @include('components.alerts.warning', ['text' => 'There are no latest trainings at this moment'])
         @endif
         <div class="row">
             @foreach($latestTrainings as $training)
@@ -213,15 +205,7 @@
             <div class="page-separator__text">Latest Match</div>
         </div>
         @if(count($latestMatches) == 0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">There are no latest matches at this momment</small>
-                    </div>
-                </div>
-            </div>
+            @include('components.alerts.warning', ['text' => 'There are no latest matches at this moment'])
         @endif
         @foreach($latestMatches as $match)
             <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
@@ -297,15 +281,7 @@
             </a>
         </div>
         @if(count($overview['upcomingMatches']) == 0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">There are no matches scheduled at this time</small>
-                    </div>
-                </div>
-            </div>
+            @include('components.alerts.warning', ['text' => 'There are no matches scheduled at this moment'])
         @endif
         @foreach($overview['upcomingMatches'] as $match)
             <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
@@ -366,15 +342,7 @@
             </a>
         </div>
         @if(count($overview['upcomingTrainings']) == 0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">There are no trainings scheduled at this time</small>
-                    </div>
-                </div>
-            </div>
+            @include('components.alerts.warning', ['text' => 'There are no trainings scheduled at this moment'])
         @endif
         <div class="row">
             @foreach($overview['upcomingTrainings'] as $training)
