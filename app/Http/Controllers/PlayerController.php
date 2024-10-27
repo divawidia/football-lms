@@ -94,7 +94,7 @@ class PlayerController extends Controller
             'overview' => $overview,
             'performanceReviews' => $performanceReviews,
             'playerSkillStats' => $playerSkillStats,
-            '$hasntJoinedTeams' => $hasntJoinedTeams
+            'hasntJoinedTeams' => $hasntJoinedTeams
         ]);
     }
 

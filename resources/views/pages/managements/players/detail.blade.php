@@ -7,6 +7,7 @@
 @endsection
 
 @section('modal')
+    <x-add-teams-to-player-coach-modal :route="route('player-managements.updateTeams', ['player' => $data->id])" :teams="$hasntJoinedTeams"/>
     <x-change-password-modal :route="route('player-managements.change-password', ['player' => ':id'])"/>
 @endsection
 
@@ -202,8 +203,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Teams</div>
                     @if(isAllAdmin())
-                        <a href="" class="btn btn-sm btn-primary ml-auto"
-                           id="add-new">
+                        <a href="" class="btn btn-sm btn-primary ml-auto" id="add-team">
                             <span class="material-icons mr-2">
                                 add
                             </span>
@@ -665,44 +665,6 @@
                                     text: "Something went wrong when deleting data!",
                                 });
                             }
-                        });
-                    }
-                });
-            });
-
-            $('#add-team').on('click', function (e) {
-                e.preventDefault();
-                $('#addTeamModal').modal('show');
-            });
-
-            $('#formAddTeam').on('submit', function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: "{{ route('player-managements.updateTeams', ['player' => $data->id]) }}",
-                    method: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#addTeamModal').modal('hide');
-                        Swal.fire({
-                            title: "Team successfully added to player!",
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        $.each(response.errors, function (key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("select#add_" + key).addClass('is-invalid');
                         });
                     }
                 });
