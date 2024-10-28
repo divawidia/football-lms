@@ -15,9 +15,12 @@ return new class extends Migration
             $table->dropColumn('state');
             $table->dropColumn('city');
             $table->dropColumn('country');
-            $table->foreignId('state_id')->nullable()->constrained('states')->nullOnDelete();
-            $table->foreignId('city_id')->nullable()->constrained('cities')->nullOnDelete();
-            $table->foreignId('country_id')->nullable()->constrained('countries')->nullOnDelete();
+            $table->unsignedInteger('country_id');
+            $table->unsignedInteger('state_id');
+            $table->unsignedInteger('city_id');
+//            $table->foreignId('state_id')->nullable()->constrained('states')->nullOnDelete();
+//            $table->foreignId('city_id')->nullable()->constrained('cities')->nullOnDelete();
+//            $table->foreignId('country_id')->nullable()->constrained('countries')->nullOnDelete();
         });
     }
 
