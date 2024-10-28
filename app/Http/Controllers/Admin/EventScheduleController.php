@@ -146,13 +146,7 @@ class EventScheduleController extends Controller
 
         $text = 'Training schedule successfully added!';
         Alert::success($text);
-
-        if (Auth::user()->hasRole('admin')){
-            $redirect = redirect()->route('training-schedules.index');
-        } elseif (Auth::user()->hasRole('coach')){
-            $redirect = redirect()->route('coach.training-schedules.index');
-        }
-        return $redirect;
+        return redirect()->route('training-schedules.index');
     }
 
     public function storeMatch(MatchScheduleRequest $request)
