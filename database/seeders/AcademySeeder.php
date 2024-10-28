@@ -21,9 +21,9 @@ class AcademySeeder extends Seeder
             'zipCode' => '80361',
             'directorName' => 'asjdasndakj',
             'status' => '1',
-//            'state_id' => 1677,
-//            'city_id' => 49219,
-//            'country_id' => 103,
+            'state_id' => 1677,
+            'city_id' => 49219,
+            'country_id' => 103,
         ]);
     }
 }
