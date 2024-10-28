@@ -100,4 +100,4 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: cd /home/divawidia-store/htdocs/online-store/ && ./scripts/script.sh
+          script: cd htdocs/football-lms/ && ./scripts/script.sh

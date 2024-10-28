@@ -9,7 +9,7 @@ echo "Deployment started ..."
 
 # Pull the latest version of the app
 git reset --hard
-git pull origin master
+git pull origin main
 
 # Install composer dependencies
 composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
@@ -21,8 +21,8 @@ php artisan clear-compiled
 php artisan optimize
 
 # Compile npm assets
-#yarn
-#yarn build
+npm install
+npm run build
 
 # Run database migrations
 php artisan migrate --force
