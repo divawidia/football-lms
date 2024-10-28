@@ -18,12 +18,12 @@ class AcademySeeder extends Seeder
             'phoneNumber' => '0872123617312',
             'academyName' => 'SSB Dreamfields',
             'address' => 'Jl. Antah Berantah, Jakarta Selatan',
-            'state' => 'DKI Jakarta',
-            'city' => 'Jakarta Selatan',
-            'country' => 'Indonesia',
             'zipCode' => '80361',
             'directorName' => 'asjdasndakj',
             'status' => '1',
+            'state_id' => 1677,
+            'city_id' => 49219,
+            'country_id' => 103,
         ]);
     }
 }
