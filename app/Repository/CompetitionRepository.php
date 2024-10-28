@@ -18,9 +18,13 @@ class CompetitionRepository
         $this->competition = $competition;
     }
 
-    public function getAll()
+    public function getAll($status = null)
     {
-        return $this->competition->with('groups.teams')->get();
+        $query = $this->competition->with('groups.teams');
+        if ($status){
+            $query->where('status', $status);
+        }
+        return $query->get();
     }
     public function getCoachCompetition($teams)
     {

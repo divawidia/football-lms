@@ -23,6 +23,11 @@ class CompetitionService extends Service
     public function index(){
         return $this->competitionRepository->getAll();
     }
+    public function getActiveCompetition()
+    {
+        return $this->competitionRepository->getAll('1');
+    }
+
     public function coachTeamsIndex(Coach $coach){
         $teams = $this->coachManagedTeams($coach);
         return $this->competitionRepository->getCoachCompetition($teams);

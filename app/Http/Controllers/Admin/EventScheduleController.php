@@ -39,10 +39,12 @@ class EventScheduleController extends Controller
         if ($this->isAllAdmin()){
             $events = $this->eventScheduleService->trainingCalendar();
             $tableRoute = url()->route('admin.training-schedules.index');
+
         } elseif ($this->isCoach()){
             $coach = $this->getLoggedCoachUser();
             $events = $this->eventScheduleService->coachTeamsTrainingCalendar($coach);
             $tableRoute = url()->route('coach.training-schedules.index');
+
         } elseif ($this->isPlayer()){
             $player = $this->getLoggedPLayerUser();
             $events = $this->eventScheduleService->playerTeamsTrainingCalendar($player);
@@ -76,10 +78,12 @@ class EventScheduleController extends Controller
         if ($this->isAllAdmin()){
             $events = $this->eventScheduleService->matchCalendar();
             $tableRoute = url()->route('admin.match-schedules.index');
+
         } elseif ($this->isCoach()){
             $coach = $this->getLoggedCoachUser();
             $events = $this->eventScheduleService->coachTeamsMatchCalendar($coach);
             $tableRoute = url()->route('coach.match-schedules.index');
+
         } elseif ($this->isPlayer()){
             $player = $this->getLoggedPLayerUser();
             $events = $this->eventScheduleService->playerTeamsMatchCalendar($player);
@@ -127,7 +131,7 @@ class EventScheduleController extends Controller
     public function createMatch()
     {
         return view('pages.admins.academies.schedules.matches.create', [
-            'competitions' => $this->competitionService->index(),
+            'competitions' => $this->competitionService->getActiveCompetition(),
         ]);
     }
 
