@@ -327,9 +327,11 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('coaches-players', [PlayerController::class, 'coachIndex'])->name('coach.player-managements.index');
 
                 Route::prefix('{player}')->group(function () {
-                    Route::get('performance-reviews', [PlayerController::class, 'skillStatsDetail'])->name('coach.player-managements.performance-reviews');
-                    Route::get('create', [SkillAssessmentController::class, 'create'])->name('coach.performance-reviews.create');
-                    Route::post('store', [SkillAssessmentController::class, 'store'])->name('coach.performance-reviews.store');
+                    Route::prefix('performance-reviews')->group(function () {
+                        Route::get('', [PlayerController::class, 'skillStatsDetail'])->name('coach.player-managements.performance-reviews');
+                        Route::post('store', [SkillAssessmentController::class, 'store'])->name('coach.performance-reviews.store');
+                    });
+
                 });
 
                 Route::prefix('performance-reviews/{review}')->group(function () {

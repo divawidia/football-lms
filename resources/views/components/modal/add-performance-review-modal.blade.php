@@ -1,7 +1,7 @@
 <div class="modal fade" id="createPerformanceReviewModal" tabindex="-1" aria-labelledby="createPerformanceReviewModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form action="{{ $routeCreate }}" method="post" id="formCreatePerformanceReviewModal">
+            <form method="post" id="formCreatePerformanceReviewModal">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="playerName">Add performance review to player</h5>
@@ -13,7 +13,7 @@
                     <input type="hidden" id="eventId" name="eventId"/>
                     <input type="hidden" id="playerId"/>
                     <div class="form-group">
-                        <label class="form-label" for="add_performanceReview">Note</label>
+                        <label class="form-label" for="add_performanceReview">Performance Review</label>
                         <small class="text-danger">*</small>
                         <textarea class="form-control" id="add_performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required>{{ old('note') }}</textarea>
                         <span class="invalid-feedback note_error" role="alert">
@@ -46,13 +46,15 @@
             // create schedule note data
             $('#formCreatePerformanceReviewModal').on('submit', function(e) {
                 e.preventDefault();
+                const playerId = $('#playerId').val();
+
                 $.ajax({
-                    url: $(this).attr('action'),
+                    url: '{{ $routeCreate }}'.replace(':id', playerId),
                     method: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function(res) {
+                    success: function() {
                         $('#createPerformanceReviewModal').modal('hide');
                         Swal.fire({
                             title: 'Performance review successfully added!',

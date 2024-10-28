@@ -26,6 +26,8 @@
 
         <x-skill-assessments-modal/>
         <x-edit-skill-assessments-modal/>
+
+        <x-add-performance-review-modal :routeCreate="route('coach.performance-reviews.store', ['player'=> ':id'])"/>
     @endif
 @endsection
 
@@ -247,7 +249,7 @@
             @endif
         </div>
         @if(count($data['dataSchedule']->notes)==0)
-            @include('components.alerts.warning', ['text' => "You haven't created any note for this training session"])
+            @include('components.alerts.warning', ['text' => "You haven't created any note for this training session", 'createRoute' => null])
         @endif
         <div class="row">
             @foreach($data['dataSchedule']->notes as $note)

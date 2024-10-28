@@ -8,12 +8,13 @@ use Illuminate\View\Component;
 
 class AddPerformanceReviewModal extends Component
 {
+    public $routeCreate;
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($routeCreate)
     {
-        //
+        $this->routeCreate = $routeCreate;
     }
 
     /**
@@ -21,6 +22,6 @@ class AddPerformanceReviewModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.add-performance-review-modal');
+        return view('components.modal.add-performance-review-modal');
     }
 }

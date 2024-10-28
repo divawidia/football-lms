@@ -190,7 +190,7 @@ class CoachService extends Service
     {
         $certifications = $this->coachRepository->getAllCoachCertification();
         $specializations = $this->coachRepository->getAllCoachSpecialization();
-        $teams = $this->teamRepository->getAcademyTeams();
+        $teams = $this->teamRepository->getByTeamside('Academy Team');
 
         return compact('certifications', 'specializations', 'teams');
     }

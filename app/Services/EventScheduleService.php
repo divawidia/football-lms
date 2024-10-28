@@ -539,6 +539,15 @@ class EventScheduleService extends Service
         return compact('totalParticipant', 'totalAttend', 'totalDidntAttend', 'totalIllness', 'totalInjured', 'totalOthers', 'dataSchedule');
     }
 
+    public function createTraining(Coach $coach = null)
+    {
+        if ($coach){
+            $teams = $this->teamRepository->getCoachManagedTeams($coach);
+        } else {
+            $teams = $this->teamRepository->getByTeamside('Academy Team');
+        }
+        return $teams;
+    }
     public function storeTraining(array $data, $userId){
         $data['userId'] = $userId;
         $data['eventType'] = 'Training';

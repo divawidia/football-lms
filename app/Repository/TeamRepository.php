@@ -22,14 +22,9 @@ class TeamRepository
         return $this->team->all();
     }
 
-    public function getAcademyTeams()
+    public function getByTeamside($teamSide)
     {
-        return $this->team->where('teamSide', 'Academy Team')->get();
-    }
-
-    public function getOpponentTeams()
-    {
-        return $this->team->where('teamSide', 'Opponent Team')->get();
+        return $this->team->where('teamSide', $teamSide)->get();
     }
 
     public function getTeamsHaventJoinedByCoach(Coach $coach)
@@ -45,6 +40,10 @@ class TeamRepository
             ->whereDoesntHave('players', function (Builder $query) use ($player) {
                 $query->where('playerId', $player->id);
             })->get();
+    }
+
+    public function getCoachManagedTeams(Coach $coach){
+        return $coach->teams;
     }
 
     public function find($id)

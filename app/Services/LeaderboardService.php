@@ -186,7 +186,7 @@ class LeaderboardService extends Service
     public function teamLeaderboard()
     {
 //        $query = Team::with('matches')->where('teamSide', 'Academy Team')->get();
-        $query = $this->teamRepository->getAcademyTeams();
+        $query = $this->teamRepository->getByTeamside('Academy Team');
         return $this->teamLeaderboardsDatatables($query);
     }
     public function coachsTeamLeaderboards($coach)

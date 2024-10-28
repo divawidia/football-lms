@@ -118,15 +118,14 @@ class EventScheduleController extends Controller
     public function createTraining()
     {
         if (isAllAdmin()){
-            $view = view('pages.admins.academies.schedules.trainings.create', [
-                'teams' => $this->eventScheduleService->getAcademyTeams(),
-            ]);
+            $teams = $this->eventScheduleService->createTraining();
         } elseif (isCoach()){
-            $view = view('pages.admins.academies.schedules.trainings.create', [
-                'teams' => $this->eventScheduleService->coachManagedTeams($this->getLoggedCoachUser()),
-            ]);
+            $coach = $this->getLoggedCoachUser();
+            $teams = $this->eventScheduleService->createTraining($coach);
         }
-        return $view;
+        return view('pages.admins.academies.schedules.trainings.create', [
+            'teams' => $teams,
+        ]);
     }
 
     public function createMatch()
@@ -200,8 +199,14 @@ class EventScheduleController extends Controller
      */
     public function editTraining(EventSchedule $schedule)
     {
+        if (isAllAdmin()){
+            $teams = $this->eventScheduleService->createTraining();
+        } elseif (isCoach()){
+            $coach = $this->getLoggedCoachUser();
+            $teams = $this->eventScheduleService->createTraining($coach);
+        }
         return view('pages.admins.academies.schedules.trainings.edit', [
-            'teams' => $this->eventScheduleService->getAcademyTeams(),
+            'teams' => $teams,
             'data' => $schedule
         ]);
     }
