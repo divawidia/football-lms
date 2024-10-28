@@ -21,15 +21,9 @@ class LeaderboardService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                if (isAllAdmin()){
                     $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player">
                             <span class="material-icons">visibility</span>
                         </a>';
-                } elseif(isCoach()){
-                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player">
-                            <span class="material-icons">visibility</span>
-                        </a>';
-                }
                 return $btn;
             })
             ->editColumn('teams', function ($item) {
@@ -124,15 +118,10 @@ class LeaderboardService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                if (isAllAdmin()){
                     $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('team-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View team">
                             <span class="material-icons">visibility</span>
                         </a>';
-                } elseif(isCoach()){
-                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.team-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View team">
-                            <span class="material-icons">visibility</span>
-                        </a>';
-                }
+
                 return $btn;
             })
             ->editColumn('name', function ($item) {

@@ -200,11 +200,11 @@ class PerformanceReportService extends Service
         );
     }
     public function latestMatch(){
-        return $this->eventScheduleRepository->getLatestMatch();
+        return $this->eventScheduleRepository->getEvent('Match', '0', 2);
     }
 
     public function coachLatestMatch(Coach $coach){
-        return $this->eventScheduleRepository->getCoachLatestMatch($coach);
+        return $this->eventScheduleRepository->coachEvent($coach, 'Match', '0', 2);
     }
 
 
@@ -229,7 +229,7 @@ class PerformanceReportService extends Service
                           </div>
                         </div>';
                 } elseif (isCoach()){
-                    $actionBtn = '<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
+                    $actionBtn = '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
                                         <span class="material-icons">visibility</span>
                                   </a>';
                 }
@@ -304,11 +304,11 @@ class PerformanceReportService extends Service
             ->make();
     }
     public function matchHistory(){
-        $data = $this->eventScheduleRepository->getMatchHistories();
+        $data = $this->eventScheduleRepository->getEvent('Match', '0');
         return $this->matchHistoryDatatables($data);
     }
     public function coachMatchHistory(Coach $coach){
-        $data = $this->eventScheduleRepository->getCoachMatchHistories($coach);
+        $data = $this->eventScheduleRepository->coachEvent($coach, 'Match', '0');
         return $this->matchHistoryDatatables($data);
     }
 }

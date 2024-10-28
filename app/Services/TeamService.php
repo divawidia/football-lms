@@ -20,14 +20,14 @@ class TeamService extends Service
         return Datatables::of($teamsData)
             ->addColumn('action', function ($item) {
                 $actionButton = '';
-                if (Auth::user()->hasRole('coach')){
+                if (isCoach()){
                     $actionButton =  '
-                          <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.team-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Team">
+                          <a class="btn btn-sm btn-outline-secondary" href="' . route('team-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Team">
                             <span class="material-icons">
                                 visibility
                             </span>
                           </a>';
-                } elseif (Auth::user()->hasRole('admin')){
+                } elseif (isAllAdmin()){
                     if ($item->status == '1') {
                         $statusButton = '<form action="' . route('deactivate-team', $item->id) . '" method="POST">
                                             ' . method_field("PATCH") . '
@@ -71,16 +71,9 @@ class TeamService extends Service
                 return count($item->coaches).' Coach(es)';
             })
             ->editColumn('name', function ($item) {
-                $teamName = '';
-                if (isAllAdmin()){
-                    $teamName = '<a href="' . route('team-managements.show', $item->id) . '">
+                $teamName = '<a href="' . route('team-managements.show', $item->id) . '">
                                     <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
                                 </a>';
-                } elseif (isCoach()){
-                    $teamName = '<a href="' . route('coach.team-managements.show', $item->id) . '">
-                                    <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
-                                </a>';
-                }
                 return '
                         <div class="media flex-nowrap align-items-center"
                              style="white-space: nowrap;">
@@ -129,14 +122,14 @@ class TeamService extends Service
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 $actionButton = '';
-                if (Auth::user()->hasRole('coach')){
+                if (isCoach()){
                     $actionButton =  '
-                          <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                          <a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
                             <span class="material-icons">
                                 visibility
                             </span>
                           </a>';
-                } elseif (Auth::user()->hasRole('admin')){
+                } elseif (isAllAdmin()){
                     $actionButton =  '
                                 <div class="dropdown">
                                   <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -168,7 +161,7 @@ class TeamService extends Service
                                 <div class="media-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
-                                            <a href="' . route('coach.player-managements.show', $item->id) . '">
+                                            <a href="' . route('player-managements.show', $item->id) . '">
                                                 <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
                                             </a>
                                             <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
@@ -240,14 +233,14 @@ class TeamService extends Service
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 $actionButton = '';
-                if (Auth::user()->hasRole('coach')){
+                if (isCoach()){
                     $actionButton =  '
                         <a class="btn btn-sm btn-outline-secondary" href="' . route('coach-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
                             <span class="material-icons">
                                 visibility
                             </span>
                         </a>';
-                } elseif (Auth::user()->hasRole('admin')){
+                } elseif (isAllAdmin()){
                     $actionButton =  '
                         <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -303,14 +296,14 @@ class TeamService extends Service
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 $actionButton = '';
-                if (Auth::user()->hasRole('coach')){
+                if (isCoach()){
                     $actionButton =  '
-                          <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.show', $item->competitionId) . '" data-toggle="tooltips" data-placement="bottom" title="View Competition">
+                          <a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->competitionId) . '" data-toggle="tooltips" data-placement="bottom" title="View Competition">
                             <span class="material-icons">
                                 visibility
                             </span>
                           </a>';
-                } elseif (Auth::user()->hasRole('admin')){
+                } elseif (isAllAdmin()){
                     if ($item->status == '1') {
                         $statusButton = '<form action="' . route('deactivate-competition', $item->competitionId) . '" method="POST">
                                             ' . method_field("PATCH") . '

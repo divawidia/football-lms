@@ -20,11 +20,13 @@ class AttendanceReportController extends Controller
             $data = $this->attendanceReportService->index();
             $lineChart = $this->attendanceReportService->attendanceLineChart();
             $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart();
-        } elseif ($this->isCoach()){
+            $playerAttendanceDatatablesRoute = url()->route('admin.attendance-report.index');
+        } elseif (isCoach()){
             $coach = $this->getLoggedCoachUser();
             $data = $this->attendanceReportService->coachIndex($coach);
             $lineChart = $this->attendanceReportService->coachAttendanceLineChart($coach);
             $doughnutChart = $this->attendanceReportService->coachAttendanceDoughnutChart($coach);
+            $playerAttendanceDatatablesRoute = url()->route('coach.attendance-report.index');
         }
 
 
@@ -35,6 +37,7 @@ class AttendanceReportController extends Controller
             'mostDidntAttendPercentage' => $data['mostDidntAttendPercentage'],
             'lineChart' => $lineChart,
             'doughnutChart' => $doughnutChart,
+            'playerAttendanceDatatablesRoute' => $playerAttendanceDatatablesRoute
         ]);
     }
 
@@ -45,7 +48,7 @@ class AttendanceReportController extends Controller
 
     public function coachIndex(){
         $coach = $this->getLoggedCoachUser();
-            return $this->attendanceReportService->coachAttendanceDatatables($coach);
+        return $this->attendanceReportService->coachAttendanceDatatables($coach);
     }
 
     public function show(Player $player){

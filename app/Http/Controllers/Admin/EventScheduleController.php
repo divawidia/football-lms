@@ -477,9 +477,7 @@ class EventScheduleController extends Controller
 
     public function indexPlayerMatchStats(EventSchedule $schedule)
     {
-        if (request()->ajax()){
             return $this->eventScheduleService->dataTablesPlayerStats($schedule);
-        }
     }
 
     public function getPlayerStats(EventSchedule $schedule, Player $player){

@@ -11,11 +11,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="@if(isAllAdmin())
-                    {{ route('attendance-report.index') }}
-                     @elseif(isCoach())
-                    {{ route('coach.attendance-report.index') }}
-                     @endif" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Attendance Report</a>
+                    <a href="{{ route('attendance-report.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Attendance Report</a>
                 </li>
             </ul>
         </div>
@@ -143,11 +139,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(isAllAdmin())
                     url: '{!! route('attendance-report.trainingTable', $player->id) !!}',
-                    @elseif(isCoach())
-                    url: '{!! route('coach.attendance-report.trainingTable', $player->id) !!}',
-                    @endif
                 },
                 columns: [
                     { data: 'eventName', name: 'eventName' },
@@ -174,11 +166,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(isAllAdmin())
                     url: '{!! route('attendance-report.matchDatatable', $player->id) !!}',
-                    @elseif(isCoach())
-                    url: '{!! route('coach.attendance-report.matchDatatable', $player->id) !!}',
-                    @endif
                 },
                 columns: [
                     { data: 'team', name: 'team' },

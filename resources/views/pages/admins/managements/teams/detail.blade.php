@@ -11,17 +11,10 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    @if(Auth::user()->hasRole('admin'))
                         <a href="{{ route('team-managements.index') }}" class="nav-link text-70">
                             <i class="material-icons icon--left">keyboard_backspace</i>
                             Back to Team Lists
                         </a>
-                    @elseif(Auth::user()->hasRole('coach'))
-                        <a href="{{ route('coach.team-managements.index') }}" class="nav-link text-70">
-                            <i class="material-icons icon--left">keyboard_backspace</i>
-                            Back to Team Lists
-                        </a>
-                    @endif
                 </li>
             </ul>
         </div>
@@ -38,7 +31,7 @@
                 <p class="lead text-white-50 d-flex align-items-center">{{ $team->ageGroup }}</p>
             </div>
 
-            @if(Auth::user()->hasRole('admin'))
+            @if(isAllAdmin())
                 <div class="dropdown">
                     <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Action
@@ -70,7 +63,7 @@
                         </button>
                     </div>
                 </div>
-            @elseif(Auth::user()->hasRole('coach'))
+            @elseif(isCoach())
                 <a class="btn btn-outline-white">
                     <span class="material-icons mr-3">
                         edit
@@ -634,11 +627,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin'))
                         url: '{!! url()->route('team-managements.teamPlayers', $team->id) !!}',
-                    @elseif(Auth::user()->hasRole('coach'))
-                        url: '{!! url()->route('coach.team-managements.teamPlayers', $team->id) !!}',
-                    @endif
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
@@ -671,11 +660,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin'))
                         url: '{!! url()->route('team-managements.teamCoaches', $team->id) !!}',
-                    @elseif(Auth::user()->hasRole('coach'))
-                        url: '{!! url()->route('coach.team-managements.teamCoaches', $team->id) !!}',
-                    @endif
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
@@ -698,11 +683,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin'))
                         url: '{!! url()->route('team-managements.teamCompetitions', $team->id) !!}',
-                    @elseif(Auth::user()->hasRole('coach'))
-                        url: '{!! url()->route('coach.team-managements.teamCompetitions', $team->id) !!}',
-                    @endif
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
@@ -728,11 +709,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin'))
                         url: '{!! url()->route('team-managements.training-histories', $team->id) !!}',
-                    @elseif(Auth::user()->hasRole('coach'))
-                        url: '{!! url()->route('coach.team-managements.training-histories', $team->id) !!}',
-                    @endif
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
@@ -758,11 +735,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    @if(Auth::user()->hasRole('admin'))
                         url: '{!! url()->route('team-managements.match-histories', $team->id) !!}',
-                    @elseif(Auth::user()->hasRole('coach'))
-                        url: '{!! url()->route('coach.team-managements.match-histories', $team->id) !!}',
-                    @endif
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },

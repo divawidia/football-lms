@@ -27,7 +27,7 @@
             {{--    Overview    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Overview</div>
-                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>
+{{--                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
             </div>
 
             <div class="row">
@@ -145,7 +145,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->current() !!}',
+                    url: '{!! $playerAttendanceDatatablesRoute !!}',
                 },
                 columns: [
                     { data: 'name', name: 'name' },

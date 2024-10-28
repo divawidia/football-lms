@@ -331,7 +331,7 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('create', [SkillAssessmentController::class, 'create'])->name('coach.performance-reviews.create');
                     Route::post('store', [SkillAssessmentController::class, 'store'])->name('coach.performance-reviews.store');
                 });
-                
+
                 Route::prefix('performance-reviews/{review}')->group(function () {
                     Route::get('', [SkillAssessmentController::class, 'edit'])->name('coach.performance-reviews.edit');
                     Route::put('update', [SkillAssessmentController::class, 'update'])->name('coach.performance-reviews.update');
@@ -491,7 +491,6 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::put('update-match-stats', [EventScheduleController::class, 'updateMatchStats'])->name('match-schedules.update-match-stats');
 
                 Route::prefix('player-match-stats')->group(function () {
-                    Route::get('', [EventScheduleController::class, 'indexPlayerMatchStats'])->name('match-schedules.index-player-match-stats');
                     Route::get('{player}', [EventScheduleController::class, 'getPlayerStats'])->name('match-schedules.show-player-match-stats');
                     Route::put('{player}/update', [EventScheduleController::class, 'updatePlayerStats'])->name('match-schedules.update-player-match-stats');
                 });
@@ -578,6 +577,9 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('{schedule}')->group(function () {
                 Route::get('', [EventScheduleController::class, 'showMatch'])->name('match-schedules.show');
+                Route::prefix('player-match-stats')->group(function () {
+                    Route::get('', [EventScheduleController::class, 'indexPlayerMatchStats'])->name('match-schedules.index-player-match-stats');
+                });
             });
         });
     });

@@ -24,17 +24,10 @@ class AttendanceReportService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                if (Auth::user()->hasRole('admin')){
                     $viewButton = '
                         <a class="btn btn-sm btn-outline-secondary" href="' . route('attendance-report.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player attendance detail">
                             <span class="material-icons">visibility</span>
                         </a>';
-                } elseif (Auth::user()->hasRole('coach')){
-                    $viewButton = '
-                        <a class="btn btn-sm btn-outline-secondary" href="' . route('coach.attendance-report.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player attendance detail">
-                            <span class="material-icons">visibility</span>
-                        </a>';
-                }
                 return $viewButton;
             })
             ->editColumn('teams', function ($item) {

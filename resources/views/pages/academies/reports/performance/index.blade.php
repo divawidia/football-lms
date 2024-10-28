@@ -27,7 +27,7 @@
             {{--    Overview    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Overview</div>
-                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>
+{{--                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
             </div>
 
             <div class="row mb-3">
@@ -127,7 +127,7 @@
 
             <div class="page-separator">
                 <div class="page-separator__text">Competition Leaderboard</div>
-                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>
+{{--                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
             </div>
 
             @foreach($competitions as $competition)
@@ -178,7 +178,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->current() !!}',
+                    url: '{!! $matchHistoryRoutes !!}',
                 },
                 columns: [
                     { data: 'team', name: 'team' },
@@ -204,11 +204,7 @@
                         serverSide: true,
                         ordering: true,
                         ajax: {
-                            @if(isAllAdmin())
                             url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
-                            @elseif(isCoach())
-                            url: '{!! route('coach.division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
-                            @endif
                         },
                         columns: [
                             { data: 'teams', name: 'teams' },

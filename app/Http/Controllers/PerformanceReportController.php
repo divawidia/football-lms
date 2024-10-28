@@ -20,18 +20,21 @@ class PerformanceReportController extends Controller
             $latestMatches = $this->performanceReportService->latestMatch();
             $overviewStats = $this->performanceReportService->overviewStats();
             $competitions = $this->competitionService->index();
+            $matchHistoryRoutes = url()->route('admin.performance-report.index');
         } elseif (isCoach()){
             $coach = $this->getLoggedCoachUser();
             $latestMatches = $this->performanceReportService->coachLatestMatch($coach);
             $overviewStats = $this->performanceReportService->coachOverviewStats($coach);
             $competitions = $this->competitionService->coachTeamsIndex($coach);
+            $matchHistoryRoutes = url()->route('coach.performance-report.index');
         }
 
 
         return view('pages.academies.reports.performance.index', [
             'latestMatches' => $latestMatches,
             'overviewStats' => $overviewStats,
-            'competitions' => $competitions
+            'competitions' => $competitions,
+            'matchHistoryRoutes' => $matchHistoryRoutes
         ]);
     }
 

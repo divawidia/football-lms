@@ -4,19 +4,20 @@ namespace App\Services;
 
 use App\Models\ProductCategory;
 use App\Models\Tax;
+use App\Repository\TaxRepository;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class TaxService extends Service
 {
-    private Tax $tax;
+    private TaxRepository $taxRepository;
 
-    public function __construct(Tax $tax){
-        $this->tax = $tax;
+    public function __construct(TaxRepository $taxRepository){
+        $this->taxRepository = $taxRepository;
     }
     public function index()
     {
-        $data = $this->tax->getAllTax();
+        $data = $this->taxRepository->getAll();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if ($item->status == '1') {
