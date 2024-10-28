@@ -208,7 +208,7 @@ class EventScheduleController extends Controller
     public function editMatch(EventSchedule $schedule)
     {
         return view('pages.admins.academies.schedules.matches.edit', [
-            'competitions' => $this->competitionService->index(),
+            'competitions' => $this->competitionService->getActiveCompetition(),
             'data' => $schedule
         ]);
     }
