@@ -13,13 +13,8 @@
                     @yield('title')
                 </h2>
                 <ol class="breadcrumb p-0 m-0">
-                    @if(Auth::user()->hasRole('admin'))
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ checkRoleDashboardRoute() }}">Home</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('training-schedules.index') }}">Training Schedule</a></li>
-                    @elseif(Auth::user()->hasRole('coach'))
-                        <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('coach.training-schedules.index') }}">Training Schedule</a></li>
-                    @endif
                     <li class="breadcrumb-item active">
                         @yield('title')
                     </li>
@@ -29,16 +24,7 @@
 
         <div class="container page-section">
             <div class="list-group">
-                @if(Auth::user()->hasRole('admin'))
-                @elseif(Auth::user()->hasRole('coach'))
-                @endif
-                <form action="
-                    @if(Auth::user()->hasRole('admin'))
-                        {{ route('training-schedules.store') }}
-                    @elseif(Auth::user()->hasRole('coach'))
-                        {{ route('coach.training-schedules.store') }}
-                    @endif"
-                      method="post">
+                <form action="{{ route('training-schedules.store') }}"method="post">
                     @csrf
                     <div class="list-group-item">
                         <div role="group" aria-labelledby="label-question" class="m-0 form-group">
