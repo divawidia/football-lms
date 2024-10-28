@@ -10,6 +10,7 @@ use App\Http\Requests\MatchStatsRequest;
 use App\Http\Requests\PlayerMatchStatsRequest;
 use App\Http\Requests\ScheduleNoteRequest;
 use App\Http\Requests\TrainingScheduleRequest;
+use App\Http\Requests\UpdateMatchScheduleRequest;
 use App\Models\Coach;
 use App\Models\Competition;
 use App\Models\EventSchedule;
@@ -226,7 +227,7 @@ class EventScheduleController extends Controller
         return redirect()->route('training-schedules.index');
     }
 
-    public function updateMatch(MatchScheduleRequest $request, EventSchedule $schedule)
+    public function updateMatch(UpdateMatchScheduleRequest $request, EventSchedule $schedule)
     {
         $data = $request->validated();
         $this->eventScheduleService->updateMatch($data, $schedule);
