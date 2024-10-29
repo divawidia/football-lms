@@ -15,7 +15,7 @@
                     <div class="form-group">
                         <label class="form-label" for="add_performanceReview">Performance Review</label>
                         <small class="text-danger">*</small>
-                        <textarea class="form-control" id="add_performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required></textarea>
+                        <textarea class="form-control" id="add_performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required rows="10"></textarea>
                         <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>

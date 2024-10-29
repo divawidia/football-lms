@@ -28,6 +28,7 @@
         <x-edit-skill-assessments-modal/>
 
         <x-add-performance-review-modal :routeCreate="route('coach.performance-reviews.store', ['player'=> ':id'])"/>
+        <x-edit-performance-review-modal/>
     @endif
 @endsection
 

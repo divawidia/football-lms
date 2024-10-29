@@ -16,7 +16,7 @@
                     <div class="form-group">
                         <label class="form-label" for="edit_performanceReview">Performance Review</label>
                         <small class="text-danger">*</small>
-                        <textarea class="form-control" id="edit_performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required></textarea>
+                        <textarea class="form-control" id="edit_performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required rows="10"></textarea>
                         <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -40,10 +40,6 @@
                 e.preventDefault();
                 const reviewId = $(this).attr('data-reviewId');
                 const eventId = $(this).attr('data-eventId');
-
-                $(modalId).modal('show');
-                $(modalId+' #eventId').val(eventId);
-                $(modalId+' #reviewId').val(reviewId);
 
                 $.ajax({
                     url: "{!! url()->route('coach.performance-reviews.edit', ['review' => ':id']) !!}".replace(':id', reviewId),
