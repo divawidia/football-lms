@@ -454,6 +454,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::patch('activate', [EventScheduleController::class, 'activateTraining'])->name('activate-training');
 
                 Route::get('player-skills', [EventScheduleController::class, 'dataTablesPlayerSkills'])->name('training-schedules.player-skills');
+                Route::get('player-performance-review', [PlayerPerformanceReviewController::class, 'indexAllPlayerInEvent'])->name('training-schedules.player-performance-review');
 
                 Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('training-schedules.player');
                 Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('training-schedules.update-player');

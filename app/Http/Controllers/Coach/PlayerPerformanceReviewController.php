@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Coach;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerPerformanceReviewRequest;
 use App\Http\Requests\SkillAssessmentRequest;
+use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\PlayerPerformanceReview;
 use App\Models\PlayerSkillStats;
@@ -32,6 +33,11 @@ class PlayerPerformanceReviewController extends Controller
     {
         $reviews = $this->performanceReviewService->index($player);
         return view('pages.coaches.academies.skill-assessments.index');
+    }
+
+    public function indexAllPlayerInEvent(EventSchedule $schedule)
+    {
+        return $this->performanceReviewService->indexAllPlayerInEvent($schedule);
     }
 
     public function edit(PlayerPerformanceReview $review): JsonResponse
