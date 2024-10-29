@@ -26,7 +26,7 @@ class PlayerRepository
 
     public function getCoachsPLayers($teams)
     {
-        return $this->player->with('user', 'teams')->withTeams($teams)->get();
+        return $this->player->with('user', 'teams', 'position', 'playerSkillStats')->withTeams($teams)->get();
     }
 
     public function getMostAttendedPLayer()

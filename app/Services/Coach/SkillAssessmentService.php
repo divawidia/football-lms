@@ -5,6 +5,7 @@ namespace App\Services\Coach;
 use App\Models\Coach;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
+use App\Repository\PlayerRepository;
 use App\Services\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -12,23 +13,19 @@ use Yajra\DataTables\Facades\DataTables;
 
 class SkillAssessmentService extends Service
 {
+    private PlayerRepository $playerRepository;
+    public function __construct(PlayerRepository $playerRepository)
+    {
+        $this->playerRepository = $playerRepository;
+    }
+
     // retrieve player data based on coach managed teams
     public function index($coach): JsonResponse
     {
-        $teams = $this->coachManagedTeams($coach);
+        $teams = $coach->teams;
 
         // query player data that included in teams that managed by logged in coach
-        $query = Player::with('user', 'teams', 'position', 'playerSkillStats')
-            ->whereHas('teams', function ($q) use ($teams) {
-                $q->where('teamId', $teams[0]->id);
-
-                // if teams are more than 1 then iterate more
-                if (count($teams) > 1) {
-                    for ($i = 1; $i < count($teams); $i++) {
-                        $q->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })->get();
+        $query = $this->playerRepository->getCoachsPLayers($teams);
 
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
@@ -40,7 +37,7 @@ class SkillAssessmentService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('coach.skill-assessments.skill-stats', $item->id) . '"><span class="material-icons">edit</span> View Skill Player</a>
+                            <a class="dropdown-item" href="' . route('skill-assessments.skill-stats', $item->id) . '"><span class="material-icons">edit</span> View Skill Player</a>
                             <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> Update Player Skill</a>
                             <button type="button" class="dropdown-item add-performance-review" id="' . $item->userId . '">
                                 <span class="material-icons">add</span>
@@ -70,7 +67,7 @@ class SkillAssessmentService extends Service
                             <div class="media-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
-                                        <a href="' . route('coach.skill-assessments.skill-stats', $item->id) . '">
+                                        <a href="' . route('skill-assessments.skill-stats', $item->id) . '">
                                             <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
                                         </a>
                                         <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
