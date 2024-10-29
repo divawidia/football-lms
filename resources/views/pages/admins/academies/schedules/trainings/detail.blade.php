@@ -288,7 +288,7 @@
 
         @if(isAllAdmin() || isCoach())
             <div class="page-separator">
-                <div class="page-separator__text">player skill evaluation</div>
+                <div class="page-separator__text">player skill & performance evaluation</div>
             </div>
             <x-player-skill-event-tables
                 :route="route('training-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
