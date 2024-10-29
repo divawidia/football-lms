@@ -15,7 +15,7 @@
                     <div class="form-group">
                         <label class="form-label" for="add_performanceReview">Performance Review</label>
                         <small class="text-danger">*</small>
-                        <textarea class="form-control" id="add_performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required>{{ old('note') }}</textarea>
+                        <textarea class="form-control" id="add_performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required></textarea>
                         <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -33,20 +33,22 @@
 @push('addon-script')
     <script>
         $(document).ready(function (){
+            const modalId = '#createPerformanceReviewModal';
+
             $('body').on('click', '.addPerformanceReview',function(e) {
                 e.preventDefault();
                 const playerId = $(this).attr('id');
                 const eventId = $(this).attr('data-eventId');
 
-                $('#createPerformanceReviewModal').modal('show');
-                $('#eventId').val(eventId);
-                $('#playerId').val(playerId);
+                $(modalId).modal('show');
+                $(modalId+' #eventId').val(eventId);
+                $(modalId+' #playerId').val(playerId);
             });
 
             // create schedule note data
             $('#formCreatePerformanceReviewModal').on('submit', function(e) {
                 e.preventDefault();
-                const playerId = $('#playerId').val();
+                const playerId = $(modalId+' #playerId').val();
 
                 $.ajax({
                     url: '{{ $routeCreate }}'.replace(':id', playerId),
@@ -72,7 +74,6 @@
                     },
                     error: function(xhr) {
                         const response = JSON.parse(xhr.responseText);
-                        console.log(response);
                         $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#add_" + key).addClass('is-invalid');
