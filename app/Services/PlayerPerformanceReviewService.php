@@ -34,18 +34,17 @@ class PlayerPerformanceReviewService extends Service
         $data = $schedule->players;
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($schedule){
-                $review = $this->performanceReviewRepository->getByPlayer($item, $schedule);
+                $review = $this->performanceReviewRepository->getByPlayer($item, $schedule)->first();
                 if (isAllAdmin()){
-                    $button = '<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.performance-reviews', ['player'=>$item->id]) . '" data-toggle="tooltip" data-placement="bottom" title="View All PLayer Performance Review">
+                    $button = '<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.performance-reviews', ['player'=>$item->id]) . '" data-toggle="tooltip" data-placement="bottom" title="View All Player Performance Review">
                                     <span class="material-icons">visibility</span>
                                </a>';
                 } elseif(isCoach()){
-                    if (!$review){
-                        $reviewBtn = '<a class="dropdown-item addPerformanceReview" id="'.$item->id.'" data-eventId="'.$schedule->id.'"><span class="material-icons">add</span> Add Player Performance Review</a>';
-                    } else {
+                    if ($review){
                         $reviewBtn = '<a class="dropdown-item editPerformanceReview" id="'.$item->id.'" data-eventId="'.$schedule->id.'"  data-reviewId="'.$review->id.'"><span class="material-icons">edit</span> Edit Player Performance Review</a>';
+                    } else {
+                        $reviewBtn = '<a class="dropdown-item addPerformanceReview" id="'.$item->id.'" data-eventId="'.$schedule->id.'"><span class="material-icons">add</span> Add Player Performance Review</a>';
                     }
-
                     $button = '<div class="dropdown">
                                       <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="material-icons">
@@ -53,7 +52,7 @@ class PlayerPerformanceReviewService extends Service
                                         </span>
                                       </button>
                                       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="' . route('player-managements.skill-stats', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View PLayer Performance Review</a>
+                                            <a class="dropdown-item" href="' . route('player-managements.skill-stats', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View All Player Performance Review</a>
                                             '.$reviewBtn.'
                                       </div>
                                 </div>';
@@ -78,7 +77,7 @@ class PlayerPerformanceReviewService extends Service
                         </div>';
             })
             ->editColumn('performance_review', function ($item) use ($schedule){
-                $review = $this->performanceReviewRepository->getByPlayer($item, $schedule);
+                $review = $this->performanceReviewRepository->getByPlayer($item, $schedule)->first();
                 if ($review){
                     $text = $review->performanceReview;
                 } else{
@@ -87,7 +86,7 @@ class PlayerPerformanceReviewService extends Service
                 return $text;
             })
             ->editColumn('performance_review_created', function ($item) use ($schedule){
-                $review = $this->performanceReviewRepository->getByPlayer($item, $schedule);
+                $review = $this->performanceReviewRepository->getByPlayer($item, $schedule)->first();
                 if ($review){
                     $text = date('M d, Y h:i A', strtotime($review->created_at));
                 } else{
@@ -96,7 +95,7 @@ class PlayerPerformanceReviewService extends Service
                 return $text;
             })
             ->editColumn('performance_review_last_updated', function ($item) use ($schedule){
-                $review = $this->performanceReviewRepository->getByPlayer($item, $schedule);
+                $review = $this->performanceReviewRepository->getByPlayer($item, $schedule)->first();
                 if ($review){
                     $text = date('M d, Y h:i A', strtotime($review->updated_at));
                 } else{
@@ -105,6 +104,7 @@ class PlayerPerformanceReviewService extends Service
                 return $text;
             })
             ->rawColumns(['action','name', 'performance_review', 'performance_review_created','performance_review_last_updated'])
+            ->addIndexColumn()
             ->make();
     }
 
