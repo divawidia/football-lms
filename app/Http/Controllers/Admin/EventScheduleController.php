@@ -189,11 +189,6 @@ class EventScheduleController extends Controller
         ]);
     }
 
-    public function dataTablesPlayerSkills(EventSchedule $schedule)
-    {
-        return $this->eventScheduleService->dataTablesPlayerSkills($schedule);
-    }
-
     /**
      * Show the form for editing the specified resource.
      */

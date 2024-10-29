@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Coach;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SkillAssessmentRequest;
+use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
 use App\Services\Coach\SkillAssessmentService;
@@ -25,6 +26,11 @@ class SkillAssessmentController extends Controller
             return $this->skillAssessmentService->index($this->getLoggedCoachUser());
         }
         return view('pages.coaches.academies.skill-assessments.index');
+    }
+
+    public function indexAllPlayerInEvent(EventSchedule $schedule)
+    {
+        return $this->skillAssessmentService->indexAllPlayerInEvent($schedule);
     }
 
     public function create(Player $player){

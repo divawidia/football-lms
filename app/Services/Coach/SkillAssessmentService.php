@@ -3,9 +3,11 @@
 namespace App\Services\Coach;
 
 use App\Models\Coach;
+use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
 use App\Repository\PlayerRepository;
+use App\Repository\PlayerSkillStatsRepository;
 use App\Services\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -14,9 +16,11 @@ use Yajra\DataTables\Facades\DataTables;
 class SkillAssessmentService extends Service
 {
     private PlayerRepository $playerRepository;
-    public function __construct(PlayerRepository $playerRepository)
+    private PlayerSkillStatsRepository $playerSkillStatsRepository;
+    public function __construct(PlayerRepository $playerRepository, PlayerSkillStatsRepository $playerSkillStatsRepository)
     {
         $this->playerRepository = $playerRepository;
+        $this->playerSkillStatsRepository = $playerSkillStatsRepository;
     }
 
     // retrieve player data based on coach managed teams
@@ -90,6 +94,85 @@ class SkillAssessmentService extends Service
                 return $date;
             })
             ->rawColumns(['action', 'name', 'lastUpdated', 'age', 'teams.name'])
+            ->addIndexColumn()
+            ->make();
+    }
+
+    public function indexAllPlayerInEvent(EventSchedule $schedule)
+    {
+        $data = $schedule->players;
+        return Datatables::of($data)
+            ->addColumn('action', function ($item) use ($schedule){
+                $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
+                if (isAllAdmin()){
+                    $button = '<a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.skill-stats', ['player'=>$item->id]) . '" data-toggle="tooltip" data-placement="bottom" title="View Player Skill Stats Detail">
+                                    <span class="material-icons">visibility</span>
+                               </a>';
+                } elseif(isCoach()){
+                    if (!$stats){
+                        $statsBtn = '<a class="dropdown-item addSkills" id="'.$item->id.'" data-eventId="'.$schedule->id.'"><span class="material-icons">edit</span> Evaluate Player Skills Stats</a>';
+                    } else {
+                        $statsBtn = '<a class="dropdown-item editSkills" id="'.$item->id.'" data-eventId="'.$schedule->id.'" data-statsId="'.$stats->id.'"><span class="material-icons">edit</span> Edit Player Skills Stats</a>';
+                    }
+                    $button = '<div class="dropdown">
+                                      <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="material-icons">
+                                            more_vert
+                                        </span>
+                                      </button>
+                                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="' . route('player-managements.skill-stats', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player Skill Stats</a>
+                                            '.$statsBtn.'
+                                      </div>
+                                </div>';
+                }
+                return $button;
+            })
+            ->editColumn('name', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center" style="white-space: nowrap;">
+                            <div class="avatar avatar-sm mr-8pt">
+                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
+                            </div>
+                            <div class="media-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex d-flex flex-column">
+                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>';
+            })
+            ->editColumn('stats_status', function ($item) use ($schedule){
+                $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
+                if ($stats){
+                    $date = 'Skill stats have been added';
+                } else{
+                    $date = 'Skill stats still not added yet';
+                }
+                return $date;
+            })
+            ->editColumn('stats_created', function ($item) use ($schedule){
+                $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
+                if ($stats){
+                    $date = date('M d, Y h:i A', strtotime($stats->created_at));
+                } else{
+                    $date = '-';
+                }
+                return $date;
+            })
+            ->editColumn('stats_updated', function ($item) use ($schedule){
+                $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
+                if ($stats){
+                    $date = date('M d, Y h:i A', strtotime($stats->updated_at));
+                } else{
+                    $date = '-';
+                }
+                return $date;
+            })
+            ->rawColumns(['action','name', 'stats_status', 'stats_created', 'stats_updated'])
             ->addIndexColumn()
             ->make();
     }
