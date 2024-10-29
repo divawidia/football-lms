@@ -475,6 +475,9 @@ Route::group(['middleware' => ['auth']], function () {
 
                 Route::get('get-assisted-player/{player}', [EventScheduleController::class, 'getAssistPlayer'])->name('get-assist-player');
 
+                Route::get('player-skills', [SkillAssessmentController::class, 'indexAllPlayerInEvent'])->name('match-schedules.player-skills');
+                Route::get('player-performance-review', [PlayerPerformanceReviewController::class, 'indexAllPlayerInEvent'])->name('match-schedules.player-performance-review');
+
                 Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('match-schedules.player');
                 Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('match-schedules.update-player');
 
