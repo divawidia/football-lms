@@ -36,7 +36,7 @@
                     { data: 'stats_status', name: 'stats_status' },
                     { data: 'stats_created', name: 'stats_created' },
                     { data: 'stats_updated', name: 'stats_updated' },
-                    { data: 'performance_review', name: 'performance_review', width: '40%' },
+                    { data: 'performance_review', name: 'performance_review', width: '50%' },
                     { data: 'performance_review_created', name: 'performance_review_created' },
                     { data: 'performance_review_last_updated', name: 'performance_review_last_updated'},
                     {

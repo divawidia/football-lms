@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TrainingVideoController;
 use App\Http\Controllers\Admin\TrainingVideoLessonController;
 use App\Http\Controllers\Coach\DashboardController as CoachDashboardController;
+use App\Http\Controllers\Coach\PlayerPerformanceReviewController;
 use App\Http\Controllers\Player\DashboardController as PlayerDashboardController;
 use App\Http\Controllers\Coach\SkillAssessmentController;
 use App\Http\Controllers\LeaderboardController;
@@ -328,16 +329,16 @@ Route::group(['middleware' => ['auth']], function () {
 
                 Route::prefix('{player}')->group(function () {
                     Route::prefix('performance-reviews')->group(function () {
-                        Route::get('', [PlayerController::class, 'skillStatsDetail'])->name('coach.player-managements.performance-reviews');
-                        Route::post('store', [SkillAssessmentController::class, 'store'])->name('coach.performance-reviews.store');
+                        Route::get('', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('coach.player-managements.performance-reviews');
+                        Route::post('store', [PlayerPerformanceReviewController::class, 'store'])->name('coach.performance-reviews.store');
                     });
 
                 });
 
                 Route::prefix('performance-reviews/{review}')->group(function () {
-                    Route::get('', [SkillAssessmentController::class, 'edit'])->name('coach.performance-reviews.edit');
-                    Route::put('update', [SkillAssessmentController::class, 'update'])->name('coach.performance-reviews.update');
-                    Route::delete('destroy', [SkillAssessmentController::class, 'destroy'])->name('coach.performance-reviews.destroy');
+                    Route::get('', [PlayerPerformanceReviewController::class, 'edit'])->name('coach.performance-reviews.edit');
+                    Route::put('update', [PlayerPerformanceReviewController::class, 'update'])->name('coach.performance-reviews.update');
+                    Route::delete('destroy', [PlayerPerformanceReviewController::class, 'destroy'])->name('coach.performance-reviews.destroy');
                 });
             });
 

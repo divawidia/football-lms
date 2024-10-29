@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PlayerPerformanceReviewRequest extends FormRequest
 {
@@ -22,7 +23,8 @@ class PlayerPerformanceReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'performanceReview' => ['required', 'string']
+            'performanceReview' => ['required', 'string'],
+            'eventId' => ['required', Rule::exists('event_schedules', 'id')]
         ];
     }
 }
