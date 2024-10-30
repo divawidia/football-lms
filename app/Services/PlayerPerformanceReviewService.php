@@ -21,13 +21,58 @@ class PlayerPerformanceReviewService extends Service
 
     public function index(Player $player)
     {
-        return $this->performanceReviewRepository->getByPlayer($player);
+        $data = $this->performanceReviewRepository->getByPlayer($player);
+        return Datatables::of($data)
+            ->addColumn('action', function ($item) use ($player){
+                if ($item->event->eventType == 'Training'){
+                    $route = route('training-schedule.show', ['schedule'=>$item->event->id]);
+                    $btnText = 'View Training Detail';
+                } elseif ($item->event->eventType == 'Match'){
+                    $route = route('match-schedule.show', ['schedule'=>$item->event->id]);
+                    $btnText = 'View Match Detail';
+                }
+
+                if (isAllAdmin()){
+                    $button = '<a class="btn btn-sm btn-outline-secondary" href="' . $route . '" data-toggle="tooltip" data-placement="bottom" title="'.$btnText.'">
+                                <span class="material-icons">visibility</span>
+                           </a>';
+                } elseif(isCoach()){
+                    $button = '<div class="dropdown">
+                                  <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="material-icons">
+                                        more_vert
+                                    </span>
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="' . $route . '"><span class="material-icons">visibility</span> '.$btnText.'</a>
+                                        <a class="dropdown-item editPerformanceReview" id="'.$player->id.'"  data-reviewId="'.$item->id.'"><span class="material-icons">edit</span> Edit Player Performance Review</a>
+                                  </div>
+                            </div>';
+                }
+                return $button;
+            })
+            ->editColumn('event', function ($item) {
+                if ($item->event->eventType == 'Training'){
+                    $text = $item->event->eventName;
+                } elseif ($item->event->eventType == 'Match'){
+                    $text = 'Match '.$item->event->teams[0]. ' Vs. '.$item->event->teams[1];
+                }
+                return $text;
+            })
+            ->editColumn('performance_review', function ($item){
+                return $item->performanceReview;
+            })
+            ->editColumn('performance_review_created', function ($item){
+                return $this->convertToDatetime($item->created_at);
+            })
+            ->editColumn('performance_review_last_updated', function ($item){
+                return $this->convertToDatetime($item->updated_at);
+            })
+            ->rawColumns(['action','event', 'performance_review', 'performance_review_created','performance_review_last_updated'])
+            ->addIndexColumn()
+            ->make();
     }
 
-    public function getByEvent(Player $player, EventSchedule $schedule)
-    {
-        return $this->performanceReviewRepository->getByPlayer($player, $schedule);
-    }
 
     public function indexAllPlayerInEvent(EventSchedule $schedule)
     {

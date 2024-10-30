@@ -31,8 +31,7 @@ class PlayerPerformanceReviewController extends Controller
 
     public function indexPlayer(Player $player)
     {
-        $reviews = $this->performanceReviewService->index($player);
-        return view('pages.coaches.academies.skill-assessments.index');
+        return $this->performanceReviewService->index($player);
     }
 
     public function indexAllPlayerInEvent(EventSchedule $schedule)
