@@ -25,30 +25,16 @@ class PlayerPerformanceReviewService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($player){
                 if ($item->event->eventType == 'Training'){
-                    $route = route('training-schedule.show', ['schedule'=>$item->event->id]);
+                    $route = route('training-schedules.show', ['schedule'=>$item->event->id]);
                     $btnText = 'View Training Detail';
                 } elseif ($item->event->eventType == 'Match'){
-                    $route = route('match-schedule.show', ['schedule'=>$item->event->id]);
+                    $route = route('match-schedules.show', ['schedule'=>$item->event->id]);
                     $btnText = 'View Match Detail';
                 }
 
-                if (isAllAdmin()){
                     $button = '<a class="btn btn-sm btn-outline-secondary" href="' . $route . '" data-toggle="tooltip" data-placement="bottom" title="'.$btnText.'">
                                 <span class="material-icons">visibility</span>
                            </a>';
-                } elseif(isCoach()){
-                    $button = '<div class="dropdown">
-                                  <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="material-icons">
-                                        more_vert
-                                    </span>
-                                  </button>
-                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item" href="' . $route . '"><span class="material-icons">visibility</span> '.$btnText.'</a>
-                                        <a class="dropdown-item editPerformanceReview" id="'.$player->id.'"  data-reviewId="'.$item->id.'"><span class="material-icons">edit</span> Edit Player Performance Review</a>
-                                  </div>
-                            </div>';
-                }
                 return $button;
             })
             ->editColumn('event', function ($item) {
@@ -97,7 +83,7 @@ class PlayerPerformanceReviewService extends Service
                                         </span>
                                       </button>
                                       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="' . route('player-managements.skill-stats', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View All Player Performance Review</a>
+                                            <a class="dropdown-item" href="' . route('player-managements.performance-reviews-page', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View All Player Performance Review</a>
                                             '.$reviewBtn.'
                                       </div>
                                 </div>';
@@ -113,7 +99,9 @@ class PlayerPerformanceReviewService extends Service
                             <div class="media-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                                        <a href="'.route('player-managements.show', ['player'=>$item->id]).'">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
+                                        </a>
                                         <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
                                     </div>
                                 </div>

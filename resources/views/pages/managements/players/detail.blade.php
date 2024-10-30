@@ -437,45 +437,11 @@
 
         {{--performance review Section--}}
         <div class="page-separator">
-            <div class="page-separator__text">performance review</div>
+            <div class="page-separator__text">player performance review</div>
         </div>
-        @if(count($performanceReviews)==0)
-            <x-warning-alert text="You haven't added any note performance review to this player yet"/>
-        @endif
-        @foreach($performanceReviews as $review)
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <div class="flex">
-                        <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($review->created_at)) }}</h4>
-                        <div class="card-subtitle text-50">Last updated
-                            at {{ date('D, M d Y h:i A', strtotime($review->updated_at)) }}</div>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="material-icons">
-                            more_vert
-                        </span>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item edit-note" id="{{ $review->id }}" href="">
-                                <span class="material-icons">edit</span>
-                                Edit Note
-                            </a>
-                            <button type="button" class="dropdown-item delete-note" id="{{ $review->id }}">
-                                <span class="material-icons">delete</span>
-                                Delete Note
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    @php
-                        echo $review->performanceReview
-                    @endphp
-                </div>
-            </div>
-        @endforeach
+        <x-player-performance-review-table
+            :route="route('player-managements.performance-reviews', ['player' => $data->id])"
+            tableId="performanceReviewTable"/>
     </div>
 
 @endsection

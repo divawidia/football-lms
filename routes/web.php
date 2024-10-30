@@ -411,6 +411,9 @@ Route::group(['middleware' => ['auth']], function () {
 
                 Route::get('upcoming-matches', [PlayerController::class, 'upcomingMatches'])->name('player-managements.upcoming-matches');
                 Route::get('upcoming-trainings', [PlayerController::class, 'upcomingTrainings'])->name('player-managements.upcoming-trainings');
+
+                Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player-managements.performance-reviews-page');
+                Route::get('performance-reviews-table', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('player-managements.performance-reviews');
             });
         });
 

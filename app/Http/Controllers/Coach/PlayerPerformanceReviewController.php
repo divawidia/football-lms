@@ -29,6 +29,10 @@ class PlayerPerformanceReviewController extends Controller
         return view('pages.coaches.academies.skill-assessments.index');
     }
 
+    public function playerPerformancePage(Player $player)
+    {
+        return view('pages.managements.players.performance-reviews', ['data' => $player]);
+    }
     public function indexPlayer(Player $player)
     {
         return $this->performanceReviewService->index($player);

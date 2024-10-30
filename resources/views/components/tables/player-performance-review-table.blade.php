@@ -7,8 +7,8 @@
                     <th>#</th>
                     <th>Event</th>
                     <th>performance review</th>
-                    <th>performance review created</th>
-                    <th>performance review last updated</th>
+                    <th>date created</th>
+                    <th>last updated</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -41,7 +41,7 @@
                         name: 'action',
                         orderable: false,
                         searchable: false,
-                        width: '15%'
+                        width: '5%'
                     },
                 ],
             });

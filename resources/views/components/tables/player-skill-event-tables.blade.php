@@ -6,8 +6,8 @@
                 <tr>
                     <th>Name</th>
                     <th>skill stats status</th>
-                    <th>skill stats created</th>
-                    <th>skill stats last updated</th>
+                    <th>date created</th>
+                    <th>last updated</th>
                     <th>Action</th>
                 </tr>
                 </thead>
