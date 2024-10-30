@@ -262,22 +262,22 @@
             @endforeach
         </div>
 
+        <div class="page-separator">
+            <div class="page-separator__text">player skills evaluation</div>
+        </div>
         @if(isAllAdmin() || isCoach())
-            <div class="page-separator">
-                <div class="page-separator__text">player skills evaluation</div>
-            </div>
             <x-player-skill-event-tables
                 :route="route('training-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
                 tableId="playerSkillsTable"/>
-
-            <div class="page-separator">
-                <div class="page-separator__text">player performance review</div>
-            </div>
-            <x-player-performance-review-event-table
-                :route="route('training-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
-                tableId="playerPerformanceReviewTable"/>
+        @elseif(isPlayer())
+            <x-player-skill-stats-card :allSkills="$allSkills"/>
         @endif
-
+        <div class="page-separator">
+            <div class="page-separator__text">player performance review</div>
+        </div>
+        <x-player-performance-review-event-table
+            :route="route('training-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
+            tableId="playerPerformanceReviewTable"/>
         {{--        @if(isPlayer())--}}
         {{--            --}}{{--    Performance Review    --}}
         {{--            <div class="page-separator">--}}
