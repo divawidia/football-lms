@@ -22,6 +22,6 @@ class PlayerSKillStatsCard extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.cards.player-s-kill-stats-card');
+        return view('components.cards.player-skill-stats-card');
     }
 }

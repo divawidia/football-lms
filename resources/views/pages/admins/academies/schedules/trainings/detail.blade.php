@@ -251,7 +251,7 @@
             @endif
         </div>
         @if(count($data['dataSchedule']->notes)==0)
-            <x-warning-alert text="You haven't created any note for this training session"/>
+            <x-warning-alert text="Training session note haven't created yet by coach"/>
         @endif
         @foreach($data['dataSchedule']->notes as $note)
             <x-event-note-card :note="$note"
@@ -280,7 +280,7 @@
             tableId="playerPerformanceReviewTable"/>
     @elseif(isPlayer())
         @if(count($data['playerPerformanceReviews'])==0)
-            @include('components.alerts.warning', ['text' => "You haven't created any note for this training session"])
+                <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
         @else
             @foreach($data['playerPerformanceReviews'] as $review)
                 <x-player-event-performance-review :review="$review"/>

@@ -169,7 +169,6 @@ class EventScheduleController extends Controller
         $data = $this->eventScheduleService->show($schedule);
         $players = $data['dataSchedule']->players()->paginate(6);
         $coaches = $data['dataSchedule']->coaches;
-        $allSkills = null;
 
         if ($this->isPlayer()){
             $player = $this->getLoggedPLayerUser();
@@ -180,7 +179,6 @@ class EventScheduleController extends Controller
             'data' => $data,
             'players' => $players,
             'coaches' => $coaches,
-            'allSkills' => $allSkills,
         ]);
     }
 
@@ -189,6 +187,11 @@ class EventScheduleController extends Controller
         $data = $this->eventScheduleService->show($schedule);
         $players = $data['dataSchedule']->players()->paginate(6);
         $coaches = $data['dataSchedule']->coaches;
+
+        if ($this->isPlayer()){
+            $player = $this->getLoggedPLayerUser();
+            $data = $this->eventScheduleService->show($schedule, $player);
+        }
 
         return view('pages.admins.academies.schedules.matches.detail', [
             'data' => $data,

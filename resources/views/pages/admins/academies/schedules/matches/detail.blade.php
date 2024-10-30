@@ -1278,31 +1278,41 @@
             @endif
         </div>
         @if(count($data['dataSchedule']->notes)==0)
-            <x-warning-alert text="You haven't created any note for this match session"/>
+            <x-warning-alert text="Match session note haven't created yet by coach"/>
         @endif
-        <div class="row">
-            @foreach($data['dataSchedule']->notes as $note)
-                <div class="col-md-4">
-                    <x-event-note-card :note="$note"
-                                       :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id'])"/>
-                </div>
-            @endforeach
-        </div>
+        @foreach($data['dataSchedule']->notes as $note)
+                <x-event-note-card :note="$note"
+                                   :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id'])"/>
+        @endforeach
 
+        {{--    PLAYER SKILLS EVALUATION SECTION    --}}
+        <div class="page-separator">
+            <div class="page-separator__text">player skills evaluation</div>
+        </div>
         @if(isAllAdmin() || isCoach())
-            <div class="page-separator">
-                <div class="page-separator__text">player skills evaluation</div>
-            </div>
             <x-player-skill-event-tables
                     :route="route('match-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
                     tableId="playerSkillsTable"/>
+        @elseif(isPlayer())
+            <x-player-skill-stats-card :allSkills="$data['allSkills']"/>
+        @endif
 
-            <div class="page-separator">
-                <div class="page-separator__text">player performance review</div>
-            </div>
+        {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
+        <div class="page-separator">
+            <div class="page-separator__text">player performance review</div>
+        </div>
+        @if(isAllAdmin() || isCoach())
             <x-player-performance-review-event-table
-                    :route="route('match-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
-                    tableId="playerPerformanceReviewTable"/>
+                :route="route('match-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
+                tableId="playerPerformanceReviewTable"/>
+        @elseif(isPlayer())
+            @if(count($data['playerPerformanceReviews'])==0)
+                <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
+            @else
+                @foreach($data['playerPerformanceReviews'] as $review)
+                    <x-player-event-performance-review :review="$review"/>
+                @endforeach
+            @endif
         @endif
     </div>
 
