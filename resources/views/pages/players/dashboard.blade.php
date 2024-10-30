@@ -18,44 +18,6 @@
 
     <div class="container page__container page-section">
         <div class="page-separator">
-            <div class="page-separator__text">Joined Teams</div>
-        </div>
-
-        <div class="row">
-            @foreach($teams as $team)
-                <div class="col-lg-6">
-                    <a class="card" href="">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6 d-flex flex-column flex-md-row align-items-center">
-                                    <img src="{{ Storage::url($team->logo) }}"
-                                         width="50"
-                                         height="50"
-                                         class="rounded-circle img-object-fit-cover"
-                                         alt="team-logo">
-                                    <div class="ml-md-3 text-center text-md-left">
-                                        <h5 class="mb-0">{{$team->teamName}}</h5>
-                                        <p class="text-50 lh-1 mb-0">{{$team->ageGroup}}</p>
-                                    </div>
-                                </div>
-                                <div class="col-6 d-flex flex-column justify-content-center align-items-end">
-                                    <div>
-                                        <i class='fa fa-users icon-16pt text-danger mr-2'></i>
-                                        {{ $team->players()->count() }} Players
-                                    </div>
-                                    <div>
-                                        <i class="fa fa-user-tie icon-16pt text-danger mr-2"></i>
-                                        {{ $team->coaches()->count() }} Coaches
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            @endforeach
-        </div>
-
-        <div class="page-separator">
             <div class="page-separator__text">Overview</div>
             {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
         </div>
@@ -81,7 +43,7 @@
                 {{--Teams Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
-                    <a href="{{ route('player-managements.skill-stats', $data->id) }}"
+                    <a href="{{ route('player.skill-stats') }}"
                        class="btn btn-white border btn-sm ml-auto">
                         View More
                         <span class="material-icons ml-2 icon-16pt">chevron_right</span>
@@ -93,57 +55,38 @@
                 </div>
             </div>
             <div class="col-sm-6 flex-column">
-                {{--performance review Section--}}
                 <div class="page-separator">
-                    <div class="page-separator__text">performance review</div>
+                    <div class="page-separator__text">Joined Teams</div>
                 </div>
-                @if(count($performanceReviews)==0)
-                    <div class="alert alert-light border-left-accent" role="alert">
-                        <div class="d-flex flex-wrap align-items-center">
-                            <i class="material-icons mr-8pt">error_outline</i>
-                            <div class="media-body"
-                                 style="min-width: 180px">
-                                <small class="text-black-100">You haven't added any note performance review to this
-                                    player
-                                    yet</small>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-                @foreach($performanceReviews as $review)
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <div class="flex">
-                                <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($review->created_at)) }}</h4>
-                                <div class="card-subtitle text-50">
-                                    Last updated at {{ date('D, M d Y h:i A', strtotime($review->updated_at)) }}
+
+                @foreach($teams as $team)
+                        <a class="card" href="">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6 d-flex flex-column flex-md-row align-items-center">
+                                        <img src="{{ Storage::url($team->logo) }}"
+                                             width="50"
+                                             height="50"
+                                             class="rounded-circle img-object-fit-cover"
+                                             alt="team-logo">
+                                        <div class="ml-md-3 text-center text-md-left">
+                                            <h5 class="mb-0">{{$team->teamName}}</h5>
+                                            <p class="text-50 lh-1 mb-0">{{$team->ageGroup}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 d-flex flex-column justify-content-center align-items-end">
+                                        <div>
+                                            <i class='fa fa-users icon-16pt text-danger mr-2'></i>
+                                            {{ $team->players()->count() }} Players
+                                        </div>
+                                        <div>
+                                            <i class="fa fa-user-tie icon-16pt text-danger mr-2"></i>
+                                            {{ $team->coaches()->count() }} Coaches
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="material-icons">
-                                    more_vert
-                                </span>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item edit-note" id="{{ $review->id }}" href="">
-                                        <span class="material-icons">edit</span>
-                                        Edit Note
-                                    </a>
-                                    <button type="button" class="dropdown-item delete-note" id="{{ $review->id }}">
-                                        <span class="material-icons">delete</span>
-                                        Delete Note
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            @php
-                                echo $review->performanceReview
-                            @endphp
-                        </div>
-                    </div>
+                        </a>
                 @endforeach
             </div>
         </div>
@@ -268,6 +211,14 @@
                 </div>
             </a>
         @endforeach
+
+        {{--performance review Section--}}
+        <div class="page-separator">
+            <div class="page-separator__text">player performance review</div>
+        </div>
+        <x-player-performance-review-table
+            :route="route('player-managements.performance-reviews', ['player' => $data->id])"
+            tableId="performanceReviewTable"/>
 
         {{--Parents/Guardians Section--}}
         <div class="page-separator">

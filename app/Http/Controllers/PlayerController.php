@@ -114,6 +114,22 @@ class PlayerController extends Controller
         ]);
     }
 
+    public function skillStatsDetailPlayer()
+    {
+        $player = $this->getLoggedPLayerUser();
+        $skillStats =$this->playerService->skillStatsChart($player);
+        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
+        $allSkills = $this->playerService->getSkillStats($player)->first();
+
+
+        return view('pages.managements.players.skill-detail', [
+            'data' => $player,
+            'skillStats' => $skillStats,
+            'skillStatsHistory' => $skillStatsHistory,
+            'allSkills' => $allSkills,
+        ]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

@@ -387,9 +387,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:player,web']], function () {
         Route::get('player-dashboard', [PlayerDashboardController::class, 'index'])->name('player.dashboard');
 
-        Route::get('skill-stats', [PlayerController::class, 'skillStatsDetail'])->name('player.skill-stats');
+        Route::get('skill-stats', [PlayerController::class, 'skillStatsDetailPlayer'])->name('player.skill-stats');
 
-        Route::get('performance-reviews', [PlayerController::class, 'skillStatsDetail'])->name('player.performance-reviews');
+        Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player.performance-reviews');
 
         Route::prefix('training-schedules')->group(function () {
             Route::get('players-trainings', [EventScheduleController::class, 'playerIndexTraining'])->name('player.training-schedules.index');
@@ -413,7 +413,6 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('upcoming-trainings', [PlayerController::class, 'upcomingTrainings'])->name('player-managements.upcoming-trainings');
 
                 Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player-managements.performance-reviews-page');
-                Route::get('performance-reviews-table', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('player-managements.performance-reviews');
             });
         });
 
@@ -571,6 +570,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::prefix('player-managements')->group(function () {
             Route::prefix('{player}')->group(function () {
                 Route::get('parents', [PlayerParentController::class, 'index'])->name('player-parents.index');
+
+                Route::get('performance-reviews-table', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('player-managements.performance-reviews');
             });
         });
 
