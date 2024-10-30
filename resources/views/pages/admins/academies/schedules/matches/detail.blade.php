@@ -8,20 +8,20 @@
 
 @section('modal')
     <x-edit-player-attendance-modal
-        :routeGet="route('match-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
-        :routeUpdate="route('match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
+            :routeGet="route('match-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
+            :routeUpdate="route('match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
 
     <x-edit-coach-attendance-modal
-        :routeGet="route('match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
-        :routeUpdate="route('match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
+            :routeGet="route('match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
+            :routeUpdate="route('match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
 
     <x-create-schedule-note-modal :routeCreate="route('match-schedules.create-note', $data['dataSchedule']->id)"
                                   :eventName="$data['dataSchedule']->eventName"/>
 
     <x-edit-schedule-note-modal
-        :routeEdit="route('match-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
-        :routeUpdate="route('match-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
-        :eventName="$data['dataSchedule']->eventName"/>
+            :routeEdit="route('match-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
+            :routeUpdate="route('match-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
+            :eventName="$data['dataSchedule']->eventName"/>
 
     <x-skill-assessments-modal/>
     <x-edit-skill-assessments-modal/>
@@ -34,7 +34,8 @@
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('match-schedules.store-match-scorer', $data['dataSchedule']->id) }}f" method="post" id="formAddScorerModal">
+                <form action="{{ route('match-schedules.store-match-scorer', $data['dataSchedule']->id) }}f"
+                      method="post" id="formAddScorerModal">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="coachName">Add team scorer of this match</h5>
@@ -99,7 +100,8 @@
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('match-schedules.store-own-goal', $data['dataSchedule']->id) }}" method="post" id="formAddOwnGoalModal">
+                <form action="{{ route('match-schedules.store-own-goal', $data['dataSchedule']->id) }}" method="post"
+                      id="formAddOwnGoalModal">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="coachName">Add own goal of this match</h5>
@@ -154,7 +156,8 @@
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <form action="{{ route('match-schedules.update-match-stats', $data['dataSchedule']->id) }}" method="post" id="formTeamMatchStats">
+                <form action="{{ route('match-schedules.update-match-stats', $data['dataSchedule']->id) }}"
+                      method="post" id="formTeamMatchStats">
                     @method('PUT')
                     @csrf
                     <div class="modal-header">
@@ -747,7 +750,7 @@
     </nav>
     <div class="page-section bg-primary">
         <div
-            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+                class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex mb-3 mb-md-0">
                 <h2 class="text-white mb-0">Match {{ $data['dataSchedule']->teams[0]->teamName }}
                     Vs {{ $data['dataSchedule']->teams[1]->teamName }}</h2>
@@ -770,7 +773,7 @@
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item"
                            href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}"><span
-                                class="material-icons">edit</span> Edit Match Schedule</a>
+                                    class="material-icons">edit</span> Edit Match Schedule</a>
                         @if($data['dataSchedule']->status == '1')
                             <form action="{{ route('end-match', $data['dataSchedule']->id) }}" method="POST">
                                 @method("PATCH")
@@ -879,11 +882,12 @@
         <div class="page-separator">
             <div class="page-separator__text">Scorer(s)</div>
             @if(isAllAdmin() || isCoach())
-            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span
-                    class="material-icons mr-2">add</span> Add team scorer</a>
-            <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span class="material-icons mr-2">add</span>
-                Add own goal</a>
-@endif
+                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span
+                            class="material-icons mr-2">add</span> Add team scorer</a>
+                <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span
+                            class="material-icons mr-2">add</span>
+                    Add own goal</a>
+            @endif
         </div>
         @if(count($data['dataSchedule']->matchScores)==0)
             <div class="alert alert-light border-left-accent" role="alert">
@@ -918,14 +922,14 @@
                                     @endif
                                 </div>
                                 @if(isAllAdmin() || isCoach())
-                                <button
-                                    class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif"
-                                    type="button" id="{{ $matchScore->id }}" data-toggle="tooltip"
-                                    data-placement="bottom" title="Delete scorer">
+                                    <button
+                                            class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif"
+                                            type="button" id="{{ $matchScore->id }}" data-toggle="tooltip"
+                                            data-placement="bottom" title="Delete scorer">
                                     <span class="material-icons">
                                         close
                                     </span>
-                                </button>
+                                    </button>
                                 @endif
                             </div>
                         </div>
@@ -938,9 +942,10 @@
         <div class="page-separator">
             <div class="page-separator__text">Match Stats</div>
             @if(isAllAdmin() || isCoach())
-            <a href="" id="updateMatchStats" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span>
-                Update match stats</a>
-@endif
+                <a href="" id="updateMatchStats" class="btn btn-primary btn-sm ml-auto"><span
+                            class="material-icons mr-2">add</span>
+                    Update match stats</a>
+            @endif
         </div>
         <div class="card">
             <div class="card-header">
@@ -1115,14 +1120,14 @@
                     <div class="row text-center">
                         <div class="col-4">
                             <strong
-                                class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamFoulsConceded }}</strong>
+                                    class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamFoulsConceded }}</strong>
                         </div>
                         <div class="col-4">
                             <strong class="flex">Fouls conceded</strong>
                         </div>
                         <div class="col-4">
                             <strong
-                                class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamFoulsConceded }}</strong>
+                                    class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamFoulsConceded }}</strong>
                         </div>
                     </div>
                 </li>
@@ -1268,16 +1273,18 @@
         <div class="page-separator">
             <div class="page-separator__text">Match Note</div>
             @if(isAllAdmin() || isCoach())
-                <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+                <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span
+                            class="material-icons mr-2">add</span> Add new note</a>
             @endif
         </div>
         @if(count($data['dataSchedule']->notes)==0)
-            @include('components.alerts.warning', ['text' => "You haven't created any note for this match session", 'createRoute' => null])
+            <x-warning-alert text="You haven't created any note for this match session"/>
         @endif
         <div class="row">
             @foreach($data['dataSchedule']->notes as $note)
                 <div class="col-md-4">
-                    <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id'])"/>
+                    <x-event-note-card :note="$note"
+                                       :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id'])"/>
                 </div>
             @endforeach
         </div>
@@ -1287,15 +1294,15 @@
                 <div class="page-separator__text">player skills evaluation</div>
             </div>
             <x-player-skill-event-tables
-                :route="route('match-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
-                tableId="playerSkillsTable"/>
+                    :route="route('match-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
+                    tableId="playerSkillsTable"/>
 
             <div class="page-separator">
                 <div class="page-separator__text">player performance review</div>
             </div>
             <x-player-performance-review-event-table
-                :route="route('match-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
-                tableId="playerPerformanceReviewTable"/>
+                    :route="route('match-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
+                    tableId="playerPerformanceReviewTable"/>
         @endif
     </div>
 

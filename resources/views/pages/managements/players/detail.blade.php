@@ -7,7 +7,8 @@
 @endsection
 
 @section('modal')
-    <x-add-teams-to-player-coach-modal :route="route('player-managements.updateTeams', ['player' => $data->id])" :teams="$hasntJoinedTeams"/>
+    <x-add-teams-to-player-coach-modal :route="route('player-managements.updateTeams', ['player' => $data->id])"
+                                       :teams="$hasntJoinedTeams"/>
     <x-change-password-modal :route="route('player-managements.change-password', ['player' => ':id'])"/>
 @endsection
 
@@ -38,14 +39,16 @@
             </div>
             @if(isAllAdmin())
                 <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
                         Action
                         <span class="material-icons ml-3">
                             keyboard_arrow_down
                         </span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('player-managements.edit', $data->id) }}"><span class="material-icons">edit</span> Edit Player</a>
+                        <a class="dropdown-item" href="{{ route('player-managements.edit', $data->id) }}"><span
+                                class="material-icons">edit</span> Edit Player</a>
                         @if($data->user->status == '1')
                             <form action="{{ route('deactivate-player', $data->id) }}" method="POST">
                                 @method("PATCH")
@@ -63,7 +66,8 @@
                                 </button>
                             </form>
                         @endif
-                        <a class="dropdown-item changePassword" id="{{ $data->id }}"><span class="material-icons">lock</span> Change Player Password</a>
+                        <a class="dropdown-item changePassword" id="{{ $data->id }}"><span
+                                class="material-icons">lock</span> Change Player Password</a>
                         <button type="button" class="dropdown-item delete-user" id="{{$data->id}}">
                             <span class="material-icons text-danger">delete</span> Delete Player
                         </button>
@@ -230,13 +234,15 @@
                 {{--Teams Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
-                    <a href="{{ route('player-managements.skill-stats', $data->id) }}" class="btn btn-white border btn-sm ml-auto">
+                    <a href="{{ route('player-managements.skill-stats', $data->id) }}"
+                       class="btn btn-white border btn-sm ml-auto">
                         View More
                         <span class="material-icons ml-2 icon-16pt">chevron_right</span>
                     </a>
                 </div>
                 <div class="card">
-                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']" :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
+                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
+                                                      :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
                 </div>
 
             </div>
@@ -260,20 +266,17 @@
         {{--Upcoming Matches Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
-            <a href="{{ route('player-managements.upcoming-matches', $data->id) }}" class="btn btn-white border btn-sm ml-auto">
+            <a href="{{ route('player-managements.upcoming-matches', $data->id) }}"
+               class="btn btn-white border btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
         </div>
         @if(count($overview['upcomingMatches']) == 0)
-            @include('components.alerts.warning', ['text' => 'There are no matches scheduled at this time'])
+            <x-warning-alert text="There are no matches scheduled at this time"/>
         @endif
         @foreach($overview['upcomingMatches'] as $match)
-            <a class="card" href="@if(isAllAdmin())
-                    {{ route('match-schedules.show', $match->id) }}
-                    @elseif(isCoach())
-                    {{ route('coach.match-schedules.show', $match->id) }}
-                    @endif">
+            <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-4 d-flex flex-column flex-md-row align-items-center">
@@ -326,13 +329,14 @@
         {{--Upcoming Trainings Section--}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Trainings</div>
-            <a href="{{ route('player-managements.upcoming-trainings', $data->id) }}" class="btn btn-white border btn-sm ml-auto">
+            <a href="{{ route('player-managements.upcoming-trainings', $data->id) }}"
+               class="btn btn-white border btn-sm ml-auto">
                 View More
                 <span class="material-icons ml-2 icon-16pt">chevron_right</span>
             </a>
         </div>
         @if(count($overview['upcomingTrainings']) == 0)
-            @include('components.alerts.warning', ['text' => 'There are no trainings scheduled at this time'])
+            <x-warning-alert text="There are no trainings scheduled at this time"/>
         @endif
         <div class="row">
             @foreach($overview['upcomingTrainings'] as $training)
@@ -436,7 +440,7 @@
             <div class="page-separator__text">performance review</div>
         </div>
         @if(count($performanceReviews)==0)
-            @include('components.alerts.warning', ['text' => "You haven't added any note performance review to this player yet"])
+            <x-warning-alert text="You haven't added any note performance review to this player yet"/>
         @endif
         @foreach($performanceReviews as $review)
             <div class="card">

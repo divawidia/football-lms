@@ -88,7 +88,8 @@
                     </a>
                 </div>
                 <div class="card">
-                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']" :datas="$playerSkillStats['data']" chartId="uniqueChartId"/>
+                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
+                                                      :datas="$playerSkillStats['data']" chartId="uniqueChartId"/>
                 </div>
             </div>
             <div class="col-sm-6 flex-column">
@@ -119,7 +120,8 @@
                                 </div>
                             </div>
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="material-icons">
                                     more_vert
                                 </span>
@@ -151,7 +153,7 @@
             <div class="page-separator__text">Latest Trainings</div>
         </div>
         @if(count($latestTrainings) == 0)
-            @include('components.alerts.warning', ['text' => 'There are no latest trainings at this moment'])
+            <x-warning-alert text="There are no latest trainings at this moment"/>
         @endif
         <div class="row">
             @foreach($latestTrainings as $training)
@@ -205,7 +207,7 @@
             <div class="page-separator__text">Latest Match</div>
         </div>
         @if(count($latestMatches) == 0)
-            @include('components.alerts.warning', ['text' => 'There are no latest matches at this moment'])
+            <x-warning-alert text="There are no latest matches at this moment"/>
         @endif
         @foreach($latestMatches as $match)
             <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
@@ -227,7 +229,7 @@
                                 - {{ $match->teams[1]->pivot->teamScore }}</h2>
                         </div>
                         <div
-                            class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
+                                class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
                             <div class="mr-md-3 text-center text-md-right">
                                 <h6 class="mb-0">{{ $match->teams[1]->teamName }}</h6>
                                 <p class="text-50 lh-1 mb-0">{{ $match->teams[1]->ageGroup }}</p>
@@ -281,7 +283,7 @@
             </a>
         </div>
         @if(count($overview['upcomingMatches']) == 0)
-            @include('components.alerts.warning', ['text' => 'There are no matches scheduled at this moment'])
+            <x-warning-alert text="There are no matches scheduled at this moment"/>
         @endif
         @foreach($overview['upcomingMatches'] as $match)
             <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
@@ -302,7 +304,7 @@
                             <h2 class="mb-0">Vs.</h2>
                         </div>
                         <div
-                            class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
+                                class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
                             <div class="mr-md-3 text-center text-md-right">
                                 <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
                                 <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
@@ -342,7 +344,7 @@
             </a>
         </div>
         @if(count($overview['upcomingTrainings']) == 0)
-            @include('components.alerts.warning', ['text' => 'There are no trainings scheduled at this moment'])
+            <x-warning-alert text="There are no trainings scheduled at this moment"/>
         @endif
         <div class="row">
             @foreach($overview['upcomingTrainings'] as $training)

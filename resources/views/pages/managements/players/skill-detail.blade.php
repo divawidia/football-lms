@@ -32,7 +32,7 @@
     </nav>
     <div class="page-section bg-primary">
         <div
-            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+                class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($data->user->foto) }}"
                  width="104"
                  height="104"
@@ -57,7 +57,8 @@
         </div>
         <div class="card align-items-center">
             <div class="card-body">
-                <x-player-skill-stats-radar-chart :labels="$skillStats['label']" :datas="$skillStats['data']" chartId="skillStatsChart"/>
+                <x-player-skill-stats-radar-chart :labels="$skillStats['label']" :datas="$skillStats['data']"
+                                                  chartId="skillStatsChart"/>
             </div>
         </div>
 
@@ -102,12 +103,13 @@
 
         {{--All Skill Stats Section--}}
         @if($allSkills == null)
-            @include('components.alerts.warning', ['text' => 'This player has not added any skill stats yet'])
+            <x-warning-alert text="This player has not added any skill stats yet"/>
         @else
             <div class="card">
                 <div class="card-Header d-flex align-items-center p-3">
                     <h4 class="card-title">SKILLS</h4>
-                    <div class="card-subtitle text-50 ml-auto">Last updated at {{ date('D, M d Y h:i A', strtotime($allSkills->updated_at)) }}</div>
+                    <div class="card-subtitle text-50 ml-auto">Last updated
+                        at {{ date('D, M d Y h:i A', strtotime($allSkills->updated_at)) }}</div>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
