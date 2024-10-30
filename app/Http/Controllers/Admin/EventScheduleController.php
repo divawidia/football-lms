@@ -17,6 +17,7 @@ use App\Models\EventSchedule;
 use App\Models\MatchScore;
 use App\Models\Player;
 use App\Models\ScheduleNote;
+use App\Repository\PlayerSkillStatsRepository;
 use App\Services\CompetitionService;
 use App\Services\EventScheduleService;
 use Illuminate\Http\JsonResponse;
@@ -168,11 +169,18 @@ class EventScheduleController extends Controller
         $data = $this->eventScheduleService->show($schedule);
         $players = $data['dataSchedule']->players()->paginate(6);
         $coaches = $data['dataSchedule']->coaches;
+        $allSkills = null;
+
+        if ($this->isPlayer()){
+            $player = $this->getLoggedPLayerUser();
+            $data = $this->eventScheduleService->show($schedule, $player);
+        }
 
         return view('pages.admins.academies.schedules.trainings.detail', [
             'data' => $data,
             'players' => $players,
-            'coaches' => $coaches
+            'coaches' => $coaches,
+            'allSkills' => $allSkills,
         ]);
     }
 

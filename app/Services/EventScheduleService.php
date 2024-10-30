@@ -10,6 +10,8 @@ use App\Models\PlayerMatchStats;
 use App\Models\ScheduleNote;
 use App\Models\Team;
 use App\Repository\EventScheduleRepository;
+use App\Repository\PlayerPerformanceReviewRepository;
+use App\Repository\PlayerSkillStatsRepository;
 use App\Repository\TeamRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
@@ -22,10 +24,18 @@ class EventScheduleService extends Service
 {
     private EventScheduleRepository $eventScheduleRepository;
     private TeamRepository $teamRepository;
-    public function __construct(EventScheduleRepository $eventScheduleRepository, TeamRepository $teamRepository)
+    private PlayerSkillStatsRepository $playerSkillStatsRepository;
+    private PlayerPerformanceReviewRepository $playerPerformanceReviewRepository;
+    public function __construct(
+        EventScheduleRepository $eventScheduleRepository,
+        TeamRepository $teamRepository,
+        PlayerSkillStatsRepository $playerSkillStatsRepository,
+        PlayerPerformanceReviewRepository $playerPerformanceReviewRepository)
     {
         $this->eventScheduleRepository = $eventScheduleRepository;
         $this->teamRepository = $teamRepository;
+        $this->playerSkillStatsRepository = $playerSkillStatsRepository;
+        $this->playerPerformanceReviewRepository = $playerPerformanceReviewRepository;
     }
 
     public function indexMatch(): Collection
@@ -495,7 +505,7 @@ class EventScheduleService extends Service
             ->make();
     }
 
-    public function show(EventSchedule $schedule){
+    public function show(EventSchedule $schedule, Player $player = null){
         $totalParticipant = count($schedule->players) + count($schedule->coaches);
 
         $playerAttended = $schedule->players()
@@ -536,7 +546,15 @@ class EventScheduleService extends Service
 
         $dataSchedule = $schedule;
 
-        return compact('totalParticipant', 'totalAttend', 'totalDidntAttend', 'totalIllness', 'totalInjured', 'totalOthers', 'dataSchedule');
+        $allSkills = null;
+        $playerPerformanceReviews = null;
+        if ($player){
+            $allSkills = $this->playerSkillStatsRepository->getByPlayer($player, $schedule)->first();
+            $playerPerformanceReviews = $this->playerPerformanceReviewRepository->getByPlayer($player, $schedule);
+
+        }
+
+        return compact('totalParticipant', 'totalAttend', 'totalDidntAttend', 'totalIllness', 'totalInjured', 'totalOthers', 'dataSchedule', 'allSkills', 'playerPerformanceReviews');
     }
 
     public function createTraining(Coach $coach = null)
