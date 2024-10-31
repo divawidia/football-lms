@@ -241,35 +241,30 @@ class PlayerService extends Service
 
     public function show(Player $player)
     {
+        $stats = ['minutesPlayed',
+            'goals',
+            'assists',
+            'ownGoal',
+            'shots',
+            'passes',
+            'fouls',
+            'yellowCards',
+            'redCards',
+            'saves',
+            ];
+        $results = ['Win', 'Lose', 'Draw'];
+
         $matchPlayed = $this->playerRepository->countMatchPlayed($player);
         $thisMonthMatchPlayed = $this->playerRepository->countMatchPlayed($player, Carbon::now()->startOfMonth(),Carbon::now());
 
-        $minutesPlayed = $this->playerRepository->playerMatchStatsSum($player, 'minutesPlayed');
-        $thisMonthMinutesPlayed = $this->playerRepository->playerMatchStatsSum($player, 'minutesPlayed', Carbon::now()->startOfMonth(),Carbon::now());
-
-        $fouls = $this->playerRepository->playerMatchStatsSum($player, 'fouls');
-        $thisMonthFouls = $this->playerRepository->playerMatchStatsSum($player, 'fouls', Carbon::now()->startOfMonth(),Carbon::now());
-
-        $saves = $this->playerRepository->playerMatchStatsSum($player, 'saves');
-        $thisMonthSaves = $this->playerRepository->playerMatchStatsSum($player, 'saves', Carbon::now()->startOfMonth(),Carbon::now());
-
-        $goals = $this->playerRepository->playerMatchStatsSum($player, 'goals');
-        $thisMonthGoals = $this->playerRepository->playerMatchStatsSum($player, 'goals', Carbon::now()->startOfMonth(),Carbon::now());
-
-        $assists = $this->playerRepository->playerMatchStatsSum($player, 'assists');
-        $thisMonthAssists = $this->playerRepository->playerMatchStatsSum($player, 'assists', Carbon::now()->startOfMonth(),Carbon::now());
-
-        $ownGoals = $this->playerRepository->playerMatchStatsSum($player, 'ownGoal');
-        $thisMonthOwnGoals = $this->playerRepository->playerMatchStatsSum($player, 'ownGoal', Carbon::now()->startOfMonth(),Carbon::now());
-
-        $wins = $this->playerRepository->matchResults($player, 'Win');
-        $thisMonthWins = $this->playerRepository->matchResults($player, 'Win', Carbon::now()->startOfMonth(),Carbon::now());
-
-        $losses = $this->playerRepository->matchResults($player, 'Lose');
-        $thisMonthLosses = $this->playerRepository->matchResults($player, 'Lose', Carbon::now()->startOfMonth(),Carbon::now());
-
-        $draws = $this->playerRepository->matchResults($player, 'Draw');
-        $thisMonthDraws = $this->playerRepository->matchResults($player, 'Draw', Carbon::now()->startOfMonth(),Carbon::now());
+        foreach ($stats as $stat){
+            $stats[$stat] = $this->playerRepository->playerMatchStatsSum($player, $stat);
+            $stats[$stat.'ThisMonth'] = $this->playerRepository->playerMatchStatsSum($player, $stat, Carbon::now()->startOfMonth(),Carbon::now());
+        }
+        foreach ($results as $result){
+            $stats[$result] = $this->playerRepository->matchResults($player, $result);
+            $stats[$result.'ThisMonth'] = $this->playerRepository->matchResults($player, $result, Carbon::now()->startOfMonth(),Carbon::now());
+        }
 
         $upcomingMatches = $this->eventScheduleRepository->playerEvent($player, '1','Match', 2);
 
@@ -285,24 +280,7 @@ class PlayerService extends Service
         return compact(
             'matchPlayed',
             'thisMonthMatchPlayed',
-            'minutesPlayed',
-            'thisMonthMinutesPlayed',
-            'fouls',
-            'thisMonthFouls',
-            'saves',
-            'thisMonthSaves',
-            'goals',
-            'thisMonthGoals',
-            'assists',
-            'thisMonthAssists',
-            'ownGoals',
-            'thisMonthOwnGoals',
-            'wins',
-            'thisMonthWins',
-            'losses',
-            'thisMonthLosses',
-            'draws',
-            'thisMonthDraws',
+            'stats',
             'upcomingMatches',
             'upcomingTrainings',
             'playerAge',
@@ -310,7 +288,7 @@ class PlayerService extends Service
             'playerJoinDate',
             'playerCreatedAt',
             'playerUpdatedAt',
-            'playerLastSeen'
+            'playerLastSeen',
         );
     }
 

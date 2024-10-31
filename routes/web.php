@@ -604,5 +604,9 @@ Route::group(['middleware' => ['auth']], function () {
             });
         });
 
+        Route::prefix('performance-reports')->group(function () {
+            Route::get('', [PerformanceReportController::class, 'index'])->name('performance-report.index');
+        });
+
     });
 });
