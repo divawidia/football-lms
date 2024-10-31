@@ -18,6 +18,10 @@ class PerformanceReportController extends Controller
         $this->playerService = $playerService;
     }
     public function index(){
+        $playerSkillStats = null;
+        $latestTrainings = null;
+        $performanceReviews = null;
+        $player = null;
         if (isAllAdmin()){
             $latestMatches = $this->performanceReportService->latestMatch();
             $overviewStats = $this->performanceReportService->overviewStats();
@@ -33,6 +37,11 @@ class PerformanceReportController extends Controller
             $player = $this->getLoggedPLayerUser();
             $playerSkillStats = $this->playerService->skillStatsChart($player);
             $latestMatches = $this->playerService->playerLatestMatch($player);
+            $latestTrainings = $this->playerService->playerLatestTraining($player);
+            $competitions = $this->competitionService->playerTeamsIndex($player);
+            $overviewStats = $this->playerService->show($player);
+            $performanceReviews = $player->playerPerformanceReview;
+            $matchHistoryRoutes = url()->route('player.performance-report.index');
         }
 
 
@@ -40,7 +49,11 @@ class PerformanceReportController extends Controller
             'latestMatches' => $latestMatches,
             'overviewStats' => $overviewStats,
             'competitions' => $competitions,
-            'matchHistoryRoutes' => $matchHistoryRoutes
+            'matchHistoryRoutes' => $matchHistoryRoutes,
+            'playerSkillStats' => $playerSkillStats,
+            'latestTrainings' => $latestTrainings,
+            'performanceReviews' => $performanceReviews,
+            'player' => $player
         ]);
     }
 
@@ -51,7 +64,11 @@ class PerformanceReportController extends Controller
 
     public function coachIndex(){
         $coach = $this->getLoggedCoachUser();
-            return $this->performanceReportService->coachMatchHistory($coach);
+        return $this->performanceReportService->modelMatchHistory($coach);
+    }
+    public function playerIndex(){
+        $player = $this->getLoggedPLayerUser();
+        return $this->performanceReportService->modelMatchHistory($player);
     }
 
 }

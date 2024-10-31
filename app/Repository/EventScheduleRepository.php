@@ -33,42 +33,18 @@ class EventScheduleRepository
         }
         return $query->orderBy('date')->get();
     }
-    public function coachEvent(Coach $coach, $eventType, $status, $take = null)
+
+    public function getEventByModel($model, $eventType, $status, $take = null, $sortDateDirection = 'asc')
     {
-        $query = $coach->schedules()->with('teams', 'competition')
+        $query = $model->schedules()->with('teams', 'competition')
             ->where('eventType', $eventType)
             ->where('status', $status);
         if ($take){
             $query->take($take);
         }
-        return $query->orderBy('date')->get();
+        return $query->orderBy('date', $sortDateDirection)->get();
     }
 
-
-//    public function getCoachMatchHistories(Coach $coach)
-//    {
-//        return $this->endedCoachMatch($coach)->get();
-//    }
-//
-//    public function getLatestMatch()
-//    {
-//        return $this->endedMatch()->take(2)->get();
-//    }
-//    public function getCoachLatestMatch(Coach $coach)
-//    {
-//        return $this->endedCoachMatch($coach)->take(2)->get();
-//    }
-
-    public function playerEvent(Player $player, $status, $eventType, $take = null, $sortDateDirection = 'asc')
-    {
-        $query = $player->schedules()
-            ->where('eventType', $eventType)
-            ->where('status', $status);
-        if ($take){
-            $query->take($take);
-        }
-            return $query->orderBy('date', $sortDateDirection)->get();
-    }
     public function playerLatestEvent(Player $player, $eventType, $take = 2)
     {
         return $player->schedules()

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Coach;
 use App\Models\Competition;
 use App\Models\GroupDivision;
+use App\Models\Player;
 use App\Models\Team;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CompetitionRepository;
@@ -29,8 +30,12 @@ class CompetitionService extends Service
     }
 
     public function coachTeamsIndex(Coach $coach){
-        $teams = $this->coachManagedTeams($coach);
-        return $this->competitionRepository->getCoachCompetition($teams);
+        $teams = $coach->teams;
+        return $this->competitionRepository->getByTeams($teams);
+    }
+    public function playerTeamsIndex(Player $player){
+        $teams = $player->teams;
+        return $this->competitionRepository->getByTeams($teams);
     }
     public function datatables(): JsonResponse
     {

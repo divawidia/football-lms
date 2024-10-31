@@ -49,20 +49,20 @@ class EventScheduleService extends Service
 
     public function coachTeamsIndexTraining(Coach $coach): Collection
     {
-        return $this->eventScheduleRepository->coachEvent($coach, 'Training', '1');
+        return $this->eventScheduleRepository->getEventByModel($coach, 'Training', '1');
     }
     public function coachTeamsIndexMatch(Coach $coach): Collection
     {
-        return $this->eventScheduleRepository->coachEvent($coach, 'Match', '1');
+        return $this->eventScheduleRepository->getEventByModel($coach, 'Match', '1');
     }
 
     public function playerTeamsIndexTraining(Player $player): Collection
     {
-        return $this->eventScheduleRepository->playerEvent($player, '1','Training', '1');
+        return $this->eventScheduleRepository->getEventByModel($player, 'Training', '1');
     }
     public function playerTeamsIndexMatch(Player $player): Collection
     {
-        return $this->eventScheduleRepository->playerEvent($player, '1', 'Match', '1');
+        return $this->eventScheduleRepository->getEventByModel($player,  'Match', '1');
     }
 
     public function makeMatchCalendar($matchesData): array

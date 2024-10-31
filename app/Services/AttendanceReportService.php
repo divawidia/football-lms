@@ -300,7 +300,7 @@ class AttendanceReportService extends Service
     }
 
     public function dataTablesTraining(Player $player){
-        $data = $this->eventScheduleRepository->playerEvent($player, '0', 'Training', sortDateDirection: 'desc');
+        $data = $this->eventScheduleRepository->getEventByModel($player, '0', 'Training', sortDateDirection: 'desc');
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return '<a class="btn btn-sm btn-outline-secondary" href="' . route('training-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View training detail">
@@ -359,7 +359,7 @@ class AttendanceReportService extends Service
             ->make();
     }
     public function dataTablesMatch(Player $player){
-        $data = $this->eventScheduleRepository->playerEvent($player, '0', 'Match', sortDateDirection: 'desc');
+        $data = $this->eventScheduleRepository->getEventByModel($player, '0', 'Match', sortDateDirection: 'desc');
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View match detail">

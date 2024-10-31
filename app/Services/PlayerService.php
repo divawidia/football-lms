@@ -241,7 +241,8 @@ class PlayerService extends Service
 
     public function show(Player $player)
     {
-        $stats = ['minutesPlayed',
+        $stats = [
+            'minutesPlayed',
             'goals',
             'assists',
             'ownGoal',
@@ -266,9 +267,9 @@ class PlayerService extends Service
             $statsData[$result.'ThisMonth'] = $this->playerRepository->matchResults($player, $result, Carbon::now()->startOfMonth(),Carbon::now());
         }
 
-        $upcomingMatches = $this->eventScheduleRepository->playerEvent($player, '1','Match', 2);
+        $upcomingMatches = $this->eventScheduleRepository->getEventByModel($player, 'Match', '1', 2);
 
-        $upcomingTrainings = $this->eventScheduleRepository->playerEvent($player, '1','Training', 2);
+        $upcomingTrainings = $this->eventScheduleRepository->getEventByModel($player, 'Training', '1',2);
 
         $playerAge = $this->getAge($player->user->dob);
         $playerDob = $this->convertToDate($player->user->dob);
@@ -503,23 +504,23 @@ class PlayerService extends Service
 
     public function playerUpcomingMatches(Player $player)
     {
-        $data = $this->eventScheduleRepository->playerEvent($player, '1','Match');
+        $data = $this->eventScheduleRepository->getEventByModel($player, 'Match', '1',);
         return $this->eventScheduleService->makeDataTablesMatch($data);
     }
     public function playerUpcomingTraining(Player $player)
     {
-        $data = $this->eventScheduleRepository->playerEvent($player, '1','Training');
+        $data = $this->eventScheduleRepository->getEventByModel($player, 'Training', '1');
         return $this->eventScheduleService->makeDataTablesTraining($data);
     }
 
     public function playerMatchCalendar(Player $player)
     {
-        $data = $this->eventScheduleRepository->playerEvent($player, '1','Match');
+        $data = $this->eventScheduleRepository->getEventByModel($player,'Match', '1');
         return $this->eventScheduleService->makeMatchCalendar($data);
     }
     public function playerTrainingCalendar(Player $player)
     {
-        $data = $this->eventScheduleRepository->playerEvent($player, '1','Training');
+        $data = $this->eventScheduleRepository->getEventByModel($player,'Training', '1');
         return $this->eventScheduleService->makeTrainingCalendar($data);
     }
 

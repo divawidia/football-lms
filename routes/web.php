@@ -403,6 +403,9 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('training-history', [AttendanceReportController::class, 'playerTrainingHistories'])->name('player.attendance-report.trainingTable');
             Route::get('match-history', [AttendanceReportController::class, 'playerMatchHistories'])->name('player.attendance-report.matchDatatable');
         });
+        Route::prefix('performance-reports')->group(function () {
+            Route::get('player-match-histories', [PerformanceReportController::class, 'playerIndex'])->name('player.performance-report.index');
+        });
     });
 
     Route::group(['middleware' => ['role:coach|admin|Super-Admin,web']], function () {
@@ -431,20 +434,6 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('competitions', [TeamController::class, 'teamCompetitions'])->name('team-managements.teamCompetitions');
                 Route::get('training-histories', [TeamController::class, 'teamTrainingHistories'])->name('team-managements.training-histories');
                 Route::get('match-histories', [TeamController::class, 'teamMatchHistories'])->name('team-managements.match-histories');
-            });
-        });
-
-        Route::prefix('competition-managements')->group(function () {
-            Route::get('', [CompetitionController::class, 'index'])->name('competition-managements.index');
-
-            Route::prefix('{competition}')->group(function () {
-                Route::get('', [CompetitionController::class, 'show'])->name('competition-managements.show');
-
-                Route::prefix('group-division')->group(function () {
-                    Route::prefix('{group}')->group(function () {
-                        Route::get('', [GroupDivisionController::class, 'index'])->name('division-managements.index');
-                    });
-                });
             });
         });
 
@@ -601,6 +590,20 @@ Route::group(['middleware' => ['auth']], function () {
             Route::prefix('{player}')->group(function () {
                 Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('attendance-report.trainingTable');
                 Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('attendance-report.matchDatatable');
+            });
+        });
+
+        Route::prefix('competition-managements')->group(function () {
+            Route::get('', [CompetitionController::class, 'index'])->name('competition-managements.index');
+
+            Route::prefix('{competition}')->group(function () {
+                Route::get('', [CompetitionController::class, 'show'])->name('competition-managements.show');
+
+                Route::prefix('group-division')->group(function () {
+                    Route::prefix('{group}')->group(function () {
+                        Route::get('', [GroupDivisionController::class, 'index'])->name('division-managements.index');
+                    });
+                });
             });
         });
 

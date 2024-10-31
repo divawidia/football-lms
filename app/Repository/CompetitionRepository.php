@@ -26,18 +26,12 @@ class CompetitionRepository
         }
         return $query->get();
     }
-    public function getCoachCompetition($teams)
+    public function getByTeams($teams)
     {
+        $teamIds = collect($teams)->pluck('id')->all();
         return $this->competition->with('groups.teams')
-            ->whereHas('groups.teams', function($q) use ($teams){
-                $q->where('teamId', $teams[0]->id);
-
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $q->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
+            ->whereHas('groups.teams', function($q) use ($teamIds){
+                $q->whereIn('teamId', $teamIds);
             })->get();
     }
 

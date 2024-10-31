@@ -204,7 +204,7 @@ class PerformanceReportService extends Service
     }
 
     public function coachLatestMatch(Coach $coach){
-        return $this->eventScheduleRepository->coachEvent($coach, 'Match', '0', 2);
+        return $this->eventScheduleRepository->getEventByModel($coach, 'Match', '0', 2);
     }
 
 
@@ -228,7 +228,7 @@ class PerformanceReportService extends Service
                             </button>
                           </div>
                         </div>';
-                } elseif (isCoach()){
+                } elseif (isCoach() || isPlayer()){
                     $actionBtn = '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
                                         <span class="material-icons">visibility</span>
                                   </a>';
@@ -307,8 +307,8 @@ class PerformanceReportService extends Service
         $data = $this->eventScheduleRepository->getEvent('Match', '0');
         return $this->matchHistoryDatatables($data);
     }
-    public function coachMatchHistory(Coach $coach){
-        $data = $this->eventScheduleRepository->coachEvent($coach, 'Match', '0');
+    public function modelMatchHistory($model){
+        $data = $this->eventScheduleRepository->getEventByModel($model, 'Match', '0');
         return $this->matchHistoryDatatables($data);
     }
 }
