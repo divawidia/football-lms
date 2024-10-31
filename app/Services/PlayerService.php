@@ -258,12 +258,12 @@ class PlayerService extends Service
         $thisMonthMatchPlayed = $this->playerRepository->countMatchPlayed($player, Carbon::now()->startOfMonth(),Carbon::now());
 
         foreach ($stats as $stat){
-            $stats[$stat] = $this->playerRepository->playerMatchStatsSum($player, $stat);
-            $stats[$stat.'ThisMonth'] = $this->playerRepository->playerMatchStatsSum($player, $stat, Carbon::now()->startOfMonth(),Carbon::now());
+            $statsData[$stat] = $this->playerRepository->playerMatchStatsSum($player, $stat);
+            $statsData[$stat.'ThisMonth'] = $this->playerRepository->playerMatchStatsSum($player, $stat, Carbon::now()->startOfMonth(),Carbon::now());
         }
         foreach ($results as $result){
-            $stats[$result] = $this->playerRepository->matchResults($player, $result);
-            $stats[$result.'ThisMonth'] = $this->playerRepository->matchResults($player, $result, Carbon::now()->startOfMonth(),Carbon::now());
+            $statsData[$result] = $this->playerRepository->matchResults($player, $result);
+            $statsData[$result.'ThisMonth'] = $this->playerRepository->matchResults($player, $result, Carbon::now()->startOfMonth(),Carbon::now());
         }
 
         $upcomingMatches = $this->eventScheduleRepository->playerEvent($player, '1','Match', 2);
@@ -280,7 +280,7 @@ class PlayerService extends Service
         return compact(
             'matchPlayed',
             'thisMonthMatchPlayed',
-            'stats',
+            'statsData',
             'upcomingMatches',
             'upcomingTrainings',
             'playerAge',

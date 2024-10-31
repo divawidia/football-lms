@@ -24,18 +24,18 @@
 
         <div class="row card-group-row mb-4">
             @include('components.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['thisMonthMatchPlayed']])
-            @include('components.stats-card', ['title' => 'Minutes Played','data' => $overview['minutesPlayed'], 'dataThisMonth' => $overview['thisMonthMinutesPlayed']])
-            @include('components.stats-card', ['title' => 'Fouls','data' => $overview['fouls'], 'dataThisMonth' => $overview['thisMonthFouls']])
+            @include('components.stats-card', ['title' => 'Minutes Played','data' => $overview['statsData']['minutesPlayed'], 'dataThisMonth' => $overview['statsData']['minutesPlayedThisMonth']])
+            @include('components.stats-card', ['title' => 'Fouls','data' => $overview['statsData']['fouls'], 'dataThisMonth' => $overview['statsData']['foulsThisMonth']])
             @if($data->position == 'Goalkeeper (GK)')
-                @include('components.stats-card', ['title' => 'Saves','data' => $overview['saves'], 'dataThisMonth' => $overview['thisMonthSaves']])
+                @include('components.stats-card', ['title' => 'Saves','data' => $overview['statsData']['saves'], 'dataThisMonth' => $overview['statsData']['savesThisMonth']])
             @else
-                @include('components.stats-card', ['title' => 'Goals','data' => $overview['goals'], 'dataThisMonth' => $overview['thisMonthGoals']])
+                @include('components.stats-card', ['title' => 'Goals','data' => $overview['statsData']['goals'], 'dataThisMonth' => $overview['statsData']['goalsThisMonth']])
             @endif
-            @include('components.stats-card', ['title' => 'Assists','data' => $overview['assists'], 'dataThisMonth' => $overview['thisMonthAssists']])
-            @include('components.stats-card', ['title' => 'Own Goals','data' => $overview['ownGoals'], 'dataThisMonth' => $overview['thisMonthOwnGoals']])
-            @include('components.stats-card', ['title' => 'Wins','data' => $overview['wins'], 'dataThisMonth' => $overview['thisMonthWins']])
-            @include('components.stats-card', ['title' => 'Losses','data' => $overview['losses'], 'dataThisMonth' => $overview['thisMonthLosses']])
-            @include('components.stats-card', ['title' => 'Draws','data' => $overview['draws'], 'dataThisMonth' => $overview['thisMonthDraws']])
+            @include('components.stats-card', ['title' => 'Assists','data' => $overview['statsData']['assists'], 'dataThisMonth' => $overview['statsData']['assistsThisMonth']])
+            @include('components.stats-card', ['title' => 'Own Goals','data' => $overview['statsData']['ownGoal'], 'dataThisMonth' => $overview['statsData']['ownGoalThisMonth']])
+            @include('components.stats-card', ['title' => 'Wins','data' => $overview['statsData']['Win'], 'dataThisMonth' => $overview['statsData']['WinThisMonth']])
+            @include('components.stats-card', ['title' => 'Losses','data' => $overview['statsData']['Lose'], 'dataThisMonth' => $overview['statsData']['LoseThisMonth']])
+            @include('components.stats-card', ['title' => 'Draws','data' => $overview['statsData']['Draw'], 'dataThisMonth' => $overview['statsData']['DrawThisMonth']])
         </div>
 
         <div class="row">
