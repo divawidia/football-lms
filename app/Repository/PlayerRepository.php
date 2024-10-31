@@ -87,7 +87,7 @@ class PlayerRepository
         if ($startDate && $endDate) {
             $query->whereBetween('player_attendance.updated_at', [$startDate, $endDate]);
         }
-
+        $query->where('status', '0');
         return $query->count();
     }
 

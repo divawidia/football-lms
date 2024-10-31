@@ -54,6 +54,7 @@
                                                       :datas="$playerSkillStats['data']" chartId="uniqueChartId"/>
                 </div>
             </div>
+
             <div class="col-sm-6 flex-column">
                 <div class="page-separator">
                     <div class="page-separator__text">Joined Teams</div>

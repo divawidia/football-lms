@@ -398,6 +398,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::prefix('match-schedules')->group(function () {
             Route::get('players-matches', [EventScheduleController::class, 'playerIndexMatch'])->name('player.match-schedules.index');
         });
+
+        Route::prefix('attendance-reports')->group(function () {
+            Route::get('training-history', [AttendanceReportController::class, 'playerTrainingHistories'])->name('player.attendance-report.trainingTable');
+            Route::get('match-history', [AttendanceReportController::class, 'playerMatchHistories'])->name('player.attendance-report.matchDatatable');
+        });
     });
 
     Route::group(['middleware' => ['role:coach|admin|Super-Admin,web']], function () {
@@ -507,12 +512,8 @@ Route::group(['middleware' => ['auth']], function () {
         });
 
         Route::prefix('attendance-reports')->group(function () {
-            Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
-
             Route::prefix('{player}')->group(function () {
                 Route::get('', [AttendanceReportController::class, 'show'])->name('attendance-report.show');
-                Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('attendance-report.trainingTable');
-                Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('attendance-report.matchDatatable');
             });
         });
 
@@ -593,5 +594,15 @@ Route::group(['middleware' => ['auth']], function () {
                 });
             });
         });
+
+        Route::prefix('attendance-reports')->group(function () {
+            Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
+
+            Route::prefix('{player}')->group(function () {
+                Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('attendance-report.trainingTable');
+                Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('attendance-report.matchDatatable');
+            });
+        });
+
     });
 });

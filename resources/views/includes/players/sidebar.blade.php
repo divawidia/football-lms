@@ -62,8 +62,7 @@
                             Reports
                             <span class="ml-auto sidebar-menu-toggle-icon"></span>
                         </a>
-                        <ul class="collapse sm-indent"
-                            id="reportsMenu">
+                        <ul class="collapse sm-indent" id="reportsMenu">
                             <li class="sidebar-menu-item">
                                 <a class="sidebar-menu-button" href="{{ route('attendance-report.index') }}">
                                     <span class="sidebar-menu-text">Attendance</span>

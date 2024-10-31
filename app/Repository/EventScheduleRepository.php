@@ -59,7 +59,7 @@ class EventScheduleRepository
 //        return $this->endedCoachMatch($coach)->take(2)->get();
 //    }
 
-    public function playerEvent(Player $player, $status, $eventType, $take = null)
+    public function playerEvent(Player $player, $status, $eventType, $take = null, $sortDateDirection = 'asc')
     {
         $query = $player->schedules()
             ->where('eventType', $eventType)
@@ -67,7 +67,7 @@ class EventScheduleRepository
         if ($take){
             $query->take($take);
         }
-            return $query->orderBy('date')->get();
+            return $query->orderBy('date', $sortDateDirection)->get();
     }
     public function playerLatestEvent(Player $player, $eventType, $take = 2)
     {

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Coach;
 use App\Models\Player;
+use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Query\JoinClause;
@@ -15,9 +16,11 @@ use Yajra\DataTables\Facades\DataTables;
 class AttendanceReportService extends Service
 {
     private PlayerRepository $playerRepository;
-    public function __construct(PlayerRepository $playerRepository)
+    private EventScheduleRepository $eventScheduleRepository;
+    public function __construct(PlayerRepository $playerRepository, EventScheduleRepository $eventScheduleRepository)
     {
         $this->playerRepository = $playerRepository;
+        $this->eventScheduleRepository = $eventScheduleRepository;
     }
 
     public function makeAttendanceDatatables($data)
@@ -151,7 +154,7 @@ class AttendanceReportService extends Service
         return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage', 'lineChart', 'doughnutChart');
     }
     public function coachIndex($coach){
-        $teams = $coach->teams()->get();
+        $teams = $coach->teams;
 
         $mostAttended = $this->playerRepository->getMostAttendedCoachsPLayer($teams);
 
@@ -166,142 +169,98 @@ class AttendanceReportService extends Service
         return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage');
     }
 
-    public function attendanceLineChart(){
-        $attendedData = DB::table('event_schedules as es')
-            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
-            ->join('players as p', 'pa.playerId', '=', 'p.id')
-            ->select(DB::raw('es.date as date'), DB::raw('COUNT(pa.playerId) as total_attended_players'))
-            ->where('pa.attendanceStatus', '=', 'Attended')
-            ->groupBy(DB::raw('date'))
-            ->orderBy('date')
-            ->get();
-        $didntAttendData = DB::table('event_schedules as es')
-            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
-            ->join('players as p', 'pa.playerId', '=', 'p.id')
-            ->select(DB::raw('es.date as date'), DB::raw('COUNT(pa.playerId) as total_didnt_attend_players'))
-            ->where(DB::raw("pa.attendanceStatus = 'Illness' OR pa.attendanceStatus = 'Injured' OR pa.attendanceStatus = 'Other'"))
-            ->groupBy(DB::raw('date'))
-            ->orderBy('date')
-            ->get();
+    public function attendanceLineChart(Player $player = null, Coach $coach = null)
+    {
+        $attendedData = $this->getAttendanceData($player, status: 'Attended');
+        $attendanceData = $this->getAttendanceData($player);
+        $didntAttendData = $this->getAttendanceData($player, status: 'didntAttended');
+        $attendanceDate = $this->getAttendanceData($player, isGetDateOnly: true);
 
-        $label = [];
+        $labels = [];
         $attended = [];
         $didntAttend = [];
-//        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-//        foreach ($attendedData as $result){
-//            $label[] = $days[$result->day];
-//            $attended[] = $result->total_attended_players;
-//        }
-        foreach ($attendedData as $result){
-            $label[] = $result->date;
+
+        foreach ($attendanceData as $result) {
+            $labels[] = $result->date;
             $attended[] = $result->total_attended_players;
-        }
-        foreach ($didntAttendData as $result){
             $didntAttend[] = $result->total_didnt_attend_players;
         }
-
-        return compact('label', 'attended', 'didntAttend');
-    }
-    public function coachAttendanceLineChart($coach){
-        $teams = $this->coachManagedTeams($coach);
-
-        $attendedData = DB::table('event_schedules as es')
-            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
-            ->join('players as p', 'pa.playerId', '=', 'p.id')
-            ->join('player_teams', function (JoinClause $join) use ($teams) {
-                $join->on('p.id', '=', 'player_teams.playerId')
-                    ->where('teamId', $teams[0]->id);
-
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $join->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })
-            ->select(DB::raw('es.date as date'), DB::raw('COUNT(pa.playerId) as total_attended_players'))
-            ->where('pa.attendanceStatus', '=', 'Attended')
-            ->groupBy(DB::raw('date'))
-            ->orderBy('date')
-            ->get();
-        $didntAttendData = DB::table('event_schedules as es')
-            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
-            ->join('players as p', 'pa.playerId', '=', 'p.id')
-            ->join('player_teams', function (JoinClause $join) use ($teams) {
-                $join->on('p.id', '=', 'player_teams.playerId')
-                    ->where('teamId', $teams[0]->id);
-
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $join->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })
-            ->select(DB::raw('es.date as date'), DB::raw('COUNT(pa.playerId) as total_didnt_attend_players'))
-            ->where(DB::raw("pa.attendanceStatus = 'Illness' OR pa.attendanceStatus = 'Injured' OR pa.attendanceStatus = 'Other'"))
-            ->groupBy(DB::raw('date'))
-            ->orderBy('date')
-            ->get();
-
-        $label = [];
-        $attended = [];
-        $didntAttend = [];
-//        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-//        foreach ($attendedData as $result){
-//            $label[] = $days[$result->day];
+//        foreach ($attendedData as $result) {
 //            $attended[] = $result->total_attended_players;
 //        }
-        foreach ($attendedData as $result){
-            $label[] = $result->date;
-            $attended[] = $result->total_attended_players;
-        }
-        foreach ($didntAttendData as $result){
-            $didntAttend[] = $result->total_didnt_attend_players;
-        }
+//        foreach ($didntAttendData as $result) {
+//            $didntAttend[] = $result->total_didnt_attend_players;
+//        }
 
-        return compact('label', 'attended', 'didntAttend');
+        return compact('labels', 'attended', 'didntAttend');
     }
 
-    public function attendanceDoughnutChart(){
-        $results = DB::table('player_attendance as pa')
-            ->select('pa.attendanceStatus as status', DB::raw('COUNT(pa.playerId) AS total_players'))
-            ->where('pa.attendanceStatus', '!=', 'Required Action')
-            ->groupBy('pa.attendanceStatus')
-            ->get();
+    private function getAttendanceData(Player $player = null, Coach $coach = null, $status = null, $isGetDateOnly = false)
+    {
+        $query = DB::table('event_schedules as es')
+            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
+            ->join('players as p', 'pa.playerId', '=', 'p.id');
 
-        $label = [];
-        $data = [];
-        foreach ($results as $result){
-            $label[] = $result->status;
-            $data[] = $result->total_players;
-        }
-
-        return compact('label', 'data');
-    }
-    public function coachAttendanceDoughnutChart($coach){
-        $teams = $this->coachManagedTeams($coach);
-        $results = DB::table('player_attendance as pa')
-            ->join('players as p', 'pa.playerId', '=', 'p.id')
-            ->join('player_teams', function (JoinClause $join) use ($teams) {
+        if ($coach) {
+            $teams = $coach->teams;
+            $teamIds = collect($teams)->pluck('id')->all();
+            $query->join('player_teams', function (JoinClause $join) use ($teamIds) {
                 $join->on('p.id', '=', 'player_teams.playerId')
-                    ->where('teamId', $teams[0]->id);
+                    ->whereIn('teamId', $teamIds);
+            });
+        }
+        $query->select(
+            DB::raw('es.date as date'),
+            DB::raw("COUNT(CASE WHEN pa.attendanceStatus = 'Attended' THEN 1 END) AS total_attended_players"),
+            DB::raw("COUNT(CASE WHEN pa.attendanceStatus != 'Attended' THEN 1 END) AS total_didnt_attend_players"));
 
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $join->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })
-            ->select('pa.attendanceStatus as status', DB::raw('COUNT(pa.playerId) AS total_players'))
-            ->where('pa.attendanceStatus', '!=', 'Required Action')
-            ->groupBy('pa.attendanceStatus')
+//        if ($status == 'Attended') {
+//            $query->select(DB::raw('es.date as date'), DB::raw('COUNT(pa.playerId) as total_attended_players'))
+//                ->where('pa.attendanceStatus', '=', 'Attended');
+//        } elseif ($status == 'didntAttended'){
+//            $query->select(DB::raw('es.date as date'), DB::raw('COUNT(pa.playerId) as total_didnt_attend_players'))
+//                ->where(DB::raw("pa.attendanceStatus = 'Illness' OR pa.attendanceStatus = 'Injured' OR pa.attendanceStatus = 'Other'"));
+//        }
+//
+//        if ($isGetDateOnly == true){
+//            $query->select(DB::raw('es.date as date'));
+//        }
+        $query->where('es.status', '0');
+        if ($player) {
+            $query->where('p.id', $player->id);
+        }
+
+        return $query->groupBy(DB::raw('date'))
+            ->orderBy('date')
             ->get();
+    }
 
+    public function attendanceDoughnutChart(Player $player = null, Coach $coach = null){
+        $query = DB::table('event_schedules as es')
+            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
+            ->join('players as p', 'pa.playerId', '=', 'p.id');
+
+        if ($coach){
+            $teams = $coach->teams;
+            $teamIds = collect($teams)->pluck('id')->all();
+            $query->join('player_teams', function (JoinClause $join) use ($teamIds) {
+                $join->on('p.id', '=', 'player_teams.playerId')
+                    ->whereIn('teamId', $teamIds);
+            });
+        }
+
+        $query->select(DB::raw('pa.attendanceStatus as status'), DB::raw('COUNT(pa.playerId) AS total_players'))
+            ->where('pa.attendanceStatus', '!=', 'Required Action');
+
+        if ($player) {
+            $query->where('p.id', $player->id);
+        }
+        $query->groupBy(DB::raw('pa.attendanceStatus'));
+
+        $query = $query->get();
         $label = [];
         $data = [];
-        foreach ($results as $result){
+        foreach ($query as $result){
             $label[] = $result->status;
             $data[] = $result->total_players;
         }
@@ -310,7 +269,7 @@ class AttendanceReportService extends Service
     }
 
     public function show(Player $player){
-        $totalAttended = $this->playerRepository->playerAttendanceCount($player, 'Attended');
+        $totalAttended = $this->playerRepository->playerAttendanceCount($player);
         $thisMonthTotalAttended = $this->playerRepository->playerAttendanceCount($player, 'Attended', Carbon::now()->startOfMonth(), Carbon::now());
 
         $totalIllness = $this->playerRepository->playerAttendanceCount($player, 'Illness');
@@ -322,6 +281,9 @@ class AttendanceReportService extends Service
         $totalOther = $this->playerRepository->playerAttendanceCount($player, 'Other');
         $thisMonthTotalOther = $this->playerRepository->playerAttendanceCount($player, 'Other', Carbon::now()->startOfMonth(), Carbon::now());
 
+        $lineChart = $this->attendanceLineChart($player);
+        $doughnutChart = $this->attendanceDoughnutChart($player);
+
         return compact(
             'totalAttended',
             'thisMonthTotalAttended',
@@ -331,14 +293,14 @@ class AttendanceReportService extends Service
             'thisMonthTotalInjured',
             'totalOther',
             'thisMonthTotalOther',
+            'lineChart',
+            'doughnutChart',
+            'player'
         );
     }
 
     public function dataTablesTraining(Player $player){
-        $data = $player->schedules()
-            ->where('eventType', 'Training')
-            ->where('status', '0')
-            ->get();
+        $data = $this->eventScheduleRepository->playerEvent($player, '0', 'Training', sortDateDirection: 'desc');
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return '<a class="btn btn-sm btn-outline-secondary" href="' . route('training-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View training detail">
@@ -393,13 +355,11 @@ class AttendanceReportService extends Service
                 return date('M d, Y ~ h:i A', strtotime($item->pivot->updated_at));
             })
             ->rawColumns(['action','team','date','status', 'attendanceStatus', 'last_updated', 'note'])
+            ->addIndexColumn()
             ->make();
     }
     public function dataTablesMatch(Player $player){
-        $data = $player->schedules()
-            ->where('eventType', 'Match')
-            ->where('status', '0')
-            ->get();
+        $data = $this->eventScheduleRepository->playerEvent($player, '0', 'Match', sortDateDirection: 'desc');
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View match detail">
@@ -493,6 +453,7 @@ class AttendanceReportService extends Service
                 return date('M d, Y ~ h:i A', strtotime($item->pivot->updated_at));
             })
             ->rawColumns(['action','team', 'competition','opponentTeam','date','status', 'attendanceStatus', 'last_updated', 'note'])
+            ->addIndexColumn()
             ->make();
     }
 }
