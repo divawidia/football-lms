@@ -51,7 +51,17 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('competition-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Competition Lists</a>
+                    @if(isAllAdmin() || isCoach())
+                        <a href="{{ route('competition-managements.index') }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back to Competition Lists
+                        </a>
+                    @elseif(isPlayer())
+                        <a href="{{ url()->previous() }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back
+                        </a>
+                    @endif
                 </li>
             </ul>
         </div>
@@ -67,6 +77,7 @@
                 <h2 class="text-white mb-0">{{ $competition->name  }}</h2>
                 <p class="lead text-white-50">{{ $competition->type }}</p>
             </div>
+            @if(isAllAdmin())
             <div class="dropdown">
                 <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Action
@@ -98,6 +109,7 @@
                     </button>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 
@@ -261,12 +273,14 @@
         </div>
         <div class="page-separator">
             <div class="page-separator__text">Group Divisions</div>
+            @if(isAllAdmin())
             <a href="{{ route('division-managements.create', $competition->id) }}" class="btn btn-primary ml-auto btn-sm">
                 <span class="material-icons mr-2">
                     add
                 </span>
                 Add New
             </a>
+            @endif
         </div>
         <div class="row">
             @foreach($competition->groups as $group)
@@ -277,6 +291,7 @@
                 @endif
                     <div class="page-separator">
                         <div class="page-separator__text">{{ $group->groupName }}</div>
+                        @if(isAllAdmin())
                         <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
                                 <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
                                     <span class="material-icons">edit</span>
@@ -288,6 +303,7 @@
                                     <span class="material-icons">delete</span>
                                 </button>
                         </div>
+                        @endif
                     </div>
                     <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                         <div class="card-body">
@@ -315,17 +331,19 @@
         @foreach($competition->groups as $group)
             <div class="page-separator">
                 <div class="page-separator__text">{{ $group->groupName }}</div>
-                <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
-                    <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
-                        <span class="material-icons">edit</span>
-                    </a>
-                    <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
-                        <span class="material-icons">add</span>
-                    </a>
-                    <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
-                        <span class="material-icons">delete</span>
-                    </button>
-                </div>
+                @if(isAllAdmin())
+                    <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
+                        <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
+                            <span class="material-icons">edit</span>
+                        </a>
+                        <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
+                            <span class="material-icons">add</span>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </div>
+                @endif
             </div>
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-body">
