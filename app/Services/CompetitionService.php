@@ -26,16 +26,21 @@ class CompetitionService extends Service
     }
     public function getActiveCompetition()
     {
-        return $this->competitionRepository->getAll('1');
+        return $this->competitionRepository->getAll(status: '1');
     }
 
-    public function coachTeamsIndex(Coach $coach){
-        $teams = $coach->teams;
-        return $this->competitionRepository->getByTeams($teams);
+    public function modelTeamsCompetition($model, $status = null){
+        $teams = $model->teams;
+        if ($status){
+            $data = $this->competitionRepository->getAll($teams, $status);
+        }else{
+            $data = $this->competitionRepository->getAll($teams);
+        }
+        return $data;
     }
-    public function playerTeamsIndex(Player $player){
+    public function playerTeamsIndex(Player $player, $status){
         $teams = $player->teams;
-        return $this->competitionRepository->getByTeams($teams);
+        return $this->competitionRepository->getAll($teams, $status);
     }
     public function datatables(): JsonResponse
     {

@@ -46,11 +46,11 @@
                     @include('components.stats-card', ['title' => 'Goals','data' => $overviewStats['statsData']['goals'], 'dataThisMonth' => $overviewStats['statsData']['goalsThisMonth']])
                     @include('components.stats-card', ['title' => 'Assists','data' => $overviewStats['statsData']['assists'], 'dataThisMonth' => $overviewStats['statsData']['assistsThisMonth']])
                     @include('components.stats-card', ['title' => 'Own Goals','data' => $overviewStats['statsData']['ownGoal'], 'dataThisMonth' => $overviewStats['statsData']['ownGoalThisMonth']])
-                    @include('components.stats-card', ['title' => 'Goals','data' => $overviewStats['statsData']['shots'], 'dataThisMonth' => $overviewStats['statsData']['shotsThisMonth']])
-                    @include('components.stats-card', ['title' => 'Assists','data' => $overviewStats['statsData']['passes'], 'dataThisMonth' => $overviewStats['statsData']['passesThisMonth']])
-                    @include('components.stats-card', ['title' => 'Own Goals','data' => $overviewStats['statsData']['fouls'], 'dataThisMonth' => $overviewStats['statsData']['foulsThisMonth']])
-                    @include('components.stats-card', ['title' => 'Goals','data' => $overviewStats['statsData']['yellowCards'], 'dataThisMonth' => $overviewStats['statsData']['yellowCardsThisMonth']])
-                    @include('components.stats-card', ['title' => 'Assists','data' => $overviewStats['statsData']['redCards'], 'dataThisMonth' => $overviewStats['statsData']['redCardsThisMonth']])
+                    @include('components.stats-card', ['title' => 'Shots','data' => $overviewStats['statsData']['shots'], 'dataThisMonth' => $overviewStats['statsData']['shotsThisMonth']])
+                    @include('components.stats-card', ['title' => 'Passes','data' => $overviewStats['statsData']['passes'], 'dataThisMonth' => $overviewStats['statsData']['passesThisMonth']])
+                    @include('components.stats-card', ['title' => 'Fouls','data' => $overviewStats['statsData']['fouls'], 'dataThisMonth' => $overviewStats['statsData']['foulsThisMonth']])
+                    @include('components.stats-card', ['title' => 'Yellow Cards','data' => $overviewStats['statsData']['yellowCards'], 'dataThisMonth' => $overviewStats['statsData']['yellowCardsThisMonth']])
+                    @include('components.stats-card', ['title' => 'Red Cards','data' => $overviewStats['statsData']['redCards'], 'dataThisMonth' => $overviewStats['statsData']['redCardsThisMonth']])
                     @include('components.stats-card', ['title' => 'Wins','data' => $overviewStats['statsData']['Win'], 'dataThisMonth' => $overviewStats['statsData']['WinThisMonth']])
                     @include('components.stats-card', ['title' => 'Losses','data' => $overviewStats['statsData']['Lose'], 'dataThisMonth' => $overviewStats['statsData']['LoseThisMonth']])
                     @include('components.stats-card', ['title' => 'Draws','data' => $overviewStats['statsData']['Draw'], 'dataThisMonth' => $overviewStats['statsData']['DrawThisMonth']])
@@ -143,10 +143,20 @@
 
             <div class="page-separator">
                 <div class="page-separator__text">Competition Leaderboard</div>
-{{--                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
+                <div class="form-group ml-auto w-25 mb-0">
+                    <select class="form-control form-select" id="competitionFilter" data-toggle="select">
+                        <option selected disabled>Filter by Competition
+                        </option>
+                        @foreach($allCompetitions as $competition)
+                            <option value="{{ $competition->id }}" data-avatar-src="{{ Storage::url($competition->logo) }}">
+                                {{ $competition->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
-            @foreach($competitions as $competition)
+            @foreach($activeCompetitions as $competition)
                 <div class="page-separator">
                     <div class="page-separator__text">{{ $competition->name }}</div>
                 </div>
@@ -181,8 +191,6 @@
                     </div>
                 @endforeach
             @endforeach
-
-
         </div>
     @endsection
 
@@ -213,7 +221,7 @@
                 ]
             });
 
-            @foreach($competitions as $competition)
+            @foreach($activeCompetitions as $competition)
                 @foreach($competition->groups as $group)
                     const classTable{{$group->id}} = $('#classTable{{$group->id}}').DataTable({
                         processing: true,
@@ -240,42 +248,25 @@
                 @endforeach
             @endforeach
 
-            {{--const lineChart = document.getElementById('areaChart');--}}
-            {{--const doughnutChart = document.getElementById('doughnutChart');--}}
+            {{--$('#competitionFilter').on('change', function (e){--}}
+            {{--    e.preventDefault();--}}
+            {{--    const competitionId = $(this).val();--}}
 
-            {{--new Chart(lineChart, {--}}
-            {{--    type: 'line',--}}
-            {{--    data: {--}}
-            {{--        labels: @json($lineChart['label']),--}}
-            {{--        datasets: [{--}}
-            {{--            label: 'Attended Player',--}}
-            {{--            data: @json($lineChart['attended']),--}}
-            {{--            borderColor: '#20F4CB',--}}
-            {{--            tension: 0.4,--}}
-            {{--        }, {--}}
-            {{--            label: 'Didnt Attend Player',--}}
-            {{--            data: @json($lineChart['didntAttend']),--}}
-            {{--            borderColor: '#E52534',--}}
-            {{--            tension: 0.4,--}}
-            {{--        }]--}}
-            {{--    },--}}
-            {{--    options: {--}}
-            {{--        responsive: true,--}}
-            {{--    },--}}
-            {{--});--}}
-            {{--new Chart(doughnutChart, {--}}
-            {{--    type: 'doughnut',--}}
-            {{--    data: {--}}
-            {{--        labels: @json($doughnutChart['label']),--}}
-            {{--        datasets: [{--}}
-            {{--            label: '# of Player',--}}
-            {{--            data: @json($doughnutChart['data']),--}}
-            {{--            backgroundColor: ['#20F4CB', '#E52534', '#F9B300', '#00122A']--}}
-            {{--        }]--}}
-            {{--    },--}}
-            {{--    options: {--}}
-            {{--        responsive: true,--}}
-            {{--    },--}}
+            {{--    $.ajax({--}}
+            {{--        url: "{{ route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) }}",--}}
+            {{--        data: {--}}
+            {{--            fields: 'states',--}}
+            {{--            "filters[country_id]": idCountry,--}}
+            {{--        },--}}
+            {{--        type: 'GET',--}}
+            {{--        dataType: 'json',--}}
+            {{--        success: function (result) {--}}
+            {{--            $('#state_id').html('<option disabled selected>Select State</option>');--}}
+            {{--            $.each(result.data, function (key, value) {--}}
+            {{--                $('#state_id').append('<option value="' + value.id + '">' + value.name + '</option>');--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
             {{--});--}}
         });
     </script>

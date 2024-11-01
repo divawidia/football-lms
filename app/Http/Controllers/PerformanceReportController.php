@@ -25,20 +25,23 @@ class PerformanceReportController extends Controller
         if (isAllAdmin()){
             $latestMatches = $this->performanceReportService->latestMatch();
             $overviewStats = $this->performanceReportService->overviewStats();
-            $competitions = $this->competitionService->index();
+            $activeCompetitions = $this->competitionService->getActiveCompetition();
+            $allCompetitions = $this->competitionService->index();
             $matchHistoryRoutes = url()->route('admin.performance-report.index');
         } elseif (isCoach()){
             $coach = $this->getLoggedCoachUser();
             $latestMatches = $this->performanceReportService->coachLatestMatch($coach);
             $overviewStats = $this->performanceReportService->coachOverviewStats($coach);
-            $competitions = $this->competitionService->coachTeamsIndex($coach);
+            $activeCompetitions = $this->competitionService->modelTeamsCompetition($coach, '1');
+            $allCompetitions = $this->competitionService->modelTeamsCompetition($coach);
             $matchHistoryRoutes = url()->route('coach.performance-report.index');
         } elseif (isPlayer()){
             $player = $this->getLoggedPLayerUser();
             $playerSkillStats = $this->playerService->skillStatsChart($player);
             $latestMatches = $this->playerService->playerLatestMatch($player);
             $latestTrainings = $this->playerService->playerLatestTraining($player);
-            $competitions = $this->competitionService->playerTeamsIndex($player);
+            $activeCompetitions = $this->competitionService->modelTeamsCompetition($player, '1');
+            $allCompetitions = $this->competitionService->modelTeamsCompetition($player);
             $overviewStats = $this->playerService->show($player);
             $performanceReviews = $player->playerPerformanceReview;
             $matchHistoryRoutes = url()->route('player.performance-report.index');
@@ -48,7 +51,8 @@ class PerformanceReportController extends Controller
         return view('pages.academies.reports.performance.index', [
             'latestMatches' => $latestMatches,
             'overviewStats' => $overviewStats,
-            'competitions' => $competitions,
+            'activeCompetitions' => $activeCompetitions,
+            'allCompetitions' => $allCompetitions,
             'matchHistoryRoutes' => $matchHistoryRoutes,
             'playerSkillStats' => $playerSkillStats,
             'latestTrainings' => $latestTrainings,

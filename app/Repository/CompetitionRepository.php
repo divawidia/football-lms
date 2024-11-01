@@ -18,21 +18,19 @@ class CompetitionRepository
         $this->competition = $competition;
     }
 
-    public function getAll($status = null)
+    public function getAll($teams = null, $status = null)
     {
         $query = $this->competition->with('groups.teams');
+        if ($teams){
+            $teamIds = collect($teams)->pluck('id')->all();
+            $query->whereHas('groups.teams', function($q) use ($teamIds){
+                $q->whereIn('teamId', $teamIds);
+            });
+        }
         if ($status){
             $query->where('status', $status);
         }
         return $query->get();
-    }
-    public function getByTeams($teams)
-    {
-        $teamIds = collect($teams)->pluck('id')->all();
-        return $this->competition->with('groups.teams')
-            ->whereHas('groups.teams', function($q) use ($teamIds){
-                $q->whereIn('teamId', $teamIds);
-            })->get();
     }
 
     public function find($id)
