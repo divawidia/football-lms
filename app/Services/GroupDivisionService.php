@@ -18,13 +18,15 @@ class GroupDivisionService extends Service
         return Datatables::of($query->teams)
             ->addColumn('action', function ($item) use ($competition) {
                 if ($item->teamSide == 'Opponent Team'){
-                    $dropdownTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
-                                    <a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>';
+                    $editTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>';
+                    $showTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>';
                 }else{
-                    $dropdownTeam = '<a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
-                                    <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>';
+                    $editTeam = '<a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>';
+                    $showTeam = '<a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>';
                 }
-                return '
+
+                if (isAllAdmin()){
+                    $actionBtn = '
                             <div class="dropdown">
                               <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="material-icons">
@@ -32,7 +34,8 @@ class GroupDivisionService extends Service
                                 </span>
                               </button>
                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                '.$dropdownTeam.'
+                                '.$editTeam.'
+                                '.$showTeam.'
                                 <form action="'.route('division-managements.removeTeam', ['competition' => $competition->id,'group'=>$item->pivot->divisionId, 'team'=>$item->id]).'" method="POST">
                                     '.method_field("PUT").'
                                     '.csrf_field().'
@@ -42,6 +45,21 @@ class GroupDivisionService extends Service
                                 </form>
                               </div>
                             </div>';
+                } elseif (isCoach() || isPlayer()){
+                    $actionBtn = '
+                            <div class="dropdown">
+                              <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="material-icons">
+                                    more_vert
+                                </span>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                '.$showTeam.'
+                              </div>
+                            </div>';
+                }
+
+                return $actionBtn;
             })
             ->editColumn('teams', function ($item) {
                 return '
