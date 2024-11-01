@@ -32,7 +32,9 @@
                 Add New
             </a>
         @elseif(isPlayer())
-            <h4 class="mb-2">Assigned Training Videos</h4>
+            <div class="page-separator">
+                <div class="page-separator__text">Assigned Training Videos</div>
+            </div>
         @endif
 
         @if(count($data)==0)
