@@ -118,96 +118,14 @@
             <div class="page-separator__text">Overview</div>
         </div>
         <div class="row card-group-row mb-md-3">
-            <div class="col-md-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Total Teams</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Total Match</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">2</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">Total Groups</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @include('components.stats-card', ['title' => 'Total Teams', 'data'=>$overviewStats['totalTeams'], 'dataThisMonth'=>null])
+            @include('components.stats-card', ['title' => 'Total Groups', 'data'=>$overviewStats['totalGroups'], 'dataThisMonth'=>null])
+            @include('components.stats-card', ['title' => 'Total Match', 'data'=>$overviewStats['totalMatch'], 'dataThisMonth'=>null])
+            @include('components.stats-card', ['title' => "Total Our Team's Wins", 'data'=>$overviewStats['ourTeamsWins'], 'dataThisMonth'=>null])
+            @include('components.stats-card', ['title' => "Total Our Team's Draws", 'data'=>$overviewStats['ourTeamsDraws'], 'dataThisMonth'=>null])
+            @include('components.stats-card', ['title' => "Total Our Team's Losses", 'data'=>$overviewStats['ourTeamsLosses'], 'dataThisMonth'=>null])
         </div>
-        <div class="row card-group-row mb-4">
-            <div class="col-md-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">wins</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">losses</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">draws</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <div class="row card-group-row">
             <div class="col-sm-6 card-group-row__col flex-column">
                 <div class="page-separator">
