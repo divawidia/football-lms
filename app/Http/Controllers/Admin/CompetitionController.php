@@ -68,8 +68,10 @@ class CompetitionController extends Controller
      */
     public function show(Competition $competition)
     {
+        $overviewStats = $this->competitionService->overviewStats($competition);
         return view('pages.admins.managements.competitions.detail', [
             'competition' => $competition,
+            'overviewStats' => $overviewStats,
         ]);
     }
 

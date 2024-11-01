@@ -58,7 +58,6 @@ class GroupDivisionService extends Service
                               </div>
                             </div>';
                 }
-
                 return $actionBtn;
             })
             ->editColumn('teams', function ($item) {
@@ -81,6 +80,7 @@ class GroupDivisionService extends Service
             ->rawColumns(['action', 'teams'])
             ->make();
     }
+
     public  function store(array $data, Competition $competition){
         $division = GroupDivision::create([
             'groupName' => $data['groupName'],

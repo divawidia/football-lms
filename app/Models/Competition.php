@@ -26,4 +26,8 @@ class Competition extends Model
     public function groups(){
         return $this->hasMany(GroupDivision::class, 'competitionId');
     }
+
+    public function matches(){
+        return $this->hasMany(EventSchedule::class, 'competitionId');
+    }
 }

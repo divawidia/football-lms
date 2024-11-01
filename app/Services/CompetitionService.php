@@ -38,10 +38,6 @@ class CompetitionService extends Service
         }
         return $data;
     }
-    public function playerTeamsIndex(Player $player, $status){
-        $teams = $player->teams;
-        return $this->competitionRepository->getAll($teams, $status);
-    }
     public function datatables(): JsonResponse
     {
         $query = $this->index();
@@ -141,6 +137,27 @@ class CompetitionService extends Service
             })
             ->rawColumns(['action', 'name', 'teams', 'divisions', 'date', 'contact', 'status'])
             ->make();
+    }
+
+    public function overviewStats(Competition $competition)
+    {
+        $groupDivisions = $competition->groups;
+        $totalGroups = $groupDivisions->count();
+        $totalMatch = $competition->matches()->count();
+        $totalTeams = 0;
+        $ourTeamsWins = 0;
+        $ourTeamsDraws = 0;
+        $ourTeamsLosses = 0;
+        foreach ($groupDivisions as $group){
+            $totalTeams += $group->teams()->count();
+
+            $ourTeamsWins += $group->teams()->where('teamSide', 'Academy Team')->sum('competition_team.won');
+            $ourTeamsDraws += $group->teams()->where('teamSide', 'Academy Team')->sum('competition_team.drawn');
+            $ourTeamsLosses += $group->teams()->where('teamSide', 'Academy Team')->sum('competition_team.lost');
+        }
+
+        return compact('totalTeams', 'ourTeamsWins', 'ourTeamsDraws', 'ourTeamsLosses', 'totalGroups', 'totalMatch');
+
     }
     public  function store(array $competitionData){
 
