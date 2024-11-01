@@ -503,12 +503,10 @@ Route::group(['middleware' => ['auth']], function () {
         });
 
         Route::prefix('training-videos')->group(function () {
-            Route::get('', [TrainingVideoController::class, 'index'])->name('training-videos.index');
             Route::get('create', [TrainingVideoController::class, 'create'])->name('training-videos.create');
             Route::post('store', [TrainingVideoController::class, 'store'])->name('training-videos.store');
 
             Route::prefix('{trainingVideo}')->group(function () {
-                Route::get('', [TrainingVideoController::class, 'show'])->name('training-videos.show');
                 Route::get('edit', [TrainingVideoController::class, 'edit'])->name('training-videos.edit');
                 Route::put('update', [TrainingVideoController::class, 'update'])->name('training-videos.update');
                 Route::patch('unpublish', [TrainingVideoController::class, 'unpublish'])->name('training-videos.unpublish');
@@ -615,6 +613,14 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::prefix('leaderboards')->group(function () {
             Route::get('', [LeaderboardController::class, 'index'])->name('leaderboards.index');
+        });
+
+        Route::prefix('training-videos')->group(function () {
+            Route::get('', [TrainingVideoController::class, 'index'])->name('training-videos.index');
+
+            Route::prefix('{trainingVideo}')->group(function () {
+                Route::get('', [TrainingVideoController::class, 'show'])->name('training-videos.show');
+            });
         });
     });
 });

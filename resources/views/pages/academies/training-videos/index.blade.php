@@ -15,11 +15,7 @@
         <div class="container d-flex flex-column">
             <h2 class="mb-2">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
-                @if(isAllAdmin())
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                @elseif(isCoach())
-                    <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
-                @endif
+                <li class="breadcrumb-item"><a href="{{ checkRoleDashboardRoute() }}">Home</a></li>
                 <li class="breadcrumb-item active">
                     @yield('title')
                 </li>
@@ -28,23 +24,19 @@
     </div>
 
     <div class="container page-section">
-        <a href="" class="btn btn-primary mb-3" id="addTrainingVideo">
+        @if(isAllAdmin() || isCoach())
+            <a href="" class="btn btn-primary mb-3" id="addTrainingVideo">
                 <span class="material-icons mr-2">
                     add
                 </span>
-            Add New
-        </a>
+                Add New
+            </a>
+        @elseif(isPlayer())
+            <h4 class="mb-2">Assigned Training Videos</h4>
+        @endif
 
         @if(count($data)==0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <strong class="text-black-100">You haven't created any training videos yet</strong>
-                    </div>
-                </div>
-            </div>
+                <x-warning-alert text="You haven't created any training videos yet"/>
         @else
             <div class="row">
                 @foreach($data as $training)
@@ -90,49 +82,50 @@
 @push('addon-script')
     <script>
         $(document).ready(function () {
-
-            $('#addTrainingVideo').on('click', function (e) {
-                e.preventDefault();
-                $('#addTrainingVideoModal').modal('show');
-            });
-
-            $('#formAddTrainingVideoModal').on('submit', function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: "{{ route('training-videos.store') }}",
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#editTrainingVideoModal').modal('hide');
-                        Swal.fire({
-                            title: 'Training video successfully created!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        $.each(response.errors, function (key, val) {
-                            $('span.' + key).text(val[0]);
-                            $("#" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when creating data!",
-                            text: errorThrown,
-                        });
-                    }
+            @if(isAllAdmin() || isCoach())
+                $('#addTrainingVideo').on('click', function (e) {
+                    e.preventDefault();
+                    $('#addTrainingVideoModal').modal('show');
                 });
-            });
+
+                $('#formAddTrainingVideoModal').on('submit', function (e) {
+                    e.preventDefault();
+                    $.ajax({
+                        url: "{{ route('training-videos.store') }}",
+                        type: $(this).attr('method'),
+                        data: new FormData(this),
+                        contentType: false,
+                        processData: false,
+                        success: function () {
+                            $('#editTrainingVideoModal').modal('hide');
+                            Swal.fire({
+                                title: 'Training video successfully created!',
+                                icon: 'success',
+                                showCancelButton: false,
+                                confirmButtonColor: "#1ac2a1",
+                                confirmButtonText:
+                                    'Ok!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            const response = JSON.parse(jqXHR.responseText);
+                            $.each(response.errors, function (key, val) {
+                                $('span.' + key).text(val[0]);
+                                $("#" + key).addClass('is-invalid');
+                            });
+                            Swal.fire({
+                                icon: "error",
+                                title: "Something went wrong when creating data!",
+                                text: errorThrown,
+                            });
+                        }
+                    });
+                });
+            @endif
         });
     </script>
 @endpush

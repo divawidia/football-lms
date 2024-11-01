@@ -27,8 +27,14 @@ class TrainingVideoController extends Controller
      */
     public function index()
     {
+        if (isAllAdmin() || isCoach()){
+            $data = $this->trainingVideoService->index();
+        } elseif (isPlayer())
+        {
+            $data = $this->trainingVideoService->playerIndex($this->getLoggedPLayerUser());
+        }
         return view('pages.academies.training-videos.index',[
-            'data' => $this->trainingVideoService->index()
+            'data' => $data
         ]);
     }
 

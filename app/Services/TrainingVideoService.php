@@ -13,6 +13,10 @@ class TrainingVideoService extends Service
     public function index(){
         return TrainingVideo::paginate(16);
     }
+    public function playerIndex(Player $player)
+    {
+        return $player->trainingVideos()->paginate(16);
+    }
 
     public function players(TrainingVideo $trainingVideo){
         $data = $trainingVideo->players;
