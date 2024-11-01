@@ -29,7 +29,7 @@ class SkillAssessmentService extends Service
         $teams = $coach->teams;
 
         // query player data that included in teams that managed by logged in coach
-        $query = $this->playerRepository->getCoachsPLayers($teams);
+        $query = $this->playerRepository->getPLayersByTeams($teams);
 
         return Datatables::of($query)
             ->addColumn('action', function ($item) {

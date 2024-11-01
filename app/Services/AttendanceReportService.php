@@ -133,7 +133,7 @@ class AttendanceReportService extends Service
         $teams = $coach->teams()->get();
 
         // query player data that included in teams that managed by logged in coach
-        $query = $this->playerRepository->getCoachsPLayers($teams);
+        $query = $this->playerRepository->getPLayersByTeams($teams);
         return $this->makeAttendanceDatatables($query);
     }
 

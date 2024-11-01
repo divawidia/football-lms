@@ -150,10 +150,10 @@ class PlayerService extends Service
     // retrieve player data based on coach managed teams
     public function coachPlayerIndex($coach): JsonResponse
     {
-        $teams = $this->coachManagedTeams($coach);
+        $teams = $coach->teams;
 
         // query player data that included in teams that managed by logged in coach
-        $query = $this->playerRepository->getCoachsPLayers($teams);
+        $query = $this->playerRepository->getPLayersByTeams($teams);
         return $this->makePlayerDatatables($query);
     }
 

@@ -406,6 +406,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::prefix('performance-reports')->group(function () {
             Route::get('player-match-histories', [PerformanceReportController::class, 'playerIndex'])->name('player.performance-report.index');
         });
+
+        Route::prefix('leaderboards')->group(function () {
+            Route::get('player-teams', [LeaderboardController::class, 'playerTeamLeaderboard'])->name('player.leaderboards.teams');
+            Route::get('players-teammate', [LeaderboardController::class, 'playersTeammateLeaderboard'])->name('player.leaderboards.teammate');
+        });
     });
 
     Route::group(['middleware' => ['role:coach|admin|Super-Admin,web']], function () {
@@ -421,19 +426,6 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('upcoming-trainings', [PlayerController::class, 'upcomingTrainings'])->name('player-managements.upcoming-trainings');
 
                 Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player-managements.performance-reviews-page');
-            });
-        });
-
-        Route::prefix('team-managements')->group(function () {
-            Route::get('', [TeamController::class, 'index'])->name('team-managements.index');
-
-            Route::prefix('{team}')->group(function () {
-                Route::get('', [TeamController::class, 'show'])->name('team-managements.show');
-                Route::get('players', [TeamController::class, 'teamPlayers'])->name('team-managements.teamPlayers');
-                Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('team-managements.teamCoaches');
-                Route::get('competitions', [TeamController::class, 'teamCompetitions'])->name('team-managements.teamCompetitions');
-                Route::get('training-histories', [TeamController::class, 'teamTrainingHistories'])->name('team-managements.training-histories');
-                Route::get('match-histories', [TeamController::class, 'teamMatchHistories'])->name('team-managements.match-histories');
             });
         });
 
@@ -508,10 +500,6 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::prefix('performance-reports')->group(function () {
             Route::get('', [PerformanceReportController::class, 'index'])->name('performance-report.index');
-        });
-
-        Route::prefix('leaderboards')->group(function () {
-            Route::get('', [LeaderboardController::class, 'index'])->name('leaderboards.index');
         });
 
         Route::prefix('training-videos')->group(function () {
@@ -593,6 +581,19 @@ Route::group(['middleware' => ['auth']], function () {
             });
         });
 
+        Route::prefix('team-managements')->group(function () {
+            Route::get('', [TeamController::class, 'index'])->name('team-managements.index');
+
+            Route::prefix('{team}')->group(function () {
+                Route::get('', [TeamController::class, 'show'])->name('team-managements.show');
+                Route::get('players', [TeamController::class, 'teamPlayers'])->name('team-managements.teamPlayers');
+                Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('team-managements.teamCoaches');
+                Route::get('competitions', [TeamController::class, 'teamCompetitions'])->name('team-managements.teamCompetitions');
+                Route::get('training-histories', [TeamController::class, 'teamTrainingHistories'])->name('team-managements.training-histories');
+                Route::get('match-histories', [TeamController::class, 'teamMatchHistories'])->name('team-managements.match-histories');
+            });
+        });
+
         Route::prefix('competition-managements')->group(function () {
             Route::get('', [CompetitionController::class, 'index'])->name('competition-managements.index');
 
@@ -611,5 +612,8 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('', [PerformanceReportController::class, 'index'])->name('performance-report.index');
         });
 
+        Route::prefix('leaderboards')->group(function () {
+            Route::get('', [LeaderboardController::class, 'index'])->name('leaderboards.index');
+        });
     });
 });

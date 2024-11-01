@@ -11,16 +11,24 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
+                    @if(isAllAdmin() || isCoach())
                         <a href="{{ route('team-managements.index') }}" class="nav-link text-70">
                             <i class="material-icons icon--left">keyboard_backspace</i>
                             Back to Team Lists
                         </a>
+                    @elseif(isPlayer())
+                        <a href="{{ url()->previous() }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back
+                        </a>
+                    @endif
                 </li>
             </ul>
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div
+            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($team->logo) }}"
                  width="104"
                  height="104"
@@ -33,14 +41,16 @@
 
             @if(isAllAdmin())
                 <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
                         Action
                         <span class="material-icons ml-3">
                         keyboard_arrow_down
                     </span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('team-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
+                        <a class="dropdown-item" href="{{ route('team-managements.edit', $team->id) }}"><span
+                                class="material-icons">edit</span> Edit Team Profile</a>
                         @if($team->status == '1')
                             <form action="{{ route('deactivate-team', $team->id) }}" method="POST">
                                 @method("PATCH")
@@ -278,11 +288,13 @@
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->created_at)) }}</div>
+                            <div
+                                class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->created_at)) }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->updated_at)) }}</div>
+                            <div
+                                class="ml-auto p-2 text-muted">{{ date('M d, Y. h:i A', strtotime($team->updated_at)) }}</div>
                         </div>
                     </div>
                 </div>
@@ -303,63 +315,69 @@
                     </div>
                 @endif
                 @foreach($latestMatches as $match)
-                        <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-4 d-flex flex-column flex-md-row align-items-center">
-                                        <img src="{{ Storage::url($match->teams[0]->logo) }}"
-                                             width="50"
-                                             height="50"
-                                             class="rounded-circle img-object-fit-cover"
-                                             alt="team-logo">
-                                        <div class="ml-md-3 text-center text-md-left">
-                                            <h6 class="mb-0">{{ $match->teams[0]->teamName }}</h6>
-                                            <p class="text-50 lh-1 mb-0">{{ $match->teams[0]->ageGroup }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-4 text-center">
-                                        <h2 class="mb-0">{{ $match->teams[0]->pivot->teamScore }} - {{ $match->teams[1]->pivot->teamScore }}</h2>
-                                    </div>
-                                    <div class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
-                                        <div class="mr-md-3 text-center text-md-right">
-                                            <h6 class="mb-0">{{ $match->teams[1]->teamName }}</h6>
-                                            <p class="text-50 lh-1 mb-0">{{ $match->teams[1]->ageGroup }}</p>
-                                        </div>
-                                        <img src="{{ Storage::url($match->teams[1]->logo) }}"
-                                             width="50"
-                                             height="50"
-                                             class="rounded-circle img-object-fit-cover"
-                                             alt="team-logo">
+                    <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-4 d-flex flex-column flex-md-row align-items-center">
+                                    <img src="{{ Storage::url($match->teams[0]->logo) }}"
+                                         width="50"
+                                         height="50"
+                                         class="rounded-circle img-object-fit-cover"
+                                         alt="team-logo">
+                                    <div class="ml-md-3 text-center text-md-left">
+                                        <h6 class="mb-0">{{ $match->teams[0]->teamName }}</h6>
+                                        <p class="text-50 lh-1 mb-0">{{ $match->teams[0]->ageGroup }}</p>
                                     </div>
                                 </div>
-
-                                <div class="row justify-content-center mt-3">
-                                    <div class="mr-2">
-                                        <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                                        {{ date('D, M d Y', strtotime($match->date)) }}
+                                <div class="col-4 text-center">
+                                    <h2 class="mb-0">{{ $match->teams[0]->pivot->teamScore }}
+                                        - {{ $match->teams[1]->pivot->teamScore }}</h2>
+                                </div>
+                                <div
+                                    class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
+                                    <div class="mr-md-3 text-center text-md-right">
+                                        <h6 class="mb-0">{{ $match->teams[1]->teamName }}</h6>
+                                        <p class="text-50 lh-1 mb-0">{{ $match->teams[1]->ageGroup }}</p>
                                     </div>
-                                    <div class="mr-2">
-                                        <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                                        {{ date('h:i A', strtotime($match->startTime)) }} - {{ date('h:i A', strtotime($match->endTime)) }}
-                                    </div>
-                                    <div>
-                                        <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                                        {{ $match->place }}
-                                    </div>
+                                    <img src="{{ Storage::url($match->teams[1]->logo) }}"
+                                         width="50"
+                                         height="50"
+                                         class="rounded-circle img-object-fit-cover"
+                                         alt="team-logo">
                                 </div>
                             </div>
-                        </a>
+
+                            <div class="row justify-content-center mt-3">
+                                <div class="mr-2">
+                                    <i class="material-icons text-danger icon--left icon-16pt">event</i>
+                                    {{ date('D, M d Y', strtotime($match->date)) }}
+                                </div>
+                                <div class="mr-2">
+                                    <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
+                                    {{ date('h:i A', strtotime($match->startTime)) }}
+                                    - {{ date('h:i A', strtotime($match->endTime)) }}
+                                </div>
+                                <div>
+                                    <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
+                                    {{ $match->place }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 @endforeach
             </div>
         </div>
         <div class="page-separator">
             <div class="page-separator__text">Players</div>
-            <a href="{{ route('team-managements.addPlayerTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
+            @if(isAllAdmin())
+                <a href="{{ route('team-managements.addPlayerTeam', $team->id) }}"
+                   class="btn btn-primary ml-auto btn-sm">
                 <span class="material-icons mr-2">
                     add
                 </span>
-                Add New
-            </a>
+                    Add New
+                </a>
+            @endif
         </div>
         <div class="card">
             <div class="card-body">
@@ -393,12 +411,14 @@
         </div>
         <div class="page-separator">
             <div class="page-separator__text">Coaches/Staffs</div>
+            @if(isAllAdmin())
             <a href="{{ route('team-managements.addCoachesTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
                 <span class="material-icons mr-2">
                     add
                 </span>
                 Add New
             </a>
+@endif
         </div>
         <div class="card">
             <div class="card-body">
@@ -479,7 +499,8 @@
                         <div class="col-4 text-center">
                             <h2 class="mb-0">Vs.</h2>
                         </div>
-                        <div class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
+                        <div
+                            class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
                             <div class="mr-md-3 text-center text-md-right">
                                 <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
                                 <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
@@ -499,7 +520,8 @@
                         </div>
                         <div class="mr-2">
                             <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                            {{ date('h:i A', strtotime($match->startTime)) }} - {{ date('h:i A', strtotime($match->endTime)) }}
+                            {{ date('h:i A', strtotime($match->startTime)) }}
+                            - {{ date('h:i A', strtotime($match->endTime)) }}
                         </div>
                         <div>
                             <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -548,7 +570,8 @@
                                     </div>
                                     <div class="mr-2">
                                         <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                                        {{ date('h:i A', strtotime($training->startTime)) }} - {{ date('h:i A', strtotime($training->endTime)) }}
+                                        {{ date('h:i A', strtotime($training->startTime)) }}
+                                        - {{ date('h:i A', strtotime($training->endTime)) }}
                                     </div>
                                     <div>
                                         <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -621,30 +644,30 @@
 @endsection
 @push('addon-script')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#playersTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                        url: '{!! url()->route('team-managements.teamPlayers', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.teamPlayers', $team->id) !!}',
                 },
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'name', name: 'name' },
-                    { data: 'strongFoot', name: 'strongFoot' },
-                    { data: 'age', name: 'age'},
-                    { data: 'minutesPlayed', name: 'minutesPlayed'},
-                    { data: 'apps', name: 'apps'},
-                    { data: 'goals', name: 'goals'},
-                    { data: 'assists', name: 'assists'},
-                    { data: 'ownGoals', name: 'ownGoals'},
-                    { data: 'shots', name: 'shots'},
-                    { data: 'passes', name: 'passes'},
-                    { data: 'fouls', name: 'fouls'},
-                    { data: 'yellowCards', name: 'yellowCards'},
-                    { data: 'redCards', name: 'redCards'},
-                    { data: 'saves', name: 'saves'},
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'name', name: 'name'},
+                    {data: 'strongFoot', name: 'strongFoot'},
+                    {data: 'age', name: 'age'},
+                    {data: 'minutesPlayed', name: 'minutesPlayed'},
+                    {data: 'apps', name: 'apps'},
+                    {data: 'goals', name: 'goals'},
+                    {data: 'assists', name: 'assists'},
+                    {data: 'ownGoals', name: 'ownGoals'},
+                    {data: 'shots', name: 'shots'},
+                    {data: 'passes', name: 'passes'},
+                    {data: 'fouls', name: 'fouls'},
+                    {data: 'yellowCards', name: 'yellowCards'},
+                    {data: 'redCards', name: 'redCards'},
+                    {data: 'saves', name: 'saves'},
                     {
                         data: 'action',
                         name: 'action',
@@ -660,14 +683,14 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                        url: '{!! url()->route('team-managements.teamCoaches', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.teamCoaches', $team->id) !!}',
                 },
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'name', name: 'name' },
-                    { data: 'age', name: 'age' },
-                    { data: 'gender', name: 'gender' },
-                    { data: 'joinedDate', name: 'joinedDate'},
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'name', name: 'name'},
+                    {data: 'age', name: 'age'},
+                    {data: 'gender', name: 'gender'},
+                    {data: 'joinedDate', name: 'joinedDate'},
                     {
                         data: 'action',
                         name: 'action',
@@ -683,16 +706,16 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                        url: '{!! url()->route('team-managements.teamCompetitions', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.teamCompetitions', $team->id) !!}',
                 },
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'name', name: 'name' },
-                    { data: 'divisions', name: 'divisions' },
-                    { data: 'date', name: 'date'},
-                    { data: 'location', name: 'location'},
-                    { data: 'contact', name: 'contact' },
-                    { data: 'status', name: 'status' },
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'name', name: 'name'},
+                    {data: 'divisions', name: 'divisions'},
+                    {data: 'date', name: 'date'},
+                    {data: 'location', name: 'location'},
+                    {data: 'contact', name: 'contact'},
+                    {data: 'status', name: 'status'},
                     {
                         data: 'action',
                         name: 'action',
@@ -709,16 +732,16 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                        url: '{!! url()->route('team-managements.training-histories', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.training-histories', $team->id) !!}',
                 },
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'eventName', name: 'eventName' },
-                    { data: 'date', name: 'date' },
-                    { data: 'place', name: 'place'},
-                    { data: 'status', name: 'status' },
-                    { data: 'note', name: 'note' },
-                    { data: 'last_updated', name: 'last_updated' },
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'eventName', name: 'eventName'},
+                    {data: 'date', name: 'date'},
+                    {data: 'place', name: 'place'},
+                    {data: 'status', name: 'status'},
+                    {data: 'note', name: 'note'},
+                    {data: 'last_updated', name: 'last_updated'},
                     {
                         data: 'action',
                         name: 'action',
@@ -735,19 +758,19 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                        url: '{!! url()->route('team-managements.match-histories', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.match-histories', $team->id) !!}',
                 },
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'opponentTeam', name: 'opponentTeam' },
-                    { data: 'competition', name: 'competition' },
-                    { data: 'date', name: 'date' },
-                    { data: 'teamScore', name: 'teamScore' },
-                    { data: 'opponentTeamScore', name: 'opponentTeamScore' },
-                    { data: 'place', name: 'place' },
-                    { data: 'status', name: 'status' },
-                    { data: 'note', name: 'note' },
-                    { data: 'last_updated', name: 'last_updated' },
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'opponentTeam', name: 'opponentTeam'},
+                    {data: 'competition', name: 'competition'},
+                    {data: 'date', name: 'date'},
+                    {data: 'teamScore', name: 'teamScore'},
+                    {data: 'opponentTeamScore', name: 'opponentTeamScore'},
+                    {data: 'place', name: 'place'},
+                    {data: 'status', name: 'status'},
+                    {data: 'note', name: 'note'},
+                    {data: 'last_updated', name: 'last_updated'},
                     {
                         data: 'action',
                         name: 'action',
@@ -759,7 +782,7 @@
                 order: [[2, 'desc']],
             });
 
-            $('.delete-team').on('click', function() {
+            $('.delete-team').on('click', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -778,7 +801,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 Swal.fire({
                                     title: 'Team successfully deleted!',
                                     icon: 'success',
@@ -792,7 +815,7 @@
                                     }
                                 });
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -804,7 +827,7 @@
                 });
             });
 
-            $('body').on('click', '.remove-player', function() {
+            $('body').on('click', '.remove-player', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -823,14 +846,14 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 Swal.fire({
                                     icon: "success",
                                     title: "Player successfully removed!",
                                 });
                                 playersTable.ajax.reload();
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",
@@ -842,7 +865,7 @@
                 });
             });
 
-            $('body').on('click', '.remove-coach', function() {
+            $('body').on('click', '.remove-coach', function () {
                 let id = $(this).attr('id');
 
                 Swal.fire({
@@ -861,14 +884,14 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 Swal.fire({
                                     icon: "success",
                                     title: "Coach successfully removed!",
                                 });
                                 coachesTable.ajax.reload();
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Oops...",

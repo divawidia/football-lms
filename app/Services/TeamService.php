@@ -152,23 +152,27 @@ class TeamService extends Service
                 return $this->getAge($item->user->dob);
             })
             ->editColumn('name', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <a href="' . route('player-managements.show', $item->id) . '">
-                                                <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
-                                            </a>
-                                            <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
-                                        </div>
+                if (isAllAdmin() || isCoach()){
+                    $playerName = '<a href="' . route('player-managements.show', $item->id) . '">
+                                        <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
+                                    </a>';
+                } else {
+                    $playerName = '<p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>';
+                }
+                return '<div class="media flex-nowrap align-items-center"
+                             style="white-space: nowrap;">
+                            <div class="avatar avatar-sm mr-8pt">
+                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
+                            </div>
+                            <div class="media-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex d-flex flex-column">
+                                        '.$playerName.'
+                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
                                     </div>
                                 </div>
-                            </div>';
+                            </div>
+                        </div>';
             })
             ->addColumn('minutesPlayed', function ($item) use ($team){
                 return $item->playerMatchStats()
@@ -296,9 +300,9 @@ class TeamService extends Service
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 $actionButton = '';
-                if (isCoach()){
+                if (isCoach() || isPlayer()){
                     $actionButton =  '
-                          <a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->competitionId) . '" data-toggle="tooltips" data-placement="bottom" title="View Competition">
+                          <a class="btn btn-sm btn-outline-secondary" href="' . route('competition-managements.show', $item->competitionId) . '" data-toggle="tooltips" data-placement="bottom" title="View Competition">
                             <span class="material-icons">
                                 visibility
                             </span>

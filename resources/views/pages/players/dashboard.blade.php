@@ -40,7 +40,7 @@
 
         <div class="row">
             <div class="col-sm-6 flex-column">
-                {{--Teams Section--}}
+                {{--Skill stats Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
                     <a href="{{ route('player.skill-stats') }}"

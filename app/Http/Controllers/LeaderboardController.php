@@ -12,7 +12,20 @@ class LeaderboardController extends Controller
         $this->leaderboardService = $leaderboardService;
     }
     public function index(){
-        return view('pages.academies.leaderboards.index');
+        if (isAllAdmin()){
+            $teamsLeaderboardRoute = route('leaderboards.teams');
+            $playersLeaderboardRoute = route('leaderboards.players');
+        } elseif (isCoach()){
+            $teamsLeaderboardRoute = route('coach.leaderboards.teams');
+            $playersLeaderboardRoute = route('coach.leaderboards.players');
+        } elseif (isPlayer()){
+            $teamsLeaderboardRoute = route('player.leaderboards.teams');
+            $playersLeaderboardRoute = route('player.leaderboards.teammate');
+        }
+        return view('pages.academies.leaderboards.index', [
+            'teamsLeaderboardRoute' => $teamsLeaderboardRoute,
+            'playersLeaderboardRoute' => $playersLeaderboardRoute,
+        ]);
     }
 
     public function playerLeaderboard(){
@@ -21,11 +34,18 @@ class LeaderboardController extends Controller
     public function coachPlayerLeaderboard(){
         return $this->leaderboardService->coachPLayerLeaderboard($this->getLoggedCoachUser());
     }
+    public function playersTeammateLeaderboard(){
+        return $this->leaderboardService->playersTeammateLeaderboard($this->getLoggedPLayerUser());
+    }
 
     public function teamLeaderboard(){
         return $this->leaderboardService->teamLeaderboard();
     }
     public function coachTeamLeaderboard(){
-        return $this->leaderboardService->coachsTeamLeaderboards($this->getLoggedCoachUser());
+        return $this->leaderboardService->modelsTeamsLeaderboards($this->getLoggedCoachUser());
+    }
+
+    public function playerTeamLeaderboard(){
+        return $this->leaderboardService->modelsTeamsLeaderboards($this->getLoggedPLayerUser());
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Coach;
+use App\Models\Player;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
 use Illuminate\Support\Facades\Storage;
@@ -110,7 +111,13 @@ class LeaderboardService extends Service
     public function coachPLayerLeaderboard(Coach $coach)
     {
         $teams = $coach->teams()->get();
-        $query = $this->playerRepository->getCoachsPLayers($teams);
+        $query = $this->playerRepository->getPLayersByTeams($teams);
+        return $this->playerLeaderboardDatatables($query);
+    }
+    public function playersTeammateLeaderboard(Player $player)
+    {
+        $teams = $player->teams;
+        $query = $this->playerRepository->getPLayersByTeams($teams);
         return $this->playerLeaderboardDatatables($query);
     }
 
@@ -189,9 +196,9 @@ class LeaderboardService extends Service
         $query = $this->teamRepository->getByTeamside('Academy Team');
         return $this->teamLeaderboardsDatatables($query);
     }
-    public function coachsTeamLeaderboards($coach)
+    public function modelsTeamsLeaderboards($model)
     {
-        $query = $coach->teams();
+        $query = $model->teams;
         return $this->teamLeaderboardsDatatables($query);
     }
 }

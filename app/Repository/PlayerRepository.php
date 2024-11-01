@@ -24,7 +24,7 @@ class PlayerRepository
         return $this->player->with('user', 'teams')->get();
     }
 
-    public function getCoachsPLayers($teams)
+    public function getPLayersByTeams($teams)
     {
         return $this->player->with('user', 'teams', 'position', 'playerSkillStats')->withTeams($teams)->get();
     }
