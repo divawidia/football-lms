@@ -315,8 +315,9 @@
                 processing: true,
                 serverSide: true,
                 ordering: true,
+                pageLength: 5,
                 ajax: {
-                    url: '{!! $matchHistoryRoutes !!}',
+                    url: '{!! route('competition-managements.matches', $competition->id) !!}',
                 },
                 columns: [
                     { data: 'team', name: 'team' },
@@ -332,7 +333,7 @@
                         searchable: false,
                         width: '15%'
                     },
-                ]
+                ],
             });
 
             @foreach($competition->groups as $group)

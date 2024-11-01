@@ -599,6 +599,7 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('{competition}')->group(function () {
                 Route::get('', [CompetitionController::class, 'show'])->name('competition-managements.show');
+                Route::get('matches', [CompetitionController::class, 'competitionMatches'])->name('competition-managements.matches');
 
                 Route::prefix('group-division')->group(function () {
                     Route::prefix('{group}')->group(function () {

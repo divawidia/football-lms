@@ -74,6 +74,10 @@ class CompetitionController extends Controller
             'overviewStats' => $overviewStats,
         ]);
     }
+    public function competitionMatches(Competition $competition)
+    {
+        return $this->competitionService->competitionMatches($competition);
+    }
 
     /**
      * Show the form for editing the specified resource.
