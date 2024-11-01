@@ -91,7 +91,6 @@
                 });
             });
             @endif
-
         });
     </script>
 @endpush

@@ -127,7 +127,7 @@
         </div>
 
         <div class="row card-group-row">
-            <div class="col-sm-6 card-group-row__col flex-column">
+            <div class="col-sm-5 card-group-row__col flex-column">
                 <div class="page-separator">
                     <div class="page-separator__text">Competition Info</div>
                 </div>
@@ -178,13 +178,29 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 card-group-row__col flex-column">
+            <div class="col-sm-7 card-group-row__col flex-column">
                 <div class="page-separator">
                     <div class="page-separator__text">Match</div>
                 </div>
                 <div class="card card-sm card-group-row__card">
                     <div class="card-body flex-column">
-
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="competitionMatchTable">
+                                <thead>
+                                <tr>
+                                    <th>Team</th>
+                                    <th>Opponent</th>
+                                    <th>Score</th>
+                                    <th>Match Date</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -295,6 +311,30 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
+            const matchHistory = $('#competitionMatchTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! $matchHistoryRoutes !!}',
+                },
+                columns: [
+                    { data: 'team', name: 'team' },
+                    { data: 'opponentTeam', name: 'opponentTeam' },
+                    { data: 'score', name: 'score'},
+                    { data: 'date', name: 'date'},
+                    { data: 'place', name: 'place'},
+                    { data: 'status', name: 'status'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ]
+            });
+
             @foreach($competition->groups as $group)
                 const groupTable{{$group->id}} = $('#groupTable{{$group->id}}').DataTable({
                     processing: true,

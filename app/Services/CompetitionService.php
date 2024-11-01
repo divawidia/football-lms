@@ -129,11 +129,13 @@ class CompetitionService extends Service
                 return $contact;
             })
             ->editColumn('status', function ($item) {
+                $status = '';
                 if ($item->status == '1') {
-                    return '<span class="badge badge-pill badge-success">Aktif</span>';
+                    $status = '<span class="badge badge-pill badge-success">Active</span>';
                 } elseif ($item->status == '0') {
-                    return '<span class="badge badge-pill badge-danger">Non Aktif</span>';
+                    $status = '<span class="badge badge-pill badge-danger">Ended</span>';
                 }
+                return $status;
             })
             ->rawColumns(['action', 'name', 'teams', 'divisions', 'date', 'contact', 'status'])
             ->make();
@@ -158,6 +160,89 @@ class CompetitionService extends Service
 
         return compact('totalTeams', 'ourTeamsWins', 'ourTeamsDraws', 'ourTeamsLosses', 'totalGroups', 'totalMatch');
 
+    }
+    public function competitionMatches(Competition $competition)
+    {
+        $data = $competition->matches;
+        return Datatables::of($data)
+            ->addColumn('action', function ($item) {
+                if (isAllAdmin()){
+                    $actionBtn ='
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="material-icons">
+                                more_vert
+                            </span>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="' . route('match-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Match</a>
+                            <a class="dropdown-item" href="' . route('match-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Match</a>
+                            <button type="button" class="dropdown-item delete" id="' . $item->id . '">
+                                <span class="material-icons">delete</span> Delete Match
+                            </button>
+                          </div>
+                        </div>';
+                } elseif (isCoach() || isPlayer()){
+                    $actionBtn = '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
+                                        <span class="material-icons">visibility</span>
+                                  </a>';
+                }
+                return $actionBtn;
+            })
+            ->editColumn('team', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->teamName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$item->teams[0]->ageGroup.'</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('opponentTeam', function ($item) {
+                return '
+                        <div class="media flex-nowrap align-items-center"
+                                 style="white-space: nowrap;">
+                                <div class="avatar avatar-sm mr-8pt">
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[1]->logo) . '" alt="profile-pic"/>
+                                </div>
+                                <div class="media-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex d-flex flex-column">
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[1]->teamName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$item->teams[1]->ageGroup.'</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+            })
+            ->editColumn('score', function ($item){
+                return '<p class="mb-0"><strong class="js-lists-values-lead">' .$item->teams[0]->pivot->teamScore . ' - ' . $item->teams[1]->pivot->teamScore.'</strong></p>';
+            })
+            ->editColumn('date', function ($item) {
+                $date = $this->convertToDate($item->date);
+                $startTime = $this->convertToTime($item->startTime);
+                $endTime = $this->convertToTime($item->endTime);
+                return $date.' ('.$startTime.' - '.$endTime.')';
+            })
+            ->editColumn('status', function ($item) {
+                $status = '';
+                if ($item->status == '1') {
+                    $status = '<span class="badge badge-pill badge-success">Active</span>';
+                } elseif ($item->status == '0') {
+                    $status = '<span class="badge badge-pill badge-danger">Ended</span>';
+                }
+                return $status;
+            })
+            ->rawColumns(['action','team', 'score', 'status','opponentTeam','date'])
+            ->make();
     }
     public  function store(array $competitionData){
 
