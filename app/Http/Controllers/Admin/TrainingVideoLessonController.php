@@ -36,21 +36,28 @@ class TrainingVideoLessonController extends Controller
 
     public function show(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
+        return view('pages.academies.training-videos.lessons.detail',[
+            'trainingVideo' => $trainingVideo,
+            'data' => $lesson,
+            'totalDuration' => $this->trainingVideoLessonService->getTotalDuration($lesson),
+        ]);
+    }
+
+    public function showPlayerLesson(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
+    {
         $previousId = $trainingVideo->lessons()->where('id', '<', $lesson->id)->orderBy('id', 'desc')->first();
         $nextId = $trainingVideo->lessons()->where('id', '>', $lesson->id)->orderBy('id', 'desc')->first();
-        $loggedPlayerUser = null;
-        if (isPlayer()){
-            $loggedPlayerUser = $this->getLoggedPLayerUser();
-            $lessonCompletionStatus = $lesson->players()->where('playerId', $loggedPlayerUser->id)->first()->pivot->completionStatus;
-        }
+        $loggedPlayerUser = $this->getLoggedPLayerUser();
+        $lessonCompletionStatus = $lesson->players()->where('playerId', $loggedPlayerUser->id)->first()->pivot->completionStatus;
 
-        return view('pages.academies.training-videos.lessons.detail',[
+        return view('pages.academies.training-videos.lessons.detail-for-player',[
             'previousId' => $previousId,
             'nextId' => $nextId,
             'trainingVideo' => $trainingVideo,
             'data' => $lesson,
             'totalDuration' => $this->trainingVideoLessonService->getTotalDuration($lesson),
-            'loggedPlayerUser' => $loggedPlayerUser
+            'loggedPlayerUser' => $loggedPlayerUser,
+            'lessonCompletionStatus' => $lessonCompletionStatus,
         ]);
     }
 
