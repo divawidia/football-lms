@@ -37,35 +37,53 @@
                     <div class="lead text-white-50 measure-hero-lead mb-24pt">
                         {!! $data->description !!}
                     </div>
-                    <div class="btn-toolbar" role="toolbar">
-                        <a href="" id="editTrainingVideo" class="btn btn-sm btn-white">
-                            <span class="material-icons mr-2">edit</span>
-                            Edit Training
+                    {{-- progress bar for player page --}}
+                    @if(isPlayer())
+                        <div class="d-flex flex-row align-items-center">
+                            <h5 class="text-white mb-0">Progress : </h5>
+                            <div class="flex mx-4" style="max-width: 100%">
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-accent-2" role="progressbar" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                            <h5 class="text-white mb-0">50%</h5>
+                        </div>
+                        <a href="" id="resumeTraining" class="btn btn-sm btn-primary mt-4">
+                            <span class="material-icons mr-2">play_arrow</span>
+                            Resume Training
                         </a>
-                        @if($data->status == "1")
-                            <form action="{{ route('training-videos.unpublish', $data->id) }}" method="POST">
-                                @method("PATCH")
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-white mx-2">
-                                    <span class="material-icons mr-2">block</span>
-                                    Unpublish Training
-                                </button>
-                            </form>
-                        @else
-                            <form action="{{ route('training-videos.publish', $data->id) }}" method="POST">
-                                @method("PATCH")
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-white mx-2">
-                                    <span class="material-icons mr-2">check_circle</span>
-                                    Publish Training
-                                </button>
-                            </form>
-                        @endif
-                        <button type="button" class="btn btn-sm btn-white delete-training" id="{{ $data->id }}">
-                            <span class="material-icons mr-2">delete</span>
-                            Delete Training
-                        </button>
-                    </div>
+                    @endif
+                    @if(isAllAdmin() || isCoach())
+                        <div class="btn-toolbar" role="toolbar">
+                            <a href="" id="editTrainingVideo" class="btn btn-sm btn-white">
+                                <span class="material-icons mr-2">edit</span>
+                                Edit Training
+                            </a>
+                            @if($data->status == "1")
+                                <form action="{{ route('training-videos.unpublish', $data->id) }}" method="POST">
+                                    @method("PATCH")
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-white mx-2">
+                                        <span class="material-icons mr-2">block</span>
+                                        Unpublish Training
+                                    </button>
+                                </form>
+                            @else
+                                <form action="{{ route('training-videos.publish', $data->id) }}" method="POST">
+                                    @method("PATCH")
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-white mx-2">
+                                        <span class="material-icons mr-2">check_circle</span>
+                                        Publish Training
+                                    </button>
+                                </form>
+                            @endif
+                            <button type="button" class="btn btn-sm btn-white delete-training" id="{{ $data->id }}">
+                                <span class="material-icons mr-2">delete</span>
+                                Delete Training
+                            </button>
+                        </div>
+                    @endif
                 </div>
             </div>
             <div
@@ -111,10 +129,6 @@
                         </li>
                         <li class="nav-item navbar-list__item">
                             <i class="material-icons text-muted icon--left">date_range</i>
-                            Created at : {{ date('M d, Y ~ H:i', strtotime($data->created_at)) }}
-                        </li>
-                        <li class="nav-item navbar-list__item">
-                            <i class="material-icons text-muted icon--left">date_range</i>
                             Last updated : {{ date('M d, Y ~ H:i', strtotime($data->updated_at)) }}
                         </li>
                     </ul>
@@ -123,111 +137,106 @@
         </div>
     </div>
     <div class="container page__container page-section">
-        <div class="page-separator">
-            <div class="page-separator__text">Overview</div>
-            {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
-        </div>
+        @if(isAllAdmin() || isCoach())
+            <div class="page-separator">
+                <div class="page-separator__text">Overview</div>
+                {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
+            </div>
 
-        <div class="row mb-3">
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data->players()->count() }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Total Assigned Players</div>
-                            </div>
-                        </div>
+            <div class="row mb-3">
+                @include('components.stats-card', ['title' => 'Total Assigned Players','data' => $data->players()->count(), 'dataThisMonth' => null])
+                @include('components.stats-card', ['title' => 'Players Completed','data' => $data->players()->where('status', 'Completed')->count(), 'dataThisMonth' => null])
+                @include('components.stats-card', ['title' => 'Players on progress','data' => $data->players()->where('status', 'On Progress')->count(), 'dataThisMonth' => null])
+            </div>
+
+            {{--    Lessons    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">Lesson(s)</div>
+                <a href="" id="addLesson" class="btn btn-primary btn-sm ml-auto"><span
+                        class="material-icons mr-2">add</span> Add lesson</a>
+            </div>
+            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="lessonsTable">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Lesson Length</th>
+                                <th>Description</th>
+                                <th>Publish Status</th>
+                                <th>Created At</th>
+                                <th>Last Updated</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div
-                                class="h2 mb-0 mr-3">{{ $data->players()->where('status', 'Completed')->count() }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Players Completed</div>
-                            </div>
-                        </div>
+
+            {{--    Assigned Player    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">Assigned Player(s)</div>
+                <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}"
+                   class="btn btn-primary btn-sm ml-auto">
+                    <span class="material-icons mr-2">add</span>
+                    Add Player
+                </a>
+            </div>
+            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="playersTable">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Progress</th>
+                                <th>Completion Status</th>
+                                <th>Assigned At</th>
+                                <th>Completed At</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div
-                                class="h2 mb-0 mr-3">{{ $data->players()->where('status', 'On Progress')->count() }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">Players on progress</div>
-                            </div>
-                        </div>
+
+        @elseif(isPlayer())
+            <div class="border-left page-section pl-32pt">
+                @php($i = 1)
+                @foreach($data->lessons as $lesson)
+                    <div class="d-flex align-items-center page-num-container">
+                        <div class="page-num">{{ $i }}</div>
+                        <h4>{{ $lesson->lessonTitle }}</h4>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        {{--    Lessons    --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Lesson(s)</div>
-            <a href="" id="addLesson" class="btn btn-primary btn-sm ml-auto"><span
-                    class="material-icons mr-2">add</span> Add lesson</a>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="lessonsTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Title</th>
-                            <th>Lesson Length</th>
-                            <th>Description</th>
-                            <th>Publish Status</th>
-                            <th>Created At</th>
-                            <th>Last Updated</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                    <p class="text-70 mb-24pt">{{ $lesson->description }}</p>
 
-        {{--    Assigned Player    --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Assigned Player(s)</div>
-            <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}"
-               class="btn btn-primary btn-sm ml-auto">
-                <span class="material-icons mr-2">add</span>
-                Add Player
-            </a>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="playersTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Progress</th>
-                            <th>Completion Status</th>
-                            <th>Assigned At</th>
-                            <th>Completed At</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="card mb-32pt mb-lg-64pt">
+                        <a class="accordion__toggle" href="{{ route('training-videos.lessons-show', ['trainingVideo' => $data->id, 'lesson' => $lesson->id]) }}">
+                            @if($lesson->players()->where('playerId', $player->id)->first(['player_lesson.completionStatus'])->completionStatus == '1')
+                                <span class="accordion__toggle-icon material-icons text-success">play_circle</span>
+                                <strong class="card-title mx-4">Completed</strong>
+                            @elseif($lesson->players()->where('playerId', $player->id)->first(['player_lesson.completionStatus'])->completionStatus == '0')
+                                <span class="accordion__toggle-icon material-icons">play_circle_outline</span>
+                                <strong class="card-title mx-4">Take Lesson</strong>
+                            @endif
+                            <span class="text-muted ml-auto">{{ secondToMinute($lesson->totalDuration) }}</span>
+                        </a>
+                    </div>
+                    @php($i++)
+                @endforeach
             </div>
-        </div>
+
+        @endif
     </div>
 @endsection
 

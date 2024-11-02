@@ -620,6 +620,12 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('{trainingVideo}')->group(function () {
                 Route::get('', [TrainingVideoController::class, 'show'])->name('training-videos.show');
+
+                Route::prefix('lessons')->group(function () {
+                    Route::prefix('{lesson}')->group(function () {
+                        Route::get('', [TrainingVideoLessonController::class, 'show'])->name('training-videos.lessons-show');
+                    });
+                });
             });
         });
     });

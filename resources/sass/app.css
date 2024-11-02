@@ -231,7 +231,11 @@
 }
 
 .bg-primary {
-  background-color: var(--accent-1) !important;
+  background-color: #E52534 !important;
+}
+
+.bg-accent-2 {
+  background-color: #20F4CB !important;
 }
 
 .badge {
