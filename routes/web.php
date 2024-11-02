@@ -624,6 +624,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::prefix('lessons')->group(function () {
                     Route::prefix('{lesson}')->group(function () {
                         Route::get('', [TrainingVideoLessonController::class, 'show'])->name('training-videos.lessons-show');
+                        Route::post('mark-as-complete', [TrainingVideoLessonController::class, 'markAsComplete'])->name('training-videos.mark-as-complete');
                     });
                 });
             });

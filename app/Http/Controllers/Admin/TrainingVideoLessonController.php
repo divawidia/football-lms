@@ -8,6 +8,7 @@ use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
 use App\Services\TrainingVideoLessonService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class TrainingVideoLessonController extends Controller
@@ -35,9 +36,21 @@ class TrainingVideoLessonController extends Controller
 
     public function show(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
+        $previousId = $trainingVideo->lessons()->where('id', '<', $lesson->id)->orderBy('id', 'desc')->first();
+        $nextId = $trainingVideo->lessons()->where('id', '>', $lesson->id)->orderBy('id', 'desc')->first();
+        $loggedPlayerUser = null;
+        if (isPlayer()){
+            $loggedPlayerUser = $this->getLoggedPLayerUser();
+            $lessonCompletionStatus = $lesson->players()->where('playerId', $loggedPlayerUser->id)->first()->pivot->completionStatus;
+        }
+
         return view('pages.academies.training-videos.lessons.detail',[
+            'previousId' => $previousId,
+            'nextId' => $nextId,
+            'trainingVideo' => $trainingVideo,
             'data' => $lesson,
-            'totalDuration' => $this->trainingVideoLessonService->getTotalDuration($lesson)
+            'totalDuration' => $this->trainingVideoLessonService->getTotalDuration($lesson),
+            'loggedPlayerUser' => $loggedPlayerUser
         ]);
     }
 
@@ -55,6 +68,14 @@ class TrainingVideoLessonController extends Controller
         $data = $request->validated();
 
         return response()->json($this->trainingVideoLessonService->update($data, $lesson));
+    }
+
+    public function markAsComplete(Request $request, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
+    {
+        $userId = $request->input('userId');
+
+        $lesson->players()->updateExistingPivot($userId, ['completionStatus' => '1']);
+        return response()->json(['message' => 'Video marked as complete']);
     }
 
     public function publish(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
