@@ -42,7 +42,6 @@
 
             <p class="hero__lead measure-hero-lead text-white-50 mb-24pt">{!! $data->description !!}</p>
 
-            @if(isAllAdmin() || isCoach())
                 <div class="btn-toolbar" role="toolbar">
                     <button type="button" class="btn btn-sm btn-white editLesson" id="{{ $data->id }}">
                         <span class="material-icons mr-2">edit</span>
@@ -74,44 +73,18 @@
                         Delete Lesson
                     </button>
                 </div>
-            @elseif(isPlayer())
-                <div class="btn-toolbar" role="toolbar">
-                    @if($trainingVideo->lessons()->first()->id != $data->id)
-                        <a class="btn btn-sm btn-white" href="{{ route('training-videos.lessons-show', ['trainingVideo' => $trainingVideo->id, 'lesson' => $previousId]) }}" id="{{ $data->id }}">
-                            <span class="material-icons icon-24pt mr-2">chevron_left</span>
-                            Previous Lesson
-                        </a>
-                    @endif
-                    @if($trainingVideo->lessons()->latest()->first()->id != $data->id)
-                        <a class="btn btn-sm btn-white ml-auto" href="{{ route('training-videos.lessons-show', ['trainingVideo' => $trainingVideo->id, 'lesson' => $nextId]) }}" id="{{ $data->id }}">
-                            Next Lesson
-                            <span class="material-icons icon-24pt ml-2">chevron_right</span>
-                        </a>
-                    @endif
-                </div>
-            @endif
         </div>
     </div>
     <div class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">
         <div class="container page__container">
             <ul class="nav navbar-nav flex align-items-sm-center">
-                <li class="nav-item navbar-list__item">
-                    @if(isAllAdmin() || isCoach())
+                <li class="nav-item navbar-list__item">=
                         <i class="material-icons text-muted icon--left">visibility</i>
                         @if($data->status == '1')
                             Status : <span class="badge badge-pill badge-success ml-1">Published</span>
                         @else
                             Status : <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
                         @endif
-                    @elseif(isPlayer())
-                        <i class="material-icons text-muted icon--left">visibility</i>
-                        @dd($data->players()->where('playerId', $loggedPlayerUser->id)->first()->pivot->completionStatus == '0')
-                        @if($data->status == '1')
-                            Status : <span class="badge badge-pill badge-success ml-1">Completed</span>
-                        @else
-                            Status : <span class="badge badge-pill badge-danger ml-1">Not Completed</span>
-                        @endif
-                    @endif
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">schedule</i>
@@ -211,43 +184,6 @@
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            @if(isPlayer())
-
-                function onYouTubeIframeAPIReady() {
-                    new YT.Player('video-player', {
-                        videoId: '{{ $data->videoId }}', // Replace with your YouTube video ID
-                        events: {
-                            'onStateChange': onPlayerStateChange
-                        }
-                    });
-                }
-
-                function onPlayerStateChange(event) {
-                    // Video has ended
-                    if (event.data === YT.PlayerState.ENDED) {
-                        markVideoAsComplete();
-                    }
-                }
-
-                function markVideoAsComplete() {
-                    $.ajax({
-                        url: '{{ url()->route('training-videos.mark-as-complete', ['trainingVideo' => $trainingVideo->id, 'lesson' => $data->id]) }}', // Route to handle video completion
-                        method: 'POST',
-                        data: {
-                            userId: 'YOUR_VIDEO_ID', // Pass the video ID to backend
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            console.log(response.message);
-                        },
-                        error: function(xhr) {
-                            console.error(xhr.responseText);
-                        }
-                    });
-                }
-            @endif
-
-
             const body = $('body');
 
             const playersTable = $('#playersTable').DataTable({

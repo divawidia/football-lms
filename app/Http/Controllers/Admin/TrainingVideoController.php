@@ -65,13 +65,19 @@ class TrainingVideoController extends Controller
     public function show(TrainingVideo $trainingVideo)
     {
         $player = null;
+        $playerCompletionProgress = null;
+        $uncompletePlayerTrainingLesson = null;
         if (isPlayer()){
             $player = $this->getLoggedPLayerUser();
+            $playerCompletionProgress = $this->trainingVideoService->playerCompletionProgress($player, $trainingVideo);
+            $uncompletePlayerTrainingLesson = $this->trainingVideoService->uncompletePlayerTrainingLesson($player);
         }
 
         return view('pages.academies.training-videos.detail',[
             'player' => $player,
             'data' => $trainingVideo,
+            'uncompletePlayerTrainingLesson' => $uncompletePlayerTrainingLesson,
+            'playerCompletionProgress' => $playerCompletionProgress,
             'totalDuration' => $this->trainingVideoService->getTotalDuration($trainingVideo)
         ]);
     }

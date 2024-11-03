@@ -40,18 +40,20 @@
                     {{-- progress bar for player page --}}
                     @if(isPlayer())
                         <div class="d-flex flex-row align-items-center">
-                            <h5 class="text-white mb-0">Progress : </h5>
+                            <h5 class="text-white mb-0">Course Progress : </h5>
                             <div class="flex mx-4" style="max-width: 100%">
                                 <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar bg-accent-2" role="progressbar" style="width: 50%;"></div>
+                                    <div class="progress-bar bg-accent-2" role="progressbar" style="width: {{ $playerCompletionProgress }}%;"></div>
                                 </div>
                             </div>
-                            <h5 class="text-white mb-0">50%</h5>
+                            <h5 class="text-white mb-0">{{ $playerCompletionProgress }}%</h5>
                         </div>
-                        <a href="" id="resumeTraining" class="btn btn-sm btn-primary mt-4">
-                            <span class="material-icons mr-2">play_arrow</span>
-                            Resume Training
-                        </a>
+                        @if($playerCompletionProgress < 100)
+                            <a href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->id, 'lesson' => $uncompletePlayerTrainingLesson->id]) }}" id="resumeTraining" class="btn btn-sm btn-primary mt-4">
+                                <span class="material-icons mr-2">play_arrow</span>
+                                Resume Training
+                            </a>
+                        @endif
                     @endif
                     @if(isAllAdmin() || isCoach())
                         <div class="btn-toolbar" role="toolbar">
@@ -221,9 +223,9 @@
                     <p class="text-70 mb-24pt">{{ $lesson->description }}</p>
 
                     <div class="card mb-32pt mb-lg-64pt">
-                        <a class="accordion__toggle" href="{{ route('training-videos.lessons-show', ['trainingVideo' => $data->id, 'lesson' => $lesson->id]) }}">
+                        <a class="accordion__toggle" href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->id, 'lesson' => $lesson->id]) }}">
                             @if($lesson->players()->where('playerId', $player->id)->first(['player_lesson.completionStatus'])->completionStatus == '1')
-                                <span class="accordion__toggle-icon material-icons text-success">play_circle</span>
+                                <span class="accordion__toggle-icon material-icons text-success">check_circle</span>
                                 <strong class="card-title mx-4">Completed</strong>
                             @elseif($lesson->players()->where('playerId', $player->id)->first(['player_lesson.completionStatus'])->completionStatus == '0')
                                 <span class="accordion__toggle-icon material-icons">play_circle_outline</span>

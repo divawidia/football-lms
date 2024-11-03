@@ -2,14 +2,26 @@
 
 namespace App\Services;
 
+use App\Models\Player;
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
+use App\Repository\PlayerRepository;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
 class TrainingVideoLessonService extends Service
 {
+    private PlayerRepository $playerRepository;
+    private TrainingVideoService $trainingVideoService;
+    public function __construct(PlayerRepository $playerRepository, TrainingVideoService $trainingVideoService)
+    {
+        $this->playerRepository = $playerRepository;
+        $this->trainingVideoService = $trainingVideoService;
+    }
+
     public function getTotalDuration(TrainingVideoLesson $trainingVideoLesson): string
     {
         return $this->secondToMinute($trainingVideoLesson->totalDuration);
@@ -136,6 +148,18 @@ class TrainingVideoLessonService extends Service
 
     public function update(array $data, TrainingVideoLesson $trainingVideoLesson){
         return $trainingVideoLesson->update($data);
+    }
+
+    public function markAsComplete($playerId, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
+    {
+        $player = $this->playerRepository->find($playerId);
+
+        $lesson->players()->updateExistingPivot($playerId, ['completionStatus' => '1', 'completed_at' => Carbon::now()]);
+
+        if ($this->trainingVideoService->playerCompletionProgress($player, $trainingVideo) == 100){
+            $this->trainingVideoService->setPlayerProgressToComplete($player, $trainingVideo);
+        }
+        return response()->json(['message' => 'Video marked as complete']);
     }
 
     public function publish(TrainingVideoLesson $trainingVideoLesson)

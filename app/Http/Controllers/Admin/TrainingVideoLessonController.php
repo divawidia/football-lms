@@ -4,19 +4,26 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingVideoLessonRequest;
+use App\Models\Player;
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
 use App\Services\TrainingVideoLessonService;
+use App\Services\TrainingVideoService;
+use Exception;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class TrainingVideoLessonController extends Controller
 {
     private TrainingVideoLessonService $trainingVideoLessonService;
+    private TrainingVideoService $trainingVideoService;
 
-    public function __construct(TrainingVideoLessonService $trainingVideoLessonService){
+    public function __construct(TrainingVideoLessonService $trainingVideoLessonService, TrainingVideoService $trainingVideoService){
         $this->trainingVideoLessonService = $trainingVideoLessonService;
+        $this->trainingVideoService = $trainingVideoService;
     }
 
     public function index(TrainingVideo $trainingVideo){
@@ -46,9 +53,10 @@ class TrainingVideoLessonController extends Controller
     public function showPlayerLesson(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
         $previousId = $trainingVideo->lessons()->where('id', '<', $lesson->id)->orderBy('id', 'desc')->first();
-        $nextId = $trainingVideo->lessons()->where('id', '>', $lesson->id)->orderBy('id', 'desc')->first();
+        $nextId = $trainingVideo->lessons()->where('id', '>', $lesson->id)->orderBy('id')->first();
         $loggedPlayerUser = $this->getLoggedPLayerUser();
         $lessonCompletionStatus = $lesson->players()->where('playerId', $loggedPlayerUser->id)->first()->pivot->completionStatus;
+        $playerCompletionProgress = $this->trainingVideoService->playerCompletionProgress($loggedPlayerUser, $trainingVideo);
 
         return view('pages.academies.training-videos.lessons.detail-for-player',[
             'previousId' => $previousId,
@@ -57,6 +65,7 @@ class TrainingVideoLessonController extends Controller
             'data' => $lesson,
             'totalDuration' => $this->trainingVideoLessonService->getTotalDuration($lesson),
             'loggedPlayerUser' => $loggedPlayerUser,
+            'playerCompletionProgress' => $playerCompletionProgress,
             'lessonCompletionStatus' => $lessonCompletionStatus,
         ]);
     }
@@ -79,10 +88,21 @@ class TrainingVideoLessonController extends Controller
 
     public function markAsComplete(Request $request, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
-        $userId = $request->input('userId');
+        try {
+            $playerId = $request->input('playerId');
+            $this->trainingVideoLessonService->markAsComplete($playerId, $trainingVideo, $lesson);
+            return response()->json(['message' => 'Video marked as complete']);
+        } catch (Exception $e) {
+            Log::error('Error marking video as complete: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while marking the video as complete.'], 500);
+        }
+    }
 
-        $lesson->players()->updateExistingPivot($userId, ['completionStatus' => '1']);
-        return response()->json(['message' => 'Video marked as complete']);
+    public function trainingVideoCompleted(TrainingVideo $trainingVideo)
+    {
+        $text = 'Congrats! You have been completed this '.$trainingVideo->trainingTitle.' training';
+        Alert::success($text);
+        return redirect()->route('training-videos.show', $trainingVideo->id);
     }
 
     public function publish(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)

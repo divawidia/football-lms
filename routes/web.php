@@ -620,8 +620,9 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('{trainingVideo}')->group(function () {
                 Route::get('', [TrainingVideoController::class, 'show'])->name('training-videos.show');
+                Route::get('training-completed', [TrainingVideoLessonController::class, 'trainingVideoCompleted'])->name('training-videos.completed');
 
-                Route::prefix('lplayer-essons')->group(function () {
+                Route::prefix('player-lessons')->group(function () {
                     Route::prefix('{lesson}')->group(function () {
                         Route::get('', [TrainingVideoLessonController::class, 'showPlayerLesson'])->name('training-videos.show-player-lesson');
                         Route::post('mark-as-complete', [TrainingVideoLessonController::class, 'markAsComplete'])->name('training-videos.mark-as-complete');

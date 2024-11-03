@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Player;
 use App\Models\TrainingVideo;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
@@ -118,6 +119,30 @@ class TrainingVideoService extends Service
             ->addIndexColumn()
             ->make();
     }
+
+    public function playerShow(TrainingVideo $trainingVideo, Player $player)
+    {
+        $playerCompletionProgress = $this->playerCompletionProgress($player, $trainingVideo);
+        $uncompletePlayerTrainingLesson = $this->uncompletePlayerTrainingLesson($player);
+    }
+    public function playerCompletionProgress(Player $player, TrainingVideo $trainingVideo)
+    {
+        $totalLesson = $trainingVideo->lessons()->count();
+        $totalPlayerComplete = $player->lessons()->where('completionStatus', '1')->count();
+        $progress = $totalPlayerComplete/$totalLesson*100;
+        return round($progress, 2);
+    }
+
+    public function setPlayerProgressToComplete(Player $player, TrainingVideo $trainingVideo)
+    {
+        return $trainingVideo->players()->updateExistingPivot($player->id, ['status' => 'Completed', 'completed_at' => Carbon::now()]);
+    }
+
+    public function uncompletePlayerTrainingLesson(Player $player)
+    {
+        return $player->lessons()->where('completionStatus', '0')->first();
+    }
+
 
     public function store(array $data, $userId){
         $data['previewPhoto'] = $this->storeImage($data, 'previewPhoto', 'assets/training-videos', 'images/video-preview.png');
