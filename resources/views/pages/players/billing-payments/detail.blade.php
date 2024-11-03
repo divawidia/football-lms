@@ -63,10 +63,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @if($data['invoice']->status == 'Open')
-                                <button type="button" class="dropdown-item" id="pay">
-                                    <span class="material-icons">payment</span>
-                                    Pay Invoice
-                                </button>
+                                <x-pay-invoice-button btnClass="dropdown-item" btnText="Pay Now!" :invoiceId="$data['invoice']->id" :snapToken="$data['invoice']->snapToken"/>
                             @endif
                             <a href="javascript:window.print()" class="dropdown-item" id="{{$data['invoice']->id}}">
                                 <span class="material-icons">file_download</span>
@@ -175,65 +172,3 @@
         </div>
     </div>
 @endsection
-@push('addon-script')
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
-    <script>
-        $(document).ready(function () {
-            $('#pay').on('click', function (e){
-                e.preventDefault();
-                snap.pay('{{ $data['invoice']->snapToken }}', {
-                    // Optional
-                    onSuccess: function(result){
-                        /* You may add your own js here, this is just example */
-                        console.log(result);
-                        Swal.fire({
-                            title: 'Invoice successfully paid!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.href = '{{ route('invoices.set-paid', $data['invoice']->id) }}'
-                            }
-                        });
-
-                    },
-                    // Optional
-                    onPending: function(result){
-                        /* You may add your own js here, this is just example */
-                        Swal.fire({
-                            title: 'Invoice payment still pending!',
-                            icon: 'error',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    // Optional
-                    onError: function(result){
-                        /* You may add your own js here, this is just example */
-                        Swal.fire({
-                            title: 'Something wrong when processing Invoice payment!',
-                            icon: JSON.stringify(result, null, 2),
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.href = '{{ route('invoices.set-uncollectible', $data['invoice']->id) }}'
-                            }
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-@endpush

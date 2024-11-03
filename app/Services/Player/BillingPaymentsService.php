@@ -21,14 +21,8 @@ use Yajra\DataTables\Facades\DataTables;
 class BillingPaymentsService extends Service
 {
     private User $user;
-    public function __construct(
-        User $user)
+    public function __construct(User $user)
     {
-        Config::$serverKey    = config('services.midtrans.serverKey');
-        Config::$isProduction = config('services.midtrans.isProduction');
-        Config::$isSanitized  = config('services.midtrans.isSanitized');
-        Config::$is3ds        = config('services.midtrans.is3ds');
-
         $this->user = $user;
     }
     public function index()
@@ -36,26 +30,12 @@ class BillingPaymentsService extends Service
         $data = $this->user->invoices;
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                $payBtn = '';
-                if ($item->status == 'Open') {
-                    $payBtn = '<button type="button" class="dropdown-item payInvoice" id="'.$item->id.'" data-snaptoken="'.$item->snapToken.'">
-                                    <span class="material-icons">payment</span>
-                                    Pay Invoice
-                                </button>';
-                }
-                return'<div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
+                return'<a class="btn btn-sm btn-outline-secondary" href="' . route('billing-and-payments.show', $item->id) . '">
+                            <span class="material-icons mr-2">
+                                visibility
                             </span>
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item edit" href="' . route('billing-and-payments.show', $item->id) . '" type="button">
-                                    <span class="material-icons">visibility</span>
-                                    Show Invoice
-                                </a>
-                                ' . $payBtn . '
-                        </div>';
+                            view invoice
+                        </a>';
             })
             ->editColumn('ammount', function ($item) {
                 return $this->priceFormat($item->ammountDue);
@@ -100,40 +80,5 @@ class BillingPaymentsService extends Service
         $createdDate = $this->convertToDate($invoice->created_at);
 
         return compact('invoice', 'createdAt', 'dueDate', 'updatedAt', 'createdDate');
-    }
-
-    public function midtransPayment(array $data, Invoice $invoice){
-        $midtrans = [
-            'transaction_details' => [
-                'order_id' => $data['invoiceNumber'],
-                'gross_amount' => (int) $data['ammountDue'],
-            ],
-            'customer_details' => [
-                'first_name' => $invoice->receiverUser->firstName,
-                'email' => $invoice->receiverUser->email
-            ],
-            'enabled_payments' => [
-                'gopay', 'bank_transfer', "indomaret", "danamon_online", "akulaku", "shopeepay", "kredivo", "uob_ezpay","other_qris"
-            ],
-            'vtweb' => []
-        ];
-
-        try {
-            $snaptoken = Snap::getSnapToken($midtrans);
-            $invoice['snapToken'] = $snaptoken;
-            return $invoice->save();
-
-//            Mail::to($data['email'])->send(new PayBookingTrfMail($booking));
-
-//            return redirect()->route('pay-booking', $booking->transaction_code);
-        }
-        catch (Exception $e){
-            return $e->getMessage();
-        }
-    }
-
-    public function paid(Invoice $invoice)
-    {
-        return $invoice->update(['status' => 'Paid']);
     }
 }
