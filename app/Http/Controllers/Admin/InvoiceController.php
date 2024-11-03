@@ -10,7 +10,9 @@ use App\Models\Tax;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\InvoiceService;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class InvoiceController extends Controller
@@ -138,39 +140,47 @@ class InvoiceController extends Controller
     }
 
     public function setPaid(Invoice $invoice){
-        $this->invoiceService->paid($invoice);
-        if (isAllAdmin()){
-            $route = redirect()->route('invoices.show', $invoice->id);
-        } elseif (isPlayer()){
-            $route = redirect()->route('billing-and-payments.show', $invoice->id);
+        try {
+            $this->invoiceService->paid($invoice);
+            return response()->json(['message' => 'Invoice status successfully mark to paid!']);
+
+        } catch (Exception $e) {
+            Log::error('Error marking invoice as paid: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while marking the invoice as paid.'], 500);
         }
-        $text = 'Invoice '.$invoice->invoiceNumber.' status successfully mark as paid';
-        Alert::success($text);
-        return $route;
     }
 
     public function setUncollectible(Invoice $invoice){
-        $this->invoiceService->uncollectible($invoice);
+        try {
+            $this->invoiceService->uncollectible($invoice);
+            return response()->json(['message' => 'Invoice status successfully mark to uncollectible!']);
 
-        $text = 'Invoice '.$invoice->invoiceNumber.' status successfully mark as uncollectible';
-        Alert::success($text);
-        return redirect()->route('invoices.show', $invoice->id);
+        } catch (Exception $e) {
+            Log::error('Error marking invoice as uncollectible: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while marking the invoice as uncollectible.'], 500);
+        }
     }
 
     public function setOpen(Invoice $invoice){
-        $this->invoiceService->open($invoice);
+        try {
+            $this->invoiceService->open($invoice);
+            return response()->json(['message' => 'Invoice status successfully mark to open!']);
 
-        $text = 'Invoice '.$invoice->invoiceNumber.' status successfully mark as open';
-        Alert::success($text);
-        return redirect()->route('invoices.show', $invoice->id);
+        } catch (Exception $e) {
+            Log::error('Error marking invoice as open: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while marking the invoice as open.'], 500);
+        }
     }
 
     public function setPastDue(Invoice $invoice){
-        $this->invoiceService->pastDue($invoice);
+        try {
+            $this->invoiceService->pastDue($invoice);
+            return response()->json(['message' => 'Invoice status successfully mark to past due!']);
 
-        $text = 'Invoice '.$invoice->invoiceNumber.' status successfully mark as past due';
-        Alert::success($text);
-        return redirect()->route('invoices.show', $invoice->id);
+        } catch (Exception $e) {
+            Log::error('Error marking invoice as open: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while marking the invoice as past due.'], 500);
+        }
     }
 
     /**
@@ -178,9 +188,9 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
-        $result = $this->invoiceService->destroy($invoice);
+        $this->invoiceService->destroy($invoice);
 
-        return response()->json($result);
+        return response()->json(['message' => 'Invoice successfully successfully deleted!']);
     }
 
     public function deletedData()

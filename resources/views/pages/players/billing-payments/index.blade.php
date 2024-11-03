@@ -20,18 +20,17 @@
     </div>
 
     <div class="container page-section">
-        <div class="page-separator">
-            <div class="page-separator__text">outstanding payments</div>
-        </div>
         @if(count($openInvoices) > 0)
+            <div class="page-separator">
+                <div class="page-separator__text">outstanding payments</div>
+            </div>
             @foreach($openInvoices as $invoice)
                 <div class="alert alert-soft-warning mb-lg-32pt border-danger">
                     <div class="d-flex flex-wrap align-items-center">
                         <div class="mr-8pt">
                             <i class="material-icons">access_time</i>
                         </div>
-                        <div class="flex"
-                             style="min-width: 180px">
+                        <div class="flex" style="min-width: 180px">
                             <small class="text-100">
                                 Please pay your amount due of <strong>{{ priceFormat($invoice->ammountDue) }}</strong> for invoice
                                 <a href="{{ route('billing-and-payments.show', $invoice->id) }}" class="text-underline">{{ $invoice->invoiceNumber }}</a>
@@ -80,16 +79,14 @@
         $(document).ready(function () {
             const body = $('body');
 
-            body.on('click', '.payInvoice', function (e){
-                e.preventDefault();
-                const snapToken = $(this).attr('data-snapToken');
-                const invoiceId = $(this).attr('id');
-
-                snap.pay(snapToken, {
-                    // Optional
-                    onSuccess: function(result){
-                        /* You may add your own js here, this is just example */
-                        console.log(result);
+            function paymentSuccess(invoiceId){
+                $.ajax({
+                    url: '{{ route('invoices.set-paid', ':id') }}'.replace(':id', invoiceId),
+                    method: 'PATCH',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function() {
                         Swal.fire({
                             title: 'Invoice successfully paid!',
                             icon: 'success',
@@ -102,11 +99,59 @@
                                 location.reload();
                             }
                         });
-
                     },
-                    // Optional
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when processing payment!",
+                            text: errorThrown,
+                        });
+                    }
+                });
+            }
+
+            function paymentExpired(invoiceId){
+                $.ajax({
+                    url: '{{ route('invoices.set-uncollectible', ':id') }}'.replace(':id', invoiceId),
+                    method: 'PATCH',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function() {
+                        Swal.fire({
+                            title: 'Something wrong when processing Invoice payment!',
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when processing payment!",
+                            text: errorThrown,
+                        });
+                    }
+                });
+            }
+
+            body.on('click', '.payInvoice', function (e){
+                e.preventDefault();
+                const snapToken = $(this).attr('data-snapToken');
+                const invoiceId = $(this).attr('id');
+
+                snap.pay(snapToken, {
+                    onSuccess: function(result){
+                        console.log(result);
+                        paymentSuccess(invoiceId);
+                    },
                     onPending: function(result){
-                        /* You may add your own js here, this is just example */
                         Swal.fire({
                             title: 'Invoice payment still pending!',
                             icon: 'error',
@@ -120,21 +165,8 @@
                             }
                         });
                     },
-                    // Optional
                     onError: function(result){
-                        /* You may add your own js here, this is just example */
-                        Swal.fire({
-                            title: 'Something wrong when processing Invoice payment!',
-                            icon: 'error',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.href = '{{ route('invoices.set-uncollectible', ':id') }}'.replace(':id', invoiceId)
-                            }
-                        });
+                        paymentExpired(invoiceId)
                     }
                 });
             });
