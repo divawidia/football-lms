@@ -139,10 +139,14 @@ class InvoiceController extends Controller
 
     public function setPaid(Invoice $invoice){
         $this->invoiceService->paid($invoice);
-
+        if (isAllAdmin()){
+            $route = redirect()->route('invoices.show', $invoice->id);
+        } elseif (isPlayer()){
+            $route = redirect()->route('billing-and-payments.show', $invoice->id);
+        }
         $text = 'Invoice '.$invoice->invoiceNumber.' status successfully mark as paid';
         Alert::success($text);
-        return redirect()->route('invoices.show', $invoice->id);
+        return $route;
     }
 
     public function setUncollectible(Invoice $invoice){

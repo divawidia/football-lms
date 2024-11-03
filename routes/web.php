@@ -642,6 +642,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::prefix('invoices')->group(function () {
 
             Route::prefix('{invoice}')->group(function () {
+                Route::patch('set-paid', [InvoiceController::class, 'setPaid'])->name('invoices.set-paid');
                 Route::patch('set-uncollectible', [InvoiceController::class, 'setUncollectible'])->name('invoices.set-uncollectible');
             });
         });

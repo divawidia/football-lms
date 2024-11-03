@@ -11,7 +11,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('invoices.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Invoices</a>
+                    <a href="{{ route('billing-and-payments.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Invoices</a>
                 </li>
             </ul>
         </div>
@@ -58,67 +58,20 @@
                         <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Action
                             <span class="material-icons ml-3">
-                        keyboard_arrow_down
-                    </span>
+                                keyboard_arrow_down
+                            </span>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="{{ route('invoices.edit', $data['invoice']->id) }}"><span class="material-icons">edit</span> Edit Invoice</a>
                             @if($data['invoice']->status == 'Open')
-                                <form action="{{ route('invoices.set-paid', $data['invoice']->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-icons text-success">check_circle</span>
-                                        Mark as Paid
-                                    </button>
-                                </form>
-                                <form action="{{ route('invoices.set-uncollectible', $data['invoice']->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-icons text-danger">check_circle</span>
-                                        Mark as Uncollectible
-                                    </button>
-                                </form>
                                 <button type="button" class="dropdown-item" id="pay">
                                     <span class="material-icons">payment</span>
                                     Pay Invoice
                                 </button>
-                            @elseif($data['invoice']->status == 'Paid')
-                                <form action="{{ route('invoices.set-uncollectible', $data['invoice']->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-icons text-danger">check_circle</span>
-                                        Mark as Uncollectible
-                                    </button>
-                                </form>
-                            @elseif($data['invoice']->status == 'Uncollectible')
-                                <form action="{{ route('invoices.set-paid', $data['invoice']->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-icons text-success">check_circle</span>
-                                        Mark as Paid
-                                    </button>
-                                </form>
-                                <form action="{{ route('invoices.set-open', $data['invoice']->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-icons text-info">check_circle</span>
-                                        Mark as Open
-                                    </button>
-                                </form>
                             @endif
                             <a href="javascript:window.print()" class="dropdown-item" id="{{$data['invoice']->id}}">
                                 <span class="material-icons">file_download</span>
                                 Download Invoice
                             </a>
-                            <button type="button" class="dropdown-item deleteInvoice" id="{{$data['invoice']->id}}">
-                                <span class="material-icons text-danger">delete</span>
-                                Archive Invoice
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -242,7 +195,7 @@
                                 'Ok!'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                location.reload();
+                                location.href = '{{ route('invoices.set-paid', $data['invoice']->id) }}'
                             }
                         });
 
@@ -276,50 +229,6 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.href = '{{ route('invoices.set-uncollectible', $data['invoice']->id) }}'
-                            }
-                        });
-                    }
-                });
-            });
-
-            // archive invoice
-            $('.deleteInvoice').on('click', function () {
-                Swal.fire({
-                    title: "Are you sure to archive this invoice?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('invoices.destroy', ['invoice' => $data['invoice']->id]) }}",
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Invoice successfully archived!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.href = '{{ route('invoices.index') }}';
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when archiving data!",
-                                    text: errorThrown
-                                });
                             }
                         });
                     }
