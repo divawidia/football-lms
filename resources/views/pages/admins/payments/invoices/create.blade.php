@@ -8,9 +8,7 @@
 
 @section('content')
     <div class="pt-32pt">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-sm-left">
-            <div class="flex d-flex flex-column flex-sm-row align-items-center">
-                <div class="mb-24pt mb-sm-0 mr-sm-24pt">
+        <div class="container">
                     <h2 class="mb-0">
                         @yield('title')
                     </h2>
@@ -21,12 +19,10 @@
                             @yield('title')
                         </li>
                     </ol>
-                </div>
-            </div>
         </div>
     </div>
 
-    <div class="container page__container page-section" style="max-width: 1200px">
+    <div class="container page-section" style="max-width: 1200px">
         <div class="list-group">
             <form method="POST" action="{{ route('invoices.store') }}">
                 @csrf

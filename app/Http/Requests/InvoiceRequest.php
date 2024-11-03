@@ -24,7 +24,6 @@ class InvoiceRequest extends FormRequest
     {
         return [
             'receiverUserId' => ['required', Rule::exists('users', 'id')],
-            'dueDate' => ['required', 'date', 'after:today'],
             'taxId' => ['nullable'],
             'products.*.productId' => ['required', Rule::exists('products', 'id')],
             'products.*.qty' => ['required', 'numeric', 'min:1'],
