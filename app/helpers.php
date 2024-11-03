@@ -49,3 +49,7 @@ function secondToMinute($seconds){
 
     return $minutes . "m " . $remaining_seconds . "s";
 }
+
+function priceFormat($price){
+    return 'Rp. ' . number_format($price);
+}

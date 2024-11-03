@@ -23,23 +23,28 @@
         <div class="page-separator">
             <div class="page-separator__text">outstanding payments</div>
         </div>
-        <div class="alert alert-soft-warning mb-lg-32pt">
-            <div class="d-flex flex-wrap align-items-center">
-                <div class="mr-8pt">
-                    <i class="material-icons">access_time</i>
+        @if(count($openInvoices) > 0)
+            @foreach($openInvoices as $invoice)
+                <div class="alert alert-soft-warning mb-lg-32pt border-danger">
+                    <div class="d-flex flex-wrap align-items-center">
+                        <div class="mr-8pt">
+                            <i class="material-icons">access_time</i>
+                        </div>
+                        <div class="flex"
+                             style="min-width: 180px">
+                            <small class="text-100">
+                                Please pay your amount due of <strong>{{ priceFormat($invoice->ammountDue) }}</strong> for invoice
+                                <a href="{{ route('billing-and-payments.show', $invoice->id) }}" class="text-underline">{{ $invoice->invoiceNumber }}</a>
+                            </small>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-primary payInvoice" id="{{ $invoice->id }}" data-snaptoken="{{ $invoice->snapToken }}">
+                            <span class="material-icons mx-2">payment</span>
+                            Pay Now!
+                        </button>
+                    </div>
                 </div>
-                <div class="flex"
-                     style="min-width: 180px">
-                    <small class="text-100">
-                        Please pay your amount due of
-                        <strong>&dollar;9.00</strong> for invoice <a href="billing-invoice.html"
-                                                                     class="text-underline">10002331</a>
-                    </small>
-                </div>
-                <a href="billing-payment.html"
-                   class="btn btn-sm btn-link">Pay Now</a>
-            </div>
-        </div>
+            @endforeach
+        @endif
 
 
         <div class="page-separator">
@@ -70,9 +75,69 @@
     </div>
 @endsection
 @push('addon-script')
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
     <script>
         $(document).ready(function () {
             const body = $('body');
+
+            body.on('click', '.payInvoice', function (e){
+                e.preventDefault();
+                const snapToken = $(this).attr('data-snapToken');
+                const invoiceId = $(this).attr('id');
+
+                snap.pay(snapToken, {
+                    // Optional
+                    onSuccess: function(result){
+                        /* You may add your own js here, this is just example */
+                        console.log(result);
+                        Swal.fire({
+                            title: 'Invoice successfully paid!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+
+                    },
+                    // Optional
+                    onPending: function(result){
+                        /* You may add your own js here, this is just example */
+                        Swal.fire({
+                            title: 'Invoice payment still pending!',
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    // Optional
+                    onError: function(result){
+                        /* You may add your own js here, this is just example */
+                        Swal.fire({
+                            title: 'Something wrong when processing Invoice payment!',
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = '{{ route('invoices.set-uncollectible', ':id') }}'.replace(':id', invoiceId)
+                            }
+                        });
+                    }
+                });
+            });
 
             $('#invoicesTable').DataTable({
                 processing: true,

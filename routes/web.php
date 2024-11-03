@@ -639,5 +639,11 @@ Route::group(['middleware' => ['auth']], function () {
                 });
             });
         });
+        Route::prefix('invoices')->group(function () {
+
+            Route::prefix('{invoice}')->group(function () {
+                Route::patch('set-uncollectible', [InvoiceController::class, 'setUncollectible'])->name('invoices.set-uncollectible');
+            });
+        });
     });
 });

@@ -38,7 +38,7 @@ class BillingPaymentsService extends Service
             ->addColumn('action', function ($item) {
                 $payBtn = '';
                 if ($item->status == 'Open') {
-                    $payBtn = '<button type="button" class="dropdown-item payInvoice" id="'.$item->snapToken.'">
+                    $payBtn = '<button type="button" class="dropdown-item payInvoice" id="'.$item->id.'" data-snaptoken="'.$item->snapToken.'">
                                     <span class="material-icons">payment</span>
                                     Pay Invoice
                                 </button>';
@@ -50,7 +50,7 @@ class BillingPaymentsService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
+                                <a class="dropdown-item edit" href="' . route('billing-and-payments.show', $item->id) . '" type="button">
                                     <span class="material-icons">visibility</span>
                                     Show Invoice
                                 </a>
