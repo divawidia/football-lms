@@ -93,6 +93,54 @@
                 ]
             });
 
+            function updateInvoiceStatus(status, route){
+                $.ajax({
+                    url: route,
+                    method: 'PATCH',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function() {
+                        Swal.fire({
+                            title: 'Invoice successfully mark as '+status+'!',
+                            icon: 'success',
+                            showCancelButton: false,
+                            allowOutsideClick: false,
+                            confirmButtonColor: "#1ac2a1",
+                            confirmButtonText:
+                                'Ok!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when processing invoice status!",
+                            text: errorThrown,
+                        });
+                    }
+                });
+            }
+
+            body.on('click', '.setStatus', function (e){
+                e.preventDefault();
+                const invoiceId = $(this).attr('id');
+                const status = $(this).attr('data-status');
+
+                if (status === 'paid'){
+                    updateInvoiceStatus(status, '{{ route('invoices.set-paid', ':id') }}'.replace(':id', invoiceId))
+                } else if(status === 'uncollectible'){
+                    updateInvoiceStatus(status, '{{ route('invoices.set-uncollectible', ':id') }}'.replace(':id', invoiceId))
+                } else if(status === 'past due'){
+                    updateInvoiceStatus(status, '{{ route('invoices.set-past-due', ':id') }}'.replace(':id', invoiceId))
+                } else if(status === 'open'){
+                    updateInvoiceStatus(status, '{{ route('invoices.set-open', ':id') }}'.replace(':id', invoiceId))
+                }
+            });
+
             // archive invoice
             body.on('click', '.deleteInvoice', function () {
                 const id = $(this).attr('id');
