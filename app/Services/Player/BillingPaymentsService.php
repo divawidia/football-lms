@@ -87,6 +87,11 @@ class BillingPaymentsService extends Service
             ->make();
     }
 
+    public function openInvoices()
+    {
+        return $this->user->invoices()->where('status', 'Open')->get();
+    }
+
     public function show(Invoice $invoice)
     {
         $createdAt = $this->convertToDatetime($invoice->created_at);

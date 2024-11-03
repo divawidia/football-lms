@@ -33,7 +33,8 @@ class BillingPaymentsController extends Controller
         if (\request()->ajax()){
             return $this->billingPaymentsService->index();
         }
-        return view('pages.players.billing-payments.index');
+        $openInvoices = $this->billingPaymentsService->openInvoices();
+        return view('pages.players.billing-payments.index', ['openInvoices' => $openInvoices]);
     }
 
     /**
