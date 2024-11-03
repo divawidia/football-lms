@@ -43,7 +43,7 @@
 
 
         <div class="page-separator">
-            <div class="page-separator__text">payments History</div>
+            <div class="page-separator__text">Invoice Histories</div>
         </div>
         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
             <div class="card-body">

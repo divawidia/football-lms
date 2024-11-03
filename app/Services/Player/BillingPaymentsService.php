@@ -36,12 +36,26 @@ class BillingPaymentsService extends Service
         $data = $this->user->invoices;
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return
-                    '<a class="btn btn-sm btn-outline-secondary" href="' . route('invoices.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="Show subscription detail">
-                        <span class="material-icons">
-                            visibility
-                        </span>
-                    </a>';
+                $payBtn = '';
+                if ($item->status == 'Open') {
+                    $payBtn = '<button type="button" class="dropdown-item payInvoice" id="'.$item->snapToken.'">
+                                    <span class="material-icons">payment</span>
+                                    Pay Invoice
+                                </button>';
+                }
+                return'<div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="material-icons">
+                                more_vert
+                            </span>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
+                                    <span class="material-icons">visibility</span>
+                                    Show Invoice
+                                </a>
+                                ' . $payBtn . '
+                        </div>';
             })
             ->editColumn('ammount', function ($item) {
                 return $this->priceFormat($item->ammountDue);
