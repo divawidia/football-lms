@@ -22,7 +22,7 @@
     <div class="container page-section">
         <div class="page-separator">
             <div class="page-separator__text">Invoices</div>
-            <a href="{{ route('invoices.archived') }}" class="btn btn-sm btn-danger ml-auto ">
+            <a href="{{ route('invoices.archived') }}" class="btn btn-sm btn-white border-danger ml-auto ">
                 <span class="material-icons mr-2 text-danger">
                     delete
                 </span>

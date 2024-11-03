@@ -411,6 +411,14 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('player-teams', [LeaderboardController::class, 'playerTeamLeaderboard'])->name('player.leaderboards.teams');
             Route::get('players-teammate', [LeaderboardController::class, 'playersTeammateLeaderboard'])->name('player.leaderboards.teammate');
         });
+
+        Route::prefix('billing-and-payments')->group(function () {
+            Route::get('', [InvoiceController::class, 'index'])->name('billing-and-payments.index');
+
+            Route::prefix('{invoice}')->group(function () {
+                Route::get('', [InvoiceController::class, 'show'])->name('billing-and-payments.show');
+            });
+        });
     });
 
     Route::group(['middleware' => ['role:coach|admin|Super-Admin,web']], function () {
