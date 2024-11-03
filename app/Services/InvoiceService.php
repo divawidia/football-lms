@@ -40,41 +40,20 @@ class InvoiceService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 $paidButton =
-                    '<form action="'.route('invoices.set-paid', $item->id).'" method="POST">
-                        ' . method_field("PATCH") . '
-                        ' . csrf_field() . '
-                        <button type="submit" class="dropdown-item">
+                    '<button type="submit" class="dropdown-item setStatus" id="'.$item->id.'" data-status="paid">
                             <span class="material-icons text-success">check_circle</span>
                             Mark as Paid
-                        </button>
-                    </form>';
+                    </button>';
                 $uncollectibleButton =
-                    '<form action="'.route('invoices.set-uncollectible', $item->id).'" method="POST">
-                        ' . method_field("PATCH") . '
-                        ' . csrf_field() . '
-                        <button type="submit" class="dropdown-item">
+                    '<button type="submit" class="dropdown-item setStatus" id="'.$item->id.'" data-status="uncollectible">
                             <span class="material-icons text-danger">check_circle</span>
                             Mark as Uncollectible
-                        </button>
-                    </form>';
+                    </button>';
                 $openButton =
-                    '<form action="'.route('invoices.set-open', $item->id).'" method="POST">
-                        ' . method_field("PATCH") . '
-                        ' . csrf_field() . '
-                        <button type="submit" class="dropdown-item">
+                    '<button type="submit" class="dropdown-item setStatus" id="'.$item->id.'" data-status="open">
                             <span class="material-icons text-info">check_circle</span>
                             Mark as Open
-                        </button>
-                    </form>';
-                $pastDueButton =
-                    '<form action="'.route('invoices.set-open', $item->id).'" method="POST">
-                        ' . method_field("PATCH") . '
-                        ' . csrf_field() . '
-                        <button type="submit" class="dropdown-item">
-                            <span class="material-icons text-warning">check_circle</span>
-                            Mark as Past Due
-                        </button>
-                    </form>';
+                    </button>';
 
                 $statusButton = '';
                 if ($item->status == 'Open') {
