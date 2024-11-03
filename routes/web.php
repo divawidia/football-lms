@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\TrainingVideoController;
 use App\Http\Controllers\Admin\TrainingVideoLessonController;
 use App\Http\Controllers\Coach\DashboardController as CoachDashboardController;
 use App\Http\Controllers\Coach\PlayerPerformanceReviewController;
+use App\Http\Controllers\Player\BillingPaymentsController;
 use App\Http\Controllers\Player\DashboardController as PlayerDashboardController;
 use App\Http\Controllers\Coach\SkillAssessmentController;
 use App\Http\Controllers\LeaderboardController;
@@ -413,10 +414,10 @@ Route::group(['middleware' => ['auth']], function () {
         });
 
         Route::prefix('billing-and-payments')->group(function () {
-            Route::get('', [InvoiceController::class, 'index'])->name('billing-and-payments.index');
+            Route::get('', [BillingPaymentsController::class, 'index'])->name('billing-and-payments.index');
 
             Route::prefix('{invoice}')->group(function () {
-                Route::get('', [InvoiceController::class, 'show'])->name('billing-and-payments.show');
+                Route::get('', [BillingPaymentsController::class, 'show'])->name('billing-and-payments.show');
             });
         });
     });
