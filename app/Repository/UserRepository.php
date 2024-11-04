@@ -24,9 +24,9 @@ class UserRepository
         return $this->user->where('id', '!=', $authUserId)->get();
     }
 
-    public function getAllPlayers()
+    public function getAllByRole($role)
     {
-        return $this->user->role('player')->get();
+        return $this->user->role($role)->get();
     }
 
     public function find($id)

@@ -4,10 +4,15 @@ namespace App\Console\Commands;
 
 use App\Models\EventSchedule;
 use App\Models\Invoice;
+use App\Models\User;
+use App\Notifications\InvoicePastDueAdmin;
+use App\Notifications\InvoicePastDuePlayer;
+use App\Repository\UserRepository;
 use App\Services\EventScheduleService;
 use App\Services\InvoiceService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Notification;
 
 class SetPastDueInvoiceStatus extends Command
 {
@@ -26,12 +31,15 @@ class SetPastDueInvoiceStatus extends Command
     protected $description = 'Set past due invoice status records where the due date has passed';
 
     private InvoiceService $invoiceService;
+    private UserRepository $userRepository;
 
-    public function __construct(InvoiceService $invoiceService)
+    public function __construct(InvoiceService $invoiceService, UserRepository $userRepository)
     {
         parent::__construct();
         $this->invoiceService = $invoiceService;
+        $this->userRepository = $userRepository;
     }
+
     /**
      * Execute the console command.
      */
@@ -41,9 +49,29 @@ class SetPastDueInvoiceStatus extends Command
         $now = Carbon::now();
 
         // Update records where end_date is less than the current date
-        $invoices = Invoice::where('dueDate', '<', $now)->get();
+        $invoices = Invoice::where('dueDate', '<=', $now)->where('status', 'Open')->get();
         foreach ($invoices as $invoice){
             $this->invoiceService->pastDue($invoice);
+            $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePastDuePlayer(
+                $this->invoiceService->convertToDatetime($invoice->dueDate),
+                $invoice->id,
+                $invoice->invoiceNumber,
+            ));
+
+            $adminUsers = $this->userRepository->getAllByRole('admin');
+            $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
+            Notification::send($adminUsers, new InvoicePastDueAdmin(
+                $this->invoiceService->convertToDatetime($invoice->dueDate),
+                $invoice->id,
+                $invoice->invoiceNumber,
+                $invoice->receiverUserId->firstName.' '.$invoice->receiverUserId->lastName,
+            ));
+            Notification::send($superAdminUsers, new InvoicePastDueAdmin(
+                $this->invoiceService->convertToDatetime($invoice->dueDate),
+                $invoice->id,
+                $invoice->invoiceNumber,
+                $invoice->receiverUserId->firstName.' '.$invoice->receiverUserId->lastName,
+            ));
         }
 
         $this->info('Invoice status data updated successfully to past due.');
