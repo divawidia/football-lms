@@ -11,13 +11,7 @@
 
     <!-- Navbar Brand -->
 
-    <a href="@if(isAllAdmin())
-        {{ route('admin.dashboard') }}
-        @elseif(isCoach())
-        {{ route('coach.dashboard') }}
-        @elseif(isPlayer())
-        {{ route('player.dashboard') }}
-        @endif" class="navbar-brand mr-16pt d-lg-none">
+    <a href="{{ checkRoleDashboardRoute() }}" class="navbar-brand mr-16pt d-lg-none">
             <span class="avatar avatar-sm navbar-brand-icon mr-0 mr-lg-8pt">
                 <span class="avatar-title rounded bg-primary">
                     @if(academyData()->logo)
@@ -37,16 +31,54 @@
         <!-- Notifications dropdown -->
         <div class="nav-item ml-16pt dropdown dropdown-notifications dropdown-xs-down-full"
              data-toggle="tooltip"
-             data-title="Notifications"
+             title="Notifications"
              data-placement="bottom"
              data-boundary="window">
             <button class="nav-link btn-flush dropdown-toggle"
                     type="button"
                     data-toggle="dropdown"
                     data-caret="false">
-                <i class="material-icons">notifications_none</i>
-                <span class="badge badge-notifications badge-accent">2</span>
+                @if(auth()->user()->unreadNotifications->count() > 0)
+                    <i class="material-icons">notifications_active</i>
+                    <span class="badge badge-pill badge-danger">{{auth()->user()->unreadNotifications->count()}}</span>
+                @else
+                    <i class="material-icons">notifications_none</i>
+                @endif
             </button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <div data-perfect-scrollbar
+                     class="position-relative">
+                    <div class="dropdown-header"><strong>System notifications</strong></div>
+                    <div class="list-group list-group-flush mb-0">
+                        @foreach (auth()->user()->unreadNotifications as $notification)
+                            <a href="#" class="list-group-item list-group-item-action unread">
+                                <span class="d-flex align-items-center mb-1">
+                                    <small class="text-black-50">{{ $notification->created_at->diffForHumans() }}</small>
+                                    <span class="ml-auto unread-indicator bg-primary"></span>
+                                </span>
+                                <span class="d-flex">
+                                    <span class="flex d-flex flex-column">
+                                        <span class="text-black-70">{{ $notification->data['data'] }}</span>
+                                    </span>
+                                </span>
+                            </a>
+                        @endforeach
+                        @foreach (auth()->user()->readNotifications as $notification)
+                            <a href="#" class="list-group-item list-group-item-action unread">
+                            <span class="d-flex align-items-center mb-1">
+                                <small class="text-black-50">{{ $notification->created_at->diffForHumans() }}</small>
+                                <span class="ml-auto unread-indicator bg-primary"></span>
+                            </span>
+                                <span class="d-flex">
+                                <span class="flex d-flex flex-column">
+                                    <span class="text-black-70">{{ $notification->data['data'] }}</span>
+                                </span>
+                            </span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- // END Notifications dropdown -->
         <div class="nav-item dropdown">

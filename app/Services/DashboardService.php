@@ -108,7 +108,7 @@ class DashboardService
         $label = [];
         $data = [];
         foreach ($results as $result){
-            $label[] = $result->month;
+            $label[] = $result->month_revenue;
             $data[] = $result->total_ammount;
         }
 
