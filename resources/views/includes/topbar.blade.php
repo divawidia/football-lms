@@ -50,19 +50,29 @@
                      class="position-relative">
                     <div class="dropdown-header"><strong>System notifications</strong></div>
                     <div class="list-group list-group-flush mb-0">
-                        @foreach (auth()->user()->unreadNotifications as $notification)
-                            <a href="{{ $notification->data['redirectRoute'] }}" class="list-group-item list-group-item-action unread-notification" id="{{ $notification->id }}">
-                                <span class="d-flex align-items-center mb-1">
-                                    <small class="text-black-50">{{ $notification->created_at->diffForHumans() }}</small>
-                                    <span class="ml-auto unread-indicator bg-primary"></span>
-                                </span>
+                        @if(auth()->user()->unreadNotifications->count() > 0)
+                            @foreach (auth()->user()->unreadNotifications as $notification)
+                                <a href="{{ $notification->data['redirectRoute'] }}" class="list-group-item list-group-item-action unread-notification" id="{{ $notification->id }}">
+                                    <span class="d-flex align-items-center mb-1">
+                                        <small class="text-black-50">{{ $notification->created_at->diffForHumans() }}</small>
+                                        <span class="ml-auto unread-indicator bg-primary"></span>
+                                    </span>
+                                    <span class="d-flex">
+                                        <span class="flex d-flex flex-column">
+                                            <span class="text-black-70">{{ $notification->data['data'] }}</span>
+                                        </span>
+                                    </span>
+                                </a>
+                            @endforeach
+                        @else
+                            <a href="#" class="list-group-item list-group-item-action">
                                 <span class="d-flex">
                                     <span class="flex d-flex flex-column">
-                                        <span class="text-black-70">{{ $notification->data['data'] }}</span>
+                                        <span class="text-black-70">No notifications at this time</span>
                                     </span>
                                 </span>
                             </a>
-                        @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
