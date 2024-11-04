@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\TrainingVideoController;
 use App\Http\Controllers\Admin\TrainingVideoLessonController;
 use App\Http\Controllers\Coach\DashboardController as CoachDashboardController;
 use App\Http\Controllers\Coach\PlayerPerformanceReviewController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Player\BillingPaymentsController;
 use App\Http\Controllers\Player\DashboardController as PlayerDashboardController;
 use App\Http\Controllers\Coach\SkillAssessmentController;
@@ -63,6 +64,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('', [AcademyController::class, 'edit'])->name('edit-academy.edit');
         Route::put('', [AcademyController::class, 'update'])->name('edit-academy.update');
     });
+    Route::patch('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 
     Route::group(['middleware' => ['role:Super-Admin,web']], function () {
 //        Route::prefix('admin')->group(function () {
