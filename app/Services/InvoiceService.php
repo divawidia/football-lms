@@ -190,7 +190,12 @@ class InvoiceService extends Service
             }
         }
         $this->midtransPayment($data, $invoice);
-        $this->userRepository->find($data['receiverUserId'])->notify(new InvoiceGenerated($data['ammountDue'], $this->convertToDatetime($data['dueDate'])));
+        $this->userRepository->find($data['receiverUserId'])
+            ->notify(new InvoiceGenerated(
+                $data['ammountDue'],
+                $this->convertToDatetime($data['dueDate']),
+                $invoice->id)
+            );
 
         return $invoice;
     }
