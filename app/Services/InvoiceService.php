@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tax;
+use App\Notifications\InvoiceGenerated;
 use App\Repository\ProductRepository;
 use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
@@ -189,6 +190,7 @@ class InvoiceService extends Service
             }
         }
         $this->midtransPayment($data, $invoice);
+        $this->userRepository->find($data['receiverUserId'])->notify(new InvoiceGenerated($data['ammountDue'], $this->convertToDatetime($data['dueDate'])));
 
         return $invoice;
     }
