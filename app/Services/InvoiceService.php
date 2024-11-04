@@ -56,6 +56,8 @@ class InvoiceService extends Service
                     </button>';
 
                 $statusButton = '';
+                $editButton = '';
+
                 if ($item->status == 'Open') {
                     $statusButton = $paidButton. ''. $uncollectibleButton;
                 } elseif ($item->status == 'Paid') {
@@ -65,6 +67,14 @@ class InvoiceService extends Service
                 } elseif ($item->status == 'Past Due') {
                     $statusButton = $openButton.''.$uncollectibleButton;
                 }
+
+                if ($item->status != 'Paid'){
+                    $editButton = '<a class="dropdown-item edit" href="' . route('invoices.edit',$item->id) . '" type="button">
+                                        <span class="material-icons">edit</span>
+                                        Edit Invoice
+                                    </a>';
+                }
+
                 return '<div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
@@ -72,10 +82,7 @@ class InvoiceService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item edit" href="' . route('invoices.edit',$item->id) . '" type="button">
-                                    <span class="material-icons">edit</span>
-                                    Edit Invoice
-                                </a>
+                                ' . $editButton . '
                                 <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
                                     <span class="material-icons">visibility</span>
                                     Show Invoice

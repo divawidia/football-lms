@@ -11,7 +11,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('billing-and-payments.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Invoices</a>
+                    <a href="{{ route('billing-and-payments.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Billings and Payments</a>
                 </li>
             </ul>
         </div>

@@ -58,59 +58,52 @@
                         <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Action
                             <span class="material-icons ml-3">
-                        keyboard_arrow_down
-                    </span>
+                                keyboard_arrow_down
+                            </span>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="{{ route('invoices.edit', $data['invoice']->id) }}"><span class="material-icons">edit</span> Edit Invoice</a>
-                            @if($data['invoice']->status == 'Open')
-                                <form action="{{ route('invoices.set-paid', $data['invoice']->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-icons text-success">check_circle</span>
-                                        Mark as Paid
-                                    </button>
-                                </form>
-                                <form action="{{ route('invoices.set-uncollectible', $data['invoice']->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-icons text-danger">check_circle</span>
-                                        Mark as Uncollectible
-                                    </button>
-                                </form>
-                                <button type="button" class="dropdown-item" id="pay">
-                                    <span class="material-icons">payment</span>
-                                    Pay Invoice
-                                </button>
-                            @elseif($data['invoice']->status == 'Paid')
-                                <form action="{{ route('invoices.set-uncollectible', $data['invoice']->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-icons text-danger">check_circle</span>
-                                        Mark as Uncollectible
-                                    </button>
-                                </form>
-                            @elseif($data['invoice']->status == 'Uncollectible')
-                                <form action="{{ route('invoices.set-paid', $data['invoice']->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-icons text-success">check_circle</span>
-                                        Mark as Paid
-                                    </button>
-                                </form>
-                                <form action="{{ route('invoices.set-open', $data['invoice']->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="material-icons text-info">check_circle</span>
-                                        Mark as Open
-                                    </button>
-                                </form>
+                            @if($data['invoice']->status != 'Paid')
+                                <a class="dropdown-item" href="{{ route('invoices.edit', $data['invoice']->id) }}"><span class="material-icons">edit</span> Edit Invoice</a>
                             @endif
+                            @if($data['invoice']->status == 'Open')
+                                <button type="submit" class="dropdown-item setStatus" id="{{ $data["invoice"]->id }}" data-status="paid">
+                                    <span class="material-icons text-success">check_circle</span>
+                                    Mark as Paid
+                                </button>
+                                <button type="submit" class="dropdown-item setStatus" id="{{ $data['invoice']->id }}" data-status="uncollectible">
+                                    <span class="material-icons text-danger">check_circle</span>
+                                    Mark as Uncollectible
+                                </button>
+                                <x-pay-invoice-button btnClass="dropdown-item" btnText="Pay Now!" :invoiceId="$data['invoice']->id" :snapToken="$data['invoice']->snapToken"/>
+                            @elseif($data['invoice']->status == 'Paid')
+                                <button type="submit" class="dropdown-item setStatus" id="{{ $data['invoice']->id }}" data-status="uncollectible">
+                                    <span class="material-icons text-danger">check_circle</span>
+                                    Mark as Uncollectible
+                                </button>
+                            @elseif($data['invoice']->status == 'Uncollectible')
+                                <button type="submit" class="dropdown-item setStatus" id="{{ $data["invoice"]->id }}" data-status="paid">
+                                    <span class="material-icons text-success">check_circle</span>
+                                    Mark as Paid
+                                </button>
+                                <button type="submit" class="dropdown-item setStatus" id="{{ $data["invoice"]->id }}" data-status="open">
+                                    <span class="material-icons text-info">check_circle</span>
+                                    Mark as Open
+                                </button>
+                            @elseif($data['invoice']->status == 'Past Due')
+                                <button type="submit" class="dropdown-item setStatus" id="{{ $data["invoice"]->id }}" data-status="paid">
+                                    <span class="material-icons text-success">check_circle</span>
+                                    Mark as Paid
+                                </button>
+                                <button type="submit" class="dropdown-item setStatus" id="{{ $data["invoice"]->id }}" data-status="open">
+                                    <span class="material-icons text-info">check_circle</span>
+                                    Mark as Open
+                                </button>
+                                <button type="submit" class="dropdown-item setStatus" id="{{ $data['invoice']->id }}" data-status="uncollectible">
+                                    <span class="material-icons text-danger">check_circle</span>
+                                    Mark as Uncollectible
+                                </button>
+                            @endif
+
                             <a href="javascript:window.print()" class="dropdown-item" id="{{$data['invoice']->id}}">
                                 <span class="material-icons">file_download</span>
                                 Download Invoice
@@ -223,37 +216,22 @@
     </div>
 @endsection
 @push('addon-script')
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
     <script>
         $(document).ready(function () {
-            $('#pay').on('click', function (e){
-                e.preventDefault();
-                snap.pay('{{ $data['invoice']->snapToken }}', {
-                    // Optional
-                    onSuccess: function(result){
-                        /* You may add your own js here, this is just example */
-                        console.log(result);
+            const body = $('body');
+            function updateInvoiceStatus(status, route){
+                $.ajax({
+                    url: route,
+                    method: 'PATCH',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function() {
                         Swal.fire({
-                            title: 'Invoice successfully paid!',
+                            title: 'Invoice successfully mark as '+status+'!',
                             icon: 'success',
                             showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-
-                    },
-                    // Optional
-                    onPending: function(result){
-                        /* You may add your own js here, this is just example */
-                        Swal.fire({
-                            title: 'Invoice payment still pending!',
-                            icon: 'error',
-                            showCancelButton: false,
+                            allowOutsideClick: false,
                             confirmButtonColor: "#1ac2a1",
                             confirmButtonText:
                                 'Ok!'
@@ -263,23 +241,30 @@
                             }
                         });
                     },
-                    // Optional
-                    onError: function(result){
-                        /* You may add your own js here, this is just example */
+                    error: function(jqXHR, textStatus, errorThrown) {
                         Swal.fire({
-                            title: 'Something wrong when processing Invoice payment!',
-                            icon: JSON.stringify(result, null, 2),
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.href = '{{ route('invoices.set-uncollectible', $data['invoice']->id) }}'
-                            }
+                            icon: "error",
+                            title: "Something went wrong when processing invoice status!",
+                            text: errorThrown,
                         });
                     }
                 });
+            }
+
+            body.on('click', '.setStatus', function (e){
+                e.preventDefault();
+                const invoiceId = $(this).attr('id');
+                const status = $(this).attr('data-status');
+
+                if (status === 'paid'){
+                    updateInvoiceStatus(status, '{{ route('invoices.set-paid', ':id') }}'.replace(':id', invoiceId))
+                } else if(status === 'uncollectible'){
+                    updateInvoiceStatus(status, '{{ route('invoices.set-uncollectible', ':id') }}'.replace(':id', invoiceId))
+                } else if(status === 'past due'){
+                    updateInvoiceStatus(status, '{{ route('invoices.set-past-due', ':id') }}'.replace(':id', invoiceId))
+                } else if(status === 'open'){
+                    updateInvoiceStatus(status, '{{ route('invoices.set-open', ':id') }}'.replace(':id', invoiceId))
+                }
             });
 
             // archive invoice

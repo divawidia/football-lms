@@ -1,5 +1,5 @@
 <a href="#" class="{{ $btnClass }} payInvoice" id="{{ $invoiceId }}" data-snaptoken="{{ $snapToken }}">
-    <span class="material-icons mx-2">payment</span>
+    <span class="material-icons mr-2">payment</span>
     {{ $btnText }}
 </a>
 
