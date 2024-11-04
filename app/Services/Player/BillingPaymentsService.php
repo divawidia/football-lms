@@ -27,7 +27,7 @@ class BillingPaymentsService extends Service
     }
     public function index()
     {
-        $data = $this->user->invoices;
+        $data = $this->user->invoices()->latest();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return'<a class="btn btn-sm btn-outline-secondary" href="' . route('billing-and-payments.show', $item->id) . '">

@@ -54,23 +54,13 @@
                             {{ $data['createdDate'] }}
                         </p>
                     </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Action
-                            <span class="material-icons ml-3">
-                                keyboard_arrow_down
-                            </span>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            @if($data['invoice']->status == 'Open')
-                                <x-pay-invoice-button btnClass="dropdown-item" btnText="Pay Now!" :invoiceId="$data['invoice']->id" :snapToken="$data['invoice']->snapToken"/>
-                            @endif
-                            <a href="javascript:window.print()" class="dropdown-item" id="{{$data['invoice']->id}}">
-                                <span class="material-icons">file_download</span>
-                                Download Invoice
-                            </a>
-                        </div>
-                    </div>
+                    @if($data['invoice']->status == 'Open')
+                        <x-pay-invoice-button btnClass="btn btn-primary mb-3" btnText="Pay Now!" :invoiceId="$data['invoice']->id" :snapToken="$data['invoice']->snapToken"/>
+                    @endif
+                    <a href="javascript:window.print()" class="btn btn-outline-white" id="{{$data['invoice']->id}}">
+                        <span class="material-icons">file_download</span>
+                        Download Invoice
+                    </a>
                 </div>
             </div>
         </div>
