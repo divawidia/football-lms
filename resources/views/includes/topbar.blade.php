@@ -51,7 +51,7 @@
                     <div class="dropdown-header"><strong>System notifications</strong></div>
                     <div class="list-group list-group-flush mb-0">
                         @foreach (auth()->user()->unreadNotifications as $notification)
-                            <a href="@if($notification->data['redirectRoute']){{ $notification->data['redirectRoute'] }}@endif" class="list-group-item list-group-item-action unread">
+                            <a href="{{ $notification->data['redirectRoute'] }}" class="list-group-item list-group-item-action unread-notification" id="{{ $notification->id }}">
                                 <span class="d-flex align-items-center mb-1">
                                     <small class="text-black-50">{{ $notification->created_at->diffForHumans() }}</small>
                                     <span class="ml-auto unread-indicator bg-primary"></span>
@@ -90,3 +90,27 @@
         </div>
     </div>
 </div>
+
+@push('addon-script')
+    <script>
+        $(document).on('click', '.unread-notification', function() {
+            let notificationId = $(this).attr('id');
+            $.ajax({
+                url: `{{ route('notifications.markAsRead', ':id') }}`.replace(':id', notificationId),
+                method: 'PATCH',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Failed to mark notification as read');
+                }
+            });
+        });
+
+    </script>
+@endpush
