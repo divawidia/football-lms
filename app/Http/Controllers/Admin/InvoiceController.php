@@ -162,8 +162,9 @@ class InvoiceController extends Controller
     }
 
     public function setOpen(Invoice $invoice){
+        $loggedUser = $this->getLoggedUser();
         try {
-            $this->invoiceService->open($invoice);
+            $this->invoiceService->open($invoice, $loggedUser);
             return response()->json(['message' => 'Invoice status successfully mark to open!']);
 
         } catch (Exception $e) {
