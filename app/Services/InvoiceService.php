@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tax;
 use App\Notifications\InvoiceGenerated;
+use App\Notifications\InvoicePaidAdmin;
+use App\Notifications\InvoicePaidPlayer;
 use App\Notifications\InvoicePastDueAdmin;
 use App\Notifications\InvoicePastDuePlayer;
 use App\Repository\ProductRepository;
@@ -378,7 +380,27 @@ class InvoiceService extends Service
 
     public function paid(Invoice $invoice)
     {
-        return $invoice->update(['status' => 'Paid']);
+        $invoice->update(['status' => 'Paid']);
+        $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePaidPlayer(
+            $invoice->id,
+            $invoice->invoiceNumber,
+        ));
+
+        $adminUsers = $this->userRepository->getAllByRole('admin');
+        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
+        $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
+
+        Notification::send($adminUsers, new InvoicePaidAdmin(
+            $playerName,
+            $invoice->id,
+            $invoice->invoiceNumber,
+        ));
+        Notification::send($superAdminUsers, new InvoicePaidAdmin(
+            $playerName,
+            $invoice->id,
+            $invoice->invoiceNumber,
+        ));
+        return $invoice;
     }
 
     public function uncollectible(Invoice $invoice)
@@ -411,6 +433,7 @@ class InvoiceService extends Service
         ));
 
         $adminUsers = $this->userRepository->getAllByRole('admin');
+        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
         $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
 
         Notification::send($adminUsers, new InvoicePastDueAdmin(
@@ -418,6 +441,11 @@ class InvoiceService extends Service
             $invoice->id,
             $invoice->invoiceNumber,
             $playerName,
+        ));
+        Notification::send($superAdminUsers, new InvoicePaidAdmin(
+            $playerName,
+            $invoice->id,
+            $invoice->invoiceNumber,
         ));
         return $invoice;
     }
