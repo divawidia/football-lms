@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tax;
 use App\Notifications\InvoiceGenerated;
+use App\Notifications\InvoiceOpenPlayer;
 use App\Notifications\InvoicePaidAdmin;
 use App\Notifications\InvoicePaidPlayer;
 use App\Notifications\InvoicePastDueAdmin;
@@ -415,6 +416,12 @@ class InvoiceService extends Service
 
         // refresh midtrans payment token
         $this->midtransPayment($data, $invoice);
+
+        $this->userRepository->find($invoice->receiverUserId)->notify(new InvoiceOpenPlayer(
+            $this->convertToDatetime($invoice->dueDate),
+            $invoice->id,
+            $invoice->invoiceNumber,
+        ));
 
         return $invoice->update([
             'status' => 'Open',
