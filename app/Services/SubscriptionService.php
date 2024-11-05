@@ -6,6 +6,9 @@ use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tax;
+use App\Repository\InvoiceRepository;
+use App\Repository\SubscriptionRepository;
+use App\Repository\TaxRepository;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
@@ -16,20 +19,26 @@ use Yajra\DataTables\Facades\DataTables;
 class SubscriptionService extends Service
 {
     private Product $product;
-    private Subscription $subscription;
-    private Invoice $invoice;
-    private Tax $tax;
+    private SubscriptionRepository $subscriptionRepository;
+    private InvoiceRepository $invoiceRepository;
+    private TaxRepository $taxRepository;
     private InvoiceService $invoiceService;
-    public function __construct(Product $product, Subscription $subscription, Invoice $invoice, Tax $tax, InvoiceService $invoiceService)
+    public function __construct(
+        Product $product,
+        SubscriptionRepository $subscriptionRepository,
+        InvoiceRepository $invoiceRepository,
+        TaxRepository $taxRepository,
+        InvoiceService $invoiceService)
     {
         $this->product = $product;
-        $this->invoice = $invoice;
-        $this->tax = $tax;
+        $this->invoiceRepository = $invoiceRepository;
+        $this->taxRepository = $taxRepository;
         $this->invoiceService = $invoiceService;
+        $this->subscriptionRepository = $subscriptionRepository;
     }
     public function index()
     {
-        $data = Subscription::with('user')->latest();
+        $data = $this->subscriptionRepository->getAll();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 $cancelButton ='
@@ -190,6 +199,53 @@ class SubscriptionService extends Service
         return compact('subscription', 'createdAt', 'nextDueDate', 'updatedAt', 'startDate');
     }
 
+    public function store(array $data, $creatorUserIdd, $academyId)
+    {
+        $data['creatorUserId'] = $creatorUserIdd;
+        $data['academyId'] = $academyId;
+        $data['invoiceNumber'] = $this->generateInvoiceNumber();
+        $data['dueDate'] = $this->getNextDayTimestamp();
+        $data['subtotal'] = 0;
+
+        foreach ($data['products'] as $product) {
+            $data['subtotal'] = $data['subtotal'] + $product['ammount'];
+        }
+        $data['ammountDue'] = $data['subtotal'];
+
+        if ($data['taxId']){
+            $tax = $this->taxRepository->find($data['taxId']);
+            $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
+            $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
+        }else{
+            $data['taxId'] = null;
+            $data['totalTax'] = 0;
+        }
+
+        $invoice = $this->invoiceRepository->create($data);
+
+        foreach ($data['products'] as $product){
+            $invoice->products()->attach($product['productId'], [
+                'qty' => $product['qty'],
+                'ammount' => $product['ammount']
+            ]);
+
+            $productDetail = $this->productRepository->find($product['productId']);
+            if ($productDetail->priceOption == 'subscription'){
+                $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId'], $data['taxId']);
+                $invoice->subscriptions()->attach($subscription->id);
+            }
+        }
+        $this->midtransPayment($data, $invoice);
+        $this->userRepository->find($data['receiverUserId'])
+            ->notify(new InvoiceGenerated(
+                    $data['ammountDue'],
+                    $this->convertToDatetime($data['dueDate']),
+                    $invoice->id)
+            );
+
+        return $invoice;
+    }
+
     public function scheduled(Subscription $subscription, $creatorUserId, $academyId)
     {
         $subscription->update(['status' => 'scheduled']);
@@ -215,7 +271,7 @@ class SubscriptionService extends Service
             $data['ammountDue'] = $data['subtotal'];
 
             if ($subscription->taxId != null){
-                $tax = $this->tax->getTaxDetail($subscription->taxId);
+                $tax = $this->taxRepository->find($subscription->taxId);
                 $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
                 $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
             }else{

@@ -22,6 +22,11 @@ class ProductRepository
         return $this->product->all();
     }
 
+    public function getByPriceOption($priceOption)
+    {
+        return $this->product->where('priceOption', $priceOption)->get();
+    }
+
     public function find($id)
     {
         return $this->product->findOrFail($id);

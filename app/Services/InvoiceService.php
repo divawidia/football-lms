@@ -162,7 +162,7 @@ class InvoiceService extends Service
     {
         $players = $this->userRepository->getAllByRole('player');
         $taxes = $this->taxRepository->getAll();
-        $products = $this->productRepository->getAll();
+        $products = $this->productRepository->getByPriceOption('one time payment');
         return compact('players', 'taxes', 'products');
     }
 
