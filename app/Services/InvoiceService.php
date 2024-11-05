@@ -7,11 +7,14 @@ use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tax;
 use App\Notifications\InvoiceGenerated;
+use App\Notifications\InvoicePastDueAdmin;
+use App\Notifications\InvoicePastDuePlayer;
 use App\Repository\ProductRepository;
 use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -55,12 +58,17 @@ class InvoiceService extends Service
                             <span class="material-icons text-info">check_circle</span>
                             Mark as Open
                     </button>';
+                $pastDueButton =
+                    '<button type="submit" class="dropdown-item setStatus" id="'.$item->id.'" data-status="past-due">
+                            <span class="material-icons text-warning">check_circle</span>
+                            Mark as Past Due
+                    </button>';
 
                 $statusButton = '';
                 $editButton = '';
 
                 if ($item->status == 'Open') {
-                    $statusButton = $paidButton. ''. $uncollectibleButton;
+                    $statusButton = $paidButton. ''. $uncollectibleButton.''.$pastDueButton;
                 } elseif ($item->status == 'Paid') {
                     $statusButton = $uncollectibleButton;
                 } elseif ($item->status == 'Uncollectible') {
@@ -394,7 +402,24 @@ class InvoiceService extends Service
     }
     public function pastDue(Invoice $invoice)
     {
-        return $invoice->update(['status' => 'Past Due']);
+        $invoice->update(['status' => 'Past Due']);
+
+        $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePastDuePlayer(
+            $this->convertToDatetime($invoice->dueDate),
+            $invoice->id,
+            $invoice->invoiceNumber,
+        ));
+
+        $adminUsers = $this->userRepository->getAllByRole('admin');
+        $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
+
+        Notification::send($adminUsers, new InvoicePastDueAdmin(
+            $this->convertToDatetime($invoice->dueDate),
+            $invoice->id,
+            $invoice->invoiceNumber,
+            $playerName,
+        ));
+        return $invoice;
     }
     public function destroy(Invoice $invoice)
     {

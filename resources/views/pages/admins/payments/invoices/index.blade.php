@@ -134,7 +134,7 @@
                     updateInvoiceStatus(status, '{{ route('invoices.set-paid', ':id') }}'.replace(':id', invoiceId))
                 } else if(status === 'uncollectible'){
                     updateInvoiceStatus(status, '{{ route('invoices.set-uncollectible', ':id') }}'.replace(':id', invoiceId))
-                } else if(status === 'past due'){
+                } else if(status === 'past-due'){
                     updateInvoiceStatus(status, '{{ route('invoices.set-past-due', ':id') }}'.replace(':id', invoiceId))
                 } else if(status === 'open'){
                     updateInvoiceStatus(status, '{{ route('invoices.set-open', ':id') }}'.replace(':id', invoiceId))
