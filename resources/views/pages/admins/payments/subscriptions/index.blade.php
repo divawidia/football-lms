@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="pt-32pt">
-        <div class="container page__container d-flex flex-column">
+        <div class="container">
             <h2 class="mb-0 text-left">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
@@ -19,8 +19,14 @@
         </div>
     </div>
 
-    <div class="container page__container page-section">
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+    <div class="container page-section">
+        <a href="{{ route('invoices.create') }}" class="btn btn-primary my-3 ">
+            <span class="material-icons mr-2">
+                add
+            </span>
+            Add New
+        </a>
+        <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="subscriptionsTable">
@@ -48,6 +54,7 @@
         </div>
     </div>
 @endsection
+
 @push('addon-script')
     <script>
         $(document).ready(function () {
