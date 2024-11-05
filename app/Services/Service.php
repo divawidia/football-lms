@@ -111,7 +111,7 @@ class Service
 
     public function generateInvoiceNumber(){
         $numbers = mt_rand(00000, 999999);
-        return 'INV-'.$numbers;
+        return 'INV-'.$numbers.'-'.$numbers;
     }
 
     public function coachManagedTeams($coach){

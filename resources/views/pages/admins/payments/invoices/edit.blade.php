@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Edit Invoice {{ $data['invoice']->invoiceNumber }}
+    Edit Invoice {{ $data->invoiceNumber }}
 @endsection
 @section('page-title')
     @yield('title')
@@ -16,8 +16,8 @@
                         </h2>
                         <ol class="breadcrumb p-0 m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('invoices.index') }}">Players Management</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('invoices.show', $data->id) }}">Invoice {{ $data->invoiceNumber }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('invoices.index') }}">Invoices</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('invoices.show', $data->id) }}">#{{ $data->invoiceNumber }}</a></li>
                             <li class="breadcrumb-item active">
                                 Edit
                             </li>
@@ -204,7 +204,7 @@
                             '<div class="col-auto d-flex align-items-center">' +
                                 '<label class="form-label"># '+i+'</label>' +
                             '</div>' +
-                            '<div class="form-group col-7 col-lg-3">' +
+                            '<div class="form-group col-7 col-lg-4">' +
                                 '<label class="form-label" for="productId'+i+'">Product</label>' +
                                 '<small class="text-danger">*</small>'+
                                 '<select class="form-control form-select product-select" data-row="'+i+'" id="productId'+i+'" name="products['+i+'][productId]" required>'+
@@ -243,7 +243,7 @@
                                     '</div>'+
                                 '</div>'+
                             '</div>'+
-                            '<div class="form-group col-4 col-lg-3">' +
+                            '<div class="form-group col-4 col-lg-2">' +
                                 '<label class="form-label" for="amount'+i+'">Total</label>' +
                                 '<small class="text-danger">*</small>'+
                                 '<div class="input-group input-group-merge">'+

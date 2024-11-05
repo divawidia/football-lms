@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Midtrans\Transaction;
 use Yajra\DataTables\Facades\DataTables;
 
 class InvoiceService extends Service
@@ -73,20 +74,11 @@ class InvoiceService extends Service
                 $editButton = '';
 
                 if ($item->status == 'Open') {
-                    $statusButton = $paidButton. ''. $uncollectibleButton.''.$pastDueButton;
-                } elseif ($item->status == 'Paid') {
                     $statusButton = $uncollectibleButton;
-                } elseif ($item->status == 'Uncollectible') {
-                    $statusButton = $paidButton.''.$openButton;
-                } elseif ($item->status == 'Past Due') {
-                    $statusButton = $openButton.''.$uncollectibleButton;
-                }
-
-                if ($item->status != 'Paid'){
-                    $editButton = '<a class="dropdown-item edit" href="' . route('invoices.edit',$item->id) . '" type="button">
-                                        <span class="material-icons">edit</span>
-                                        Edit Invoice
-                                    </a>';
+//                    $editButton = '<a class="dropdown-item edit" href="' . route('invoices.edit',$item->id) . '" type="button">
+//                                        <span class="material-icons">edit</span>
+//                                        Edit Invoice
+//                                    </a>';
                 }
 
                 return '<div class="dropdown">
@@ -301,15 +293,41 @@ class InvoiceService extends Service
     }
 
     public function midtransPayment(array $data, Invoice $invoice){
+        $items = [];
+        foreach ($invoice->products as $product){
+            $items[] = [
+                'name' => $product->productName,
+                'price' => $product->price,
+                'quantity' => $product->pivot->qty,
+                'subtotal' => $product->pivot->ammount,
+            ];
+        }
+
+        $billing_address = array(
+            'first_name'   => $invoice->receiverUser->firstName,
+            'last_name'    => $invoice->receiverUser->lastName,
+            'address'      => $invoice->receiverUser->address,
+            'city'         => $invoice->receiverUser->city->name,
+            'postal_code'  => $invoice->receiverUser->zipCode,
+            'phone'        => $invoice->receiverUser->phoneNumber,
+            'country_code' => $invoice->receiverUser->country->iso3,
+        );
+
+        $customer_details = array(
+            'first_name'       => $invoice->receiverUser->firstName,
+            'last_name'        => $invoice->receiverUser->lastName,
+            'email'            => $invoice->receiverUser->email,
+            'phone'            => $invoice->receiverUser->phoneNumber,
+            'billing_address'  => $billing_address,
+        );
+
         $midtrans = [
             'transaction_details' => [
                 'order_id' => $data['invoiceNumber'],
                 'gross_amount' => (int) $data['ammountDue'],
             ],
-            'customer_details' => [
-                'first_name' => $invoice->receiverUser->firstName,
-                'email' => $invoice->receiverUser->email
-            ],
+            'item_details'        => $items,
+            'customer_details'    => $customer_details,
             'enabled_payments' => [
                 'gopay', 'bank_transfer', "indomaret", "danamon_online", "akulaku", "shopeepay", "kredivo", "uob_ezpay","other_qris"
             ],
@@ -383,7 +401,13 @@ class InvoiceService extends Service
 
     public function paid(Invoice $invoice)
     {
-        $invoice->update(['status' => 'Paid']);
+        $paymentDetails = $this->getPaymentDetail($invoice->invoiceNumber);
+
+        $invoice->update([
+            'status' => 'Paid',
+            'paymentMethod' => $paymentDetails->payment_type,
+        ]);
+
         $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePaidPlayer(
             $invoice->id,
             $invoice->invoiceNumber,
@@ -408,18 +432,27 @@ class InvoiceService extends Service
 
     public function uncollectible(Invoice $invoice)
     {
+        $status = $this->getPaymentDetail($invoice->invoiceNumber)->transaction_status;
+        if ($status == 'pending' || $status == 'challenge'){
+            Transaction::cancel($invoice->invoiceNumber);
+        }
+
         return $invoice->update(['status' => 'Uncollectible']);
+    }
+
+    public function getPaymentDetail($invoiceNumber)
+    {
+        return Transaction::status($invoiceNumber);
     }
 
     public function open(Invoice $invoice, User $user)
     {
-        $data['invoiceNumber'] = $invoice->invoiceNumber;
+        $data['invoiceNumber'] = $this->generateInvoiceNumber();
         $data['ammountDue'] = $invoice->ammountDue;
         $dueDate = $this->getNextDayTimestamp();
 
         // refresh midtrans payment token
         $this->midtransPayment($data, $invoice);
-
         $this->userRepository->find($invoice->receiverUserId)->notify(new InvoiceOpenPlayer(
             $this->convertToDatetime($invoice->dueDate),
             $invoice->id,
@@ -443,11 +476,14 @@ class InvoiceService extends Service
 
         return $invoice->update([
             'status' => 'Open',
-            'dueDate' => $dueDate
+            'dueDate' => $dueDate,
+            'invoiceNumber' => $data['invoiceNumber']
         ]);
     }
+
     public function pastDue(Invoice $invoice)
     {
+        Transaction::cancel($invoice->invoiceNumber);
         $invoice->update(['status' => 'Past Due']);
 
         $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePastDuePlayer(
@@ -473,6 +509,7 @@ class InvoiceService extends Service
         ));
         return $invoice;
     }
+
     public function destroy(Invoice $invoice)
     {
         return $invoice->delete();
