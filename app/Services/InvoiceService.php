@@ -390,8 +390,7 @@ class InvoiceService extends Service
         $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
         $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
 
-        Notification::send($adminUsers, new InvoicePaidAdmin(
-            $playerName,
+        Notification::send($adminUsers, new InvoicePaidPlayer(
             $invoice->id,
             $invoice->invoiceNumber,
         ));
