@@ -6,7 +6,9 @@ use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tax;
+use App\Models\User;
 use App\Notifications\InvoiceGenerated;
+use App\Notifications\InvoiceOpenAdmin;
 use App\Notifications\InvoiceOpenPlayer;
 use App\Notifications\InvoicePaidAdmin;
 use App\Notifications\InvoicePaidPlayer;
@@ -391,7 +393,8 @@ class InvoiceService extends Service
         $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
         $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
 
-        Notification::send($adminUsers, new InvoicePaidPlayer(
+        Notification::send($adminUsers, new InvoicePaidAdmin(
+            $playerName,
             $invoice->id,
             $invoice->invoiceNumber,
         ));
@@ -408,7 +411,7 @@ class InvoiceService extends Service
         return $invoice->update(['status' => 'Uncollectible']);
     }
 
-    public function open(Invoice $invoice)
+    public function open(Invoice $invoice, User $user)
     {
         $data['invoiceNumber'] = $invoice->invoiceNumber;
         $data['ammountDue'] = $invoice->ammountDue;
@@ -419,6 +422,21 @@ class InvoiceService extends Service
 
         $this->userRepository->find($invoice->receiverUserId)->notify(new InvoiceOpenPlayer(
             $this->convertToDatetime($invoice->dueDate),
+            $invoice->id,
+            $invoice->invoiceNumber,
+        ));
+
+        $adminUsers = $this->userRepository->getAllByRole('admin');
+        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
+        $adminName = $user->firstName.' '.$user->lastName;
+
+        Notification::send($adminUsers, new InvoiceOpenAdmin(
+            $adminName,
+            $invoice->id,
+            $invoice->invoiceNumber,
+        ));
+        Notification::send($superAdminUsers, new InvoiceOpenAdmin(
+            $adminName,
             $invoice->id,
             $invoice->invoiceNumber,
         ));
