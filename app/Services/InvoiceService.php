@@ -14,6 +14,7 @@ use App\Notifications\InvoicePaidAdmin;
 use App\Notifications\InvoicePaidPlayer;
 use App\Notifications\InvoicePastDueAdmin;
 use App\Notifications\InvoicePastDuePlayer;
+use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
@@ -31,8 +32,14 @@ class InvoiceService extends Service
     private ProductRepository $productRepository;
     private TaxRepository $taxRepository;
     private UserRepository $userRepository;
+    private InvoiceRepository $invoiceRepository;
     private Invoice $invoice;
-    public function __construct(ProductRepository $productRepository, TaxRepository $taxRepository, UserRepository $userRepository, Invoice $invoice)
+    public function __construct(
+        ProductRepository $productRepository,
+        TaxRepository $taxRepository,
+        UserRepository $userRepository,
+        Invoice $invoice,
+        InvoiceRepository $invoiceRepository)
     {
         Config::$serverKey    = config('services.midtrans.serverKey');
         Config::$isProduction = config('services.midtrans.isProduction');
@@ -43,10 +50,11 @@ class InvoiceService extends Service
         $this->taxRepository = $taxRepository;
         $this->userRepository = $userRepository;
         $this->invoice = $invoice;
+        $this->invoiceRepository = $invoiceRepository;
     }
     public function index()
     {
-        $data = Invoice::with('receiverUser', 'creatorUser')->latest();
+        $data = $this->invoiceRepository->getAll();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 $paidButton =
@@ -180,7 +188,7 @@ class InvoiceService extends Service
             $data['totalTax'] = 0;
         }
 
-        $invoice = Invoice::create($data);
+        $invoice = $this->invoiceRepository->create($data);
 
         foreach ($data['products'] as $product){
             $invoice->products()->attach($product['productId'], [
