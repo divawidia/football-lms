@@ -72,9 +72,19 @@ class SubscriptionController extends Controller
     {
         $data = $this->subscriptionService->create();
         return view('pages.admins.payments.subscriptions.create', [
-            'products' => $data['products'],
+//            'products' => $data['products'],
             'taxes' => $data['taxes'],
             'contacts' => $data['players'],
+        ]);
+    }
+
+    public function getAvailablePlayerSubscriptionProduct(Request $request){
+        $userId = $request->query('userId');
+        $data = $this->subscriptionService->getAvailablePlayerSubscriptionProduct($userId);
+
+        return response()->json([
+            'data' => $data,
+            'message' => 'Successfully retrieve data'
         ]);
     }
     /**

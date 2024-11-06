@@ -92,4 +92,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Invoice::class, 'receiverUserId');
     }
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class, 'userId');
+    }
 }

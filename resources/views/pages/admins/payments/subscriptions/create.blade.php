@@ -53,17 +53,17 @@
                 <div id="productsField">
                     <div class="row">
                         <div class="form-group col-lg-4">
-                            <label class="form-label" for="productId1">Product</label>
+                            <label class="form-label" for="productId">Product</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select product-select" data-row="1" id="productId1" name="products[1][productId]" required>
-                                <option disabled selected>Select product</option>
-                                @foreach($products AS $product)
-                                    <option value="{{ $product->id }}" @selected( old('products[1][productId]') )>
-                                        {{ $product->productName }} ~ {{ $product->subscriptionCycle }} cycle
-                                    </option>
-                                @endforeach
+                            <select class="form-control form-select product-select" id="productId" name="productId" required>
+{{--                                <option disabled selected>Select subscriptions product</option>--}}
+{{--                                @foreach($products AS $product)--}}
+{{--                                    <option value="{{ $product->id }}" @selected( old('products[1][productId]') )>--}}
+{{--                                        {{ $product->productName }} ~ {{ $product->subscriptionCycle }} cycle--}}
+{{--                                    </option>--}}
+{{--                                @endforeach--}}
                             </select>
-                            @error('products[1][productId]')
+                            @error('productId]')
                             <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -79,12 +79,11 @@
                                 </div>
                                 <input type="number"
                                        id="price1"
-                                       name="products[1][price]"
+                                       name="productPrice"
                                        class="form-control"
                                        required
-                                       readonly="readonly"
-                                       value="{{ old('products[1][price]') }}">
-                                @error('products[1][price]')
+                                       readonly="readonly">
+                                @error('productPrice')
                                 <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -117,7 +116,7 @@
 
                 <div class="page-separator"></div>
                 <div class="d-flex justify-content-end">
-                    <a class="btn btn-secondary mx-2" href="{{ route('player-managements.index') }}">
+                    <a class="btn btn-secondary mx-2" href="{{ url()->previous()}}">
                         <span class="material-icons mr-2">close</span>
                         Cancel
                     </a>
@@ -133,8 +132,32 @@
 
 @push('addon-script')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function (message) {
             const body = $('body');
+
+            function getAvailablePlayerSubscriptionProduct(userId) {
+                const productSelectId = $('#productId');
+
+                // Send an AJAX request with query parameters
+                $.ajax({
+                    url: '{{ route('subscriptions.available-product') }}',  // URL endpoint
+                    type: 'GET',
+                    data: {
+                        userId: userId,
+                    },
+                    success: function (response) {
+                        productSelectId.empty();
+                        productSelectId.html('<option disabled selected>Select subscriptions product</option>');
+                        $.each(response.data, function (key, value) {
+                            productSelectId.append('<option value="' + value.id + '">' + value.productName + ' ~ '+value.subscriptionCycle+'</option>');
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle any errors
+                        alert('Error:', error);
+                    }
+                });
+            }
 
             function getProductAmount(rowId){
                 // Capture user input for query parameters
@@ -150,6 +173,7 @@
                         productId: productId
                     },
                     success: function(response) {
+                        console.log(response)
                         // Process the response
                         $('#price'+rowId).val(response.data.productPrice);
                         $('#subscription-info'+rowId).text(response.data.subscription);
@@ -160,11 +184,16 @@
                     }
                 });
             }
+            $('#receiverUserId').on('change',function() {
+                const userId = $(this).val();
+                getAvailablePlayerSubscriptionProduct(userId);
+            });
 
             body.on('change', '.product-select',function() {
                 const rowId = $(this).attr('data-row');
                 getProductAmount(rowId);
             });
-        });
+
+        })
     </script>
 @endpush

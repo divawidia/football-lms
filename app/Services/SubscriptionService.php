@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tax;
+use App\Models\User;
 use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
@@ -13,6 +14,7 @@ use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -212,8 +214,16 @@ class SubscriptionService extends Service
     {
         $players = $this->userRepository->getAllByRole('player');
         $taxes = $this->taxRepository->getAll();
-        $products = $this->productRepository->getByPriceOption('subscription');
-        return compact('players', 'taxes', 'products');
+//        $products = $this->productRepository->getByPriceOption('subscription');
+        return compact('players', 'taxes');
+    }
+
+    public function getAvailablePlayerSubscriptionProduct($userId)
+    {
+        return Product::with('subscritions')->where('priceOption', '=','subscription')
+            ->whereDoesntHave('subscritions', function (Builder $query) use ($userId){
+                $query->where('userId', $userId);
+            })->get();
     }
 
     public function store(array $data, $creatorUserIdd, $academyId)
