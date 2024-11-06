@@ -310,6 +310,8 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('subscriptions')->group(function () {
                 Route::get('', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+                Route::get('create', [SubscriptionController::class, 'create'])->name('subscriptions.create');
+                Route::post('store', [SubscriptionController::class, 'store'])->name('subscriptions.store');
 
                 Route::prefix('{subscription}')->group(function () {
                     Route::get('', [SubscriptionController::class, 'show'])->name('subscriptions.show');

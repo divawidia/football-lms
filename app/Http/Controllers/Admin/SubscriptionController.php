@@ -41,9 +41,7 @@ class SubscriptionController extends Controller
 
     public function invoices(Subscription $subscription)
     {
-        if (\request()->ajax()){
-            return $this->subscriptionService->invoices($subscription);
-        }
+        return $this->subscriptionService->invoices($subscription);
     }
 
     public function setScheduled(Subscription $subscription){
@@ -70,6 +68,15 @@ class SubscriptionController extends Controller
         return redirect()->route('subscriptions.show', $subscription->id);
     }
 
+    public function create()
+    {
+        $data = $this->subscriptionService->create();
+        return view('pages.admins.payments.subscriptions.create', [
+            'products' => $data['products'],
+            'taxes' => $data['taxes'],
+            'contacts' => $data['players'],
+        ]);
+    }
     /**
      * Show the form for editing the specified resource.
      */

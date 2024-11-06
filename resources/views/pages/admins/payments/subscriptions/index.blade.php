@@ -20,7 +20,7 @@
     </div>
 
     <div class="container page-section">
-        <a href="{{ route('invoices.create') }}" class="btn btn-primary my-3 ">
+        <a href="{{ route('subscriptions.create') }}" class="btn btn-primary my-3 ">
             <span class="material-icons mr-2">
                 add
             </span>

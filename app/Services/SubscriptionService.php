@@ -7,8 +7,10 @@ use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tax;
 use App\Repository\InvoiceRepository;
+use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\TaxRepository;
+use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
@@ -23,19 +25,26 @@ class SubscriptionService extends Service
     private InvoiceRepository $invoiceRepository;
     private TaxRepository $taxRepository;
     private InvoiceService $invoiceService;
+    private UserRepository $userRepository;
+    private ProductRepository $productRepository;
     public function __construct(
         Product $product,
         SubscriptionRepository $subscriptionRepository,
         InvoiceRepository $invoiceRepository,
         TaxRepository $taxRepository,
-        InvoiceService $invoiceService)
+        InvoiceService $invoiceService,
+        UserRepository $userRepository,
+        ProductRepository $productRepository)
     {
         $this->product = $product;
         $this->invoiceRepository = $invoiceRepository;
         $this->taxRepository = $taxRepository;
         $this->invoiceService = $invoiceService;
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->userRepository = $userRepository;
+        $this->productRepository = $productRepository;
     }
+
     public function index()
     {
         $data = $this->subscriptionRepository->getAll();
@@ -197,6 +206,14 @@ class SubscriptionService extends Service
         $updatedAt = $this->convertToDatetime($subscription->updated_at);
 
         return compact('subscription', 'createdAt', 'nextDueDate', 'updatedAt', 'startDate');
+    }
+
+    public function create()
+    {
+        $players = $this->userRepository->getAllByRole('player');
+        $taxes = $this->taxRepository->getAll();
+        $products = $this->productRepository->getByPriceOption('subscription');
+        return compact('players', 'taxes', 'products');
     }
 
     public function store(array $data, $creatorUserIdd, $academyId)
