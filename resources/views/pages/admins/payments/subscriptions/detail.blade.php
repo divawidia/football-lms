@@ -8,10 +8,10 @@
 
 @section('content')
     <nav class="navbar navbar-light border-bottom border-top px-0">
-        <div class="container page__container">
+        <div class="container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('invoices.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Subscription lists</a>
+                    <a href="{{ route('subscriptions.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Subscription lists</a>
                 </li>
             </ul>
         </div>
@@ -38,21 +38,25 @@
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <button type="submit" class="dropdown-item" id="edit-tax">
+                        <span class="material-icons">edit</span>
+                        Edit subscription tax
+                    </button>
                     @if($data['subscription']->status == 'scheduled')
-                        <form action="" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons text-success">check_circle</span>
-                                Mark as Unsubscribed
-                            </button>
-                        </form>
-                    @elseif($data['subscription']->status == 'unsubscribed')
-                        <form action="" method="POST">
+                        <form action="{{ route('subscriptions.set-unsubscribed', $data['subscription']->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
                             <button type="submit" class="dropdown-item">
                                 <span class="material-icons text-danger">check_circle</span>
+                                Mark as Unsubscribed
+                            </button>
+                        </form>
+                    @elseif($data['subscription']->status == 'unsubscribed')
+                        <form action="{{  route('subscriptions.set-scheduled', $data['subscription']->id) }}" method="POST">
+                            @method("PATCH")
+                            @csrf
+                            <button type="submit" class="dropdown-item">
+                                <span class="material-icons text-success">check_circle</span>
                                 Mark as Scheduled
                             </button>
                         </form>
@@ -76,7 +80,7 @@
                     <div class="p-2"><p class="card-title mb-4pt">Subscription Status :</p></div>
                     @if ($data['subscription']->status == 'scheduled')
                         <span class="ml-auto p-2 badge badge-pill badge-success">Scheduled</span>
-                    @elseif($$data['subscription']->status == 'unsubscribed')
+                    @elseif($data['subscription']->status == 'unsubscribed')
                         <span class="ml-auto p-2 badge badge-pill badge-danger">Unsubscribed</span>
                     @endif
                 </div>
@@ -92,7 +96,7 @@
                     <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
                     <div class="ml-auto p-2 text-muted">{{ $data['createdAt'] }}</div>
                 </div>
-                <div class="d-flex align-items-center border-bottom">
+                <div class="d-flex align-items-center">
                     <div class="p-2"><p class="card-title mb-4pt">Last updated at :</p></div>
                     <div class="ml-auto p-2 text-muted">{{ $data['updatedAt'] }}</div>
                 </div>

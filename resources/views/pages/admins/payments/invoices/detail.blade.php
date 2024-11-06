@@ -62,48 +62,13 @@
                             </span>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            @if($data['invoice']->status != 'Paid')
-                                <a class="dropdown-item" href="{{ route('invoices.edit', $data['invoice']->id) }}"><span class="material-icons">edit</span> Edit Invoice</a>
-                            @endif
                             @if($data['invoice']->status == 'Open')
-                                <button type="submit" class="dropdown-item setStatus" id="{{ $data["invoice"]->id }}" data-status="paid">
-                                    <span class="material-icons text-success">check_circle</span>
-                                    Mark as Paid
-                                </button>
                                 <button type="submit" class="dropdown-item setStatus" id="{{ $data['invoice']->id }}" data-status="uncollectible">
                                     <span class="material-icons text-danger">check_circle</span>
                                     Mark as Uncollectible
                                 </button>
                                 <x-pay-invoice-button btnClass="dropdown-item" btnText="Pay Now!" :invoiceId="$data['invoice']->id" :snapToken="$data['invoice']->snapToken"/>
-                            @elseif($data['invoice']->status == 'Paid')
-                                <button type="submit" class="dropdown-item setStatus" id="{{ $data['invoice']->id }}" data-status="uncollectible">
-                                    <span class="material-icons text-danger">check_circle</span>
-                                    Mark as Uncollectible
-                                </button>
-                            @elseif($data['invoice']->status == 'Uncollectible')
-                                <button type="submit" class="dropdown-item setStatus" id="{{ $data["invoice"]->id }}" data-status="paid">
-                                    <span class="material-icons text-success">check_circle</span>
-                                    Mark as Paid
-                                </button>
-                                <button type="submit" class="dropdown-item setStatus" id="{{ $data["invoice"]->id }}" data-status="open">
-                                    <span class="material-icons text-info">check_circle</span>
-                                    Mark as Open
-                                </button>
-                            @elseif($data['invoice']->status == 'Past Due')
-                                <button type="submit" class="dropdown-item setStatus" id="{{ $data["invoice"]->id }}" data-status="paid">
-                                    <span class="material-icons text-success">check_circle</span>
-                                    Mark as Paid
-                                </button>
-                                <button type="submit" class="dropdown-item setStatus" id="{{ $data["invoice"]->id }}" data-status="open">
-                                    <span class="material-icons text-info">check_circle</span>
-                                    Mark as Open
-                                </button>
-                                <button type="submit" class="dropdown-item setStatus" id="{{ $data['invoice']->id }}" data-status="uncollectible">
-                                    <span class="material-icons text-danger">check_circle</span>
-                                    Mark as Uncollectible
-                                </button>
                             @endif
-
                             <a href="javascript:window.print()" class="dropdown-item" id="{{$data['invoice']->id}}">
                                 <span class="material-icons">file_download</span>
                                 Download Invoice

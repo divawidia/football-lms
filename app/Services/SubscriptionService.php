@@ -5,19 +5,15 @@ namespace App\Services;
 use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Subscription;
-use App\Models\Tax;
-use App\Models\User;
+use App\Notifications\InvoiceGenerated;
+use App\Notifications\SubscriptionCreated;
 use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
-use Midtrans\Config;
-use Midtrans\Snap;
 use Yajra\DataTables\Facades\DataTables;
 
 class SubscriptionService extends Service
@@ -232,14 +228,10 @@ class SubscriptionService extends Service
         $data['academyId'] = $academyId;
         $data['invoiceNumber'] = $this->generateInvoiceNumber();
         $data['dueDate'] = $this->getNextDayTimestamp();
-        $data['subtotal'] = 0;
-
-        foreach ($data['products'] as $product) {
-            $data['subtotal'] = $data['subtotal'] + $product['ammount'];
-        }
+        $data['subtotal'] = $data['productPrice'];
         $data['ammountDue'] = $data['subtotal'];
 
-        if ($data['taxId']){
+        if (array_key_exists('taxId', $data)){
             $tax = $this->taxRepository->find($data['taxId']);
             $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
@@ -249,28 +241,61 @@ class SubscriptionService extends Service
         }
 
         $invoice = $this->invoiceRepository->create($data);
+        $invoice->products()->attach($data['productId'], [
+            'qty' => 1,
+            'ammount' => $data['subtotal']
+        ]);
+        $subscription = $this->storeSubscription($data['receiverUserId'], $data['ammountDue'], $data['productId'], $data['taxId']);
+        $invoice->subscriptions()->attach($subscription->id);
 
-        foreach ($data['products'] as $product){
-            $invoice->products()->attach($product['productId'], [
-                'qty' => $product['qty'],
-                'ammount' => $product['ammount']
-            ]);
+        $this->invoiceService->midtransPayment($data, $invoice);
 
-            $productDetail = $this->productRepository->find($product['productId']);
-            if ($productDetail->priceOption == 'subscription'){
-                $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId'], $data['taxId']);
-                $invoice->subscriptions()->attach($subscription->id);
-            }
-        }
-        $this->midtransPayment($data, $invoice);
+        $productDetail = $this->productRepository->find($data['productId']);
+        $userDetail = $this->userRepository->find($data['receiverUserId']);
+
         $this->userRepository->find($data['receiverUserId'])
             ->notify(new InvoiceGenerated(
                     $data['ammountDue'],
                     $this->convertToDatetime($data['dueDate']),
                     $invoice->id)
             );
+        $this->userRepository->find($data['receiverUserId'])
+            ->notify(new SubscriptionCreated(
+                    $productDetail->productName,
+                    $userDetail->firstName.' '.$userDetail->lastName,
+                    $invoice->id,
+                    $invoice->invoiceNumber)
+            );
 
         return $invoice;
+    }
+
+    public function storeSubscription($userId, $ammount, $productId, $taxId){
+        $data = [];
+        $data['startDate'] = $this->getNowDate();
+        $data['ammountDue'] = $ammount;
+        $data['status'] = 'scheduled';
+        $data['userId'] = $userId;
+        $data['productId'] = $productId;
+        $data['taxId'] = $taxId;
+
+        $product = $this->productRepository->find($productId);
+
+        if ($product->subscriptionCycle == 'monthly'){
+            $data['cycle'] =  'monthly';
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(1);
+        } elseif ($product->subscriptionCycle == 'quarterly'){
+            $data['cycle'] =  'quarterly';
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(3);
+        } elseif ($product->subscriptionCycle == 'semianually'){
+            $data['cycle'] =  'semianually';
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(6);
+        } elseif ($product->subscriptionCycle == 'anually'){
+            $data['cycle'] =  'anually';
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(12);
+        }
+
+        return $this->subscriptionRepository->create($data);
     }
 
     public function scheduled(Subscription $subscription, $creatorUserId, $academyId)
@@ -290,7 +315,6 @@ class SubscriptionService extends Service
 
     public function createNewInvoice(Subscription $subscription, $creatorUserId, $academyId)
     {
-        if ($subscription->status == 'scheduled'){
             $data['creatorUserId'] = $creatorUserId;
             $data['academyId'] = $academyId;
             $data['invoiceNumber'] = $this->generateInvoiceNumber();
@@ -335,6 +359,5 @@ class SubscriptionService extends Service
             $this->invoiceService->midtransPayment($data, $invoice);
 
             return $invoice;
-        }
     }
 }

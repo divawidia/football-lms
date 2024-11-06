@@ -16,10 +16,12 @@ use App\Notifications\InvoicePastDueAdmin;
 use App\Notifications\InvoicePastDuePlayer;
 use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
+use App\Repository\SubscriptionRepository;
 use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Midtrans\Config;
@@ -33,13 +35,15 @@ class InvoiceService extends Service
     private TaxRepository $taxRepository;
     private UserRepository $userRepository;
     private InvoiceRepository $invoiceRepository;
+    private SubscriptionRepository $subscriptionRepository;
     private Invoice $invoice;
     public function __construct(
         ProductRepository $productRepository,
         TaxRepository $taxRepository,
         UserRepository $userRepository,
         Invoice $invoice,
-        InvoiceRepository $invoiceRepository)
+        InvoiceRepository $invoiceRepository,
+        SubscriptionRepository $subscriptionRepository)
     {
         Config::$serverKey    = config('services.midtrans.serverKey');
         Config::$isProduction = config('services.midtrans.isProduction');
@@ -51,6 +55,7 @@ class InvoiceService extends Service
         $this->userRepository = $userRepository;
         $this->invoice = $invoice;
         $this->invoiceRepository = $invoiceRepository;
+        $this->subscriptionRepository = $subscriptionRepository;
     }
     public function index()
     {
@@ -276,7 +281,7 @@ class InvoiceService extends Service
             $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(12);
         }
 
-        return Subscription::create($data);
+        return $this->subscriptionRepository->create($data);
     }
 
     public function show(Invoice $invoice)
@@ -304,6 +309,7 @@ class InvoiceService extends Service
         $items = [];
         foreach ($invoice->products as $product){
             $items[] = [
+                'id' => $product->id,
                 'name' => $product->productName,
                 'price' => $product->price,
                 'quantity' => $product->pivot->qty,
@@ -352,7 +358,8 @@ class InvoiceService extends Service
 //            return redirect()->route('pay-booking', $booking->transaction_code);
         }
         catch (Exception $e){
-            return $e->getMessage();
+            Log::error('Error in someMethod: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred: '. $e->getMessage()], 500);
         }
     }
 

@@ -52,7 +52,7 @@
                 </div>
                 <div id="productsField">
                     <div class="row">
-                        <div class="form-group col-lg-4">
+                        <div class="form-group col-lg-5">
                             <label class="form-label" for="productId">Product</label>
                             <small class="text-danger">*</small>
                             <select class="form-control form-select product-select" id="productId" name="productId" required>
@@ -69,8 +69,8 @@
                                 </span>
                             @enderror
                         </div>
-                        <div class="form-group col-lg-4">
-                            <label class="form-label" for="price1">Price</label>
+                        <div class="form-group col-lg-3">
+                            <label class="form-label" for="price">Price</label>
                             <div class="input-group input-group-merge">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text">
@@ -78,7 +78,7 @@
                                     </div>
                                 </div>
                                 <input type="number"
-                                       id="price1"
+                                       id="price"
                                        name="productPrice"
                                        class="form-control"
                                        required
@@ -89,7 +89,7 @@
                                     </span>
                                 @enderror
                                 <div class="input-group-append">
-                                    <div class="input-group-text" id="subscription-info1">
+                                    <div class="input-group-text" id="subscription-info">
                                     </div>
                                 </div>
                             </div>
@@ -149,7 +149,7 @@
                         productSelectId.empty();
                         productSelectId.html('<option disabled selected>Select subscriptions product</option>');
                         $.each(response.data, function (key, value) {
-                            productSelectId.append('<option value="' + value.id + '">' + value.productName + ' ~ '+value.subscriptionCycle+'</option>');
+                            productSelectId.append('<option value="' + value.id + '">' + value.productName + ' ~ '+value.subscriptionCycle+' payment cycle</option>');
                         });
                     },
                     error: function (xhr, status, error) {
@@ -159,10 +159,10 @@
                 });
             }
 
-            function getProductAmount(rowId){
+            function getProductAmount(){
                 // Capture user input for query parameters
                 let qty = 1;
-                const productId = $('#productId'+rowId).val();
+                const productId = $('#productId').val();
 
                 // Send an AJAX request with query parameters
                 $.ajax({
@@ -175,8 +175,8 @@
                     success: function(response) {
                         console.log(response)
                         // Process the response
-                        $('#price'+rowId).val(response.data.productPrice);
-                        $('#subscription-info'+rowId).text(response.data.subscription);
+                        $('#price').val(response.data.productPrice);
+                        $('#subscription-info').text(response.data.subscription);
                     },
                     error: function(xhr, status, error) {
                         // Handle any errors
@@ -190,8 +190,7 @@
             });
 
             body.on('change', '.product-select',function() {
-                const rowId = $(this).attr('data-row');
-                getProductAmount(rowId);
+                getProductAmount();
             });
 
         })

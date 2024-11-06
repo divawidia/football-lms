@@ -317,8 +317,8 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::prefix('{subscription}')->group(function () {
                     Route::get('', [SubscriptionController::class, 'show'])->name('subscriptions.show');
                     Route::get('invoices', [SubscriptionController::class, 'invoices'])->name('subscriptions.invoices');
-                    Route::patch('set-scheduled', [SubscriptionController::class, ''])->name('subscriptions.set-scheduled');
-                    Route::patch('set-unsubscribed', [SubscriptionController::class, 'setUncollectible'])->name('subscriptions.set-unsubscribed');
+                    Route::patch('set-scheduled', [SubscriptionController::class, 'setScheduled'])->name('subscriptions.set-scheduled');
+                    Route::patch('set-unsubscribed', [SubscriptionController::class, 'setUnsubscribed'])->name('subscriptions.set-unsubscribed');
                 });
 
             });

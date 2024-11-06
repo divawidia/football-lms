@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SubscriptionRequest;
 use App\Models\Subscription;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
@@ -45,7 +46,7 @@ class SubscriptionController extends Controller
     }
 
     public function setScheduled(Subscription $subscription){
-        $this->subscriptionService->scheduled($subscription);
+        $this->subscriptionService->scheduled($subscription, $this->getLoggedUserId(), $this->getAcademyId());
 
         $text = $subscription->product->productName.' subscription of '.$subscription->user->firstName.' '.$subscription->user->lastName.' status successfully mark as scheduled';
         Alert::success($text);
@@ -72,10 +73,20 @@ class SubscriptionController extends Controller
     {
         $data = $this->subscriptionService->create();
         return view('pages.admins.payments.subscriptions.create', [
-//            'products' => $data['products'],
             'taxes' => $data['taxes'],
             'contacts' => $data['players'],
         ]);
+    }
+    public function store(SubscriptionRequest $request)
+    {
+        $data = $request->validated();
+        $loggedUserId = $this->getLoggedUserId();
+        $academyId = $this->getAcademyId();
+        $result = $this->subscriptionService->store($data, $loggedUserId, $academyId);
+
+        $text = 'Subscription of  '.$result->invoiceNumber.' successfully created';
+        Alert::success($text);
+        return redirect()->route('invoices.show', $result->id);
     }
 
     public function getAvailablePlayerSubscriptionProduct(Request $request){
