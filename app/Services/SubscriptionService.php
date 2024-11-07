@@ -369,4 +369,9 @@ class SubscriptionService extends Service
             'taxId' => $data
         ]);
     }
+
+    public function destroy(Subscription $subscription)
+    {
+        return $subscription->delete();
+    }
 }
