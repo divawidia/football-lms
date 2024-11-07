@@ -56,7 +56,7 @@ class SubscriptionExpiredAdmin extends Notification
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array
-    {
+     {
         return [
             'message' => '📅 Reminder: The subscription of '.$this->productName.' for player '.$this->playerName.' is due on '.$this->dueDate.'. Ensure the player completes the renewal to maintain active status!',
             'redirectRoute' => route('subscriptions.show', $this->subscriptionId)
