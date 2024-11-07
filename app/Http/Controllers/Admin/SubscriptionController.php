@@ -35,8 +35,12 @@ class SubscriptionController extends Controller
      */
     public function show(Subscription $subscription)
     {
+        $data = $this->subscriptionService->show($subscription);
+        if (\request()->ajax()){
+            return response()->json(['data' => $data, 'message' => 'Successfully retrieve players subscription data']);
+        }
         return view('pages.admins.payments.subscriptions.detail', [
-            'data' => $this->subscriptionService->show($subscription)
+            'data' => $data
         ]);
     }
 
