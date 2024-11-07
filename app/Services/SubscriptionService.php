@@ -324,6 +324,7 @@ class SubscriptionService extends Service
             $data['creatorUserId'] = $creatorUserId;
             $data['academyId'] = $academyId;
             $data['invoiceNumber'] = $this->generateInvoiceNumber();
+            $data['dueDate'] = $this->getNextDayTimestamp();
             $data['subtotal'] = $subscription->product->price;
             $data['ammountDue'] = $data['subtotal'];
 
@@ -336,14 +337,14 @@ class SubscriptionService extends Service
                 $data['totalTax'] = 0;
             }
 
-            $invoice = Invoice::create($data);
+            $invoice = $this->invoiceRepository->create($data);
             $invoice->products()->attach($subscription->productId, [
                 'qty' => 1,
                 'ammount' => $data['subtotal']
             ]);
             $invoice->subscriptions()->attach($subscription->id);
 
-            $product = $this->product->findProductById($subscription->productId);
+            $product = $this->productRepository->find($subscription->productId);
 
             if ($product->subscriptionCycle == 'monthly'){
                 $data['cycle'] =  'monthly';
