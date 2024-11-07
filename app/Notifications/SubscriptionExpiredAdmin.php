@@ -7,23 +7,25 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionExpiredPlayer extends Notification
+class SubscriptionExpiredAdmin extends Notification
 {
     use Queueable;
     protected $productName;
     protected $playerName;
     protected $invoiceNumber;
     protected $dueDate;
+    protected $subscriptionId;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($productName, $playerName, $invoiceNumber, $dueDate)
+    public function __construct($productName, $playerName, $invoiceNumber, $dueDate, $subscriptionId)
     {
         $this->productName = $productName;
         $this->playerName = $playerName;
         $this->invoiceNumber = $invoiceNumber;
         $this->dueDate = $dueDate;
+        $this->subscriptionId = $subscriptionId;
     }
 
     /**
@@ -42,13 +44,10 @@ class SubscriptionExpiredPlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Upcoming Subscription Renewal for {$this->productName}")
-            ->greeting("Hello, {$this->playerName}!")
-            ->line('Just a quick reminder that your subscription of '.$this->productName.' will be due on '.$this->dueDate.'.')
-            ->line('Please ensure that your payment is completed to continue enjoying uninterrupted access to all our facilities and training resources')
-            ->action('View Subscription at', url()->route('billing-and-payments.index'))
-            ->line('Please pay your invoice #'.$this->invoiceNumber.' to continue your subscription')
-            ->line('Keep up the great work in the academy!');
+            ->subject("Player {$this->productName} Subscription Renewal Reminder")
+            ->greeting("Dear Admin, the subscription for {$this->playerName} will be due on {$this->dueDate}!")
+            ->line('Please review and follow up if necessary to assist the player in completing their subscription of '.$this->productName.' renewal')
+            ->action('View Subscription at', url()->route('subscriptions.show', $this->subscriptionId));
     }
 
     /**
@@ -59,8 +58,8 @@ class SubscriptionExpiredPlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => '⚠️ Reminder: Your subscription of '.$this->productName.' is due on '.$this->dueDate.'. Ensure you renew on time to keep your access to exclusive training resources and sessions!',
-            'redirectRoute' => route('billing-and-payments.index')
+            'message' => '📅 Reminder: The subscription of '.$this->productName.' for player '.$this->playerName.' is due on '.$this->dueDate.'. Ensure the player completes the renewal to maintain active status!',
+            'redirectRoute' => route('subscriptions.show', $this->subscriptionId)
         ];
     }
 }
