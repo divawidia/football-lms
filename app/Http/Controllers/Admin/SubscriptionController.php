@@ -119,7 +119,7 @@ class SubscriptionController extends Controller
     {
         $data = $request->validated();
         try {
-            $data = $this->subscriptionService->updateTax($subscription);
+            $data = $this->subscriptionService->updateTax($data, $subscription);
 
             return response()->json([
                 'data' => $data,
@@ -134,7 +134,7 @@ class SubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Subscription $subscription)
     {
         //
     }
