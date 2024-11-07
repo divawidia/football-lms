@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class DeleteSubscriptionComfirmation extends Component
+class DeleteDataConfirmation extends Component
 {
     public $deleteBtnClass;
     public $destroyRoute;
