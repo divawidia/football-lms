@@ -109,13 +109,7 @@ class SubscriptionController extends Controller
             return response()->json(['error' => 'An error occurred while retrieving available player subscription product data : '. $e->getMessage()], 500);
         }
     }
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
