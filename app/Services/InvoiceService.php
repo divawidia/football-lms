@@ -498,7 +498,7 @@ class InvoiceService extends Service
 
     public function pastDue(Invoice $invoice)
     {
-        Transaction::cancel($invoice->invoiceNumber);
+//        Transaction::cancel($invoice->invoiceNumber);
         $invoice->update(['status' => 'Past Due']);
 
         $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePastDuePlayer(
