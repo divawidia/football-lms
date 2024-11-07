@@ -42,7 +42,7 @@
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <button type="submit" class="dropdown-item edit-tax" id="{{ $data['subscription']->id }}">
+                    <button type="button" class="dropdown-item edit-tax" id="{{ $data['subscription']->id }}">
                         <span class="material-icons">edit</span>
                         Edit subscription tax
                     </button>
@@ -65,6 +65,10 @@
                             </button>
                         </form>
                     @endif
+                    <button type="button" class="dropdown-item deleteSubscription" id="{{ $data['subscription']->id }}">
+                        <span class="material-icons text-danger">delete</span>
+                        Delete players subscription
+                    </button>
                 </div>
             </div>
         </div>
@@ -136,6 +140,7 @@
             </div>
         </div>
     </div>
+    <x-delete-data-confirmation deleteBtnClass=".deleteSubscription" :destroyRoute="route('subscriptions.destroy', ':id')" :routeAfterDelete="route('subscriptions.index')"/>
 @endsection
 @push('addon-script')
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>

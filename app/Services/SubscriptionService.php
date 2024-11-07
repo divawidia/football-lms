@@ -73,6 +73,10 @@ class SubscriptionService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <button type="button" class="dropdown-item edit-tax" id="' . $item->id . '">
+                                    <span class="material-icons">edit</span>
+                                    Edit subscriptions tax
+                                </button>
                                 <a class="dropdown-item edit" href="' . route('subscriptions.show', $item->id) . '" type="button">
                                     <span class="material-icons">visibility</span>
                                     Show Subscription
@@ -366,7 +370,7 @@ class SubscriptionService extends Service
     public function updateTax(array $data, Subscription $subscription)
     {
         return $subscription->update([
-            'taxId' => $data
+            'taxId' => $data['taxId']
         ]);
     }
 

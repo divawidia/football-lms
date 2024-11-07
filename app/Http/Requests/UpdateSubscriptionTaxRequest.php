@@ -23,7 +23,7 @@ class UpdateSubscriptionTaxRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'taxId' => ['required', Rule::exists('taxes', 'id')],
+            'taxId' => ['nullable', Rule::exists('taxes', 'id')],
         ];
     }
 }

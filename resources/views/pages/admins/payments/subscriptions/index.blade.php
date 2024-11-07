@@ -6,6 +6,10 @@
     @yield('title')
 @endsection
 
+@section('modal')
+    <x-edit-subscription-tax-modal/>
+@endsection
+
 @section('content')
     <div class="pt-32pt">
         <div class="container">
@@ -53,6 +57,8 @@
             </div>
         </div>
     </div>
+
+    <x-delete-data-confirmation deleteBtnClass=".deleteSubscription" :destroyRoute="route('subscriptions.destroy', ':id')" :routeAfterDelete="route('subscriptions.index')"/>
 @endsection
 
 @push('addon-script')
@@ -87,51 +93,6 @@
                         width: '15%'
                     },
                 ]
-            });
-
-            // archive invoice
-            body.on('click', '.deleteInvoice', function () {
-                const id = $(this).attr('id');
-                Swal.fire({
-                    title: "Are you sure to archive this invoice?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, archive it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('invoices.destroy', ['invoice' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Invoice successfully archived!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when archiving data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
             });
         });
     </script>

@@ -13,10 +13,11 @@
                 <div class="modal-body">
                     <input type="hidden" id="subscriptionId">
                     <div class="form-group">
-                        <label class="form-label" for="taxId">Include Tax</label>
+                        <label class="form-label" for="edit_taxId">Include Tax</label>
                         <small>(Optional)</small>
                         <select class="form-control form-select" id="edit_taxId" name="taxId" required data-toggle="select">
                             <option disabled selected>Select tax</option>
+                            <option value="{{ null }}">Without tax included</option>
                         </select>
                         <span class="invalid-feedback taxId_error" role="alert">
                                 <strong></strong>
@@ -45,10 +46,11 @@
                     url: "{{ route('subscriptions.show', ':id') }}".replace(':id', id),
                     type: 'get',
                     success: function(res) {
+                        console.log(res)
                         $('#editTaxModal').modal('show');
                         $('#editTaxTitle').text('Edit '+res.data.subscription.user.firstName+' '+res.data.subscription.user.lastName+' subscription of '+res.data.subscription.product.productName+"'s tax");
                         $.each(res.data.taxes, function (key, value) {
-                            $('#edit_taxId').append('<option value="' + value.id + '">' + value.taxName + '</option>');
+                            $('#edit_taxId').append('<option value="' + value.id + '">' + value.taxName + ' ~ '+value.percentage+'</option>');
                         });
                         $('#edit_taxId option[value="' + res.data.subscription.taxId + '"]').attr('selected', 'selected');
                         $('#subscriptionId').val(res.data.subscription.id);
@@ -90,9 +92,13 @@
                             }
                         });
                     },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        console.log(response);
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Something went wrong when processing data!",
+                            text: errorThrown
+                        });
+                        const response = JSON.parse(jqXHR.responseText);
                         $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#edit_" + key).addClass('is-invalid');
