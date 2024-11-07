@@ -136,6 +136,16 @@ class SubscriptionController extends Controller
      */
     public function destroy(Subscription $subscription)
     {
-        //
+        try {
+            $data = $this->subscriptionService->destroy($subscription);
+
+            return response()->json([
+                'data' => $data,
+                'message' => 'Successfully deleted subscription data'
+            ]);
+        }catch (Exception $e) {
+            Log::error('Error deleting subscription data : ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while deleting subscription data : '. $e->getMessage()], 500);
+        }
     }
 }
