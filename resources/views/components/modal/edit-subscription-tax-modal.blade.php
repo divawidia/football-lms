@@ -69,7 +69,7 @@
                 const id = $('#subscriptionId').val();
 
                 $.ajax({
-                    url: "{{ route('subscriptions.update-tax', ['schedule' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('subscriptions.update-tax', ['subscription' => ":id"]) }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
