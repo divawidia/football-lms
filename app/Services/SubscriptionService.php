@@ -6,13 +6,17 @@ use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Subscription;
 use App\Notifications\InvoiceGenerated;
+use App\Notifications\InvoicePastDueAdmin;
 use App\Notifications\SubscriptionCreated;
+use App\Notifications\SubscriptionRenewedAdmin;
+use App\Notifications\SubscriptionRenewedPlayer;
 use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -81,6 +85,13 @@ class SubscriptionService extends Service
                                     <span class="material-icons">visibility</span>
                                     Show Subscription
                                 </a>
+                                <form method="POST" action="' . route('subscriptions.create-new-invoice', $item->id) . '">
+                                    '.csrf_field().'
+                                    <button class="dropdown-item edit" type="submit">
+                                        <span class="material-icons">receipt</span>
+                                        Renew Subscriptions Invoice
+                                    </button>
+                                </form>
                                 ' . $statusButton . '
                                 <button type="button" class="dropdown-item deleteSubscription" id="' . $item->id . '">
                                     <span class="material-icons text-danger">delete</span>
@@ -258,6 +269,7 @@ class SubscriptionService extends Service
 
         $productDetail = $this->productRepository->find($data['productId']);
         $userDetail = $this->userRepository->find($data['receiverUserId']);
+        $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
 
         $this->userRepository->find($data['receiverUserId'])
             ->notify(new InvoiceGenerated(
@@ -268,10 +280,33 @@ class SubscriptionService extends Service
         $this->userRepository->find($data['receiverUserId'])
             ->notify(new SubscriptionCreated(
                     $productDetail->productName,
-                    $userDetail->firstName.' '.$userDetail->lastName,
-                    $invoice->id,
+                    $playerName,
                     $invoice->invoiceNumber)
             );
+        $adminUsers = $this->userRepository->getAllByRole('admin');
+        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
+
+
+        Notification::send($adminUsers, new InvoiceGenerated(
+            $data['ammountDue'],
+            $data['dueDate'],
+            $invoice->id,
+        ));
+        Notification::send($superAdminUsers, new InvoiceGenerated(
+            $data['ammountDue'],
+            $data['dueDate'],
+            $invoice->id,
+        ));
+        Notification::send($adminUsers, new SubscriptionCreated(
+            $productDetail->productName,
+            $playerName,
+            $invoice->invoiceNumber
+        ));
+        Notification::send($superAdminUsers, new SubscriptionCreated(
+            $productDetail->productName,
+            $playerName,
+            $invoice->invoiceNumber
+        ));
 
         return $invoice;
     }
@@ -322,6 +357,7 @@ class SubscriptionService extends Service
     public function createNewInvoice(Subscription $subscription, $creatorUserId, $academyId)
     {
             $data['creatorUserId'] = $creatorUserId;
+            $data['receiverUserId'] = $subscription->userId;
             $data['academyId'] = $academyId;
             $data['invoiceNumber'] = $this->generateInvoiceNumber();
             $data['dueDate'] = $this->getNextDayTimestamp();
@@ -345,6 +381,7 @@ class SubscriptionService extends Service
             $invoice->subscriptions()->attach($subscription->id);
 
             $product = $this->productRepository->find($subscription->productId);
+            $userDetail = $this->userRepository->find($data['receiverUserId']);
 
             if ($product->subscriptionCycle == 'monthly'){
                 $data['cycle'] =  'monthly';
@@ -364,6 +401,19 @@ class SubscriptionService extends Service
             $subscription->save();
 
             $this->invoiceService->midtransPayment($data, $invoice);
+
+            $this->userRepository->find($data['receiverUserId'])
+                ->notify(new InvoiceGenerated(
+                        $data['ammountDue'],
+                        $this->convertToDatetime($data['dueDate']),
+                        $invoice->id)
+                );
+            $this->userRepository->find($data['receiverUserId'])
+                ->notify(new SubscriptionRenewedPlayer(
+                        $product->productName,
+                        $userDetail->firstName.' '.$userDetail->lastName,
+                        $invoice->invoiceNumber)
+                );
 
             return $invoice;
     }

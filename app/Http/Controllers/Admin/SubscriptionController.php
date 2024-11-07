@@ -71,7 +71,7 @@ class SubscriptionController extends Controller
     public function createNewInvoice(Subscription $subscription){
         $this->subscriptionService->createNewInvoice($subscription, $this->getLoggedUserId(), $this->getAcademyId());
 
-        $text = $subscription->product->productName.' subscription of '.$subscription->user->firstName.' '.$subscription->user->lastName.' status successfully mark as unsubscribed';
+        $text = $subscription->product->productName.' invoice subscription of '.$subscription->user->firstName.' '.$subscription->user->lastName.' successfully renewed';
         Alert::success($text);
         return redirect()->route('subscriptions.show', $subscription->id);
     }

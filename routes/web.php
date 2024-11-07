@@ -318,6 +318,7 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('', [SubscriptionController::class, 'show'])->name('subscriptions.show');
                     Route::put('', [SubscriptionController::class, 'update'])->name('subscriptions.update-tax');
                     Route::delete('', [SubscriptionController::class, 'destroy'])->name('subscriptions.destroy');
+                    Route::post('create-new-invoice', [SubscriptionController::class, 'createNewInvoice'])->name('subscriptions.create-new-invoice');
                     Route::get('invoices', [SubscriptionController::class, 'invoices'])->name('subscriptions.invoices');
                     Route::patch('set-scheduled', [SubscriptionController::class, 'setScheduled'])->name('subscriptions.set-scheduled');
                     Route::patch('set-unsubscribed', [SubscriptionController::class, 'setUnsubscribed'])->name('subscriptions.set-unsubscribed');

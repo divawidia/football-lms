@@ -517,10 +517,11 @@ class InvoiceService extends Service
             $invoice->invoiceNumber,
             $playerName,
         ));
-        Notification::send($superAdminUsers, new InvoicePaidAdmin(
-            $playerName,
+        Notification::send($superAdminUsers, new InvoicePastDueAdmin(
+            $this->convertToDatetime($invoice->dueDate),
             $invoice->id,
             $invoice->invoiceNumber,
+            $playerName,
         ));
         return $invoice;
     }

@@ -7,21 +7,23 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionCreated extends Notification
+class SubscriptionRenewedAdmin extends Notification
 {
     use Queueable;
     protected $productName;
     protected $playerName;
     protected $invoiceNumber;
+    protected $subscriptionId;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($productName, $playerName, $invoiceNumber)
+    public function __construct($productName, $playerName, $invoiceNumber, $subscriptionId)
     {
         $this->productName = $productName;
         $this->playerName = $playerName;
         $this->invoiceNumber = $invoiceNumber;
+        $this->subscriptionId = $subscriptionId;
     }
 
     /**
@@ -40,7 +42,7 @@ class SubscriptionCreated extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("{$this->productName} subscription created")
+            ->subject("{$this->productName} subscription renewed")
             ->greeting("Hello, {$this->playerName}!")
             ->line('Your subscription has been successfully created.')
             ->line("Subscription : {$this->productName}")
@@ -57,8 +59,8 @@ class SubscriptionCreated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Subscription of '.$this->productName.' for player '.$this->playerName.' has been created.',
-            'redirectRoute' => route('billing-and-payments.index')
+            'message' => 'Subscription of '.$this->productName.' for player '.$this->playerName.' has been renewed.',
+            'redirectRoute' => route('billing-and-payments.show', $this->subscriptionId)
         ];
     }
 }
