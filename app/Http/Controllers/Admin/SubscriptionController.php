@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SubscriptionRequest;
 use App\Models\Subscription;
 use App\Services\SubscriptionService;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class SubscriptionController extends Controller
@@ -95,12 +97,17 @@ class SubscriptionController extends Controller
 
     public function getAvailablePlayerSubscriptionProduct(Request $request){
         $userId = $request->query('userId');
-        $data = $this->subscriptionService->getAvailablePlayerSubscriptionProduct($userId);
+        try {
+            $data = $this->subscriptionService->getAvailablePlayerSubscriptionProduct($userId);
 
-        return response()->json([
-            'data' => $data,
-            'message' => 'Successfully retrieve data'
-        ]);
+            return response()->json([
+                'data' => $data,
+                'message' => 'Successfully retrieve data'
+            ]);
+        }catch (Exception $e) {
+            Log::error('Error retrieving available player subscription product data : ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while retrieving available player subscription product data : '. $e->getMessage()], 500);
+        }
     }
     /**
      * Show the form for editing the specified resource.
