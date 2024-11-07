@@ -6,6 +6,10 @@
     @yield('title')
 @endsection
 
+@section('modal')
+    <x-edit-subscription-tax-modal/>
+@endsection
+
 @section('content')
     <nav class="navbar navbar-light border-bottom border-top px-0">
         <div class="container">
@@ -38,7 +42,7 @@
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <button type="submit" class="dropdown-item" id="edit-tax">
+                    <button type="submit" class="dropdown-item edit-tax" id="{{ $data['subscription']->id }}">
                         <span class="material-icons">edit</span>
                         Edit subscription tax
                     </button>

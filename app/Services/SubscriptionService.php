@@ -203,6 +203,7 @@ class SubscriptionService extends Service
         $startDate = $this->convertToDatetime($subscription->startDate);
         $updatedAt = $this->convertToDatetime($subscription->updated_at);
         $taxes = $this->taxRepository->getAll();
+        $subscription = $subscription->with('user', 'product')->find($subscription->id);
 
         return compact('subscription', 'createdAt', 'nextDueDate', 'updatedAt', 'startDate', 'taxes');
     }
