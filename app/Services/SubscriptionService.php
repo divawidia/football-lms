@@ -362,4 +362,11 @@ class SubscriptionService extends Service
 
             return $invoice;
     }
+
+    public function updateTax(array $data, Subscription $subscription)
+    {
+        return $subscription->update([
+            'taxId' => $data
+        ]);
+    }
 }

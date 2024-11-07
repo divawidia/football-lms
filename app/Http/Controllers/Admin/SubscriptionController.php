@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubscriptionRequest;
+use App\Http\Requests\UpdateSubscriptionTaxRequest;
 use App\Models\Subscription;
 use App\Services\SubscriptionService;
 use Exception;
@@ -114,9 +115,20 @@ class SubscriptionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateSubscriptionTaxRequest $request, Subscription $subscription)
     {
-        //
+        $data = $request->validated();
+        try {
+            $data = $this->subscriptionService->updateTax($subscription);
+
+            return response()->json([
+                'data' => $data,
+                'message' => 'Successfully updating subscriptions tax data'
+            ]);
+        }catch (Exception $e) {
+            Log::error('Error updating subscriptions tax data : ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while updating subscriptions tax data : '. $e->getMessage()], 500);
+        }
     }
 
     /**
