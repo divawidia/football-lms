@@ -80,7 +80,7 @@ class SubscriptionService extends Service
                                 ' . $statusButton . '
                                 <button type="button" class="dropdown-item deleteSubscription" id="' . $item->id . '">
                                     <span class="material-icons text-danger">delete</span>
-                                    Delete subscription
+                                    Delete players subscription
                                 </button>
                         </div>';
             })
