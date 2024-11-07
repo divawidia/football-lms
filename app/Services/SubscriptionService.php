@@ -401,7 +401,9 @@ class SubscriptionService extends Service
             $subscription->save();
 
             $this->invoiceService->midtransPayment($data, $invoice);
-
+        $adminUsers = $this->userRepository->getAllByRole('admin');
+        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
+        $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
             $this->userRepository->find($data['receiverUserId'])
                 ->notify(new InvoiceGenerated(
                         $data['ammountDue'],
@@ -414,6 +416,18 @@ class SubscriptionService extends Service
                         $userDetail->firstName.' '.$userDetail->lastName,
                         $invoice->invoiceNumber)
                 );
+        Notification::send($adminUsers, new SubscriptionRenewedAdmin(
+            $product->productName,
+            $playerName,
+            $invoice->invoiceNumber,
+            $subscription->id
+        ));
+        Notification::send($superAdminUsers, new SubscriptionRenewedAdmin(
+            $product->productName,
+            $playerName,
+            $invoice->invoiceNumber,
+            $subscription->id
+        ));
 
             return $invoice;
     }
