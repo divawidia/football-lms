@@ -511,26 +511,13 @@ class InvoiceService extends Service
 //        Transaction::cancel($invoice->invoiceNumber);
         $invoice->update(['status' => 'Past Due']);
 
+        $playerName = $this->getUserFullName($invoice->receiverUser);
         $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePastDuePlayer(
-            $this->convertToDatetime($invoice->dueDate),
-            $invoice->id,
-            $invoice->invoiceNumber,
-        ));
-
-        $adminUsers = $this->userRepository->getAllByRole('admin');
-        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
-        $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
-
-        Notification::send($adminUsers, new InvoicePastDueAdmin(
-            $this->convertToDatetime($invoice->dueDate),
-            $invoice->id,
-            $invoice->invoiceNumber,
+            $invoice,
             $playerName,
         ));
-        Notification::send($superAdminUsers, new InvoicePastDueAdmin(
-            $this->convertToDatetime($invoice->dueDate),
-            $invoice->id,
-            $invoice->invoiceNumber,
+        Notification::send($this->getAllAdminUsers(), new InvoicePastDueAdmin(
+            $invoice,
             $playerName,
         ));
         return $invoice;
