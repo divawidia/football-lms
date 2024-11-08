@@ -3,10 +3,9 @@
 namespace App\Services;
 
 use App\Models\Invoice;
-use App\Models\Product;
-use App\Models\Subscription;
-use App\Models\Tax;
 use App\Models\User;
+use App\Notifications\InvoiceArchivedAdmin;
+use App\Notifications\InvoiceArchivedPlayer;
 use App\Notifications\InvoiceGeneratedAdmin;
 use App\Notifications\InvoiceGeneratedPlayer;
 use App\Notifications\InvoiceOpenAdmin;
@@ -21,8 +20,6 @@ use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\TaxRepository;
-use App\Repository\UserRepository;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
@@ -525,7 +522,17 @@ class InvoiceService extends Service
 
     public function destroy(Invoice $invoice)
     {
-        return $invoice->delete();
+        $playerName = $this->getUserFullName($invoice->receiverUser);
+        $invoice->delete();
+        $this->userRepository->find($invoice->receiverUserId)->notify(new InvoiceArchivedPlayer(
+            $invoice,
+            $playerName,
+        ));
+        Notification::send($this->getAllAdminUsers(), new InvoiceArchivedAdmin(
+            $invoice,
+            $playerName,
+        ));
+        return $invoice;
     }
 
     public function deletedDataIndex(){
