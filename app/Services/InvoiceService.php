@@ -555,24 +555,23 @@ class InvoiceService extends Service
                                 <span class="material-icons text-danger">delete</span>
                                 Permanently Delete Invoice
                             </button>
-                        </div>';
+                        </div>
+                    </div>';
             })
             ->editColumn('name', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->receiverUser->foto) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->receiverUser->firstName . ' ' . $item->receiverUser->lastName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->receiverUser->roles[0]['name'] . '</small>
-                                        </div>
+                return '<div class="media flex-nowrap align-items-center" style="white-space: nowrap;">
+                            <div class="avatar avatar-sm mr-8pt">
+                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->receiverUser->foto) . '" alt="profile-pic"/>
+                            </div>
+                            <div class="media-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex d-flex flex-column">
+                                        <p class="mb-0"><strong class="js-lists-values-lead">' . $item->receiverUser->firstName . ' ' . $item->receiverUser->lastName . '</strong></p>
+                                        <small class="js-lists-values-email text-50">' . $item->receiverUser->roles[0]['name'] . '</small>
                                     </div>
                                 </div>
-                            </div>';
+                            </div>
+                        </div>';
             })
             ->editColumn('email', function ($item) {
                 return $item->receiverUser->email;

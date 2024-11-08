@@ -29,14 +29,15 @@ class SubscriptionService extends Service
     private InvoiceService $invoiceService;
     private UserRepository $userRepository;
     private ProductRepository $productRepository;
+
     public function __construct(
-        Product $product,
+        Product                $product,
         SubscriptionRepository $subscriptionRepository,
-        InvoiceRepository $invoiceRepository,
-        TaxRepository $taxRepository,
-        InvoiceService $invoiceService,
-        UserRepository $userRepository,
-        ProductRepository $productRepository)
+        InvoiceRepository      $invoiceRepository,
+        TaxRepository          $taxRepository,
+        InvoiceService         $invoiceService,
+        UserRepository         $userRepository,
+        ProductRepository      $productRepository)
     {
         $this->product = $product;
         $this->invoiceRepository = $invoiceRepository;
@@ -52,13 +53,13 @@ class SubscriptionService extends Service
         $data = $this->subscriptionRepository->getAll();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                $cancelButton ='
-                        <button type="button" class="dropdown-item cancelSubscription" id="'.$item->id.'">
+                $cancelButton = '
+                        <button type="button" class="dropdown-item cancelSubscription" id="' . $item->id . '">
                             <span class="material-icons text-danger">check_circle</span>
                             Cancel Subscription
                         </button>';
                 $continueButton =
-                        '<button type="button" class="dropdown-item continueSubscription" id="'.$item->id.'">
+                    '<button type="button" class="dropdown-item continueSubscription" id="' . $item->id . '">
                             <span class="material-icons text-success">check_circle</span>
                             Continue Subscription
                         </button>';
@@ -86,7 +87,7 @@ class SubscriptionService extends Service
                                     Show Subscription
                                 </a>
                                 <form method="POST" action="' . route('subscriptions.create-new-invoice', $item->id) . '">
-                                    '.csrf_field().'
+                                    ' . csrf_field() . '
                                     <button class="dropdown-item edit" type="submit">
                                         <span class="material-icons">receipt</span>
                                         Renew Subscriptions Invoice
@@ -146,12 +147,13 @@ class SubscriptionService extends Service
                 }
                 return $badge;
             })
-            ->rawColumns(['action', 'email', 'name', 'product', 'amountDue', 'startDate', 'nextDueDate','status', 'createdAt','updatedAt'])
+            ->rawColumns(['action', 'email', 'name', 'product', 'amountDue', 'startDate', 'nextDueDate', 'status', 'createdAt', 'updatedAt'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function invoices(Subscription $subscription){
+    public function invoices(Subscription $subscription)
+    {
         return Datatables::of($subscription->invoices)
             ->addColumn('action', function ($item) {
                 return
@@ -196,17 +198,17 @@ class SubscriptionService extends Service
             ->editColumn('status', function ($item) {
                 $badge = '';
                 if ($item->status == 'Open') {
-                    $badge = '<span class="badge badge-pill badge-info">'.$item->status.'</span>';
+                    $badge = '<span class="badge badge-pill badge-info">' . $item->status . '</span>';
                 } elseif ($item->status == 'Paid') {
-                    $badge = '<span class="badge badge-pill badge-success">'.$item->status.'</span>';
+                    $badge = '<span class="badge badge-pill badge-success">' . $item->status . '</span>';
                 } elseif ($item->status == 'Past Due') {
-                    $badge = '<span class="badge badge-pill badge-warning">'.$item->status.'</span>';
+                    $badge = '<span class="badge badge-pill badge-warning">' . $item->status . '</span>';
                 } elseif ($item->status == 'Uncollectible') {
-                    $badge = '<span class="badge badge-pill badge-danger">'.$item->status.'</span>';
+                    $badge = '<span class="badge badge-pill badge-danger">' . $item->status . '</span>';
                 }
                 return $badge;
             })
-            ->rawColumns(['action', 'email', 'ammount','dueDate', 'name', 'status', 'createdAt','updatedAt'])
+            ->rawColumns(['action', 'email', 'ammount', 'dueDate', 'name', 'status', 'createdAt', 'updatedAt'])
             ->addIndexColumn()
             ->make();
     }
@@ -233,8 +235,8 @@ class SubscriptionService extends Service
 
     public function getAvailablePlayerSubscriptionProduct($userId)
     {
-        return Product::with('subscritions')->where('priceOption', '=','subscription')
-            ->whereDoesntHave('subscritions', function (Builder $query) use ($userId){
+        return Product::with('subscritions')->where('priceOption', '=', 'subscription')
+            ->whereDoesntHave('subscritions', function (Builder $query) use ($userId) {
                 $query->where('userId', $userId);
             })->get();
     }
@@ -248,11 +250,11 @@ class SubscriptionService extends Service
         $data['subtotal'] = $data['productPrice'];
         $data['ammountDue'] = $data['subtotal'];
 
-        if (array_key_exists('taxId', $data)){
+        if (array_key_exists('taxId', $data)) {
             $tax = $this->taxRepository->find($data['taxId']);
-            $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
+            $data['totalTax'] = $data['subtotal'] * $tax->percentage / 100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
-        }else{
+        } else {
             $data['taxId'] = null;
             $data['totalTax'] = 0;
         }
@@ -269,7 +271,7 @@ class SubscriptionService extends Service
 
         $productDetail = $this->productRepository->find($data['productId']);
         $userDetail = $this->userRepository->find($data['receiverUserId']);
-        $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
+        $playerName = $invoice->receiverUser->firstName . ' ' . $invoice->receiverUser->lastName;
 
         $this->userRepository->find($data['receiverUserId'])
             ->notify(new InvoiceGenerated(
@@ -311,7 +313,8 @@ class SubscriptionService extends Service
         return $invoice;
     }
 
-    public function storeSubscription($userId, $ammount, $productId, $taxId){
+    public function storeSubscription($userId, $ammount, $productId, $taxId)
+    {
         $data = [];
         $data['startDate'] = $this->getNowDate();
         $data['ammountDue'] = $ammount;
@@ -322,17 +325,17 @@ class SubscriptionService extends Service
 
         $product = $this->productRepository->find($productId);
 
-        if ($product->subscriptionCycle == 'monthly'){
-            $data['cycle'] =  'monthly';
+        if ($product->subscriptionCycle == 'monthly') {
+            $data['cycle'] = 'monthly';
             $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(1);
-        } elseif ($product->subscriptionCycle == 'quarterly'){
-            $data['cycle'] =  'quarterly';
+        } elseif ($product->subscriptionCycle == 'quarterly') {
+            $data['cycle'] = 'quarterly';
             $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(3);
-        } elseif ($product->subscriptionCycle == 'semianually'){
-            $data['cycle'] =  'semianually';
+        } elseif ($product->subscriptionCycle == 'semianually') {
+            $data['cycle'] = 'semianually';
             $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(6);
-        } elseif ($product->subscriptionCycle == 'anually'){
-            $data['cycle'] =  'anually';
+        } elseif ($product->subscriptionCycle == 'anually') {
+            $data['cycle'] = 'anually';
             $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(12);
         }
 
@@ -344,7 +347,7 @@ class SubscriptionService extends Service
         $subscription->update(['status' => 'scheduled']);
 
         //create new invoice if the time where the subscription is set to scheduled is after the next due date
-        if ($this->getNowDate() > $subscription->nextDueDate){
+        if ($this->getNowDate() > $subscription->nextDueDate) {
             $this->createNewInvoice($subscription, $creatorUserId, $academyId);
         }
     }
@@ -356,80 +359,75 @@ class SubscriptionService extends Service
 
     public function createNewInvoice(Subscription $subscription, $creatorUserId, $academyId)
     {
-            $data['creatorUserId'] = $creatorUserId;
-            $data['receiverUserId'] = $subscription->userId;
-            $data['academyId'] = $academyId;
-            $data['invoiceNumber'] = $this->generateInvoiceNumber();
-            $data['dueDate'] = $this->getNextDayTimestamp();
-            $data['subtotal'] = $subscription->product->price;
-            $data['ammountDue'] = $data['subtotal'];
+        $data['creatorUserId'] = $creatorUserId;
+        $data['receiverUserId'] = $subscription->userId;
+        $data['academyId'] = $academyId;
+        $data['invoiceNumber'] = $this->generateInvoiceNumber();
+        $data['dueDate'] = $this->getNextDayTimestamp();
+        $data['subtotal'] = $subscription->product->price;
+        $data['ammountDue'] = $data['subtotal'];
 
-            if ($subscription->taxId != null){
-                $tax = $this->taxRepository->find($subscription->taxId);
-                $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
-                $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
-            }else{
-                $data['taxId'] = null;
-                $data['totalTax'] = 0;
-            }
+        if ($subscription->taxId != null) {
+            $tax = $this->taxRepository->find($subscription->taxId);
+            $data['totalTax'] = $data['subtotal'] * $tax->percentage / 100;
+            $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
+        } else {
+            $data['taxId'] = null;
+            $data['totalTax'] = 0;
+        }
 
-            $invoice = $this->invoiceRepository->create($data);
-            $invoice->products()->attach($subscription->productId, [
-                'qty' => 1,
-                'ammount' => $data['subtotal']
-            ]);
-            $invoice->subscriptions()->attach($subscription->id);
+        $invoice = $this->invoiceRepository->create($data);
+        $invoice->products()->attach($subscription->productId, [
+            'qty' => 1,
+            'ammount' => $data['subtotal']
+        ]);
+        $invoice->subscriptions()->attach($subscription->id);
 
-            $product = $this->productRepository->find($subscription->productId);
-            $userDetail = $this->userRepository->find($data['receiverUserId']);
+        $product = $this->productRepository->find($subscription->productId);
+        $userDetail = $this->userRepository->find($data['receiverUserId']);
 
-            if ($product->subscriptionCycle == 'monthly'){
-                $data['cycle'] =  'monthly';
-                $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(1);
-            } elseif ($product->subscriptionCycle == 'quarterly'){
-                $data['cycle'] =  'quarterly';
-                $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(3);
-            } elseif ($product->subscriptionCycle == 'semianually'){
-                $data['cycle'] =  'semianually';
-                $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(6);
-            } elseif ($product->subscriptionCycle == 'anually'){
-                $data['cycle'] =  'anually';
-                $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(12);
-            }
+        if ($product->subscriptionCycle == 'monthly') {
+            $data['cycle'] = 'monthly';
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(1);
+        } elseif ($product->subscriptionCycle == 'quarterly') {
+            $data['cycle'] = 'quarterly';
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(3);
+        } elseif ($product->subscriptionCycle == 'semianually') {
+            $data['cycle'] = 'semianually';
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(6);
+        } elseif ($product->subscriptionCycle == 'anually') {
+            $data['cycle'] = 'anually';
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(12);
+        }
 
-            $subscription['nextDueDate'] = $data['nextDueDate'];
-            $subscription->save();
+        $subscription['nextDueDate'] = $data['nextDueDate'];
+        $subscription->save();
 
-            $this->invoiceService->midtransPayment($data, $invoice);
-        $adminUsers = $this->userRepository->getAllByRole('admin');
-        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
-        $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
-            $this->userRepository->find($data['receiverUserId'])
-                ->notify(new InvoiceGenerated(
-                        $data['ammountDue'],
-                        $this->convertToDatetime($data['dueDate']),
-                        $invoice->id)
-                );
-            $this->userRepository->find($data['receiverUserId'])
-                ->notify(new SubscriptionRenewedPlayer(
-                        $product->productName,
-                        $userDetail->firstName.' '.$userDetail->lastName,
-                        $invoice->invoiceNumber)
-                );
+        $this->invoiceService->midtransPayment($data, $invoice);
+        $adminUsers = $this->userRepository->getAllByRole(['admin', 'Super-Admin']);
+        $playerName = $invoice->receiverUser->firstName . ' ' . $invoice->receiverUser->lastName;
+
+        $this->userRepository->find($data['receiverUserId'])
+            ->notify(new InvoiceGenerated(
+                $data['ammountDue'],
+                $this->convertToDatetime($data['dueDate']),
+                $invoice->id)
+            );
+        $this->userRepository->find($data['receiverUserId'])
+            ->notify(new SubscriptionRenewedPlayer(
+                $product->productName,
+                $userDetail->firstName . ' ' . $userDetail->lastName,
+                $invoice->invoiceNumber)
+            );
+
         Notification::send($adminUsers, new SubscriptionRenewedAdmin(
             $product->productName,
             $playerName,
             $invoice->invoiceNumber,
             $subscription->id
         ));
-        Notification::send($superAdminUsers, new SubscriptionRenewedAdmin(
-            $product->productName,
-            $playerName,
-            $invoice->invoiceNumber,
-            $subscription->id
-        ));
 
-            return $invoice;
+        return $invoice;
     }
 
     public function updateTax(array $data, Subscription $subscription)
