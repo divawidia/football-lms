@@ -53,3 +53,7 @@ function secondToMinute($seconds){
 function priceFormat($price){
     return 'Rp. ' . number_format($price);
 }
+
+function convertToDatetime($timestamp){
+    return date('M d, Y ~ h:i A', strtotime($timestamp));
+}

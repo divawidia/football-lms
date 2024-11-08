@@ -8,6 +8,7 @@ use App\Models\Subscription;
 use App\Models\Tax;
 use App\Models\User;
 use App\Notifications\InvoiceGeneratedAdmin;
+use App\Notifications\InvoiceGeneratedPlayer;
 use App\Notifications\InvoiceOpenAdmin;
 use App\Notifications\InvoiceOpenPlayer;
 use App\Notifications\InvoicePaidAdmin;
@@ -200,21 +201,21 @@ class InvoiceService extends Service
                 'qty' => $product['qty'],
                 'ammount' => $product['ammount']
             ]);
-
-            $productDetail = $this->productRepository->find($product['productId']);
-            if ($productDetail->priceOption == 'subscription'){
-                $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId'], $data['taxId']);
-                $invoice->subscriptions()->attach($subscription->id);
-            }
+//
+//            $productDetail = $this->productRepository->find($product['productId']);
+//            if ($productDetail->priceOption == 'subscription'){
+//                $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId'], $data['taxId']);
+//                $invoice->subscriptions()->attach($subscription->id);
+//            }
         }
         $this->midtransPayment($data, $invoice);
-        $this->userRepository->find($data['receiverUserId'])
-            ->notify(new InvoiceGeneratedAdmin(
-                $data['ammountDue'],
-                $this->convertToDatetime($data['dueDate']),
-                $invoice->id)
-            );
 
+        $playerName = $this->getUserFullName($invoice->receiverUser);
+
+        $this->userRepository->find($data['receiverUserId'])->notify(new InvoiceGeneratedPlayer($invoice, $playerName));
+        Notification::send($this->userRepository->getAllByRole(['admin', 'Super-Admin']), new InvoiceGeneratedAdmin(
+            $invoice, $playerName
+        ));
         return $invoice;
     }
 
@@ -384,35 +385,35 @@ class InvoiceService extends Service
 
         $invoice->products()->sync($data['products']);
 
-        $invoiceSubscriptions = $invoice->subscriptions()->get();
-
-        foreach ($invoiceSubscriptions as $subscription){
-            if (!in_array($subscription->id, $data['products'])){
-                $invoice->subscriptions()->detach($subscription->id);
-                Subscription::destroy($subscription->id);
-            }
-        }
-
-        foreach ($data['products'] as $product){
-            $productDetail = $this->productRepository->find($product['productId']);
-
-            if ($productDetail->priceOption == 'subscription'){
-                if ($this->checkSubscriptionIsExist($product['productId'], $data['receiverUserId']) == null){
-                    $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
-                    $invoice->subscriptions()->attach($subscription->id);
-                }
-            }
-        }
+//        $invoiceSubscriptions = $invoice->subscriptions()->get();
+//
+//        foreach ($invoiceSubscriptions as $subscription){
+//            if (!in_array($subscription->id, $data['products'])){
+//                $invoice->subscriptions()->detach($subscription->id);
+//                Subscription::destroy($subscription->id);
+//            }
+//        }
+//
+//        foreach ($data['products'] as $product){
+//            $productDetail = $this->productRepository->find($product['productId']);
+//
+//            if ($productDetail->priceOption == 'subscription'){
+//                if ($this->checkSubscriptionIsExist($product['productId'], $data['receiverUserId']) == null){
+//                    $subscription = $this->storeSubscription($data['receiverUserId'], $product['ammount'], $product['productId']);
+//                    $invoice->subscriptions()->attach($subscription->id);
+//                }
+//            }
+//        }
         $invoice->update($data);
         $this->midtransPayment($data, $invoice);
         return $invoice;
     }
 
-    public function checkSubscriptionIsExist($productId, $userId){
-        return Subscription::where('productId', $productId)
-            ->where('userId', $userId)
-            ->exists();
-    }
+//    public function checkSubscriptionIsExist($productId, $userId){
+//        return Subscription::where('productId', $productId)
+//            ->where('userId', $userId)
+//            ->exists();
+//    }
 
     public function paid(Invoice $invoice)
     {
@@ -427,10 +428,6 @@ class InvoiceService extends Service
             $invoice->id,
             $invoice->invoiceNumber,
         ));
-
-        $adminUsers = $this->userRepository->getAllByRole('admin');
-        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
-        $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
 
         Notification::send($adminUsers, new InvoicePaidAdmin(
             $playerName,

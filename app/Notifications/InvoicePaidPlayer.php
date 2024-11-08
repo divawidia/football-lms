@@ -10,15 +10,15 @@ use Illuminate\Notifications\Notification;
 class InvoicePaidPlayer extends Notification
 {
     use Queueable;
-    protected $invoiceId;
-    protected $invoiceNumber;
+    protected $invoice;
+    protected $playerName;
     /**
      * Create a new notification instance.
      */
-    public function __construct($invoiceId, $invoiceNumber)
+    public function __construct($invoice, $playerName)
     {
-        $this->invoiceId = $invoiceId;
-        $this->invoiceNumber = $invoiceNumber;
+        $this->invoice = $invoice;
+        $this->playerName = $playerName;
     }
 
     /**
@@ -28,7 +28,7 @@ class InvoicePaidPlayer extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail','database'];
     }
 
     /**
@@ -37,9 +37,17 @@ class InvoicePaidPlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->subject('Invoice Payment Confirmation')
+            ->greeting("Hello {$this->playerName},")
+            ->line("Thank you for your payment! We have received payment for your invoice #{$this->invoice->invoiceNumber}.")
+            ->line("Invoice Number: {$this->invoice->invoiceNumber}")
+            ->line("Amount Paid: ".priceFormat($this->invoice->ammountDue))
+            ->line("Payment Date: " . now()->toFormattedDateString())
+            ->line('Your payment has been successfully processed. You can view the payment details and download a receipt from your account.')
+            ->action('View Payment Details', url()->route('billing-and-payments.show', $this->invoice->id))
+            ->line('If you have any questions, feel free to reach out to our support team.')
+            ->line('Thank you!');
+
     }
 
     /**
@@ -50,8 +58,8 @@ class InvoicePaidPlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Thank you! Your payment for Invoice #'.$this->invoiceNumber.' has been successfully processed.',
-            'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoiceId])
+            'data' =>'Thank you! Your payment for Invoice #'.$this->invoice->invoiceNumber.' has been successfully processed.',
+            'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoice->id])
         ];
     }
 }
