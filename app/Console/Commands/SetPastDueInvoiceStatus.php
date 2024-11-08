@@ -3,13 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\Invoice;
-use App\Notifications\InvoicePastDueAdmin;
-use App\Notifications\InvoicePastDuePlayer;
-use App\Repository\UserRepository;
 use App\Services\InvoiceService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Notification;
 
 class SetPastDueInvoiceStatus extends Command
 {
@@ -28,13 +24,10 @@ class SetPastDueInvoiceStatus extends Command
     protected $description = 'Set past due invoice status records where the due date has passed';
 
     private InvoiceService $invoiceService;
-    private UserRepository $userRepository;
-
-    public function __construct(InvoiceService $invoiceService, UserRepository $userRepository)
+    public function __construct(InvoiceService $invoiceService)
     {
         parent::__construct();
         $this->invoiceService = $invoiceService;
-        $this->userRepository = $userRepository;
     }
 
     /**

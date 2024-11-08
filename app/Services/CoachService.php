@@ -2,31 +2,14 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\Controller;
 use App\Models\Coach;
-use App\Models\CoachCertification;
-use App\Models\CoachMatchStat;
-use App\Models\CoachSpecialization;
-use App\Models\OpponentTeam;
-use App\Models\Player;
-use App\Models\PlayerParrent;
-use App\Models\PlayerPosition;
 use App\Models\Team;
-use App\Models\User;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
-use Nnjeim\World\World;
-use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
 
 class CoachService extends Service

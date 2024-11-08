@@ -20,6 +20,7 @@ use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\TaxRepository;
+use App\Repository\UserRepository;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
@@ -357,10 +358,6 @@ class InvoiceService extends Service
             $snaptoken = Snap::getSnapToken($midtrans);
             $invoice['snapToken'] = $snaptoken;
             return $invoice->save();
-
-//            Mail::to($data['email'])->send(new PayBookingTrfMail($booking));
-
-//            return redirect()->route('pay-booking', $booking->transaction_code);
         }
         catch (Exception $e){
             Log::error('Error in someMethod: ' . $e->getMessage());
@@ -454,7 +451,6 @@ class InvoiceService extends Service
             $invoice,
             $playerName
         ));
-
         Notification::send($this->getAllAdminUsers(), new InvoiceUncollectibleAdmin(
             $invoice,
             $playerName,
@@ -475,26 +471,26 @@ class InvoiceService extends Service
 
         // refresh midtrans payment token
         $this->midtransPayment($data, $invoice);
-        $this->userRepository->find($invoice->receiverUserId)->notify(new InvoiceOpenPlayer(
-            $this->convertToDatetime($invoice->dueDate),
-            $invoice->id,
-            $invoice->invoiceNumber,
-        ));
+//        $this->userRepository->find($invoice->receiverUserId)->notify(new InvoiceOpenPlayer(
+//            $this->convertToDatetime($invoice->dueDate),
+//            $invoice->id,
+//            $invoice->invoiceNumber,
+//        ));
 
         $adminUsers = $this->userRepository->getAllByRole('admin');
         $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
         $adminName = $user->firstName.' '.$user->lastName;
 
-        Notification::send($adminUsers, new InvoiceOpenAdmin(
-            $adminName,
-            $invoice->id,
-            $invoice->invoiceNumber,
-        ));
-        Notification::send($superAdminUsers, new InvoiceOpenAdmin(
-            $adminName,
-            $invoice->id,
-            $invoice->invoiceNumber,
-        ));
+//        Notification::send($adminUsers, new InvoiceOpenAdmin(
+//            $adminName,
+//            $invoice->id,
+//            $invoice->invoiceNumber,
+//        ));
+//        Notification::send($superAdminUsers, new InvoiceOpenAdmin(
+//            $adminName,
+//            $invoice->id,
+//            $invoice->invoiceNumber,
+//        ));
 
         return $invoice->update([
             'status' => 'Open',

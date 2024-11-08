@@ -2,17 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ChangePasswordRequest;
-use App\Http\Requests\ResetPasswordRequest;
-use App\Http\Requests\UserRequest;
-use App\Models\User;
-use App\Services\Coach\DashboardService;
-use App\Services\UserService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use RealRashid\SweetAlert\Facades\Alert;
-
 class NotificationController extends Controller
 {
     public function markAsRead($id)

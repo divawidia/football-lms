@@ -2,9 +2,6 @@
 
 namespace App\Repository;
 
-use App\Models\Coach;
-use App\Models\CoachCertification;
-use App\Models\CoachSpecialization;
 use App\Models\User;
 
 class UserRepository

@@ -2,11 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Invoice;
-use App\Models\Product;
 use App\Models\Subscription;
 use App\Notifications\InvoiceGeneratedAdmin;
-use App\Notifications\InvoicePastDueAdmin;
+use App\Notifications\InvoiceGeneratedPlayer;
 use App\Notifications\SubscriptionCreatedAdmin;
 use App\Notifications\SubscriptionCreatedPlayer;
 use App\Notifications\SubscriptionRenewedAdmin;
@@ -16,14 +14,12 @@ use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class SubscriptionService extends Service
 {
-    private Product $product;
     private SubscriptionRepository $subscriptionRepository;
     private InvoiceRepository $invoiceRepository;
     private TaxRepository $taxRepository;
@@ -32,7 +28,6 @@ class SubscriptionService extends Service
     private ProductRepository $productRepository;
 
     public function __construct(
-        Product                $product,
         SubscriptionRepository $subscriptionRepository,
         InvoiceRepository      $invoiceRepository,
         TaxRepository          $taxRepository,
@@ -40,7 +35,6 @@ class SubscriptionService extends Service
         UserRepository         $userRepository,
         ProductRepository      $productRepository)
     {
-        $this->product = $product;
         $this->invoiceRepository = $invoiceRepository;
         $this->taxRepository = $taxRepository;
         $this->invoiceService = $invoiceService;
@@ -267,34 +261,12 @@ class SubscriptionService extends Service
 
         $this->invoiceService->midtransPayment($data, $invoice);
 
-        $productDetail = $this->productRepository->find($data['productId']);
         $playerName = $this->getUserFullName($invoice->receiverUser);
-
-        $this->userRepository->find($data['receiverUserId'])
-            ->notify(new InvoiceGeneratedAdmin(
-                    $data['ammountDue'],
-                    $this->convertToDatetime($data['dueDate']),
-                    $invoice->id)
-            );
-        $this->userRepository->find($data['receiverUserId'])
-            ->notify(new SubscriptionCreatedPlayer(
-                    $productDetail->productName,
-                    $playerName,
-                    $invoice->invoiceNumber)
-            );
-        $adminUsers = $this->userRepository->getAllByRole(['admin', 'Super-Admin']);
-
-        Notification::send($adminUsers, new InvoiceGeneratedAdmin(
-            $data['ammountDue'],
-            $data['dueDate'],
-            $invoice->id,
-        ));
-        Notification::send($adminUsers, new SubscriptionCreatedAdmin(
-            $productDetail->productName,
-            $playerName,
-            $invoice->invoiceNumber,
-            $subscription->id
-        ));
+        $allAdmins = $this->invoiceService->getAllAdminUsers();
+        $this->userRepository->find($data['receiverUserId'])->notify(new InvoiceGeneratedPlayer($invoice, $playerName));
+        $this->userRepository->find($data['receiverUserId'])->notify(new SubscriptionCreatedPlayer($invoice, $subscription, $playerName));
+        Notification::send($allAdmins, new InvoiceGeneratedAdmin($invoice, $playerName));
+        Notification::send($allAdmins, new SubscriptionCreatedAdmin($invoice, $subscription, $playerName));
 
         return $invoice;
     }
@@ -390,29 +362,13 @@ class SubscriptionService extends Service
         $subscription->save();
 
         $this->invoiceService->midtransPayment($data, $invoice);
-        $adminUsers = $this->userRepository->getAllByRole(['admin', 'Super-Admin']);
-        $playerName = $invoice->receiverUser->firstName . ' ' . $invoice->receiverUser->lastName;
 
-        $this->userRepository->find($data['receiverUserId'])
-            ->notify(new InvoiceGeneratedAdmin(
-                $data['ammountDue'],
-                $this->convertToDatetime($data['dueDate']),
-                $invoice->id)
-            );
-        $this->userRepository->find($data['receiverUserId'])
-            ->notify(new SubscriptionRenewedPlayer(
-                $product->productName,
-                $userDetail->firstName . ' ' . $userDetail->lastName,
-                $invoice->invoiceNumber)
-            );
-
-        Notification::send($adminUsers, new SubscriptionRenewedAdmin(
-            $product->productName,
-            $playerName,
-            $invoice->invoiceNumber,
-            $subscription->id
-        ));
-
+        $playerName = $this->getUserFullName($invoice->receiverUser);
+        $allAdmins = $this->invoiceService->getAllAdminUsers();
+        $this->userRepository->find($data['receiverUserId'])->notify(new InvoiceGeneratedPlayer($invoice, $playerName));
+        $this->userRepository->find($data['receiverUserId'])->notify(new SubscriptionRenewedPlayer($invoice, $subscription, $playerName));
+        Notification::send($allAdmins, new InvoiceGeneratedAdmin($invoice, $playerName));
+        Notification::send($allAdmins, new SubscriptionRenewedAdmin($subscription->product->productName, $playerName, $invoice->invoiceNumber, $subscription->id));
         return $invoice;
     }
 

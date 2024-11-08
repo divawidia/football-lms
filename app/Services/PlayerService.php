@@ -4,21 +4,15 @@ namespace App\Services;
 
 use App\Models\Player;
 use App\Models\PlayerParrent;
-use App\Models\PlayerPosition;
 use App\Models\Team;
-use App\Models\User;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerPositionRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Nnjeim\World\World;
 use Yajra\DataTables\Facades\DataTables;
 
 class PlayerService extends Service
