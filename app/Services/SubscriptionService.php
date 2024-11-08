@@ -235,10 +235,7 @@ class SubscriptionService extends Service
 
     public function getAvailablePlayerSubscriptionProduct($userId)
     {
-        return Product::with('subscritions')->where('priceOption', '=', 'subscription')
-            ->whereDoesntHave('subscritions', function (Builder $query) use ($userId) {
-                $query->where('userId', $userId);
-            })->get();
+        return $this->productRepository->getAvailablePlayerSubscriptionProduct($userId);
     }
 
     public function store(array $data, $creatorUserIdd, $academyId)

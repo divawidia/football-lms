@@ -8,6 +8,7 @@ use App\Models\CoachSpecialization;
 use App\Models\Product;
 use App\Models\Tax;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductRepository
 {
@@ -25,6 +26,14 @@ class ProductRepository
     public function getByPriceOption($priceOption)
     {
         return $this->product->where('priceOption', $priceOption)->get();
+    }
+
+    public function getAvailablePlayerSubscriptionProduct($userId)
+    {
+        return Product::with('subscritions')->where('priceOption', '=', 'subscription')
+            ->whereDoesntHave('subscritions', function (Builder $query) use ($userId) {
+                $query->where('userId', $userId);
+            })->get();
     }
 
     public function find($id)
