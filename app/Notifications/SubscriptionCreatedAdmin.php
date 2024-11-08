@@ -10,20 +10,18 @@ use Illuminate\Notifications\Notification;
 class SubscriptionCreatedAdmin extends Notification
 {
     use Queueable;
-    protected $productName;
+    protected $invoice;
+    protected $subscription;
     protected $playerName;
-    protected $invoiceNumber;
-    protected $subscriptionId;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($productName, $playerName, $invoiceNumber, $subscriptionId)
+    public function __construct($invoice, $subscription, $playerName)
     {
-        $this->productName = $productName;
+        $this->invoice = $invoice;
+        $this->subscription = $subscription;
         $this->playerName = $playerName;
-        $this->invoiceNumber = $invoiceNumber;
-        $this->subscriptionId = $subscriptionId;
     }
 
     /**
@@ -42,11 +40,11 @@ class SubscriptionCreatedAdmin extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("{$this->productName} subscription for player {$this->playerName} has been created")
+            ->subject("{$this->invoice->products[0]->productName} subscription for player {$this->playerName} has been created")
             ->greeting("Dear, admins!")
-            ->line("Subscription of {$this->productName} for player {$this->playerName} has been successfully created.")
-            ->action('View Subscription detail at', url()->route('subscriptions.show', $this->subscriptionId))
-            ->line("Please follow up the player {$this->playerName} to complete the payment of invoice #{$this->invoiceNumber} as soon as possible to activate the subscription")
+            ->line("Subscription of {$this->invoice->products[0]->productName} for player {$this->playerName} has been successfully created.")
+            ->action('View Subscription detail at', url()->route('subscriptions.show', $this->subscription->id))
+            ->line("Please follow up the player {$this->playerName} to complete the payment of invoice #{$this->invoice->invoiceNumber} as soon as possible to activate the subscription")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
 
@@ -58,8 +56,8 @@ class SubscriptionCreatedAdmin extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Your Subscription of '.$this->productName.' has been created. Please pay your invoice #'.$this->invoiceNumber.' as soon as possible to activate your subscription status!',
-            'redirectRoute' => route('subscriptions.show', $this->subscriptionId)
+            'data' =>'Subscription of '.$this->invoice->products[0]->productName.' has been created. Please follow up the player '.$this->playerName.' to pay the invoice #'.$this->invoice->invoiceNumber.' as soon as possible to activate your subscription status!',
+            'redirectRoute' => route('subscriptions.show', $this->subscription->id)
         ];
     }
 }
