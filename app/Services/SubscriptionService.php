@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\Subscription;
 use App\Notifications\InvoiceGenerated;
 use App\Notifications\InvoicePastDueAdmin;
-use App\Notifications\SubscriptionCreated;
+use App\Notifications\SubscriptionCreatedPlayer;
 use App\Notifications\SubscriptionRenewedAdmin;
 use App\Notifications\SubscriptionRenewedPlayer;
 use App\Repository\InvoiceRepository;
@@ -267,8 +267,7 @@ class SubscriptionService extends Service
         $this->invoiceService->midtransPayment($data, $invoice);
 
         $productDetail = $this->productRepository->find($data['productId']);
-        $userDetail = $this->userRepository->find($data['receiverUserId']);
-        $playerName = $invoice->receiverUser->firstName . ' ' . $invoice->receiverUser->lastName;
+        $playerName = $this->getUserFullName($invoice->receiverUser);
 
         $this->userRepository->find($data['receiverUserId'])
             ->notify(new InvoiceGenerated(
@@ -277,31 +276,19 @@ class SubscriptionService extends Service
                     $invoice->id)
             );
         $this->userRepository->find($data['receiverUserId'])
-            ->notify(new SubscriptionCreated(
+            ->notify(new SubscriptionCreatedPlayer(
                     $productDetail->productName,
                     $playerName,
                     $invoice->invoiceNumber)
             );
-        $adminUsers = $this->userRepository->getAllByRole('admin');
-        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
-
+        $adminUsers = $this->userRepository->getAllByRole(['admin', 'Super-Admin']);
 
         Notification::send($adminUsers, new InvoiceGenerated(
             $data['ammountDue'],
             $data['dueDate'],
             $invoice->id,
         ));
-        Notification::send($superAdminUsers, new InvoiceGenerated(
-            $data['ammountDue'],
-            $data['dueDate'],
-            $invoice->id,
-        ));
-        Notification::send($adminUsers, new SubscriptionCreated(
-            $productDetail->productName,
-            $playerName,
-            $invoice->invoiceNumber
-        ));
-        Notification::send($superAdminUsers, new SubscriptionCreated(
+        Notification::send($adminUsers, new SubscriptionCreatedPlayer(
             $productDetail->productName,
             $playerName,
             $invoice->invoiceNumber

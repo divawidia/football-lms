@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionCreated extends Notification
+class SubscriptionCreatedPlayer extends Notification
 {
     use Queueable;
     protected $productName;
@@ -31,7 +31,7 @@ class SubscriptionCreated extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -40,10 +40,9 @@ class SubscriptionCreated extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("{$this->productName} subscription created")
+            ->subject("Your {$this->productName} subscription created")
             ->greeting("Hello, {$this->playerName}!")
-            ->line('Your subscription has been successfully created.')
-            ->line("Subscription : {$this->productName}")
+            ->line("Your subscription for {$this->productName} has been successfully created.")
             ->action('View Subscription at', url()->route('billing-and-payments.index'))
             ->line('Please pay your invoice #'.$this->invoiceNumber.' to activate your subscription')
             ->line('Keep up the great work in the academy!');
@@ -57,7 +56,7 @@ class SubscriptionCreated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Subscription of '.$this->productName.' for player '.$this->playerName.' has been created.',
+            'data' =>'Your Subscription of '.$this->productName.' has been created. Please pay your invoice #'.$this->invoiceNumber.' as soon as possible to activate your subscription status!',
             'redirectRoute' => route('billing-and-payments.index')
         ];
     }
