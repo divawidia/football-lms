@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\Tax;
 use App\Models\User;
-use App\Notifications\InvoiceGenerated;
+use App\Notifications\InvoiceGeneratedAdmin;
 use App\Notifications\InvoiceOpenAdmin;
 use App\Notifications\InvoiceOpenPlayer;
 use App\Notifications\InvoicePaidAdmin;
@@ -209,7 +209,7 @@ class InvoiceService extends Service
         }
         $this->midtransPayment($data, $invoice);
         $this->userRepository->find($data['receiverUserId'])
-            ->notify(new InvoiceGenerated(
+            ->notify(new InvoiceGeneratedAdmin(
                 $data['ammountDue'],
                 $this->convertToDatetime($data['dueDate']),
                 $invoice->id)

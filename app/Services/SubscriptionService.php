@@ -5,8 +5,9 @@ namespace App\Services;
 use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Subscription;
-use App\Notifications\InvoiceGenerated;
+use App\Notifications\InvoiceGeneratedAdmin;
 use App\Notifications\InvoicePastDueAdmin;
+use App\Notifications\SubscriptionCreatedAdmin;
 use App\Notifications\SubscriptionCreatedPlayer;
 use App\Notifications\SubscriptionRenewedAdmin;
 use App\Notifications\SubscriptionRenewedPlayer;
@@ -270,7 +271,7 @@ class SubscriptionService extends Service
         $playerName = $this->getUserFullName($invoice->receiverUser);
 
         $this->userRepository->find($data['receiverUserId'])
-            ->notify(new InvoiceGenerated(
+            ->notify(new InvoiceGeneratedAdmin(
                     $data['ammountDue'],
                     $this->convertToDatetime($data['dueDate']),
                     $invoice->id)
@@ -283,15 +284,16 @@ class SubscriptionService extends Service
             );
         $adminUsers = $this->userRepository->getAllByRole(['admin', 'Super-Admin']);
 
-        Notification::send($adminUsers, new InvoiceGenerated(
+        Notification::send($adminUsers, new InvoiceGeneratedAdmin(
             $data['ammountDue'],
             $data['dueDate'],
             $invoice->id,
         ));
-        Notification::send($adminUsers, new SubscriptionCreatedPlayer(
+        Notification::send($adminUsers, new SubscriptionCreatedAdmin(
             $productDetail->productName,
             $playerName,
-            $invoice->invoiceNumber
+            $invoice->invoiceNumber,
+            $subscription->id
         ));
 
         return $invoice;
@@ -392,7 +394,7 @@ class SubscriptionService extends Service
         $playerName = $invoice->receiverUser->firstName . ' ' . $invoice->receiverUser->lastName;
 
         $this->userRepository->find($data['receiverUserId'])
-            ->notify(new InvoiceGenerated(
+            ->notify(new InvoiceGeneratedAdmin(
                 $data['ammountDue'],
                 $this->convertToDatetime($data['dueDate']),
                 $invoice->id)
