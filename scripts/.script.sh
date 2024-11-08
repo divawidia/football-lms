@@ -14,6 +14,8 @@ git pull origin main
 # Install composer dependencies
 composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
+composer dump-autoload
+
 # Clear the old cache
 php artisan clear-compiled
 
