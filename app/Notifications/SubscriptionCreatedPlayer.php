@@ -10,18 +10,18 @@ use Illuminate\Notifications\Notification;
 class SubscriptionCreatedPlayer extends Notification
 {
     use Queueable;
-    protected $productName;
+    protected $invoice;
+    protected $subscription;
     protected $playerName;
-    protected $invoiceNumber;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($productName, $playerName, $invoiceNumber)
+    public function __construct($invoice, $subscription, $playerName)
     {
-        $this->productName = $productName;
+        $this->invoice = $invoice;
+        $this->subscription = $subscription;
         $this->playerName = $playerName;
-        $this->invoiceNumber = $invoiceNumber;
     }
 
     /**
@@ -40,11 +40,11 @@ class SubscriptionCreatedPlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Your {$this->productName} subscription created")
+            ->subject("Your {$this->subscription->product->productName} subscription created")
             ->greeting("Hello, {$this->playerName}!")
-            ->line("Your subscription for {$this->productName} has been successfully created.")
+            ->line("Your subscription for {$this->subscription->product->productName} has been successfully created.")
             ->action('View Subscription at', url()->route('billing-and-payments.index'))
-            ->line('Please pay your invoice #'.$this->invoiceNumber.' to activate your subscription')
+            ->line("Please pay your invoice #{$this->invoice->invoiceNumber} as soon as possible to activate your subscription")
             ->line('Keep up the great work in the academy!');
     }
 
@@ -56,7 +56,7 @@ class SubscriptionCreatedPlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Your Subscription of '.$this->productName.' has been created. Please pay your invoice #'.$this->invoiceNumber.' as soon as possible to activate your subscription status!',
+            'data' =>'Your Subscription of '.$this->subscription->product->productName.' has been created. Please pay your invoice #'.$this->invoice->invoiceNumber.' as soon as possible to activate your subscription status!',
             'redirectRoute' => route('billing-and-payments.index')
         ];
     }
