@@ -418,6 +418,7 @@ class InvoiceService extends Service
     public function paid(Invoice $invoice)
     {
         $paymentDetails = $this->getPaymentDetail($invoice->invoiceNumber);
+        $playerName = $this->getUserFullName($invoice->receiverUser);
 
         $invoice->update([
             'status' => 'Paid',
@@ -425,8 +426,8 @@ class InvoiceService extends Service
         ]);
 
         $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePaidPlayer(
-            $invoice->id,
-            $invoice->invoiceNumber,
+            $invoice,
+            $playerName
         ));
 
         Notification::send($adminUsers, new InvoicePaidAdmin(
