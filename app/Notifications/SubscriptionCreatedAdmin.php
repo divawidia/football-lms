@@ -40,9 +40,9 @@ class SubscriptionCreatedAdmin extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("{$this->invoice->products[0]->productName} subscription for player {$this->playerName} has been created")
+            ->subject("{$this->subscription->product->productName} subscription for player {$this->playerName} has been created")
             ->greeting("Dear, admins!")
-            ->line("Subscription of {$this->invoice->products[0]->productName} for player {$this->playerName} has been successfully created.")
+            ->line("Subscription of {$this->subscription->product->productName} for player {$this->playerName} has been successfully created.")
             ->action('View Subscription detail at', url()->route('subscriptions.show', $this->subscription->id))
             ->line("Please follow up the player {$this->playerName} to complete the payment of invoice #{$this->invoice->invoiceNumber} as soon as possible to activate the subscription")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
@@ -56,7 +56,7 @@ class SubscriptionCreatedAdmin extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Subscription of '.$this->invoice->products[0]->productName.' has been created. Please follow up the player '.$this->playerName.' to pay the invoice #'.$this->invoice->invoiceNumber.' as soon as possible to activate your subscription status!',
+            'data' =>'Subscription of '.$this->subscription->product->productName.' has been created. Please follow up the player '.$this->playerName.' to pay the invoice #'.$this->invoice->invoiceNumber.' as soon as possible to activate your subscription status!',
             'redirectRoute' => route('subscriptions.show', $this->subscription->id)
         ];
     }
