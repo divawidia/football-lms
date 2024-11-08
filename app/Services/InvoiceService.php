@@ -213,10 +213,15 @@ class InvoiceService extends Service
         $playerName = $this->getUserFullName($invoice->receiverUser);
 
         $this->userRepository->find($data['receiverUserId'])->notify(new InvoiceGeneratedPlayer($invoice, $playerName));
-        Notification::send($this->userRepository->getAllByRole(['admin', 'Super-Admin']), new InvoiceGeneratedAdmin(
+        Notification::send($this->getAllAdminUsers(), new InvoiceGeneratedAdmin(
             $invoice, $playerName
         ));
         return $invoice;
+    }
+
+    public function getAllAdminUsers()
+    {
+        return $this->userRepository->getAllByRole(['admin', 'Super-Admin']);
     }
 
     public function calculateProductAmount(int $qty, $productId){
@@ -430,15 +435,9 @@ class InvoiceService extends Service
             $playerName
         ));
 
-        Notification::send($adminUsers, new InvoicePaidAdmin(
+        Notification::send($this->getAllAdminUsers(), new InvoicePaidAdmin(
+            $invoice,
             $playerName,
-            $invoice->id,
-            $invoice->invoiceNumber,
-        ));
-        Notification::send($superAdminUsers, new InvoicePaidAdmin(
-            $playerName,
-            $invoice->id,
-            $invoice->invoiceNumber,
         ));
         return $invoice;
     }
