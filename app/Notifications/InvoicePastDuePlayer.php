@@ -10,17 +10,15 @@ use Illuminate\Notifications\Notification;
 class InvoicePastDuePlayer extends Notification
 {
     use Queueable;
-    protected $duedate;
-    protected $invoiceId;
-    protected $invoiceNumber;
+    protected $invoice;
+    protected $playerName;
     /**
      * Create a new notification instance.
      */
-    public function __construct($duedate, $invoiceId, $invoiceNumber)
+    public function __construct($invoice, $playerName)
     {
-        $this->duedate = $duedate;
-        $this->invoiceId = $invoiceId;
-        $this->invoiceNumber = $invoiceNumber;
+        $this->invoice = $invoice;
+        $this->playerName = $playerName;
     }
 
     /**
@@ -30,7 +28,7 @@ class InvoicePastDuePlayer extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail','database'];
     }
 
     /**
@@ -39,9 +37,16 @@ class InvoicePastDuePlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->subject("Invoice #{$this->invoice->invoiceNumber} is Past Due")
+            ->greeting("Hello {$this->playerName},")
+            ->line("Your invoice #{$this->invoice->invoiceNumber} is now past due.")
+            ->line("Invoice Number: {$this->invoice->invoiceNumber}")
+            ->line("Amount Due: ".priceFormat($this->invoice->amountDue))
+            ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
+            ->action('View Payment Details', url()->route('billing-and-payments.show', $this->invoice->id))
+            ->line('Please reach our admins to recreate the invoice to settle the payment at your earliest convenience.')
+            ->line('If you have any questions, feel free to reach out to our support team.')
+            ->line('Thank you!');
     }
 
     /**
@@ -52,8 +57,8 @@ class InvoicePastDuePlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Your payment for Invoice #'.$this->invoiceNumber.' is overdue at '.$this->duedate.'. Please contact admin to complete the payment as soon as possible.',
-            'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoiceId])
+            'data' =>'Your invoice #'.$this->invoice->invoiceNumber.' is now past due at '.convertToDatetime($this->invoice->dueDate).'. Please reach our admins to recreate the invoice to settle the payment at your earliest convenience. Click here to see the invoice!',
+            'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoice->id])
         ];
     }
 }
