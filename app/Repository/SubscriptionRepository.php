@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Models\subscription;
+use App\Models\Subscription;
 
 class SubscriptionRepository
 {
