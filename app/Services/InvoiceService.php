@@ -15,6 +15,8 @@ use App\Notifications\InvoicePaidAdmin;
 use App\Notifications\InvoicePaidPlayer;
 use App\Notifications\InvoicePastDueAdmin;
 use App\Notifications\InvoicePastDuePlayer;
+use App\Notifications\InvoiceUncollectibleAdmin;
+use App\Notifications\InvoiceUncollectiblePlayer;
 use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
@@ -448,8 +450,19 @@ class InvoiceService extends Service
         if ($status == 'pending' || $status == 'challenge'){
             Transaction::cancel($invoice->invoiceNumber);
         }
+        $invoice->update(['status' => 'Uncollectible']);
 
-        return $invoice->update(['status' => 'Uncollectible']);
+        $playerName = $this->getUserFullName($invoice->receiverUser);
+        $this->userRepository->find($invoice->receiverUserId)->notify(new InvoiceUncollectiblePlayer(
+            $invoice,
+            $playerName
+        ));
+
+        Notification::send($this->getAllAdminUsers(), new InvoiceUncollectibleAdmin(
+            $invoice,
+            $playerName,
+        ));
+        return $invoice;
     }
 
     public function getPaymentDetail($invoiceNumber)
