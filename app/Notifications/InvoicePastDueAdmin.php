@@ -10,18 +10,14 @@ use Illuminate\Notifications\Notification;
 class InvoicePastDueAdmin extends Notification
 {
     use Queueable;
-    protected $duedate;
-    protected $invoiceId;
-    protected $invoiceNumber;
+    protected $invoice;
     protected $playerName;
     /**
      * Create a new notification instance.
      */
-    public function __construct($duedate, $invoiceId, $invoiceNumber, $playerName)
+    public function __construct($invoice, $playerName)
     {
-        $this->duedate = $duedate;
-        $this->invoiceId = $invoiceId;
-        $this->invoiceNumber = $invoiceNumber;
+        $this->invoice = $invoice;
         $this->playerName = $playerName;
     }
 
@@ -32,17 +28,24 @@ class InvoicePastDueAdmin extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail','database'];
     }
+
     /**
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->subject("Invoice #{$this->invoice->invoiceNumber} is Past Due for Player ($this->playerName)")
+            ->greeting("Hello {$notifiable->name},")
+            ->line("An invoice #{$this->invoice->invoiceNumber} is now past due.")
+            ->line("Invoice Number: {$this->invoice->invoiceNumber}")
+            ->line("Amount Due: ".priceFormat($this->invoice->amountDue))
+            ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
+            ->action('View Invoice Details', url()->route('invoices.show', $this->invoice->id))
+            ->line('Please follow up the player as necessary or take appropriate action.')
+            ->line('Thank you!');
     }
 
     /**
@@ -53,8 +56,8 @@ class InvoicePastDueAdmin extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Player '.$this->playerName.' has an overdue invoice #'.$this->invoiceNumber.' is overdue at '.$this->duedate.'. Consider following up with them to complete the payment as soon as possible.',
-            'redirectRoute' => route('invoices.show', ['invoice' => $this->invoiceId])
+            'data' =>'Invoice #'.$this->invoice->invoiceNumber.' for player '.$this->playerName.' is now past due at '.convertToDatetime($this->invoice->dueDate).'. Please reach the player and recreate the invoice to settle the payment at the earliest convenience. Click here to see the invoice!',
+            'redirectRoute' => route('invoices.show', ['invoice' => $this->invoice->id])
         ];
     }
 }
