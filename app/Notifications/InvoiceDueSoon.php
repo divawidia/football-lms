@@ -10,15 +10,15 @@ use Illuminate\Notifications\Notification;
 class InvoiceDueSoon extends Notification
 {
     use Queueable;
-    protected $duedate;
-    protected $invoiceId;
+    protected $invoice;
+    protected $playerName;
     /**
      * Create a new notification instance.
      */
-    public function __construct($duedate, $invoiceId)
+    public function __construct($invoice, $playerName)
     {
-        $this->duedate = $duedate;
-        $this->invoiceId = $invoiceId;
+        $this->invoice = $invoice;
+        $this->playerName = $playerName;
     }
 
     /**
@@ -28,7 +28,7 @@ class InvoiceDueSoon extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail','database'];
     }
 
     /**
@@ -37,9 +37,13 @@ class InvoiceDueSoon extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->subject("Invoice #{$this->invoice->invoiceNumber} is Due Soon")
+            ->greeting("Hello {$this->playerName},")
+            ->line("This is a friendly reminder that your invoice is due soon. Please ensure payment is made on time.")
+            ->line("Invoice Number: {$this->invoice->invoiceNumber}")
+            ->line("Amount Due: ".priceFormat($this->invoice->amountDue))
+            ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
+            ->action('View Invoice', url()->route('billing-and-payments.show', $this->invoice->id));
     }
 
     /**
@@ -50,8 +54,8 @@ class InvoiceDueSoon extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Your payment is due soon. Please pay by '.$this->duedate.' to avoid late fees.',
-            'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoiceId])
+            'data' =>'Your invoice #'.$this->invoice->invoiceNumber.' is due soon. Please complete your payment before the due date at '.convertToDatetime($this->invoice->dueDate).' to avoid late payment.',
+            'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoice->id])
         ];
     }
 }
