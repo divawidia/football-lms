@@ -30,10 +30,12 @@ class Kernel extends ConsoleKernel
          $schedule->command('update:end-match-status')->everyMinute();
          $schedule->command('update:end-competition-status')->everyMinute();
          $schedule->command('update:set-past-due-invoice-status')->everyMinute();
+
         $schedule->call(function () {
             $invoices = Invoice::where('dueDate', '=', Carbon::now()->addHour())->where('status', 'Open')->get();
             foreach ($invoices as $invoice) {
-                $invoice->receiverUser->notify(new InvoiceDueSoon($invoice->dueDate, $invoice->id));
+                $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
+                $invoice->receiverUser->notify(new InvoiceDueSoon($invoice, $playerName));
             }
         })->everyMinute();
     }
