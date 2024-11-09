@@ -12,7 +12,11 @@
             <a href=""
                class="navbar-brand flex-column mb-2 align-items-center mr-0"
                style="min-width: 0">
-                LOGO
+                @if(academyData()->logo)
+                    <img src="{{ Storage::url(academyData()->logo) }}" alt="" height="75">
+                @else
+                    LOGO
+                @endif
             </a>
             <p class="m-0">Login to access your Account </p>
         </div>
