@@ -32,6 +32,12 @@ class SubscriptionController extends Controller
         return view('pages.admins.payments.subscriptions.index');
     }
 
+    public function playerIndex()
+    {
+        $user = $this->getLoggedUser();
+        return $this->subscriptionService->playerIndex($user);
+    }
+
 
     /**
      * Display the specified resource.

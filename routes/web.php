@@ -423,6 +423,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::prefix('billing-and-payments')->group(function () {
             Route::get('', [BillingPaymentsController::class, 'index'])->name('billing-and-payments.index');
+            Route::get('subscriptions', [SubscriptionController::class, 'playerIndex'])->name('billing-and-payments.subscriptions');
 
             Route::prefix('{invoice}')->group(function () {
                 Route::get('', [BillingPaymentsController::class, 'show'])->name('billing-and-payments.show');
