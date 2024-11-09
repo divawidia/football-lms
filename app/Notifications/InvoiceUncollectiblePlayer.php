@@ -41,7 +41,7 @@ class InvoiceUncollectiblePlayer extends Notification
             ->greeting("Hello {$notifiable->name},")
             ->line("Your outstanding invoice has been marked as uncollectible.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
-            ->line("Original Amount Due: ".priceFormat($this->invoice->amountDue))
+            ->line("Original Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Status: Uncollectible")
             ->action('View Payment Details', url()->route('billing-and-payments.show', $this->invoice->id))
             ->line('If you have any questions, feel free to reach out to our support team.')

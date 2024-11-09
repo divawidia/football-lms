@@ -42,7 +42,7 @@ class InvoiceUncollectibleAdmin extends Notification
             ->line("The following player’s invoice has been marked as uncollectible.")
             ->line("Player : {$this->playerName}")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
-            ->line("Original Amount Due: ".priceFormat($this->invoice->amountDue))
+            ->line("Original Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Status: Uncollectible")
             ->line('You can review the invoice details and take any necessary actions in the invoices page.')
             ->action('View Invoice Details', url()->route('invoices.show', $this->invoice->id))

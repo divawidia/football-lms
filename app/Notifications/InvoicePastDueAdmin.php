@@ -38,12 +38,12 @@ class InvoicePastDueAdmin extends Notification
     {
         return (new MailMessage)
             ->subject("Invoice #{$this->invoice->invoiceNumber} is Past Due for Player ($this->playerName)")
-            ->greeting("Hello {$notifiable->name},")
+            ->greeting("Hello Admins,")
             ->line("An invoice #{$this->invoice->invoiceNumber} is now past due.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
-            ->line("Amount Due: ".priceFormat($this->invoice->amountDue))
+            ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
-            ->action('View Invoice Details', url()->route('invoices.show', $this->invoice->id))
+            ->action('View Invoice Details', route('invoices.show', $this->invoice->id))
             ->line('Please follow up the player as necessary or take appropriate action.')
             ->line('Thank you!');
     }

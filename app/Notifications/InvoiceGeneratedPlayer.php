@@ -39,9 +39,9 @@ class InvoiceGeneratedPlayer extends Notification
             ->greeting("Hello {$this->playerName},")
             ->line("A new invoice #{$this->invoice->invoiceNumber} has been created for your product payments.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
-            ->line("Amount Due: {$this->invoice->ammountDue}")
+            ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
-            ->action('View Invoice here', url()->route('billing-and-payments.show' . $this->invoice->id))
+            ->action('View Invoice here', route('billing-and-payments.show', ['invoice' => $this->invoice->id]))
             ->line("Please ensure payment is completed as soon as possible by the due date.")
             ->line("If you have any questions, feel free to reach out to our support team.")
             ->line("Thank you!");

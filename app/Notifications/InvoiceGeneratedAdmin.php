@@ -36,11 +36,11 @@ class InvoiceGeneratedAdmin extends Notification
     {
         return (new MailMessage)
             ->subject("New Invoice #{$this->invoice->invoiceNumber} Created for Player {$this->playerName}")
-            ->line("A new invoice #{$this->invoice->invoiceNumber} has been created for player: {$this->invoice->player->name}.")
+            ->line("A new invoice #{$this->invoice->invoiceNumber} has been created for player: {$this->playerName}.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
-            ->line("Amount Due: {$this->invoice->ammountDue}")
+            ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: {$this->invoice->dueDate}")
-            ->action('View Invoice here', url()->route('invoices.show' . $this->invoice->id))
+            ->action('View Invoice here', route('invoices.show', ['invoice' => $this->invoice->id]))
             ->line("Please review the invoice details in the invoices page. Please follow up the player {$this->playerName} to pay the invoice as soon as possible.")
             ->line("If payment is not received by the due date, a reminder will be sent automatically to the player.")
             ->line("You can manage this invoice directly from the invoices page to track its status and take any required action.");

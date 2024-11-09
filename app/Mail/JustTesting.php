@@ -54,7 +54,7 @@ class JustTesting extends Mailable
 
     public function build()
     {
-        return $this->from('hello@mailtrap.io')
+        return $this->from(env('MAIL_FROM_ADDRESS'))
             ->to('wiartha2001@gmail.com')
             ->cc('wiartha2001@gmail.com')
             ->subject('Auf Wiedersehen')

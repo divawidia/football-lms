@@ -41,7 +41,7 @@ class InvoiceArchivedAdmin extends Notification
             ->greeting("Hello Teams,")
             ->line("An invoice #{$this->invoice->invoiceNumber} for player {$this->playerName} has been archived.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
-            ->line("Amount Due: ".priceFormat($this->invoice->amountDue))
+            ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
             ->line('This invoice is now stored for reference and will no longer appear in the active invoice list.')
             ->action('View Archived Invoice', url()->route('invoices.show-archived', $this->invoice->id))

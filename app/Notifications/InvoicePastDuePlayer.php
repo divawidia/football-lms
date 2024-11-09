@@ -41,9 +41,9 @@ class InvoicePastDuePlayer extends Notification
             ->greeting("Hello {$this->playerName},")
             ->line("Your invoice #{$this->invoice->invoiceNumber} is now past due.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
-            ->line("Amount Due: ".priceFormat($this->invoice->amountDue))
+            ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
-            ->action('View Payment Details', url()->route('billing-and-payments.show', $this->invoice->id))
+            ->action('View Payment Details', route('billing-and-payments.show', $this->invoice->id))
             ->line('Please reach our admins to recreate the invoice to settle the payment at your earliest convenience.')
             ->line('If you have any questions, feel free to reach out to our support team.')
             ->line('Thank you!');

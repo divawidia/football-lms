@@ -41,7 +41,7 @@ class InvoiceDueSoon extends Notification
             ->greeting("Hello {$this->playerName},")
             ->line("This is a friendly reminder that your invoice is due soon. Please ensure payment is made on time.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
-            ->line("Amount Due: ".priceFormat($this->invoice->amountDue))
+            ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
             ->action('View Invoice', url()->route('billing-and-payments.show', $this->invoice->id));
     }
