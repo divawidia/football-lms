@@ -185,7 +185,7 @@ class InvoiceService extends Service
         }
         $data['ammountDue'] = $data['subtotal'];
 
-        if ($data['taxId']){
+        if (array_key_exists('taxId', $data)){
             $tax = $this->taxRepository->find($data['taxId']);
             $data['totalTax'] = $data['subtotal'] * $tax->percentage/100;
             $data['ammountDue'] = $data['ammountDue'] + $data['totalTax'];
@@ -213,9 +213,7 @@ class InvoiceService extends Service
         $playerName = $this->getUserFullName($invoice->receiverUser);
 
         $this->userRepository->find($data['receiverUserId'])->notify(new InvoiceGeneratedPlayer($invoice, $playerName));
-        Notification::send($this->getAllAdminUsers(), new InvoiceGeneratedAdmin(
-            $invoice, $playerName
-        ));
+        Notification::send($this->getAllAdminUsers(), new InvoiceGeneratedAdmin($invoice, $playerName));
         return $invoice;
     }
 
@@ -312,6 +310,7 @@ class InvoiceService extends Service
     }
 
     public function midtransPayment(array $data, Invoice $invoice){
+//        dd($data);
         $items = [];
         foreach ($invoice->products as $product){
             $items[] = [
@@ -320,6 +319,17 @@ class InvoiceService extends Service
                 'price' => $product->price,
                 'quantity' => $product->pivot->qty,
                 'subtotal' => $product->pivot->ammount,
+            ];
+        }
+
+        if ($data['taxId'] != null){
+            $tax = $this->taxRepository->find($data['taxId']);
+            $items[] = [
+                'id' => $tax->id,
+                'name' => $tax->taxName.' ~ '.$tax->percentage.'%',
+                'price' => $data['totalTax'],
+                'quantity' => 1,
+                'subtotal' => $data['totalTax'],
             ];
         }
 
@@ -440,10 +450,15 @@ class InvoiceService extends Service
 
     public function uncollectible(Invoice $invoice)
     {
-        $status = $this->getPaymentDetail($invoice->invoiceNumber)->transaction_status;
-        if ($status == 'pending' || $status == 'challenge'){
-            Transaction::cancel($invoice->invoiceNumber);
+        try {
+            $status = $this->getPaymentDetail($invoice->invoiceNumber)->transaction_status;
+            if ($status == 'pending' || $status == 'challenge'){
+                Transaction::cancel($invoice->invoiceNumber);
+            }
+        }catch (Exception $e){
+            Log::error('Error in someMethod: ' . $e->getMessage());
         }
+
         $invoice->update(['status' => 'Uncollectible']);
 
         $playerName = $this->getUserFullName($invoice->receiverUser);
