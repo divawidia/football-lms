@@ -203,6 +203,12 @@
   margin-top: 20px;
 }
 
+#container {
+  overflow: hidden;
+  width: 300px;
+  height: 300px;
+}
+
 @media (min-width: 1200px) {
   .layout-app .container-fluid, .layout-app .container-lg, .layout-app .container-md, .layout-app .container-sm, .layout-app .container-xl {
     padding-left: 2rem;

@@ -1,6 +1,6 @@
 <div class="mdk-drawer js-mdk-drawer" id="default-drawer">
     <div class="mdk-drawer__content">
-        <div class="sidebar sidebar-dark-pickled-bluewood sidebar-left" data-perfect-scrollbar>
+        <div class="sidebar sidebar-dark-pickled-bluewood sidebar-left">
             <!-- Sidebar Content -->
 
             <div class="d-flex align-items-center navbar-height">

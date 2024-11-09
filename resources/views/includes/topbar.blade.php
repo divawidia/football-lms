@@ -45,9 +45,7 @@
                     <i class="material-icons">notifications_none</i>
                 @endif
             </button>
-            <div class="dropdown-menu dropdown-menu-right">
-                <div data-perfect-scrollbar
-                     class="position-relative">
+            <div class="dropdown-menu dropdown-menu-right" id="container">
                     <div class="dropdown-header"><strong>System notifications</strong></div>
                     <div class="list-group list-group-flush mb-0">
                         @if(auth()->user()->unreadNotifications->count() > 0)
@@ -74,7 +72,6 @@
                             </a>
                         @endif
                     </div>
-                </div>
             </div>
         </div>
         <!-- // END Notifications dropdown -->
