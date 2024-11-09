@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Player;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Notifications\InvoiceGeneratedAdmin;
 use App\Notifications\InvoiceGeneratedPlayer;
 use App\Notifications\SubscriptionCreatedAdmin;
@@ -134,15 +136,53 @@ class SubscriptionService extends Service
                 return $this->convertToDatetime($item->updated_at);
             })
             ->editColumn('status', function ($item) {
-                $badge = '';
-                if ($item->status == 'scheduled') {
-                    $badge = '<span class="badge badge-pill badge-success">Scheduled</span>';
-                } elseif ($item->status == 'unsubscribed') {
-                    $badge = '<span class="badge badge-pill badge-danger">Unsubscribed</span>';
+                if ($item->status == 'Scheduled') {
+                    $badge = '<span class="badge badge-pill badge-success">'.$item->status.'</span>';
+                } elseif ($item->status == 'Unsubscribed') {
+                    $badge = '<span class="badge badge-pill badge-danger">'.$item->status.'</span>';
+                } else {
+                    $badge = '<span class="badge badge-pill badge-warning">'.$item->status.'</span>';
                 }
                 return $badge;
             })
             ->rawColumns(['action', 'email', 'name', 'product', 'amountDue', 'startDate', 'nextDueDate', 'status', 'createdAt', 'updatedAt'])
+            ->addIndexColumn()
+            ->make();
+    }
+
+    public function playerIndex(User $user)
+    {
+        $data = $user->subscriptions;
+        return Datatables::of($data)
+            ->editColumn('product', function ($item) {
+                return $item->product->productName;
+            })
+            ->editColumn('amountDue', function ($item) {
+                return $this->priceFormat($item->ammountDue);
+            })
+            ->editColumn('startDate', function ($item) {
+                return $this->convertToDatetime($item->startDate);
+            })
+            ->editColumn('nextDueDate', function ($item) {
+                return $this->convertToDatetime($item->nextDueDate);
+            })
+            ->editColumn('createdAt', function ($item) {
+                return $this->convertToDatetime($item->created_at);
+            })
+            ->editColumn('updatedAt', function ($item) {
+                return $this->convertToDatetime($item->updated_at);
+            })
+            ->editColumn('status', function ($item) {
+                if ($item->status == 'Scheduled') {
+                    $badge = '<span class="badge badge-pill badge-success">'.$item->status.'</span>';
+                } elseif ($item->status == 'Unsubscribed') {
+                    $badge = '<span class="badge badge-pill badge-danger">'.$item->status.'</span>';
+                } else {
+                    $badge = '<span class="badge badge-pill badge-warning">'.$item->status.'</span>';
+                }
+                return $badge;
+            })
+            ->rawColumns(['product', 'amountDue', 'startDate', 'nextDueDate', 'status', 'createdAt', 'updatedAt'])
             ->addIndexColumn()
             ->make();
     }
