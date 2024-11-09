@@ -55,7 +55,7 @@
                         <div class="form-group col-lg-5">
                             <label class="form-label" for="productId">Product</label>
                             <small class="text-danger">*</small>
-                            <select class="form-control form-select product-select" id="productId" name="productId" required>
+                            <select class="form-control form-select product-select" id="productId" name="productId" required data-toggle="select">
 {{--                                <option disabled selected>Select subscriptions product</option>--}}
 {{--                                @foreach($products AS $product)--}}
 {{--                                    <option value="{{ $product->id }}" @selected( old('products[1][productId]') )>--}}

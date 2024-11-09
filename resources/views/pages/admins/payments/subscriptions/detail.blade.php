@@ -86,10 +86,12 @@
             <div class="card-body flex-column">
                 <div class="d-flex align-items-center">
                     <div class="p-2"><p class="card-title mb-4pt">Subscription Status :</p></div>
-                    @if ($data['subscription']->status == 'scheduled')
-                        <span class="ml-auto p-2 badge badge-pill badge-success">Scheduled</span>
-                    @elseif($data['subscription']->status == 'unsubscribed')
-                        <span class="ml-auto p-2 badge badge-pill badge-danger">Unsubscribed</span>
+                    @if ($data['subscription']->status == 'Scheduled')
+                        <span class="ml-auto p-2 badge badge-pill badge-success">{{ $data['subscription']->status }}</span>
+                    @elseif($data['subscription']->status == 'Unsubscribed')
+                        <span class="ml-auto p-2 badge badge-pill badge-danger">{{ $data['subscription']->status }}</span>
+                    @else
+                        <span class="ml-auto p-2 badge badge-pill badge-warning">{{ $data['subscription']->status }}</span>
                     @endif
                 </div>
                 <div class="d-flex align-items-center border-bottom">

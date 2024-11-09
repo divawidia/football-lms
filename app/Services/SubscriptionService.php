@@ -316,7 +316,6 @@ class SubscriptionService extends Service
         $data = [];
         $data['startDate'] = $this->getNowDate();
         $data['ammountDue'] = $ammount;
-        $data['status'] = 'scheduled';
         $data['userId'] = $userId;
         $data['productId'] = $productId;
         $data['taxId'] = $taxId;
@@ -340,9 +339,9 @@ class SubscriptionService extends Service
         return $this->subscriptionRepository->create($data);
     }
 
-    public function scheduled(Subscription $subscription, $creatorUserId, $academyId)
+    public function scheduled(Subscription $subscription, $creatorUserId = null, $academyId = null)
     {
-        $subscription->update(['status' => 'scheduled']);
+        $subscription->update(['status' => 'Scheduled']);
 
         //create new invoice if the time where the subscription is set to scheduled is after the next due date
         if ($this->getNowDate() > $subscription->nextDueDate) {
@@ -352,7 +351,7 @@ class SubscriptionService extends Service
 
     public function unsubscribed(Subscription $subscription)
     {
-        return $subscription->update(['status' => 'unsubscribed']);
+        return $subscription->update(['status' => 'Unsubscribed']);
     }
 
     public function createNewInvoice(Subscription $subscription, $creatorUserId, $academyId)

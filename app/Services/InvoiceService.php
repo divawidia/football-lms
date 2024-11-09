@@ -8,8 +8,6 @@ use App\Notifications\InvoiceArchivedAdmin;
 use App\Notifications\InvoiceArchivedPlayer;
 use App\Notifications\InvoiceGeneratedAdmin;
 use App\Notifications\InvoiceGeneratedPlayer;
-use App\Notifications\InvoiceOpenAdmin;
-use App\Notifications\InvoiceOpenPlayer;
 use App\Notifications\InvoicePaidAdmin;
 use App\Notifications\InvoicePaidPlayer;
 use App\Notifications\InvoicePastDueAdmin;
@@ -21,6 +19,7 @@ use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
+use App\Services\SubscriptionService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
@@ -37,6 +36,7 @@ class InvoiceService extends Service
     private UserRepository $userRepository;
     private InvoiceRepository $invoiceRepository;
     private SubscriptionRepository $subscriptionRepository;
+    private SubscriptionService $subscriptionService;
     private Invoice $invoice;
     public function __construct(
         ProductRepository $productRepository,
@@ -44,7 +44,8 @@ class InvoiceService extends Service
         UserRepository $userRepository,
         Invoice $invoice,
         InvoiceRepository $invoiceRepository,
-        SubscriptionRepository $subscriptionRepository)
+        SubscriptionRepository $subscriptionRepository,
+        SubscriptionService $subscriptionService)
     {
         Config::$serverKey    = config('services.midtrans.serverKey');
         Config::$isProduction = config('services.midtrans.isProduction');
@@ -57,6 +58,7 @@ class InvoiceService extends Service
         $this->invoice = $invoice;
         $this->invoiceRepository = $invoiceRepository;
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->subscriptionService = $subscriptionService;
     }
     public function index()
     {
@@ -430,21 +432,19 @@ class InvoiceService extends Service
     {
         $paymentDetails = $this->getPaymentDetail($invoice->invoiceNumber);
         $playerName = $this->getUserFullName($invoice->receiverUser);
+        $subscription = $invoice->subscriptions()->first();
 
         $invoice->update([
             'status' => 'Paid',
             'paymentMethod' => $paymentDetails->payment_type,
         ]);
 
-        $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePaidPlayer(
-            $invoice,
-            $playerName
-        ));
+        if ($subscription != null){
+            $this->subscriptionService->scheduled($subscription);
+        }
 
-        Notification::send($this->getAllAdminUsers(), new InvoicePaidAdmin(
-            $invoice,
-            $playerName,
-        ));
+        $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePaidPlayer($invoice, $playerName));
+        Notification::send($this->getAllAdminUsers(), new InvoicePaidAdmin($invoice, $playerName,));
         return $invoice;
     }
 
