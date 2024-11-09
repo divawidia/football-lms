@@ -28,7 +28,9 @@ use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\PerformanceReportController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\UserController;
+use App\Mail\JustTesting;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,6 +53,10 @@ Route::middleware('prevent.back.history')->group(function (){
 });
 
 Route::group(['middleware' => ['auth']], function () {
+    Route::get('/send-mail', function () {
+        Mail::to('wiartha2001@gmail.com')->send(new JustTesting());
+        return 'A message has been sent to Mailtrap!';
+    });
 
     Route::prefix('edit-account')->group(function () {
         Route::get('', [UserController::class, 'edit'])->name('edit-account.edit');
