@@ -71,6 +71,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('', [AcademyController::class, 'update'])->name('edit-academy.update');
     });
     Route::patch('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::get('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
     Route::group(['middleware' => ['role:Super-Admin,web']], function () {
 //        Route::prefix('admin')->group(function () {

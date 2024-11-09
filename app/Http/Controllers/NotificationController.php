@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+
 class NotificationController extends Controller
 {
     public function markAsRead($id)
@@ -14,5 +16,11 @@ class NotificationController extends Controller
         }
 
         return response()->json(['status' => 'error', 'message' => 'Notification not found'], 404);
+    }
+
+    public function markAllAsRead()
+    {
+        auth()->user()->unreadNotifications->markAsRead();
+        return redirect()->back();
     }
 }

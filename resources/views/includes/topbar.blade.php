@@ -46,7 +46,12 @@
                 @endif
             </button>
             <div class="dropdown-menu dropdown-menu-right" id="container">
-                    <div class="dropdown-header"><strong>System notifications</strong></div>
+                    <div class="dropdown-header d-flex justify-content-center py-3 border-bottom">
+                        <strong class="h5">System notifications</strong>
+                        <div class="ml-auto">
+                            <a href="{{ route('notifications.markAllAsRead') }}" class="btn btn-sm btn-primary">Mark All as Read</a>
+                        </div>
+                    </div>
                     <div class="list-group list-group-flush mb-0">
                         @if(auth()->user()->unreadNotifications->count() > 0)
                             @foreach (auth()->user()->unreadNotifications as $notification)
@@ -118,6 +123,5 @@
                 }
             });
         });
-
     </script>
 @endpush
