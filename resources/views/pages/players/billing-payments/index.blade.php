@@ -48,7 +48,7 @@
         <div class="page-separator">
             <div class="page-separator__text">Invoice Histories</div>
         </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+        <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="invoicesTable">
@@ -62,6 +62,33 @@
                             <th>Created At</th>
                             <th>Last Updated</th>
                             <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-separator">
+            <div class="page-separator__text">Subscriptions</div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="subscriptionsTable">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th>Cycle</th>
+                            <th>Status</th>
+                            <th>Start Date</th>
+                            <th>Next Due Date</th>
+                            <th>Amount Due</th>
+                            <th>Created At</th>
+                            <th>Last Updated</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -97,6 +124,26 @@
                         searchable: false,
                         width: '20%'
                     },
+                ]
+            });
+
+            $('#subscriptionsTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! url()->route('billing-and-payments.subscriptions') !!}',
+                },
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'product', name: 'product'},
+                    {data: 'cycle', name: 'cycle'},
+                    {data: 'status', name: 'status'},
+                    {data: 'startDate', name: 'startDate'},
+                    {data: 'nextDueDate', name: 'nextDueDate'},
+                    {data: 'amountDue', name: 'amountDue'},
+                    {data: 'createdAt', name: 'createdAt'},
+                    {data: 'updatedAt', name: 'updatedAt'},
                 ]
             });
         });
