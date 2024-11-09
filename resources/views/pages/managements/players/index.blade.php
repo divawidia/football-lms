@@ -40,7 +40,7 @@
                 Add New Player
             </a>
         @endif
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+        <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="table">
