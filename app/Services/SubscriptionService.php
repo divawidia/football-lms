@@ -301,7 +301,8 @@ class SubscriptionService extends Service
         $this->invoiceService->midtransPayment($data, $invoice);
 
         $playerName = $this->getUserFullName($invoice->receiverUser);
-        $allAdmins = $this->invoiceService->getAllAdminUsers();
+        $allAdmins = $this->userRepository->getAllAdminUsers();
+
         $this->userRepository->find($data['receiverUserId'])->notify(new InvoiceGeneratedPlayer($invoice, $playerName));
         $this->userRepository->find($data['receiverUserId'])->notify(new SubscriptionCreatedPlayer($invoice, $subscription, $playerName));
         Notification::send($allAdmins, new InvoiceGeneratedAdmin($invoice, $playerName));
@@ -402,7 +403,7 @@ class SubscriptionService extends Service
         $this->invoiceService->midtransPayment($data, $invoice);
 
         $playerName = $this->getUserFullName($invoice->receiverUser);
-        $allAdmins = $this->invoiceService->getAllAdminUsers();
+        $allAdmins = $this->userRepository->getAllAdminUsers();
         $this->userRepository->find($data['receiverUserId'])->notify(new InvoiceGeneratedPlayer($invoice, $playerName));
         $this->userRepository->find($data['receiverUserId'])->notify(new SubscriptionRenewedPlayer($invoice, $subscription, $playerName));
         Notification::send($allAdmins, new InvoiceGeneratedAdmin($invoice, $playerName));

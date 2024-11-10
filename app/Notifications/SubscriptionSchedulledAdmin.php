@@ -10,15 +10,13 @@ use Illuminate\Notifications\Notification;
 class SubscriptionSchedulledAdmin extends Notification
 {
     use Queueable;
-    protected $invoice;
     protected $subscription;
     protected $playerName;
     /**
      * Create a new notification instance.
      */
-    public function __construct($invoice, $subscription, $playerName)
+    public function __construct($subscription, $playerName)
     {
-        $this->invoice = $invoice;
         $this->subscription = $subscription;
         $this->playerName = $playerName;
     }

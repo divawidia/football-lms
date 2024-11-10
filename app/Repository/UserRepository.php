@@ -26,6 +26,11 @@ class UserRepository
         return $this->user->role($role)->get();
     }
 
+    public function getAllAdminUsers()
+    {
+        return $this->getAllByRole(['admin', 'Super-Admin']);
+    }
+
     public function find($id)
     {
         return $this->user->findOrFail($id);

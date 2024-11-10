@@ -213,13 +213,8 @@ class InvoiceService extends Service
         $playerName = $this->getUserFullName($invoice->receiverUser);
 
         $this->userRepository->find($data['receiverUserId'])->notify(new InvoiceGeneratedPlayer($invoice, $playerName));
-        Notification::send($this->getAllAdminUsers(), new InvoiceGeneratedAdmin($invoice, $playerName));
+        Notification::send($this->userRepository->getAllAdminUsers(), new InvoiceGeneratedAdmin($invoice, $playerName));
         return $invoice;
-    }
-
-    public function getAllAdminUsers()
-    {
-        return $this->userRepository->getAllByRole(['admin', 'Super-Admin']);
     }
 
     public function calculateProductAmount(int $qty, $productId){
@@ -440,12 +435,12 @@ class InvoiceService extends Service
 
         if ($subscription != null){
             $subscription->update(['status' => 'Scheduled']);
-            $user->notify(new SubscriptionSchedulledPlayer($invoice, $subscription, $playerName));
-            Notification::send($this->getAllAdminUsers(), new SubscriptionSchedulledAdmin($invoice, $subscription, $playerName));
+            $user->notify(new SubscriptionSchedulledPlayer($subscription, $playerName));
+            Notification::send($this->userRepository->getAllAdminUsers(), new SubscriptionSchedulledAdmin($subscription, $playerName));
         }
 
         $user->notify(new InvoicePaidPlayer($invoice, $playerName));
-        Notification::send($this->getAllAdminUsers(), new InvoicePaidAdmin($invoice, $playerName));
+        Notification::send($this->userRepository->getAllAdminUsers(), new InvoicePaidAdmin($invoice, $playerName));
         return $invoice;
     }
 
@@ -467,7 +462,7 @@ class InvoiceService extends Service
             $invoice,
             $playerName
         ));
-        Notification::send($this->getAllAdminUsers(), new InvoiceUncollectibleAdmin(
+        Notification::send($this->userRepository->getAllAdminUsers(), new InvoiceUncollectibleAdmin(
             $invoice,
             $playerName,
         ));
@@ -525,7 +520,7 @@ class InvoiceService extends Service
             $invoice,
             $playerName,
         ));
-        Notification::send($this->getAllAdminUsers(), new InvoicePastDueAdmin(
+        Notification::send($this->userRepository->getAllAdminUsers(), new InvoicePastDueAdmin(
             $invoice,
             $playerName,
         ));
@@ -540,7 +535,7 @@ class InvoiceService extends Service
             $invoice,
             $playerName,
         ));
-        Notification::send($this->getAllAdminUsers(), new InvoiceArchivedAdmin(
+        Notification::send($this->userRepository->getAllAdminUsers(), new InvoiceArchivedAdmin(
             $invoice,
             $playerName,
         ));
