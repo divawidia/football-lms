@@ -1,27 +1,26 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Subscriptions;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionRenewedPlayer extends Notification
+class SubscriptionCreatedPlayer extends Notification
 {
     use Queueable;
-    protected $productName;
+    protected $invoice;
+    protected $subscription;
     protected $playerName;
-    protected $invoiceNumber;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($productName, $playerName, $invoiceNumber)
+    public function __construct($invoice, $subscription, $playerName)
     {
-        $this->productName = $productName;
+        $this->invoice = $invoice;
+        $this->subscription = $subscription;
         $this->playerName = $playerName;
-        $this->invoiceNumber = $invoiceNumber;
     }
 
     /**
@@ -31,7 +30,7 @@ class SubscriptionRenewedPlayer extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -40,12 +39,11 @@ class SubscriptionRenewedPlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("{$this->productName} subscription renewed")
+            ->subject("Your {$this->subscription->product->productName} subscription created")
             ->greeting("Hello, {$this->playerName}!")
-            ->line('Your subscription has been successfully created.')
-            ->line("Subscription : {$this->productName}")
+            ->line("Your subscription for {$this->subscription->product->productName} has been successfully created.")
             ->action('View Subscription at', url()->route('billing-and-payments.index'))
-            ->line('Please pay your invoice #'.$this->invoiceNumber.' to activate your subscription')
+            ->line("Please pay your invoice #{$this->invoice->invoiceNumber} as soon as possible to activate your subscription")
             ->line('Keep up the great work in the academy!');
     }
 
@@ -57,7 +55,7 @@ class SubscriptionRenewedPlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'Your subscription of '.$this->productName.' has been renewed.',
+            'data' =>'Your Subscription of '.$this->subscription->product->productName.' has been created. Please pay your invoice #'.$this->invoice->invoiceNumber.' as soon as possible to activate your subscription status!',
             'redirectRoute' => route('billing-and-payments.index')
         ];
     }

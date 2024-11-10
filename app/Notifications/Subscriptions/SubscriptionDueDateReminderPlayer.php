@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Subscriptions;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionSchedulledPlayer extends Notification
+class SubscriptionDueDateReminderPlayer extends Notification
 {
     use Queueable;
     protected $subscription;
@@ -37,12 +36,12 @@ class SubscriptionSchedulledPlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Subscription for {$this->subscription->product->productName} Activated")
-            ->greeting('Hello, ' . $this->playerName)
-            ->line("We are pleased to inform you that your subscription invoice for {$this->subscription->product->productName} has been successfully paid.")
-            ->line('Your subscription is now active and ready to use.')
+            ->subject("Academy Subscription for {$this->subscription->product->productName} Due Date Reminder")
+            ->greeting("Hello, {$this->playerName}")
+            ->line("This is a reminder that your academy subscription for {$this->subscription->product->productName} is due on ".convertToDatetime($this->subscription->nextDueDate))
+            ->line('Please ensure to pay your subscription fee after the invoice sent to you.')
             ->action('View Subscription', route('billing-and-payments'))
-            ->line('Thank you for choosing our Football Academy!');
+            ->line('Thank you for being part of our football academy!');
     }
 
     /**
@@ -53,7 +52,7 @@ class SubscriptionSchedulledPlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' => 'Your subscription for '.$this->subscription->product->productName.' has been scheduled.',
+            'data' => 'Your academy subscription is due on ' . convertToDatetime($this->subscription->nextDueDate) . '. Please ensure to pay your subscription fee after the invoice sent to you.',
             'redirectRoute' => route('billing-and-payments')
         ];
     }

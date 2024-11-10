@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Invoices;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvoiceUncollectibleAdmin extends Notification
+class InvoicePaidPlayer extends Notification
 {
     use Queueable;
     protected $invoice;
@@ -37,15 +36,15 @@ class InvoiceUncollectibleAdmin extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Invoice #{$this->invoice->invoiceNumber} Marked as Uncollectible for {$this->playerName}")
-            ->greeting("Hello {$notifiable->name},")
-            ->line("The following player’s invoice has been marked as uncollectible.")
-            ->line("Player : {$this->playerName}")
+            ->subject('Invoice Payment Confirmation')
+            ->greeting("Hello {$this->playerName},")
+            ->line("Thank you for your payment! We have received payment for your invoice #{$this->invoice->invoiceNumber}.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
-            ->line("Original Amount Due: ".priceFormat($this->invoice->ammountDue))
-            ->line("Status: Uncollectible")
-            ->line('You can review the invoice details and take any necessary actions in the invoices page.')
-            ->action('View Invoice Details', url()->route('invoices.show', $this->invoice->id))
+            ->line("Amount Paid: ".priceFormat($this->invoice->ammountDue))
+            ->line("Payment Date: " . now()->toFormattedDateString())
+            ->line('Your payment has been successfully processed. You can view the payment details and download a receipt from your account.')
+            ->action('View Payment Details', url()->route('billing-and-payments.show', $this->invoice->id))
+            ->line('If you have any questions, feel free to reach out to our support team.')
             ->line('Thank you!');
 
     }
@@ -58,8 +57,8 @@ class InvoiceUncollectibleAdmin extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'The invoice #'.$this->invoice->invoiceNumber.' for player '.$this->playerName.' has been marked as uncollectible. Click here to see the invoice!',
-            'redirectRoute' => route('invoices.show', ['invoice' => $this->invoice->id])
+            'data' =>'Thank you! Your payment for Invoice #'.$this->invoice->invoiceNumber.' has been successfully processed.',
+            'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoice->id])
         ];
     }
 }

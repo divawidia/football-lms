@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Invoices;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvoicePastDuePlayer extends Notification
+class InvoiceDueSoon extends Notification
 {
     use Queueable;
     protected $invoice;
@@ -37,16 +36,13 @@ class InvoicePastDuePlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Invoice #{$this->invoice->invoiceNumber} is Past Due")
+            ->subject("Invoice #{$this->invoice->invoiceNumber} is Due Soon")
             ->greeting("Hello {$this->playerName},")
-            ->line("Your invoice #{$this->invoice->invoiceNumber} is now past due.")
+            ->line("This is a friendly reminder that your invoice is due soon. Please ensure payment is made on time.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
             ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
-            ->action('View Payment Details', route('billing-and-payments.show', $this->invoice->id))
-            ->line('Please reach our admins to recreate the invoice to settle the payment at your earliest convenience.')
-            ->line('If you have any questions, feel free to reach out to our support team.')
-            ->line('Thank you!');
+            ->action('View Invoice', url()->route('billing-and-payments.show', $this->invoice->id));
     }
 
     /**
@@ -57,7 +53,7 @@ class InvoicePastDuePlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Your invoice #'.$this->invoice->invoiceNumber.' is now past due at '.convertToDatetime($this->invoice->dueDate).'. Please reach our admins to recreate the invoice to settle the payment at your earliest convenience. Click here to see the invoice!',
+            'data' =>'Your invoice #'.$this->invoice->invoiceNumber.' is due soon. Please complete your payment before the due date at '.convertToDatetime($this->invoice->dueDate).' to avoid late payment.',
             'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoice->id])
         ];
     }

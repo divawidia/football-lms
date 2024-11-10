@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Invoices;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvoiceArchivedPlayer extends Notification
+class InvoicePastDueAdmin extends Notification
 {
     use Queueable;
     protected $invoice;
@@ -37,14 +36,14 @@ class InvoiceArchivedPlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Invoice #{$this->invoice->invoiceNumber} Archived Notification")
-            ->greeting("Hello {$this->playerName},")
-            ->line("Your invoice #{$this->invoice->invoiceNumber} has been archived by our team.")
+            ->subject("Invoice #{$this->invoice->invoiceNumber} is Past Due for Player ($this->playerName)")
+            ->greeting("Hello Admins,")
+            ->line("An invoice #{$this->invoice->invoiceNumber} is now past due.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
             ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
-            ->action('View Payment Details', url()->route('billing-and-payments.show', $this->invoice->id))
-            ->line('If you have any questions, please feel free to contact us.')
+            ->action('View Invoice Details', route('invoices.show', $this->invoice->id))
+            ->line('Please follow up the player as necessary or take appropriate action.')
             ->line('Thank you!');
     }
 
@@ -56,8 +55,8 @@ class InvoiceArchivedPlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Your invoice #'.$this->invoice->invoiceNumber.' has been archived.',
-            'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoice->id])
+            'data' =>'Invoice #'.$this->invoice->invoiceNumber.' for player '.$this->playerName.' is now past due at '.convertToDatetime($this->invoice->dueDate).'. Please reach the player and recreate the invoice to settle the payment at the earliest convenience. Click here to see the invoice!',
+            'redirectRoute' => route('invoices.show', ['invoice' => $this->invoice->id])
         ];
     }
 }

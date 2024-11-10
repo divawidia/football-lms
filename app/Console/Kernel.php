@@ -7,11 +7,10 @@ use App\Console\Commands\EndCompetitionStatus;
 use App\Console\Commands\EndMatchStatus;
 use App\Console\Commands\SetPastDueInvoiceStatus;
 use App\Models\Invoice;
-use App\Notifications\InvoiceDueSoon;
+use App\Notifications\Invoices\InvoiceDueSoon;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {

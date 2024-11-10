@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Invoices;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvoiceDueSoon extends Notification
+class InvoiceUncollectibleAdmin extends Notification
 {
     use Queueable;
     protected $invoice;
@@ -37,13 +36,17 @@ class InvoiceDueSoon extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Invoice #{$this->invoice->invoiceNumber} is Due Soon")
-            ->greeting("Hello {$this->playerName},")
-            ->line("This is a friendly reminder that your invoice is due soon. Please ensure payment is made on time.")
+            ->subject("Invoice #{$this->invoice->invoiceNumber} Marked as Uncollectible for {$this->playerName}")
+            ->greeting("Hello {$notifiable->name},")
+            ->line("The following player’s invoice has been marked as uncollectible.")
+            ->line("Player : {$this->playerName}")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
-            ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
-            ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
-            ->action('View Invoice', url()->route('billing-and-payments.show', $this->invoice->id));
+            ->line("Original Amount Due: ".priceFormat($this->invoice->ammountDue))
+            ->line("Status: Uncollectible")
+            ->line('You can review the invoice details and take any necessary actions in the invoices page.')
+            ->action('View Invoice Details', url()->route('invoices.show', $this->invoice->id))
+            ->line('Thank you!');
+
     }
 
     /**
@@ -54,8 +57,8 @@ class InvoiceDueSoon extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Your invoice #'.$this->invoice->invoiceNumber.' is due soon. Please complete your payment before the due date at '.convertToDatetime($this->invoice->dueDate).' to avoid late payment.',
-            'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoice->id])
+            'data' =>'The invoice #'.$this->invoice->invoiceNumber.' for player '.$this->playerName.' has been marked as uncollectible. Click here to see the invoice!',
+            'redirectRoute' => route('invoices.show', ['invoice' => $this->invoice->id])
         ];
     }
 }

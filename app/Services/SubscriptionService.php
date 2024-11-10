@@ -4,12 +4,12 @@ namespace App\Services;
 
 use App\Models\Subscription;
 use App\Models\User;
-use App\Notifications\InvoiceGeneratedAdmin;
-use App\Notifications\InvoiceGeneratedPlayer;
-use App\Notifications\SubscriptionCreatedAdmin;
-use App\Notifications\SubscriptionCreatedPlayer;
-use App\Notifications\SubscriptionRenewedAdmin;
-use App\Notifications\SubscriptionRenewedPlayer;
+use App\Notifications\Invoices\InvoiceGeneratedAdmin;
+use App\Notifications\Invoices\InvoiceGeneratedPlayer;
+use App\Notifications\Subscriptions\SubscriptionCreatedAdmin;
+use App\Notifications\Subscriptions\SubscriptionCreatedPlayer;
+use App\Notifications\Subscriptions\SubscriptionRenewedAdmin;
+use App\Notifications\Subscriptions\SubscriptionRenewedPlayer;
 use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
