@@ -43,7 +43,7 @@ class SubscriptionRenewedPlayer extends Notification
             ->greeting("Hello, {$this->playerName}!")
             ->line('Your subscription has been successfully created.')
             ->line("Subscription : {$this->productName}")
-            ->action('View Subscription at', url()->route('billing-and-payments.index'))
+            ->action('View Subscription at', route('billing-and-payments.index'))
             ->line('Please pay your invoice #'.$this->invoiceNumber.' to activate your subscription')
             ->line('Keep up the great work in the academy!');
     }

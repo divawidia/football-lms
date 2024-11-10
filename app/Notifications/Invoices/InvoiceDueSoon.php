@@ -42,7 +42,7 @@ class InvoiceDueSoon extends Notification
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
             ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
-            ->action('View Invoice', url()->route('billing-and-payments.show', $this->invoice->id));
+            ->action('View Invoice', route('billing-and-payments.show', $this->invoice->id));
     }
 
     /**

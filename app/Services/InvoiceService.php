@@ -16,6 +16,8 @@ use App\Notifications\Invoices\InvoiceUncollectibleAdmin;
 use App\Notifications\Invoices\InvoiceUncollectiblePlayer;
 use App\Notifications\Subscriptions\SubscriptionSchedulledAdmin;
 use App\Notifications\Subscriptions\SubscriptionSchedulledPlayer;
+use App\Notifications\Subscriptions\SubscriptionUnsubscribeAdmin;
+use App\Notifications\Subscriptions\SubscriptionUnsubscribePlayer;
 use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
@@ -516,6 +518,15 @@ class InvoiceService extends Service
         $invoice->update(['status' => 'Past Due']);
 
         $playerName = $this->getUserFullName($invoice->receiverUser);
+        $subscription = $invoice->subscriptions()->first();
+        $user = $this->userRepository->find($invoice->receiverUserId);
+
+        if ($subscription != null){
+            $subscription->update(['status' => 'Unsubscribed']);
+            $user->notify(new SubscriptionUnsubscribePlayer($subscription, $playerName));
+            Notification::send($this->userRepository->getAllAdminUsers(), new SubscriptionUnsubscribeAdmin($subscription, $playerName));
+        }
+
         $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePastDuePlayer(
             $invoice,
             $playerName,

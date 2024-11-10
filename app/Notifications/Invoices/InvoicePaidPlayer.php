@@ -43,7 +43,7 @@ class InvoicePaidPlayer extends Notification
             ->line("Amount Paid: ".priceFormat($this->invoice->ammountDue))
             ->line("Payment Date: " . now()->toFormattedDateString())
             ->line('Your payment has been successfully processed. You can view the payment details and download a receipt from your account.')
-            ->action('View Payment Details', url()->route('billing-and-payments.show', $this->invoice->id))
+            ->action('View Payment Details', route('billing-and-payments.show', $this->invoice->id))
             ->line('If you have any questions, feel free to reach out to our support team.')
             ->line('Thank you!');
 

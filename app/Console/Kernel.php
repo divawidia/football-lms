@@ -7,10 +7,14 @@ use App\Console\Commands\EndCompetitionStatus;
 use App\Console\Commands\EndMatchStatus;
 use App\Console\Commands\SetPastDueInvoiceStatus;
 use App\Models\Invoice;
+use App\Models\Subscription;
 use App\Notifications\Invoices\InvoiceDueSoon;
+use App\Notifications\Subscriptions\SubscriptionDueDateReminderAdmin;
+use App\Notifications\Subscriptions\SubscriptionDueDateReminderPlayer;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Notification;
 
 class Kernel extends ConsoleKernel
 {
@@ -25,18 +29,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-         $schedule->command('update:training-status-data')->everyMinute();
-         $schedule->command('update:end-match-status')->everyMinute();
-         $schedule->command('update:end-competition-status')->everyMinute();
-         $schedule->command('update:set-past-due-invoice-status')->everyMinute();
-
-        $schedule->call(function () {
-            $invoices = Invoice::where('dueDate', '=', Carbon::now()->addHour())->where('status', 'Open')->get();
-            foreach ($invoices as $invoice) {
-                $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
-                $invoice->receiverUser->notify(new InvoiceDueSoon($invoice, $playerName));
-            }
-        })->everyMinute();
+        $schedule->command('update:training-status-data')->everyMinute();
+        $schedule->command('update:end-match-status')->everyMinute();
+        $schedule->command('update:end-competition-status')->everyMinute();
+        $schedule->command('update:set-past-due-invoice-status')->everyMinute();
+        $schedule->command('update:invoice-due-soon-notification')->everyMinute();
+        $schedule->command('update:subscription-due-soon-notification')->everyMinute();
     }
 
     /**

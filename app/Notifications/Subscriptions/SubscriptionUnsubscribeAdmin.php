@@ -9,18 +9,16 @@ use Illuminate\Notifications\Notification;
 class SubscriptionUnsubscribeAdmin extends Notification
 {
     use Queueable;
-    protected $productName;
+    protected $subscription;
     protected $playerName;
-    protected $subscriptionId;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($productName, $playerName, $subscriptionId)
+    public function __construct($subscription, $playerName)
     {
-        $this->productName = $productName;
+        $this->subscription = $subscription;
         $this->playerName = $playerName;
-        $this->subscriptionId = $subscriptionId;
     }
 
     /**
@@ -30,7 +28,7 @@ class SubscriptionUnsubscribeAdmin extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -40,10 +38,10 @@ class SubscriptionUnsubscribeAdmin extends Notification
     {
         return (new MailMessage)
             ->subject("Player Subscription Lapsed: {$this->playerName}")
-            ->greeting("Dear, admin!")
-            ->line("The {$this->productName} subscription for {$this->playerName} has ended.")
+            ->greeting("Dear Admins,")
+            ->line("The subscription for {$this->subscription->product->productName} has ended.")
             ->line("The player no longer has access to our resources and sessions")
-            ->action('View Subscription at', url()->route('subscriptions.show', $this->subscriptionId))
+            ->action('View Subscription at', route('subscriptions.show', $this->subscription->id))
             ->line('Please follow up if necessary to assist with a renewal if the player wishes to continue.');
     }
 
@@ -55,8 +53,8 @@ class SubscriptionUnsubscribeAdmin extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => '⚠️ Alert: The '.$this->productName.' subscription for '.$this->playerName.' has ended. They no longer have access to training resources and sessions. Consider following up if they may be interested in renewing.',
-            'redirectRoute' => route('subscriptions.show', $this->subscriptionId)
+            'message' => '⚠️ Alert: The player'.$this->playerName.' subscriptions for '.$this->subscription->product->productName.' has ended. They no longer have access to training resources and sessions. Consider following up if they may be interested in renewing.',
+            'redirectRoute' => route('subscriptions.show', $this->subscription->id)
         ];
     }
 }

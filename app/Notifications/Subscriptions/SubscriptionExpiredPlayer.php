@@ -45,7 +45,7 @@ class SubscriptionExpiredPlayer extends Notification
             ->greeting("Hello, {$this->playerName}!")
             ->line('Just a quick reminder that your subscription of '.$this->productName.' will be due on '.$this->dueDate.'.')
             ->line('Please ensure that your payment is completed to continue enjoying uninterrupted access to all our facilities and training resources')
-            ->action('View Subscription at', url()->route('billing-and-payments.index'))
+            ->action('View Subscription at', route('billing-and-payments.index'))
             ->line('Please pay your invoice #'.$this->invoiceNumber.' to continue your subscription')
             ->line('Keep up the great work in the academy!');
     }

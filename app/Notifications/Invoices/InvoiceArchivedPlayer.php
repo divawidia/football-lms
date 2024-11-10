@@ -42,7 +42,7 @@ class InvoiceArchivedPlayer extends Notification
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
             ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
-            ->action('View Payment Details', url()->route('billing-and-payments.show', $this->invoice->id))
+            ->action('View Payment Details', route('billing-and-payments.show', $this->invoice->id))
             ->line('If you have any questions, please feel free to contact us.')
             ->line('Thank you!');
     }

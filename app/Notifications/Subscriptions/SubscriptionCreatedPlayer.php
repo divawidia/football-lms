@@ -42,7 +42,7 @@ class SubscriptionCreatedPlayer extends Notification
             ->subject("Your {$this->subscription->product->productName} subscription created")
             ->greeting("Hello, {$this->playerName}!")
             ->line("Your subscription for {$this->subscription->product->productName} has been successfully created.")
-            ->action('View Subscription at', url()->route('billing-and-payments.index'))
+            ->action('View Subscription at', route('billing-and-payments.index'))
             ->line("Please pay your invoice #{$this->invoice->invoiceNumber} as soon as possible to activate your subscription")
             ->line('Keep up the great work in the academy!');
     }

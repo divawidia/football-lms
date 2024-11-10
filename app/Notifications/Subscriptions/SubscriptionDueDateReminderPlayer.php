@@ -40,7 +40,7 @@ class SubscriptionDueDateReminderPlayer extends Notification
             ->greeting("Hello, {$this->playerName}")
             ->line("This is a reminder that your academy subscription for {$this->subscription->product->productName} is due on ".convertToDatetime($this->subscription->nextDueDate))
             ->line('Please ensure to pay your subscription fee after the invoice sent to you.')
-            ->action('View Subscription', route('billing-and-payments'))
+            ->action('View Subscription', route('billing-and-payments.index'))
             ->line('Thank you for being part of our football academy!');
     }
 
@@ -53,7 +53,7 @@ class SubscriptionDueDateReminderPlayer extends Notification
     {
         return [
             'data' => 'Your academy subscription is due on ' . convertToDatetime($this->subscription->nextDueDate) . '. Please ensure to pay your subscription fee after the invoice sent to you.',
-            'redirectRoute' => route('billing-and-payments')
+            'redirectRoute' => route('billing-and-payments.index')
         ];
     }
 }

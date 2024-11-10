@@ -9,14 +9,16 @@ use Illuminate\Notifications\Notification;
 class SubscriptionUnsubscribePlayer extends Notification
 {
     use Queueable;
-    protected $productName;
+    protected $subscription;
+    protected $playerName;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($productName)
+    public function __construct($subscription, $playerName)
     {
-        $this->productName = $productName;
+        $this->subscription = $subscription;
+        $this->playerName = $playerName;
     }
 
     /**
@@ -26,7 +28,7 @@ class SubscriptionUnsubscribePlayer extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -35,10 +37,11 @@ class SubscriptionUnsubscribePlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Your Subscription for {$this->productName} Has Ended")
-            ->greeting("Hello {$this->productName}, we wanted to let you know that your subscription for {$this->productName} has ended.")
+            ->subject("Your Subscription for {$this->subscription->product->productName} Has Ended")
+            ->greeting("Hello {$this->playerName},")
+            ->line("We wanted to let you know that your subscription for {$this->subscription->product->productName} has ended.")
             ->line('To continue accessing training resources, facilities, and sessions, please renew your subscription. Reach out if you need assistance with the renewal process!')
-            ->action('View Subscription at', url()->route('billing-and-payments.index'));
+            ->action('View Subscription at', route('billing-and-payments.index'));
     }
 
     /**
@@ -49,7 +52,7 @@ class SubscriptionUnsubscribePlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => '⛔ Subscription Ended: Your subscription for '.$this->productName.' has expired, and your access to our resources has been paused. Renew now to regain access to all training materials and sessions.',
+            'message' => '⛔ Subscription Ended: Your subscription for '.$this->subscription->product->productName.' has expired, and your access to our resources has been paused. Renew now to regain access to all training materials and sessions.',
             'redirectRoute' => route('billing-and-payments.index')
         ];
     }
