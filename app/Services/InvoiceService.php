@@ -14,6 +14,8 @@ use App\Notifications\InvoicePastDueAdmin;
 use App\Notifications\InvoicePastDuePlayer;
 use App\Notifications\InvoiceUncollectibleAdmin;
 use App\Notifications\InvoiceUncollectiblePlayer;
+use App\Notifications\SubscriptionSchedulledAdmin;
+use App\Notifications\SubscriptionSchedulledPlayer;
 use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
@@ -429,6 +431,7 @@ class InvoiceService extends Service
         $paymentDetails = $this->getPaymentDetail($invoice->invoiceNumber);
         $playerName = $this->getUserFullName($invoice->receiverUser);
         $subscription = $invoice->subscriptions()->first();
+        $user = $this->userRepository->find($invoice->receiverUserId);
 
         $invoice->update([
             'status' => 'Paid',
@@ -437,10 +440,12 @@ class InvoiceService extends Service
 
         if ($subscription != null){
             $subscription->update(['status' => 'Scheduled']);
+            $user->notify(new SubscriptionSchedulledPlayer($invoice, $subscription, $playerName));
+            Notification::send($this->getAllAdminUsers(), new SubscriptionSchedulledAdmin($invoice, $subscription, $playerName));
         }
 
-        $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePaidPlayer($invoice, $playerName));
-        Notification::send($this->getAllAdminUsers(), new InvoicePaidAdmin($invoice, $playerName,));
+        $user->notify(new InvoicePaidPlayer($invoice, $playerName));
+        Notification::send($this->getAllAdminUsers(), new InvoicePaidAdmin($invoice, $playerName));
         return $invoice;
     }
 
