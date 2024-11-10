@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Player;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Notifications\InvoiceGeneratedAdmin;
@@ -343,7 +342,7 @@ class SubscriptionService extends Service
     {
         $subscription->update(['status' => 'Scheduled']);
 
-        //create new invoice if the time where the subscription is set to scheduled is after the next due date
+        //create new invoice when where the subscription is set to scheduled is after the next due date
         if ($this->getNowDate() > $subscription->nextDueDate) {
             $this->createNewInvoice($subscription, $creatorUserId, $academyId);
         }

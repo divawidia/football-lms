@@ -19,7 +19,6 @@ use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
-use App\Services\SubscriptionService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
@@ -36,7 +35,6 @@ class InvoiceService extends Service
     private UserRepository $userRepository;
     private InvoiceRepository $invoiceRepository;
     private SubscriptionRepository $subscriptionRepository;
-    private SubscriptionService $subscriptionService;
     private Invoice $invoice;
     public function __construct(
         ProductRepository $productRepository,
@@ -44,8 +42,7 @@ class InvoiceService extends Service
         UserRepository $userRepository,
         Invoice $invoice,
         InvoiceRepository $invoiceRepository,
-        SubscriptionRepository $subscriptionRepository,
-        SubscriptionService $subscriptionService)
+        SubscriptionRepository $subscriptionRepository)
     {
         Config::$serverKey    = config('services.midtrans.serverKey');
         Config::$isProduction = config('services.midtrans.isProduction');
@@ -58,7 +55,6 @@ class InvoiceService extends Service
         $this->invoice = $invoice;
         $this->invoiceRepository = $invoiceRepository;
         $this->subscriptionRepository = $subscriptionRepository;
-        $this->subscriptionService = $subscriptionService;
     }
     public function index()
     {
@@ -440,7 +436,7 @@ class InvoiceService extends Service
         ]);
 
         if ($subscription != null){
-            $this->subscriptionService->scheduled($subscription);
+            $subscription->update(['status' => 'Scheduled']);
         }
 
         $this->userRepository->find($invoice->receiverUserId)->notify(new InvoicePaidPlayer($invoice, $playerName));
@@ -455,7 +451,7 @@ class InvoiceService extends Service
             if ($status == 'pending' || $status == 'challenge'){
                 Transaction::cancel($invoice->invoiceNumber);
             }
-        }catch (Exception $e){
+        } catch (Exception $e){
             Log::error('Error in someMethod: ' . $e->getMessage());
         }
 
@@ -492,9 +488,9 @@ class InvoiceService extends Service
 //            $invoice->invoiceNumber,
 //        ));
 
-        $adminUsers = $this->userRepository->getAllByRole('admin');
-        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
-        $adminName = $user->firstName.' '.$user->lastName;
+//        $adminUsers = $this->userRepository->getAllByRole('admin');
+//        $superAdminUsers = $this->userRepository->getAllByRole('Super-Admin');
+//        $adminName = $user->firstName.' '.$user->lastName;
 
 //        Notification::send($adminUsers, new InvoiceOpenAdmin(
 //            $adminName,

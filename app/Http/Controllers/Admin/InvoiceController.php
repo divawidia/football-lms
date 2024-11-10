@@ -5,10 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceRequest;
 use App\Models\Invoice;
-use App\Models\Product;
-use App\Models\Tax;
-use App\Models\Team;
-use App\Models\User;
 use App\Services\InvoiceService;
 use Exception;
 use Illuminate\Http\Request;
@@ -18,15 +14,8 @@ use RealRashid\SweetAlert\Facades\Alert;
 class InvoiceController extends Controller
 {
     private InvoiceService $invoiceService;
-    private Product $product;
-    private Tax $tax;
-    private User $user;
-
-    public function __construct(InvoiceService $invoiceService, Product $product, Tax $tax, User $user){
+    public function __construct(InvoiceService $invoiceService){
         $this->invoiceService = $invoiceService;
-        $this->product = $product;
-        $this->tax = $tax;
-        $this->user = $user;
     }
 
     /**
@@ -162,7 +151,7 @@ class InvoiceController extends Controller
     }
 
     public function setOpen(Invoice $invoice){
-        $loggedUser = $this->getLoggedUser();
+        $loggedUser = auth()->user()->getAuthIdentifier();
         try {
             $this->invoiceService->open($invoice, $loggedUser);
             return response()->json(['message' => 'Invoice status successfully mark to open!']);
