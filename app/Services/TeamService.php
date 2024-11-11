@@ -9,10 +9,9 @@ use App\Models\Team;
 use App\Models\TeamMatch;
 use App\Notifications\PlayerCoachAddToTeam;
 use App\Notifications\PlayerCoachRemoveToTeam;
+use App\Notifications\TeamsManagements\OpponentTeamUpdated;
 use App\Notifications\TeamsManagements\TeamCreatedDeleted;
 use App\Notifications\TeamsManagements\TeamUpdated;
-use App\Repository\CoachRepository;
-use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
@@ -28,9 +27,7 @@ class TeamService extends Service
 
     public function __construct(
         TeamRepository $teamRepository,
-        UserRepository $userRepository,
-        PlayerRepository $playerRepository,
-        CoachRepository $coachRepository)
+        UserRepository $userRepository)
     {
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
@@ -126,7 +123,7 @@ class TeamService extends Service
 
     public function index(): JsonResponse
     {
-        $query = Team::with('coaches', 'players')->where('teamSide', 'Academy Team')->get();
+        $query = $this->teamRepository->getByTeamside('Academy Team');
         return $this->indexDatatables($query);
     }
 
@@ -800,11 +797,16 @@ class TeamService extends Service
 
         $loggedAdminName = $this->getUserFullName($loggedUser);
         $admins = $this->userRepository->getAllAdminUsers();
-        $coaches = $this->teamsCoaches($team);
-        $players = $this->teamsPlayers($team);
-        Notification::send($coaches,new TeamUpdated($loggedAdminName, $team, 'activated'));
-        Notification::send($players,new TeamUpdated($loggedAdminName, $team, 'activated'));
-        Notification::send($admins,new TeamUpdated($loggedAdminName, $team, 'activated'));
+
+        if ($team->teamSide == 'Academy Team'){
+            $coaches = $this->teamsCoaches($team);
+            $players = $this->teamsPlayers($team);
+            Notification::send($coaches,new TeamUpdated($loggedAdminName, $team, 'activated'));
+            Notification::send($players,new TeamUpdated($loggedAdminName, $team, 'activated'));
+            Notification::send($admins,new TeamUpdated($loggedAdminName, $team, 'activated'));
+        } elseif ($team->teamSide == 'Opponent Team'){
+            Notification::send($admins,new OpponentTeamUpdated($loggedAdminName, $team, 'activated'));
+        }
 
         return $team;
     }
@@ -815,12 +817,16 @@ class TeamService extends Service
 
         $loggedAdminName = $this->getUserFullName($loggedUser);
         $admins = $this->userRepository->getAllAdminUsers();
-        $coaches = $this->teamsCoaches($team);
-        $players = $this->teamsPlayers($team);
-        Notification::send($coaches,new TeamUpdated($loggedAdminName, $team, 'deactivated'));
-        Notification::send($players,new TeamUpdated($loggedAdminName, $team, 'deactivated'));
-        Notification::send($admins,new TeamUpdated($loggedAdminName, $team, 'deactivated'));
 
+        if ($team->teamSide == 'Academy Team'){
+            $coaches = $this->teamsCoaches($team);
+            $players = $this->teamsPlayers($team);
+            Notification::send($coaches,new TeamUpdated($loggedAdminName, $team, 'deactivated'));
+            Notification::send($players,new TeamUpdated($loggedAdminName, $team, 'deactivated'));
+            Notification::send($admins,new TeamUpdated($loggedAdminName, $team, 'deactivated'));
+        } elseif ($team->teamSide == 'Opponent Team'){
+            Notification::send($admins,new OpponentTeamUpdated($loggedAdminName, $team, 'deactivated'));
+        }
         return $team;
     }
 

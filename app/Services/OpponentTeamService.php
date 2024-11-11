@@ -3,15 +3,32 @@
 namespace App\Services;
 
 use App\Models\Team;
+use App\Notifications\TeamsManagements\OpponentTeamCreatedDeleted;
+use App\Notifications\TeamsManagements\OpponentTeamUpdated;
+use App\Notifications\TeamsManagements\TeamCreatedDeleted;
+use App\Notifications\TeamsManagements\TeamUpdated;
+use App\Repository\TeamRepository;
+use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class OpponentTeamService extends Service
 {
+    private TeamRepository $teamRepository;
+    private UserRepository $userRepository;
+
+    public function __construct(
+        TeamRepository $teamRepository,
+        UserRepository $userRepository)
+    {
+        $this->teamRepository = $teamRepository;
+        $this->userRepository = $userRepository;
+    }
     public function index(): JsonResponse
     {
-        $query = Team::where('teamSide','=','Opponent Team')->get();
+        $query = $this->teamRepository->getByTeamside('Opponent Team');
         return Datatables::of($query)->addColumn('action', function ($item) {
             if ($item->status == '1') {
                 $statusButton = '<form action="' . route('deactivate-team', $item->id) . '" method="POST">
@@ -76,36 +93,39 @@ class OpponentTeamService extends Service
             ->rawColumns(['action', 'name', 'status'])
             ->make();
     }
-    public  function store(array $data){
-
-        if (array_key_exists('logo', $data)){
-            $data['logo'] =$data['logo']->store('assets/team-logo', 'public');
-        }else{
-            $data['logo'] = 'images/undefined-user.png';
-        }
+    public  function store(array $data, $loggedUser){
+        $data['logo'] = $this->storeImage($data, 'logo', 'assets/team-logo', 'images/undefined-user.png');
         $data['status'] = '1';
         $data['teamSide'] = 'Opponent Team';
-        return Team::create($data);
+
+        $team = $this->teamRepository->create($data);
+
+        $superAdminName = $this->getUserFullName($loggedUser);
+        Notification::send($this->userRepository->getAllAdminUsers(),new OpponentTeamCreatedDeleted($superAdminName, $team, 'created'));
+        return $team;
     }
 
-    public function update(array $data, Team $team): Team
+    public function update(array $data, Team $team, $loggedUser): Team
     {
-        if (array_key_exists('logo', $data)){
-            $this->deleteImage($team->logo);
-            $data['logo'] = $data['logo']->store('assets/team-logo', 'public');
-        }else{
-            $data['logo'] = $team->logo;
-        }
-
+        $data['logo'] = $this->updateImage($data, 'logo', 'team-logo', $team->logo);
         $team->update($data);
+
+        $admins = $this->userRepository->getAllAdminUsers();
+        $loggedAdminName = $this->getUserFullName($loggedUser);
+        Notification::send($admins,new OpponentTeamUpdated($loggedAdminName, $team, 'updated'));
 
         return $team;
     }
 
-    public function destroy(Team $team): Team
+    public function destroy(Team $team, $loggedUser): Team
     {
         $this->deleteImage($team->logo);
         $team->delete();
+
+        $admins = $this->userRepository->getAllAdminUsers();
+        $loggedAdminName = $this->getUserFullName($loggedUser);
+        Notification::send($admins,new OpponentTeamCreatedDeleted($loggedAdminName, $team, 'deleted'));
+
         return $team;
     }
 }
