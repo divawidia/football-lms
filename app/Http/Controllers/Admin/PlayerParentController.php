@@ -7,6 +7,7 @@ use App\Http\Requests\PlayerParentRequest;
 use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\User;
+use App\Repository\UserRepository;
 use App\Services\PlayerParentService;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
@@ -15,9 +16,12 @@ class PlayerParentController extends Controller
 {
     private PlayerParentService $playerParentService;
 
-    public function __construct(PlayerParentService $playerParentService)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->playerParentService = $playerParentService;
+        $this->middleware(function ($request, $next) use ($userRepository){
+            $this->playerParentService = new PlayerParentService($this->getLoggedUser(), $userRepository, );
+            return $next($request);
+        });
     }
 
     public function index(Player $player)
@@ -37,12 +41,11 @@ class PlayerParentController extends Controller
     public function store(PlayerParentRequest $request, Player $player)
     {
         $data = $request->validated();
-        $playerId = $player->id;
-        $this->playerParentService->store($data, $playerId);
+        $this->playerParentService->store($data, $player);
 
         $text = "Player's parent/guardian successfully added!";
         Alert::success($text);
-        return redirect()->route('player-managements.show', $playerId);
+        return redirect()->route('player-managements.show', $player->id);
     }
 
     public function edit(Player $player, PlayerParrent $parent)

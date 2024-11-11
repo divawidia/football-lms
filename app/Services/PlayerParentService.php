@@ -7,16 +7,29 @@ use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;
 use App\Models\Team;
 use App\Models\User;
+use App\Notifications\PlayerManagements\PlayerParent;
+use App\Notifications\PlayerManagements\PlayerParentAdmin;
+use App\Repository\AdminRepository;
+use App\Repository\PlayerRepository;
+use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Nnjeim\World\World;
 use Yajra\DataTables\Facades\DataTables;
 
 class PlayerParentService extends Service
 {
+    private $loggedUser;
+    private UserRepository $userRepository;
+    public function __construct($loggedUser, UserRepository $userRepository)
+    {
+        $this->loggedUser = $loggedUser;
+        $this->userRepository = $userRepository;
+    }
     public function makeDatatables($data, Player $player)
     {
         return Datatables::of($data)
@@ -45,16 +58,36 @@ class PlayerParentService extends Service
         return $this->makeDatatables($query, $player);
     }
 
-    public  function store(array $data, $playerId){
-        $data['playerId'] = $playerId;
-        return PlayerParrent::create($data);
+    public  function store(array $data, Player $player){
+        $data['playerId'] = $player->id;
+        $parent = PlayerParrent::create($data);
+
+        $superAdminName = $this->getUserFullName($this->loggedUser);
+
+        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerParentAdmin($superAdminName, $player, 'created'));
+        $player->user->notify(new PlayerParent($parent, 'added'));
+        return $parent;
     }
     public function update(array $data, PlayerParrent $parent)
     {
-        return $parent->update($data);
+        $parent->update($data);
+
+        $superAdminName = $this->getUserFullName($this->loggedUser);
+        $player = $parent->player;
+
+        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerParentAdmin($superAdminName, $player, 'updated'));
+        $player->user->notify(new PlayerParent($parent, 'updated'));
+        return $parent;
     }
     public function destroy(PlayerParrent $parent)
     {
-        return $parent->delete();
+        $superAdminName = $this->getUserFullName($this->loggedUser);
+        $player = $parent->player;
+
+        $parent->delete();
+
+        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerParentAdmin($superAdminName, $player, 'deleted'));
+        $player->user->notify(new PlayerParent($parent, 'deleted'));
+        return $parent;
     }
 }
