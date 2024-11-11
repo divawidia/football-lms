@@ -29,6 +29,11 @@ class PlayerRepository
         return $this->player->with('user', 'teams', 'position', 'playerSkillStats')->withTeams($teams)->get();
     }
 
+    public function getInArray($playerIds)
+    {
+        return $this->player->whereIn('id', $playerIds)->get();
+    }
+
     public function getMostAttendedPLayer()
     {
         return $this->player->with('schedules', 'user')

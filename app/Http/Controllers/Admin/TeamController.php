@@ -109,8 +109,9 @@ class TeamController extends Controller
     public function store(TeamRequest $request)
     {
         $data = $request->validated();
+        $loggedUser = $this->getLoggedUser();
 
-        $this->teamService->store($data, Auth::user()->academyId);
+        $this->teamService->store($data, Auth::user()->academyId, $loggedUser);
 
         $text = 'Team '.$data['teamName'].' successfully added!';
         Alert::success($text);
@@ -120,8 +121,9 @@ class TeamController extends Controller
     public function apiStore(TeamRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $loggedUser = $this->getLoggedUser();
 
-        $team = $this->teamService->store($data, Auth::user()->academyId);
+        $team = $this->teamService->store($data, Auth::user()->academyId, $loggedUser);
 
         return response()->json($team, 201);
     }
@@ -157,7 +159,8 @@ class TeamController extends Controller
     {
         $data = $request->validated();
 
-        $this->teamService->update($data, $team);
+        $loggedUser = $this->getLoggedUser();
+        $this->teamService->update($data, $team, $loggedUser);
 
         $text = 'Team '.$team->teamName.' successfully updated!';
         Alert::success($text);
@@ -165,14 +168,16 @@ class TeamController extends Controller
     }
 
     public function deactivate(Team $team){
-        $this->teamService->deactivate($team);
+        $loggedUser = $this->getLoggedUser();
+        $this->teamService->deactivate($team, $loggedUser);
 
         Alert::success('Team '.$team->teamName.' status successfully deactivated!');
         return redirect()->route('team-managements.index');
     }
 
     public function activate(Team $team){
-        $this->teamService->activate($team);
+        $loggedUser = $this->getLoggedUser();
+        $this->teamService->activate($team, $loggedUser);
 
         Alert::success('Team '.$team->teamName.' status successfully activated!');
         return redirect()->route('team-managements.index');
@@ -246,7 +251,8 @@ class TeamController extends Controller
      */
     public function destroy(Team $team)
     {
-       $this->teamService->destroy($team);
+        $loggedUser = $this->getLoggedUser();
+        $this->teamService->destroy($team, $loggedUser);
 
         return response()->json(['success' => true]);
     }

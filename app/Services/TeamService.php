@@ -7,14 +7,34 @@ use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\Team;
 use App\Models\TeamMatch;
+use App\Notifications\PlayerCoachAddToTeam;
+use App\Notifications\PlayerCoachRemoveToTeam;
+use App\Notifications\TeamsManagements\TeamCreatedDeleted;
+use App\Notifications\TeamsManagements\TeamUpdated;
+use App\Repository\CoachRepository;
+use App\Repository\PlayerRepository;
+use App\Repository\TeamRepository;
+use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class TeamService extends Service
 {
+    private TeamRepository $teamRepository;
+    private UserRepository $userRepository;
+
+    public function __construct(
+        TeamRepository $teamRepository,
+        UserRepository $userRepository,
+        PlayerRepository $playerRepository,
+        CoachRepository $coachRepository)
+    {
+        $this->teamRepository = $teamRepository;
+        $this->userRepository = $userRepository;
+    }
     public function indexDatatables($teamsData)
     {
         return Datatables::of($teamsData)
@@ -699,84 +719,126 @@ class TeamService extends Service
             ->make();
     }
 
-    public  function store(array $teamData, $academyId){
-
-        if (array_key_exists('logo', $teamData)){
-            $teamData['logo'] =$teamData['logo']->store('assets/team-logo', 'public');
-        }else{
-            $teamData['logo'] = 'images/undefined-user.png';
-        }
+    public  function store(array $teamData, $academyId, $loggedUser)
+    {
+        $teamData['logo'] = $this->storeImage($teamData, 'logo', 'assets/team-logo', 'images/undefined-user.png');
         $teamData['status'] = '1';
         $teamData['teamSide'] = 'Academy Team';
         $teamData['academyId'] = $academyId;
 
-        $team = Team::create($teamData);
+        $team = $this->teamRepository->create($teamData);
+
+        $superAdminName = $this->getUserFullName($loggedUser);
+        Notification::send($this->userRepository->getAllAdminUsers(),new TeamCreatedDeleted($superAdminName, $team, 'created'));
 
         if (array_key_exists('players', $teamData)){
-            $team->players()->attach($teamData['players']);
+            $this->updatePlayerTeam($teamData, $team);
         }
         if (array_key_exists('coaches', $teamData)){
-            $team->coaches()->attach($teamData['coaches']);
+            $this->updateCoachTeam($teamData, $team);
         }
         return $team;
     }
 
-    public function update(array $teamData, Team $team): Team
+    public function update(array $teamData, Team $team, $loggedUser): Team
     {
-        if (array_key_exists('logo', $teamData)){
-            $this->deleteImage($team->logo);
-            $teamData['logo'] = $teamData['logo']->store('assets/team-logo', 'public');
-        }else{
-            $teamData['logo'] = $team->logo;
-        }
-
+        $teamData['logo'] = $this->updateImage($teamData, 'logo', 'team-logo', $team->logo);
         $team->update($teamData);
 
+        $admins = $this->userRepository->getAllAdminUsers();
+        $loggedAdminName = $this->getUserFullName($loggedUser);
+
+        Notification::send($this->teamsCoaches($team),new TeamUpdated($loggedAdminName, $team, 'updated'));
+        Notification::send($admins,new TeamUpdated($loggedAdminName, $team, 'updated'));
         return $team;
+    }
+
+    public function teamsCoaches(Team $team)
+    {
+        $coachesIds = collect($team->coaches)->pluck('id')->all();
+        return $this->userRepository->getInArray('coach', $coachesIds);
+    }
+    public function teamsPlayers(Team $team)
+    {
+        $playersIds = collect($team->players)->pluck('id')->all();
+        return $this->userRepository->getInArray('player', $playersIds);
     }
 
     public function updatePlayerTeam(array $teamData, Team $team): Team
     {
         $team->players()->attach($teamData['players']);
+        $players = $this->userRepository->getInArray('player', $teamData['players']);
+        Notification::send($players, new PlayerCoachAddToTeam($team));
         return $team;
     }
 
     public function updateCoachTeam(array $teamData, Team $team): Team
     {
         $team->coaches()->attach($teamData['coaches']);
+        $coaches = $this->userRepository->getInArray('coach', $teamData['coaches']);
+        Notification::send($coaches, new PlayerCoachAddToTeam($team));
         return $team;
     }
 
     public function removePlayer(Team $team, Player $player): Team
     {
         $team->players()->detach($player);
+        $player->user->notify(new PlayerCoachRemoveToTeam($team));
         return $team;
     }
 
     public function removeCoach(Team $team, Coach $coach): Team
     {
         $team->coaches()->detach($coach);
+        $coach->user->notify(new PlayerCoachRemoveToTeam($team));
         return $team;
     }
 
-    public function activate(Team $team): Team
+    public function activate(Team $team, $loggedUser): Team
     {
         $team->update(['status' => '1']);
+
+        $loggedAdminName = $this->getUserFullName($loggedUser);
+        $admins = $this->userRepository->getAllAdminUsers();
+        $coaches = $this->teamsCoaches($team);
+        $players = $this->teamsPlayers($team);
+        Notification::send($coaches,new TeamUpdated($loggedAdminName, $team, 'activated'));
+        Notification::send($players,new TeamUpdated($loggedAdminName, $team, 'activated'));
+        Notification::send($admins,new TeamUpdated($loggedAdminName, $team, 'activated'));
+
         return $team;
     }
 
-    public function deactivate(Team $team): Team
+    public function deactivate(Team $team, $loggedUser): Team
     {
         $team->update(['status' => '0']);
+
+        $loggedAdminName = $this->getUserFullName($loggedUser);
+        $admins = $this->userRepository->getAllAdminUsers();
+        $coaches = $this->teamsCoaches($team);
+        $players = $this->teamsPlayers($team);
+        Notification::send($coaches,new TeamUpdated($loggedAdminName, $team, 'deactivated'));
+        Notification::send($players,new TeamUpdated($loggedAdminName, $team, 'deactivated'));
+        Notification::send($admins,new TeamUpdated($loggedAdminName, $team, 'deactivated'));
+
         return $team;
     }
 
-    public function destroy(Team $team): Team
+    public function destroy(Team $team, $loggedUser): Team
     {
         $this->deleteImage($team->logo);
         $team->coaches()->detach();
         $team->players()->detach();
         $team->delete();
+
+        $loggedAdminName = $this->getUserFullName($loggedUser);
+        $admins = $this->userRepository->getAllAdminUsers();
+        $coaches = $this->teamsCoaches($team);
+        $players = $this->teamsPlayers($team);
+        Notification::send($coaches,new TeamUpdated($loggedAdminName, $team, 'deleted'));
+        Notification::send($players,new TeamUpdated($loggedAdminName, $team, 'deleted'));
+        Notification::send($admins,new TeamUpdated($loggedAdminName, $team, 'deleted'));
+
         return $team;
     }
 }

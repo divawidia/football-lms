@@ -105,7 +105,7 @@
                         },
                     ]
                 });
-                @if(Auth::user()->hasRole('admin'))
+                @if(isAllAdmin())
                     const opponentTable = $('#opponentTable').DataTable({
                         processing: true,
                         serverSide: true,

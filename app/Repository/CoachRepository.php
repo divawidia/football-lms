@@ -24,6 +24,10 @@ class CoachRepository
     {
         return $this->coach->with('user', 'teams')->get();
     }
+    public function getInArray($coachIds)
+    {
+        return $this->coach->whereIn('id', $coachIds)->get();
+    }
     public function getAllCoachSpecialization()
     {
         return $this->coachSpecialization->all();

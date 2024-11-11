@@ -17,6 +17,13 @@ class UserRepository
         return $this->user->all();
     }
 
+    public function getInArray($relation,$ids)
+    {
+        return $this->user->whereHas($relation, function ($q) use ($ids){
+            $q->whereIn('id', $ids);
+        })->get();
+    }
+
     public function getAllUserWithoutLoggedUserData($authUserId){
         return $this->user->where('id', '!=', $authUserId)->get();
     }
