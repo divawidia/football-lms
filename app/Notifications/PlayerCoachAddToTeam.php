@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Notifications\PlayerManagements;
+namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PlayerAddToTeam extends Notification
+class PlayerCoachAddToTeam extends Notification
 {
     use Queueable;
     protected $team;

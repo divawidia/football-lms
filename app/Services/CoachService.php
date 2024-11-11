@@ -4,11 +4,15 @@ namespace App\Services;
 
 use App\Models\Coach;
 use App\Models\Team;
+use App\Notifications\CoachManagements\CoachAccountCreatedDeleted;
+use App\Notifications\CoachManagements\CoachAccountUpdated;
+use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -160,12 +164,16 @@ class CoachService extends Service
 
     public function removeTeam(Coach $coach, Team $team)
     {
-        return $coach->teams()->detach($team->id);
+        $coach->teams()->detach($team->id);
+        $coach->user->notify(new PlayerCoachRemoveToTeam($team));
+        return $coach;
     }
 
     public function updateTeams($teamData, Coach $coach)
     {
         $coach->teams()->attach($teamData);
+        $team =$this->teamRepository->find($teamData)->first();
+        $coach->user->notify(new PlayerCoachRemoveToTeam($team));
         return $coach;
     }
 
@@ -178,7 +186,7 @@ class CoachService extends Service
         return compact('certifications', 'specializations', 'teams');
     }
 
-    public  function store(array $data, $academyId){
+    public  function store(array $data, $academyId, $loggedUser){
 
         $data['password'] = bcrypt($data['password']);
         $data['foto'] = $this->storeImage($data, 'foto', 'assets/user-profile', 'images/undefined-user.png');
@@ -187,7 +195,11 @@ class CoachService extends Service
 
         $user = $this->userRepository->createUserWithRole($data, 'coach');
         $data['userId'] = $user->id;
-        return $this->coachRepository->create($data);
+        $coach = $this->coachRepository->create($data);
+
+        $superAdminName = $this->getUserFullName($loggedUser);
+        Notification::send($this->userRepository->getAllAdminUsers(),new CoachAccountCreatedDeleted($superAdminName, $coach, 'created'));
+        return $coach;
     }
     public function show(Coach $coach)
     {
@@ -257,26 +269,36 @@ class CoachService extends Service
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'user-profile', $coach->user->foto);
         $this->coachRepository->update($coach, $data);
+        $coach->user->notify(new CoachAccountUpdated($coach, 'updated'));
         return $coach;
     }
     public function activate(Coach $coach)
     {
-        return $this->coachRepository->activate($coach);
+        $this->coachRepository->activate($coach);
+        $coach->user->notify(new CoachAccountUpdated($coach, 'activated'));
+        return $coach;
     }
 
     public function deactivate(Coach $coach)
     {
-        return $this->coachRepository->deactivate($coach);
+        $this->coachRepository->deactivate($coach);
+        $coach->user->notify(new CoachAccountUpdated($coach, 'deactivated'));
+        return $coach;
     }
 
     public function changePassword($data, Coach $coach){
-        return $this->coachRepository->changePassword($data, $coach);
+        $this->coachRepository->changePassword($data, $coach);
+        $coach->user->notify(new CoachAccountUpdated($coach, 'updated password'));
+        return $coach;
     }
 
-    public function destroy(Coach $coach)
+    public function destroy(Coach $coach, $loggedUser)
     {
         $this->deleteImage($coach->user->foto);
         $this->coachRepository->delete($coach);
+
+        $superAdminName = $this->getUserFullName($loggedUser);
+        Notification::send($this->userRepository->getAllAdminUsers(),new CoachAccountCreatedDeleted($superAdminName, $coach, 'created'));
         return $coach;
     }
 }

@@ -5,11 +5,10 @@ namespace App\Services;
 use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\Team;
-use App\Notifications\AdminManagements\AdminAccountUpdated;
+use App\Notifications\PlayerCoachAddToTeam;
 use App\Notifications\PlayerManagements\PlayerAccountCreatedDeleted;
 use App\Notifications\PlayerManagements\PlayerAccountUpdated;
-use App\Notifications\PlayerManagements\PlayerAddToTeam;
-use App\Notifications\PlayerManagements\PlayerRemoveToTeam;
+use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerPositionRepository;
 use App\Repository\PlayerRepository;
@@ -203,14 +202,14 @@ class PlayerService extends Service
     public function removeTeam(Player $player, Team $team)
     {
         $player->teams()->detach($team->id);
-        $player->user->notify(new PlayerRemoveToTeam($team));
+        $player->user->notify(new PlayerCoachRemoveToTeam($team));
         return $player;
     }
     public function updateTeams($teamData, Player $player)
     {
         $player->teams()->attach($teamData);
         $team =$this->teamRepository->find($teamData)->first();
-        $player->user->notify(new PlayerAddToTeam($team));
+        $player->user->notify(new PlayerCoachAddToTeam($team));
         return $player;
     }
 
