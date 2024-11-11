@@ -6,21 +6,35 @@ use App\Models\Admin;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
 use App\Models\User;
+use App\Notifications\AdminManagements\AdminAccountCreatedDeleted;
+use App\Notifications\AdminManagements\AdminAccountUpdated;
+use App\Repository\AdminRepository;
+use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Nnjeim\World\World;
 use Yajra\DataTables\Facades\DataTables;
 
 class AdminService extends Service
 {
+    private AdminRepository $adminRepository;
+    private UserRepository $userRepository;
+    private $loggedUser;
+    public function __construct(AdminRepository $adminRepository, UserRepository $userRepository, $loggedUser)
+    {
+        $this->adminRepository = $adminRepository;
+        $this->userRepository = $userRepository;
+        $this->loggedUser = $loggedUser;
+    }
     public function index(): JsonResponse
     {
-        $query = Admin::with('user')->get();
+        $query = $this->adminRepository->getAll();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if (isSuperAdmin()){
                     if ($item->user->status == '1'){
-                        $statusButton = '<form action="' . route('deactivate-admin', $item->userId) . '" method="POST">
+                        $statusButton = '<form action="' . route('deactivate-admin', $item->id) . '" method="POST">
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
@@ -28,11 +42,11 @@ class AdminService extends Service
                                             </button>
                                         </form>';
                     }else{
-                        $statusButton = '<form action="' . route('activate-admin', $item->userId) . '" method="POST">
+                        $statusButton = '<form action="' . route('activate-admin', $item->id) . '" method="POST">
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
                                             <button type="submit" class="dropdown-item">
-                                                <span class="material-icons mr-2 text-danger">check_circle</span> Activate Admin</a>
+                                                <span class="material-icons mr-2 text-success">check_circle</span> Activate Admin</a>
                                             </button>
                                         </form>';
                     }
@@ -82,7 +96,7 @@ class AdminService extends Service
                 if ($item->user->status == '1') {
                     $badge = '<span class="badge badge-pill badge-success">Active</span>';
                 }elseif ($item->user->status == '0'){
-                    $badge = '<span class="badge badge-pill badge-danger">Non Active</span>';
+                    $badge = '<span class="badge badge-pill badge-danger">Non-Active</span>';
                 }
                 return $badge;
             })
@@ -100,12 +114,14 @@ class AdminService extends Service
         $data['status'] = '1';
         $data['academyId'] = $academyId;
 
-        $user = User::create($data);
-        $user->assignRole('admin');
+        $user = $this->userRepository->createUserWithRole($data, 'admin');
 
         $data['userId'] = $user->id;
+        $admin = $this->adminRepository->create($data);
+        $superAdminName = $this->getUserFullName($this->loggedUser);
 
-        $admin = Admin::create($data);
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminAccountCreatedDeleted($superAdminName, $admin, 'created'));
+
         return $admin;
     }
 
@@ -130,24 +146,35 @@ class AdminService extends Service
             'zipCode'=> $data['zipCode'],
             'phoneNumber'=> $data['phoneNumber'],
         ]);
+        $superAdminName = $this->getUserFullName($this->loggedUser);
+        $admin->user->notify(new AdminAccountUpdated($superAdminName, $admin, 'updated'));
         return $admin;
     }
 
     public function activate(Admin $admin)
     {
-        return $admin->user()->update(['status' => '1']);
+        $admin->user()->update(['status' => '1']);
+        $superAdminName = $this->getUserFullName($this->loggedUser);
+        $admin->user->notify(new AdminAccountUpdated($superAdminName, $admin, 'activated'));
+        return $admin;
     }
 
     public function deactivate(Admin $admin)
     {
-        return $admin->user()->update(['status' => '0']);
+        $admin->user()->update(['status' => '0']);
+        $superAdminName = $this->getUserFullName($this->loggedUser);
+        $admin->user->notify(new AdminAccountUpdated($superAdminName, $admin, 'deactivated'));
+        return $admin;
     }
 
     public function changePassword($data, Admin $admin)
     {
-        return $admin->user()->update([
+        $admin->user()->update([
             'password' => bcrypt($data['password'])
         ]);
+        $superAdminName = $this->getUserFullName($this->loggedUser);
+        $admin->user->notify(new AdminAccountUpdated($superAdminName, $admin, 'updated the password'));
+        return $admin;
     }
 
     public function destroy(Admin $admin)
@@ -156,6 +183,8 @@ class AdminService extends Service
         $admin->delete();
         $admin->user->roles()->detach();
         $admin->user()->delete();
+        $superAdminName = $this->getUserFullName($this->loggedUser);
+        $admin->user->notify(new AdminAccountCreatedDeleted($superAdminName, $admin, 'deleted'));
         return $admin;
     }
 }

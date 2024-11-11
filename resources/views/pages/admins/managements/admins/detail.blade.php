@@ -97,6 +97,10 @@
                             <div class="ml-auto p-2 text-muted">{{ $data->user->phoneNumber }}</div>
                         </div>
                         <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Position :</p></div>
+                            <div class="ml-auto p-2 text-muted">{{ $data->position }}</div>
+                        </div>
+                        <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Last Seen :</p></div>
                             <div
                                 class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($data->user->lastSeen)) }}</div>
@@ -127,9 +131,9 @@
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
                             @if($data->user->status == '1')
-                                <span class="ml-auto p-2 badge badge-pill badge-success">Aktif</span>
+                                <span class="ml-auto p-2 badge badge-pill badge-success">Active</span>
                             @elseif($data->user->status == '0')
-                                <span class="ml-auto p-2 badge badge-pill badge-danger">Non Aktif</span>
+                                <span class="ml-auto p-2 badge badge-pill badge-danger">Non-Active</span>
                             @endif
                         </div>
                         <div class="d-flex align-items-center">

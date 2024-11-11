@@ -8,6 +8,8 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use App\Models\Admin;
 use App\Models\User;
+use App\Repository\AdminRepository;
+use App\Repository\UserRepository;
 use App\Services\AdminService;
 use Carbon\Carbon;
 use DateTime;
@@ -25,9 +27,12 @@ use Nnjeim\World\World;
 class AdminController extends Controller
 {
     private AdminService $adminService;
-    public function __construct(AdminService $adminService)
+    public function __construct(AdminRepository $adminRepository, UserRepository $userRepository)
     {
-        $this->adminService = $adminService;
+        $this->middleware(function ($request, $next) use ($adminRepository, $userRepository){
+            $this->adminService = new AdminService($adminRepository, $userRepository, $this->getLoggedUser());
+            return $next($request);
+        });
     }
     public function index()
     {
