@@ -61,7 +61,7 @@
                 </div>
 
                 @foreach($teams as $team)
-                        <a class="card" href="">
+                        <a class="card" href="{{ route('team-managements.show', ['team'=>$team->id]) }}">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-6 d-flex flex-column flex-md-row align-items-center">

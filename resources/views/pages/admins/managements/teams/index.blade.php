@@ -11,11 +11,7 @@
             <div class="container">
                 <h2 class="mb-0 text-left">@yield('title')</h2>
                 <ol class="breadcrumb p-0 m-0">
-                    @if(Auth::user()->hasRole('admin'))
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                    @elseif(Auth::user()->hasRole('coach'))
-                        <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
-                    @endif
+                        <li class="breadcrumb-item"><a href="{{ checkRoleDashboardRoute() }}">Home</a></li>
                     <li class="breadcrumb-item active">
                         @yield('title')
                     </li>
@@ -26,7 +22,7 @@
         <div class="container page-section">
             <div class="page-separator">
                 <div class="page-separator__text">Our Teams</div>
-                @if(Auth::user()->hasRole('admin'))
+                @if(isAllAdmin())
                     <a href="{{  route('team-managements.create') }}" class="btn btn-sm btn-primary ml-auto " id="add-new">
                         <span class="material-icons mr-2">
                             add
@@ -55,7 +51,7 @@
                 </div>
             </div>
 
-            @if(Auth::user()->hasRole('admin'))
+            @if(isAllAdmin())
                 <div class="page-separator">
                     <div class="page-separator__text">Opponent Teams</div>
                     <a href="{{  route('opponentTeam-managements.create') }}" class="btn btn-sm btn-primary ml-auto " id="add-new">
@@ -93,11 +89,7 @@
                     serverSide: true,
                     ordering: true,
                     ajax: {
-                        @if(Auth::user()->hasRole('admin'))
-                            url: '{!! url()->route('team-managements.admin-teams') !!}',
-                        @elseif(Auth::user()->hasRole('coach'))
-                            url: '{!! url()->route('coach.team-managements.coach-teams') !!}',
-                        @endif
+                        url: '{{ $teamRoutes }}',
                     },
                     columns: [
                         { data: 'name', name: 'name' },

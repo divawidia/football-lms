@@ -89,177 +89,15 @@
             <div class="page-separator__text">Overview</div>
         </div>
         <div class="row card-group-row mb-4">
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['matchPlayed'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Match Played</div>
-                                @if($overview['thisMonthMatchPlayed'] > 0)
-                                    <p class="card-subtitle text-50">
-                                        {{ $overview['thisMonthMatchPlayed'] }}
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['goals'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Goals</div>
-                                @if($overview['thisMonthGoals'] > 0)
-                                    <p class="card-subtitle text-50">
-                                        {{ $overview['thisMonthGoals'] }}
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['goalsConceded'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">goals conceded</div>
-                                @if($overview['thisMonthGoalsConceded'] > 0)
-                                    <p class="card-subtitle text-50">
-                                        {{ $overview['thisMonthGoalsConceded'] }}
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['goalsDifference'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">goal difference</div>
-                                @if($overview['thisMonthGoalDifference'] > 0)
-                                    <p class="card-subtitle text-50">
-                                        {{ $overview['thisMonthGoalDifference'] }}
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['cleanSheets'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">clean sheets</div>
-                                @if($overview['thisMonthCleanSheets'] > 0)
-                                    <p class="card-subtitle text-50">
-                                        {{ $overview['thisMonthCleanSheets'] }}
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['ownGoals'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">own goals</div>
-                                @if($overview['thisMonthOwnGoals'] > 0)
-                                    <p class="card-subtitle text-50">
-                                        {{ $overview['thisMonthOwnGoals'] }}
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['wins'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">wins</div>
-                                @if($overview['thisMonthWins'] > 0)
-                                    <p class="card-subtitle text-50">
-                                        {{ $overview['thisMonthWins'] }}
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['losses'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">losses</div>
-                                @if($overview['thisMonthLosses'] > 0)
-                                    <p class="card-subtitle text-50">
-                                        {{ $overview['thisMonthLosses'] }}
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $overview['draws'] }}</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">draws</div>
-                                @if($overview['thisMonthDraws'] > 0)
-                                    <p class="card-subtitle text-50">
-                                        {{ $overview['thisMonthDraws'] }}
-                                        <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                        From Last Month
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @include('components.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['thisMonthMatchPlayed']])
+            @include('components.stats-card', ['title' => 'Goals','data' => $overview['goals'], 'dataThisMonth' => $overview['thisMonthGoals']])
+            @include('components.stats-card', ['title' => 'Goals Conceded','data' => $overview['goalsConceded'], 'dataThisMonth' => $overview['thisMonthGoalsConceded']])
+            @include('components.stats-card', ['title' => 'Goals difference','data' => $overview['goalsDifference'], 'dataThisMonth' => $overview['thisMonthGoalDifference']])
+            @include('components.stats-card', ['title' => 'clean sheets','data' => $overview['cleanSheets'], 'dataThisMonth' => $overview['cleanSheets']])
+            @include('components.stats-card', ['title' => 'own goals','data' => $overview['ownGoals'], 'dataThisMonth' => $overview['thisMonthOwnGoals']])
+            @include('components.stats-card', ['title' => 'Wins','data' => $overview['wins'], 'dataThisMonth' => $overview['thisMonthWins']])
+            @include('components.stats-card', ['title' => 'losses','data' => $overview['losses'], 'dataThisMonth' => $overview['thisMonthLosses']])
+            @include('components.stats-card', ['title' => 'draws','data' => $overview['draws'], 'dataThisMonth' => $overview['thisMonthDraws']])
         </div>
         <div class="row card-group-row">
             <div class="col-sm-6 card-group-row__col flex-column">
@@ -418,7 +256,7 @@
                 </span>
                 Add New
             </a>
-@endif
+            @endif
         </div>
         <div class="card">
             <div class="card-body">
@@ -806,9 +644,9 @@
                                     title: 'Team successfully deleted!',
                                     icon: 'success',
                                     showCancelButton: false,
+                                    allowOutsideClick: false,
                                     confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
+                                    confirmButtonText: 'Ok!'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
                                         window.location.href = "{{ route('team-managements.index') }}";
@@ -850,8 +688,15 @@
                                 Swal.fire({
                                     icon: "success",
                                     title: "Player successfully removed!",
+                                    showCancelButton: false,
+                                    allowOutsideClick: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText: 'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.reload()
+                                    }
                                 });
-                                playersTable.ajax.reload();
                             },
                             error: function (error) {
                                 Swal.fire({
@@ -888,8 +733,15 @@
                                 Swal.fire({
                                     icon: "success",
                                     title: "Coach successfully removed!",
+                                    showCancelButton: false,
+                                    allowOutsideClick: false,
+                                    confirmButtonColor: "#1ac2a1",
+                                    confirmButtonText: 'Ok!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.reload()
+                                    }
                                 });
-                                coachesTable.ajax.reload();
                             },
                             error: function (error) {
                                 Swal.fire({

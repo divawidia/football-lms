@@ -20,7 +20,7 @@ class TeamService extends Service
         return Datatables::of($teamsData)
             ->addColumn('action', function ($item) {
                 $actionButton = '';
-                if (isCoach()){
+                if (isCoach() || isPlayer()){
                     $actionButton =  '
                           <a class="btn btn-sm btn-outline-secondary" href="' . route('team-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Team">
                             <span class="material-icons">
@@ -112,8 +112,11 @@ class TeamService extends Service
 
     public function coachTeamsIndex($coach)
     {
-        $teams = $this->coachManagedTeams($coach);
-        return $this->indexDatatables($teams);
+        return $this->indexDatatables($coach->teams);
+    }
+    public function playerTeamsIndex($player)
+    {
+        return $this->indexDatatables($player->teams);
     }
 
     public function teamPlayers(Team $team){

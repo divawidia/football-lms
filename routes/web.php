@@ -407,6 +407,10 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player.performance-reviews');
 
+        Route::prefix('team-managements')->group(function () {
+            Route::get('player-teams', [TeamController::class, 'playerTeamsData'])->name('player.team-managements.player-teams');
+        });
+
         Route::prefix('training-schedules')->group(function () {
             Route::get('players-trainings', [EventScheduleController::class, 'playerIndexTraining'])->name('player.training-schedules.index');
         });

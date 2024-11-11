@@ -38,6 +38,12 @@
                 <div class="sidebar-heading">Academy</div>
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu-item">
+                        <a class="sidebar-menu-button" href="{{ route('team-managements.index') }}">
+                            <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">group</span>
+                            <span class="sidebar-menu-text">Teams</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button" data-toggle="collapse" href="#scheduleMenu" role="button" aria-expanded="false" aria-controls="scheduleMenu">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">event</span>
                             Schedule

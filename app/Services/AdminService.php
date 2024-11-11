@@ -3,9 +3,6 @@
 namespace App\Services;
 
 use App\Models\Admin;
-use App\Models\CoachCertification;
-use App\Models\CoachSpecialization;
-use App\Models\User;
 use App\Notifications\AdminManagements\AdminAccountCreatedDeleted;
 use App\Notifications\AdminManagements\AdminAccountUpdated;
 use App\Repository\AdminRepository;
@@ -13,7 +10,6 @@ use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
-use Nnjeim\World\World;
 use Yajra\DataTables\Facades\DataTables;
 
 class AdminService extends Service

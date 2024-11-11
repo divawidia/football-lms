@@ -41,7 +41,7 @@ class PlayerController extends Controller
     }
     public function coachIndex()
     {
-            return $this->playerService->coachPlayerIndex($this->getLoggedCoachUser());
+        return $this->playerService->coachPlayerIndex($this->getLoggedCoachUser());
     }
 
     public function playerTeams(Player $player)
@@ -72,7 +72,8 @@ class PlayerController extends Controller
     public function store(PlayerRequest $request)
     {
         $data = $request->validated();
-        $this->playerService->store($data, $this->getAcademyId());
+        $loggedUser = $this->getLoggedUser();
+        $this->playerService->store($data, $this->getAcademyId(), $loggedUser);
 
         $text = $data['firstName'].' '.$data['lastName'].' account successfully added!';
         Alert::success($text);
@@ -218,7 +219,8 @@ class PlayerController extends Controller
      */
     public function destroy(Player $player)
     {
-        $result = $this->playerService->destroy($player);
+        $loggedUser = $this->getLoggedUser();
+        $result = $this->playerService->destroy($player, $loggedUser);
         return response()->json([
             'status' => 200,
             'data' => $result,

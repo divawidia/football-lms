@@ -36,7 +36,17 @@ class TeamController extends Controller
 
     public function index()
     {
-        return view('pages.admins.managements.teams.index');
+        if (isAllAdmin()){
+            $teamRoutes = url()->route('team-managements.admin-teams');
+        } elseif (isCoach()){
+            $teamRoutes = url()->route('coach.team-managements.coach-teams');
+        } elseif (isPlayer()){
+            $teamRoutes = url()->route('player.team-managements.player-teams');
+        }
+
+        return view('pages.admins.managements.teams.index', [
+            'teamRoutes' => $teamRoutes
+        ]);
     }
 
     public function adminTeamsData(): JsonResponse
@@ -47,6 +57,11 @@ class TeamController extends Controller
     public function coachTeamsData(): JsonResponse
     {
         return $this->teamService->coachTeamsIndex($this->getLoggedCoachUser());
+    }
+
+    public function playerTeamsData(): JsonResponse
+    {
+        return $this->teamService->playerTeamsIndex($this->getLoggedPLayerUser());
     }
 
     public function teamPlayers(Team $team): JsonResponse

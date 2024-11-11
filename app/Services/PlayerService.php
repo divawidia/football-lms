@@ -5,6 +5,11 @@ namespace App\Services;
 use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\Team;
+use App\Notifications\AdminManagements\AdminAccountUpdated;
+use App\Notifications\PlayerManagements\PlayerAccountCreatedDeleted;
+use App\Notifications\PlayerManagements\PlayerAccountUpdated;
+use App\Notifications\PlayerManagements\PlayerAddToTeam;
+use App\Notifications\PlayerManagements\PlayerRemoveToTeam;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerPositionRepository;
 use App\Repository\PlayerRepository;
@@ -12,6 +17,7 @@ use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -197,11 +203,14 @@ class PlayerService extends Service
     public function removeTeam(Player $player, Team $team)
     {
         $player->teams()->detach($team->id);
+        $player->user->notify(new PlayerRemoveToTeam($team));
         return $player;
     }
     public function updateTeams($teamData, Player $player)
     {
         $player->teams()->attach($teamData);
+        $team =$this->teamRepository->find($teamData)->first();
+        $player->user->notify(new PlayerAddToTeam($team));
         return $player;
     }
 
@@ -210,7 +219,7 @@ class PlayerService extends Service
         return $this->playerPositionRepository->getAll();
     }
 
-    public  function store(array $data, $academyId){
+    public  function store(array $data, $academyId, $loggedUser){
 
         $data['foto'] = $this->storeImage($data, 'foto', 'assets/user-profile', 'images/undefined-user.png');
         $data['password'] = bcrypt($data['password']);
@@ -221,6 +230,10 @@ class PlayerService extends Service
 
         $data['userId'] = $user->id;
         $player = $this->playerRepository->create($data);
+
+        $superAdminName = $this->getUserFullName($loggedUser);
+
+        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerAccountCreatedDeleted($superAdminName, $player, 'created'));
 
         PlayerParrent::create([
             'firstName' => $data['firstName2'],
@@ -530,25 +543,37 @@ class PlayerService extends Service
     public function update(array $data, Player $player)
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $player->user->foto);
-        return $this->playerRepository->update($player, $data);
+        $this->playerRepository->update($player, $data);
+        $player->user->notify(new PlayerAccountUpdated($player, 'updated'));
+        return $player;
     }
     public function activate(Player $player)
     {
-        return $this->userRepository->updateUserStatus($player, '1');
+        $this->userRepository->updateUserStatus($player, '1');
+        $player->user->notify(new PlayerAccountUpdated($player, 'activated'));
+        return $player;
     }
 
     public function deactivate(Player $player)
     {
-        return $this->userRepository->updateUserStatus($player, '0');
+        $this->userRepository->updateUserStatus($player, '0');
+        $player->user->notify(new PlayerAccountUpdated($player, 'deactivated'));
+        return $player;
     }
 
     public function changePassword($data, Player $player){
-        return $this->userRepository->changePassword($data, $player);
+        $this->userRepository->changePassword($data, $player);
+        $player->user->notify(new PlayerAccountUpdated($player, 'updated password'));
+        return $player;
     }
 
-    public function destroy(Player $player)
+    public function destroy(Player $player, $loggedUser)
     {
         $this->deleteImage($player->user->foto);
-        return $this->userRepository->delete($player);
+        $this->userRepository->delete($player);
+        $superAdminName = $this->getUserFullName($loggedUser);
+
+        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerAccountCreatedDeleted($superAdminName, $player, 'created'));
+        return $player;
     }
 }

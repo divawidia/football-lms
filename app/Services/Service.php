@@ -114,13 +114,6 @@ class Service
         return 'INV-'.$numbers.'-'.$numbers;
     }
 
-    public function coachManagedTeams($coach){
-        return Team::with('coaches', 'players')
-            ->whereHas('coaches', function($q) use ($coach) {
-                $q->where('coachId', $coach->id);
-            })->get();
-    }
-
     public function getNextDayTimestamp()
     {
         return Carbon::now()->copy()->addDay();
