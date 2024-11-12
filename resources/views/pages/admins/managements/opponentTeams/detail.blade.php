@@ -8,22 +8,32 @@
 
 @section('content')
     <nav class="navbar navbar-light border-bottom border-top px-0">
-        <div class="container page__container">
+        <div class="container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('team-managements.index') }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i> Back to Team Lists</a>
+                    @if(isAllAdmin() || isCoach())
+                        <a href="{{ route('team-managements.index') }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back to Team Lists
+                        </a>
+                    @elseif(isPlayer())
+                        <a href="{{ url()->previous() }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back
+                        </a>
+                    @endif
                 </li>
             </ul>
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div class="container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($team->logo) }}"
                  width="104"
                  height="104"
-                 class="mr-md-32pt mb-32pt mb-md-0 rounded-circle img-object-fit-cover"
+                 class="mr-md-32pt mb-3 mb-md-0 rounded-circle img-object-fit-cover"
                  alt="instructor">
-            <div class="flex mb-32pt mb-md-0">
+            <div class="flex mb-3 mb-md-0 ml-md-4">
                 <h2 class="text-white mb-0">{{ $team->teamName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">{{ $team->ageGroup }}</p>
             </div>
@@ -61,168 +71,20 @@
         </div>
     </div>
 
-    <div class="container page__container page-section">
+    <div class="container page-section">
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
         </div>
         <div class="row card-group-row mb-4">
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Match Played</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title">Goals</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">goals conceded</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row card-group-row mb-4">
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">goal difference</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">clean sheets</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">own goals</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Match
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row card-group-row mb-4">
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">wins</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">losses</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 card-group-row__col flex-column">
-                <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">12</div>
-                            <div class="ml-auto text-right">
-                                <div class="card-title text-capitalize">draws</div>
-                                <p class="card-subtitle text-50">
-                                    4
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @include('components.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['matchPlayedThisMonth']])
+            @include('components.stats-card', ['title' => 'Goals','data' => $overview['teamScore'], 'dataThisMonth' => $overview['teamScoreThisMonth']])
+            @include('components.stats-card', ['title' => 'Goals Conceded','data' => $overview['goalsConceded'], 'dataThisMonth' => $overview['goalsConcededThisMonth']])
+            @include('components.stats-card', ['title' => 'Goals Difference','data' => $overview['goalsDifference'], 'dataThisMonth' => $overview['goalDifferenceThisMonth']])
+            @include('components.stats-card', ['title' => 'Clean Sheets','data' => $overview['cleanSheets'], 'dataThisMonth' => $overview['cleanSheetsThisMonth']])
+            @include('components.stats-card', ['title' => 'Own Goals','data' => $overview['teamOwnGoal'], 'dataThisMonth' => $overview['teamOwnGoalThisMonth']])
+            @include('components.stats-card', ['title' => 'Wins','data' => $overview['Win'], 'dataThisMonth' => $overview['WinThisMonth']])
+            @include('components.stats-card', ['title' => 'losses','data' => $overview['Lose'], 'dataThisMonth' => $overview['LoseThisMonth']])
+            @include('components.stats-card', ['title' => 'Draws','data' => $overview['Draw'], 'dataThisMonth' => $overview['DrawThisMonth']])
         </div>
         <div class="row card-group-row">
             <div class="col-sm-6 card-group-row__col flex-column">
@@ -256,71 +118,146 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Latest Match</div>
                 </div>
-                <div class="card card-sm card-group-row__card">
-                    <div class="card-body flex-column">
-
-                    </div>
-                </div>
+                @if(count($latestMatches) == 0)
+                    <x-warning-alert text="There are no latest matches record on this team"/>
+                @endif
+                @foreach($latestMatches as $match)
+                    <x-match-card :match="$match" :latestMatch="true"/>
+                @endforeach
             </div>
         </div>
+
+        {{-- Competitions/Events --}}
         <div class="page-separator">
             <div class="page-separator__text">Competitions/Events</div>
         </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="competitionsTable">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Group Division</th>
+                            <th>Competition Date</th>
+                            <th>Location</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {{-- Upcoming Matches --}}
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
         </div>
+        @if(count($upcomingMatches) == 0)
+            <x-warning-alert text="There are no matches scheduled at this time"/>
+        @endif
+        @foreach($upcomingMatches as $match)
+            <x-match-card :match="$match" :latestMatch="false"/>
+        @endforeach
+
+        {{-- Match Histories --}}
         <div class="page-separator">
-            <div class="page-separator__text">Upcoming Training</div>
+            <div class="page-separator__text">Match Histories</div>
+        </div>
+        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="matchHistoryTable">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Opponent Team</th>
+                            <th>competition</th>
+                            <th>Match Date</th>
+                            <th>Team Score</th>
+                            <th>Opponent Team Score</th>
+                            <th>Location</th>
+                            <th>Note</th>
+                            <th>Match Status</th>
+                            <th>Last Updated</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-
+    <x-delete-data-confirmation deleteBtnClass=".delete-team"
+                                :destroyRoute="route('opponentTeam-managements.destroy', ':id')"
+                                :routeAfterDelete="route('team-managements.index')"
+                                confirmationText="Are you sure to delete this team {{$team->teamName}}?"
+                                successText="Successfully deleted team {{$team->teamName}}!"
+                                errorText="Something went wrong when deleting team {{$team->teamName}}!"/>
 @endsection
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            $('.delete-team').on('click', function() {
-                let id = $(this).attr('id');
+            $('#competitionsTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! url()->route('team-managements.teamCompetitions', $team->id) !!}',
+                },
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'name', name: 'name'},
+                    {data: 'divisions', name: 'divisions'},
+                    {data: 'date', name: 'date'},
+                    {data: 'location', name: 'location'},
+                    {data: 'contact', name: 'contact'},
+                    {data: 'status', name: 'status'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ],
+                order: [[3, 'desc']],
+            });
 
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('opponentTeam-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function(response) {
-                                Swal.fire({
-                                    title: "Team successfully deleted!",
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('team-managements.index') }}";
-                                    }
-                                });
-                            },
-                            error: function(error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Oops...",
-                                    text: "Something went wrong when deleting data!",
-                                });
-                            }
-                        });
-                    }
-                });
+            $('#matchHistoryTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! url()->route('team-managements.match-histories', $team->id) !!}',
+                },
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'opponentTeam', name: 'opponentTeam'},
+                    {data: 'competition', name: 'competition'},
+                    {data: 'date', name: 'date'},
+                    {data: 'teamScore', name: 'teamScore'},
+                    {data: 'opponentTeamScore', name: 'opponentTeamScore'},
+                    {data: 'place', name: 'place'},
+                    {data: 'status', name: 'status'},
+                    {data: 'note', name: 'note'},
+                    {data: 'last_updated', name: 'last_updated'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ],
+                order: [[2, 'desc']],
             });
         });
     </script>

@@ -295,10 +295,11 @@ class CoachService extends Service
     public function destroy(Coach $coach, $loggedUser)
     {
         $this->deleteImage($coach->user->foto);
-        $this->coachRepository->delete($coach);
 
         $superAdminName = $this->getUserFullName($loggedUser);
         Notification::send($this->userRepository->getAllAdminUsers(),new CoachAccountCreatedDeleted($superAdminName, $coach, 'created'));
+
+        $this->coachRepository->delete($coach);
         return $coach;
     }
 }

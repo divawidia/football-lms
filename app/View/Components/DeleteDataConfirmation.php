@@ -11,14 +11,20 @@ class DeleteDataConfirmation extends Component
     public $deleteBtnClass;
     public $destroyRoute;
     public $routeAfterDelete;
+    public $confirmationText;
+    public $successText;
+    public $errorText;
     /**
      * Create a new component instance.
      */
-    public function __construct($deleteBtnClass, $destroyRoute, $routeAfterDelete)
+    public function __construct($deleteBtnClass, $destroyRoute, $routeAfterDelete, $confirmationText, $successText, $errorText)
     {
         $this->deleteBtnClass = $deleteBtnClass;
         $this->destroyRoute = $destroyRoute;
         $this->routeAfterDelete = $routeAfterDelete;
+        $this->confirmationText = $confirmationText;
+        $this->successText = $successText;
+        $this->errorText = $errorText;
     }
 
     /**

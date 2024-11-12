@@ -3,12 +3,13 @@
 namespace App\Services;
 
 use App\Models\Team;
-use App\Notifications\TeamsManagements\OpponentTeamCreatedDeleted;
-use App\Notifications\TeamsManagements\OpponentTeamUpdated;
-use App\Notifications\TeamsManagements\TeamCreatedDeleted;
-use App\Notifications\TeamsManagements\TeamUpdated;
+use App\Notifications\OpponentTeamsManagements\OpponentTeamUpdated;
+use App\Notifications\OpponentTeamsManagements\OpponentTeamCreatedDeleted;
+use App\Repository\EventScheduleRepository;
+use App\Repository\TeamMatchRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -18,13 +19,19 @@ class OpponentTeamService extends Service
 {
     private TeamRepository $teamRepository;
     private UserRepository $userRepository;
+    private EventScheduleRepository $eventScheduleRepository;
+    private TeamMatchRepository $teamMatchRepository;
 
     public function __construct(
         TeamRepository $teamRepository,
-        UserRepository $userRepository)
+        UserRepository $userRepository,
+        EventScheduleRepository $eventScheduleRepository,
+        TeamMatchRepository $teamMatchRepository)
     {
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
+        $this->eventScheduleRepository = $eventScheduleRepository;
+        $this->teamMatchRepository = $teamMatchRepository;
     }
     public function index(): JsonResponse
     {
@@ -105,6 +112,36 @@ class OpponentTeamService extends Service
         return $team;
     }
 
+    public function teamOverviewStats(Team $team)
+    {
+        $stats = [
+            'teamScore',
+            'cleanSheets',
+            'teamOwnGoal',
+        ];
+        $results = ['Win', 'Lose', 'Draw'];
+
+        $statsData['matchPlayed'] = $this->eventScheduleRepository->getTeamsMatchPlayed($team, 'Opponent Team');
+        $statsData['matchPlayedThisMonth'] = $this->eventScheduleRepository->getTeamsMatchPlayed($team, 'Opponent Team', startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now());
+
+        foreach ($stats as $stat){
+            $statsData[$stat] = $this->teamMatchRepository->getTeamsStats($team, 'Opponent Team', stats: $stat);
+            $statsData[$stat.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, 'Opponent Team', startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now(), stats: $stat);
+        }
+        foreach ($results as $result){
+            $statsData[$result] = $this->teamMatchRepository->getTeamsStats($team, 'Opponent Team', results: $result);
+            $statsData[$result.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, 'Opponent Team', startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now(), results: $result);
+        }
+
+        $statsData['goalsConceded'] = $this->teamMatchRepository->getTeamsStats($team, stats: 'teamScore');
+        $statsData['goalsConcededThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now(), stats: 'teamScore');
+
+        $statsData['goalsDifference'] = $statsData['teamScore'] - $statsData['goalsConceded'];
+        $statsData['goalDifferenceThisMonth'] = $statsData['teamScoreThisMonth'] - $statsData['goalsConcededThisMonth'];
+
+        return $statsData;
+    }
+
     public function update(array $data, Team $team, $loggedUser): Team
     {
         $data['logo'] = $this->updateImage($data, 'logo', 'team-logo', $team->logo);
@@ -120,12 +157,11 @@ class OpponentTeamService extends Service
     public function destroy(Team $team, $loggedUser): Team
     {
         $this->deleteImage($team->logo);
-        $team->delete();
 
         $admins = $this->userRepository->getAllAdminUsers();
         $loggedAdminName = $this->getUserFullName($loggedUser);
         Notification::send($admins,new OpponentTeamCreatedDeleted($loggedAdminName, $team, 'deleted'));
-
+        $team->delete();
         return $team;
     }
 }

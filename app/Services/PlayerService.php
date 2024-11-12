@@ -308,7 +308,6 @@ class PlayerService extends Service
     public function getSkillStats(Player $player){
         return $player->playerSkillStats()->latest();
     }
-
     public function skillStatsLabel()
     {
         $label = [
@@ -569,10 +568,11 @@ class PlayerService extends Service
     public function destroy(Player $player, $loggedUser)
     {
         $this->deleteImage($player->user->foto);
-        $this->userRepository->delete($player);
-        $superAdminName = $this->getUserFullName($loggedUser);
 
+        $superAdminName = $this->getUserFullName($loggedUser);
         Notification::send($this->userRepository->getAllAdminUsers(),new PlayerAccountCreatedDeleted($superAdminName, $player, 'created'));
+
+        $this->userRepository->delete($player);
         return $player;
     }
 }

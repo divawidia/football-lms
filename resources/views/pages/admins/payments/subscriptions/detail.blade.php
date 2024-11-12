@@ -142,7 +142,12 @@
             </div>
         </div>
     </div>
-    <x-delete-data-confirmation deleteBtnClass=".deleteSubscription" :destroyRoute="route('subscriptions.destroy', ':id')" :routeAfterDelete="route('subscriptions.index')"/>
+    <x-delete-data-confirmation deleteBtnClass=".deleteSubscription"
+                                :destroyRoute="route('subscriptions.destroy', ':id')"
+                                :routeAfterDelete="route('subscriptions.index')"
+                                confirmationText="Are you sure to delete this player's subscription {{ $data['subscription']->product->productName }}?"
+                                successText="Successfully deleted player's subscription {{ $data['subscription']->product->productName }}!"
+                                errorText="Something went wrong when deleting player's subscription {{ $data['subscription']->product->productName }}!"/>
 @endsection
 @push('addon-script')
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>

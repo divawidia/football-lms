@@ -6,23 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TeamRequest;
 use App\Models\Team;
 use App\Services\OpponentTeamService;
+use App\Services\TeamService;
 use Illuminate\Http\JsonResponse;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class OpponentTeamController extends Controller
 {
     private OpponentTeamService $opponentTeamService;
+    private TeamService $teamService;
 
-    public function __construct(OpponentTeamService $opponentTeamService)
+    public function __construct(OpponentTeamService $opponentTeamService, TeamService $teamService)
     {
         $this->opponentTeamService = $opponentTeamService;
+        $this->teamService = $teamService;
     }
 
     public function index()
     {
-        if (request()->ajax()) {
-            return $this->opponentTeamService->index();
-        }
+        return $this->opponentTeamService->index();
     }
 
     /**
@@ -40,7 +41,8 @@ class OpponentTeamController extends Controller
     {
         $data = $request->validated();
 
-        $this->opponentTeamService->store($data);
+        $loggedUser = $this->getLoggedUser();
+        $this->opponentTeamService->store($data, $loggedUser);
 
         $text = 'Team '.$data['teamName'].' successfully added!';
         Alert::success($text);
@@ -51,7 +53,8 @@ class OpponentTeamController extends Controller
     {
         $data = $request->validated();
 
-        $team = $this->opponentTeamService->store($data);
+        $loggedUser = $this->getLoggedUser();
+        $team = $this->opponentTeamService->store($data, $loggedUser);
 
         return response()->json($team, 201);
     }
@@ -63,6 +66,10 @@ class OpponentTeamController extends Controller
     {
         return view('pages.admins.managements.opponentTeams.detail', [
             'team' => $team,
+            'overview' => $this->opponentTeamService->teamOverviewStats($team),
+            'latestMatches' => $this->teamService->teamLatestMatch($team),
+            'upcomingMatches' => $this->teamService->teamUpcomingMatch($team),
+            'upcomingTrainings' => $this->teamService->teamUpcomingTraining($team),
         ]);
     }
 
@@ -73,6 +80,7 @@ class OpponentTeamController extends Controller
     {
         return view('pages.admins.managements.opponentTeams.edit',[
             'team' => $team,
+
         ]);
     }
 
@@ -83,7 +91,8 @@ class OpponentTeamController extends Controller
     {
         $data = $request->validated();
 
-        $this->opponentTeamService->update($data, $team);
+        $loggedUser = $this->getLoggedUser();
+        $this->opponentTeamService->update($data, $team, $loggedUser);
 
         $text = 'Team '.$team->teamName.' successfully updated!';
         Alert::success($text);
@@ -95,7 +104,8 @@ class OpponentTeamController extends Controller
      */
     public function destroy(Team $team)
     {
-        $this->opponentTeamService->destroy($team);
+        $loggedUser = $this->getLoggedUser();
+        $this->opponentTeamService->destroy($team, $loggedUser);
 
         return response()->json(['success' => true]);
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\TeamsManagements;
+namespace App\Notifications\OpponentTeamsManagements;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;

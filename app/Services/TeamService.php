@@ -3,15 +3,15 @@
 namespace App\Services;
 
 use App\Models\Coach;
-use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\Team;
-use App\Models\TeamMatch;
+use App\Notifications\OpponentTeamsManagements\OpponentTeamUpdated;
 use App\Notifications\PlayerCoachAddToTeam;
 use App\Notifications\PlayerCoachRemoveToTeam;
-use App\Notifications\TeamsManagements\OpponentTeamUpdated;
 use App\Notifications\TeamsManagements\TeamCreatedDeleted;
 use App\Notifications\TeamsManagements\TeamUpdated;
+use App\Repository\EventScheduleRepository;
+use App\Repository\TeamMatchRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
@@ -24,13 +24,19 @@ class TeamService extends Service
 {
     private TeamRepository $teamRepository;
     private UserRepository $userRepository;
+    private EventScheduleRepository $eventScheduleRepository;
+    private TeamMatchRepository $teamMatchRepository;
 
     public function __construct(
         TeamRepository $teamRepository,
-        UserRepository $userRepository)
+        UserRepository $userRepository,
+        EventScheduleRepository $eventScheduleRepository,
+        TeamMatchRepository $teamMatchRepository)
     {
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
+        $this->eventScheduleRepository = $eventScheduleRepository;
+        $this->teamMatchRepository = $teamMatchRepository;
     }
     public function indexDatatables($teamsData)
     {
@@ -137,7 +143,7 @@ class TeamService extends Service
     }
 
     public function teamPlayers(Team $team){
-        $query = $team->players()->get();
+        $query = $team->players;
 
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
@@ -253,7 +259,7 @@ class TeamService extends Service
     }
 
     public function teamCoaches(Team $team){
-        $query = $team->coaches()->get();
+        $query = $team->coaches;
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 $actionButton = '';
@@ -416,179 +422,51 @@ class TeamService extends Service
 
     public function teamOverviewStats(Team $team)
     {
-        $matchPlayed = EventSchedule::whereHas('teams', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->where('status', '0')
-            ->where('eventType', 'Match')
-            ->count();
-        $thisMonthMatchPlayed = EventSchedule::whereHas('teams', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->where('status', '0')
-            ->where('eventType', 'Match')
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->count();
-
-        $goals = TeamMatch::whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })->sum('teamScore');
-        $thisMonthGoals = TeamMatch::whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->sum('teamScore');
-
-        $goalsConceded = TeamMatch::whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Opponent Team');
-                $q->where('teamId', $team->id);
-            })
-            ->sum('teamScore');
-        $thisMonthGoalsConceded = TeamMatch::whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Opponent Team');
-                $q->where('teamId', $team->id);
-            })
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->sum('teamScore');
-
-        $goalsDifference = $goals - $goalsConceded;
-        $thisMonthGoalDifference = $thisMonthGoals - $thisMonthGoalsConceded;
-
-        $cleanSheets = TeamMatch::whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->sum('cleanSheets');
-        $thisMonthCleanSheets = TeamMatch::whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->sum('cleanSheets');
-
-        $ownGoals = TeamMatch::whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->sum('teamOwnGoal');
-        $thisMonthOwnGoals = TeamMatch::whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->sum('teamOwnGoal');
-
-        $wins = TeamMatch::where('resultStatus', 'Win')
-            ->whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })->count();
-        $thisMonthWins = TeamMatch::where('resultStatus', 'Win')
-            ->whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->count();
-
-        $losses = TeamMatch::where('resultStatus', 'Lose')
-            ->whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->count();
-        $thisMonthLosses = TeamMatch::where('resultStatus', 'Lose')
-            ->whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->count();
-
-        $draws = TeamMatch::where('resultStatus', 'Draw')
-            ->whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })->count();
-        $thisMonthDraws = TeamMatch::where('resultStatus', 'Draw')
-            ->whereHas('team', function($q) use ($team) {
-                $q->where('teamSide', 'Academy Team');
-                $q->where('teamId', $team->id);
-            })
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->count();
-
-        return compact(
-            'matchPlayed',
-            'thisMonthMatchPlayed',
-            'goals',
-            'thisMonthGoals',
-            'goalsConceded',
-            'thisMonthGoalsConceded',
-            'goalsDifference',
-            'thisMonthGoalDifference',
+        $stats = [
+            'teamScore',
             'cleanSheets',
-            'thisMonthCleanSheets',
-            'ownGoals',
-            'thisMonthOwnGoals',
-            'wins',
-            'thisMonthWins',
-            'losses',
-            'thisMonthLosses',
-            'draws',
-            'thisMonthDraws'
-        );
+            'teamOwnGoal',
+        ];
+        $results = ['Win', 'Lose', 'Draw'];
+
+        $statsData['matchPlayed'] = $this->eventScheduleRepository->getTeamsMatchPlayed($team);
+        $statsData['matchPlayedThisMonth'] = $this->eventScheduleRepository->getTeamsMatchPlayed($team, startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now());
+
+        foreach ($stats as $stat){
+            $statsData[$stat] = $this->teamMatchRepository->getTeamsStats($team, stats: $stat);
+            $statsData[$stat.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now(), stats: $stat);
+        }
+        foreach ($results as $result){
+            $statsData[$result] = $this->teamMatchRepository->getTeamsStats($team, results: $result);
+            $statsData[$result.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now(), results: $result);
+        }
+
+        $statsData['goalsConceded'] = $this->teamMatchRepository->getTeamsStats($team, teamSide:'Opponent Team', stats: 'teamScore');
+        $statsData['goalsConcededThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, teamSide:'Opponent Team', startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now(), stats: 'teamScore');
+
+        $statsData['goalsDifference'] = $statsData['teamScore'] - $statsData['goalsConceded'];
+        $statsData['goalDifferenceThisMonth'] = $statsData['teamScoreThisMonth'] - $statsData['goalsConcededThisMonth'];
+
+        return $statsData;
     }
 
     public function teamLatestMatch(Team $team)
     {
-        return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) use ($team){
-                $q->where('teamId', $team->id);
-            })
-            ->where('eventType', 'Match')
-            ->where('status', '0')
-            ->latest('date')
-            ->take(2)
-            ->get();
+        return $this->eventScheduleRepository->getTeamsEvents($team, 'Match', '0', true, 2);
     }
 
     public function teamUpcomingMatch(Team $team)
     {
-        return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) use ($team){
-                $q->where('teamId', $team->id);
-            })
-            ->where('eventType', 'Match')
-            ->where('status', '1')
-            ->latest('date')
-            ->take(2)
-            ->get();
+        return $this->eventScheduleRepository->getTeamsEvents($team, 'Match', '1', true, 2);
     }
 
     public function teamUpcomingTraining(Team $team)
     {
-        return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) use ($team){
-                $q->where('teamId', $team->id);
-            })
-            ->where('eventType', 'Training')
-            ->where('status', '1')
-            ->latest('date')
-            ->take(2)
-            ->get();
+        return $this->eventScheduleRepository->getTeamsEvents($team, 'Training', '1', true, 2);
     }
 
     public function teamTrainingHistories(Team $team){
-        $data = $team->schedules()
-            ->where('eventType', 'Training')
-            ->where('status', '0')
-            ->latest('date')
-            ->get();
+        $data = $this->eventScheduleRepository->getTeamsEvents($team, 'Training', '0', true);
 
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
@@ -626,13 +504,8 @@ class TeamService extends Service
             ->make();
     }
 
-
     public function teamMatchHistories(Team $team){
-        $data = $team->schedules()
-            ->where('eventType', 'Match')
-            ->where('status', '0')
-            ->latest('date')
-            ->get();
+        $data = $this->eventScheduleRepository->getTeamsEvents($team, 'Match', '0', true);
 
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
@@ -640,18 +513,22 @@ class TeamService extends Service
                             <span class="material-icons">visibility</span>
                         </a>';
             })
-            ->editColumn('opponentTeam', function ($item) {
+            ->editColumn('opponentTeam', function ($item) use ($team){
+                if ($team->teamSide == 'Academy Team'){
+                    $data = $item->teams[1];
+                } else {
+                    $data = $item->teams[0];
+                }
                 return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
+                        <div class="media flex-nowrap align-items-center" style="white-space: nowrap;">
                                 <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[1]->logo) . '" alt="profile-pic"/>
+                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($data->logo) . '" alt="profile-pic"/>
                                 </div>
                                 <div class="media-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[1]->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->teams[1]->ageGroup.'</small>
+                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $data->teamName . '</strong></p>
+                                            <small class="js-lists-values-email text-50">'.$data->ageGroup.'</small>
                                         </div>
                                     </div>
                                 </div>
@@ -694,11 +571,21 @@ class TeamService extends Service
                 }
                 return $badge;
             })
-            ->editColumn('teamScore', function ($item) {
-                return $item->teams[0]->pivot->teamScore;
+            ->editColumn('teamScore', function ($item) use ($team) {
+                if ($team->teamSide == 'Academy Team'){
+                    $data = $item->teams[0];
+                } else {
+                    $data = $item->teams[1];
+                }
+                return $data->pivot->teamScore;
             })
-            ->editColumn('opponentTeamScore', function ($item) {
-                return $item->teams[1]->pivot->teamScore;
+            ->editColumn('opponentTeamScore', function ($item) use ($team) {
+                if ($team->teamSide == 'Academy Team'){
+                    $data = $item->teams[1];
+                } else {
+                    $data = $item->teams[0];
+                }
+                return $data->pivot->teamScore;
             })
             ->editColumn('note', function ($item) {
                 if ($item->pivot->note == null) {
@@ -835,7 +722,6 @@ class TeamService extends Service
         $this->deleteImage($team->logo);
         $team->coaches()->detach();
         $team->players()->detach();
-        $team->delete();
 
         $loggedAdminName = $this->getUserFullName($loggedUser);
         $admins = $this->userRepository->getAllAdminUsers();
@@ -844,6 +730,8 @@ class TeamService extends Service
         Notification::send($coaches,new TeamUpdated($loggedAdminName, $team, 'deleted'));
         Notification::send($players,new TeamUpdated($loggedAdminName, $team, 'deleted'));
         Notification::send($admins,new TeamUpdated($loggedAdminName, $team, 'deleted'));
+
+        $team->delete();
 
         return $team;
     }

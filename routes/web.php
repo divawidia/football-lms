@@ -488,7 +488,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::prefix('match-schedules')->group(function () {
             Route::prefix('{schedule}')->group(function () {
-                Route::get('', [EventScheduleController::class, 'showMatch'])->name('match-schedules.show');
+//                Route::get('', [EventScheduleController::class, 'showMatch'])->name('match-schedules.show');
 
                 Route::get('get-assisted-player/{player}', [EventScheduleController::class, 'getAssistPlayer'])->name('get-assist-player');
 

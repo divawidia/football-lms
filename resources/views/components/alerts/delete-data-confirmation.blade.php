@@ -6,7 +6,7 @@
             body.on('click', '{{ $deleteBtnClass }}', function () {
                 const id = $(this).attr('id');
                 Swal.fire({
-                    title: "Are you sure to delete this data?",
+                    title: "{{ $confirmationText }}",
                     text: "You won't be able to revert this!",
                     icon: "warning",
                     showCancelButton: true,
@@ -23,7 +23,7 @@
                             },
                             success: function () {
                                 Swal.fire({
-                                    title: 'Data successfully deleted!',
+                                    title: '{{ $successText }}',
                                     icon: 'success',
                                     showCancelButton: false,
                                     allowOutsideClick: false,
@@ -39,7 +39,7 @@
                             error: function (jqXHR, textStatus, errorThrown) {
                                 Swal.fire({
                                     icon: "error",
-                                    title: "Something went wrong when deleting data!",
+                                    title: "{{ $errorText }}",
                                     text: errorThrown
                                 });
                             }

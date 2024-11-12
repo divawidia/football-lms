@@ -80,6 +80,21 @@
                 </div>
             @endif
         </div>
+        @if(isAllAdmin())
+        <x-delete-data-confirmation deleteBtnClass=".delete-team"
+                                    :destroyRoute="route('team-managements.destroy', ':id')"
+                                    :routeAfterDelete="route('team-managements.index')"
+                                    confirmationText="Are you sure to delete this team?"
+                                    successText="Successfully deleted team!"
+                                    errorText="Something went wrong when deleting team!"/>
+
+        <x-delete-data-confirmation deleteBtnClass=".delete-opponentTeam"
+                                    :destroyRoute="route('opponentTeam-managements.destroy', ':id')"
+                                    :routeAfterDelete="route('team-managements.index')"
+                                    confirmationText="Are you sure to delete this team?"
+                                    successText="Successfully deleted team!"
+                                    errorText="Something went wrong when deleting team!"/>
+        @endif
     @endsection
     @push('addon-script')
         <script>
@@ -124,82 +139,6 @@
                                 width: '15%'
                             },
                         ]
-                    });
-
-                    $('body').on('click', '.delete-team', function() {
-                        let id = $(this).attr('id');
-
-                        Swal.fire({
-                            title: "Are you sure?",
-                            text: "You won't be able to revert this!",
-                            icon: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: "#1ac2a1",
-                            cancelButtonColor: "#E52534",
-                            confirmButtonText: "Yes, delete it!"
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $.ajax({
-                                    url: "{{ route('team-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
-                                    type: 'DELETE',
-                                    data: {
-                                        _token: "{{ csrf_token() }}"
-                                    },
-                                    success: function(response) {
-                                        Swal.fire({
-                                            icon: "success",
-                                            title: "Team successfully deleted!",
-                                        });
-                                        datatable.ajax.reload();
-                                    },
-                                    error: function(error) {
-                                        Swal.fire({
-                                            icon: "error",
-                                            title: "Oops...",
-                                            text: "Something went wrong when deleting data!",
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    });
-
-                    $('body').on('click', '.delete-opponentTeam', function() {
-                        let id = $(this).attr('id');
-
-                        Swal.fire({
-                            title: "Are you sure?",
-                            text: "You won't be able to revert this!",
-                            icon: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: "#1ac2a1",
-                            cancelButtonColor: "#E52534",
-                            confirmButtonText: "Yes, delete it!"
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $.ajax({
-                                    url: "{{ route('opponentTeam-managements.destroy', ['team' => ':id']) }}".replace(':id', id),
-                                    type: 'DELETE',
-                                    data: {
-                                        _token: "{{ csrf_token() }}"
-                                    },
-                                    success: function(response) {
-                                        Swal.fire({
-                                            icon: "success",
-                                            title: "Team successfully deleted!",
-                                        });
-                                        opponentTable.ajax.reload();
-                                    },
-                                    error: function(error) {
-                                        Swal.fire({
-                                            icon: "error",
-                                            title: "Oops...",
-                                            text: "Something went wrong when deleting data!",
-                                        });
-                                    }
-                                });
-                            }
-                        });
                     });
                 @endif
             });
