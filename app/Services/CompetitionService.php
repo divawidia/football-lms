@@ -8,6 +8,7 @@ use App\Models\GroupDivision;
 use App\Models\Player;
 use App\Models\Team;
 use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
+use App\Notifications\CompetitionManagements\TeamJoinedCompetition;
 use App\Notifications\TeamsManagements\TeamCreatedDeleted;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
@@ -294,7 +295,8 @@ class CompetitionService extends Service
         $competitionData['competitionId'] = $competition->id;
         $division = $this->groupDivisionRepository->create($competitionData);
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new CompetitionCreatedDeleted($loggedUser, $competition, 'created'));
+        $admins = $this->userRepository->getAllAdminUsers();
+        Notification::send($admins, new CompetitionCreatedDeleted($loggedUser, $competition, 'created'));
 
         if (array_key_exists('opponentTeams', $competitionData)){
             $division->teams()->attach($competitionData['opponentTeams']);
@@ -302,13 +304,16 @@ class CompetitionService extends Service
         if (array_key_exists('teams', $competitionData)){
             $division->teams()->attach($competitionData['teams']);
             $teams = $this->teamRepository->getInArray($competitionData['teams']);
+
             foreach ($teams as $team){
                 $playersIds = collect($team->players)->pluck('id')->all();
                 $players = $this->userRepository->getInArray('player', $playersIds);
                 $coachesIds = collect($team->coaches)->pluck('id')->all();
                 $coaches = $this->userRepository->getInArray('coach', $coachesIds);
-            }
 
+                $allUsers = array_merge($admins, $players, $coaches);
+                Notification::send($allUsers,new TeamJoinedCompetition($team, $competition));
+            }
         }
         return $competition;
     }
