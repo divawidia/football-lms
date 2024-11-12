@@ -67,7 +67,7 @@ class CompetitionService extends Service
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 $statusButton = '';
-                if ($item->status != 'Cancelled') {
+                if ($item->status != 'Cancelled' && $item->status != 'Completed') {
                     $statusButton = '<button type="submit" class="dropdown-item cancelBtn" id="'.$item->id.'">
                                         <span class="material-icons text-danger">block</span> Cancel Competition
                                     </button>';

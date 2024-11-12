@@ -87,25 +87,14 @@
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('competition-managements.edit', $competition->id) }}"><span class="material-icons">edit</span> Edit Competition Info</a>
-                    @if($competition->status == '1')
-                        <form action="{{ route('deactivate-competition', $competition->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons">block</span> Deactivate Competition
-                            </button>
-                        </form>
-                    @else
-                        <form action="{{ route('activate-competition', $competition->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons">check_circle</span> Activate Competition
-                            </button>
-                        </form>
+                    @if($competition->status != 'Cancelled' && $competition->status != 'Completed')
+                        <button type="submit" class="dropdown-item cancelBtn" id="{{ $data['invoice']->id }}">
+                            <span class="material-icons text-danger">block</span>
+                            Cancel Competition
+                        </button>
                     @endif
                     <button type="button" class="dropdown-item delete" id="{{$competition->id}}">
-                        <span class="material-icons">delete</span> Delete Competition
+                        <span class="material-icons text-danger">delete</span> Delete Competition
                     </button>
                 </div>
             </div>
@@ -307,6 +296,30 @@
         @endforeach
     </div>
 
+    <x-process-data-confirmation btnClass=".delete"
+                                 :processRoute="route('competition-managements.destroy', ['competition' => ':id'])"
+                                 :routeAfterProcess="route('competition-managements.index')"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete competition {{ $competition->name }}?"
+                                 successText="Successfully deleted the competition {{ $competition->name }}!"
+                                 errorText="Something went wrong when deleting the competition {{ $competition->name }}!"/>
+
+    <x-process-data-confirmation btnClass=".cancelBtn"
+                                 :processRoute="route('cancelled-competition', ['competition' => ':id'])"
+                                 :routeAfterProcess="route('competition-managements.show', $competition->id)"
+                                 method="PATCH"
+                                 confirmationText="Are you sure to cancel competition {{ $competition->name }}?"
+                                 successText="Competition {{ $competition->name }} successfully mark as cancelled!"
+                                 errorText="Something went wrong when marking the competition {{ $competition->name }} as cancelled!"/>
+
+    <x-process-data-confirmation btnClass=".delete-group"
+                                 :processRoute="route('division-managements.destroy', ['competition' => $competition->id, 'group' => ':id'])"
+                                 :routeAfterProcess="route('competition-managements.show', $competition->id)"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this group division?"
+                                 successText="Group division successfully deleted!"
+                                 errorText="Something went wrong when deleting the group division!"/>
+
 @endsection
 @push('addon-script')
     <script>
@@ -434,97 +447,6 @@
                         $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("input#add_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
-
-            $('.delete-group').on('click', function() {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('division-managements.destroy', ['competition' => $competition->id,'group' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function() {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Group division successfully deleted!",
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function(error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong",
-                                    text: error,
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            // delete competition alert
-            $('body').on('click', '.delete', function() {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('competition-managements.destroy', ['competition' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function() {
-                                Swal.fire({
-                                    title: 'Competition successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('competition-managements.index') }}";
-                                    }
-                                });
-                            },
-                            error: function(error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: error,
-                                });
-                            }
                         });
                     }
                 });
