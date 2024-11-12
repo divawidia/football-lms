@@ -7,6 +7,8 @@ use App\Models\Competition;
 use App\Models\GroupDivision;
 use App\Models\Player;
 use App\Models\Team;
+use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
+use App\Notifications\TeamsManagements\TeamCreatedDeleted;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
 use App\Repository\CompetitionRepository;
@@ -14,8 +16,10 @@ use App\Repository\EventScheduleRepository;
 use App\Repository\GroupDivisionRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
+use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -26,13 +30,15 @@ class CompetitionService extends Service
     private TeamRepository $teamRepository;
     private PlayerRepository $playerRepository;
     private CoachRepository $coachRepository;
+    private UserRepository $userRepository;
 
     public function __construct(
         CompetitionRepository $competitionRepository,
         GroupDivisionRepository $groupDivisionRepository,
         TeamRepository $teamRepository,
         PlayerRepository $playerRepository,
-        CoachRepository $coachRepository
+        CoachRepository $coachRepository,
+        UserRepository $userRepository
     )
     {
         $this->competitionRepository = $competitionRepository;
@@ -40,6 +46,7 @@ class CompetitionService extends Service
         $this->teamRepository = $teamRepository;
         $this->playerRepository = $playerRepository;
         $this->coachRepository = $coachRepository;
+        $this->userRepository = $userRepository;
     }
     public function index(){
         return $this->competitionRepository->getAll();
@@ -279,7 +286,7 @@ class CompetitionService extends Service
         $coaches = $this->coachRepository->getAll();
         return compact('teams', 'opponentTeams', 'players', 'coaches');
     }
-    public  function store(array $competitionData)
+    public  function store(array $competitionData, $loggedUser)
     {
         $competitionData['logo'] = $this->storeImage($competitionData, 'logo', 'assets/competition-logo', 'images/undefined-user.png');
         $competition = $this->competitionRepository->create($competitionData);
@@ -287,11 +294,21 @@ class CompetitionService extends Service
         $competitionData['competitionId'] = $competition->id;
         $division = $this->groupDivisionRepository->create($competitionData);
 
+        Notification::send($this->userRepository->getAllAdminUsers(),new CompetitionCreatedDeleted($loggedUser, $competition, 'created'));
+
         if (array_key_exists('opponentTeams', $competitionData)){
             $division->teams()->attach($competitionData['opponentTeams']);
         }
         if (array_key_exists('teams', $competitionData)){
             $division->teams()->attach($competitionData['teams']);
+            $teams = $this->teamRepository->getInArray($competitionData['teams']);
+            foreach ($teams as $team){
+                $playersIds = collect($team->players)->pluck('id')->all();
+                $players = $this->userRepository->getInArray('player', $playersIds);
+                $coachesIds = collect($team->coaches)->pluck('id')->all();
+                $coaches = $this->userRepository->getInArray('coach', $coachesIds);
+            }
+
         }
         return $competition;
     }

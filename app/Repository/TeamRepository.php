@@ -27,6 +27,13 @@ class TeamRepository
         return $this->team->where('teamSide', $teamSide)->get();
     }
 
+    public function getInArray($ids)
+    {
+        return $this->team->with('players', 'coaches')
+            ->whereIn('id', $ids)
+            ->get();
+    }
+
     public function getTeamsHaventJoinedByCoach(Coach $coach)
     {
         return $this->team->where('teamSide', 'Academy Team')
