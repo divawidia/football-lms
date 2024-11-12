@@ -10,6 +10,7 @@ use App\Models\Team;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CompetitionRepository;
 use App\Repository\EventScheduleRepository;
+use App\Repository\GroupDivisionRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -18,8 +19,11 @@ use Yajra\DataTables\Facades\DataTables;
 class CompetitionService extends Service
 {
     private CompetitionRepository $competitionRepository;
-    public function __construct(CompetitionRepository $competitionRepository){
+    private GroupDivisionRepository $groupDivisionRepository;
+    public function __construct(CompetitionRepository $competitionRepository, GroupDivisionRepository $groupDivisionRepository)
+    {
         $this->competitionRepository = $competitionRepository;
+        $this->groupDivisionRepository = $groupDivisionRepository;
     }
     public function index(){
         return $this->competitionRepository->getAll();
@@ -250,21 +254,13 @@ class CompetitionService extends Service
             ->rawColumns(['action','team', 'score', 'status','opponentTeam','date'])
             ->make();
     }
-    public  function store(array $competitionData){
+    public  function store(array $competitionData)
+    {
+        $competitionData['logo'] = $this->storeImage($competitionData, 'logo', 'assets/competition-logo', 'images/undefined-user.png');
+        $competition = $this->competitionRepository->create($competitionData);
 
-        if (array_key_exists('logo', $competitionData)){
-            $competitionData['logo'] =$competitionData['logo']->store('assets/competition-logo', 'public');
-        }else{
-            $competitionData['logo'] = 'images/undefined-user.png';
-        }
-        $competitionData['status'] = '1';
-
-        $competition = Competition::create($competitionData);
-
-        $division = GroupDivision::create([
-            'groupName' => $competitionData['groupName'],
-            'competitionId' => $competition->id
-        ]);
+        $competitionData['competitionId'] = $competition->id;
+        $division = $this->groupDivisionRepository->create($competitionData);
 
         if (array_key_exists('opponentTeams', $competitionData)){
             $division->teams()->attach($competitionData['opponentTeams']);
@@ -277,13 +273,7 @@ class CompetitionService extends Service
 
     public function update(array $competitionData, Competition $competition): Competition
     {
-        if (array_key_exists('logo', $competitionData)){
-            $this->deleteImage($competitionData['logo']);
-            $competitionData['logo'] = $competitionData['logo']->store('assets/competition-logo', 'public');
-        }else{
-            $competitionData['logo'] = $competition->logo;
-        }
-
+        $competitionData['logo'] = $this->updateImage($competitionData, 'logo', 'competition-logo', $competition->logo);
         $competition->update($competitionData);
         return $competition;
     }
