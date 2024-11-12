@@ -195,9 +195,10 @@
             </div>
         </div>
     </div>
-    <x-delete-data-confirmation deleteBtnClass=".delete-team"
-                                :destroyRoute="route('opponentTeam-managements.destroy', ':id')"
-                                :routeAfterDelete="route('team-managements.index')"
+    <x-process-data-confirmation btnClass=".delete-team"
+                                :processRoute="route('opponentTeam-managements.destroy', ':id')"
+                                :routeAfterProcess="route('team-managements.index')"
+                                 method="DELETE"
                                 confirmationText="Are you sure to delete this team {{$team->teamName}}?"
                                 successText="Successfully deleted team {{$team->teamName}}!"
                                 errorText="Something went wrong when deleting team {{$team->teamName}}!"/>

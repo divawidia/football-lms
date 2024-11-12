@@ -3,7 +3,7 @@
         $(document).ready(function () {
             const body = $('body');
 
-            body.on('click', '{{ $deleteBtnClass }}', function () {
+            body.on('click', '{{ $btnClass }}', function () {
                 const id = $(this).attr('id');
                 Swal.fire({
                     title: "{{ $confirmationText }}",
@@ -16,8 +16,8 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ $destroyRoute }}".replace(':id', id),
-                            type: 'DELETE',
+                            url: "{{ $processRoute }}".replace(':id', id),
+                            type: '{{ $method }}',
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
@@ -32,7 +32,7 @@
                                         'Ok!'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
-                                        window.location.href = "{{ $routeAfterDelete }}";
+                                        window.location.href = "{{ $routeAfterProcess }}";
                                     }
                                 });
                             },

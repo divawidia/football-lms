@@ -38,7 +38,7 @@ class CompetitionStatus extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"Competition {$this->competition->name} has started, and your team '{$this->team->teamName}' {$this->status}.",
+            'data' =>"The competition {$this->competition->name} that your team '{$this->team->teamName}' participated in {$this->status}.",
             'redirectRoute' => route('competition-managements.show', $this->competition->id)
         ];
     }

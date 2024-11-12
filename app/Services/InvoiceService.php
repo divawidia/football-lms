@@ -71,7 +71,7 @@ class InvoiceService extends Service
                             Mark as Paid
                     </button>';
                 $uncollectibleButton =
-                    '<button type="submit" class="dropdown-item setStatus" id="'.$item->id.'" data-status="uncollectible">
+                    '<button type="submit" class="dropdown-item setUcollectibleStatus" id="'.$item->id.'" data-status="uncollectible">
                             <span class="material-icons text-danger">check_circle</span>
                             Mark as Uncollectible
                     </button>';

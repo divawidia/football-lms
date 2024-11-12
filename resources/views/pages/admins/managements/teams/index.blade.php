@@ -81,16 +81,18 @@
             @endif
         </div>
         @if(isAllAdmin())
-        <x-delete-data-confirmation deleteBtnClass=".delete-team"
-                                    :destroyRoute="route('team-managements.destroy', ':id')"
-                                    :routeAfterDelete="route('team-managements.index')"
+        <x-process-data-confirmation btnClass=".delete-team"
+                                    :processRoute="route('team-managements.destroy', ':id')"
+                                    :routeAfterProcess="route('team-managements.index')"
+                                     method="DELETE"
                                     confirmationText="Are you sure to delete this team?"
                                     successText="Successfully deleted team!"
                                     errorText="Something went wrong when deleting team!"/>
 
-        <x-delete-data-confirmation deleteBtnClass=".delete-opponentTeam"
-                                    :destroyRoute="route('opponentTeam-managements.destroy', ':id')"
-                                    :routeAfterDelete="route('team-managements.index')"
+        <x-process-data-confirmation btnClass=".delete-opponentTeam"
+                                    :processRoute="route('opponentTeam-managements.destroy', ':id')"
+                                    :routeAfterProcess="route('team-managements.index')"
+                                     method="DELETE"
                                     confirmationText="Are you sure to delete this team?"
                                     successText="Successfully deleted team!"
                                     errorText="Something went wrong when deleting team!"/>

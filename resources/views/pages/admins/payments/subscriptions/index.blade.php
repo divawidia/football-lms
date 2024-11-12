@@ -57,9 +57,10 @@
             </div>
         </div>
     </div>
-    <x-delete-data-confirmation deleteBtnClass=".deleteSubscription"
-                                :destroyRoute="route('subscriptions.destroy', ':id')"
-                                :routeAfterDelete="route('subscriptions.index')"
+    <x-process-data-confirmation btnClass=".deleteSubscription"
+                                :processRoute="route('subscriptions.destroy', ':id')"
+                                :routeAfterProcess="route('subscriptions.index')"
+                                 method="DELETE"
                                 confirmationText="Are you sure to delete this player's subscription?"
                                 successText="Successfully deleted player's subscription!"
                                 errorText="Something went wrong when deleting player's subscription!"/>

@@ -6,22 +6,24 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class DeleteDataConfirmation extends Component
+class ProcessDataConfirmation extends Component
 {
-    public $deleteBtnClass;
-    public $destroyRoute;
-    public $routeAfterDelete;
+    public $btnClass;
+    public $processRoute;
+    public $method;
+    public $routeAfterProcess;
     public $confirmationText;
     public $successText;
     public $errorText;
     /**
      * Create a new component instance.
      */
-    public function __construct($deleteBtnClass, $destroyRoute, $routeAfterDelete, $confirmationText, $successText, $errorText)
+    public function __construct($btnClass, $processRoute, $method ,$routeAfterProcess, $confirmationText, $successText, $errorText)
     {
-        $this->deleteBtnClass = $deleteBtnClass;
-        $this->destroyRoute = $destroyRoute;
-        $this->routeAfterDelete = $routeAfterDelete;
+        $this->btnClass = $btnClass;
+        $this->processRoute = $processRoute;
+        $this->method = $method;
+        $this->routeAfterProcess = $routeAfterProcess;
         $this->confirmationText = $confirmationText;
         $this->successText = $successText;
         $this->errorText = $errorText;
@@ -32,6 +34,6 @@ class DeleteDataConfirmation extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.alerts.delete-data-confirmation');
+        return view('components.alerts.process-data-confirmation');
     }
 }
