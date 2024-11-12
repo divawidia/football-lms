@@ -2,26 +2,18 @@
 
 namespace App\Services;
 
-use App\Models\Coach;
 use App\Models\Competition;
-use App\Models\GroupDivision;
-use App\Models\Player;
 use App\Models\Team;
-use App\Notifications\CompetitionManagements\CompetitionCompleted;
 use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
 use App\Notifications\CompetitionManagements\CompetitionStatus;
 use App\Notifications\CompetitionManagements\CompetitionUpdated;
 use App\Notifications\CompetitionManagements\TeamJoinedCompetition;
-use App\Notifications\TeamsManagements\TeamCreatedDeleted;
-use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
 use App\Repository\CompetitionRepository;
-use App\Repository\EventScheduleRepository;
 use App\Repository\GroupDivisionRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
