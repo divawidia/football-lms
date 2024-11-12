@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompetitionRequest;
+use App\Http\Requests\UpdateCompetitionRequest;
 use App\Models\Coach;
 use App\Models\Competition;
 use App\Models\Player;
@@ -90,21 +91,10 @@ class CompetitionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Competition $competition)
+    public function update(UpdateCompetitionRequest $request, Competition $competition)
     {
 
-        $data = $request->validate([
-            'name' => ['required', 'string'],
-            'type' => ['required', Rule::in('League', 'Tournament')],
-            'logo' => ['nullable', 'image', 'max:10240'],
-            'startDate' => ['required', 'date'],
-            'endDate' => ['required', 'date', 'after:startDate'],
-            'location' => ['required', 'string'],
-            'contactName' => ['nullable', 'string'],
-            'contactPhone' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
-        ]);
-
+        $data = $request->validated();
         $this->competitionService->update($data, $competition, $this->getLoggedUser());
 
         $text = 'Competition '.$competition->name.' successfully updated!';
