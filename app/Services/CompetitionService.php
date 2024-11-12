@@ -129,11 +129,14 @@ class CompetitionService extends Service
                 return $contact;
             })
             ->editColumn('status', function ($item) {
-                $status = '';
-                if ($item->status == '1') {
-                    $status = '<span class="badge badge-pill badge-success">Active</span>';
-                } elseif ($item->status == '0') {
-                    $status = '<span class="badge badge-pill badge-danger">Ended</span>';
+                if ($item->status == 'Scheduled') {
+                    $status = '<span class="badge badge-pill badge-warning">'.$item->status .'</span>';
+                } elseif ($item->status == 'Ongoing') {
+                    $status = '<span class="badge badge-pill badge-info">'.$item->status .'</span>';
+                } elseif ($item->status == 'Completed') {
+                    $status = '<span class="badge badge-pill badge-success">'.$item->status .'</span>';
+                } else {
+                    $status = '<span class="badge badge-pill badge-danger">'.$item->status .'</span>';
                 }
                 return $status;
             })
@@ -233,11 +236,14 @@ class CompetitionService extends Service
                 return $date.' ('.$startTime.' - '.$endTime.')';
             })
             ->editColumn('status', function ($item) {
-                $status = '';
-                if ($item->status == '1') {
-                    $status = '<span class="badge badge-pill badge-success">Active</span>';
-                } elseif ($item->status == '0') {
-                    $status = '<span class="badge badge-pill badge-danger">Ended</span>';
+                if ($item->status == 'Scheduled') {
+                    $status = '<span class="badge badge-pill badge-warning">'.$item->status .'</span>';
+                } elseif ($item->status == 'Ongoing') {
+                    $status = '<span class="badge badge-pill badge-info">'.$item->status .'</span>';
+                } elseif ($item->status == 'Completed') {
+                    $status = '<span class="badge badge-pill badge-success">'.$item->status .'</span>';
+                } else {
+                    $status = '<span class="badge badge-pill badge-danger">'.$item->status .'</span>';
                 }
                 return $status;
             })
