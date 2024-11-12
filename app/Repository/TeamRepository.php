@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
+use App\Models\Competition;
 use App\Models\Player;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,6 +52,18 @@ class TeamRepository
 
     public function getCoachManagedTeams(Coach $coach){
         return $coach->teams;
+    }
+
+    public function getJoinedCompetition(Competition $competition)
+    {
+        $teams = [];
+        foreach ($competition->groups as $group){
+            if (count($group->teams) > 0) {
+                $team = $group->teams->where('teamSide', 'Academy Team')->first();
+                $teams[] = $team;
+            }
+        }
+        return $teams;
     }
 
     public function find($id)

@@ -7,7 +7,10 @@ use App\Models\Competition;
 use App\Models\GroupDivision;
 use App\Models\Player;
 use App\Models\Team;
+use App\Notifications\CompetitionManagements\CompetitionCompleted;
 use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
+use App\Notifications\CompetitionManagements\CompetitionStatus;
+use App\Notifications\CompetitionManagements\CompetitionUpdated;
 use App\Notifications\CompetitionManagements\TeamJoinedCompetition;
 use App\Notifications\TeamsManagements\TeamCreatedDeleted;
 use App\Repository\CoachMatchStatsRepository;
@@ -306,33 +309,64 @@ class CompetitionService extends Service
             $teams = $this->teamRepository->getInArray($competitionData['teams']);
 
             foreach ($teams as $team){
-                $playersIds = collect($team->players)->pluck('id')->all();
-                $players = $this->userRepository->getInArray('player', $playersIds);
-                $coachesIds = collect($team->coaches)->pluck('id')->all();
-                $coaches = $this->userRepository->getInArray('coach', $coachesIds);
-
-                $allUsers = array_merge($admins, $players, $coaches);
-                Notification::send($allUsers,new TeamJoinedCompetition($team, $competition));
+                $teamParticipants = $this->allTeamsParticipant($team);
+                Notification::send($teamParticipants,new TeamJoinedCompetition($team, $competition));
             }
         }
         return $competition;
     }
 
-    public function update(array $competitionData, Competition $competition): Competition
+    public function update(array $competitionData, Competition $competition, $loggedUser): Competition
     {
         $competitionData['logo'] = $this->updateImage($competitionData, 'logo', 'competition-logo', $competition->logo);
         $competition->update($competitionData);
+        Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionUpdated($loggedUser, $competition, 'updated'));
         return $competition;
+    }
+
+    public function allTeamsParticipant(Team $team)
+    {
+        $admins = $this->userRepository->getAllAdminUsers();
+        $playersIds = collect($team->players)->pluck('id')->all();
+        $players = $this->userRepository->getInArray('player', $playersIds);
+        $coachesIds = collect($team->coaches)->pluck('id')->all();
+        $coaches = $this->userRepository->getInArray('coach', $coachesIds);
+        return $admins->merge($players)->merge($coaches);
     }
 
     public function setStatus(Competition $competition, $status): Competition
     {
         $competition->update(['status' => $status]);
+        $teams = $this->teamRepository->getJoinedCompetition($competition);
+
+        // Define status messages mapping
+        $statusMessages = [
+            'Ongoing' => 'is now competing',
+            'Completed' => 'have been completed',
+            'Cancelled' => 'have been cancelled',
+            'Scheduled' => 'have been set to scheduled',
+        ];
+
+        // Check if the status exists in the defined mapping
+        if (array_key_exists($status, $statusMessages)) {
+            $statusMessage = $statusMessages[$status];
+
+            foreach ($teams as $team) {
+                $teamParticipants = $this->allTeamsParticipant($team);
+                Notification::send($teamParticipants, new CompetitionStatus($competition, $team, $statusMessage));
+            }
+        }
+
         return $competition;
     }
 
-    public function destroy(Competition $competition): Competition
+    public function destroy(Competition $competition, $loggedUser): Competition
     {
+        $teams = $this->teamRepository->getJoinedCompetition($competition);
+        foreach ($teams as $team) {
+            $teamParticipants = $this->allTeamsParticipant($team);
+            Notification::send($teamParticipants, new CompetitionCreatedDeleted($loggedUser, $competition, 'deleted'));
+        }
         $this->deleteImage($competition->logo);
         $competition->delete();
         return $competition;

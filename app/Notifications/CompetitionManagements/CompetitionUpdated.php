@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CompetitionCreatedDeleted extends Notification
+class CompetitionUpdated extends Notification
 {
     use Queueable;
     protected $admin;
@@ -38,7 +38,7 @@ class CompetitionCreatedDeleted extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"{$this->admin->firstName} {$this->admin->lastName} has {$this->status} a competition {$this->competition->name}. Please review the changes if necessary.",
+            'data' =>"Competition {$this->competition->name} have been {$this->status} by Admin {$this->admin->firstName} {$this->admin->lastName}. Please review the changes if necessary.",
             'redirectRoute' => route('competition-managements.show', $this->competition->id)
         ];
     }
