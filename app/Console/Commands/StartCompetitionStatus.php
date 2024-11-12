@@ -9,14 +9,14 @@ use App\Services\EventScheduleService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class EndCompetitionStatus extends Command
+class StartCompetitionStatus extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'update:end-competition-status';
+    protected $signature = 'update:start-competition-status';
 
     /**
      * The console command description.
@@ -40,11 +40,11 @@ class EndCompetitionStatus extends Command
         $now = Carbon::now();
 
         // Update records where end_date is less than the current date
-        $competitions = Competition::where('endDate', '<', $now)->get();
+        $competitions = Competition::where('startDate', '=', $now)->where('status', '!=', 'Cancelled')->get();
         foreach ($competitions as $competition){
-            $this->competitionService->deactivate($competition);
+            $this->competitionService->setStatus($competition, 'Ongoing');
         }
 
-        $this->info('Competition status data updated successfully.');
+        $this->info('Competition status data successfully updated to ongoing.');
     }
 }

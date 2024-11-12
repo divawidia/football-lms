@@ -3,7 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\DeactivateTrainingStatus;
-use App\Console\Commands\EndCompetitionStatus;
+use App\Console\Commands\StartCompetitionStatus;
 use App\Console\Commands\EndMatchStatus;
 use App\Console\Commands\SetPastDueInvoiceStatus;
 use App\Models\Invoice;
@@ -21,7 +21,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         DeactivateTrainingStatus::class,
         EndMatchStatus::class,
-        EndCompetitionStatus::class,
+        StartCompetitionStatus::class,
         SetPastDueInvoiceStatus::class,
     ];
     /**
