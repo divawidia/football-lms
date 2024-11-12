@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('event_schedules', function (Blueprint $table) {
-            $table->dropColumn('status');
-            $table->enum('status', ['Scheduled', 'Completed', 'Ongoing', 'Cancelled'])->default('Scheduled')->nullable()->change();
+            $table->enum('status', ['Scheduled', 'Completed', 'Ongoing', 'Cancelled'])->default('Scheduled')->change();
         });
     }
 
@@ -23,7 +22,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('event_schedules', function (Blueprint $table) {
-            $table->dropColumn('status');
             $table->enum('status', ['0', '1'])->default('1')->change();
         });
     }
