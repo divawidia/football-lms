@@ -303,24 +303,10 @@ class CompetitionService extends Service
         return $competition;
     }
 
-    public function activate(Competition $competition): Competition
+    public function setStatus(Competition $competition, $status): Competition
     {
-        $competition->update(['status' => '1']);
+        $competition->update(['status' => $status]);
         return $competition;
-    }
-
-    public function deactivate(Competition $competition): Competition
-    {
-        $competition->update(['status' => '0']);
-        return $competition;
-    }
-
-    public function getTeams(){
-        return Team::where('teamSide', 'Academy Team')->get();
-    }
-
-    public function getOpponentTeams(){
-        return Team::where('teamSide', 'Opponent Team')->get();
     }
 
     public function destroy(Competition $competition): Competition
