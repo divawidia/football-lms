@@ -557,6 +557,12 @@ class EventScheduleService extends Service
         return compact('totalParticipant', 'totalAttend', 'totalDidntAttend', 'totalIllness', 'totalInjured', 'totalOthers', 'dataSchedule', 'allSkills', 'playerPerformanceReviews');
     }
 
+    public function getFriendlyMatchTeam()
+    {
+        $teams = $this->teamRepository->getByTeamside('Academy Team');
+        $opponentTeams = $this->teamRepository->getByTeamside('Opponent Team');
+        return compact('teams', 'opponentTeams');
+    }
     public function createTraining(Coach $coach = null)
     {
         if ($coach){

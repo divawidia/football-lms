@@ -409,13 +409,11 @@ class EventScheduleController extends Controller
     }
 
     public function getFriendlyMatchTeam(){
-        $teams = $this->competitionService->getTeams();
-        $opponentTeams = $this->competitionService->getOpponentTeams();
+        $data = $this->eventScheduleService->getFriendlyMatchTeam();
         return response()->json([
-            'status' => '200',
             'data' => [
-                'teams' => $teams,
-                'opponentTeams' => $opponentTeams,
+                'teams' => $data['teams'],
+                'opponentTeams' => $data['opponentTeams'],
             ],
             'message' => 'Success'
         ]);
@@ -424,7 +422,6 @@ class EventScheduleController extends Controller
     public function getAssistPlayer(EventSchedule $schedule, Player $player){
         $players = $schedule->players()->with('user', 'position')->where('players.id', '!=', $player->id)->get();
         return response()->json([
-            'status' => '200',
             'data' => $players,
             'message' => 'Success'
         ]);
