@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\CompletedCompetitionStatus;
 use App\Console\Commands\DeactivateTrainingStatus;
 use App\Console\Commands\StartCompetitionStatus;
 use App\Console\Commands\EndMatchStatus;
@@ -22,6 +23,7 @@ class Kernel extends ConsoleKernel
         DeactivateTrainingStatus::class,
         EndMatchStatus::class,
         StartCompetitionStatus::class,
+        CompletedCompetitionStatus::class,
         SetPastDueInvoiceStatus::class,
     ];
     /**
@@ -32,6 +34,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:training-status-data')->everyMinute();
         $schedule->command('update:end-match-status')->everyMinute();
         $schedule->command('update:start-competition-status')->everyMinute();
+        $schedule->command('update:complete-competition-status')->everyMinute();
         $schedule->command('update:set-past-due-invoice-status')->everyMinute();
         $schedule->command('update:invoice-due-soon-notification')->everyMinute();
         $schedule->command('update:subscription-due-soon-notification')->everyMinute();
