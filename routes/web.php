@@ -197,8 +197,10 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('edit', [CompetitionController::class, 'edit'])->name('competition-managements.edit');
                     Route::put('update', [CompetitionController::class, 'update'])->name('competition-managements.update');
                     Route::delete('destroy', [CompetitionController::class, 'destroy'])->name('competition-managements.destroy');
-                    Route::patch('deactivate', [CompetitionController::class, 'deactivate'])->name('deactivate-competition');
-                    Route::patch('activate', [CompetitionController::class, 'activate'])->name('activate-competition');
+                    Route::patch('scheduled', [CompetitionController::class, 'scheduled'])->name('scheduled-competition');
+                    Route::patch('ongoing', [CompetitionController::class, 'ongoing'])->name('ongoing-competition');
+                    Route::patch('completed', [CompetitionController::class, 'completed'])->name('completed-competition');
+                    Route::patch('cancelled', [CompetitionController::class, 'cancelled'])->name('cancelled-competition');
 
                     Route::prefix('group-division')->group(function () {
                         Route::get('create', [GroupDivisionController::class, 'create'])->name('division-managements.create');
