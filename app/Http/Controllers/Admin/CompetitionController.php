@@ -9,7 +9,9 @@ use App\Models\Competition;
 use App\Models\Player;
 use App\Models\Team;
 use App\Services\CompetitionService;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -52,7 +54,7 @@ class CompetitionController extends Controller
     {
         $data = $request->validated();
 
-        $this->competitionService->store($data);
+        $this->competitionService->store($data, $this->getLoggedUser());
 
         $text = 'Competition '.$data['name'].' successfully added!';
         Alert::success($text);
@@ -103,37 +105,48 @@ class CompetitionController extends Controller
             'description' => ['nullable', 'string'],
         ]);
 
-        $this->competitionService->update($data, $competition);
+        $this->competitionService->update($data, $competition, $this->getLoggedUser());
 
         $text = 'Competition '.$competition->name.' successfully updated!';
         Alert::success($text);
         return redirect()->route('competition-managements.index');
     }
 
-    public function activate(Competition $competition)
+    public function status(Competition $competition, $status)
     {
-        $this->competitionService->activate($competition);
+        try {
+            $this->competitionService->setStatus($competition, $status);
+            return response()->json(['message' => 'Competition '.$competition->name.' status successfully mark to '.$status.'!']);
 
-        $text = 'Competition '.$competition->name.' status successfully updated!';
-        Alert::success($text);
-        return redirect()->route('competition-managements.show', $competition->id);
+        } catch (Exception $e) {
+            Log::error('Error marking invoice as Scheduled: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while marking the competition '.$competition->name.' as '.$status.'.'], 500);
+        }
     }
 
-    public function deactivate(Competition $competition)
+    public function scheduled(Competition $competition)
     {
-        $this->competitionService->deactivate($competition);
+        return $this->status($competition, 'Scheduled');
+    }
 
-        $text = 'Competition '.$competition->name.' status successfully updated!';
-        Alert::success($text);
-        return redirect()->route('competition-managements.show', $competition->id);
+    public function ongoing(Competition $competition)
+    {
+        return $this->status($competition, 'Ongoing');
+    }
+    public function completed(Competition $competition)
+    {
+        return $this->status($competition, 'Completed');
+    }
+    public function cancelled(Competition $competition)
+    {
+        return $this->status($competition, 'Cancelled');
     }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Competition $competition)
     {
-        $this->competitionService->destroy($competition);
-
+        $this->competitionService->destroy($competition, $this->getLoggedUser());
         return response()->json(['success' => true]);
     }
 }
