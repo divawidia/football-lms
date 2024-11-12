@@ -68,13 +68,9 @@ class CompetitionService extends Service
             ->addColumn('action', function ($item) {
                 $statusButton = '';
                 if ($item->status != 'Cancelled') {
-                    $statusButton = '<form action="' . route('cancelled-competition', $item->id) . '" method="POST">
-                                        ' . method_field("PATCH") . '
-                                        ' . csrf_field() . '
-                                        <button type="submit" class="dropdown-item">
-                                            <span class="material-icons text-danger">block</span> Cancel Competition
-                                        </button>
-                                    </form>';
+                    $statusButton = '<button type="submit" class="dropdown-item cancelBtn" id="'.$item->id.'">
+                                        <span class="material-icons text-danger">block</span> Cancel Competition
+                                    </button>';
                 }
                 return '
                             <div class="dropdown">

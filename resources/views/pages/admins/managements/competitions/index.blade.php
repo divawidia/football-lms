@@ -8,7 +8,7 @@
 
     @section('content')
         <div class="pt-32pt">
-            <div class="container page__container d-flex flex-column">
+            <div class="container d-flex flex-column">
                 <h2 class="mb-2">@yield('title')</h2>
                 <ol class="breadcrumb p-0 m-0">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
@@ -19,14 +19,14 @@
             </div>
         </div>
 
-        <div class="container page__container page-section">
+        <div class="container page-section">
             <a href="{{  route('competition-managements.create') }}" class="btn btn-primary mb-3" id="add-new">
                 <span class="material-icons mr-2">
                     add
                 </span>
                 Add New
             </a>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="table">
@@ -49,6 +49,23 @@
                 </div>
             </div>
         </div>
+
+        <x-process-data-confirmation btnClass=".delete"
+                                     :processRoute="route('competition-managements.destroy', ['competition' => ':id'])"
+                                     :routeAfterProcess="route('competition-managements.index')"
+                                     method="DELETE"
+                                     confirmationText="Are you sure to delete this competition?"
+                                     successText="Successfully deleted the competition!"
+                                     errorText="Something went wrong when deleting the competition!"/>
+
+        <x-process-data-confirmation btnClass=".cancelBtn"
+                                     :processRoute="route('cancelled-competition', ['competition' => ':id'])"
+                                     :routeAfterProcess="route('competition-managements.index')"
+                                     method="PATCH"
+                                     confirmationText="Are you sure to cancel this competition?"
+                                     successText="Competition successfully mark as cancelled!"
+                                     errorText="Something went wrong when marking the competition as cancelled!"/>
+
     @endsection
     @push('addon-script')
         <script>
@@ -76,43 +93,6 @@
                             width: '15%'
                         },
                     ]
-                });
-                $('body').on('click', '.delete', function() {
-                    let id = $(this).attr('id');
-
-                    Swal.fire({
-                        title: "Are you sure?",
-                        text: "You won't be able to revert this!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#1ac2a1",
-                        cancelButtonColor: "#E52534",
-                        confirmButtonText: "Yes, delete it!"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: "{{ route('competition-managements.destroy', ['competition' => ':id']) }}".replace(':id', id),
-                                type: 'DELETE',
-                                data: {
-                                    _token: "{{ csrf_token() }}"
-                                },
-                                success: function(response) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "Competition successfully deleted!",
-                                    });
-                                    datatable.ajax.reload();
-                                },
-                                error: function(error) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "Oops...",
-                                        text: "Something went wrong when deleting data!",
-                                    });
-                                }
-                            });
-                        }
-                    });
                 });
             });
         </script>
