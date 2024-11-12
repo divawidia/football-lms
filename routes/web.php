@@ -345,7 +345,7 @@ Route::group(['middleware' => ['auth']], function () {
 
                 Route::prefix('{player}')->group(function () {
                     Route::prefix('performance-reviews')->group(function () {
-                        Route::get('', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('coach.player-managements.performance-reviews');
+//                        Route::get('', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('coach.player-managements.performance-reviews');
                         Route::post('store', [PlayerPerformanceReviewController::class, 'store'])->name('coach.performance-reviews.store');
                     });
 
@@ -454,7 +454,11 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('upcoming-matches', [PlayerController::class, 'upcomingMatches'])->name('player-managements.upcoming-matches');
                 Route::get('upcoming-trainings', [PlayerController::class, 'upcomingTrainings'])->name('player-managements.upcoming-trainings');
 
-                Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player-managements.performance-reviews-page');
+                Route::prefix('performance-reviews')->group(function () {
+                    Route::get('match-training', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('coach.player-managements.performance-reviews');
+                    Route::get('', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player-managements.performance-reviews-page');
+                });
+
             });
         });
 
