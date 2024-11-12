@@ -36,16 +36,12 @@ class CompetitionController extends Controller
      */
     public function create()
     {
-        $teams = $this->competitionService->getTeams();
-        $opponentTeams = $this->competitionService->getOpponentTeams();
-        $players = Player::all();
-        $coaches = Coach::all();
-
+        $data = $this->competitionService->create();
         return view('pages.admins.managements.competitions.create', [
-            'teams' => $teams,
-            'opponentTeams' => $opponentTeams,
-            'players' => $players,
-            'coaches' => $coaches
+            'teams' => $data['teams'],
+            'opponentTeams' => $data['opponentTeams'],
+            'players' => $data['players'],
+            'coaches' => $data['coaches']
         ]);
     }
 

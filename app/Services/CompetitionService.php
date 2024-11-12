@@ -8,9 +8,12 @@ use App\Models\GroupDivision;
 use App\Models\Player;
 use App\Models\Team;
 use App\Repository\CoachMatchStatsRepository;
+use App\Repository\CoachRepository;
 use App\Repository\CompetitionRepository;
 use App\Repository\EventScheduleRepository;
 use App\Repository\GroupDivisionRepository;
+use App\Repository\PlayerRepository;
+use App\Repository\TeamRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -20,10 +23,23 @@ class CompetitionService extends Service
 {
     private CompetitionRepository $competitionRepository;
     private GroupDivisionRepository $groupDivisionRepository;
-    public function __construct(CompetitionRepository $competitionRepository, GroupDivisionRepository $groupDivisionRepository)
+    private TeamRepository $teamRepository;
+    private PlayerRepository $playerRepository;
+    private CoachRepository $coachRepository;
+
+    public function __construct(
+        CompetitionRepository $competitionRepository,
+        GroupDivisionRepository $groupDivisionRepository,
+        TeamRepository $teamRepository,
+        PlayerRepository $playerRepository,
+        CoachRepository $coachRepository
+    )
     {
         $this->competitionRepository = $competitionRepository;
         $this->groupDivisionRepository = $groupDivisionRepository;
+        $this->teamRepository = $teamRepository;
+        $this->playerRepository = $playerRepository;
+        $this->coachRepository = $coachRepository;
     }
     public function index(){
         return $this->competitionRepository->getAll();
@@ -253,6 +269,15 @@ class CompetitionService extends Service
             })
             ->rawColumns(['action','team', 'score', 'status','opponentTeam','date'])
             ->make();
+    }
+
+    public function create()
+    {
+        $teams = $this->teamRepository->getByTeamside('Academy Team');
+        $opponentTeams = $this->teamRepository->getByTeamside('Opponent Team');
+        $players = $this->playerRepository->getAll();
+        $coaches = $this->coachRepository->getAll();
+        return compact('teams', 'opponentTeams', 'players', 'coaches');
     }
     public  function store(array $competitionData)
     {
