@@ -66,22 +66,15 @@ class CompetitionService extends Service
         $query = $this->index();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('deactivate-competition', $item->id) . '" method="POST">
-                                                    ' . method_field("PATCH") . '
-                                                    ' . csrf_field() . '
-                                                    <button type="submit" class="dropdown-item">
-                                                        <span class="material-icons">block</span> Deactivate Competition
-                                                    </button>
-                                                </form>';
-                } else {
-                    $statusButton = '<form action="' . route('activate-competition', $item->id) . '" method="POST">
-                                                    ' . method_field("PATCH") . '
-                                                    ' . csrf_field() . '
-                                                    <button type="submit" class="dropdown-item">
-                                                        <span class="material-icons">check_circle</span> Activate Competition
-                                                    </button>
-                                                </form>';
+                $statusButton = '';
+                if ($item->status != 'Cancelled') {
+                    $statusButton = '<form action="' . route('cancelled-competition', $item->id) . '" method="POST">
+                                        ' . method_field("PATCH") . '
+                                        ' . csrf_field() . '
+                                        <button type="submit" class="dropdown-item">
+                                            <span class="material-icons text-danger">block</span> Cancel Competition
+                                        </button>
+                                    </form>';
                 }
                 return '
                             <div class="dropdown">
@@ -95,7 +88,7 @@ class CompetitionService extends Service
                                 <a class="dropdown-item" href="' . route('competition-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Competition</a>
                                 ' . $statusButton . '
                                 <button type="button" class="dropdown-item delete" id="' . $item->id . '">
-                                    <span class="material-icons">delete</span> Delete Competition
+                                    <span class="material-icons text-danger">delete</span> Delete Competition
                                 </button>
                               </div>
                             </div>';
@@ -204,7 +197,7 @@ class CompetitionService extends Service
                             <a class="dropdown-item" href="' . route('match-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Match</a>
                             <a class="dropdown-item" href="' . route('match-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Match</a>
                             <button type="button" class="dropdown-item delete" id="' . $item->id . '">
-                                <span class="material-icons">delete</span> Delete Match
+                                <span class="material-icons text-danger">delete</span> Delete Match
                             </button>
                           </div>
                         </div>';
@@ -311,6 +304,11 @@ class CompetitionService extends Service
     public function update(array $competitionData, Competition $competition, $loggedUser): Competition
     {
         $competitionData['logo'] = $this->updateImage($competitionData, 'logo', 'competition-logo', $competition->logo);
+
+        if ($competitionData['startDate'] > $this->getNowDate()){
+            $competitionData['status'] = 'Scheduled';
+        }
+
         $competition->update($competitionData);
         Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionUpdated($loggedUser, $competition, 'updated'));
         return $competition;
