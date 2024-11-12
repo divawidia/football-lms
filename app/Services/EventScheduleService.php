@@ -634,13 +634,9 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function activate(EventSchedule $schedule)
+    public function setStatus(EventSchedule $schedule)
     {
         return $this->eventScheduleRepository->updateStatus($schedule, '1');
-    }
-    public function deactivate(EventSchedule $schedule)
-    {
-        return $this->eventScheduleRepository->updateStatus($schedule, '0');
     }
 
     public function endMatch(EventSchedule $schedule)
