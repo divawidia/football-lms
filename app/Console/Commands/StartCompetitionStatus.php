@@ -43,8 +43,7 @@ class StartCompetitionStatus extends Command
         $competitions = Competition::where('startDate', '=', $now)->where('status', '!=', 'Cancelled')->get();
         foreach ($competitions as $competition){
             $this->competitionService->setStatus($competition, 'Ongoing');
+            $this->info('Competition '.$competition->name.' status data successfully updated to ongoing.');
         }
-
-        $this->info('Competition status data successfully updated to ongoing.');
     }
 }
