@@ -7,19 +7,23 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingScheduleUpdatedForPlayer extends Notification
+class TrainingScheduleUpdatedForCoachAdmin extends Notification
 {
     use Queueable;
     protected $trainingSchedule;
     protected $team;
+    protected $adminName;
+    protected $status;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($trainingSchedule, $team)
+    public function __construct($trainingSchedule, $team, $adminName, $status)
     {
         $this->trainingSchedule = $trainingSchedule;
         $this->team = $team;
+        $this->adminName = $adminName;
+        $this->status = $status;
     }
 
     /**
@@ -38,9 +42,9 @@ class TrainingScheduleUpdatedForPlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("New Training Session Scheduled")
+            ->subject("Training Session {$this->trainingSchedule->eventName} {$this->status}")
             ->greeting("Hello!")
-            ->line("The training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} on ".convertToDatetime($this->trainingSchedule->startDatetime)." has been updated.")
+            ->line("The training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} on ".convertToDatetime($this->trainingSchedule->startDatetime)." {$this->status} by {$this->adminName}.")
             ->action('View training session detail', route('training-schedules.show', $this->trainingSchedule->id))
             ->line("Please log in to view the details!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
@@ -54,7 +58,7 @@ class TrainingScheduleUpdatedForPlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'The training session '.$this->trainingSchedule->eventName.' for your team '.$this->team->teamName.' on '.convertToDatetime($this->trainingSchedule->startDatetime).' has been updated. Please check the schedule for details!',
+            'data' =>'The training session '.$this->trainingSchedule->eventName.' for your team '.$this->team->teamName.' on '.convertToDatetime($this->trainingSchedule->startDatetime).' '.$this->status.' by '.$this->adminName.'. Please check the schedule for details!',
             'redirectRoute' => route('training-schedules.show', $this->trainingSchedule->id)
         ];
     }

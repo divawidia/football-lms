@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingScheduleUpdatedForPlayer extends Notification
+class TrainingScheduleReminder extends Notification
 {
     use Queueable;
     protected $trainingSchedule;
@@ -38,11 +38,11 @@ class TrainingScheduleUpdatedForPlayer extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("New Training Session Scheduled")
+            ->subject("Training Session Reminder")
             ->greeting("Hello!")
-            ->line("The training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} on ".convertToDatetime($this->trainingSchedule->startDatetime)." has been updated.")
+            ->line("Reminder: You have training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} scheduled for tomorrow at ".convertToDatetime($this->trainingSchedule->startDatetime).".")
             ->action('View training session detail', route('training-schedules.show', $this->trainingSchedule->id))
-            ->line("Please log in to view the details!")
+            ->line("Please be on time!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
 
@@ -54,7 +54,7 @@ class TrainingScheduleUpdatedForPlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'The training session '.$this->trainingSchedule->eventName.' for your team '.$this->team->teamName.' on '.convertToDatetime($this->trainingSchedule->startDatetime).' has been updated. Please check the schedule for details!',
+            'data' =>'Reminder! : The training session '.$this->trainingSchedule->eventName.' for your team '.$this->team->teamName.' is tomorrow at '.convertToDatetime($this->trainingSchedule->startDatetime).'. Please arrive on time!',
             'redirectRoute' => route('training-schedules.show', $this->trainingSchedule->id)
         ];
     }

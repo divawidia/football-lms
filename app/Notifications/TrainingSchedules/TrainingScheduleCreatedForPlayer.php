@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingScheduleCreatedForPlayerCoach extends Notification
+class TrainingScheduleCreatedForPlayer extends Notification
 {
     use Queueable;
     protected $trainingSchedule;
@@ -41,7 +41,7 @@ class TrainingScheduleCreatedForPlayerCoach extends Notification
             ->subject("New Training Session Scheduled")
             ->greeting("Hello!")
             ->line("A new training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} has been scheduled on ".convertToDatetime($this->trainingSchedule->startDatetime).". Please log in to view the details.")
-            ->action('View training session detail at', route('training-schedules.show', $this->trainingSchedule->id))
+            ->action('View training session detail', route('training-schedules.show', $this->trainingSchedule->id))
             ->line("Please prepare accordingly and arrive on time!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }

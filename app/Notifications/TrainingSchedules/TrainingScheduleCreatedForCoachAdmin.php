@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingScheduleCreatedForAdmin extends Notification
+class TrainingScheduleCreatedForCoachAdmin extends Notification
 {
     use Queueable;
     protected $trainingSchedule;
@@ -43,7 +43,7 @@ class TrainingScheduleCreatedForAdmin extends Notification
             ->subject("New Training Session Scheduled")
             ->greeting("Hello Admins!")
             ->line("A new training session {$this->trainingSchedule->eventName} has been scheduled on ".convertToDatetime($this->trainingSchedule->startDatetime)." by admin ".$this->adminName.". Please log in to view the details.")
-            ->action('View training session detail at', route('training-schedules.show', $this->trainingSchedule->id))
+            ->action('View training session detail', route('training-schedules.show', $this->trainingSchedule->id))
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
 
@@ -55,7 +55,7 @@ class TrainingScheduleCreatedForAdmin extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'A new training session '.$this->trainingSchedule->eventName.' for team '.$this->team->teamName.' has been scheduled on '.convertToDatetime($this->trainingSchedule->startDatetime).' by admin '.$this->adminName.'. Please check the details and prepare accordingly!',
+            'data' =>'A new training session '.$this->trainingSchedule->eventName.' for team '.$this->team->teamName.' has been scheduled on '.convertToDatetime($this->trainingSchedule->startDatetime).' by '.$this->adminName.'. Please check the details and prepare accordingly!',
             'redirectRoute' => route('training-schedules.show', $this->trainingSchedule->id)
         ];
     }
