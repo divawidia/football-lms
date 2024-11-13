@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CompetitionMatchRequest;
 use App\Http\Requests\CompetitionRequest;
 use App\Http\Requests\UpdateCompetitionRequest;
 use App\Models\Coach;
@@ -52,6 +53,17 @@ class CompetitionController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(CompetitionRequest $request)
+    {
+        $data = $request->validated();
+
+        $this->competitionService->store($data, $this->getLoggedUser());
+
+        $text = 'Competition '.$data['name'].' successfully added!';
+        Alert::success($text);
+        return redirect()->route('competition-managements.index');
+    }
+
+    public function storeMatch(CompetitionMatchRequest $request)
     {
         $data = $request->validated();
 

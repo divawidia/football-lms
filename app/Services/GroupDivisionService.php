@@ -110,6 +110,19 @@ class GroupDivisionService extends Service
             ->rawColumns(['action', 'teams'])
             ->make();
     }
+
+    public function getAll(Competition $competition)
+    {
+        return $competition->groups;
+    }
+
+    public function getTeams(GroupDivision $group)
+    {
+        $ourTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, 'Academy Team');
+        $opponentTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, 'Opponent Team');
+        return compact('ourTeams', 'opponentTeams');
+    }
+
     public function create(Competition $competition)
     {
         $teams = $this->teamRepository->getTeamsHaventJoinedCompetition($competition, 'Academy Team');
@@ -162,7 +175,7 @@ class GroupDivisionService extends Service
     {
         $teams = $this->teamRepository->getTeamsHaventJoinedCompetition($competition, 'Academy Team');
         $opponentTeams = $this->teamRepository->getTeamsHaventJoinedCompetition($competition, 'Opponent Team');
-        $availableAcademyTeams = $this->teamRepository->getTeamsHaventJoinedGroupDivision($group, 'Academy Team');
+        $availableAcademyTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, 'Academy Team');
         $players = $this->playerRepository->getAll();
         $coaches = $this->coachRepository->getAll();
         return compact('teams', 'opponentTeams', 'availableAcademyTeams','players', 'coaches');

@@ -10,8 +10,10 @@ use App\Models\GroupDivision;
 use App\Models\Player;
 use App\Models\Team;
 use App\Services\GroupDivisionService;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -25,6 +27,25 @@ class GroupDivisionController extends Controller
 
     public function index(Competition $competition, GroupDivision $group){
         return $this->groupDivisionService->index($competition, $group);
+    }
+
+    public function getAll(Competition $competition)
+    {
+        try {
+            $data = $this->groupDivisionService->getAll($competition);
+            return response()->json([
+                'status' => 200,
+                'data' => $data,
+                'message' => 'Successfully retrieving group division data'
+            ]);
+        } catch (Exception $exception){
+            Log::error('Error retrieving group division data : ' . $exception->getMessage());
+            return response()->json([
+                'status' => 500,
+                'data'=> [],
+                'message' => 'An error occurred while retrieving group division data : '. $exception->getMessage()
+            ], 500);
+        }
     }
 
     public function create(Competition $competition){
@@ -48,6 +69,22 @@ class GroupDivisionController extends Controller
         Alert::success($text);
         return redirect()->route('competition-managements.show', $competition->id);
     }
+
+    public function getTeams(Competition $competition, GroupDivision $group)
+    {
+        try {
+            $data = $this->groupDivisionService->getTeams($group);
+            return response()->json([
+                'status' => 200,
+                'data' => $data,
+                'message' => 'Successfully retrieving teams in group division '.$group->groupName
+            ]);
+        } catch (Exception $exception){
+            Log::error('Error retrieving teams in group division '.$group->groupName.' : ' . $exception->getMessage());
+            return response()->json(['status' => 500, 'data'=> [], 'message' => 'An error occurred while retrieving teams in group division '.$group->groupName.' : '. $exception->getMessage()], 500);
+        }
+    }
+
 
     public function addTeam(Competition $competition, GroupDivision $group)
     {

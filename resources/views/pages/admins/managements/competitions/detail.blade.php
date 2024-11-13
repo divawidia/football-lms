@@ -44,6 +44,8 @@
             </div>
         </div>
     </div>
+
+    <x-add-our-team-match-in-competition-modal :competition="$competition"/>
 @endsection
 
 @section('content')
@@ -115,20 +117,24 @@
             @include('components.stats-card', ['title' => "Total Our Team's Losses", 'data'=>$overviewStats['ourTeamsLosses'], 'dataThisMonth'=>null])
         </div>
 
+        <div class="page-separator">
+            <div class="page-separator__text">Competition Info</div>
+        </div>
         <div class="row card-group-row">
-            <div class="col-sm-5 card-group-row__col flex-column">
-                <div class="page-separator">
-                    <div class="page-separator__text">Competition Info</div>
-                </div>
+            <div class="col-sm-6 card-group-row__col flex-column">
                 <div class="card card-sm card-group-row__card">
                     <div class="card-body flex-column">
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
                             <div class="ml-auto p-2 text-muted">
-                                @if ($competition->status == '1')
-                                    <span class="badge badge-pill badge-success">Aktif</span>
-                                @elseif($competition->status == '0')
-                                    <span class="badge badge-pill badge-danger">Non Aktif</span>
+                                @if ($competition->status == 'Scheduled')
+                                    <span class="badge badge-pill badge-warning">{{ $competition->status }}</span>
+                                @elseif($competition->status == 'Ongoing')
+                                    <span class="badge badge-pill badge-info">{{ $competition->status }}</span>
+                                @elseif($competition->status == 'Completed')
+                                    <span class="badge badge-pill badge-success">{{ $competition->status }}</span>
+                                @else
+                                    <span class="badge badge-pill badge-danger">{{ $competition->status }}</span>
                                 @endif
                             </div>
                         </div>
@@ -145,16 +151,22 @@
                             <div class="ml-auto p-2 text-muted">{{ $competition->location }}</div>
                         </div>
                         <div class="d-flex align-items-center">
+                            <div class="p-2"><p class="card-title mb-4pt">Description :</p></div>
+                            <div class="ml-auto p-2 text-muted">@php echo $competition->description @endphp</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 card-group-row__col flex-column">
+                <div class="card card-sm card-group-row__card">
+                    <div class="card-body flex-column">
+                        <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Contact Name :</p></div>
                             <div class="ml-auto p-2 text-muted">{{ $competition->contactName }}</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Contact Phone :</p></div>
                             <div class="ml-auto p-2 text-muted">{{ $competition->contactPhone }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Description :</p></div>
-                            <div class="ml-auto p-2 text-muted">@php echo $competition->description @endphp</div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
@@ -167,33 +179,49 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-7 card-group-row__col flex-column">
-                <div class="page-separator">
-                    <div class="page-separator__text">Match</div>
-                </div>
-                <div class="card card-sm card-group-row__card">
-                    <div class="card-body flex-column">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="competitionMatchTable">
-                                <thead>
-                                <tr>
-                                    <th>Team</th>
-                                    <th>Opponent</th>
-                                    <th>Score</th>
-                                    <th>Match Date</th>
-                                    <th>Location</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+        </div>
+
+        <div class="card-group-row__col flex-column">
+            <div class="page-separator">
+                <div class="page-separator__text">Match</div>
+                @if(isAllAdmin())
+                    <a href="{{ route('division-managements.create', $competition->id) }}" class="btn btn-primary ml-auto btn-sm">
+                            <span class="material-icons mr-2">
+                                add
+                            </span>
+                        Create Opponent Team Match
+                    </a>
+                    <a href="{{ route('match-schedules.create', $competition->id) }}" id="addOurTeamMatch" class="btn btn-primary ml-2 btn-sm">
+                            <span class="material-icons mr-2">
+                                add
+                            </span>
+                        Create Our Team Match
+                    </a>
+                @endif
+            </div>
+            <div class="card card-sm card-group-row__card">
+                <div class="card-body flex-column">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="competitionMatchTable">
+                            <thead>
+                            <tr>
+                                <th>Team</th>
+                                <th>Opponent</th>
+                                <th>Score</th>
+                                <th>Match Date</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="page-separator">
             <div class="page-separator__text">Group Divisions</div>
             @if(isAllAdmin())

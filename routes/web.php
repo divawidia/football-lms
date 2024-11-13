@@ -196,6 +196,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::prefix('{competition}')->group(function () {
                     Route::get('edit', [CompetitionController::class, 'edit'])->name('competition-managements.edit');
                     Route::put('update', [CompetitionController::class, 'update'])->name('competition-managements.update');
+                    Route::post('store-match', [CompetitionController::class, 'storeMatch'])->name('competition-managements.store-match');
                     Route::delete('destroy', [CompetitionController::class, 'destroy'])->name('competition-managements.destroy');
                     Route::patch('scheduled', [CompetitionController::class, 'scheduled'])->name('scheduled-competition');
                     Route::patch('ongoing', [CompetitionController::class, 'ongoing'])->name('ongoing-competition');
@@ -203,9 +204,11 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::patch('cancelled', [CompetitionController::class, 'cancelled'])->name('cancelled-competition');
 
                     Route::prefix('group-division')->group(function () {
+                        Route::get('get-all', [GroupDivisionController::class, 'getAll'])->name('division-managements.get-all');
                         Route::get('create', [GroupDivisionController::class, 'create'])->name('division-managements.create');
                         Route::post('store', [GroupDivisionController::class, 'store'])->name('division-managements.store');
                         Route::prefix('{group}')->group(function () {
+                            Route::get('get-teams', [GroupDivisionController::class, 'getTeams'])->name('division-managements.get-teams');
                             Route::get('edit', [GroupDivisionController::class, 'edit'])->name('division-managements.edit');
                             Route::put('update', [GroupDivisionController::class, 'update'])->name('division-managements.update');
                             Route::delete('destroy', [GroupDivisionController::class, 'destroy'])->name('division-managements.destroy');

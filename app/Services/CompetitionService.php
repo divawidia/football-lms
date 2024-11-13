@@ -8,6 +8,7 @@ use App\Notifications\CompetitionManagements\CompetitionStatus;
 use App\Notifications\CompetitionManagements\CompetitionUpdated;
 use App\Repository\CoachRepository;
 use App\Repository\CompetitionRepository;
+use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
@@ -24,6 +25,8 @@ class CompetitionService extends Service
     private CoachRepository $coachRepository;
     private UserRepository $userRepository;
     private GroupDivisionService $groupDivisionService;
+    private EventScheduleService $eventScheduleService;
+    private EventScheduleRepository $eventScheduleRepository;
 
     public function __construct(
         CompetitionRepository $competitionRepository,
@@ -31,7 +34,9 @@ class CompetitionService extends Service
         PlayerRepository $playerRepository,
         CoachRepository $coachRepository,
         UserRepository $userRepository,
-        GroupDivisionService $groupDivisionService
+        GroupDivisionService $groupDivisionService,
+        EventScheduleService $eventScheduleService,
+        EventScheduleRepository $eventScheduleRepository
     )
     {
         $this->competitionRepository = $competitionRepository;
@@ -40,6 +45,8 @@ class CompetitionService extends Service
         $this->coachRepository = $coachRepository;
         $this->userRepository = $userRepository;
         $this->groupDivisionService = $groupDivisionService;
+        $this->eventScheduleService = $eventScheduleService;
+        $this->eventScheduleRepository = $eventScheduleRepository;
     }
     public function index(){
         return $this->competitionRepository->getAll();
@@ -279,6 +286,14 @@ class CompetitionService extends Service
         $competitionData['competitionId'] = $competition->id;
         $this->groupDivisionService->store($competitionData, $competition, $loggedUser);
 
+        return $competition;
+    }
+
+    public  function storeMatch(array $competitionData, Competition $competition, $loggedUser)
+    {
+        $competitionData['matchType'] = 'Competition';
+        $competitionData['competitionId'] = $competition->id;
+        $this->eventScheduleService->storeMatch($competitionData, $loggedUser->id);
         return $competition;
     }
 
