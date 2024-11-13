@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Models\Competition;
 use App\Models\Team;
-use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
+use App\Notifications\CompetitionManagements\GroupDivisionCreatedDeleted;
 use App\Notifications\CompetitionManagements\CompetitionStatus;
-use App\Notifications\CompetitionManagements\CompetitionUpdated;
+use App\Notifications\CompetitionManagements\GroupDivisionUpdated;
 use App\Notifications\CompetitionManagements\TeamJoinedCompetition;
 use App\Repository\CoachRepository;
 use App\Repository\CompetitionRepository;
@@ -280,7 +280,7 @@ class CompetitionService extends Service
         $division = $this->groupDivisionRepository->create($competitionData);
 
         $admins = $this->userRepository->getAllAdminUsers();
-        Notification::send($admins, new CompetitionCreatedDeleted($loggedUser, $competition, 'created'));
+        Notification::send($admins, new GroupDivisionCreatedDeleted($loggedUser, $competition, 'created'));
 
         if (array_key_exists('opponentTeams', $competitionData)){
             $division->teams()->attach($competitionData['opponentTeams']);
@@ -306,7 +306,7 @@ class CompetitionService extends Service
         }
 
         $competition->update($competitionData);
-        Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionUpdated($loggedUser, $competition, 'updated'));
+        Notification::send($this->userRepository->getAllAdminUsers(), new GroupDivisionUpdated($loggedUser, $competition, 'updated'));
         return $competition;
     }
 
@@ -351,7 +351,7 @@ class CompetitionService extends Service
         $teams = $this->teamRepository->getJoinedCompetition($competition);
         foreach ($teams as $team) {
             $teamParticipants = $this->allTeamsParticipant($team);
-            Notification::send($teamParticipants, new CompetitionCreatedDeleted($loggedUser, $competition, 'deleted'));
+            Notification::send($teamParticipants, new GroupDivisionCreatedDeleted($loggedUser, $competition, 'deleted'));
         }
         $this->deleteImage($competition->logo);
         $competition->delete();
