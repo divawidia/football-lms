@@ -59,12 +59,17 @@ class TeamRepository
             })->get();
     }
 
-    public function getTeamsJoinedGroupDivision(GroupDivision $groupDivision, $teamSide)
+    public function getTeamsJoinedGroupDivision(GroupDivision $groupDivision, $exceptTeamId = null, $teamSide)
     {
-        return $this->team->where('teamSide', $teamSide)
+        $query = $this->team->where('teamSide', $teamSide)
             ->whereHas('divisions', function (Builder $query) use ($groupDivision) {
                 $query->where('divisionId', $groupDivision->id);
-            })->get();
+            });
+        if ($exceptTeamId != null){
+            return $query->where('id', '!=', $exceptTeamId)->get();
+        } else {
+            return $query->get();
+        }
     }
 
     public function getCoachManagedTeams(Coach $coach){

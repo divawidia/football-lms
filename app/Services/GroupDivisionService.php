@@ -116,10 +116,10 @@ class GroupDivisionService extends Service
         return $competition->groups;
     }
 
-    public function getTeams(GroupDivision $group)
+    public function getTeams(GroupDivision $group, $exceptTeamId = null)
     {
-        $ourTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, 'Academy Team');
-        $opponentTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, 'Opponent Team');
+        $ourTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, $exceptTeamId, 'Academy Team');
+        $opponentTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, $exceptTeamId, 'Opponent Team');
         return compact('ourTeams', 'opponentTeams');
     }
 

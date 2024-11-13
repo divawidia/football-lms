@@ -70,10 +70,11 @@ class GroupDivisionController extends Controller
         return redirect()->route('competition-managements.show', $competition->id);
     }
 
-    public function getTeams(Competition $competition, GroupDivision $group)
+    public function getTeams(Request $request, Competition $competition, GroupDivision $group)
     {
+        $exceptTeamId = $request->query('exceptTeamId');
         try {
-            $data = $this->groupDivisionService->getTeams($group);
+            $data = $this->groupDivisionService->getTeams($group, $exceptTeamId);
             return response()->json([
                 'status' => 200,
                 'data' => $data,

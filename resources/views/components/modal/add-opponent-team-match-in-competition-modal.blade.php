@@ -1,16 +1,16 @@
-<div class="modal fade" id="addOurTeamMatchModal" tabindex="-1" aria-labelledby="addOurTeamMatchModalLabel" aria-hidden="true">
+<div class="modal fade" id="addOpponentTeamMatchModal" tabindex="-1" aria-labelledby="addOpponentTeamMatchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form action="" method="post" id="formAddOurTeamMatch">
+            <form action="" method="post" id="formAddOpponentTeamMatch">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Add Our Team's Match in Competition {{ $competition->name }}</h5>
+                    <h5 class="modal-title">Add Opponent Team's Match in Competition {{ $competition->name }}</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="isOpponentTeamMatch" value="0">
+                    <input type="hidden" name="isOpponentTeamMatch" value="1">
                     <div class="form-group">
                         <label class="form-label" for="add_groupId">Group Division</label>
                         <small class="text-danger">*</small>
@@ -22,7 +22,7 @@
                         </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="add_teamId">Our Teams</label>
+                        <label class="form-label" for="add_teamId">Home Teams</label>
                         <small class="text-danger">*</small>
                         <select class="form-control form-select" id="add_teamId" name="teamId" required data-toggle="select">
                         </select>
@@ -31,7 +31,7 @@
                         </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="add_opponentTeamId">Opponent Teams</label>
+                        <label class="form-label" for="add_opponentTeamId">Away Teams</label>
                         <small class="text-danger">*</small>
                         <select class="form-control form-select" id="add_opponentTeamId" name="opponentTeamId" required data-toggle="select">
                         </select>
@@ -120,17 +120,16 @@
 @push('addon-script')
     <script>
         $(document).ready(function (){
-            const formId = '#formAddOurTeamMatch';
+            const formId = '#formAddOpponentTeamMatch';
 
-            $('#addOurTeamMatch').on('click', function(e) {
+            $('#addOpponentTeamMatch').on('click', function(e) {
                 e.preventDefault();
 
                 $.ajax({
                     url: "{{ route('division-managements.get-all', ['competition' => $competition]) }}",
-                    {{--url: "{{ $routeGet }}".replace(':id', id),--}}
                     type: 'GET',
                     success: function(res) {
-                        $('#addOurTeamMatchModal').modal('show');
+                        $('#addOpponentTeamMatchModal').modal('show');
 
                         $.each(res.data, function (key, value) {
                             $(formId+' #add_groupId').append('<option value=' + value.id + '>' + value.groupName + '</option>');
@@ -147,18 +146,35 @@
             });
 
             $(formId+' #add_groupId').on('change', function () {
-                const id = this.value;
+                const id = $(this).val();
 
                 $.ajax({
                     url: "{{route('division-managements.get-teams', ['competition' => $competition->id ,'group' => ':id']) }}".replace(':id', id),
                     type: 'GET',
                     dataType: 'json',
                     success: function (result) {
-                        $(formId+' #add_teamId').html('<option disabled selected>Select team in this match</option>');
-                        $.each(result.data.ourTeams, function (key, value) {
+                        $(formId+' #add_opponentTeamId').empty();
+
+                        $(formId+' #add_teamId').html('<option disabled selected>Select home team in this match</option>');
+                        $.each(result.data.opponentTeams, function (key, value) {
                             $(formId+' #add_teamId').append('<option value=' + value.id + '>' + value.teamName + '</option>');
                         });
 
+                    }
+                });
+            });
+
+            $(formId+' #add_teamId').on('change', function () {
+                const id = $(formId+' #add_groupId').val();
+                const exceptTeamId = $(this).val();
+                $.ajax({
+                    url: "{{route('division-managements.get-teams', ['competition' => $competition->id ,'group' => ':id']) }}".replace(':id', id),
+                    type: 'GET',
+                    data: {
+                        exceptTeamId: exceptTeamId
+                    },
+                    dataType: 'json',
+                    success: function (result) {
                         $(formId+' #add_opponentTeamId').html('<option disabled selected>Select opponent team in this match</option>');
                         $.each(result.data.opponentTeams, function (key, value) {
                             $(formId+' #add_opponentTeamId').append('<option value=' + value.id + '>' + value.teamName + '</option>');
@@ -179,7 +195,7 @@
                     success: function() {
                         $('#addOurTeamMatchModal').modal('hide');
                         Swal.fire({
-                            title: "Our team's match in competition {{ $competition->name }} successfully added!",
+                            title: "Opponent team's match in competition {{ $competition->name }} successfully added!",
                             icon: 'success',
                             showCancelButton: false,
                             allowOutsideClick: false,

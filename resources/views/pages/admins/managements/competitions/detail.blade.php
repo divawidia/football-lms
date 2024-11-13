@@ -46,6 +46,7 @@
     </div>
 
     <x-add-our-team-match-in-competition-modal :competition="$competition"/>
+    <x-add-opponent-team-match-in-competition-modal :competition="$competition"/>
 @endsection
 
 @section('content')
@@ -185,17 +186,17 @@
             <div class="page-separator">
                 <div class="page-separator__text">Match</div>
                 @if(isAllAdmin())
-                    <a href="{{ route('division-managements.create', $competition->id) }}" class="btn btn-primary ml-auto btn-sm">
+                    <a href="#" id="addOpponentTeamMatch" class="btn btn-primary ml-auto btn-sm">
                             <span class="material-icons mr-2">
                                 add
                             </span>
-                        Create Opponent Team Match
+                        Add Opponent Team Match
                     </a>
-                    <a href="{{ route('match-schedules.create', $competition->id) }}" id="addOurTeamMatch" class="btn btn-primary ml-2 btn-sm">
+                    <a href="#" id="addOurTeamMatch" class="btn btn-primary ml-2 btn-sm">
                             <span class="material-icons mr-2">
                                 add
                             </span>
-                        Create Our Team Match
+                        Add Our Team Match
                     </a>
                 @endif
             </div>
