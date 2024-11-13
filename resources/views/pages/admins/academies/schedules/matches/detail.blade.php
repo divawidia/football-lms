@@ -180,6 +180,37 @@
                         </div>
                         <div class="row">
                             <div class="col-6 col-md-3">
+                                @if($data['dataSchedule']->isOpponentTeamMatch == 1)
+                                    <div class="form-group">
+                                        <label class="form-label" for="teamATeamScore">Team Score</label>
+                                        <small class="text-danger">*</small>
+                                        <input type="number"
+                                               class="form-control"
+                                               id="teamATeamScore"
+                                               name="teamATeamScore"
+                                               min="0"
+                                               max="100"
+                                               value="{{ old('teamATeamScore', $data['dataSchedule']->teams[0]->pivot->teamScore) }}"
+                                               placeholder="Input team Team Score">
+                                        <span class="invalid-feedback teamATeamScore_error" role="alert">
+                                            <strong></strong>
+                                        </span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="teamAOwnGoal">Own Goal</label>
+                                        <small class="text-danger">*</small>
+                                        <input type="number"
+                                               class="form-control"
+                                               id="teamAOwnGoal"
+                                               name="teamAOwnGoal"
+                                               min="0"
+                                               value="{{ old('teamAOwnGoal', $data['dataSchedule']->teams[0]->pivot->teamOwnGoal) }}"
+                                               placeholder="Input team own goal">
+                                        <span class="invalid-feedback teamAOwnGoal_error" role="alert">
+                                            <strong></strong>
+                                        </span>
+                                    </div>
+                                @endif
                                 <div class="form-group">
                                     <label class="form-label" for="teamAPossession">Possession</label>
                                     <small class="text-danger">*</small>
@@ -209,23 +240,40 @@
                                         <strong></strong>
                                     </span>
                                 </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="teamAShots">Shots</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamAShots"
-                                           name="teamAShots"
-                                           min="0"
-
-                                           value="{{ old('teamAShots', $data['dataSchedule']->teams[0]->pivot->teamShots) }}"
-                                           placeholder="Input team Shot">
-                                    <span class="invalid-feedback teamAShots_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
+                                    @if($data['dataSchedule']->isOpponentTeamMatch == 0)
+                                        <div class="form-group">
+                                            <label class="form-label" for="teamAShots">Shots</label>
+                                            <small class="text-danger">*</small>
+                                            <input type="number"
+                                                   class="form-control"
+                                                   id="teamAShots"
+                                                   name="teamAShots"
+                                                   min="0"
+                                                   value="{{ old('teamAShots', $data['dataSchedule']->teams[0]->pivot->teamShots) }}"
+                                                   placeholder="Input team Shot">
+                                            <span class="invalid-feedback teamAShots_error" role="alert">
+                                                <strong></strong>
+                                            </span>
+                                        </div>
+                                     @endif
                             </div>
                             <div class="col-6 col-md-3">
+                                @if($data['dataSchedule']->isOpponentTeamMatch == 1)
+                                    <div class="form-group">
+                                        <label class="form-label" for="teamAShots">Shots</label>
+                                        <small class="text-danger">*</small>
+                                        <input type="number"
+                                               class="form-control"
+                                               id="teamAShots"
+                                               name="teamAShots"
+                                               min="0"
+                                               value="{{ old('teamAShots', $data['dataSchedule']->teams[0]->pivot->teamShots) }}"
+                                               placeholder="Input team Shot">
+                                        <span class="invalid-feedback teamAShots_error" role="alert">
+                                                <strong></strong>
+                                            </span>
+                                    </div>
+                                @endif
                                 <div class="form-group">
                                     <label class="form-label" for="teamATouches">Touches</label>
                                     <small class="text-danger">*</small>
@@ -423,8 +471,6 @@
                                         <strong></strong>
                                     </span>
                                 </div>
-                            </div>
-                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamBShotOnTarget">Shot on Target</label>
                                     <small class="text-danger">*</small>
@@ -439,6 +485,8 @@
                                         <strong></strong>
                                     </span>
                                 </div>
+                            </div>
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamBShots">Shots</label>
                                     <small class="text-danger">*</small>
@@ -483,8 +531,6 @@
                                         <strong></strong>
                                     </span>
                                 </div>
-                            </div>
-                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamBTackles">Tackles</label>
                                     <small class="text-danger">*</small>
@@ -500,6 +546,8 @@
                                         <strong></strong>
                                     </span>
                                 </div>
+                            </div>
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamBClearances">Clearances</label>
                                     <small class="text-danger">*</small>
@@ -530,8 +578,6 @@
                                         <strong></strong>
                                     </span>
                                 </div>
-                            </div>
-                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamBOffsides">Offsides</label>
                                     <small class="text-danger">*</small>
@@ -547,6 +593,8 @@
                                         <strong></strong>
                                     </span>
                                 </div>
+                            </div>
+                            <div class="col-6 col-md-3">
                                 <div class="form-group">
                                     <label class="form-label" for="teamBYellowCards">Yellow Cards</label>
                                     <small class="text-danger">*</small>
@@ -740,9 +788,9 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('match-schedules.index') }}" class="nav-link text-70">
+                    <a href="{{ url()->previous() }}" class="nav-link text-70">
                         <i class="material-icons icon--left">keyboard_backspace</i>
-                        Back to Match Schedule Lists
+                        Back
                     </a>
                 </li>
             </ul>
@@ -761,7 +809,7 @@
                     @endif
                 </p>
             </div>
-            @if(Auth::user()->hasRole('admin'))
+            @if(isAllAdmin())
                 <div class="dropdown">
                     <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
@@ -771,28 +819,17 @@
                         </span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item"
-                           href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}"><span
-                                    class="material-icons">edit</span> Edit Match Schedule</a>
-                        @if($data['dataSchedule']->status == '1')
-                            <form action="{{ route('end-match', $data['dataSchedule']->id) }}" method="POST">
-                                @method("PATCH")
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <span class="material-icons">block</span> End Match
-                                </button>
-                            </form>
-                        @else
-                            <form action="{{ route('activate-match', $data['dataSchedule']->id) }}" method="POST">
-                                @method("PATCH")
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <span class="material-icons">check_circle</span> Start Match
-                                </button>
-                            </form>
+                        <a class="dropdown-item" href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}">
+                            <span class="material-icons">edit</span> Edit Match Schedule
+                        </a>
+                        @if($data['dataSchedule']->status != 'Cancelled' && $data['dataSchedule']->status != 'Completed')
+                            <button type="submit" class="dropdown-item cancelBtn" id="{{ $data['dataSchedule']->id }}">
+                                <span class="material-icons text-danger">block</span>
+                                Cancel Match
+                            </button>
                         @endif
                         <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
-                            <span class="material-icons">delete</span> Delete Match
+                            <span class="material-icons text-danger">delete</span> Delete Match
                         </button>
                     </div>
                 </div>
@@ -804,10 +841,15 @@
         <div class="container page__container">
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
-                    @if($data['dataSchedule']->status == '1')
-                        Status : <span class="badge badge-pill badge-success ml-1">Active</span>
+                    Status :
+                    @if ($data['dataSchedule']->status == 'Scheduled')
+                        <span class="badge badge-pill badge-warning">{{ $data['dataSchedule']->status }}</span>
+                    @elseif($data['dataSchedule']->status == 'Ongoing')
+                        <span class="badge badge-pill badge-info">{{ $data['dataSchedule']->status }}</span>
+                    @elseif($data['dataSchedule']->status == 'Completed')
+                        <span class="badge badge-pill badge-success">{{ $data['dataSchedule']->status }}</span>
                     @else
-                        Status : <span class="badge badge-pill badge-danger ml-1">Ended</span>
+                        <span class="badge badge-pill badge-danger">{{ $data['dataSchedule']->status }}</span>
                     @endif
                 </li>
                 <li class="nav-item navbar-list__item">
@@ -878,64 +920,66 @@
             </div>
         </div>
 
-        {{--    Match Scorer    --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Scorer(s)</div>
-            @if(isAllAdmin() || isCoach())
-                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span
+        @if($data['dataSchedule']->isOpponentTeamMatch == 0)
+            {{--    Match Scorer    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">Scorer(s)</div>
+                @if(isAllAdmin() || isCoach())
+                    <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span
                             class="material-icons mr-2">add</span> Add team scorer</a>
-                <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span
+                    <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span
                             class="material-icons mr-2">add</span>
-                    Add own goal</a>
-            @endif
-        </div>
-        @if(count($data['dataSchedule']->matchScores)==0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">You haven't added any team scorer yet</small>
+                        Add own goal</a>
+                @endif
+            </div>
+            @if(count($data['dataSchedule']->matchScores)==0)
+                <div class="alert alert-light border-left-accent" role="alert">
+                    <div class="d-flex flex-wrap align-items-center">
+                        <i class="material-icons mr-8pt">error_outline</i>
+                        <div class="media-body"
+                             style="min-width: 180px">
+                            <small class="text-black-100">You haven't added any team scorer yet</small>
+                        </div>
                     </div>
                 </div>
-            </div>
-        @else
-            <div class="row">
-                @foreach($data['dataSchedule']->matchScores as $matchScore)
-                    <div class="col-md-6">
-                        <div class="card" id="{{$matchScore->id}}">
-                            <div class="card-body d-flex align-items-center flex-row text-left">
-                                <img src="{{ Storage::url($matchScore->player->user->foto) }}"
-                                     width="50"
-                                     height="50"
-                                     class="rounded-circle img-object-fit-cover"
-                                     alt="instructor">
-                                <div class="flex ml-3">
-                                    <h5 class="mb-0 d-flex">{{ $matchScore->player->user->firstName  }} {{ $matchScore->player->user->lastName  }}
-                                        <p class="text-50 ml-2 mb-0">({{ $matchScore->minuteScored }}')</p></h5>
-                                    <p class="text-50 lh-1 mb-0">{{ $matchScore->player->position->name }}</p>
-                                    @if($matchScore->isOwnGoal == 1)
-                                        <p class="text-50 lh-1 mb-0"><strong>Own Goal</strong></p>
-                                    @elseif($matchScore->assistPlayer)
-                                        <p class="text-50 lh-1 mb-0">Assist
-                                            : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
-                                    @endif
-                                </div>
-                                @if(isAllAdmin() || isCoach())
-                                    <button
+            @else
+                <div class="row">
+                    @foreach($data['dataSchedule']->matchScores as $matchScore)
+                        <div class="col-md-6">
+                            <div class="card" id="{{$matchScore->id}}">
+                                <div class="card-body d-flex align-items-center flex-row text-left">
+                                    <img src="{{ Storage::url($matchScore->player->user->foto) }}"
+                                         width="50"
+                                         height="50"
+                                         class="rounded-circle img-object-fit-cover"
+                                         alt="instructor">
+                                    <div class="flex ml-3">
+                                        <h5 class="mb-0 d-flex">{{ $matchScore->player->user->firstName  }} {{ $matchScore->player->user->lastName  }}
+                                            <p class="text-50 ml-2 mb-0">({{ $matchScore->minuteScored }}')</p></h5>
+                                        <p class="text-50 lh-1 mb-0">{{ $matchScore->player->position->name }}</p>
+                                        @if($matchScore->isOwnGoal == 1)
+                                            <p class="text-50 lh-1 mb-0"><strong>Own Goal</strong></p>
+                                        @elseif($matchScore->assistPlayer)
+                                            <p class="text-50 lh-1 mb-0">Assist
+                                                : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
+                                        @endif
+                                    </div>
+                                    @if(isAllAdmin() || isCoach())
+                                        <button
                                             class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif"
                                             type="button" id="{{ $matchScore->id }}" data-toggle="tooltip"
                                             data-placement="bottom" title="Delete scorer">
                                     <span class="material-icons">
                                         close
                                     </span>
-                                    </button>
-                                @endif
+                                        </button>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
-            </div>
+                    @endforeach
+                </div>
+            @endif
         @endif
 
         {{--    Match Stats    --}}
@@ -943,7 +987,7 @@
             <div class="page-separator__text">Match Stats</div>
             @if(isAllAdmin() || isCoach())
                 <a href="" id="updateMatchStats" class="btn btn-primary btn-sm ml-auto"><span
-                            class="material-icons mr-2">add</span>
+                        class="material-icons mr-2">add</span>
                     Update match stats</a>
             @endif
         </div>
@@ -1120,198 +1164,201 @@
                     <div class="row text-center">
                         <div class="col-4">
                             <strong
-                                    class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamFoulsConceded }}</strong>
+                                class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamFoulsConceded }}</strong>
                         </div>
                         <div class="col-4">
                             <strong class="flex">Fouls conceded</strong>
                         </div>
                         <div class="col-4">
                             <strong
-                                    class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamFoulsConceded }}</strong>
+                                class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamFoulsConceded }}</strong>
                         </div>
                     </div>
                 </li>
             </ul>
         </div>
 
-        {{--    Player Stats    --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Player Stats</div>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="playerStatTable">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Minutes Played</th>
-                            <th>Goals</th>
-                            <th>Assists</th>
-                            <th>Own Goals</th>
-                            <th>Shots</th>
-                            <th>Passes</th>
-                            <th>Fouls</th>
-                            <th>Yellow Cards</th>
-                            <th>Red Cards</th>
-                            <th>Saves</th>
-                            <th>Last Updated</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        @if($data['dataSchedule']->isOpponentTeamMatch == 0)
 
-        {{--    Attendance Overview    --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Attendance Overview</div>
-        </div>
-        <div class="row card-group-row">
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalParticipant'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Total Participants</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-group icon-32pt text-danger ml-8pt'></i>
+            {{--    Player Stats    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">Player Stats</div>
+            </div>
+            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="playerStatTable">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Minutes Played</th>
+                                <th>Goals</th>
+                                <th>Assists</th>
+                                <th>Own Goals</th>
+                                <th>Shots</th>
+                                <th>Passes</th>
+                                <th>Fouls</th>
+                                <th>Yellow Cards</th>
+                                <th>Red Cards</th>
+                                <th>Saves</th>
+                                <th>Last Updated</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalAttend'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Attended</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-user-check icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalDidntAttend'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Didn't Attended</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row card-group-row">
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalIllness'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Illness</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalInjured'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Injured</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalOthers'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Others</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        {{--    Player Attendance    --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Player Attendance</div>
-        </div>
-        <div class=".player-attendance">
-            @include('pages.admins.academies.schedules.player-attendance-data')
-        </div>
+            {{--    Attendance Overview    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">Attendance Overview</div>
+            </div>
+            <div class="row card-group-row">
+                <div class="col-lg-4 col-md-6 card-group-row__col">
+                    <div class="card card-group-row__card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex d-flex align-items-center">
+                                <div class="h2 mb-0 mr-3">{{ $data['totalParticipant'] }}</div>
+                                <div class="flex">
+                                    <div class="card-title">Total Participants</div>
+                                </div>
+                            </div>
+                            <i class='bx bxs-group icon-32pt text-danger ml-8pt'></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 card-group-row__col">
+                    <div class="card card-group-row__card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex d-flex align-items-center">
+                                <div class="h2 mb-0 mr-3">{{ $data['totalAttend'] }}</div>
+                                <div class="flex">
+                                    <div class="card-title">Attended</div>
+                                </div>
+                            </div>
+                            <i class='bx bxs-user-check icon-32pt text-danger ml-8pt'></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 card-group-row__col">
+                    <div class="card card-group-row__card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex d-flex align-items-center">
+                                <div class="h2 mb-0 mr-3">{{ $data['totalDidntAttend'] }}</div>
+                                <div class="flex">
+                                    <div class="card-title">Didn't Attended</div>
+                                </div>
+                            </div>
+                            <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row card-group-row">
+                <div class="col-lg-4 col-md-6 card-group-row__col">
+                    <div class="card card-group-row__card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex d-flex align-items-center">
+                                <div class="h2 mb-0 mr-3">{{ $data['totalIllness'] }}</div>
+                                <div class="flex">
+                                    <div class="card-title">Illness</div>
+                                </div>
+                            </div>
+                            <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 card-group-row__col">
+                    <div class="card card-group-row__card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex d-flex align-items-center">
+                                <div class="h2 mb-0 mr-3">{{ $data['totalInjured'] }}</div>
+                                <div class="flex">
+                                    <div class="card-title">Injured</div>
+                                </div>
+                            </div>
+                            <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 card-group-row__col">
+                    <div class="card card-group-row__card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex d-flex align-items-center">
+                                <div class="h2 mb-0 mr-3">{{ $data['totalOthers'] }}</div>
+                                <div class="flex">
+                                    <div class="card-title">Others</div>
+                                </div>
+                            </div>
+                            <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        {{--    Coach Attendance    --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Coach Attendance</div>
-        </div>
-        <div class=".coach-attendance">
-            @include('pages.admins.academies.schedules.coach-attendance-data')
-        </div>
+            {{--    Player Attendance    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">Player Attendance</div>
+            </div>
+            <div class=".player-attendance">
+                @include('pages.admins.academies.schedules.player-attendance-data')
+            </div>
 
-        {{--    Training Note    --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Match Note</div>
-            @if(isAllAdmin() || isCoach())
-                <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span
-                            class="material-icons mr-2">add</span> Add new note</a>
+            {{--    Coach Attendance    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">Coach Attendance</div>
+            </div>
+            <div class=".coach-attendance">
+                @include('pages.admins.academies.schedules.coach-attendance-data')
+            </div>
+
+            {{--    Training Note    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">Match Note</div>
+                @if(isAllAdmin() || isCoach())
+                    <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span
+                                class="material-icons mr-2">add</span> Add new note</a>
+                @endif
+            </div>
+            @if(count($data['dataSchedule']->notes)==0)
+                <x-warning-alert text="Match session note haven't created yet by coach"/>
             @endif
-        </div>
-        @if(count($data['dataSchedule']->notes)==0)
-            <x-warning-alert text="Match session note haven't created yet by coach"/>
-        @endif
-        @foreach($data['dataSchedule']->notes as $note)
-                <x-event-note-card :note="$note"
-                                   :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id'])"/>
-        @endforeach
+            @foreach($data['dataSchedule']->notes as $note)
+                    <x-event-note-card :note="$note"
+                                       :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id'])"/>
+            @endforeach
 
-        {{--    PLAYER SKILLS EVALUATION SECTION    --}}
-        <div class="page-separator">
-            <div class="page-separator__text">player skills evaluation</div>
-        </div>
-        @if(isAllAdmin() || isCoach())
-            <x-player-skill-event-tables
-                    :route="route('match-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
-                    tableId="playerSkillsTable"/>
-        @elseif(isPlayer())
-            <x-player-skill-stats-card :allSkills="$data['allSkills']"/>
-        @endif
+            {{--    PLAYER SKILLS EVALUATION SECTION    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">player skills evaluation</div>
+            </div>
+            @if(isAllAdmin() || isCoach())
+                <x-player-skill-event-tables
+                        :route="route('match-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
+                        tableId="playerSkillsTable"/>
+            @elseif(isPlayer())
+                <x-player-skill-stats-card :allSkills="$data['allSkills']"/>
+            @endif
 
-        {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
-        <div class="page-separator">
-            <div class="page-separator__text">player performance review</div>
-        </div>
-        @if(isAllAdmin() || isCoach())
-            <x-player-performance-review-event-table
-                :route="route('match-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
-                tableId="playerPerformanceReviewTable"/>
-        @elseif(isPlayer())
-            @if(count($data['playerPerformanceReviews'])==0)
-                <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
-            @else
-                @foreach($data['playerPerformanceReviews'] as $review)
-                    <x-player-event-performance-review :review="$review"/>
-                @endforeach
+            {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
+            <div class="page-separator">
+                <div class="page-separator__text">player performance review</div>
+            </div>
+            @if(isAllAdmin() || isCoach())
+                <x-player-performance-review-event-table
+                    :route="route('match-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
+                    tableId="playerPerformanceReviewTable"/>
+            @elseif(isPlayer())
+                @if(count($data['playerPerformanceReviews'])==0)
+                    <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
+                @else
+                    @foreach($data['playerPerformanceReviews'] as $review)
+                        <x-player-event-performance-review :review="$review"/>
+                    @endforeach
+                @endif
             @endif
         @endif
     </div>

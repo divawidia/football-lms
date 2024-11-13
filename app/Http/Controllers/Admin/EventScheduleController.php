@@ -290,7 +290,7 @@ class EventScheduleController extends Controller
         if (request()->ajax()) {
             if ($data) {
                 return response()->json([
-                    'status' => '200',
+                    'status' => 200,
                     'data' => [
                         'user' => $data->user,
                         'playerAttendance'=>$data->pivot
@@ -298,7 +298,7 @@ class EventScheduleController extends Controller
                 ]);
             } else {
                 return response()->json([
-                    'status' => '404',
+                    'status' => 404,
                     'message' => 'Data not found!'
                 ]);
             }
@@ -313,7 +313,7 @@ class EventScheduleController extends Controller
         if (request()->ajax()) {
             if ($data) {
                 return response()->json([
-                    'status' => '200',
+                    'status' => 200,
                     'data' => [
                         'user' => $data->user,
                         'coachAttendance'=>$data->pivot
@@ -321,7 +321,7 @@ class EventScheduleController extends Controller
                 ]);
             } else {
                 return response()->json([
-                    'status' => '404',
+                    'status' => 404,
                     'message' => 'Data not found!'
                 ]);
             }
@@ -350,7 +350,7 @@ class EventScheduleController extends Controller
         $note = $this->eventScheduleService->createNote($data, $schedule);
         if (request()->ajax()) {
             return response()->json([
-                'status' => '200',
+                'status' => 200,
                 'data' => $note,
                 'message' => 'Success'
             ]);
@@ -361,13 +361,13 @@ class EventScheduleController extends Controller
     {
         try {
             return response()->json([
-                'status' => '200',
+                'status' => 200,
                 'data' => $note,
                 'message' => 'Success'
             ]);
         }catch (\Throwable $throwable){
             return response()->json([
-                'status' => '400',
+                'status' => 400,
                 'data' => $throwable,
                 'message' => 'Error'
             ]);
@@ -378,7 +378,7 @@ class EventScheduleController extends Controller
         $data = $request->validated();
         $note = $this->eventScheduleService->updateNote($data, $schedule, $note);
         return response()->json([
-            'status' => '200',
+            'status' => 200,
             'data' => $note,
             'message' => 'Success'
         ]);
@@ -399,7 +399,7 @@ class EventScheduleController extends Controller
             $opponentTeams[] = $group->teams()->where('teamSide', 'Opponent Team')->get();
         }
         return response()->json([
-            'status' => '200',
+            'status' => 200,
             'data' => [
                 'teams' => $teams,
                 'opponentTeams' => $opponentTeams,
@@ -411,6 +411,7 @@ class EventScheduleController extends Controller
     public function getFriendlyMatchTeam(){
         $data = $this->eventScheduleService->getFriendlyMatchTeam();
         return response()->json([
+            'status' => 200,
             'data' => [
                 'teams' => $data['teams'],
                 'opponentTeams' => $data['opponentTeams'],
@@ -422,6 +423,7 @@ class EventScheduleController extends Controller
     public function getAssistPlayer(EventSchedule $schedule, Player $player){
         $players = $schedule->players()->with('user', 'position')->where('players.id', '!=', $player->id)->get();
         return response()->json([
+            'status' => 200,
             'data' => $players,
             'message' => 'Success'
         ]);
@@ -432,7 +434,7 @@ class EventScheduleController extends Controller
         $note = $this->eventScheduleService->storeMatchScorer($data, $schedule);
         if (request()->ajax()) {
             return response()->json([
-                'status' => '200',
+                'status' => 200,
                 'data' => $note,
                 'message' => 'Success'
             ]);
@@ -442,7 +444,7 @@ class EventScheduleController extends Controller
     public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer){
         $matchScorer = $this->eventScheduleService->destroyMatchScorer($schedule, $scorer);
         return response()->json([
-            'status' => '200',
+            'status' => 200,
             'data' => $matchScorer,
             'message' => 'Success'
         ]);
@@ -454,7 +456,7 @@ class EventScheduleController extends Controller
         $matchStats = $this->eventScheduleService->updateMatchStats($data, $schedule);
         if (request()->ajax()) {
             return response()->json([
-                'status' => '200',
+                'status' => 200,
                 'data' => $matchStats,
                 'message' => 'Success'
             ]);
@@ -466,7 +468,7 @@ class EventScheduleController extends Controller
         $ownGoal = $this->eventScheduleService->storeOwnGoal($data, $schedule);
         if (request()->ajax()) {
             return response()->json([
-                'status' => '200',
+                'status' => 200,
                 'data' => $ownGoal,
                 'message' => 'Success'
             ]);
@@ -476,7 +478,7 @@ class EventScheduleController extends Controller
     public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer){
         $ownGoal = $this->eventScheduleService->destroyOwnGoal($schedule, $scorer);
         return response()->json([
-            'status' => '200',
+            'status' => 200,
             'data' => $ownGoal,
             'message' => 'Success'
         ]);
@@ -490,7 +492,7 @@ class EventScheduleController extends Controller
     public function getPlayerStats(EventSchedule $schedule, Player $player){
         $player = $this->eventScheduleService->getPlayerStats($schedule, $player);
         return response()->json([
-            'status' => '200',
+            'status' => 200,
             'data' => $player,
             'message' => 'Success'
         ]);
@@ -502,7 +504,7 @@ class EventScheduleController extends Controller
         $playerStats = $this->eventScheduleService->updatePlayerStats($data, $schedule, $player);
         if (request()->ajax()) {
             return response()->json([
-                'status' => '200',
+                'status' => 200,
                 'data' => $playerStats,
                 'message' => 'Success'
             ]);

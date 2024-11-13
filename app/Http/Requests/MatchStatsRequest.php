@@ -22,6 +22,8 @@ class MatchStatsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'teamATeamScore' => ['nullable', 'numeric', 'min:0'],
+            'teamAOwnGoal' => ['nullable', 'numeric', 'min:0'],
             'teamAPossession' => ['required', 'numeric', 'min:0'],
             'teamAShotOnTarget' => ['required', 'numeric', 'min:0'],
             'teamAShots' => ['required', 'numeric', 'min:0'],
