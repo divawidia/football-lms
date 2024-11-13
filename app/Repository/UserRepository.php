@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Models\Team;
 use App\Models\User;
 
 class UserRepository
@@ -36,6 +37,19 @@ class UserRepository
     public function getAllAdminUsers()
     {
         return $this->getAllByRole(['admin', 'Super-Admin']);
+    }
+
+    public function allTeamsParticipant(Team $team)
+    {
+        $admins = $this->getAllAdminUsers();
+
+        $playersIds = collect($team->players)->pluck('id')->all();
+        $players = $this->getInArray('player', $playersIds);
+
+        $coachesIds = collect($team->coaches)->pluck('id')->all();
+        $coaches = $this->getInArray('coach', $coachesIds);
+
+        return $admins->merge($players)->merge($coaches);
     }
 
     public function find($id)

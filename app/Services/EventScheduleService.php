@@ -9,13 +9,16 @@ use App\Models\Player;
 use App\Models\PlayerMatchStats;
 use App\Models\ScheduleNote;
 use App\Models\Team;
+use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerPerformanceReviewRepository;
 use App\Repository\PlayerSkillStatsRepository;
 use App\Repository\TeamRepository;
+use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use function PHPUnit\Framework\isFalse;
@@ -24,16 +27,19 @@ class EventScheduleService extends Service
 {
     private EventScheduleRepository $eventScheduleRepository;
     private TeamRepository $teamRepository;
+    private UserRepository $userRepository;
     private PlayerSkillStatsRepository $playerSkillStatsRepository;
     private PlayerPerformanceReviewRepository $playerPerformanceReviewRepository;
     public function __construct(
         EventScheduleRepository $eventScheduleRepository,
         TeamRepository $teamRepository,
+        UserRepository $userRepository,
         PlayerSkillStatsRepository $playerSkillStatsRepository,
         PlayerPerformanceReviewRepository $playerPerformanceReviewRepository)
     {
         $this->eventScheduleRepository = $eventScheduleRepository;
         $this->teamRepository = $teamRepository;
+        $this->userRepository = $userRepository;
         $this->playerSkillStatsRepository = $playerSkillStatsRepository;
         $this->playerPerformanceReviewRepository = $playerPerformanceReviewRepository;
     }
@@ -580,8 +586,13 @@ class EventScheduleService extends Service
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule =  $this->eventScheduleRepository->create($data);
 
-//        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
         $team = $this->teamRepository->find($data['teamId']);
+
+        $admins = $this->userRepository->getAllAdminUsers();
+        $loggedUser = $this->userRepository->find($userId);
+        $userName = $this->getUserFullName($loggedUser);
+        Notification::send($admins, new TrainingScheduleCreatedForCoachAdmin($schedule, $team, $userName));
+
         $schedule->teams()->attach($data['teamId']);
         $schedule->players()->attach($team->players);
         $schedule->coaches()->attach($team->coaches);

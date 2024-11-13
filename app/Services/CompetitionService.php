@@ -328,7 +328,7 @@ class CompetitionService extends Service
             $statusMessage = $statusMessages[$status];
 
             foreach ($teams as $team) {
-                $teamParticipants = $this->groupDivisionService->allTeamsParticipant($team);
+                $teamParticipants = $this->userRepository->allTeamsParticipant($team);
                 Notification::send($teamParticipants, new CompetitionStatus($competition, $team, $statusMessage));
             }
         }
@@ -340,7 +340,7 @@ class CompetitionService extends Service
     {
         $teams = $this->teamRepository->getJoinedCompetition($competition);
         foreach ($teams as $team) {
-            $teamParticipants = $this->groupDivisionService->allTeamsParticipant($team);
+            $teamParticipants = $this->userRepository->allTeamsParticipant($team);
             Notification::send($teamParticipants, new CompetitionCreatedDeleted($loggedUser, $competition, 'deleted'));
         }
         $this->deleteImage($competition->logo);

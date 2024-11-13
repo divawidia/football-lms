@@ -142,19 +142,6 @@ class GroupDivisionService extends Service
         return $division;
     }
 
-    public function allTeamsParticipant(Team $team)
-    {
-        $admins = $this->userRepository->getAllAdminUsers();
-
-        $playersIds = collect($team->players)->pluck('id')->all();
-        $players = $this->userRepository->getInArray('player', $playersIds);
-
-        $coachesIds = collect($team->coaches)->pluck('id')->all();
-        $coaches = $this->userRepository->getInArray('coach', $coachesIds);
-
-        return $admins->merge($players)->merge($coaches);
-    }
-
     public  function storeTeam(array $data, GroupDivision $groupDivision, Competition $competition){
         if (array_key_exists('opponentTeams', $data)){
             $groupDivision->teams()->attach($data['opponentTeams']);
@@ -164,7 +151,7 @@ class GroupDivisionService extends Service
             $teams = $this->teamRepository->getInArray($data['teams']);
 
             foreach ($teams as $team){
-                $teamParticipants = $this->allTeamsParticipant($team);
+                $teamParticipants = $this->userRepository->allTeamsParticipant($team);
                 Notification::send($teamParticipants,new TeamJoinedRemovedCompetition($team, $competition, 'joined'));
             }
         }
@@ -185,7 +172,7 @@ class GroupDivisionService extends Service
     {
         $competition = $group->competition;
         $group->teams()->detach($team);
-        $teamParticipants = $this->allTeamsParticipant($team);
+        $teamParticipants = $this->userRepository->allTeamsParticipant($team);
         Notification::send($teamParticipants,new TeamJoinedRemovedCompetition($team, $competition, 'removed from'));
         return $team;
     }
@@ -206,7 +193,7 @@ class GroupDivisionService extends Service
 
         $groupDivision->teams()->detach();
         foreach ($teams as $team) {
-            $teamParticipants = $this->allTeamsParticipant($team);
+            $teamParticipants = $this->userRepository->allTeamsParticipant($team);
             Notification::send($teamParticipants,new TeamJoinedRemovedCompetition($team, $competition, 'removed from'));
             Notification::send($teamParticipants, new GroupDivisionCreatedDeleted($loggedUser, $groupDivision, $competition, 'deleted'));
         }
