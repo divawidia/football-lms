@@ -6,11 +6,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TeamJoinedCompetition extends Notification
+class TeamJoinedRemovedCompetition extends Notification
 {
     use Queueable;
     protected $team;
     protected $competition;
+    protected $status;
 
     /**
      * Create a new notification instance.
@@ -19,10 +20,11 @@ class TeamJoinedCompetition extends Notification
      * @param  string  $competition
      * @return void
      */
-    public function __construct($team, $competition)
+    public function __construct($team, $competition, $status)
     {
         $this->team = $team;
         $this->competition = $competition;
+        $this->status = $status;
     }
 
     /**
@@ -43,7 +45,7 @@ class TeamJoinedCompetition extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"Your team {$this->team->teamName} has joined the competition: {$this->competition->name}.",
+            'data' =>"Your team {$this->team->teamName} has {$this->status} the competition: {$this->competition->name}.",
             'redirectRoute' => route('competition-managements.show', $this->competition->id)
         ];
     }

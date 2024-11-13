@@ -5,13 +5,35 @@ namespace App\Services;
 use App\Models\Competition;
 use App\Models\GroupDivision;
 use App\Models\Team;
+use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
+use App\Notifications\CompetitionManagements\GroupDivisions\GroupDivisionCreatedDeleted;
+use App\Notifications\CompetitionManagements\GroupDivisions\GroupDivisionUpdated;
+use App\Notifications\CompetitionManagements\TeamJoinedRemovedCompetition;
+use App\Repository\GroupDivisionRepository;
+use App\Repository\TeamRepository;
+use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class GroupDivisionService extends Service
 {
+    private GroupDivisionRepository $groupDivisionRepository;
+    private UserRepository $userRepository;
+    private TeamRepository $teamRepository;
+
+    public function __construct(
+        GroupDivisionRepository $groupDivisionRepository,
+        UserRepository $userRepository,
+        TeamRepository $teamRepository
+    )
+    {
+        $this->groupDivisionRepository = $groupDivisionRepository;
+        $this->userRepository = $userRepository;
+        $this->teamRepository = $teamRepository;
+    }
     public function index(Competition $competition, GroupDivision $groupDivision): JsonResponse
     {
         $query = GroupDivision::with('teams')->find($groupDivision->id);
@@ -81,45 +103,75 @@ class GroupDivisionService extends Service
             ->make();
     }
 
-    public  function store(array $data, Competition $competition){
-        $division = GroupDivision::create([
-            'groupName' => $data['groupName'],
-            'competitionId' => $competition->id
-        ]);
+    public  function store(array $data, Competition $competition, $loggedUser){
+        $data['competitionId'] = $competition->id;
+        $division = $this->groupDivisionRepository->create($data);
 
-        if (array_key_exists('opponentTeams', $data)){
-            $division->teams()->attach($data['opponentTeams']);
-        }
-        if (array_key_exists('teams', $data)){
-            $division->teams()->attach($data['teams']);
-        }
+        Notification::send($this->userRepository->getAllAdminUsers(), new GroupDivisionCreatedDeleted($loggedUser, $division ,$competition, 'created'));
+
+        $this->storeTeam($data, $division, $competition);
+
         return $division;
     }
 
-    public  function storeTeam(array $data, GroupDivision $groupDivision){
+    public function allTeamsParticipant(Team $team)
+    {
+        $admins = $this->userRepository->getAllAdminUsers();
+
+        $playersIds = collect($team->players)->pluck('id')->all();
+        $players = $this->userRepository->getInArray('player', $playersIds);
+
+        $coachesIds = collect($team->coaches)->pluck('id')->all();
+        $coaches = $this->userRepository->getInArray('coach', $coachesIds);
+
+        return $admins->merge($players)->merge($coaches);
+    }
+
+    public  function storeTeam(array $data, GroupDivision $groupDivision, Competition $competition){
         if (array_key_exists('opponentTeams', $data)){
             $groupDivision->teams()->attach($data['opponentTeams']);
         }
         if (array_key_exists('teams', $data)){
             $groupDivision->teams()->attach($data['teams']);
+            $teams = $this->teamRepository->getInArray($data['teams']);
+
+            foreach ($teams as $team){
+                $teamParticipants = $this->allTeamsParticipant($team);
+                Notification::send($teamParticipants,new TeamJoinedRemovedCompetition($team, $competition, 'joined'));
+            }
         }
         return $groupDivision;
     }
 
     public function removeTeam(GroupDivision $group, Team $team)
     {
-        return $group->teams()->detach($team);
+        $competition = $group->competition;
+        $group->teams()->detach($team);
+        $teamParticipants = $this->allTeamsParticipant($team);
+        Notification::send($teamParticipants,new TeamJoinedRemovedCompetition($team, $competition, 'removed from'));
+        return $team;
     }
 
-    public function update(array $data, GroupDivision $groupDivision): GroupDivision
+    public function update(array $data, GroupDivision $groupDivision, $loggedUser): GroupDivision
     {
+        $competition = $groupDivision->competition;
         $groupDivision->update($data);
+        $admin = $this->userRepository->getAllAdminUsers();
+        Notification::send($admin, new GroupDivisionUpdated($loggedUser, $competition, $groupDivision,'updated'));
         return $groupDivision;
     }
 
-    public function destroy(GroupDivision $groupDivision): GroupDivision
+    public function destroy(GroupDivision $groupDivision, $loggedUser): GroupDivision
     {
+        $competition = $groupDivision->competition;
+        $teams = $this->teamRepository->getJoinedCompetition($competition);
+
         $groupDivision->teams()->detach();
+        foreach ($teams as $team) {
+            $teamParticipants = $this->allTeamsParticipant($team);
+            Notification::send($teamParticipants,new TeamJoinedRemovedCompetition($team, $competition, 'removed from'));
+            Notification::send($teamParticipants, new GroupDivisionCreatedDeleted($loggedUser, $groupDivision, $competition, 'deleted'));
+        }
         $groupDivision->delete();
         return $groupDivision;
     }

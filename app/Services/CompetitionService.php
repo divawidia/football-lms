@@ -3,14 +3,11 @@
 namespace App\Services;
 
 use App\Models\Competition;
-use App\Models\Team;
-use App\Notifications\CompetitionManagements\GroupDivisionCreatedDeleted;
+use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
 use App\Notifications\CompetitionManagements\CompetitionStatus;
-use App\Notifications\CompetitionManagements\GroupDivisionUpdated;
-use App\Notifications\CompetitionManagements\TeamJoinedCompetition;
+use App\Notifications\CompetitionManagements\CompetitionUpdated;
 use App\Repository\CoachRepository;
 use App\Repository\CompetitionRepository;
-use App\Repository\GroupDivisionRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
@@ -22,27 +19,27 @@ use Yajra\DataTables\Facades\DataTables;
 class CompetitionService extends Service
 {
     private CompetitionRepository $competitionRepository;
-    private GroupDivisionRepository $groupDivisionRepository;
     private TeamRepository $teamRepository;
     private PlayerRepository $playerRepository;
     private CoachRepository $coachRepository;
     private UserRepository $userRepository;
+    private GroupDivisionService $groupDivisionService;
 
     public function __construct(
         CompetitionRepository $competitionRepository,
-        GroupDivisionRepository $groupDivisionRepository,
         TeamRepository $teamRepository,
         PlayerRepository $playerRepository,
         CoachRepository $coachRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        GroupDivisionService $groupDivisionService
     )
     {
         $this->competitionRepository = $competitionRepository;
-        $this->groupDivisionRepository = $groupDivisionRepository;
         $this->teamRepository = $teamRepository;
         $this->playerRepository = $playerRepository;
         $this->coachRepository = $coachRepository;
         $this->userRepository = $userRepository;
+        $this->groupDivisionService = $groupDivisionService;
     }
     public function index(){
         return $this->competitionRepository->getAll();
@@ -276,24 +273,12 @@ class CompetitionService extends Service
         $competitionData['logo'] = $this->storeImage($competitionData, 'logo', 'assets/competition-logo', 'images/undefined-user.png');
         $competition = $this->competitionRepository->create($competitionData);
 
-        $competitionData['competitionId'] = $competition->id;
-        $division = $this->groupDivisionRepository->create($competitionData);
-
         $admins = $this->userRepository->getAllAdminUsers();
-        Notification::send($admins, new GroupDivisionCreatedDeleted($loggedUser, $competition, 'created'));
+        Notification::send($admins, new CompetitionCreatedDeleted($loggedUser, $competition, 'created'));
 
-        if (array_key_exists('opponentTeams', $competitionData)){
-            $division->teams()->attach($competitionData['opponentTeams']);
-        }
-        if (array_key_exists('teams', $competitionData)){
-            $division->teams()->attach($competitionData['teams']);
-            $teams = $this->teamRepository->getInArray($competitionData['teams']);
+        $competitionData['competitionId'] = $competition->id;
+        $this->groupDivisionService->store($competitionData, $competition, $loggedUser);
 
-            foreach ($teams as $team){
-                $teamParticipants = $this->allTeamsParticipant($team);
-                Notification::send($teamParticipants,new TeamJoinedCompetition($team, $competition));
-            }
-        }
         return $competition;
     }
 
@@ -306,18 +291,8 @@ class CompetitionService extends Service
         }
 
         $competition->update($competitionData);
-        Notification::send($this->userRepository->getAllAdminUsers(), new GroupDivisionUpdated($loggedUser, $competition, 'updated'));
+        Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionUpdated($loggedUser, $competition, 'updated'));
         return $competition;
-    }
-
-    public function allTeamsParticipant(Team $team)
-    {
-        $admins = $this->userRepository->getAllAdminUsers();
-        $playersIds = collect($team->players)->pluck('id')->all();
-        $players = $this->userRepository->getInArray('player', $playersIds);
-        $coachesIds = collect($team->coaches)->pluck('id')->all();
-        $coaches = $this->userRepository->getInArray('coach', $coachesIds);
-        return $admins->merge($players)->merge($coaches);
     }
 
     public function setStatus(Competition $competition, $status): Competition
@@ -338,7 +313,7 @@ class CompetitionService extends Service
             $statusMessage = $statusMessages[$status];
 
             foreach ($teams as $team) {
-                $teamParticipants = $this->allTeamsParticipant($team);
+                $teamParticipants = $this->groupDivisionService->allTeamsParticipant($team);
                 Notification::send($teamParticipants, new CompetitionStatus($competition, $team, $statusMessage));
             }
         }
@@ -350,8 +325,8 @@ class CompetitionService extends Service
     {
         $teams = $this->teamRepository->getJoinedCompetition($competition);
         foreach ($teams as $team) {
-            $teamParticipants = $this->allTeamsParticipant($team);
-            Notification::send($teamParticipants, new GroupDivisionCreatedDeleted($loggedUser, $competition, 'deleted'));
+            $teamParticipants = $this->groupDivisionService->allTeamsParticipant($team);
+            Notification::send($teamParticipants, new CompetitionCreatedDeleted($loggedUser, $competition, 'deleted'));
         }
         $this->deleteImage($competition->logo);
         $competition->delete();
