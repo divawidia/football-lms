@@ -63,15 +63,15 @@ class CompetitionController extends Controller
         return redirect()->route('competition-managements.index');
     }
 
-    public function storeMatch(CompetitionMatchRequest $request)
+    public function storeMatch(CompetitionMatchRequest $request, Competition $competition)
     {
         $data = $request->validated();
-
-        $this->competitionService->store($data, $this->getLoggedUser());
-
-        $text = 'Competition '.$data['name'].' successfully added!';
-        Alert::success($text);
-        return redirect()->route('competition-managements.index');
+        $result = $this->competitionService->storeMatch($data, $competition, $this->getLoggedUser());
+        return response()->json([
+            'status' => 200,
+            'data' => $result,
+            'message' => 'Successfully stored competition '.$competition->name.' teams match data!'
+        ]);
     }
 
     /**

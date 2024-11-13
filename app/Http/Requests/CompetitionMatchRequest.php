@@ -27,6 +27,7 @@ class CompetitionMatchRequest extends FormRequest
             'date' => ['required', 'date'],
             'startTime' => ['required', 'date_format:H:i'],
             'endTime' => ['required', 'date_format:H:i', 'after:startTime'],
+            'isOpponentTeamMatch' => [Rule::in('1', '0')],
             'teamId' => ['required', Rule::exists('teams', 'id')],
             'opponentTeamId' => ['required', Rule::exists('teams', 'id')],
         ];

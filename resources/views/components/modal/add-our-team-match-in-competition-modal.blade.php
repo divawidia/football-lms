@@ -11,6 +11,7 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="playerId">
+                    <input type="hidden" name="isOpponentTeamMatch" value="0">
                     <div class="form-group">
                         <label class="form-label" for="add_groupId">Group Division</label>
                         <small class="text-danger">*</small>

@@ -23,6 +23,7 @@ class EventSchedule extends Model
         'place',
         'note',
         'status',
+        'isOpponentTeamMatch'
     ];
 
     public function teams()

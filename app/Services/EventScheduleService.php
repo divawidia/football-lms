@@ -591,20 +591,20 @@ class EventScheduleService extends Service
     public function storeMatch(array $data, $userId){
         $data['userId'] = $userId;
         $data['eventType'] = 'Match';
-        $data['status'] = '1';
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule =  $this->eventScheduleRepository->create($data);
 
-//        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->first();
-        $team = $this->teamRepository->find($data['teamId']);
-
         $schedule->teams()->attach($data['teamId']);
         $schedule->teams()->attach($data['opponentTeamId']);
-        $schedule->players()->attach($team->players);
-        $schedule->playerMatchStats()->attach($team->players, ['teamId' => $team->id]);
-        $schedule->coaches()->attach($team->coaches);
-        $schedule->coachMatchStats()->attach($team->coaches, ['teamId' => $team->id]);
+
+        if ($data['isOpponentTeamMatch'] == '0'){
+            $team = $this->teamRepository->find($data['teamId']);
+            $schedule->players()->attach($team->players);
+            $schedule->playerMatchStats()->attach($team->players, ['teamId' => $team->id]);
+            $schedule->coaches()->attach($team->coaches);
+            $schedule->coachMatchStats()->attach($team->coaches, ['teamId' => $team->id]);
+        }
 
         return $schedule;
     }
