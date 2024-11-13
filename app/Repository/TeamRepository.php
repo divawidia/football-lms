@@ -6,6 +6,7 @@ use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
 use App\Models\Competition;
+use App\Models\GroupDivision;
 use App\Models\Player;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Builder;
@@ -47,6 +48,22 @@ class TeamRepository
         return $this->team->where('teamSide', 'Academy Team')
             ->whereDoesntHave('players', function (Builder $query) use ($player) {
                 $query->where('playerId', $player->id);
+            })->get();
+    }
+
+    public function getTeamsHaventJoinedCompetition(Competition $competition, $teamSide)
+    {
+        return $this->team->where('teamSide', $teamSide)
+            ->whereDoesntHave('divisions', function (Builder $query) use ($competition) {
+                $query->where('competitionId', $competition->id);
+            })->get();
+    }
+
+    public function getTeamsHaventJoinedGroupDivision(GroupDivision $groupDivision, $teamSide)
+    {
+        return $this->team->where('teamSide', $teamSide)
+            ->whereHas('divisions', function (Builder $query) use ($groupDivision) {
+                $query->where('divisionId', $groupDivision->id);
             })->get();
     }
 

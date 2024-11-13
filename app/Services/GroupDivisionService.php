@@ -9,7 +9,9 @@ use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
 use App\Notifications\CompetitionManagements\GroupDivisions\GroupDivisionCreatedDeleted;
 use App\Notifications\CompetitionManagements\GroupDivisions\GroupDivisionUpdated;
 use App\Notifications\CompetitionManagements\TeamJoinedRemovedCompetition;
+use App\Repository\CoachRepository;
 use App\Repository\GroupDivisionRepository;
+use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,21 +25,27 @@ class GroupDivisionService extends Service
     private GroupDivisionRepository $groupDivisionRepository;
     private UserRepository $userRepository;
     private TeamRepository $teamRepository;
+    private PlayerRepository $playerRepository;
+    private CoachRepository $coachRepository;
 
     public function __construct(
         GroupDivisionRepository $groupDivisionRepository,
         UserRepository $userRepository,
-        TeamRepository $teamRepository
+        TeamRepository $teamRepository,
+        PlayerRepository $playerRepository,
+        CoachRepository $coachRepository
     )
     {
         $this->groupDivisionRepository = $groupDivisionRepository;
         $this->userRepository = $userRepository;
         $this->teamRepository = $teamRepository;
+        $this->playerRepository = $playerRepository;
+        $this->coachRepository = $coachRepository;
     }
     public function index(Competition $competition, GroupDivision $groupDivision): JsonResponse
     {
-        $query = GroupDivision::with('teams')->find($groupDivision->id);
-        return Datatables::of($query->teams)
+        $query = $groupDivision->teams;
+        return Datatables::of($query)
             ->addColumn('action', function ($item) use ($competition) {
                 if ($item->teamSide == 'Opponent Team'){
                     $editTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>';
@@ -102,7 +110,14 @@ class GroupDivisionService extends Service
             ->rawColumns(['action', 'teams'])
             ->make();
     }
-
+    public function create(Competition $competition)
+    {
+        $teams = $this->teamRepository->getTeamsHaventJoinedCompetition($competition, 'Academy Team');
+        $opponentTeams = $this->teamRepository->getTeamsHaventJoinedCompetition($competition, 'Opponent Team');
+        $players = $this->playerRepository->getAll();
+        $coaches = $this->coachRepository->getAll();
+        return compact('teams', 'opponentTeams', 'players', 'coaches');
+    }
     public  function store(array $data, Competition $competition, $loggedUser){
         $data['competitionId'] = $competition->id;
         $division = $this->groupDivisionRepository->create($data);
@@ -141,6 +156,16 @@ class GroupDivisionService extends Service
             }
         }
         return $groupDivision;
+    }
+
+    public function addTeam(Competition $competition, GroupDivision $group)
+    {
+        $teams = $this->teamRepository->getTeamsHaventJoinedCompetition($competition, 'Academy Team');
+        $opponentTeams = $this->teamRepository->getTeamsHaventJoinedCompetition($competition, 'Opponent Team');
+        $availableAcademyTeams = $this->teamRepository->getTeamsHaventJoinedGroupDivision($group, 'Academy Team');
+        $players = $this->playerRepository->getAll();
+        $coaches = $this->coachRepository->getAll();
+        return compact('teams', 'opponentTeams', 'availableAcademyTeams','players', 'coaches');
     }
 
     public function removeTeam(GroupDivision $group, Team $team)
