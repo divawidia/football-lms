@@ -797,8 +797,7 @@
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div
-                class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex mb-3 mb-md-0">
                 <h2 class="text-white mb-0">Match {{ $data['dataSchedule']->teams[0]->teamName }}
                     Vs {{ $data['dataSchedule']->teams[1]->teamName }}</h2>
@@ -1363,6 +1362,32 @@
         @endif
     </div>
 
+    {{--    delete match confirmation   --}}
+    <x-process-data-confirmation btnClass=".delete"
+                                 :processRoute="route('match-schedules.destroy', ['schedule' => ':id'])"
+                                 :routeAfterProcess="route('match-schedules.index')"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this match {{ $data['dataSchedule']->teams[0]->teamName }} Vs. {{ $data['dataSchedule']->teams[1]->teamName }}?"
+                                 successText="Successfully deleted the match {{ $data['dataSchedule']->teams[0]->teamName }} Vs. {{ $data['dataSchedule']->teams[1]->teamName }}!"
+                                 errorText="Something went wrong when deleting the match {{ $data['dataSchedule']->teams[0]->teamName }} Vs. {{ $data['dataSchedule']->teams[1]->teamName }}!"/>
+
+    {{--    delete team scorer confirmation   --}}
+    <x-process-data-confirmation btnClass=".delete-scorer"
+                                 :processRoute="route('match-schedules.destroy-match-scorer', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id'])"
+                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $data['dataSchedule']->id])"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this scorer?"
+                                 successText="Match Scorer successfully deleted!"
+                                 errorText="Something went wrong when deleting match scorer!"/>
+
+    {{--    delete own goal player confirmation   --}}
+    <x-process-data-confirmation btnClass=".delete-own-goal"
+                                 :processRoute="route('match-schedules.destroy-own-goal', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id'])"
+                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $data['dataSchedule']->id])"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this own goal?"
+                                 successText="Own goal scorer successfully deleted!"
+                                 errorText="Something went wrong when deleting own goal scorer!"/>
 @endsection
 @push('addon-script')
     <script>
@@ -1395,53 +1420,6 @@
                         width: '15%'
                     },
                 ]
-            });
-
-            // delete match alert
-            $('body').on('click', '.delete', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to delete this match?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
-
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Match schedule successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('match-schedules.index') }}";
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown,
-                                });
-                            }
-                        });
-                    }
-                });
             });
 
             // show create team scorer modal
@@ -1502,100 +1480,6 @@
                 });
             });
 
-            // delete team scorer with alert
-            $('body').on('click', '.delete-scorer', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to delete this scorer?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('match-schedules.destroy-match-scorer', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
-
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Match Scorer successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown,
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            // delete own goal player with alert
-            $('body').on('click', '.delete-own-goal', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to delete this own goal?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('match-schedules.destroy-own-goal', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id']) }}".replace(':id', id),
-
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Own goal successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown,
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
             // show update match stats modal
             $('#updateMatchStats').on('click', function (e) {
                 e.preventDefault();
@@ -1617,6 +1501,7 @@
                             title: 'Match stats successfully added!',
                             icon: 'success',
                             showCancelButton: false,
+                            allowOutsideClick: false,
                             confirmButtonColor: "#1ac2a1",
                             confirmButtonText:
                                 'Ok!'
@@ -1628,7 +1513,6 @@
                     },
                     error: function (xhr) {
                         const response = JSON.parse(xhr.responseText);
-                        console.log(response);
                         $.each(response.errors, function (key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#" + key).addClass('is-invalid');

@@ -210,7 +210,6 @@
                     },
                     error: function(xhr) {
                         const response = JSON.parse(xhr.responseText);
-                        console.log(response);
                         $.each(response.errors, function(key, val) {
                             $(formId+' span.' + key + '_error').text(val[0]);
                             $(formId+" #add_" + key).addClass('is-invalid');
