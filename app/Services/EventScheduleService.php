@@ -9,10 +9,12 @@ use App\Models\Player;
 use App\Models\PlayerMatchStats;
 use App\Models\ScheduleNote;
 use App\Models\Team;
+use App\Notifications\MatchSchedules\MatchScheduleAttendance;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForAdmin;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForPlayerCoach;
 use App\Notifications\MatchSchedules\MatchScheduleUpdatedForAdmin;
 use App\Notifications\MatchSchedules\MatchScheduleUpdatedForPlayerCoach;
+use App\Notifications\TrainingSchedules\TrainingScheduleAttendance;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForPlayer;
 use App\Notifications\TrainingSchedules\TrainingScheduleDeletedForCoachAdmin;
@@ -895,10 +897,22 @@ class EventScheduleService extends Service
     }
 
     public function updatePlayerAttendanceStatus($data, EventSchedule $schedule, Player $player){
-        return $schedule->players()->updateExistingPivot($player->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
+        $schedule->players()->updateExistingPivot($player->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
+        if ($schedule->eventType == 'Training') {
+            $player->user->notify(new TrainingScheduleAttendance($schedule, $data['attendanceStatus']));
+        } elseif ($schedule->eventType == 'Match') {
+            $player->user->notify(new MatchScheduleAttendance($schedule, $data['attendanceStatus']));
+        }
+        return $schedule;
     }
     public function updateCoachAttendanceStatus($data, EventSchedule $schedule, Coach $coach){
-        return $schedule->coaches()->updateExistingPivot($coach->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
+        $schedule->coaches()->updateExistingPivot($coach->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
+        if ($schedule->eventType == 'Training') {
+            $coach->user->notify(new TrainingScheduleAttendance($schedule, $data['attendanceStatus']));
+        } elseif ($schedule->eventType == 'Match') {
+            $coach->user->notify(new MatchScheduleAttendance($schedule, $data['attendanceStatus']));
+        }
+        return $schedule;
     }
 
     public function createNote($data, EventSchedule $schedule){

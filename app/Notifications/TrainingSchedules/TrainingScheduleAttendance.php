@@ -11,13 +11,11 @@ class TrainingScheduleAttendance extends Notification
 {
     use Queueable;
     protected $scheduleDetails;
-    protected $attendanceType;
     protected $status;
 
-    public function __construct($scheduleDetails, $attendanceType, $status)
+    public function __construct($scheduleDetails, $status)
     {
         $this->scheduleDetails = $scheduleDetails;
-        $this->attendanceType = $attendanceType;
         $this->status = $status;
     }
 
@@ -37,9 +35,9 @@ class TrainingScheduleAttendance extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("{$this->attendanceType} Session Attendance Notification")
+            ->subject("Training Session Attendance Notification")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("This is a notification about your attendance for the {$this->attendanceType} session for your team {$this->scheduleDetails->teams[0]->teamName} at ".convertToDatetime($this->scheduleDetails->startDatetime).".")
+            ->line("This is a notification about your attendance for the training session for your team {$this->scheduleDetails->teams[0]->teamName} at ".convertToDatetime($this->scheduleDetails->startDatetime).".")
             ->line("Training Topic: {$this->scheduleDetails->eventName}")
             ->line("Team: {$this->scheduleDetails->teams[0]->teamName}")
             ->line("Location: {$this->scheduleDetails->place}")
