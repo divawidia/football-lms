@@ -702,7 +702,12 @@ class EventScheduleService extends Service
         if (array_key_exists($status, $statusMessages)) {
             $statusMessage = $statusMessages[$status];
 
-            Notification::send($teamParticipants, new TrainingScheduleUpdatedForPlayer($schedule, $team, $statusMessage));
+            if ($schedule->eventType == 'Training') {
+                Notification::send($teamParticipants, new TrainingScheduleUpdatedForPlayer($schedule, $team, $statusMessage));
+            } elseif ($schedule->eventType == 'Training' && $schedule->isOpponentTeamMatch == '0') {
+                Notification::send($teamParticipants, new MatchScheduleUpdatedForPlayerCoach($schedule, $statusMessage));
+            }
+
         }
 
         return $schedule;
