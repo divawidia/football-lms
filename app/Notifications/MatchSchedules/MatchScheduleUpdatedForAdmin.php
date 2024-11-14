@@ -11,17 +11,15 @@ class MatchScheduleUpdatedForAdmin extends Notification
 {
     use Queueable;
     protected $matchSchedule;
-    protected $team;
     protected $updatedBy;
     protected $status;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($matchSchedule, $team, $updatedBy, $status)
+    public function __construct($matchSchedule, $updatedBy, $status)
     {
         $this->matchSchedule = $matchSchedule;
-        $this->team = $team;
         $this->updatedBy = $updatedBy;
         $this->status = $status;
     }
