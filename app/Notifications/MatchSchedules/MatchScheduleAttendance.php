@@ -1,23 +1,21 @@
 <?php
 
-namespace App\Notifications\TrainingSchedules;
+namespace App\Notifications\MatchSchedules;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingScheduleAttendance extends Notification
+class MatchScheduleAttendance extends Notification
 {
     use Queueable;
     protected $scheduleDetails;
-    protected $attendanceType;
     protected $status;
 
-    public function __construct($scheduleDetails, $attendanceType, $status)
+    public function __construct($scheduleDetails, $status)
     {
         $this->scheduleDetails = $scheduleDetails;
-        $this->attendanceType = $attendanceType;
         $this->status = $status;
     }
 
@@ -37,17 +35,17 @@ class TrainingScheduleAttendance extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("{$this->attendanceType} Session Attendance Notification")
+            ->subject("Match Session Attendance Notification")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("This is a notification about your attendance for the {$this->attendanceType} session for your team {$this->scheduleDetails->teams[0]->teamName} at ".convertToDatetime($this->scheduleDetails->startDatetime).".")
-            ->line("Training Topic: {$this->scheduleDetails->eventName}")
-            ->line("Team: {$this->scheduleDetails->teams[0]->teamName}")
+            ->line("This is a notification about your attendance for the Match session for your team {$this->scheduleDetails->teams[0]->teamName} at ".convertToDatetime($this->scheduleDetails->startDatetime).".")
+            ->line("Match Teams: {$this->scheduleDetails->teams[0]->teamName} Vs. {$this->scheduleDetails->teams[1]->teamName}")
+            ->line("Match Type: {$this->scheduleDetails->matchType}")
             ->line("Location: {$this->scheduleDetails->place}")
             ->line("Date: ".convertToDate($this->scheduleDetails->date))
             ->line("Start Time: ".convertToTime($this->scheduleDetails->startTime))
             ->line("End Time: ".convertToTime($this->scheduleDetails->endTime))
             ->line("Attendance Status: {$this->status}.")
-            ->action('View training session detail', route('training-schedules.show', $this->scheduleDetails->id))
+            ->action('View match session detail', route('match-schedules.show', $this->scheduleDetails->id))
             ->line("Please ensure your attendance is marked accordingly.")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
@@ -60,8 +58,8 @@ class TrainingScheduleAttendance extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Your attendance for the training session '.$this->scheduleDetails->eventName.' for your team '.$this->scheduleDetails->teams[0]->teamName.' at '.convertToDatetime($this->scheduleDetails->startDatetime).' is marked as: '.$this->status,
-            'redirectRoute' => route('training-schedules.show', $this->scheduleDetails->id)
+            'data' =>'Your attendance for the match session for your team '.$this->scheduleDetails->teams[0]->teamName.' at '.convertToDatetime($this->scheduleDetails->startDatetime).' is marked as: '.$this->status,
+            'redirectRoute' => route('match-schedules.show', $this->scheduleDetails->id)
         ];
     }
 }
