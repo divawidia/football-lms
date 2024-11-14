@@ -720,15 +720,19 @@ class EventScheduleService extends Service
         $academyTeamScore = $schedule->teams[0]->pivot->teamScore;
         $opponentTeamScore = $schedule->teams[1]->pivot->teamScore;
 
+        // update teams goal conceded data
         $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['goalConceded'=> $opponentTeamScore]);
         $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['goalConceded'=> $academyTeamScore]);
 
+        // calculate teams goal difference data
         $academyTeamGoalsDifference = $academyTeamScore - $opponentTeamScore;
         $opponentTeamGoalsDifference = $opponentTeamScore - $academyTeamScore;
 
-        // update match result data of each coach match stats
-        foreach ($schedule->coaches as $coach){
-            $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['goalConceded' => $opponentTeamScore]);
+        // update match result data of each coach match stats if match is not opponent team match
+        if ($schedule->isOpponentTeamMatch == '0') {
+            foreach ($schedule->coaches as $coach){
+                $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['goalConceded' => $opponentTeamScore]);
+            }
         }
 
         // chack if match is in competition
@@ -748,11 +752,14 @@ class EventScheduleService extends Service
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Lose']);
 
             // update match result data of each coach match stats
-            foreach ($schedule->coaches as $coach){
-                $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['resultStatus' => 'Win']);
+            if ($schedule->isOpponentTeamMatch == '0') {
+                foreach ($schedule->coaches as $coach) {
+                    $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['resultStatus' => 'Win']);
+                }
             }
-
+            // check if match are in competition
             if ($schedule->competition()->exists()){
+                // update our teams stats in competition
                 $groupDivision->teams()
                     ->updateExistingPivot($schedule->teams[0]->id, [
                         'matchPlayed'=> $academyTeam->pivot->matchPlayed + 1,
@@ -764,7 +771,7 @@ class EventScheduleService extends Service
                         'redCards'=> $academyTeam->pivot->redCards + $schedule->teams[0]->pivot->teamRedCards,
                         'yellowCards'=> $academyTeam->pivot->yellowCards + $schedule->teams[0]->pivot->teamYellowCards,
                     ]);
-
+                // update opponent teams stats in competition
                 $groupDivision->teams()
                     ->updateExistingPivot($schedule->teams[1]->id, [
                         'matchPlayed'=> $opponentTeam->pivot->matchPlayed + 1,
@@ -778,15 +785,19 @@ class EventScheduleService extends Service
                     ]);
             }
 
-        } elseif ($academyTeamScore < $opponentTeamScore){
+        } elseif ($academyTeamScore < $opponentTeamScore){ // if our team result are lose
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Win']);
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Lose']);
             // update match result data of each coach match stats
-            foreach ($schedule->coaches as $coach){
-                $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['resultStatus' => 'Lose']);
+            if ($schedule->isOpponentTeamMatch == '0') {
+                foreach ($schedule->coaches as $coach) {
+                    $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['resultStatus' => 'Lose']);
+                }
             }
 
+            // check if match are in competition
             if ($schedule->competition()->exists()){
+                // update our teams stats in competition
                 $groupDivision->teams()
                     ->updateExistingPivot($schedule->teams[0]->id, [
                         'matchPlayed'=> $academyTeam->pivot->matchPlayed + 1,
@@ -798,7 +809,7 @@ class EventScheduleService extends Service
                         'redCards'=> $academyTeam->pivot->redCards + $schedule->teams[0]->pivot->teamRedCards,
                         'yellowCards'=> $academyTeam->pivot->yellowCards + $schedule->teams[0]->pivot->teamYellowCards,
                     ]);
-
+                // update opponent teams stats in competition
                 $groupDivision->teams()
                     ->updateExistingPivot($schedule->teams[1]->id, [
                         'matchPlayed'=> $opponentTeam->pivot->matchPlayed + 1,
@@ -812,15 +823,19 @@ class EventScheduleService extends Service
                     ]);
             }
 
-        }elseif ($academyTeamScore == $opponentTeamScore){
+        } elseif ($academyTeamScore == $opponentTeamScore){ // if team match result are draw
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['resultStatus'=> 'Draw']);
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['resultStatus'=> 'Draw']);
             // update match result data of each coach match stats
-            foreach ($schedule->coaches as $coach){
-                $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['resultStatus' => 'Draw']);
+            if ($schedule->isOpponentTeamMatch == '0') {
+                foreach ($schedule->coaches as $coach) {
+                    $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['resultStatus' => 'Draw']);
+                }
             }
 
+            // check if match are in competition
             if ($schedule->competition()->exists()){
+                // update our teams stats in competition
                 $groupDivision->teams()
                     ->updateExistingPivot($schedule->teams[0]->id, [
                         'matchPlayed'=> $academyTeam->pivot->matchPlayed + 1,
@@ -832,7 +847,7 @@ class EventScheduleService extends Service
                         'redCards'=> $academyTeam->pivot->redCards + $schedule->teams[0]->pivot->teamRedCards,
                         'yellowCards'=> $academyTeam->pivot->yellowCards + $schedule->teams[0]->pivot->teamYellowCards,
                     ]);
-
+                // update opponent teams stats in competition
                 $groupDivision->teams()
                     ->updateExistingPivot($schedule->teams[1]->id, [
                         'matchPlayed'=> $opponentTeam->pivot->matchPlayed + 1,
@@ -847,20 +862,26 @@ class EventScheduleService extends Service
             }
         }
 
+        // check if our team is cleansheet
         if ($academyTeamScore == 0){
+            // update teams clean sheets data
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, ['cleanSheets'=> 1]);
 
             // update clean sheets data of each coach match stats
-            foreach ($schedule->coaches as $coach){
-                $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['cleanSheets' => 1]);
+            if ($schedule->isOpponentTeamMatch == '0') {
+                foreach ($schedule->coaches as $coach) {
+                    $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['cleanSheets' => 1]);
+                }
             }
         }
 
+        // check if opponent team is cleansheet
         if ($opponentTeamScore == 0){
+            // update teams clean sheets data
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, ['cleanSheets'=> 1]);
         }
 
-        return $schedule->update(['status' => '0']);
+        return $this->setStatus($schedule, 'Completed');
     }
 
 
