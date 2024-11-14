@@ -41,6 +41,11 @@ class TrainingScheduleCreatedForPlayer extends Notification
             ->subject("New Training Session Scheduled")
             ->greeting("Hello!")
             ->line("A new training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} has been scheduled on ".convertToDatetime($this->trainingSchedule->startDatetime).". Please log in to view the details.")
+            ->line("Training Topic: {$this->trainingSchedule->eventName}")
+            ->line("Location: {$this->trainingSchedule->place}")
+            ->line("Date: ".convertToDate($this->trainingSchedule->date))
+            ->line("Start Time: ".convertToTime($this->trainingSchedule->startTime))
+            ->line("End Time: ".convertToTime($this->trainingSchedule->endTime))
             ->action('View training session detail', route('training-schedules.show', $this->trainingSchedule->id))
             ->line("Please prepare accordingly and arrive on time!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");

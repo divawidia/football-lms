@@ -41,6 +41,11 @@ class TrainingScheduleReminder extends Notification
             ->subject("Training Session Reminder")
             ->greeting("Hello!")
             ->line("Reminder: You have training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} scheduled for tomorrow at ".convertToDatetime($this->trainingSchedule->startDatetime).".")
+            ->line("Training Topic: {$this->trainingSchedule->eventName}")
+            ->line("Location: {$this->trainingSchedule->place}")
+            ->line("Date: ".convertToDate($this->trainingSchedule->date))
+            ->line("Start Time: ".convertToTime($this->trainingSchedule->startTime))
+            ->line("End Time: ".convertToTime($this->trainingSchedule->endTime))
             ->action('View training session detail', route('training-schedules.show', $this->trainingSchedule->id))
             ->line("Please be on time!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
