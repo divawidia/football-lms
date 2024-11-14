@@ -14,6 +14,7 @@ use App\Notifications\MatchSchedules\MatchScheduleCreatedForAdmin;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForPlayerCoach;
 use App\Notifications\MatchSchedules\MatchScheduleUpdatedForAdmin;
 use App\Notifications\MatchSchedules\MatchScheduleUpdatedForPlayerCoach;
+use App\Notifications\MatchSchedules\MatchStatsPlayer;
 use App\Notifications\TrainingSchedules\TrainingScheduleAttendance;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForPlayer;
@@ -1121,7 +1122,9 @@ class EventScheduleService extends Service
 //        ]);
 //        dd($schedule);
 
-        return $schedule->playerMatchStats()->updateExistingPivot($player->id, $data);
+        $schedule->playerMatchStats()->updateExistingPivot($player->id, $data);
+        $player->user->notify(new MatchStatsPlayer($schedule));
+        return $schedule;
     }
 
     public function destroy(EventSchedule $schedule, $loggedUser)
