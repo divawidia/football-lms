@@ -39,17 +39,28 @@ class UserRepository
         return $this->getAllByRole(['admin', 'Super-Admin']);
     }
 
-    public function allTeamsParticipant(Team $team)
+    public function allTeamsParticipant(Team $team, $admins = true, $coaches = true, $players = true)
     {
-        $admins = $this->getAllAdminUsers();
+        $allUsers = collect();
+        if ($admins){
+            $admins = $this->getAllAdminUsers();
+            $allUsers = $allUsers->merge($admins);
+        }
 
-        $playersIds = collect($team->players)->pluck('id')->all();
-        $players = $this->getInArray('player', $playersIds);
+        if ($players){
+            $playersIds = collect($team->players)->pluck('id')->all();
+            $players = $this->getInArray('player', $playersIds);
+            $allUsers = $allUsers->merge($players);
+        }
 
-        $coachesIds = collect($team->coaches)->pluck('id')->all();
-        $coaches = $this->getInArray('coach', $coachesIds);
+        if ($coaches){
+            $coachesIds = collect($team->coaches)->pluck('id')->all();
+            $coaches = $this->getInArray('coach', $coachesIds);
+            $allUsers = $allUsers->merge($coaches);
+        }
 
-        return $admins->merge($players)->merge($coaches);
+
+        return $allUsers;
     }
 
     public function find($id)

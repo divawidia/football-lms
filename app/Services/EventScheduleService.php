@@ -10,6 +10,8 @@ use App\Models\PlayerMatchStats;
 use App\Models\ScheduleNote;
 use App\Models\Team;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
+use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForPlayer;
+use App\Notifications\TrainingSchedules\TrainingScheduleUpdatedForPlayer;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerPerformanceReviewRepository;
 use App\Repository\PlayerSkillStatsRepository;
@@ -578,20 +580,24 @@ class EventScheduleService extends Service
         }
         return $teams;
     }
+
     public function storeTraining(array $data, $userId){
         $data['userId'] = $userId;
         $data['eventType'] = 'Training';
-        $data['status'] = '1';
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule =  $this->eventScheduleRepository->create($data);
 
         $team = $this->teamRepository->find($data['teamId']);
 
-        $admins = $this->userRepository->getAllAdminUsers();
         $loggedUser = $this->userRepository->find($userId);
         $userName = $this->getUserFullName($loggedUser);
-        Notification::send($admins, new TrainingScheduleCreatedForCoachAdmin($schedule, $team, $userName));
+
+        $teamsCoachesAdmins = $this->userRepository->allTeamsParticipant($team, players: false);
+        Notification::send($teamsCoachesAdmins, new TrainingScheduleCreatedForCoachAdmin($schedule, $team, $userName));
+
+        $teamsPlayers = $this->userRepository->allTeamsParticipant($team, admins: false, coaches: false);
+        Notification::send($teamsPlayers, new TrainingScheduleCreatedForPlayer($schedule, $team));
 
         $schedule->teams()->attach($data['teamId']);
         $schedule->players()->attach($team->players);
