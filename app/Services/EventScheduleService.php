@@ -9,6 +9,8 @@ use App\Models\Player;
 use App\Models\PlayerMatchStats;
 use App\Models\ScheduleNote;
 use App\Models\Team;
+use App\Notifications\MatchSchedules\MatchScheduleCreatedForAdmin;
+use App\Notifications\MatchSchedules\MatchScheduleCreatedForPlayerCoach;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForPlayer;
 use App\Notifications\TrainingSchedules\TrainingScheduleDeletedForCoachAdmin;
@@ -596,7 +598,7 @@ class EventScheduleService extends Service
         $creatorUserName = $this->getUserFullName($loggedUser);
 
         $teamsCoachesAdmins = $this->userRepository->allTeamsParticipant($team, players: false);
-        Notification::send($teamsCoachesAdmins, new TrainingScheduleCreatedForCoachAdmin($schedule, $team, $userName));
+        Notification::send($teamsCoachesAdmins, new TrainingScheduleCreatedForCoachAdmin($schedule, $team, $creatorUserName));
 
         $teamsPlayers = $this->userRepository->allTeamsParticipant($team, admins: false, coaches: false);
         Notification::send($teamsPlayers, new TrainingScheduleCreatedForPlayer($schedule, $team));
@@ -617,8 +619,17 @@ class EventScheduleService extends Service
         $schedule->teams()->attach($data['teamId']);
         $schedule->teams()->attach($data['opponentTeamId']);
 
+        $loggedUser = $this->userRepository->find($userId);
+        $creatorUserName = $this->getUserFullName($loggedUser);
+
         if ($data['isOpponentTeamMatch'] == '0'){
             $team = $this->teamRepository->find($data['teamId']);
+
+            Notification::send($this->userRepository->getAllAdminUsers(), new MatchScheduleCreatedForAdmin($schedule, $team, $creatorUserName));
+
+            $teamsPlayersCoaches = $this->userRepository->allTeamsParticipant($team, admins: false);
+            Notification::send($teamsPlayersCoaches, new MatchScheduleCreatedForPlayerCoach($schedule));
+
             $schedule->players()->attach($team->players);
             $schedule->playerMatchStats()->attach($team->players, ['teamId' => $team->id]);
             $schedule->coaches()->attach($team->coaches);
