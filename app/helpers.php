@@ -54,6 +54,13 @@ function priceFormat($price){
     return 'Rp. ' . number_format($price);
 }
 
+function convertToDate($timestamp){
+    return date('M d, Y', strtotime($timestamp));
+}
+
+function convertToTime($timestamp){
+    return date('h:i A', strtotime($timestamp));
+}
 function convertToDatetime($timestamp){
     return date('M d, Y ~ h:i A', strtotime($timestamp));
 }

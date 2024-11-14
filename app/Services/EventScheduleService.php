@@ -11,6 +11,7 @@ use App\Models\ScheduleNote;
 use App\Models\Team;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForPlayer;
+use App\Notifications\TrainingSchedules\TrainingScheduleUpdatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleUpdatedForPlayer;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerPerformanceReviewRepository;
@@ -591,7 +592,7 @@ class EventScheduleService extends Service
         $team = $this->teamRepository->find($data['teamId']);
 
         $loggedUser = $this->userRepository->find($userId);
-        $userName = $this->getUserFullName($loggedUser);
+        $creatorUserName = $this->getUserFullName($loggedUser);
 
         $teamsCoachesAdmins = $this->userRepository->allTeamsParticipant($team, players: false);
         Notification::send($teamsCoachesAdmins, new TrainingScheduleCreatedForCoachAdmin($schedule, $team, $userName));
@@ -626,13 +627,22 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function updateTraining(array $data, EventSchedule $schedule){
+    public function updateTraining(array $data, EventSchedule $schedule, $loggedUser){
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule->update($data);
 
         if (array_key_exists('teamId', $data)){
-            $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->first();
+            $team = $this->teamRepository->find($data['teamId']);
+
+            $creatorUserName = $this->getUserFullName($loggedUser);
+
+            $teamsCoachesAdmins = $this->userRepository->allTeamsParticipant($team, players: false);
+            Notification::send($teamsCoachesAdmins, new TrainingScheduleUpdatedForCoachAdmin($schedule, $team, $creatorUserName, 'Has Been Updated'));
+
+            $teamsPlayers = $this->userRepository->allTeamsParticipant($team, admins: false, coaches: false);
+            Notification::send($teamsPlayers, new TrainingScheduleUpdatedForPlayer($schedule, $team, 'Has Been Updated'));
+
             $schedule->teams()->sync($data['teamId']);
             $schedule->players()->sync($team->players);
             $schedule->coaches()->sync($team->coaches);
@@ -651,10 +661,30 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function setStatus(EventSchedule $schedule)
+    public function setStatus(EventSchedule $schedule, $status): EventSchedule
     {
-        return $this->eventScheduleRepository->updateStatus($schedule, '1');
+        $this->eventScheduleRepository->updateStatus($schedule, $status);
+
+        $statusMessages = [
+            'Ongoing' => 'is now ongoing',
+            'Completed' => 'have been completed',
+            'Cancelled' => 'have been cancelled',
+            'Scheduled' => 'have been set to scheduled',
+        ];
+
+        $team = $schedule->teams()->first();
+        $teamParticipants = $this->userRepository->allTeamsParticipant($team);
+
+        // Check if the status exists in the defined mapping
+        if (array_key_exists($status, $statusMessages)) {
+            $statusMessage = $statusMessages[$status];
+
+            Notification::send($teamParticipants, new TrainingScheduleUpdatedForPlayer($schedule, $team, $statusMessage));
+        }
+
+        return $schedule;
     }
+
 
     public function endMatch(EventSchedule $schedule)
     {

@@ -43,8 +43,13 @@ class TrainingScheduleUpdatedForCoachAdmin extends Notification
     {
         return (new MailMessage)
             ->subject("Training Session {$this->trainingSchedule->eventName} {$this->status}")
-            ->greeting("Hello!")
+            ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("The training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} on ".convertToDatetime($this->trainingSchedule->startDatetime)." {$this->status} by {$this->adminName}.")
+            ->line("Training Topic: {$this->trainingSchedule->eventName}")
+            ->line("Location: {$this->trainingSchedule->place}")
+            ->line("Date: ".convertToDate($this->trainingSchedule->date))
+            ->line("Start Time: ".convertToTime($this->trainingSchedule->startTime))
+            ->line("End Time: ".convertToTime($this->trainingSchedule->endTime))
             ->action('View training session detail', route('training-schedules.show', $this->trainingSchedule->id))
             ->line("Please log in to view the details!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");

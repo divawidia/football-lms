@@ -26,7 +26,6 @@ class CompetitionService extends Service
     private UserRepository $userRepository;
     private GroupDivisionService $groupDivisionService;
     private EventScheduleService $eventScheduleService;
-    private EventScheduleRepository $eventScheduleRepository;
 
     public function __construct(
         CompetitionRepository $competitionRepository,
@@ -36,7 +35,6 @@ class CompetitionService extends Service
         UserRepository $userRepository,
         GroupDivisionService $groupDivisionService,
         EventScheduleService $eventScheduleService,
-        EventScheduleRepository $eventScheduleRepository
     )
     {
         $this->competitionRepository = $competitionRepository;
@@ -46,7 +44,6 @@ class CompetitionService extends Service
         $this->userRepository = $userRepository;
         $this->groupDivisionService = $groupDivisionService;
         $this->eventScheduleService = $eventScheduleService;
-        $this->eventScheduleRepository = $eventScheduleRepository;
     }
     public function index(){
         return $this->competitionRepository->getAll();
