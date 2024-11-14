@@ -11,6 +11,7 @@ use App\Models\ScheduleNote;
 use App\Models\Team;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForPlayer;
+use App\Notifications\TrainingSchedules\TrainingScheduleDeletedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleUpdatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleUpdatedForPlayer;
 use App\Repository\EventScheduleRepository;
@@ -1061,11 +1062,22 @@ class EventScheduleService extends Service
         return $schedule->playerMatchStats()->updateExistingPivot($player->id, $data);
     }
 
-    public function destroy(EventSchedule $schedule)
+    public function destroy(EventSchedule $schedule, $loggedUser)
     {
         $schedule->teams()->detach();
         $schedule->players()->detach();
         $schedule->coaches()->detach();
+
+        $deletedBy = $this->getUserFullName($loggedUser);
+        $team = $schedule->teams()->first();
+        $allTeamsParticipant = $this->userRepository->allTeamsParticipant($team);
+
+        if ($schedule->eventType == 'Training') {
+            Notification::send($allTeamsParticipant, new TrainingScheduleDeletedForCoachAdmin($schedule, $team, $deletedBy));
+        } elseif ($schedule->eventType == 'Match' && $schedule->isOpponentTeamMatch == '0') {
+
+        }
+
         $schedule->delete();
         return $schedule;
     }

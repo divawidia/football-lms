@@ -7,23 +7,21 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingScheduleUpdatedForCoachAdmin extends Notification
+class TrainingScheduleDeletedForCoachAdmin extends Notification
 {
     use Queueable;
     protected $trainingSchedule;
     protected $team;
-    protected $adminName;
-    protected $status;
+    protected $deletedBy;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($trainingSchedule, $team, $adminName, $status)
+    public function __construct($trainingSchedule, $team, $deletedBy)
     {
         $this->trainingSchedule = $trainingSchedule;
         $this->team = $team;
-        $this->adminName = $adminName;
-        $this->status = $status;
+        $this->deletedBy = $deletedBy;
     }
 
     /**
@@ -42,17 +40,15 @@ class TrainingScheduleUpdatedForCoachAdmin extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Training Session {$this->trainingSchedule->eventName} {$this->status}")
+            ->subject("Training Session Schedule Deleted")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("The training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} on ".convertToDatetime($this->trainingSchedule->startDatetime)." {$this->status} by {$this->adminName}.")
+            ->line("The training session {$this->trainingSchedule->eventName} schedule at ".convertToDatetime($this->trainingSchedule->startDatetime)." has been deleted by ".$this->deletedBy)
             ->line("Training Topic: {$this->trainingSchedule->eventName}")
             ->line("Team: {$this->team->teamName}")
             ->line("Location: {$this->trainingSchedule->place}")
             ->line("Date: ".convertToDate($this->trainingSchedule->date))
             ->line("Start Time: ".convertToTime($this->trainingSchedule->startTime))
             ->line("End Time: ".convertToTime($this->trainingSchedule->endTime))
-            ->action('View training session detail', route('training-schedules.show', $this->trainingSchedule->id))
-            ->line("Please log in to view the details!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
 
@@ -64,8 +60,8 @@ class TrainingScheduleUpdatedForCoachAdmin extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'The training session '.$this->trainingSchedule->eventName.' for your team '.$this->team->teamName.' on '.convertToDatetime($this->trainingSchedule->startDatetime).' '.$this->status.' by '.$this->adminName.'. Please check the schedule for details!',
-            'redirectRoute' => route('training-schedules.show', $this->trainingSchedule->id)
+            'data' =>'The training session '.$this->trainingSchedule->eventName.' schedule for team '.$this->team->teamName.' at '.convertToDatetime($this->trainingSchedule->startDatetime).' has been deleted by '.$this->adminName,
+            'redirectRoute' => route('training-schedules.index')
         ];
     }
 }

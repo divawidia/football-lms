@@ -42,6 +42,7 @@ class TrainingScheduleReminder extends Notification
             ->greeting("Hello!")
             ->line("Reminder: You have training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} scheduled for tomorrow at ".convertToDatetime($this->trainingSchedule->startDatetime).".")
             ->line("Training Topic: {$this->trainingSchedule->eventName}")
+            ->line("Team: {$this->team->teamName}")
             ->line("Location: {$this->trainingSchedule->place}")
             ->line("Date: ".convertToDate($this->trainingSchedule->date))
             ->line("Start Time: ".convertToTime($this->trainingSchedule->startTime))

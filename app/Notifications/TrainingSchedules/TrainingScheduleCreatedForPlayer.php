@@ -39,9 +39,10 @@ class TrainingScheduleCreatedForPlayer extends Notification
     {
         return (new MailMessage)
             ->subject("New Training Session Scheduled")
-            ->greeting("Hello!")
+            ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("A new training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} has been scheduled on ".convertToDatetime($this->trainingSchedule->startDatetime).". Please log in to view the details.")
             ->line("Training Topic: {$this->trainingSchedule->eventName}")
+            ->line("Team: {$this->team->teamName}")
             ->line("Location: {$this->trainingSchedule->place}")
             ->line("Date: ".convertToDate($this->trainingSchedule->date))
             ->line("Start Time: ".convertToTime($this->trainingSchedule->startTime))
