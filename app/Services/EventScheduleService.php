@@ -11,6 +11,8 @@ use App\Models\ScheduleNote;
 use App\Models\Team;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForAdmin;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForPlayerCoach;
+use App\Notifications\MatchSchedules\MatchScheduleUpdatedForAdmin;
+use App\Notifications\MatchSchedules\MatchScheduleUpdatedForPlayerCoach;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForPlayer;
 use App\Notifications\TrainingSchedules\TrainingScheduleDeletedForCoachAdmin;
@@ -661,10 +663,19 @@ class EventScheduleService extends Service
         }
         return $schedule;
     }
-    public function updateMatch(array $data, EventSchedule $schedule){
+    public function updateMatch(array $data, EventSchedule $schedule, $loggedUser){
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule->update($data);
+
+        $team = $schedule->teams()->first();
+
+        $creatorUserName = $this->getUserFullName($loggedUser);
+
+        Notification::send($this->userRepository->getAllAdminUsers(), new MatchScheduleUpdatedForAdmin($schedule, $creatorUserName, 'Has Been Updated'));
+
+        $teamsPlayersCoaches = $this->userRepository->allTeamsParticipant($team, admins: false);
+        Notification::send($teamsPlayersCoaches, new MatchScheduleUpdatedForPlayerCoach($schedule, 'Has Been Updated'));
 
 //        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->first();
 //        $schedule->teams()->sync([$data['teamId'], $data['opponentTeamId']]);
