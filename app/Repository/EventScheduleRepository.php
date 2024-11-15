@@ -39,7 +39,6 @@ class EventScheduleRepository
     {
         return $this->eventSchedule->with('teams', 'competition')
             ->where('eventType', $eventType)
-            ->where('isOpponentTeamMatch', '0')
             ->where('status', 'Scheduled')
             ->whereBetween('startDateTime', [Carbon::now(), Carbon::now()->addHours($hour)])
             ->orderBy('startDateTime')->get();

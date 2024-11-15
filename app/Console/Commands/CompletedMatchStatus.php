@@ -7,21 +7,21 @@ use App\Services\EventScheduleService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class EndMatchStatus extends Command
+class CompletedMatchStatus extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'update:end-match-status';
+    protected $signature = 'update:completed-match-status';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Ended match status records where the end date has passed';
+    protected $description = 'Completed match status records where the end date has passed';
     private EventScheduleService $eventScheduleService;
 
     public function __construct(EventScheduleService $eventScheduleService)

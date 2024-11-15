@@ -7,7 +7,7 @@ use App\Console\Commands\DeactivateTrainingStatus;
 use App\Console\Commands\InvoiceDueSoonNotification;
 use App\Console\Commands\MatchReminderNotification;
 use App\Console\Commands\StartCompetitionStatus;
-use App\Console\Commands\EndMatchStatus;
+use App\Console\Commands\CompletedMatchStatus;
 use App\Console\Commands\SetPastDueInvoiceStatus;
 use App\Console\Commands\StartMatchStatus;
 use App\Console\Commands\StartTrainingStatus;
@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         CompletedCompetitionStatus::class,
         DeactivateTrainingStatus::class,
-        EndMatchStatus::class,
+        CompletedMatchStatus::class,
         InvoiceDueSoonNotification::class,
         MatchReminderNotification::class,
         SetPastDueInvoiceStatus::class,

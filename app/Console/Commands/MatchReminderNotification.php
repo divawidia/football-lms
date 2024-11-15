@@ -49,9 +49,11 @@ class MatchReminderNotification extends Command
     {
         $matches = $this->eventScheduleRepository->getUpcomingEvent('Match', 24);
         foreach ($matches as $data) {
-            $team = $data->teams()->first();
-            $allTeamParticipant = $this->userRepository->allTeamsParticipant($team, admins: false);
-            Notification::send($allTeamParticipant, new TrainingScheduleReminder($data, $team));
+            if ($data->isOpponentTeamMatch == '0') {
+                $team = $data->teams()->first();
+                $allTeamParticipant = $this->userRepository->allTeamsParticipant($team, admins: false);
+                Notification::send($allTeamParticipant, new TrainingScheduleReminder($data, $team));
+            }
         }
 
         $this->info('Upcoming match schedule successfully sent reminder notification.');
