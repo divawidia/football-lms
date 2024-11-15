@@ -420,21 +420,23 @@ class TeamService extends Service
             'teamOwnGoal',
         ];
         $results = ['Win', 'Lose', 'Draw'];
+        $startDate = Carbon::now()->startOfMonth();
+        $endDate = Carbon::now();
 
         $statsData['matchPlayed'] = $this->eventScheduleRepository->getTeamsMatchPlayed($team);
-        $statsData['matchPlayedThisMonth'] = $this->eventScheduleRepository->getTeamsMatchPlayed($team, startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now());
+        $statsData['matchPlayedThisMonth'] = $this->eventScheduleRepository->getTeamsMatchPlayed($team, startDate: $startDate, endDate: $endDate);
 
         foreach ($stats as $stat){
             $statsData[$stat] = $this->teamMatchRepository->getTeamsStats($team, stats: $stat);
-            $statsData[$stat.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now(), stats: $stat);
+            $statsData[$stat.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, startDate: $startDate, endDate: $endDate, stats: $stat);
         }
         foreach ($results as $result){
             $statsData[$result] = $this->teamMatchRepository->getTeamsStats($team, results: $result);
-            $statsData[$result.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now(), results: $result);
+            $statsData[$result.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, startDate: $startDate, endDate: $endDate, results: $result);
         }
 
         $statsData['goalsConceded'] = $this->teamMatchRepository->getTeamsStats($team, teamSide:'Opponent Team', stats: 'teamScore');
-        $statsData['goalsConcededThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, teamSide:'Opponent Team', startDate: Carbon::now()->startOfMonth(), endDate: Carbon::now(), stats: 'teamScore');
+        $statsData['goalsConcededThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, teamSide:'Opponent Team', startDate: $startDate, endDate: $endDate, stats: 'teamScore');
 
         $statsData['goalsDifference'] = $statsData['teamScore'] - $statsData['goalsConceded'];
         $statsData['goalDifferenceThisMonth'] = $statsData['teamScoreThisMonth'] - $statsData['goalsConcededThisMonth'];
@@ -444,21 +446,21 @@ class TeamService extends Service
 
     public function teamLatestMatch(Team $team)
     {
-        return $this->eventScheduleRepository->getTeamsEvents($team, 'Match', '0', true, 2);
+        return $this->eventScheduleRepository->getTeamsEvents($team, 'Match', 'Completed', true, 2);
     }
 
     public function teamUpcomingMatch(Team $team)
     {
-        return $this->eventScheduleRepository->getTeamsEvents($team, 'Match', '1', true, 2);
+        return $this->eventScheduleRepository->getTeamsEvents($team, 'Match', 'Scheduled', true, 2);
     }
 
     public function teamUpcomingTraining(Team $team)
     {
-        return $this->eventScheduleRepository->getTeamsEvents($team, 'Training', '1', true, 2);
+        return $this->eventScheduleRepository->getTeamsEvents($team, 'Training', 'Scheduled', true, 2);
     }
 
     public function teamTrainingHistories(Team $team){
-        $data = $this->eventScheduleRepository->getTeamsEvents($team, 'Training', '0', true);
+        $data = $this->eventScheduleRepository->getTeamsEvents($team, 'Training', 'Completed', true);
 
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
@@ -497,7 +499,7 @@ class TeamService extends Service
     }
 
     public function teamMatchHistories(Team $team){
-        $data = $this->eventScheduleRepository->getTeamsEvents($team, 'Match', '0', true);
+        $data = $this->eventScheduleRepository->getTeamsEvents($team, 'Match', 'Completed', true);
 
         return Datatables::of($data)
             ->addColumn('action', function ($item) {

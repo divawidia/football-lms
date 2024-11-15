@@ -13,6 +13,7 @@ use App\Models\Team;
 use App\Models\TeamMatch;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
+use App\Repository\EventScheduleRepository;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Number;
 use Carbon\Carbon;
@@ -22,9 +23,11 @@ class DashboardService extends CoachService
 {
     private Coach $coach;
     private CoachMatchStatsRepository $coachMatchStatsRepository;
-    public function __construct(Coach $coach, CoachMatchStatsRepository $coachMatchStatsRepository){
+    private EventScheduleRepository $eventScheduleRepository;
+    public function __construct(Coach $coach, CoachMatchStatsRepository $coachMatchStatsRepository, EventScheduleRepository $eventScheduleRepository){
         $this->coach = $coach;
         $this->coachMatchStatsRepository = $coachMatchStatsRepository;
+        $this->eventScheduleRepository = $eventScheduleRepository;
     }
 
     public function overviewStats(){
@@ -82,23 +85,14 @@ class DashboardService extends CoachService
 
     public function latestMatch()
     {
-        $teams = $this->managedTeams($this->coach);
-        return EventSchedule::with('teams', 'competition')
-            ->whereHas('teams', function($q) use ($teams){
-                $q->where('teamId', $teams[0]->id);
+        $teams = $this->coach->teams;
+        $latestMatch = collect();
+        foreach ($teams as $team){
+            $matches = $this->eventScheduleRepository->getTeamsEvents($team, 'Match', 'Completed', true, 2);
+            $latestMatch = $latestMatch->merge($matches);
+        }
 
-                // if teams are more than 1 then iterate more
-                if (count($teams)>1){
-                    for ($i = 1; $i < count($teams); $i++){
-                        $q->orWhere('teamId', $teams[$i]->id);
-                    }
-                }
-            })
-            ->where('eventType', 'Match')
-            ->where('status', '0')
-            ->orderBy('date', 'desc')
-            ->take(2)
-            ->get();
+        return $latestMatch;
     }
 
     public function upcomingMatch()

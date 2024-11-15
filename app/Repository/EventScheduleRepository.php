@@ -49,7 +49,8 @@ class EventScheduleRepository
         return $this->eventSchedule->with('teams', 'competition')
             ->where('eventType', $eventType)
             ->where('status', 'Ongoing')
-            ->whereDate('endDateTime', '<=', Carbon::now())
+            ->orWhere('status', 'Scheduled')
+            ->whereDate('endDatetime', '<=', Carbon::now())
             ->orderBy('endDateTime')->get();
     }
 
@@ -74,13 +75,16 @@ class EventScheduleRepository
             ->get();
     }
 
-    public function getTeamsMatchPlayed(Team $team, $teamSide = 'Academy Team', $startDate = null, $endDate = null)
+    public function getTeamsMatchPlayed(Team $team = null, $teamSide = 'Academy Team', $startDate = null, $endDate = null)
     {
         $query = $this->eventSchedule->whereHas('teams', function($q) use ($team, $teamSide) {
                 $q->where('teamSide', $teamSide);
-                $q->where('teamId', $team->id);
+                if ($team != null){
+                    $q->where('teamId', $team->id);
+                }
             })
-            ->where('status', '0')
+            ->where('status', 'Completed')
+            ->where('isOpponentTeamMatch', '0')
             ->where('eventType', 'Match');
 
         if ($startDate != null && $endDate != null){
@@ -92,7 +96,7 @@ class EventScheduleRepository
 
     public function getTeamsEvents(Team $team, $eventType, $status, $latest = false, $take = null)
     {
-        $query = $team->schedules()
+        $query = $team->schedules()->with('teams', 'competition')
             ->where('eventType', $eventType)
             ->where('status', $status);
         if ($latest){

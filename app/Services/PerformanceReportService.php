@@ -7,6 +7,7 @@ use App\Models\EventSchedule;
 use App\Models\TeamMatch;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\EventScheduleRepository;
+use App\Repository\TeamMatchRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -15,11 +16,27 @@ class PerformanceReportService extends Service
 {
     private CoachMatchStatsRepository $coachMatchStatsRepository;
     private EventScheduleRepository $eventScheduleRepository;
-    public function __construct(CoachMatchStatsRepository $coachMatchStatsRepository, EventScheduleRepository $eventScheduleRepository){
+    private TeamMatchRepository $teamMatchRepository;
+    public function __construct(CoachMatchStatsRepository $coachMatchStatsRepository, EventScheduleRepository $eventScheduleRepository, TeamMatchRepository $teamMatchRepository){
         $this->coachMatchStatsRepository = $coachMatchStatsRepository;
         $this->eventScheduleRepository = $eventScheduleRepository;
+        $this->teamMatchRepository = $teamMatchRepository;
     }
     public function overviewStats(){
+        $stats = [
+            'teamScore',
+            'cleanSheets',
+            'teamOwnGoal',
+        ];
+        $results = ['Win', 'Lose', 'Draw'];
+        $startDate = Carbon::now()->startOfMonth();
+        $endDate = Carbon::now();
+
+        foreach ($results as $result){
+            $statsData[$result] = $this->teamMatchRepository->getTeamsStats(results: $result);
+            $statsData[$result.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats(startDate: $startDate, endDate: $endDate, results: $result);
+        }
+
         $totalWins = TeamMatch::where('resultStatus', 'Win')
             ->whereHas('team', function($q) {
                 $q->where('teamSide', 'Academy Team');
