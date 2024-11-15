@@ -20,8 +20,10 @@ use App\Models\ScheduleNote;
 use App\Repository\PlayerSkillStatsRepository;
 use App\Services\CompetitionService;
 use App\Services\EventScheduleService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class EventScheduleController extends Controller
@@ -142,7 +144,7 @@ class EventScheduleController extends Controller
     public function storeTraining(TrainingScheduleRequest $request)
     {
         $data = $request->validated();
-        $userId = Auth::user()->id;
+        $userId = $this->getLoggedUserId();
         $this->eventScheduleService->storeTraining($data, $userId);
 
         $text = 'Training schedule successfully added!';
@@ -153,7 +155,7 @@ class EventScheduleController extends Controller
     public function storeMatch(MatchScheduleRequest $request)
     {
         $data = $request->validated();
-        $userId = Auth::user()->id;
+        $userId = $this->getLoggedUserId();
         $this->eventScheduleService->storeMatch($data, $userId);
 
         $text = 'Match schedule successfully added!';
@@ -231,7 +233,8 @@ class EventScheduleController extends Controller
     public function updateTraining(TrainingScheduleRequest $request, EventSchedule $schedule)
     {
         $data = $request->validated();
-        $this->eventScheduleService->updateTraining($data, $schedule);
+        $loggedUser = $this->getLoggedUser();
+        $this->eventScheduleService->updateTraining($data, $schedule, $loggedUser);
 
         $text = 'Schedule successfully updated!';
         Alert::success($text);
@@ -241,38 +244,42 @@ class EventScheduleController extends Controller
     public function updateMatch(UpdateMatchScheduleRequest $request, EventSchedule $schedule)
     {
         $data = $request->validated();
-        $this->eventScheduleService->updateMatch($data, $schedule);
+        $loggedUser = $this->getLoggedUser();
+        $this->eventScheduleService->updateMatch($data, $schedule, $loggedUser);
 
         $text = 'Match Schedule successfully updated!';
         Alert::success($text);
         return redirect()->route('match-schedules.index');
     }
 
-    public function activateTraining(EventSchedule $schedule)
+    public function status(EventSchedule $schedule, $status)
     {
-        $this->eventScheduleService->activate($schedule);
+        try {
+            $this->eventScheduleService->setStatus($schedule, $status);
+            return response()->json(['message' =>  $schedule->eventType.' session status successfully mark to '.$status.'!']);
 
-        $text = 'Schedule status successfully updated!';
-        Alert::success($text);
-        return redirect()->route('training-schedules.show', $schedule->id);
+        } catch (Exception $e) {
+            Log::error('Error marking '.$schedule->eventType.' session as '.$status.': ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while marking the competition '.$schedule->eventType.' session as '.$status.'.'], 500);
+        }
     }
 
-    public function deactivateTraining(EventSchedule $schedule)
+    public function scheduled(EventSchedule $schedule)
     {
-        $this->eventScheduleService->deactivate($schedule);
-
-        $text = 'Schedule status successfully updated!';
-        Alert::success($text);
-        return redirect()->route('training-schedules.show', $schedule->id);
+        return $this->status($schedule, 'Scheduled');
     }
 
-    public function activateMatch(EventSchedule $schedule)
+    public function ongoing(EventSchedule $schedule)
     {
-        $this->eventScheduleService->activate($schedule);
-
-        $text = 'Match status successfully updated!';
-        Alert::success($text);
-        return redirect()->route('match-schedules.show', $schedule->id);
+        return $this->status($schedule, 'Ongoing');
+    }
+    public function completed(EventSchedule $schedule)
+    {
+        return $this->status($schedule, 'Completed');
+    }
+    public function cancelled(EventSchedule $schedule)
+    {
+        return $this->status($schedule, 'Cancelled');
     }
 
     public function endMatch(EventSchedule $schedule)
