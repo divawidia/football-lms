@@ -36,8 +36,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('update:training-status-data')->everyMinute();
-        $schedule->command('update:end-match-status')->everyMinute();
+        $schedule->command('update:completed-training-status')->everyMinute();
+        $schedule->command('update:completed-match-status')->everyMinute();
         $schedule->command('update:start-competition-status')->everyMinute();
         $schedule->command('update:complete-competition-status')->everyMinute();
         $schedule->command('update:set-past-due-invoice-status')->everyMinute();
