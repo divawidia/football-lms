@@ -9,6 +9,7 @@ use App\Console\Commands\MatchReminderNotification;
 use App\Console\Commands\StartCompetitionStatus;
 use App\Console\Commands\EndMatchStatus;
 use App\Console\Commands\SetPastDueInvoiceStatus;
+use App\Console\Commands\StartTrainingStatus;
 use App\Console\Commands\SubscriptionDueSoonNotification;
 use App\Console\Commands\TrainingReminderNotification;
 use Illuminate\Console\Scheduling\Schedule;
@@ -23,6 +24,7 @@ class Kernel extends ConsoleKernel
         MatchReminderNotification::class,
         SetPastDueInvoiceStatus::class,
         StartCompetitionStatus::class,
+        StartTrainingStatus::class,
         SubscriptionDueSoonNotification::class,
         TrainingReminderNotification::class,
     ];
@@ -41,6 +43,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:subscription-due-soon-notification')->everyMinute();
         $schedule->command('update:training-reminder-notification')->everyMinute();
         $schedule->command('update:match-reminder-notification')->everyMinute();
+        $schedule->command('update:start-training-data')->everyMinute();
     }
 
     /**
