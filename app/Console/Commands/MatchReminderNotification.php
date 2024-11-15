@@ -16,21 +16,21 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
 
-class TrainingReminderNotification extends Command
+class MatchReminderNotification extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'update:training-reminder-notification';
+    protected $signature = 'update:match-reminder-notification';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Sent training schedule reminder notification to players, coaches';
+    protected $description = 'Sent match schedule reminder notification to players, coaches';
 
     private UserRepository $userRepository;
     private EventScheduleRepository $eventScheduleRepository;
@@ -47,13 +47,13 @@ class TrainingReminderNotification extends Command
      */
     public function handle()
     {
-        $trainings = $this->eventScheduleRepository->getUpcomingEvent('Training', 24);
-        foreach ($trainings as $data) {
+        $matches = $this->eventScheduleRepository->getUpcomingEvent('Match', 24);
+        foreach ($matches as $data) {
             $team = $data->teams()->first();
             $allTeamParticipant = $this->userRepository->allTeamsParticipant($team, admins: false);
             Notification::send($allTeamParticipant, new TrainingScheduleReminder($data, $team));
         }
 
-        $this->info('Upcoming training schedule successfully sent reminder notification.');
+        $this->info('Upcoming match schedule successfully sent reminder notification.');
     }
 }
