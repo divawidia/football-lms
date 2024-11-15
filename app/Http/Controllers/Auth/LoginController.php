@@ -51,14 +51,14 @@ class LoginController extends Controller
 
         Cache::put('user-is-online-' . $user->id, true, Carbon::now()->addMinutes(10));
 
-        if (Auth::user()->hasRole('admin|Super-Admin')) {
-            Alert::toast('Selamat datang ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
+        if (isAllAdmin()) {
+            Alert::toast('Welcome back ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
             return redirect()->route('admin.dashboard');
-        } else if (Auth::user()->hasRole('coach')) {
-            Alert::toast('Selamat datang ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
+        } else if (isCoach()) {
+            Alert::toast('Welcome back ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
             return redirect()->route('coach.dashboard');
-        } else  if (Auth::user()->hasRole('player')) {
-            Alert::toast('Selamat datang ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
+        } else  if (isPlayer()) {
+            Alert::toast('Welcome back ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
             return redirect()->route('player.dashboard');
         }
     }
