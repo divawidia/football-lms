@@ -146,22 +146,11 @@ class EventScheduleService extends Service
         return Datatables::of($trainingData)
             ->addColumn('action', function ($item) {
                 if (isAllAdmin() || isCoach()){
-                    if ($item->status == '1') {
-                        $statusButton = '<form action="' . route('deactivate-training', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">block</span> End Training
-                                                </button>
-                                            </form>';
-                    } else {
-                        $statusButton = '<form action="' . route('activate-training', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons">check_circle</span> Start Training
-                                                </button>
-                                            </form>';
+                    $statusButton = '';
+                    if ($item->status != 'Cancelled' && $item->status != 'Completed') {
+                        $statusButton = '<button type="submit" class="dropdown-item cancelTrainingBtn" id="'.$item->id.'">
+                                            <span class="material-icons text-danger">block</span> Cancel Training
+                                        </button>';
                     }
                     return '
                         <div class="dropdown">
@@ -232,22 +221,11 @@ class EventScheduleService extends Service
                             </span>
                         </a>';
                 } elseif (isAllAdmin()){
-                    if ($item->status == '1') {
-                        $statusButton = '<form action="' . route('end-match', $item->id) . '" method="POST">
-                                            ' . method_field("PATCH") . '
-                                            ' . csrf_field() . '
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">block</span> End Match
-                                            </button>
-                                        </form>';
-                    } else {
-                        $statusButton = '<form action="' . route('activate-match', $item->id) . '" method="POST">
-                                            ' . method_field("PATCH") . '
-                                            ' . csrf_field() . '
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">check_circle</span> Start Match
-                                            </button>
-                                        </form>';
+                    $statusButton = '';
+                    if ($item->status != 'Cancelled' && $item->status != 'Completed') {
+                        $statusButton = '<button type="submit" class="dropdown-item cancelMatchBtn" id="'.$item->id.'">
+                                            <span class="material-icons text-danger">block</span> Cancel Schedule
+                                        </button>';
                     }
                     return '
                         <div class="dropdown">
@@ -372,7 +350,8 @@ class EventScheduleService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if (isAllAdmin() || isCoach()){
-                    $showPlayer = '<div class="dropdown">
+                    $showPlayer = '
+                        <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="material-icons">
                                 more_vert
