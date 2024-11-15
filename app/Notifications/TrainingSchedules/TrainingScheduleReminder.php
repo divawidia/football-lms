@@ -39,7 +39,7 @@ class TrainingScheduleReminder extends Notification
     {
         return (new MailMessage)
             ->subject("Training Session Reminder")
-            ->greeting("Hello!")
+            ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("Reminder: You have training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} scheduled for tomorrow at ".convertToDatetime($this->trainingSchedule->startDatetime).".")
             ->line("Training Topic: {$this->trainingSchedule->eventName}")
             ->line("Team: {$this->team->teamName}")

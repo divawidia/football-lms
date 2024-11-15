@@ -8,6 +8,7 @@ use App\Models\CoachSpecialization;
 use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\Team;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 class EventScheduleRepository
@@ -32,6 +33,16 @@ class EventScheduleRepository
             $query->take($take);
         }
         return $query->orderBy('date')->get();
+    }
+
+    public function getUpcomingEvent($eventType, $hour)
+    {
+        return $this->eventSchedule->with('teams', 'competition')
+            ->where('eventType', $eventType)
+            ->where('isOpponentTeamMatch', '0')
+            ->where('status', 'Scheduled')
+            ->whereBetween('startDateTime', [Carbon::now(), Carbon::now()->addHours($hour)])
+            ->orderBy('startDateTime')->get();
     }
 
     public function getEventByModel($model, $eventType, $status, $take = null, $sortDateDirection = 'asc')

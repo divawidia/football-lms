@@ -4,28 +4,27 @@ namespace App\Console;
 
 use App\Console\Commands\CompletedCompetitionStatus;
 use App\Console\Commands\DeactivateTrainingStatus;
+use App\Console\Commands\InvoiceDueSoonNotification;
 use App\Console\Commands\StartCompetitionStatus;
 use App\Console\Commands\EndMatchStatus;
 use App\Console\Commands\SetPastDueInvoiceStatus;
-use App\Models\Invoice;
-use App\Models\Subscription;
-use App\Notifications\Invoices\InvoiceDueSoon;
-use App\Notifications\Subscriptions\SubscriptionDueDateReminderAdmin;
-use App\Notifications\Subscriptions\SubscriptionDueDateReminderPlayer;
-use Carbon\Carbon;
+use App\Console\Commands\SubscriptionDueSoonNotification;
+use App\Console\Commands\TrainingReminderNotification;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Notification;
-
 class Kernel extends ConsoleKernel
 {
     protected $commands = [
+        CompletedCompetitionStatus::class,
         DeactivateTrainingStatus::class,
         EndMatchStatus::class,
-        StartCompetitionStatus::class,
-        CompletedCompetitionStatus::class,
+        InvoiceDueSoonNotification::class,
         SetPastDueInvoiceStatus::class,
+        StartCompetitionStatus::class,
+        SubscriptionDueSoonNotification::class,
+        TrainingReminderNotification::class,
     ];
+
     /**
      * Define the application's command schedule.
      */
@@ -38,6 +37,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:set-past-due-invoice-status')->everyMinute();
         $schedule->command('update:invoice-due-soon-notification')->everyMinute();
         $schedule->command('update:subscription-due-soon-notification')->everyMinute();
+        $schedule->command('update:training-reminder-notification')->everyMinute();
     }
 
     /**
