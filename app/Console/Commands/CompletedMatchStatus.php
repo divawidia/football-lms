@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\EventSchedule;
+use App\Repository\EventScheduleRepository;
 use App\Services\EventScheduleService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -23,26 +24,25 @@ class CompletedMatchStatus extends Command
      */
     protected $description = 'Completed match status records where the end date has passed';
     private EventScheduleService $eventScheduleService;
+    private EventScheduleRepository $eventScheduleRepository;
 
-    public function __construct(EventScheduleService $eventScheduleService)
+    public function __construct(EventScheduleService $eventScheduleService, EventScheduleRepository $eventScheduleRepository)
     {
         parent::__construct();
         $this->eventScheduleService = $eventScheduleService;
+        $this->eventScheduleRepository = $eventScheduleRepository;
     }
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        // Get the current date and time
-        $now = Carbon::now();
-
         // Update records where end_date is less than the current date
-        $matches = EventSchedule::where('eventType', 'Match')->where('endDatetime', '<', $now)->get();
+        $matches = $this->eventScheduleRepository->getEndingEvent('Match');
         foreach ($matches as $match){
             $this->eventScheduleService->endMatch($match);
         }
 
-        $this->info('Active status training data updated successfully.');
+        $this->info('Match schedule status data updated successfully set to completed.');
     }
 }
