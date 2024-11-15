@@ -28,7 +28,8 @@ class EventScheduleRepository
     {
         $query = $this->eventSchedule->with('teams', 'competition')
             ->where('eventType', $eventType)
-            ->where('status', $status);
+            ->where('status', $status)
+            ->where('isOpponentTeamMatch', '0');
         if ($take){
             $query->take($take);
         }
