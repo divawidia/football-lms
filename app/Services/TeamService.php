@@ -334,22 +334,11 @@ class TeamService extends Service
                             </span>
                           </a>';
                 } elseif (isAllAdmin()){
-                    if ($item->status == '1') {
-                        $statusButton = '<form action="' . route('deactivate-competition', $item->competitionId) . '" method="POST">
-                                            ' . method_field("PATCH") . '
-                                            ' . csrf_field() . '
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">block</span> Deactivate Competition
-                                            </button>
-                                        </form>';
-                    } else {
-                        $statusButton = '<form action="' . route('activate-competition', $item->competitionId) . '" method="POST">
-                                            ' . method_field("PATCH") . '
-                                            ' . csrf_field() . '
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons">check_circle</span> Activate Competition
-                                            </button>
-                                        </form>';
+                    $statusButton = '';
+                    if ($item->competition->status != 'Cancelled' && $item->competition->status != 'Completed') {
+                        $statusButton = '<button type="submit" class="dropdown-item cancelBtn" id="'.$item->id.'">
+                                            <span class="material-icons text-danger">block</span> Cancel Competition
+                                        </button>';
                     }
                     $actionButton =  '
                             <div class="dropdown">
@@ -404,13 +393,16 @@ class TeamService extends Service
                 return $contact;
             })
             ->editColumn('status', function ($item) {
-                $badge = '';
-                if ($item->competition->status == '1') {
-                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
-                } elseif ($item->competition->status == '0') {
-                    $badge = '<span class="badge badge-pill badge-danger">Ended</span>';
+                if ($item->competition->status == 'Scheduled') {
+                    $status = '<span class="badge badge-pill badge-warning">'.$item->competition->status .'</span>';
+                } elseif ($item->competition->status == 'Ongoing') {
+                    $status = '<span class="badge badge-pill badge-info">'.$item->competition->status .'</span>';
+                } elseif ($item->competition->status == 'Completed') {
+                    $status = '<span class="badge badge-pill badge-success">'.$item->competition->status .'</span>';
+                } else {
+                    $status = '<span class="badge badge-pill badge-danger">'.$item->competition->status .'</span>';
                 }
-                return $badge;
+                return $status;
             })
             ->editColumn('location', function ($item) {
                 return $item->competition->location;

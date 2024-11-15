@@ -3,7 +3,7 @@
         <div class="card-body d-flex align-items-center">
             <div class="h2 mb-0 mr-3">{{ $data }}</div>
             <div class="ml-auto text-right">
-                <div class="card-title">{{ $title }}</div>
+                <div class="card-title text-capitalize">{{ $title }}</div>
                 <p class="card-subtitle text-50">
 
                     @if($dataThisMonth > 0)
