@@ -12,6 +12,8 @@ use App\Models\Team;
 use App\Notifications\MatchSchedules\MatchScheduleAttendance;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForAdmin;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForPlayerCoach;
+use App\Notifications\MatchSchedules\MatchScheduleDeletedForAdmin;
+use App\Notifications\MatchSchedules\MatchScheduleDeletedForPlayersCoaches;
 use App\Notifications\MatchSchedules\MatchScheduleUpdatedForAdmin;
 use App\Notifications\MatchSchedules\MatchScheduleUpdatedForPlayerCoach;
 use App\Notifications\MatchSchedules\MatchStatsPlayer;
@@ -19,6 +21,7 @@ use App\Notifications\TrainingSchedules\TrainingScheduleAttendance;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForPlayer;
 use App\Notifications\TrainingSchedules\TrainingScheduleDeletedForCoachAdmin;
+use App\Notifications\TrainingSchedules\TrainingScheduleDeletedForPlayers;
 use App\Notifications\TrainingSchedules\TrainingScheduleUpdatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleUpdatedForPlayer;
 use App\Repository\EventScheduleRepository;
@@ -57,29 +60,29 @@ class EventScheduleService extends Service
 
     public function indexMatch(): Collection
     {
-        return $this->eventScheduleRepository->getEvent('Match', '1');
+        return $this->eventScheduleRepository->getEvent('Match', 'Scheduled');
     }
     public function indexTraining(): Collection
     {
-        return $this->eventScheduleRepository->getEvent('Training', '1');
+        return $this->eventScheduleRepository->getEvent('Training', 'Scheduled');
     }
 
     public function coachTeamsIndexTraining(Coach $coach): Collection
     {
-        return $this->eventScheduleRepository->getEventByModel($coach, 'Training', '1');
+        return $this->eventScheduleRepository->getEventByModel($coach, 'Training', 'Scheduled');
     }
     public function coachTeamsIndexMatch(Coach $coach): Collection
     {
-        return $this->eventScheduleRepository->getEventByModel($coach, 'Match', '1');
+        return $this->eventScheduleRepository->getEventByModel($coach, 'Match', 'Scheduled');
     }
 
     public function playerTeamsIndexTraining(Player $player): Collection
     {
-        return $this->eventScheduleRepository->getEventByModel($player, 'Training', '1');
+        return $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Scheduled');
     }
     public function playerTeamsIndexMatch(Player $player): Collection
     {
-        return $this->eventScheduleRepository->getEventByModel($player,  'Match', '1');
+        return $this->eventScheduleRepository->getEventByModel($player,  'Match', 'Scheduled');
     }
 
     public function makeMatchCalendar($matchesData): array
@@ -1135,12 +1138,17 @@ class EventScheduleService extends Service
 
         $deletedBy = $this->getUserFullName($loggedUser);
         $team = $schedule->teams()->first();
-        $allTeamsParticipant = $this->userRepository->allTeamsParticipant($team);
+        $admins = $this->userRepository->getAllAdminUsers();
+        $adminsCoachesTeamsParticipant = $this->userRepository->allTeamsParticipant($team, players: false);
+        $playersTeamsParticipants = $this->userRepository->allTeamsParticipant($team, admins: false, coaches: false);
+        $playersCoachesTeamsParticipants = $this->userRepository->allTeamsParticipant($team, admins: false);
 
         if ($schedule->eventType == 'Training') {
-            Notification::send($allTeamsParticipant, new TrainingScheduleDeletedForCoachAdmin($schedule, $team, $deletedBy));
+            Notification::send($adminsCoachesTeamsParticipant, new TrainingScheduleDeletedForCoachAdmin($schedule, $team, $deletedBy));
+            Notification::send($playersTeamsParticipants, new TrainingScheduleDeletedForPlayers($schedule));
         } elseif ($schedule->eventType == 'Match' && $schedule->isOpponentTeamMatch == '0') {
-
+            Notification::send($admins, new MatchScheduleDeletedForAdmin($schedule, $deletedBy));
+            Notification::send($playersCoachesTeamsParticipants, new MatchScheduleDeletedForPlayersCoaches($schedule));
         }
 
         $schedule->delete();
