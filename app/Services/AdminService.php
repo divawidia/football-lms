@@ -29,7 +29,19 @@ class AdminService extends Service
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if (isSuperAdmin()){
-                    if ($item->user->status == '1'){
+                    $deleteUserBtn = '';
+                    $changePassBtn = '';
+                    $statusButton = '';
+
+                    if (getLoggedUser()->id == $item->id) {
+                        $deleteUserBtn = '
+                            <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->id.'">
+                                <span class="material-icons mr-2 text-danger">delete</span> Delete Admin
+                            </button>';
+                        $changePassBtn = '<a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons mr-2">lock</span> Change Admin Password</a>';
+                    }
+
+                    if ($item->user->status == '1' && getLoggedUser()->id == $item->id){
                         $statusButton = '<form action="' . route('deactivate-admin', $item->id) . '" method="POST">
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
@@ -37,7 +49,7 @@ class AdminService extends Service
                                                 <span class="material-icons mr-2 text-danger">block</span> Deactivate Admin</a>
                                             </button>
                                         </form>';
-                    }else{
+                    }elseif($item->user->status == '0' && getLoggedUser()->id == $item->id) {
                         $statusButton = '<form action="' . route('activate-admin', $item->id) . '" method="POST">
                                             '.method_field("PATCH").'
                                             '.csrf_field().'
@@ -57,10 +69,8 @@ class AdminService extends Service
                             <a class="dropdown-item" href="' . route('admin-managements.edit', $item->id) . '"><span class="material-icons mr-2">edit</span> Edit Admin</a>
                             <a class="dropdown-item" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons mr-2">visibility</span> View Admin</a>
                             '. $statusButton .'
-                            <a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons mr-2">lock</span> Change Admin Password</a>
-                            <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->id.'">
-                                <span class="material-icons mr-2 text-danger">delete</span> Delete Admin
-                            </button>
+                            '.$changePassBtn.'
+                            '.$deleteUserBtn.'
                           </div>
                         </div>';
                 } elseif (isAdmin()){
