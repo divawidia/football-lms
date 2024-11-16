@@ -16,12 +16,14 @@ class AdminService extends Service
 {
     private AdminRepository $adminRepository;
     private UserRepository $userRepository;
+    private DatatablesService $datatablesService;
     private $loggedUser;
-    public function __construct(AdminRepository $adminRepository, UserRepository $userRepository, $loggedUser)
+    public function __construct(AdminRepository $adminRepository, UserRepository $userRepository, $loggedUser, DatatablesService $datatablesService)
     {
         $this->adminRepository = $adminRepository;
         $this->userRepository = $userRepository;
         $this->loggedUser = $loggedUser;
+        $this->datatablesService = $datatablesService;
     }
     public function index(): JsonResponse
     {
@@ -32,8 +34,10 @@ class AdminService extends Service
                     $deleteUserBtn = '';
                     $changePassBtn = '';
                     $statusButton = '';
+                    $editAccBtn = '';
 
                     if (getLoggedUser()->id == $item->id) {
+                        $editAccBtn = '<a class="dropdown-item" href="' . route('admin-managements.edit', $item->id) . '"><span class="material-icons mr-2">edit</span> Edit Admin</a>';
                         $deleteUserBtn = '
                             <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->id.'">
                                 <span class="material-icons mr-2 text-danger">delete</span> Delete Admin
@@ -66,8 +70,8 @@ class AdminService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('admin-managements.edit', $item->id) . '"><span class="material-icons mr-2">edit</span> Edit Admin</a>
                             <a class="dropdown-item" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons mr-2">visibility</span> View Admin</a>
+                            '.$editAccBtn.'
                             '. $statusButton .'
                             '.$changePassBtn.'
                             '.$deleteUserBtn.'
@@ -78,33 +82,10 @@ class AdminService extends Service
                 }
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                             style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                        <a href="'.route('admin-managements.show', $item->id).'">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
-                                        </a>
-                                        <small class="js-lists-values-email text-50">' . $item->position . '</small>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>';
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position, route('admin-managements.show', $item->id));
             })
             ->editColumn('status', function ($item){
-                $badge = '';
-                if ($item->user->status == '1') {
-                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
-                }elseif ($item->user->status == '0'){
-                    $badge = '<span class="badge badge-pill badge-danger">Non-Active</span>';
-                }
-                return $badge;
+                return $this->datatablesService->activeNonactiveStatus($item->user->status);
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);

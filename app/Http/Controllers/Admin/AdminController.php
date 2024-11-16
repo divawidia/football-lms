@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Repository\AdminRepository;
 use App\Repository\UserRepository;
 use App\Services\AdminService;
+use App\Services\DatatablesService;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -27,10 +28,10 @@ use Nnjeim\World\World;
 class AdminController extends Controller
 {
     private AdminService $adminService;
-    public function __construct(AdminRepository $adminRepository, UserRepository $userRepository)
+    public function __construct(AdminRepository $adminRepository, UserRepository $userRepository, DatatablesService $datatablesService)
     {
-        $this->middleware(function ($request, $next) use ($adminRepository, $userRepository){
-            $this->adminService = new AdminService($adminRepository, $userRepository, $this->getLoggedUser());
+        $this->middleware(function ($request, $next) use ($adminRepository, $userRepository, $datatablesService){
+            $this->adminService = new AdminService($adminRepository, $userRepository, $this->getLoggedUser(), $datatablesService);
             return $next($request);
         });
     }

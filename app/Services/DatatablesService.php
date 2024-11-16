@@ -44,8 +44,15 @@ class DatatablesService extends Service
         $endTime = $this->convertToTime($data->endTime);
         return $date.' ('.$startTime.' - '.$endTime.')';
     }
-    public function name($image, $title, $subtitle)
+    public function name($image, $title, $subtitle, $showRoute = null)
     {
+        if ($showRoute != null) {
+            $text = '<a href="'.$showRoute.'">
+                        <p class="mb-0"><strong class="js-lists-values-lead">' . $title . '</strong></p>
+                    </a>';
+        } else {
+            $text = '<p class="mb-0"><strong class="js-lists-values-lead">' . $title . '</strong></p>';
+        }
         return '<div class="media flex-nowrap align-items-center" style="white-space: nowrap;">
                     <div class="avatar avatar-sm mr-8pt">
                         <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($image) . '" alt="profile-pic"/>
@@ -53,7 +60,7 @@ class DatatablesService extends Service
                     <div class="media-body">
                         <div class="d-flex align-items-center">
                             <div class="flex d-flex flex-column">
-                                <p class="mb-0"><strong class="js-lists-values-lead">' . $title . '</strong></p>
+                                '.$text.'
                                 <small class="js-lists-values-email text-50">'.$subtitle.'</small>
                             </div>
                         </div>

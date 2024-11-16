@@ -57,6 +57,11 @@ class Controller extends BaseController
         return $this->getLoggedUser()->hasRole('player');
     }
 
+    public function getUserFullName(User $user): string
+    {
+        return $user->firstName . ' ' . $user->lastName;
+    }
+
     public function successAlertAddUser(array $data, string $context)
     {
         $text = $data['firstName'].' '.$data['lastName'].' successfully '.$context.'!';

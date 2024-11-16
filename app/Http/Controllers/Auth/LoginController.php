@@ -43,22 +43,27 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
-    public function authenticated(Request $request, $user): RedirectResponse
+
+
+    public function authenticated(Request $request): RedirectResponse
     {
+        $user = $this->getLoggedUser();
         $user->update([
             'last_seen' => Carbon::now()
         ]);
 
         Cache::put('user-is-online-' . $user->id, true, Carbon::now()->addMinutes(10));
 
+        $userFullName = $this->getUserFullName($user);
+
         if (isAllAdmin()) {
-            Alert::toast('Welcome back ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
+            Alert::toast('Welcome back ' .$userFullName, 'success');
             return redirect()->route('admin.dashboard');
         } else if (isCoach()) {
-            Alert::toast('Welcome back ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
+            Alert::toast('Welcome back ' .$userFullName, 'success');
             return redirect()->route('coach.dashboard');
         } else  if (isPlayer()) {
-            Alert::toast('Welcome back ' .Auth::user()->firstName. ' ' .Auth::user()->lastName, 'success');
+            Alert::toast('Welcome back ' .$userFullName, 'success');
             return redirect()->route('player.dashboard');
         }
     }
