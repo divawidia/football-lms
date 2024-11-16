@@ -10,13 +10,13 @@
                 LOGO
             @endif
         </p>
-        <p class="measure-lead-max text-50 small mr-8pt">Lorem ipsum dolor sit amet consectetur. Pellentesque libero purus ac diam eget eu in vulputate. A bibendum dictum amet mauris nunc erat fusce sapien. Convallis non nisl ut sed neque fermentum elementum. Tempor venenatis bibendum justo phasellus.</p>
-        <p class="mb-8pt d-flex">
-            <a href=""
-               class="text-70 text-underline mr-8pt small">Terms</a>
-            <a href=""
-               class="text-70 text-underline small">Privacy policy</a>
-        </p>
+        <p class="measure-lead-max text-50 small mr-8pt">{{academyData()->academyDescription}}</p>
+{{--        <p class="mb-8pt d-flex">--}}
+{{--            <a href=""--}}
+{{--               class="text-70 text-underline mr-8pt small">Terms</a>--}}
+{{--            <a href=""--}}
+{{--               class="text-70 text-underline small">Privacy policy</a>--}}
+{{--        </p>--}}
         <p class="text-50 small mt-n1 mb-0">Copyright <script>document.write(new Date().getFullYear())</script>; All rights reserved.</p>
     </div>
 </div>
