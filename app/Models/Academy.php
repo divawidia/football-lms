@@ -24,7 +24,8 @@ class Academy extends Model
         'zipCode',
         'directorName',
         'status',
-        'logo'
+        'logo',
+        'academyDescription'
     ];
 
     public function users()
