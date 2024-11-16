@@ -18,7 +18,7 @@
                     LOGO
                 @endif
             </a>
-            <p class="m-0">Login to access your Account </p>
+            <strong class="m-0 h5">Login to access your Account </strong>
         </div>
         @error('status')
         <div class="alert alert-danger text-center">
