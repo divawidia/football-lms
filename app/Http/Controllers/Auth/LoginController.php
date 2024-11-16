@@ -48,8 +48,9 @@ class LoginController extends Controller
     public function authenticated(Request $request): RedirectResponse
     {
         $user = $this->getLoggedUser();
+
         $user->update([
-            'last_seen' => Carbon::now()
+            'lastSeen' => Carbon::now()
         ]);
 
         Cache::put('user-is-online-' . $user->id, true, Carbon::now()->addMinutes(10));
