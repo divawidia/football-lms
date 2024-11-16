@@ -30,6 +30,7 @@ class AcademyRequest extends FormRequest
             'phoneNumber' => ['required', 'string'],
             'zipCode' => ['required', 'numeric'],
             'directorName' => ['required', 'string'],
+            'academyDescription' => ['required', 'string'],
             'logo' => ['image', 'max:1024', 'nullable'],
             'country_id' => ['required', Rule::exists('countries', 'id')],
             'state_id' => ['required', Rule::exists('states', 'id')],
