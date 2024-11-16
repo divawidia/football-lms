@@ -108,6 +108,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label" for="academyDescription">Academy Description</label>
+                        <small class="text-danger">*</small>
+                        <textarea
+                            class="form-control @error('academyDescription') is-invalid @enderror"
+                            name="academyDescription"
+                            id="academyDescription"
+                            rows="5"
+                            required
+                            placeholder="Input academy's description ...">{{old('academyDescription', $data->academyDescription)}}</textarea>
+                        @error('academyDescription')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
                     <div class="page-separator mt-3">
                         <div class="page-separator__text">Contact Information</div>
                     </div>
