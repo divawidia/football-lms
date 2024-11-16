@@ -167,7 +167,7 @@ class EventScheduleService extends Service
                             <a class="dropdown-item" href="' . route('training-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Schedule</a>
                             ' . $statusButton . '
                             <button type="button" class="dropdown-item delete" id="' . $item->id . '">
-                                <span class="material-icons">delete</span> Delete Schedule
+                                <span class="material-icons text-danger">delete</span> Delete Schedule
                             </button>
                           </div>
                         </div>';

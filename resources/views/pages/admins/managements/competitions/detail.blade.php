@@ -91,7 +91,7 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('competition-managements.edit', $competition->id) }}"><span class="material-icons">edit</span> Edit Competition Info</a>
                     @if($competition->status != 'Cancelled' && $competition->status != 'Completed')
-                        <button type="submit" class="dropdown-item cancelBtn" id="{{ $data['invoice']->id }}">
+                        <button type="submit" class="dropdown-item cancelBtn" id="{{ $competition->id }}">
                             <span class="material-icons text-danger">block</span>
                             Cancel Competition
                         </button>

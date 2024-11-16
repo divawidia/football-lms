@@ -39,4 +39,20 @@
             </div>
         </div>
     </div>
+
+    <x-process-data-confirmation btnClass=".delete"
+                                 :processRoute="route('training-schedules.destroy', ['schedule' => ':id'])"
+                                 :routeAfterProcess="route('training-schedules.index')"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this training session?"
+                                 successText="Successfully deleted training session!"
+                                 errorText="Something went wrong when deleting training session!"/>
+
+    <x-process-data-confirmation btnClass=".cancelTrainingBtn"
+                                 :processRoute="route('cancel-training', ['schedule' => ':id'])"
+                                 :routeAfterProcess="route('training-schedules.index')"
+                                 method="PATCH"
+                                 confirmationText="Are you sure to cancel competition?"
+                                 successText="Training session successfully mark as cancelled!"
+                                 errorText="Something went wrong when marking training session as cancelled!"/>
 @endsection

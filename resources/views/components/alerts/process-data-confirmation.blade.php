@@ -12,9 +12,17 @@
                     showCancelButton: true,
                     confirmButtonColor: "#1ac2a1",
                     cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
+                    confirmButtonText: "Yes!"
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Processing...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
                         $.ajax({
                             url: "{{ $processRoute }}".replace(':id', id),
                             type: '{{ $method }}',

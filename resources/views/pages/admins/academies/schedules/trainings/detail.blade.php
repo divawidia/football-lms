@@ -46,8 +46,7 @@
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div
-            class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex">
                 <h2 class="text-white mb-0">{{ $data['dataSchedule']->eventName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">{{ $data['dataSchedule']->eventType }}
@@ -55,39 +54,21 @@
             </div>
             @if(isAllAdmin() || isCoach())
                 <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                        Action
-                        <span class="material-icons ml-3">
-                            keyboard_arrow_down
-                        </span>
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Action<span class="material-icons ml-3">keyboard_arrow_down</span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item"
-                           href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}">
-                            <span class="material-icons">edit</span>
-                            Edit Training Schedule
+                        <a class="dropdown-item" href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}">
+                            <span class="material-icons">edit</span> Edit Training Schedule
                         </a>
-
-                        @if($data['dataSchedule']->status == '1')
-                            <form action="{{ route('deactivate-training', $data['dataSchedule']->id) }}" method="POST">
-                                @method("PATCH")
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <span class="material-icons">block</span> End Training
-                                </button>
-                            </form>
-                        @else
-                            <form action="{{ route('activate-training', $data['dataSchedule']->id) }}" method="POST">
-                                @method("PATCH")
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <span class="material-icons">check_circle</span> Start Training
-                                </button>
-                            </form>
+                        @if($data['dataSchedule']->status != 'Cancelled' && $data['dataSchedule']->status != 'Completed')
+                            <button type="submit" class="dropdown-item cancelBtn" id="{{ $data['dataSchedule']->id }}">
+                                <span class="material-icons text-danger">block</span>
+                                Cancel Competition
+                            </button>
                         @endif
                         <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
-                            <span class="material-icons">delete</span> Delete Training
+                            <span class="material-icons text-danger">delete</span> Delete Training
                         </button>
                     </div>
                 </div>
@@ -99,10 +80,15 @@
         <div class="container page__container">
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
-                    @if($data['dataSchedule']->status == '1')
-                        Status : <span class="badge badge-pill badge-success ml-1">Active</span>
+                    Status :
+                    @if ($data['dataSchedule']->status == 'Scheduled')
+                        <span class="badge badge-pill badge-warning">{{ $data['dataSchedule']->status }}</span>
+                    @elseif($data['dataSchedule']->status == 'Ongoing')
+                        <span class="badge badge-pill badge-info">{{ $data['dataSchedule']->status }}</span>
+                    @elseif($data['dataSchedule']->status == 'Completed')
+                        <span class="badge badge-pill badge-success">{{ $data['dataSchedule']->status }}</span>
                     @else
-                        Status : <span class="badge badge-pill badge-danger ml-1">Ended</span>
+                        <span class="badge badge-pill badge-danger">{{ $data['dataSchedule']->status }}</span>
                     @endif
                 </li>
                 <li class="nav-item navbar-list__item">
@@ -111,8 +97,7 @@
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }}
-                    - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
+                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }} - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -121,15 +106,10 @@
                 <li class="nav-item navbar-list__item">
                     <div class="media align-items-center">
                         <span class="media-left mr-16pt">
-                            <img src="{{Storage::url($data['dataSchedule']->user->foto) }}"
-                                 width="30"
-                                 alt="avatar"
-                                 class="rounded-circle">
+                            <img src="{{Storage::url($data['dataSchedule']->user->foto) }}" width="30" alt="avatar" class="rounded-circle">
                         </span>
                         <div class="media-body">
-                            <a class="card-title m-0"
-                               href="">Created
-                                by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
+                            <a class="card-title m-0" href="">Created by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
                             <p class="text-50 lh-1 mb-0">Admin</p>
                         </div>
                     </div>
@@ -144,86 +124,12 @@
             <div class="page-separator__text">Overview</div>
         </div>
         <div class="row card-group-row">
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalParticipant'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Total Participants</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-group icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalAttend'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Attended</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-user-check icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalDidntAttend'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Didn't Attended</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row card-group-row mb-4">
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalIllness'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Illness</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalInjured'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Injured</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $data['totalOthers'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Others</div>
-                            </div>
-                        </div>
-                        <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
+            @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$data['totalParticipant'], 'dataThisMonth'=>null])
+            @include('components.stats-card', ['title' => 'Attended', 'data'=>$data['totalAttend'], 'dataThisMonth'=>null])
+            @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$data['totalDidntAttend'], 'dataThisMonth'=>null])
+            @include('components.stats-card', ['title' => "Illness", 'data'=>$data['totalIllness'], 'dataThisMonth'=>null])
+            @include('components.stats-card', ['title' => "Injured", 'data'=>$data['totalInjured'], 'dataThisMonth'=>null])
+            @include('components.stats-card', ['title' => "Others", 'data'=>$data['totalOthers'], 'dataThisMonth'=>null])
         </div>
 
         {{--    Player Attendance    --}}
@@ -287,60 +193,22 @@
             @endforeach
         @endif
     @endif
-
 </div>
+
+    <x-process-data-confirmation btnClass=".delete"
+                                 :processRoute="route('training-schedules.destroy', ['schedule' => ':id'])"
+                                 :routeAfterProcess="route('training-schedules.index')"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this training session {{ $data['dataSchedule']->eventName }}?"
+                                 successText="Successfully deleted training session {{ $data['dataSchedule']->eventName }}!"
+                                 errorText="Something went wrong when deleting training session {{ $data['dataSchedule']->eventName }}!"/>
+
+    <x-process-data-confirmation btnClass=".cancelBtn"
+                                 :processRoute="route('cancel-training', ['schedule' => ':id'])"
+                                 :routeAfterProcess="route('training-schedules.show', $data['dataSchedule']->id)"
+                                 method="PATCH"
+                                 confirmationText="Are you sure to cancel competition {{ $data['dataSchedule']->eventName }}?"
+                                 successText="Training session {{ $data['dataSchedule']->eventName }} successfully mark as cancelled!"
+                                 errorText="Something went wrong when marking training session {{ $data['dataSchedule']->eventName }} as cancelled!"/>
+
 @endsection
-@push('addon-script')
-<script>
-    $(document).ready(function () {
-        const body = $('body');
-
-        // delete competition alert
-        body.on('click', '.delete', function () {
-            let id = $(this).attr('id');
-
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#1ac2a1",
-                cancelButtonColor: "#E52534",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}".replace(':id', id),
-                        type: 'DELETE',
-                        data: {
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function () {
-                            Swal.fire({
-                                title: 'Training schedule successfully deleted!',
-                                icon: 'success',
-                                showCancelButton: false,
-                                allowOutsideClick: false,
-                                confirmButtonColor: "#1ac2a1",
-                                confirmButtonText:
-                                    'Ok!'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = "{{ route('training-schedules.index') }}";
-                                }
-                            });
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Something went wrong when deleting data!",
-                                text: errorThrown,
-                            });
-                        }
-                    });
-                }
-            });
-        });
-    });
-</script>
-@endpush
