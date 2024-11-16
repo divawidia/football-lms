@@ -20,6 +20,11 @@
             </a>
             <p class="m-0">Login to access your Account </p>
         </div>
+        @error('status')
+        <div class="alert alert-danger text-center">
+            {{ $message }}
+        </div>
+        @enderror
 
         <form method="POST" action="{{ route('login') }}">
             @csrf

@@ -19,7 +19,7 @@ class CheckUserStatus
         if (Auth::check() && Auth::user()->status != '1'){
             Auth::logout();
             return redirect()->route('login')->withErrors([
-               'status' => 'Your account is inactive. Please contact support.',
+               'status' => 'Your account is inactive. Please contact our support.',
             ]);
         }
         return $next($request);
