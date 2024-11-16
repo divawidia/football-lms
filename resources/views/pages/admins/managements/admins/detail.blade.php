@@ -33,7 +33,7 @@
                 <h2 class="text-white mb-0">{{ $fullName  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">{{ $data->position }}</p>
             </div>
-            @if(isSuperAdmin())
+            @if(isSuperAdmin() && getLoggedUser()->id != $data->user->id)
                 <div class="dropdown">
                     <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
@@ -55,7 +55,7 @@
                                     <span class="material-icons mr-2 text-danger">block</span> Deactivate admin
                                 </button>
                             </form>
-                        @else
+                        @elseif($data->user->status == '0')
                             <form action="{{ route('activate-admin', $data->id) }}" method="POST">
                                 @method("PATCH")
                                 @csrf
