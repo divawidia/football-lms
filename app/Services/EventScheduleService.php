@@ -571,10 +571,10 @@ class EventScheduleService extends Service
         $this->eventScheduleRepository->updateStatus($schedule, $status);
 
         $statusMessages = [
-            'Ongoing' => 'is now ongoing',
+            'Ongoing' => 'is now ongoing. Please check the schedule for details and arrive on time!',
             'Completed' => 'have been completed',
             'Cancelled' => 'have been cancelled',
-            'Scheduled' => 'have been set to scheduled',
+            'Scheduled' => 'have been set to scheduled. Please check the schedule for the updated details!',
         ];
 
         $team = $schedule->teams()->first();

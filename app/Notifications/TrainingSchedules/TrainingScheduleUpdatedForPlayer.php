@@ -62,7 +62,7 @@ class TrainingScheduleUpdatedForPlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'The training session '.$this->trainingSchedule->eventName.' for your team '.$this->team->teamName.' on '.convertToDatetime($this->trainingSchedule->startDatetime).' '.$this->status.'. Please check the schedule for details and arrive on time!',
+            'data' =>'The training session '.$this->trainingSchedule->eventName.' for your team '.$this->team->teamName.' on '.convertToDatetime($this->trainingSchedule->startDatetime).' '.$this->status,
             'redirectRoute' => route('training-schedules.show', $this->trainingSchedule->id)
         ];
     }
