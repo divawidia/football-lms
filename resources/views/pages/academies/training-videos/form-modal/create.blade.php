@@ -5,7 +5,7 @@
             <form method="POST" id="formAddTrainingVideoModal" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="training-title">Create new training video</h5>
+                    <h5 class="modal-title" id="training-title text-capitalize">Create new training Course</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -46,7 +46,7 @@
                         <label class="form-label" for="level">Difficulty Level</label>
                         <small class="text-danger">*</small>
                         <select class="form-control form-select" id="level" name="level" required>
-                            <option disabled selected>Select training video's difficulty</option>
+                            <option disabled selected>Select training course's difficulty</option>
                             @foreach(['Beginner', 'Intermediate', 'Expert'] AS $level)
                                 <option value="{{ $level }}">{{ $level }}</option>
                             @endforeach

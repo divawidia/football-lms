@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Create Training Videos
+    Create Training Course
 @endsection
 @section('page-title')
     @yield('title')
@@ -18,7 +18,7 @@
                     @elseif(isCoach())
                         <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
                     @endif
-                    <li class="breadcrumb-item"><a href="{{ route('training-videos.create') }}">Training Videos</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('training-videos.create') }}">Training Course</a></li>
                     <li class="breadcrumb-item active">
                         @yield('title')
                     </li>

@@ -20,7 +20,7 @@
                         @elseif(isCoach())
                             <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
                         @endif
-                        <li class="breadcrumb-item"><a href="{{ route('training-videos.index') }}">Training Videos</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('training-videos.index') }}">Training Course</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('training-videos.show', $data->id) }}">{{ $data->trainingTitle }}</a></li>
                         <li class="breadcrumb-item active">
                             Add Players

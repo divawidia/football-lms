@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Training Videos
+    Training Course
 @endsection
 @section('page-title')
     @yield('title')
@@ -38,15 +38,14 @@
         @endif
 
         @if(count($data)==0)
-                <x-warning-alert text="You haven't created any training videos yet"/>
+                <x-warning-alert text="You haven't created any training course yet"/>
         @else
             <div class="row">
                 @foreach($data as $training)
                     <div class="col-sm-6 col-lg-4">
                         <div class="card card-sm card--elevated p-relative o-hidden">
                             <a href="{{ route('training-videos.show', $training->id) }}">
-                                <img class="img-index-page" src="{{ Storage::url($training->previewPhoto) }}"
-                                     alt="training-preview">
+                                <img class="img-index-page" src="{{ Storage::url($training->previewPhoto) }}" alt="training-preview">
                             </a>
                             <div class="card-body">
                                 <div class="d-flex">

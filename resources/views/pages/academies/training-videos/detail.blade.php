@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    {{ $data->trainingTitle }} Training Videos
+    {{ $data->trainingTitle }} Training Course
 @endsection
 @section('page-title')
     @yield('title')
@@ -25,7 +25,7 @@
                     <ul class="nav navbar-nav">
                         <li class="nav-item">
                             <a href="{{ route('training-videos.index') }}" class="nav-link text-70"><i
-                                    class="material-icons icon--left">keyboard_backspace</i> Back to Training Video
+                                    class="material-icons icon--left">keyboard_backspace</i> Back to Training Course
                                 Lists</a>
                         </li>
                     </ul>
@@ -37,6 +37,7 @@
                     <div class="lead text-white-50 measure-hero-lead mb-24pt">
                         {!! $data->description !!}
                     </div>
+
                     {{-- progress bar for player page --}}
                     @if(isPlayer())
                         <div class="d-flex flex-row align-items-center">
