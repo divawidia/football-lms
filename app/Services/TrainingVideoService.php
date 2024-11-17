@@ -147,7 +147,6 @@ class TrainingVideoService extends Service
     public function store(array $data, $userId){
         $data['previewPhoto'] = $this->storeImage($data, 'previewPhoto', 'assets/training-videos', 'images/video-preview.png');
         $data['userId'] = $userId;
-
         return TrainingVideo::create($data);
     }
 
@@ -158,7 +157,6 @@ class TrainingVideoService extends Service
         }else{
             $data['previewPhoto'] = $trainingVideo->previewPhoto;
         }
-
         return $trainingVideo->update($data);
     }
 
