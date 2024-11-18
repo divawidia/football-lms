@@ -151,6 +151,7 @@ class TrainingVideoLessonService extends Service
         $playersId = collect($lesson->players)->pluck('playerId')->all();
         return $this->userRepository->getInArray('player', $playersId);
     }
+
     public function store(array $data, TrainingVideo $trainingVideo, $loggedUser){
         $data['trainingVideoId'] = $trainingVideo->id;
         $players = $trainingVideo->players()->select('playerId')->get();
@@ -159,11 +160,8 @@ class TrainingVideoLessonService extends Service
 
         $createdUserName = $this->getUserFullName($loggedUser);
 
-        $playersId = collect($lesson->players)->pluck('playerId')->all();
-        $assignedPlayers = $this->userRepository->getInArray('player', $playersId);
-
         try {
-            Notification::send($assignedPlayers, new TrainingLessonCreated($trainingVideo, $lesson, role: 'player'));
+            Notification::send($this->lessonUserPlayers($lesson), new TrainingLessonCreated($trainingVideo, $lesson, role: 'player'));
             Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'admin'));
             Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'coach'));
         } catch (Exception $exception) {
