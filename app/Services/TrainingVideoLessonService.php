@@ -6,6 +6,7 @@ use App\Models\Player;
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
 use App\Notifications\TrainingCourseLessons\TrainingLessonCreated;
+use App\Notifications\TrainingCourseLessons\TrainingLessonUpdated;
 use App\Repository\PlayerRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
@@ -171,15 +172,17 @@ class TrainingVideoLessonService extends Service
         return $lesson;
     }
 
-    public function update(array $data, TrainingVideoLesson $trainingVideoLesson){
+    public function update(array $data, TrainingVideoLesson $trainingVideoLesson, $loggedUser){
         $trainingVideoLesson->update($data);
 
+        $createdUserName = $this->getUserFullName($loggedUser);
+        $trainingVideo =$trainingVideoLesson->trainingVideo;
+
         try {
-            Notification::send($assignedPlayers, new TrainingLessonCreated($trainingVideo, $lesson, role: 'player'));
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'admin'));
-            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'coach'));
+            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonUpdated($trainingVideo, $trainingVideoLesson, $createdUserName));
+            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonUpdated($trainingVideo, $trainingVideoLesson, $createdUserName));
         } catch (Exception $exception) {
-            Log::error('Error while sending create lesson '.$lesson->lessonTitle.' notification: ' . $exception->getMessage());
+            Log::error('Error while sending update lesson '.$trainingVideoLesson->lessonTitle.' notification: ' . $exception->getMessage());
         }
     }
 
