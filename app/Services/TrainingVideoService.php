@@ -257,7 +257,6 @@ class TrainingVideoService extends Service
             Log::error('Error while sending deleted training course notification: ' . $exception->getMessage());
         }
 
-        $trainingVideo->delete();
-        return $trainingVideo;
+        return $trainingVideo->delete();
     }
 }
