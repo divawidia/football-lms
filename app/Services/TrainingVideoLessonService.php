@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\Player;
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
+use App\Notifications\TrainingCourse\TrainingCourseStatus;
 use App\Notifications\TrainingCourseLessons\TrainingLessonCreated;
+use App\Notifications\TrainingCourseLessons\TrainingLessonStatus;
 use App\Notifications\TrainingCourseLessons\TrainingLessonUpdated;
 use App\Repository\PlayerRepository;
 use App\Repository\UserRepository;
@@ -198,14 +200,24 @@ class TrainingVideoLessonService extends Service
         return response()->json(['message' => 'Video marked as complete']);
     }
 
-    public function publish(TrainingVideoLesson $trainingVideoLesson)
+    public function setStatus(TrainingVideoLesson $lesson, $status)
     {
-        return $trainingVideoLesson->update(['status' => '1']);
-    }
+        $lesson->update(['status' => $status]);
+        $trainingVideo =$lesson->trainingVideo;
 
-    public function unpublish(TrainingVideoLesson $trainingVideoLesson)
-    {
-        return $trainingVideoLesson->update(['status' => '0']);
+        if ($status == '1') {
+            $statusMessage = 'published';
+        } else {
+            $statusMessage = 'unpublished';
+        }
+
+        try {
+            Notification::send($this->lessonUserPlayers($lesson), new TrainingLessonStatus($trainingVideo, $lesson,$statusMessage));
+            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonStatus($trainingVideo, $lesson,$statusMessage));
+            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonStatus($trainingVideo, $lesson, $statusMessage));
+        } catch (\Exception $exception) {
+            Log::error('Error while sending '.$statusMessage.' lesson '.$lesson->lessonTitle.' notification: ' . $exception->getMessage());
+        }
     }
 
     public function destroy(TrainingVideoLesson $trainingVideoLesson)
