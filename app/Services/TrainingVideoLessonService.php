@@ -145,6 +145,12 @@ class TrainingVideoLessonService extends Service
             ->addIndexColumn()
             ->make();
     }
+
+    public function lessonUserPlayers(TrainingVideoLesson $lesson)
+    {
+        $playersId = collect($lesson->players)->pluck('playerId')->all();
+        return $this->userRepository->getInArray('player', $playersId);
+    }
     public function store(array $data, TrainingVideo $trainingVideo, $loggedUser){
         $data['trainingVideoId'] = $trainingVideo->id;
         $players = $trainingVideo->players()->select('playerId')->get();
@@ -168,7 +174,15 @@ class TrainingVideoLessonService extends Service
     }
 
     public function update(array $data, TrainingVideoLesson $trainingVideoLesson){
-        return $trainingVideoLesson->update($data);
+        $trainingVideoLesson->update($data);
+
+        try {
+            Notification::send($assignedPlayers, new TrainingLessonCreated($trainingVideo, $lesson, role: 'player'));
+            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'admin'));
+            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'coach'));
+        } catch (Exception $exception) {
+            Log::error('Error while sending create lesson '.$lesson->lessonTitle.' notification: ' . $exception->getMessage());
+        }
     }
 
     public function markAsComplete($playerId, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
