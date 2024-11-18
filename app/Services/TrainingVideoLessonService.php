@@ -153,9 +153,13 @@ class TrainingVideoLessonService extends Service
 
         $createdUserName = $this->getUserFullName($loggedUser);
 
+        $playersId = collect($lesson->players)->pluck('playerId')->all();
+        $assignedPlayers = $this->userRepository->getInArray('player', $playersId);
+
         try {
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName));
-            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName));
+            Notification::send($assignedPlayers, new TrainingLessonCreated($trainingVideo, $lesson, role: 'player'));
+            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'admin'));
+            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'coach'));
         } catch (Exception $exception) {
             Log::error('Error while sending create lesson '.$lesson->lessonTitle.' notification: ' . $exception->getMessage());
         }
