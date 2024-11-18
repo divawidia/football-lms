@@ -6,14 +6,14 @@ use App\Models\Player;
 use App\Models\TrainingVideo;
 use App\Notifications\TrainingCourse\AssignPlayersToTrainingCourse;
 use App\Notifications\TrainingCourse\RemovePlayersFromTrainingCourse;
-use App\Notifications\TrainingCourse\TrainingLessonCreated;
-use App\Notifications\TrainingCourse\TrainingLessonDeleted;
-use App\Notifications\TrainingCourse\TrainingLessonStatus;
-use App\Notifications\TrainingCourse\TrainingLessonUpdated;
-use App\Notifications\TrainingSchedules\TrainingScheduleUpdatedForPlayer;
+use App\Notifications\TrainingCourse\TrainingCourseCreated;
+use App\Notifications\TrainingCourse\TrainingCourseDeleted;
+use App\Notifications\TrainingCourse\TrainingCourseStatus;
+use App\Notifications\TrainingCourse\TrainingCourseUpdated;
 use App\Repository\TrainingVideoRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -171,9 +171,9 @@ class TrainingVideoService extends Service
         $createdUserName = $this->getUserFullName($createdUser);
 
         try {
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreated($training, $createdUserName));
-            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonCreated($training, $createdUserName));
-        } catch (\Exception $exception) {
+            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingCourseCreated($training, $createdUserName));
+            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingCourseCreated($training, $createdUserName));
+        } catch (Exception $exception) {
             Log::error('Error while sending create training course '.$training->trainingTitle.' notification: ' . $exception->getMessage());
         }
         return $training;
@@ -184,8 +184,8 @@ class TrainingVideoService extends Service
         $trainingVideo->update($data);
 
         try {
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonUpdated($trainingVideo));
-            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonUpdated($trainingVideo));
+            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingCourseUpdated($trainingVideo));
+            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingCourseUpdated($trainingVideo));
         } catch (\Exception $exception) {
             Log::error('Error while sending update training course '.$trainingVideo->trainingTitle.' notification: ' . $exception->getMessage());
         }
@@ -202,8 +202,8 @@ class TrainingVideoService extends Service
         }
 
         try {
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonStatus($trainingVideo, $statusMessage));
-            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonStatus($trainingVideo, $statusMessage));
+            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingCourseStatus($trainingVideo, $statusMessage));
+            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingCourseStatus($trainingVideo, $statusMessage));
         } catch (\Exception $exception) {
             Log::error('Error while sending '.$statusMessage.' training course '.$trainingVideo->trainingTitle.' notification: ' . $exception->getMessage());
         }
@@ -248,9 +248,9 @@ class TrainingVideoService extends Service
         $assignedPlayers = $this->userRepository->getInArray('player', $playersId);
 
         try {
-            Notification::send($assignedPlayers, new TrainingLessonDeleted($trainingVideo));
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonDeleted($trainingVideo));
-            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonDeleted($trainingVideo));
+            Notification::send($assignedPlayers, new TrainingCourseDeleted($trainingVideo));
+            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingCourseDeleted($trainingVideo));
+            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingCourseDeleted($trainingVideo));
         } catch (\Exception $exception) {
             Log::error('Error while sending deleted training course notification: ' . $exception->getMessage());
         }
