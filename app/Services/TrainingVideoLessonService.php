@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Models\Player;
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
+use App\Notifications\TrainingCourse\TrainingCourseDeleted;
 use App\Notifications\TrainingCourse\TrainingCourseStatus;
 use App\Notifications\TrainingCourseLessons\TrainingLessonCreated;
+use App\Notifications\TrainingCourseLessons\TrainingLessonDeleted;
 use App\Notifications\TrainingCourseLessons\TrainingLessonStatus;
 use App\Notifications\TrainingCourseLessons\TrainingLessonUpdated;
 use App\Repository\PlayerRepository;
@@ -222,6 +224,14 @@ class TrainingVideoLessonService extends Service
 
     public function destroy(TrainingVideoLesson $trainingVideoLesson)
     {
+        $trainingVideo =$trainingVideoLesson->trainingVideo;
+        try {
+            Notification::send($this->lessonUserPlayers($trainingVideoLesson), new TrainingLessonDeleted($trainingVideo, $trainingVideoLesson));
+            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonDeleted($trainingVideo, $trainingVideoLesson));
+            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonDeleted($trainingVideo, $trainingVideoLesson));
+        } catch (\Exception $exception) {
+            Log::error('Error while sending deleted lesson '.$trainingVideoLesson->lessonTitle.' notification: ' . $exception->getMessage());
+        }
         return $trainingVideoLesson->delete();
     }
 }
