@@ -189,6 +189,8 @@ class TrainingVideoService extends Service
         } catch (\Exception $exception) {
             Log::error('Error while sending update training course '.$trainingVideo->trainingTitle.' notification: ' . $exception->getMessage());
         }
+
+        return $trainingVideo;
     }
 
     public function setStatus(TrainingVideo $trainingVideo, $status)
