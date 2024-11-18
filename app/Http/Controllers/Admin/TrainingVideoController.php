@@ -125,7 +125,7 @@ class TrainingVideoController extends Controller
     }
 
     public function unpublish(TrainingVideo $trainingVideo){
-        $this->trainingVideoService->unpublish($trainingVideo);
+        $this->trainingVideoService->setStatus($trainingVideo, '0');
 
         Alert::success('Training '.$trainingVideo->trainingTitle.' status successfully unpublished!');
         return redirect()->route('training-videos.show', $trainingVideo->id);
