@@ -539,7 +539,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('', [PerformanceReportController::class, 'index'])->name('performance-report.index');
         });
 
-        Route::prefix('training-videos')->group(function () {
+        Route::prefix('training-courses')->group(function () {
             Route::get('create', [TrainingVideoController::class, 'create'])->name('training-videos.create');
             Route::post('store', [TrainingVideoController::class, 'store'])->name('training-videos.store');
 
@@ -548,7 +548,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::put('update', [TrainingVideoController::class, 'update'])->name('training-videos.update');
                 Route::patch('unpublish', [TrainingVideoController::class, 'unpublish'])->name('training-videos.unpublish');
                 Route::patch('publish', [TrainingVideoController::class, 'publish'])->name('training-videos.publish');
-                Route::get('assign-player', [TrainingVideoController::class, 'assignPlayer'])->name('training-videos.assign-player');
+                Route::get('assigned-player', [TrainingVideoController::class, 'assignPlayer'])->name('training-videos.assign-player');
                 Route::put('update-player', [TrainingVideoController::class, 'updatePlayers'])->name('training-videos.update-player');
                 Route::delete('delete', [TrainingVideoController::class, 'destroy'])->name('training-videos.destroy');
 
@@ -652,7 +652,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('', [LeaderboardController::class, 'index'])->name('leaderboards.index');
         });
 
-        Route::prefix('training-videos')->group(function () {
+        Route::prefix('training-courses')->group(function () {
             Route::get('', [TrainingVideoController::class, 'index'])->name('training-videos.index');
 
             Route::prefix('{trainingVideo}')->group(function () {

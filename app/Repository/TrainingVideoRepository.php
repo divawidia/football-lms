@@ -22,6 +22,16 @@ class TrainingVideoRepository
         return $this->trainingVideo->all();
     }
 
+    public function paginate($count)
+    {
+        return $this->trainingVideo->paginate($count);
+    }
+
+    public function playerPaginate($count)
+    {
+        return $this->trainingVideo->paginate($count);
+    }
+
     public function find($id)
     {
         return $this->trainingVideo->findOrFail($id);

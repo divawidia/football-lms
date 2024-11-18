@@ -10,13 +10,15 @@ class TrainingCourseCreated extends Notification
 {
     use Queueable;
     protected $trainingCourse;
+    protected $createdByName;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($trainingCourse)
+    public function __construct($trainingCourse, $createdByName)
     {
         $this->trainingCourse = $trainingCourse;
+        $this->createdByName = $createdByName;
     }
 
     /**
@@ -37,7 +39,7 @@ class TrainingCourseCreated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"A new training course titled '{$this->trainingCourse->trainingTitle}' has been successfully created. Please review the course details in the system!",
+            'data' =>"A new training course titled '{$this->trainingCourse->trainingTitle}' has been successfully created by {$this->createdByName}. Please review the course details in the system!",
             'redirectRoute' => route('training-videos.show', $this->trainingCourse->id),
         ];
     }

@@ -42,7 +42,7 @@ class AssignPlayersToTrainingCourse extends Notification
             ->line("Total Duration: {$this->trainingCourse->totalDuration}")
             ->line("Difficulty Level: {$this->trainingCourse->level}")
             ->action('View course detail', route('training-videos.show', $this->trainingCourse->id))
-            ->line("Please ensure you review the course materials and be on time. You can find more details in your account dashboard.");
+            ->line("Please ensure you review the course materials and complete the course as soon as possible. You can find more details in your account dashboard.");
     }
 
     /**
