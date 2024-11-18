@@ -37,7 +37,7 @@ class PlayerAccountUpdated extends Notification
     {
         return [
             'data' =>"Your account have been {$this->status} by Admin. Please review the changes if necessary.",
-            'redirectRoute' => route('player-managements.show', $this->player->id)
+            'redirectRoute' => route('edit-account.edit')
         ];
     }
 }
