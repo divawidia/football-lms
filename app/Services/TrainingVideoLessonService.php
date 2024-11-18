@@ -5,9 +5,14 @@ namespace App\Services;
 use App\Models\Player;
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
+use App\Notifications\TrainingCourseLessons\TrainingLessonCreated;
 use App\Repository\PlayerRepository;
+use App\Repository\UserRepository;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
@@ -16,10 +21,12 @@ class TrainingVideoLessonService extends Service
 {
     private PlayerRepository $playerRepository;
     private TrainingVideoService $trainingVideoService;
-    public function __construct(PlayerRepository $playerRepository, TrainingVideoService $trainingVideoService)
+    private UserRepository $userRepository;
+    public function __construct(PlayerRepository $playerRepository, TrainingVideoService $trainingVideoService,  UserRepository $userRepository)
     {
         $this->playerRepository = $playerRepository;
         $this->trainingVideoService = $trainingVideoService;
+        $this->userRepository = $userRepository;
     }
 
     public function getTotalDuration(TrainingVideoLesson $trainingVideoLesson): string
@@ -138,11 +145,21 @@ class TrainingVideoLessonService extends Service
             ->addIndexColumn()
             ->make();
     }
-    public function store(array $data, TrainingVideo $trainingVideo){
+    public function store(array $data, TrainingVideo $trainingVideo, $loggedUser){
         $data['trainingVideoId'] = $trainingVideo->id;
         $players = $trainingVideo->players()->select('playerId')->get();
         $lesson = TrainingVideoLesson::create($data);
         $lesson->players()->attach($players);
+
+        $createdUserName = $this->getUserFullName($loggedUser);
+
+        try {
+            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName));
+            Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName));
+        } catch (Exception $exception) {
+            Log::error('Error while sending create lesson '.$lesson->lessonTitle.' notification: ' . $exception->getMessage());
+        }
+
         return $lesson;
     }
 

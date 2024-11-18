@@ -12,15 +12,17 @@ class TrainingLessonCreated extends Notification
     protected $trainingCourse;
     protected $lesson;
     protected $createdByName;
+    protected $role;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($trainingCourse, $lesson, $createdByName)
+    public function __construct($trainingCourse, $lesson, $createdByName = null, $role)
     {
         $this->trainingCourse = $trainingCourse;
         $this->lesson = $lesson;
         $this->createdByName = $createdByName;
+        $this->role = $role;
     }
 
     /**
@@ -40,8 +42,13 @@ class TrainingLessonCreated extends Notification
      */
     public function toArray(object $notifiable): array
     {
+        if ($this->role == 'player') {
+            $message = "A new lesson titled '{$this->lesson->lessonTitle}' in training course {$this->trainingCourse->trainingTitle} has been added and assigned to you. Please check the lesson details in the system and complete as soos as possible!";
+        } else {
+            $message = "A new lesson titled '{$this->lesson->lessonTitle}' in training course {$this->trainingCourse->trainingTitle} has been successfully created by {$this->createdByName}. Please review the lesson details in the system!";
+        }
         return [
-            'data' =>"A new lesson titled '{$this->lesson->lessonTitle}' in training course {$this->trainingCourse->trainingTitle} has been successfully created by {$this->createdByName}. Please review the lesson details in the system!",
+            'data' => $message,
             'redirectRoute' => route('training-videos.lessons-show', ['trainingVideo' => $this->trainingCourse->id, 'lessons' => $this->lesson->id]),
         ];
     }
