@@ -122,7 +122,7 @@
                                 </a>
                             </li>
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="">
+                                <a class="sidebar-menu-button" href="{{ route('admin.financial-report.index') }}">
                                     <span class="sidebar-menu-text">Financial</span>
                                 </a>
                             </li>
