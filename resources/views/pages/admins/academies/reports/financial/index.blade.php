@@ -27,7 +27,7 @@
         </div>
 
         <div class="row mb-3">
-            <div class="col-lg-4">
+            <div class="col-lg-6">
                 <div class="card">
                     <div class="card-body d-flex flex-row align-items-center">
                         <div class="h2 mb-0 mr-3" id="totalRevenue">81</div>
@@ -61,43 +61,10 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-6">
                 <div class="card">
                     <div class="card-body d-flex flex-row align-items-center">
-                        <div class="h2 mb-0 mr-3" id="totalRevenue">Rp. 23jt</div>
-                        <div class="flex">
-                            <div class="card-title h5">Est. Payment Coming 30 Days</div>
-                            <div class="card-subtitle text-50 d-flex align-items-center">
-                                21
-                                {{--                                @if($dataOverview['revenueGrowth'] > 0)--}}
-                                {{--                                    <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>--}}
-                                {{--                                @elseif($dataOverview['revenueGrowth'] < 0)--}}
-                                {{--                                    <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>--}}
-                                {{--                                @endif--}}
-                                From Last Month
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <small class="d-flex align-items-start text-muted mb-2">
-                            <span class="flex d-flex flex-column">
-                                <span class="text-body"><strong>Invoices</strong></span>
-                            </span>
-                            <span id="sumPaidInvoices">Rp. 12.321.000</span>
-                        </small>
-                        <small class="d-flex align-items-start text-muted mb-2">
-                            <span class="flex d-flex flex-column">
-                                <span class="text-body"><strong>Subscriptions</strong></span>
-                            </span>
-                            <span id="sumPastDueInvoices">Rp. 11.211.000</span>
-                        </small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-body d-flex flex-row align-items-center">
-                        <div class="h2 mb-0 mr-3" id="totalRevenue">Rp. 23jt</div>
+                        <div class="h2 mb-0 mr-3" id="totalRevenue">Rp. 23.000.000</div>
                         <div class="flex">
                             <div class="card-title h5">Monthly Est. Recuring Revenue</div>
                             <div class="card-subtitle text-50 d-flex align-items-center">

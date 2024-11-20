@@ -10,6 +10,7 @@ use App\Models\Invoice;
 use App\Models\Player;
 use App\Models\Team;
 use App\Repository\InvoiceRepository;
+use App\Repository\SubscriptionRepository;
 use Illuminate\Support\Number;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 class FinancialReportService extends Service
 {
     private InvoiceRepository $invoiceRepository;
+    private SubscriptionRepository $subscriptionRepository;
     public function __construct(InvoiceRepository $invoiceRepository)
     {
         $this->invoiceRepository = $invoiceRepository;
@@ -47,6 +49,17 @@ class FinancialReportService extends Service
             'sumUncollectInvoices',
             'sumRequireActionInvoice',
             );
+    }
+
+    public function estimatedRecuringRevenue()
+    {
+        $result = $this->subscriptionRepository->recurringRevenue();
+
+        return [
+            'yrr' => $result->yrr,
+            'qrr' => $result->qrr,
+            'mrr' => $result->mrr,
+        ];
     }
 
     public function playerAgeChart(){
