@@ -52,6 +52,19 @@ class FinancialReportService extends Service
             );
     }
 
+    public function revenueGrowth()
+    {
+        $startMonth = Carbon::now()->startOfMonth();
+        $now = Carbon::now();
+        $startOfLastMonth = now()->subMonth()->startOfMonth();
+        $endOfLastMonth = now()->subMonth()->endOfMonth();
+
+        $thisMonthTotalRevenues = $this->invoiceRepository->calculateInvoiceByStatus('Paid', $startMonth, $now, sumAmount: true);
+        $previousMonthTotalRevenues = $this->invoiceRepository->calculateInvoiceByStatus('Paid', $startOfLastMonth, $endOfLastMonth, sumAmount: true);
+        $revenueGrowth = (($thisMonthTotalRevenues - $previousMonthTotalRevenues) / $previousMonthTotalRevenues) * 100;
+        return $this->formatPercentage($revenueGrowth);
+    }
+
     public function estimatedRecuringRevenue()
     {
         $result = $this->subscriptionRepository->recurringRevenue();

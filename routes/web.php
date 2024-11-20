@@ -99,7 +99,6 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('admin-dashboard')->group(function () {
                 Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
-                Route::get('revenue', [DashboardController::class, 'getRevenueChartData'])->name('admin.revenue-chart-data');
             });
 
             Route::prefix('admin-managements')->group(function () {
@@ -254,6 +253,7 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('financial-reports')->group(function () {
                 Route::get('', [FinancialReportController::class, 'index'])->name('admin.financial-report.index');
+                Route::get('revenue', [FinancialReportController::class, 'revenueChartData'])->name('admin.financial-report.revenue-chart-data');
             });
 
             Route::prefix('leaderboards')->group(function () {

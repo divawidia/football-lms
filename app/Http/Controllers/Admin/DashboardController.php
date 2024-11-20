@@ -31,17 +31,4 @@ class DashboardController extends Controller
             'upcomingTrainings' => $upcomingTrainings
         ]);
     }
-
-    public function getRevenueChartData(Request $request)
-    {
-        $filter = $request->input('filter');
-
-        $data = $this->dashboardService->revenue($filter);
-        return response()->json([
-            'success' => true,
-            'status' => 200,
-            'message' => 'Successfully retrieve revenue data',
-            'data' => $data,
-        ]);
-    }
 }

@@ -30,33 +30,33 @@
     <div class="card-body flex-0 row">
         <div class="col-6">
             <small class="d-flex align-items-start text-muted mb-2">
-                                <span class="flex d-flex flex-column">
-                                    <span class="text-body"><strong>Paid</strong></span>
-                                    <span id="totalPaidInvoices"></span>
-                                </span>
+                <span class="flex d-flex flex-column">
+                    <span class="text-body"><strong>Paid</strong></span>
+                    <span id="totalPaidInvoices"></span>
+                </span>
                 <span class="mx-3" id="sumPaidInvoices"></span>
             </small>
             <small class="d-flex align-items-start text-muted mb-2">
-                                <span class="flex d-flex flex-column">
-                                    <span class="text-body"><strong>Past Due</strong></span>
-                                    <span id="totalPastDueInvoices"></span>
-                                </span>
+                <span class="flex d-flex flex-column">
+                    <span class="text-body"><strong>Past Due</strong></span>
+                    <span id="totalPastDueInvoices"></span>
+                </span>
                 <span class="mx-3" id="sumPastDueInvoices"></span>
             </small>
         </div>
         <div class="col-6">
             <small class="d-flex align-items-start text-muted mb-2">
-                                <span class="flex d-flex flex-column">
-                                    <span class="text-body"><strong>Open</strong></span>
-                                    <span id="totalOpenInvoices"></span>
-                                </span>
+                <span class="flex d-flex flex-column">
+                    <span class="text-body"><strong>Open</strong></span>
+                    <span id="totalOpenInvoices"></span>
+                </span>
                 <span class="mx-3" id="sumOpenInvoices"></span>
             </small>
             <small class="d-flex align-items-start text-muted mb-2">
-                                <span class="flex d-flex flex-column">
-                                    <span class="text-body"><strong>Uncollectible</strong></span>
-                                    <span id="totalUncollectInvoices"></span>
-                                </span>
+                <span class="flex d-flex flex-column">
+                    <span class="text-body"><strong>Uncollectible</strong></span>
+                    <span id="totalUncollectInvoices"></span>
+                </span>
                 <span class="mx-3" id="sumUncollectInvoices"></span>
             </small>
         </div>
@@ -74,7 +74,7 @@
 
             function fetchChartData(filter, filterText) {
                 $.ajax({
-                    url: '{{ route('admin.revenue-chart-data') }}',
+                    url: '{{ route('admin.financial-report.revenue-chart-data') }}',
                     type: 'GET',
                     data: {
                         filter: filter,

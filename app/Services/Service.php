@@ -122,7 +122,7 @@ class Service
 
     public function formatNumber($number)
     {
-        return Number::format($number, locale: 'id');
+        return Number::format($number, precision: 0, locale: 'id');
     }
     public function formatReadableNumber($number)
     {
