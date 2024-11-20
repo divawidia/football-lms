@@ -28,61 +28,45 @@
 
         <div class="row mb-3">
             <div class="col-lg-4">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex flex-row align-items-center flex-0">
-                        <div class="h2 mb-0 mr-3" id="totalRevenue"></div>
+                <div class="card">
+                    <div class="card-body d-flex flex-row align-items-center">
+                        <div class="h2 mb-0 mr-3" id="totalRevenue">81</div>
                         <div class="flex">
-                            <div class="card-title h5">Total Revenue</div>
+                            <div class="card-title h5">Requires Action Invoices</div>
                             <div class="card-subtitle text-50 d-flex align-items-center">
-                                21
+                                Rp. 23.901.000
 {{--                                @if($dataOverview['revenueGrowth'] > 0)--}}
 {{--                                    <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>--}}
 {{--                                @elseif($dataOverview['revenueGrowth'] < 0)--}}
 {{--                                    <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>--}}
 {{--                                @endif--}}
-                                From Last Month
-                            </div>
-                        </div>
-                        <div class="ml-3 align-self-start">
-                            <div class="dropdown mb-2">
-                                <a href="" class="dropdown-toggle" data-toggle="dropdown" data-caret="false">Filter by : <span id="filter-type">All Time</span><i class="material-icons text-50 pb-1">expand_more</i></a>
-                                <div id="filterRevenue" class="dropdown-menu dropdown-menu-right">
-                                    <button type="button" class="dropdown-item" id="today">Today</button>
-                                    <button type="button" class="dropdown-item" id="weekly">Weekly</button>
-                                    <button type="button" class="dropdown-item" id="monthly">Monthly</button>
-                                    <button type="button" class="dropdown-item" id="yearly">Yearly</button>
-                                    <button type="button" class="dropdown-item" id="allTime">All Time</button>
-                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body flex-0 row">
-                        <small class="d-flex align-items-start text-muted mb-2">
-                            <span class="flex d-flex flex-column">
-                                <span class="text-body"><strong>Paid</strong></span>
-                                <span id="totalPaidInvoices"></span>
-                            </span>
-                            <span class="mx-3" id="sumPaidInvoices"></span>
-                        </small>
+                    <div class="card-body">
                         <small class="d-flex align-items-start text-muted mb-2">
                             <span class="flex d-flex flex-column">
                                 <span class="text-body"><strong>Past Due</strong></span>
-                                <span id="totalPastDueInvoices"></span>
+                                <span id="totalPaidInvoices">75 Invoices</span>
                             </span>
-                            <span class="mx-3" id="sumPastDueInvoices"></span>
+                            <span id="sumPaidInvoices">Rp. 13.231.000</span>
                         </small>
-                    </div>
-                    <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
-                        <canvas id="revenueChart"></canvas>
+                        <small class="d-flex align-items-start text-muted mb-2">
+                            <span class="flex d-flex flex-column">
+                                <span class="text-body"><strong>Uncollectible</strong></span>
+                                <span id="totalPastDueInvoices">6 Invoices</span>
+                            </span>
+                            <span id="sumPastDueInvoices">Rp. 13.231.000</span>
+                        </small>
                     </div>
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex flex-row align-items-center flex-0">
-                        <div class="h2 mb-0 mr-3" id="totalRevenue"></div>
+                <div class="card">
+                    <div class="card-body d-flex flex-row align-items-center">
+                        <div class="h2 mb-0 mr-3" id="totalRevenue">Rp. 23jt</div>
                         <div class="flex">
-                            <div class="card-title h5">Total Revenue</div>
+                            <div class="card-title h5">Est. Payment Coming 30 Days</div>
                             <div class="card-subtitle text-50 d-flex align-items-center">
                                 21
                                 {{--                                @if($dataOverview['revenueGrowth'] > 0)--}}
@@ -93,46 +77,29 @@
                                 From Last Month
                             </div>
                         </div>
-                        <div class="ml-3 align-self-start">
-                            <div class="dropdown mb-2">
-                                <a href="" class="dropdown-toggle" data-toggle="dropdown" data-caret="false">Filter by : <span id="filter-type">All Time</span><i class="material-icons text-50 pb-1">expand_more</i></a>
-                                <div id="filterRevenue" class="dropdown-menu dropdown-menu-right">
-                                    <button type="button" class="dropdown-item" id="today">Today</button>
-                                    <button type="button" class="dropdown-item" id="weekly">Weekly</button>
-                                    <button type="button" class="dropdown-item" id="monthly">Monthly</button>
-                                    <button type="button" class="dropdown-item" id="yearly">Yearly</button>
-                                    <button type="button" class="dropdown-item" id="allTime">All Time</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                    <div class="card-body flex-0 row">
+                    <div class="card-body">
                         <small class="d-flex align-items-start text-muted mb-2">
                             <span class="flex d-flex flex-column">
-                                <span class="text-body"><strong>Paid</strong></span>
-                                <span id="totalPaidInvoices"></span>
+                                <span class="text-body"><strong>Invoices</strong></span>
                             </span>
-                            <span class="mx-3" id="sumPaidInvoices"></span>
+                            <span id="sumPaidInvoices">Rp. 12.321.000</span>
                         </small>
                         <small class="d-flex align-items-start text-muted mb-2">
                             <span class="flex d-flex flex-column">
-                                <span class="text-body"><strong>Past Due</strong></span>
-                                <span id="totalPastDueInvoices"></span>
+                                <span class="text-body"><strong>Subscriptions</strong></span>
                             </span>
-                            <span class="mx-3" id="sumPastDueInvoices"></span>
+                            <span id="sumPastDueInvoices">Rp. 11.211.000</span>
                         </small>
-                    </div>
-                    <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
-                        <canvas id="revenueChart"></canvas>
                     </div>
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex flex-row align-items-center flex-0">
-                        <div class="h2 mb-0 mr-3" id="totalRevenue"></div>
+                <div class="card">
+                    <div class="card-body d-flex flex-row align-items-center">
+                        <div class="h2 mb-0 mr-3" id="totalRevenue">Rp. 23jt</div>
                         <div class="flex">
-                            <div class="card-title h5">Total Revenue</div>
+                            <div class="card-title h5">Monthly Est. Recuring Revenue</div>
                             <div class="card-subtitle text-50 d-flex align-items-center">
                                 21
                                 {{--                                @if($dataOverview['revenueGrowth'] > 0)--}}
@@ -143,37 +110,20 @@
                                 From Last Month
                             </div>
                         </div>
-                        <div class="ml-3 align-self-start">
-                            <div class="dropdown mb-2">
-                                <a href="" class="dropdown-toggle" data-toggle="dropdown" data-caret="false">Filter by : <span id="filter-type">All Time</span><i class="material-icons text-50 pb-1">expand_more</i></a>
-                                <div id="filterRevenue" class="dropdown-menu dropdown-menu-right">
-                                    <button type="button" class="dropdown-item" id="today">Today</button>
-                                    <button type="button" class="dropdown-item" id="weekly">Weekly</button>
-                                    <button type="button" class="dropdown-item" id="monthly">Monthly</button>
-                                    <button type="button" class="dropdown-item" id="yearly">Yearly</button>
-                                    <button type="button" class="dropdown-item" id="allTime">All Time</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                    <div class="card-body flex-0 row">
+                    <div class="card-body">
                         <small class="d-flex align-items-start text-muted mb-2">
                             <span class="flex d-flex flex-column">
-                                <span class="text-body"><strong>Paid</strong></span>
-                                <span id="totalPaidInvoices"></span>
+                                <span class="text-body"><strong>Quarterly</strong></span>
                             </span>
-                            <span class="mx-3" id="sumPaidInvoices"></span>
+                            <span id="sumPaidInvoices">Rp. 12.321.000</span>
                         </small>
                         <small class="d-flex align-items-start text-muted mb-2">
                             <span class="flex d-flex flex-column">
-                                <span class="text-body"><strong>Past Due</strong></span>
-                                <span id="totalPastDueInvoices"></span>
+                                <span class="text-body"><strong>Yearly</strong></span>
                             </span>
-                            <span class="mx-3" id="sumPastDueInvoices"></span>
+                            <span id="sumPastDueInvoices">Rp. 11.211.000</span>
                         </small>
-                    </div>
-                    <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
-                        <canvas id="revenueChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -187,12 +137,12 @@
                         <div class="flex">
                             <div class="card-title h5">Total Revenue</div>
                             <div class="card-subtitle text-50 d-flex align-items-center">
-                                {{ $dataOverview['revenueGrowth'] }}
-                                @if($dataOverview['revenueGrowth'] > 0)
-                                    <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>
-                                @elseif($dataOverview['revenueGrowth'] < 0)
-                                    <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>
-                                @endif
+{{--                                {{ $dataOverview['revenueGrowth'] }}--}}
+{{--                                @if($dataOverview['revenueGrowth'] > 0)--}}
+{{--                                    <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>--}}
+{{--                                @elseif($dataOverview['revenueGrowth'] < 0)--}}
+{{--                                    <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>--}}
+{{--                                @endif--}}
                                 From Last Month
                             </div>
                         </div>
@@ -277,12 +227,12 @@
                         <div class="flex">
                             <div class="card-title h5">new player's subscription</div>
                             <div class="card-subtitle text-50 d-flex align-items-center">
-                                {{ $dataOverview['revenueGrowth'] }}
-                                @if($dataOverview['revenueGrowth'] > 0)
-                                    <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>
-                                @elseif($dataOverview['revenueGrowth'] < 0)
-                                    <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>
-                                @endif
+{{--                                {{ $dataOverview['revenueGrowth'] }}--}}
+{{--                                @if($dataOverview['revenueGrowth'] > 0)--}}
+{{--                                    <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>--}}
+{{--                                @elseif($dataOverview['revenueGrowth'] < 0)--}}
+{{--                                    <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>--}}
+{{--                                @endif--}}
                                 From Last Month
                             </div>
                         </div>
