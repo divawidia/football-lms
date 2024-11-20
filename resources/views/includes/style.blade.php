@@ -11,7 +11,7 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/metismenu/dist/metisMenu.min.css">
 
-<link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css"/>
+{{--<link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css"/>--}}
 {{--<link rel="stylesheet" href="{{  node_modules/material-design-kit/dist/material-design-kit.css}}">--}}
 
 <!-- Material Design Icons -->
@@ -48,8 +48,8 @@
 
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
-<link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
-<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
+{{--<link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />--}}
+{{--<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />--}}
 
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.1.1/ckeditor5.css">
 
