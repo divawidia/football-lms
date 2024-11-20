@@ -40,7 +40,7 @@
                         <div role="group" aria-labelledby="label-question" class="m-0 form-group">
                             <div class="form-group mb-3">
                                 <label class="form-label" for="coaches">Coaches</label>
-                                <small class="text-black-100">(Optional)</small>
+                                <small class="text-danger">*</small>
                                 @if(count($coaches) == 0)
                                     <div class="alert alert-light border-1 border-left-4 border-left-accent"
                                          role="alert">

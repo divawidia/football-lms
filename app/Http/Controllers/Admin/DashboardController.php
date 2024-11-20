@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\DashboardService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,17 +18,30 @@ class DashboardController extends Controller
     public function index()
     {
         $dataOverview = $this->dashboardService->overviewStats();
-        $revenueChart = $this->dashboardService->revenueChart();
+//        $revenueChart = $this->dashboardService->revenueChart();
         $teamAgeChart = $this->dashboardService->playerAgeChart();
         $upcomingMatches = $this->dashboardService->upcomingMatches();
         $upcomingTrainings = $this->dashboardService->upcomingTrainings();
 
         return view('pages.admins.dashboard', [
             'dataOverview' => $dataOverview,
-            'revenueChart' => $revenueChart,
+//            'revenueChart' => $revenueChart,
             'teamAgeChart' => $teamAgeChart,
             'upcomingMatches' => $upcomingMatches,
             'upcomingTrainings' => $upcomingTrainings
+        ]);
+    }
+
+    public function getRevenueChartData(Request $request)
+    {
+        $filter = $request->input('filter');
+
+        $data = $this->dashboardService->revenue($filter);
+        return response()->json([
+            'success' => true,
+            'status' => 200,
+            'message' => 'Successfully retrieve revenue data',
+            'data' => $data,
         ]);
     }
 }

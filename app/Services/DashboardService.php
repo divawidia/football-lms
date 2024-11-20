@@ -9,50 +9,46 @@ use App\Models\EventSchedule;
 use App\Models\Invoice;
 use App\Models\Player;
 use App\Models\Team;
+use App\Repository\InvoiceRepository;
 use Illuminate\Support\Number;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class DashboardService
+class DashboardService extends Service
 {
+    private InvoiceRepository $invoiceRepository;
+    public function __construct(InvoiceRepository $invoiceRepository)
+    {
+        $this->invoiceRepository = $invoiceRepository;
+    }
+
     public function overviewStats(){
+        $startMonth = Carbon::now()->startOfMonth();
+        $now = Carbon::now();
+        $startOfLastMonth = now()->subMonth()->startOfMonth();
+        $endOfLastMonth = now()->subMonth()->endOfMonth();
+
         $totalPlayers = Player::count();
         $totalCoaches = Coach::count();
-        $totalTeams = Team::where('teamSide','Academy Teams')->count();
+        $totalTeams = Team::where('teamSide','Academy Team')->count();
         $totalAdmins = Admin::count();
         $totalCompetitions = Competition::count();
         $totalUpcomingMatches = EventSchedule::where('eventType', 'Match')->where('status', '1')->count();
         $totalUpcomingTrainings = EventSchedule::where('eventType', 'Training')->where('status', '1')->count();
-        $totalRevenues = Invoice::where('status', 'Paid')->sum('ammountDue');
-        $totalRevenues = Number::forHumans($totalRevenues, abbreviate: true);
+        $totalRevenues = $this->invoiceRepository->calculateInvoiceByStatus('Paid', sumAmount: true);
+        $totalRevenues = $this->formatReadableNumber($totalRevenues);
 
-        $totalPaidInvoices = Invoice::where('status', 'Paid')->count();
-        $totalPaidInvoices = Number::format($totalPaidInvoices, locale: 'id');
-        $totalOpenInvoices = Invoice::where('status', 'Open')->count();
-        $totalOpenInvoices = Number::format($totalOpenInvoices, locale: 'id');
-        $totalPastDueInvoices = Invoice::where('status', 'Past Due')->count();
-        $totalPastDueInvoices = Number::format($totalPastDueInvoices, locale: 'id');
-        $totalUncollectInvoices = Invoice::where('status', 'Uncollectible')->count();
-        $totalUncollectInvoices = Number::format($totalUncollectInvoices, locale: 'id');
+        $thisMonthTotalPlayers = Player::whereBetween('created_at',[$startMonth,$now])->count();
+        $thisMonthTotalCoaches = Coach::whereBetween('created_at',[$startMonth,$now])->count();
+        $thisMonthTotalTeams = Team::where('teamSide','Academy Team')->whereBetween('created_at',[$startMonth,$now])->count();
+        $thisMonthTotalAdmins = Admin::whereBetween('created_at',[$startMonth,$now])->count();
+        $thisMonthTotalCompetitions = Competition::whereBetween('created_at',[$startMonth,$now])->count();
 
-        $sumPaidInvoices = Invoice::where('status', 'Paid')->sum('ammountDue');
-        $sumPaidInvoices = Number::format($sumPaidInvoices, locale: 'id');
-        $sumOpenInvoices = Invoice::where('status', 'Open')->sum('ammountDue');
-        $sumOpenInvoices = Number::format($sumOpenInvoices, locale: 'id');
-        $sumPastDueInvoices = Invoice::where('status', 'Past Due')->sum('ammountDue');
-        $sumPastDueInvoices = Number::format($sumPastDueInvoices, locale: 'id');
-        $sumUncollectInvoices = Invoice::where('status', 'Uncollectible')->sum('ammountDue');
-        $sumUncollectInvoices = Number::format($sumUncollectInvoices, locale: 'id');
-
-
-        $thisMonthTotalPlayers = Player::whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])->count();
-        $thisMonthTotalCoaches = Coach::whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])->count();
-        $thisMonthTotalTeams = Team::whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])->count();
-        $thisMonthTotalAdmins = Admin::whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])->count();
-        $thisMonthTotalCompetitions = Competition::whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])->count();
-        $thisMonthTotalRevenues = Invoice::where('status', 'Paid')
-            ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->sum('ammountDue');
+        $thisMonthTotalRevenues = $this->invoiceRepository->calculateInvoiceByStatus('Paid', $startMonth, $now, sumAmount: true);
+        $previousMonthTotalRevenues = $this->invoiceRepository->calculateInvoiceByStatus('Paid', $startOfLastMonth, $endOfLastMonth, sumAmount: true);
+        $revenueGrowth = (($thisMonthTotalRevenues - $previousMonthTotalRevenues) / $previousMonthTotalRevenues) * 100;
+        $revenueGrowth = $this->formatPercentage($revenueGrowth);
+        $thisMonthTotalRevenues = $this->formatNumber($thisMonthTotalRevenues);
 
         return compact(
             'totalPlayers',
@@ -69,14 +65,7 @@ class DashboardService
             'thisMonthTotalAdmins',
             'thisMonthTotalCompetitions',
             'thisMonthTotalRevenues',
-            'totalOpenInvoices',
-            'totalPaidInvoices',
-            'totalPastDueInvoices',
-            'totalUncollectInvoices',
-            'sumOpenInvoices',
-            'sumPaidInvoices',
-            'sumPastDueInvoices',
-            'sumUncollectInvoices'
+            'revenueGrowth'
             );
     }
 
@@ -98,21 +87,94 @@ class DashboardService
         return compact('label', 'data');
     }
 
-    public function revenueChart(){
-        $results = DB::table('invoices')
-            ->select(DB::raw('MONTHNAME(created_at) as month_revenue'), DB::raw('SUM(ammountDue) AS total_ammount'))
-            ->where('status', '=', 'Paid')
-            ->groupBy(DB::raw('month_revenue'))
-            ->get();
-
-        $label = [];
-        $data = [];
-        foreach ($results as $result){
-            $label[] = $result->month_revenue;
-            $data[] = $result->total_ammount;
+    public function revenue($filter){
+        $startDate = null;
+        $endDate = null;
+        switch ($filter) {
+            case 'allTime':
+                $selectDate = DB::raw('MONTHNAME(created_at) as date');
+                break;
+            case 'today':
+                $startDate = Carbon::today();
+                $endDate = Carbon::now()->endOfDay();
+                $selectDate = DB::raw('DAYNAME(created_at) as date');
+                break;
+            case 'weekly':
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+                $selectDate = DB::raw('DAYNAME(created_at) as date');
+                break;
+            case 'monthly':
+                $startDate = Carbon::now()->startOfYear();
+                $endDate = Carbon::now()->endOfYear();
+                $selectDate = DB::raw('MONTHNAME(created_at) as date');
+                break;
+            case 'yearly':
+//                $startDate = Carbon::now()->startOfYear();
+//                $endDate = Carbon::now()->endOfYear();
+                $selectDate = DB::raw('YEAR(created_at) as date');
+                break;
         }
 
-        return compact('label', 'data');
+
+        $results = $this->invoiceRepository->revenue($selectDate, $startDate, $endDate);
+
+        $totalPaidInvoices = $this->invoiceRepository->calculateInvoiceByStatus('Paid', $startDate, $endDate, countInvoice: true);
+        $totalPaidInvoices = $this->formatNumber($totalPaidInvoices);
+
+        $totalOpenInvoices = $this->invoiceRepository->calculateInvoiceByStatus('Open', $startDate, $endDate, countInvoice: true);
+        $totalOpenInvoices = $this->formatNumber($totalOpenInvoices);
+
+        $totalPastDueInvoices = $this->invoiceRepository->calculateInvoiceByStatus('Past Due', $startDate, $endDate, countInvoice: true);
+        $totalPastDueInvoices = $this->formatNumber($totalPastDueInvoices);
+
+        $totalUncollectInvoices = $this->invoiceRepository->calculateInvoiceByStatus('Uncollectible', $startDate, $endDate, countInvoice: true);
+        $totalUncollectInvoices = $this->formatNumber($totalUncollectInvoices);
+
+        $revenue = $this->invoiceRepository->calculateInvoiceByStatus('Paid', $startDate, $endDate, sumAmount: true);
+        $sumPaidInvoices = $this->formatNumber($revenue);
+        $totalRevenue = $this->formatReadableNumber($revenue);
+        $sumOpenInvoices = $this->invoiceRepository->calculateInvoiceByStatus('Open', $startDate, $endDate, sumAmount: true);
+        $sumOpenInvoices = $this->formatNumber($sumOpenInvoices);
+        $sumPastDueInvoices = $this->invoiceRepository->calculateInvoiceByStatus('Past Due', $startDate, $endDate, sumAmount: true);
+        $sumPastDueInvoices = $this->formatNumber($sumPastDueInvoices);
+        $sumUncollectInvoices = $this->invoiceRepository->calculateInvoiceByStatus('Uncollectible', $startDate, $endDate, sumAmount: true);
+        $sumUncollectInvoices = $this->formatNumber($sumUncollectInvoices);
+
+//        $label = [];
+//        $data = [];
+//        foreach ($results as $result){
+//            $label[] = $result->month_revenue;
+//            $data[] = $result->total_ammount;
+//        }
+//        return compact('label', 'data');
+        $chart = [
+            'labels' => $results->pluck('date'),
+            'datasets' => [
+                [
+                    'label' => 'Revenue',
+                    'data' => $results->pluck('total_ammount'),
+                    'borderColor' => '#20F4CB',
+                    'backgroundColor'=> 'rgba(32, 244, 203, 0.2)',
+                    'fill' => 'start',
+                    'tension' => 0.4,
+
+                ],
+            ],
+        ];
+
+        return compact(
+            'chart',
+            'totalPaidInvoices',
+            'totalOpenInvoices',
+            'totalPastDueInvoices',
+            'totalUncollectInvoices',
+            'sumPaidInvoices',
+            'sumOpenInvoices',
+            'sumPastDueInvoices',
+            'sumUncollectInvoices',
+            'totalRevenue'
+        );
     }
 
     public function upcomingMatches(){

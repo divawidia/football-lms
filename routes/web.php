@@ -96,7 +96,10 @@ Route::group(['middleware' => ['auth']], function () {
 
 //        Route::prefix('admin')->group(function () {
 
-            Route::get('admin-dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+            Route::prefix('admin-dashboard')->group(function () {
+                Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
+                Route::get('revenue', [DashboardController::class, 'getRevenueChartData'])->name('admin.revenue-chart-data');
+            });
 
             Route::prefix('admin-managements')->group(function () {
                 Route::get('', [AdminController::class, 'index'])->name('admin-managements.index');

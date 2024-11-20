@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Nnjeim\World\World;
 
@@ -117,5 +118,18 @@ class Service
     public function getNextDayTimestamp()
     {
         return Carbon::now()->copy()->addDay();
+    }
+
+    public function formatNumber($number)
+    {
+        return Number::format($number, locale: 'id');
+    }
+    public function formatReadableNumber($number)
+    {
+        return Number::forHumans($number, abbreviate: true);
+    }
+    public function formatPercentage($number)
+    {
+        return Number::percentage($number);
     }
 }

@@ -69,12 +69,12 @@ class PlayerService extends Service
                     }
                     $actionBtn = '
                         <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown">
                             <span class="material-icons">
                                 more_vert
                             </span>
                           </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="' . route('player-managements.edit', $item->id) . '"><span class="material-icons">edit</span>Edit Player</a>
                             <a class="dropdown-item" href="' . route('player-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Player</a>
                             '. $statusButton .'

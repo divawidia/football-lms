@@ -23,198 +23,43 @@
             {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
         </div>
         <div class="row">
-            <div class="col-lg-4 col-md-6">
-                <div class="card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalPlayers'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Total Players</div>
-                                <p class="card-subtitle text-50">
-                                    {{ $dataOverview['thisMonthTotalPlayers'] }}
-                                    @if($dataOverview['thisMonthTotalPlayers'] > 0)
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    @endif
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                        <i class='fa fa-user icon-24pt text-danger'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalCoaches'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Total Coaches</div>
-                                <p class="card-subtitle text-50">
-                                    {{ $dataOverview['thisMonthTotalCoaches'] }}
-                                    @if($dataOverview['thisMonthTotalCoaches'] > 0)
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    @endif
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                        <i class="fa fa-user-tie icon-24pt text-danger"></i>
-                        {{--                        <i class='bx bxs-user-check icon-32pt text-danger ml-8pt'></i>--}}
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalTeams'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Total Teams</div>
-                                <p class="card-subtitle text-50">
-                                    {{ $dataOverview['thisMonthTotalTeams'] }}
-                                    @if($dataOverview['thisMonthTotalTeams'] > 0)
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    @endif
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                        <i class='fa fa-users icon-24pt text-danger ml-8pt'></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row card-group-row">
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalAdmins'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Total Admins</div>
-                                <p class="card-subtitle text-50">
-                                    {{ $dataOverview['thisMonthTotalAdmins'] }}
-                                    @if($dataOverview['thisMonthTotalAdmins'] > 0)
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    @endif
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                        <i class='fa fa-user icon-24pt text-danger'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalCompetitions'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Competitions Joined</div>
-                                <p class="card-subtitle text-50">
-                                    {{ $dataOverview['thisMonthTotalCompetitions'] }}
-                                    @if($dataOverview['thisMonthTotalCompetitions'] > 0)
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    @endif
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                        <i class='fa fa-trophy icon-24pt text-danger'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalUpcomingMatches'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Match Schedule</div>
-                            </div>
-                        </div>
-                        <i class='fa fa-calendar-day icon-24pt text-danger'></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row card-group-row">
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalUpcomingTrainings'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Training Schedules</div>
-                            </div>
-                        </div>
-                        <i class='fa fa-calendar-day icon-24pt text-danger'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h3 mb-0 mr-3">Rp. {{ $dataOverview['totalRevenues'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Total Revenue</div>
-                                <p class="card-subtitle text-50">
-                                    {{ $dataOverview['thisMonthTotalRevenues'] }}
-                                    @if($dataOverview['thisMonthTotalRevenues'] > 0)
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    @endif
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                        <i class='fa fa-money-bill icon-24pt text-danger'></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 card-group-row__col">
-                <div class="card card-group-row__card">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="flex d-flex align-items-center">
-                            <div class="h2 mb-0 mr-3">{{ $dataOverview['totalTeams'] }}</div>
-                            <div class="flex">
-                                <div class="card-title">Revenue Growth</div>
-                                <p class="card-subtitle text-50">
-                                    {{ $dataOverview['totalTeams'] }}
-                                    @if($dataOverview['thisMonthTotalPlayers'] > 0)
-                                    <i class="material-icons text-success ml-4pt icon-16pt">keyboard_arrow_up</i>
-                                    @endif
-                                    From Last Month
-                                </p>
-                            </div>
-                        </div>
-                        <i class='bx bx-line-chart icon-32pt text-danger'></i>
-                    </div>
-                </div>
-            </div>
+            <x-stats-with-icon-card  title="Total Players" :datas="$dataOverview['totalPlayers']" :dataThisMonth="$dataOverview['thisMonthTotalPlayers']" icon="fa fa-user"/>
+            <x-stats-with-icon-card  title="Total Coaches" :datas="$dataOverview['totalCoaches']" :dataThisMonth="$dataOverview['thisMonthTotalPlayers']" icon="fa fa-user-tie"/>
+            <x-stats-with-icon-card  title="Total Teams" :datas="$dataOverview['totalTeams']" :dataThisMonth="$dataOverview['thisMonthTotalTeams']" icon="fa fa-users"/>
+            <x-stats-with-icon-card  title="Total Admins" :datas="$dataOverview['totalAdmins']" :dataThisMonth="$dataOverview['thisMonthTotalAdmins']" icon="fa fa-user"/>
+            <x-stats-with-icon-card  title="Competitions Joined" :datas="$dataOverview['totalCompetitions']" :dataThisMonth="$dataOverview['thisMonthTotalCompetitions']" icon="fa fa-trophy"/>
+            <x-stats-with-icon-card  title="Match Schedule" :datas="$dataOverview['totalUpcomingMatches']" icon="fa fa-calendar-day"/>
+            <x-stats-with-icon-card  title="Training Schedules" :datas="$dataOverview['totalUpcomingTrainings']" icon="fa fa-calendar-day"/>
+            <x-stats-with-icon-card  title="Total Revenue" :datas="'Rp. '.$dataOverview['totalRevenues']" :dataThisMonth="$dataOverview['thisMonthTotalRevenues']" icon="fa fa-money-bill"/>
+            <x-stats-with-icon-card  title="Revenue Growth" :datas="$dataOverview['revenueGrowth']" icon="bx bx-line-chart" subtitle="From last month"/>
         </div>
 
         <div class="row card-group-row">
             <div class="col-md-7 card-group-row__col">
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex flex-row align-items-center flex-0">
-                        <div class="h2 mb-0 mr-3">Rp. {{ $dataOverview['totalRevenues'] }}</div>
+                        <div class="h2 mb-0 mr-3" id="totalRevenue"></div>
                         <div class="flex">
-                            <div class="card-title">Total Revenue</div>
-                            <div class="card-subtitle text-50 d-flex align-items-center">2.6% <i
-                                class="material-icons text-accent icon-16pt ml-4pt">keyboard_arrow_up</i></div>
+                            <div class="card-title h5">Total Revenue</div>
+                            <div class="card-subtitle text-50 d-flex align-items-center">
+                                {{ $dataOverview['revenueGrowth'] }}
+                                @if($dataOverview['revenueGrowth'] > 0)
+                                    <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>
+                                @elseif($dataOverview['revenueGrowth'] < 0)
+                                    <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>
+                                @endif
+                                From Last Month
+                            </div>
                         </div>
                         <div class="ml-3 align-self-start">
                             <div class="dropdown mb-2">
-                                <a href=""
-                                   class="dropdown-toggle"
-                                   data-toggle="dropdown"
-                                   data-caret="false"><i class="material-icons text-50">more_horiz</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a href=""
-                                       class="dropdown-item">View report</a>
+                                <a href="" class="dropdown-toggle" data-toggle="dropdown" data-caret="false">Filter by : <span id="filter-type">All Time</span><i class="material-icons text-50 pb-1">expand_more</i></a>
+                                <div id="filterRevenue" class="dropdown-menu dropdown-menu-right">
+                                    <button type="button" class="dropdown-item" id="today">Today</button>
+                                    <button type="button" class="dropdown-item" id="weekly">Weekly</button>
+                                    <button type="button" class="dropdown-item" id="monthly">Monthly</button>
+                                    <button type="button" class="dropdown-item" id="yearly">Yearly</button>
+                                    <button type="button" class="dropdown-item" id="allTime">All Time</button>
                                 </div>
                             </div>
                         </div>
@@ -224,32 +69,32 @@
                             <small class="d-flex align-items-start text-muted mb-2">
                                 <span class="flex d-flex flex-column">
                                     <span class="text-body"><strong>Paid</strong></span>
-                                    {{ $dataOverview['totalPaidInvoices'] }} Invoices
+                                    <span id="totalPaidInvoices"></span>
                                 </span>
-                                <span class="mx-3">Rp. {{ $dataOverview['sumPaidInvoices'] }}</span>
+                                <span class="mx-3" id="sumPaidInvoices"></span>
                             </small>
                             <small class="d-flex align-items-start text-muted mb-2">
                                 <span class="flex d-flex flex-column">
                                     <span class="text-body"><strong>Past Due</strong></span>
-                                    {{ $dataOverview['totalPastDueInvoices'] }} Invoices
+                                    <span id="totalPastDueInvoices"></span>
                                 </span>
-                                <span class="mx-3">Rp. {{ $dataOverview['sumPastDueInvoices'] }}</span>
+                                <span class="mx-3" id="sumPastDueInvoices"></span>
                             </small>
                         </div>
                         <div class="col-6">
                             <small class="d-flex align-items-start text-muted mb-2">
                                 <span class="flex d-flex flex-column">
                                     <span class="text-body"><strong>Open</strong></span>
-                                    {{ $dataOverview['totalOpenInvoices'] }} Invoices
+                                    <span id="totalOpenInvoices"></span>
                                 </span>
-                                <span class="mx-3">Rp. {{ $dataOverview['sumOpenInvoices'] }}</span>
+                                <span class="mx-3" id="sumOpenInvoices"></span>
                             </small>
                             <small class="d-flex align-items-start text-muted mb-2">
                                 <span class="flex d-flex flex-column">
                                     <span class="text-body"><strong>Uncollectible</strong></span>
-                                    {{ $dataOverview['totalUncollectInvoices'] }} Invoices
+                                    <span id="totalUncollectInvoices"></span>
                                 </span>
-                                <span class="mx-3">Rp. {{ $dataOverview['sumUncollectInvoices'] }}</span>
+                                <span class="mx-3" id="sumUncollectInvoices"></span>
                             </small>
                         </div>
                     </div>
@@ -261,19 +106,7 @@
             <div class="col-md-5 card-group-row__col">
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex flex-row align-items-center flex-0">
-                        <div class="card-title">Team Age Groups</div>
-                        <div class="ml-auto align-self-start">
-                            <div class="dropdown mb-2">
-                                <a href=""
-                                   class="dropdown-toggle"
-                                   data-toggle="dropdown"
-                                   data-caret="false"><i class="material-icons text-50">more_horiz</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a href=""
-                                       class="dropdown-item">View report</a>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="card-title h5">Team Age Groups</div>
                     </div>
                     <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
                         <canvas id="teamAgeChart"></canvas>
@@ -538,22 +371,64 @@
 
             const revenueChart = document.getElementById('revenueChart');
             const teamAgeChart = document.getElementById('teamAgeChart');
+            let myChart;
 
-            new Chart(revenueChart, {
-                type: 'line',
-                data: {
-                    labels: @json($revenueChart['label']),
-                    datasets: [{
-                        label: 'Revenue',
-                        data: @json($revenueChart['data']),
-                        borderColor: '#20F4CB',
-                        tension: 0.4,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                },
+            function fetchChartData(filter, filterText) {
+                $.ajax({
+                    url: '{{ route('admin.revenue-chart-data') }}',
+                    type: 'GET',
+                    data: {
+                        filter: filter,
+                    },
+                    success: function (response) {
+                        if (myChart) myChart.destroy(); // Destroy previous chart instance
+                        myChart = new Chart(revenueChart, {
+                            type: 'line',
+                            data: response.data.chart,
+                            options: {
+                                responsive: true,
+                            },
+                        });
+                        $('#filter-type').text(filterText)
+                        $('#totalPaidInvoices').text(response.data.totalPaidInvoices + ' Invoices')
+                        $('#totalPastDueInvoices').text(response.data.totalPastDueInvoices + ' Invoices')
+                        $('#totalOpenInvoices').text(response.data.totalOpenInvoices + ' Invoices')
+                        $('#totalUncollectInvoices').text(response.data.totalUncollectInvoices + ' Invoices')
+                        $('#sumPaidInvoices').text('Rp. ' + response.data.sumPaidInvoices)
+                        $('#sumPastDueInvoices').text('Rp. ' + response.data.sumPastDueInvoices)
+                        $('#sumOpenInvoices').text('Rp. ' + response.data.sumOpenInvoices)
+                        $('#sumUncollectInvoices').text('Rp. ' + response.data.sumUncollectInvoices)
+                        $('#totalRevenue').text('Rp. ' + response.data.totalRevenue)
+                    },
+                    error: function (err) {
+                        console.error(err);
+                        alert('Failed to fetch chart data.');
+                    },
+                });
+            }
+
+            $('#filterRevenue .dropdown-item').on('click', function () {
+                const filter = $(this).attr('id');
+                const filterText = $(this).text();
+                fetchChartData(filter, filterText);
             });
+
+            fetchChartData('allTime');
+            {{--new Chart(revenueChart, {--}}
+            {{--    type: 'line',--}}
+            {{--    data: {--}}
+            {{--        labels: @json($revenueChart['label']),--}}
+            {{--        datasets: [{--}}
+            {{--            label: 'Revenue',--}}
+            {{--            data: @json($revenueChart['data']),--}}
+            {{--            borderColor: '#20F4CB',--}}
+            {{--            tension: 0.4,--}}
+            {{--        }]--}}
+            {{--    },--}}
+            {{--    options: {--}}
+            {{--        responsive: true,--}}
+            {{--    },--}}
+            {{--});--}}
             new Chart(teamAgeChart, {
                 type: 'doughnut',
                 data: {
