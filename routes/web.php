@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CoachController;
 use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventScheduleController;
+use App\Http\Controllers\Admin\FinancialReportController;
 use App\Http\Controllers\Admin\GroupDivisionController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\OpponentTeamController;
@@ -249,6 +250,10 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('performance-reports')->group(function () {
                 Route::get('admin', [PerformanceReportController::class, 'adminIndex'])->name('admin.performance-report.index');
+            });
+
+            Route::prefix('financial-reports')->group(function () {
+                Route::get('', [FinancialReportController::class, 'index'])->name('admin.financial-report.index');
             });
 
             Route::prefix('leaderboards')->group(function () {
