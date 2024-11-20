@@ -23,23 +23,17 @@
         {{--    Overview    --}}
         <div class="page-separator">
             <div class="page-separator__text">Overview</div>
-            {{--                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
         </div>
 
         <div class="row mb-3">
             <div class="col-lg-6">
                 <div class="card">
                     <div class="card-body d-flex flex-row align-items-center">
-                        <div class="h2 mb-0 mr-3" id="totalRevenue">81</div>
+                        <div class="h2 mb-0 mr-3" id="totalRevenue">{{ $requireActionInvoice['totalRequireActionInvoice'] }}</div>
                         <div class="flex">
                             <div class="card-title h5">Requires Action Invoices</div>
                             <div class="card-subtitle text-50 d-flex align-items-center">
-                                Rp. 23.901.000
-{{--                                @if($dataOverview['revenueGrowth'] > 0)--}}
-{{--                                    <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>--}}
-{{--                                @elseif($dataOverview['revenueGrowth'] < 0)--}}
-{{--                                    <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>--}}
-{{--                                @endif--}}
+                                Rp. {{ $requireActionInvoice['sumRequireActionInvoice'] }}
                             </div>
                         </div>
                     </div>
@@ -47,35 +41,26 @@
                         <small class="d-flex align-items-start text-muted mb-2">
                             <span class="flex d-flex flex-column">
                                 <span class="text-body"><strong>Past Due</strong></span>
-                                <span id="totalPaidInvoices">75 Invoices</span>
+                                <span id="totalPaidInvoices">{{ $requireActionInvoice['totalPastDueInvoices'] }} Invoices</span>
                             </span>
-                            <span id="sumPaidInvoices">Rp. 13.231.000</span>
+                            <span id="sumPaidInvoices">Rp. {{ $requireActionInvoice['sumPastDueInvoices'] }}</span>
                         </small>
-                        <small class="d-flex align-items-start text-muted mb-2">
+                        <small class="d-flex align-items-start text-muted">
                             <span class="flex d-flex flex-column">
                                 <span class="text-body"><strong>Uncollectible</strong></span>
-                                <span id="totalPastDueInvoices">6 Invoices</span>
+                                <span id="totalPastDueInvoices">{{ $requireActionInvoice['totalUncollectInvoices'] }} Invoices</span>
                             </span>
-                            <span id="sumPastDueInvoices">Rp. 13.231.000</span>
+                            <span id="sumPastDueInvoices">Rp. {{ $requireActionInvoice['sumUncollectInvoices'] }}</span>
                         </small>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 d-flex">
                 <div class="card">
                     <div class="card-body d-flex flex-row align-items-center">
-                        <div class="h2 mb-0 mr-3" id="totalRevenue">Rp. 23.000.000</div>
+                        <div class="h2 mb-0 mr-3" id="totalRevenue">Rp. {{ $recurringRevenue['mrr'] }}</div>
                         <div class="flex">
                             <div class="card-title h5">Monthly Est. Recuring Revenue</div>
-                            <div class="card-subtitle text-50 d-flex align-items-center">
-                                21
-                                {{--                                @if($dataOverview['revenueGrowth'] > 0)--}}
-                                {{--                                    <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>--}}
-                                {{--                                @elseif($dataOverview['revenueGrowth'] < 0)--}}
-                                {{--                                    <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>--}}
-                                {{--                                @endif--}}
-                                From Last Month
-                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -83,13 +68,13 @@
                             <span class="flex d-flex flex-column">
                                 <span class="text-body"><strong>Quarterly</strong></span>
                             </span>
-                            <span id="sumPaidInvoices">Rp. 12.321.000</span>
+                            <span id="sumPaidInvoices">Rp. {{ $recurringRevenue['qrr'] }}</span>
                         </small>
                         <small class="d-flex align-items-start text-muted mb-2">
                             <span class="flex d-flex flex-column">
                                 <span class="text-body"><strong>Yearly</strong></span>
                             </span>
-                            <span id="sumPastDueInvoices">Rp. 11.211.000</span>
+                            <span id="sumPastDueInvoices">Rp. {{ $recurringRevenue['yrr'] }}</span>
                         </small>
                     </div>
                 </div>

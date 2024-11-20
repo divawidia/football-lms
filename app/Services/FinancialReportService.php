@@ -19,9 +19,10 @@ class FinancialReportService extends Service
 {
     private InvoiceRepository $invoiceRepository;
     private SubscriptionRepository $subscriptionRepository;
-    public function __construct(InvoiceRepository $invoiceRepository)
+    public function __construct(InvoiceRepository $invoiceRepository, SubscriptionRepository $subscriptionRepository)
     {
         $this->invoiceRepository = $invoiceRepository;
+        $this->subscriptionRepository = $subscriptionRepository;
     }
 
     public function requireActionInvoice()
@@ -56,9 +57,9 @@ class FinancialReportService extends Service
         $result = $this->subscriptionRepository->recurringRevenue();
 
         return [
-            'yrr' => $result->yrr,
-            'qrr' => $result->qrr,
-            'mrr' => $result->mrr,
+            'yrr' => $this->formatNumber($result->yrr),
+            'qrr' => $this->formatNumber($result->qrr),
+            'mrr' => $this->formatNumber($result->mrr),
         ];
     }
 

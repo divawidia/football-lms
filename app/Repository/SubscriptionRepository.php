@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Models\Subscription;
+use Carbon\Carbon;
 
 class SubscriptionRepository
 {
@@ -20,27 +21,24 @@ class SubscriptionRepository
     public function recurringRevenue()
     {
         return $this->subscription->where('status', 'Scheduled')
-            ->where(function($query) {
-                $query->whereNull('nextDueDate')
-                ->orWhere('nextDueDate', '>=', now());
-            })
+            ->where('nextDueDate', '>=', Carbon::now())
             ->selectRaw("
                 SUM(CASE
-                    WHEN billing_cycle = 'monthly' THEN price
-                    WHEN billing_cycle = 'quarterly' THEN price / 4
-                    WHEN billing_cycle = 'annual' THEN price / 12
+                    WHEN cycle = 'monthly' THEN ammountDue
+                    WHEN cycle = 'quarterly' THEN ammountDue / 4
+                    WHEN cycle = 'anually' THEN ammountDue / 12
                     ELSE 0
                 END) as mrr,
                 SUM(CASE
-                    WHEN billing_cycle = 'monthly' THEN price * 12
-                    WHEN billing_cycle = 'quarterly' THEN price * 4
-                    WHEN billing_cycle = 'annual' THEN price
+                    WHEN cycle = 'monthly' THEN ammountDue * 12
+                    WHEN cycle = 'quarterly' THEN ammountDue * 4
+                    WHEN cycle = 'anually' THEN ammountDue
                     ELSE 0
                 END) as yrr,
                 SUM(CASE
-                    WHEN billing_cycle = 'monthly' THEN price * 3
-                    WHEN billing_cycle = 'quarterly' THEN price
-                    WHEN billing_cycle = 'annual' THEN price / 4
+                    WHEN cycle = 'monthly' THEN ammountDue * 3
+                    WHEN cycle = 'quarterly' THEN ammountDue
+                    WHEN cycle = 'anually' THEN ammountDue / 4
                     ELSE 0
                 END) as qrr
             ")
