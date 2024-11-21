@@ -76,20 +76,20 @@ class FinancialReportService extends Service
         ];
     }
 
-    public function playerAgeChart(){
-        $results = DB::table('teams')
-            ->join('player_teams as pt', 'teams.id', '=', 'pt.teamId')
-            ->select('ageGroup', DB::raw('COUNT(playerId) AS total_player'))
-            ->where('teamSide', '=', 'Academy Team')
-            ->groupBy('ageGroup')
-            ->get();
+    public function invoiceStatus(){
+        $results = $this->invoiceRepository->invoiceStatus();
 
-        $label = [];
-        $data = [];
-        foreach ($results as $result){
-            $label[] = $result->ageGroup;
-            $data[] = $result->total_player;
-        }
+        $label = $results->pluck('status');
+        $data = $results->pluck('count');
+
+        return compact('label', 'data');
+    }
+
+    public function paymentType(){
+        $results = $this->invoiceRepository->paymentType();
+
+        $label = $results->pluck('paymentMethod');
+        $data = $results->pluck('count');
 
         return compact('label', 'data');
     }

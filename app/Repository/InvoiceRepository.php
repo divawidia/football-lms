@@ -45,6 +45,16 @@ class InvoiceRepository
             return $results->get();
     }
 
+    public function invoiceStatus()
+    {
+        return $this->invoice->selectRaw('status, COUNT(status) as count')->groupBy('status')->get();
+    }
+
+    public function paymentType()
+    {
+        return $this->invoice->selectRaw('paymentMethod, COUNT(paymentMethod) as count')->groupBy('paymentMethod')->get();
+    }
+
     public function getAll()
     {
         return $this->invoice->with('receiverUser', 'creatorUser')->latest();

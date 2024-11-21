@@ -20,11 +20,15 @@ class FinancialReportController extends Controller
         $requireActionInvoice = $this->financialReportService->requireActionInvoice();
         $recurringRevenue = $this->financialReportService->estimatedRecuringRevenue();
         $revenueGrowth = $this->financialReportService->revenueGrowth();
+        $invoiceStatus = $this->financialReportService->invoiceStatus();
+        $paymentType = $this->financialReportService->paymentType();
 
         return view('pages.admins.academies.reports.financial.index', [
             'requireActionInvoice' => $requireActionInvoice,
             'recurringRevenue' => $recurringRevenue,
-            'revenueGrowth' => $revenueGrowth
+            'revenueGrowth' => $revenueGrowth,
+            'invoiceStatus' => $invoiceStatus,
+            'paymentType' => $paymentType
         ]);
     }
     public function revenueChartData(Request $request)
