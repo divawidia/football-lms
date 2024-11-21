@@ -169,11 +169,24 @@ class AdminController extends Controller
      */
     public function destroy(Admin $admin)
     {
-        $result = $this->adminService->destroy($admin);
-        return response()->json([
-            'status' => 200,
-            'data' => $result,
-            'message' => 'Successfully delete admin'
-        ]);
+        try {
+            $data = $this->adminService->destroy($admin);
+            return response()->json([
+                'success' => true,
+                'status' => 200,
+                'message' => 'Admin '.$this->getUserFullName($admin->user).' account successfully deleted.',
+                'data' => $data,
+            ]);
+
+        } catch (Exception $e){
+            $message = 'Error while deleting admin '.$this->getUserFullName($admin->user).' account: ' . $e->getMessage();
+            Log::error($message);
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => $message,
+                'data' => $data,
+            ], 500);
+        }
     }
 }
