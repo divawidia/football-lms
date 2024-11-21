@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Models\Subscription;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SubscriptionRepository
 {
@@ -45,13 +46,13 @@ class SubscriptionRepository
             ->first();
     }
 
-    public function playerSubscriptionTrend($status, $startDate = null, $endDate = null)
+    public function playerSubscriptionTrend($status, $selectDate, $startDate = null, $endDate = null)
     {
-        $query = $this->subscription->where('status', $status);
+        $query = $this->subscription->select($selectDate, DB::raw('COUNT(ID) AS count'))->where('status', $status);
         if ($startDate != null && $endDate != null) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
-        return $query->count();
+        return $query->get();
     }
 
     public function find($id)

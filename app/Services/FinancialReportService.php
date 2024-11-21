@@ -199,6 +199,20 @@ class FinancialReportService extends Service
         $endDate = $queryFilter['endDate'];
         $selectDate = $queryFilter['selectDate'];
 
+        $results = $this->subscriptionRepository->playerSubscriptionTrend('Scheduled', $selectDate,$startDate, $endDate);
+        return [
+            'labels' => $results->pluck('date'),
+            'datasets' => [
+                [
+                    'label' => '# of Players',
+                    'data' => $results->pluck('count'),
+                    'borderColor' => '#E52534',
+                    'backgroundColor'=> 'rgba(229, 37, 52, 0.2)',
+                    'fill' => 'start',
+                    'tension' => 0.4,
 
+                ],
+            ],
+        ];
     }
 }
