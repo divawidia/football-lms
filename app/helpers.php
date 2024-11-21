@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Academy;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 function getLoggedUser(){
@@ -63,4 +64,9 @@ function convertToTime($timestamp){
 }
 function convertToDatetime($timestamp){
     return date('M d, Y ~ h:i A', strtotime($timestamp));
+}
+
+function getUserFullName(User $user): string
+{
+    return $user->firstName . ' ' . $user->lastName;
 }

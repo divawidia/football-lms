@@ -296,3 +296,9 @@ select {
         }
     }
 }
+
+.nav-link{
+    &.active{
+        background-color: $accent-1 !important;
+    }
+}

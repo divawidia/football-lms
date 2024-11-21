@@ -13,8 +13,8 @@
 @endsection
 
 @section('content')
-    <nav class="navbar navbar-light border-bottom border-top px-0">
-        <div class="container page__container">
+    <nav class="navbar navbar-light border-bottom border-top">
+        <div class="container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
                     <a href="{{ route('player-managements.index') }}" class="nav-link text-70">
@@ -50,24 +50,17 @@
                         <a class="dropdown-item" href="{{ route('player-managements.edit', $data->id) }}"><span
                                 class="material-icons">edit</span> Edit Player</a>
                         @if($data->user->status == '1')
-                            <form action="{{ route('deactivate-player', $data->id) }}" method="POST">
-                                @method("PATCH")
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <span class="material-icons text-danger">block</span> Deactivate Player
-                                </button>
-                            </form>
-                        @else
-                            <form action="{{ route('activate-player', $data->id) }}" method="POST">
-                                @method("PATCH")
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <span class="material-icons text-success">check_circle</span> Activate Player
-                                </button>
-                            </form>
+                            <button type="submit" class="dropdown-item setDeactivate" id="{{$data->id}}">
+                                <span class="material-icons text-danger">check_circle</span>
+                                Deactivate Player
+                            </button>
+                        @elseif($data->user->status == '0')
+                            <button type="submit" class="dropdown-item setActivate" id="{{$data->id}}">
+                                <span class="material-icons text-success">check_circle</span>
+                                Activate Player
+                            </button>
                         @endif
-                        <a class="dropdown-item changePassword" id="{{ $data->id }}"><span
-                                class="material-icons">lock</span> Change Player Password</a>
+                        <a class="dropdown-item changePassword" id="{{ $data->id }}"><span class="material-icons">lock</span> Change Player Password</a>
                         <button type="button" class="dropdown-item delete-user" id="{{$data->id}}">
                             <span class="material-icons text-danger">delete</span> Delete Player
                         </button>
@@ -76,129 +69,174 @@
             @endif
         </div>
     </div>
+    <nav class="navbar navbar-light border-bottom border-top py-3">
+        <div class="container">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#overview-tab">Overview</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#profile-tab">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#teams-tab">Teams</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#skillStats-tab">Skill Stats</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#parents-tab">Parents/Guardians</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#upcomingMatch-tab">Upcoming Matches</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#upcomingTraining-tab">Upcoming Training</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#trainingHistories-tab">Training Histories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#matchHistories-tab">Matches Histories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#performance-tab">Player Performance Review</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
     <div class="container page__container page-section">
-        {{--        Overview Section--}}
-        <div class="page-separator">
-            <div class="page-separator__text">Overview</div>
-        </div>
-        <div class="row card-group-row">
-            @include('components.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['thisMonthMatchPlayed']])
-            @include('components.stats-card', ['title' => 'Minutes Played','data' => $overview['statsData']['minutesPlayed'], 'dataThisMonth' => $overview['statsData']['minutesPlayedThisMonth']])
-            @include('components.stats-card', ['title' => 'Fouls','data' => $overview['statsData']['fouls'], 'dataThisMonth' => $overview['statsData']['foulsThisMonth']])
-            @if($data->position == 'Goalkeeper (GK)')
-                @include('components.stats-card', ['title' => 'Saves','data' => $overview['statsData']['saves'], 'dataThisMonth' => $overview['statsData']['savesThisMonth']])
-            @else
-                @include('components.stats-card', ['title' => 'Goals','data' => $overview['statsData']['goals'], 'dataThisMonth' => $overview['statsData']['goalsThisMonth']])
-            @endif
-            @include('components.stats-card', ['title' => 'Assists','data' => $overview['statsData']['assists'], 'dataThisMonth' => $overview['statsData']['assistsThisMonth']])
-            @include('components.stats-card', ['title' => 'Own Goals','data' => $overview['statsData']['ownGoal'], 'dataThisMonth' => $overview['statsData']['ownGoalThisMonth']])
-            @include('components.stats-card', ['title' => 'Wins','data' => $overview['statsData']['Win'], 'dataThisMonth' => $overview['statsData']['WinThisMonth']])
-            @include('components.stats-card', ['title' => 'Losses','data' => $overview['statsData']['Lose'], 'dataThisMonth' => $overview['statsData']['LoseThisMonth']])
-            @include('components.stats-card', ['title' => 'Draws','data' => $overview['statsData']['Draw'], 'dataThisMonth' => $overview['statsData']['DrawThisMonth']])
-        </div>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="overview-tab" role="tabpanel">
 
-        <div class="row card-group-row">
-            <div class="col-sm-6 card-group-row__col flex-column">
-                {{--Profile Section--}}
+                {{--        Overview Section--}}
                 <div class="page-separator">
-                    <div class="page-separator__text">Profile</div>
+                    <div class="page-separator__text">Overview</div>
                 </div>
-                <div class="card card-sm card-group-row__card">
-                    <div class="card-body flex-column">
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
-                            @if($data->user->status == '1')
-                                <span class="ml-auto p-2 badge badge-pill badge-success">Aktif</span>
-                            @elseif($data->user->status == '0')
-                                <span class="ml-auto p-2 badge badge-pill badge-danger">Non Aktif</span>
-                            @endif
+                <div class="row card-group-row">
+                    @include('components.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['thisMonthMatchPlayed']])
+                    @include('components.stats-card', ['title' => 'Minutes Played','data' => $overview['statsData']['minutesPlayed'], 'dataThisMonth' => $overview['statsData']['minutesPlayedThisMonth']])
+                    @include('components.stats-card', ['title' => 'Fouls','data' => $overview['statsData']['fouls'], 'dataThisMonth' => $overview['statsData']['foulsThisMonth']])
+                    @if($data->position == 'Goalkeeper (GK)')
+                        @include('components.stats-card', ['title' => 'Saves','data' => $overview['statsData']['saves'], 'dataThisMonth' => $overview['statsData']['savesThisMonth']])
+                    @else
+                        @include('components.stats-card', ['title' => 'Goals','data' => $overview['statsData']['goals'], 'dataThisMonth' => $overview['statsData']['goalsThisMonth']])
+                    @endif
+                    @include('components.stats-card', ['title' => 'Assists','data' => $overview['statsData']['assists'], 'dataThisMonth' => $overview['statsData']['assistsThisMonth']])
+                    @include('components.stats-card', ['title' => 'Own Goals','data' => $overview['statsData']['ownGoal'], 'dataThisMonth' => $overview['statsData']['ownGoalThisMonth']])
+                    @include('components.stats-card', ['title' => 'Wins','data' => $overview['statsData']['Win'], 'dataThisMonth' => $overview['statsData']['WinThisMonth']])
+                    @include('components.stats-card', ['title' => 'Losses','data' => $overview['statsData']['Lose'], 'dataThisMonth' => $overview['statsData']['LoseThisMonth']])
+                    @include('components.stats-card', ['title' => 'Draws','data' => $overview['statsData']['Draw'], 'dataThisMonth' => $overview['statsData']['DrawThisMonth']])
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="profile-tab" role="tabpanel">
+                <div class="row card-group-row">
+                    <div class="col-sm-6 flex-column">
+                        {{--Profile Section--}}
+                        <div class="page-separator">
+                            <div class="page-separator__text">Profile</div>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Player Skill :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->skill }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Strong Foot :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->strongFoot }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Height :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->height }} CM</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Weight :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->weight }} KG</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Date of Birth :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $overview['playerDob'] }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Age :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $overview['playerAge'] }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Gender :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->gender }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Join Date :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $overview['playerJoinDate'] }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $overview['playerCreatedAt'] }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $overview['playerUpdatedAt'] }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Last Seen :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $overview['playerLastSeen'] }}</div>
+                        <div class="card card-sm card-group-row__card">
+                            <div class="card-body flex-column">
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
+                                    @if($data->user->status == '1')
+                                        <span class="ml-auto p-2 badge badge-pill badge-success">Aktif</span>
+                                    @elseif($data->user->status == '0')
+                                        <span class="ml-auto p-2 badge badge-pill badge-danger">Non Aktif</span>
+                                    @endif
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Player Skill :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->skill }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Strong Foot :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->strongFoot }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Height :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->height }} CM</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Weight :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->weight }} KG</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Date of Birth :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $overview['playerDob'] }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Age :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $overview['playerAge'] }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Gender :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->user->gender }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Join Date :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $overview['playerJoinDate'] }}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                {{--Contact Section--}}
-                <div class="page-separator">
-                    <div class="page-separator__text">Contact</div>
-                </div>
-                <div class="card card-sm card-group-row__card">
-                    <div class="card-body flex-column">
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Email :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->email }}</div>
+                    <div class="col-sm-6 flex-column">
+                        {{--Contact Section--}}
+                        <div class="page-separator">
+                            <div class="page-separator__text">Contact</div>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Phone Number :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->phoneNumber }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Address :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->address }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Country :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->country->name }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">State :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->state->name }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">City :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->city->name }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Zip Code :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $data->user->zipCode }}</div>
+                        <div class="card card-sm card-group-row__card">
+                            <div class="card-body flex-column">
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Email :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->user->email }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Phone Number :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->user->phoneNumber }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Address :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->user->address }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Country :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->user->country->name }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">State :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->user->state->name }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">City :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->user->city->name }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Zip Code :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $data->user->zipCode }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $overview['playerCreatedAt'] }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $overview['playerUpdatedAt'] }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Last Seen :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $overview['playerLastSeen'] }}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 card-group-row__col flex-column">
+
+            <div class="tab-pane fade" id="teams-tab" role="tabpanel">
                 {{--Teams Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Teams</div>
@@ -211,10 +249,10 @@
                         </a>
                     @endif
                 </div>
-                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="teamsTable">
+                            <table class="table table-hover w-100" id="teamsTable">
                                 <thead>
                                 <tr>
                                     <th>Team Name</th>
@@ -230,8 +268,8 @@
                         </div>
                     </div>
                 </div>
-
-                {{--Teams Section--}}
+            </div>
+            <div class="tab-pane fade" id="skillStats-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
                     <a href="{{ route('player-managements.skill-stats', $data->id) }}"
@@ -244,205 +282,154 @@
                     <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
                                                       :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
                 </div>
-
             </div>
-        </div>
-
-        {{--Parents/Guardians Section--}}
-        <div class="page-separator">
-            <div class="page-separator__text">Parents/Guardians</div>
-            @if(isAllAdmin())
-                <a href="{{  route('player-parents.create', $data->id) }}" class="btn btn-sm btn-primary ml-auto"
-                   id="add-new">
+            <div class="tab-pane fade" id="parents-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Parents/Guardians</div>
+                    @if(isAllAdmin())
+                        <a href="{{  route('player-parents.create', $data->id) }}" class="btn btn-sm btn-primary ml-auto"
+                           id="add-new">
                 <span class="material-icons mr-2">
                     add
                 </span>
-                    Add New
-                </a>
-            @endif
-        </div>
-        <x-player-parents-tables :player="$data->id"/>
-
-        {{--Upcoming Matches Section--}}
-        <div class="page-separator">
-            <div class="page-separator__text">Upcoming Matches</div>
-            <a href="{{ route('player-managements.upcoming-matches', $data->id) }}"
-               class="btn btn-white border btn-sm ml-auto">
-                View More
-                <span class="material-icons ml-2 icon-16pt">chevron_right</span>
-            </a>
-        </div>
-        @if(count($overview['upcomingMatches']) == 0)
-            <x-warning-alert text="There are no matches scheduled at this time"/>
-        @endif
-        @foreach($overview['upcomingMatches'] as $match)
-            <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-4 d-flex flex-column flex-md-row align-items-center">
-                            <img src="{{ Storage::url($match->teams[0]->logo) }}"
-                                 width="50"
-                                 height="50"
-                                 class="rounded-circle img-object-fit-cover"
-                                 alt="team-logo">
-                            <div class="ml-md-3 text-center text-md-left">
-                                <h5 class="mb-0">{{$match->teams[0]->teamName}}</h5>
-                                <p class="text-50 lh-1 mb-0">{{$match->teams[0]->ageGroup}}</p>
-                            </div>
-                        </div>
-                        <div class="col-4 text-center">
-                            <h2 class="mb-0">Vs.</h2>
-                        </div>
-                        <div
-                            class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
-                            <div class="mr-md-3 text-center text-md-right">
-                                <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
-                                <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
-                            </div>
-                            <img src="{{ Storage::url($match->teams[1]->logo) }}"
-                                 width="50"
-                                 height="50"
-                                 class="rounded-circle img-object-fit-cover"
-                                 alt="team-logo">
-                        </div>
-                    </div>
-
-                    <div class="row justify-content-center mt-3">
-                        <div class="mr-2">
-                            <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                            {{ date('D, M d Y', strtotime($match->date)) }}
-                        </div>
-                        <div class="mr-2">
-                            <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                            {{ date('h:i A', strtotime($match->startTime)) }}
-                            - {{ date('h:i A', strtotime($match->endTime)) }}
-                        </div>
-                        <div>
-                            <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                            {{ $match->place }}
-                        </div>
-                    </div>
+                            Add New
+                        </a>
+                    @endif
                 </div>
-            </a>
-        @endforeach
-
-        {{--Upcoming Trainings Section--}}
-        <div class="page-separator">
-            <div class="page-separator__text">Upcoming Trainings</div>
-            <a href="{{ route('player-managements.upcoming-trainings', $data->id) }}"
-               class="btn btn-white border btn-sm ml-auto">
-                View More
-                <span class="material-icons ml-2 icon-16pt">chevron_right</span>
-            </a>
-        </div>
-        @if(count($overview['upcomingTrainings']) == 0)
-            <x-warning-alert text="There are no trainings scheduled at this time"/>
-        @endif
-        <div class="row">
-            @foreach($overview['upcomingTrainings'] as $training)
-                <div class="col-lg-6">
-                    <a class="card" href="{{ route('training-schedules.show', $training->id) }}f">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6 d-flex flex-column flex-md-row align-items-center">
-                                    <img src="{{ Storage::url($training->teams[0]->logo) }}"
-                                         width="50"
-                                         height="50"
-                                         class="rounded-circle img-object-fit-cover"
-                                         alt="team-logo">
-                                    <div class="ml-md-3 text-center text-md-left">
-                                        <h5 class="mb-0">{{$training->teams[0]->teamName}}</h5>
-                                        <p class="text-50 lh-1 mb-0">{{$training->teams[0]->ageGroup}}</p>
-                                    </div>
-                                </div>
-                                <div class="col-6 d-flex flex-column">
-                                    <div class="mr-2">
-                                        <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                                        {{ date('D, M d Y', strtotime($training->date)) }}
-                                    </div>
-                                    <div class="mr-2">
-                                        <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                                        {{ date('h:i A', strtotime($training->startTime)) }}
-                                        - {{ date('h:i A', strtotime($training->endTime)) }}
-                                    </div>
-                                    <div>
-                                        <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                                        {{ $training->place }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <x-player-parents-tables :player="$data"/>
+            </div>
+            <div class="tab-pane fade" id="upcomingMatch-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Upcoming Matches</div>
+                    <a href="{{ route('player-managements.upcoming-matches', $data->id) }}"
+                       class="btn btn-white border btn-sm ml-auto">
+                        View More
+                        <span class="material-icons ml-2 icon-16pt">chevron_right</span>
                     </a>
                 </div>
-            @endforeach
-        </div>
-
-        {{--Training Histories Section--}}
-        <div class="page-separator">
-            <div class="page-separator__text">Training Histories</div>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="trainingHistoryTable">
-                        <thead>
-                        <tr>
-                            <th>Training/Practice</th>
-                            <th>Team</th>
-                            <th>training date</th>
-                            <th>Location</th>
-                            <th>Training Status</th>
-                            <th>Attendance Status</th>
-                            <th>Note</th>
-                            <th>Last Updated Attendance</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                @if(count($overview['upcomingMatches']) == 0)
+                    <x-warning-alert text="There are no matches scheduled at this time"/>
+                @endif
+                @foreach($overview['upcomingMatches'] as $match)
+                    <x-match-card :match="$match"/>
+                @endforeach
+            </div>
+            <div class="tab-pane fade" id="upcomingTraining-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Upcoming Trainings</div>
+                    <a href="{{ route('player-managements.upcoming-trainings', $data->id) }}"
+                       class="btn btn-white border btn-sm ml-auto">
+                        View More
+                        <span class="material-icons ml-2 icon-16pt">chevron_right</span>
+                    </a>
+                </div>
+                @if(count($overview['upcomingTrainings']) == 0)
+                    <x-warning-alert text="There are no trainings scheduled at this time"/>
+                @endif
+                <div class="row">
+                    @foreach($overview['upcomingTrainings'] as $training)
+                        <x-training-card :training="$training"/>
+                    @endforeach
                 </div>
             </div>
-        </div>
-
-        {{--Match Histories Section--}}
-        <div class="page-separator">
-            <div class="page-separator__text">Match Histories</div>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="matchHistoryTable">
-                        <thead>
-                        <tr>
-                            <th>Team</th>
-                            <th>Opponent</th>
-                            <th>Match Date</th>
-                            <th>Location</th>
-                            <th>Competition</th>
-                            <th>Match Type</th>
-                            <th>Match Status</th>
-                            <th>Attendance Status</th>
-                            <th>Note</th>
-                            <th>Last Updated Attendance</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+            <div class="tab-pane fade" id="trainingHistories-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Training Histories</div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover w-100" id="trainingHistoryTable">
+                                <thead>
+                                <tr>
+                                    <th>Training/Practice</th>
+                                    <th>Team</th>
+                                    <th>training date</th>
+                                    <th>Location</th>
+                                    <th>Training Status</th>
+                                    <th>Attendance Status</th>
+                                    <th>Note</th>
+                                    <th>Last Updated Attendance</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div class="tab-pane fade" id="matchHistories-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Match Histories</div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover w-100" id="matchHistoryTable">
+                                <thead>
+                                <tr>
+                                    <th>Team</th>
+                                    <th>Opponent</th>
+                                    <th>Match Date</th>
+                                    <th>Location</th>
+                                    <th>Competition</th>
+                                    <th>Match Type</th>
+                                    <th>Match Status</th>
+                                    <th>Attendance Status</th>
+                                    <th>Note</th>
+                                    <th>Last Updated Attendance</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="performance-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">player performance review</div>
+                </div>
+                <x-player-performance-review-table
+                    :route="route('player-managements.performance-reviews', ['player' => $data->id])"
+                    tableId="performanceReviewTable"/>
+            </div>
         </div>
-
-        {{--performance review Section--}}
-        <div class="page-separator">
-            <div class="page-separator__text">player performance review</div>
-        </div>
-        <x-player-performance-review-table
-            :route="route('player-managements.performance-reviews', ['player' => $data->id])"
-            tableId="performanceReviewTable"/>
     </div>
+
+    @if(isAllAdmin())
+        <x-process-data-confirmation btnClass=".setDeactivate"
+                                     :processRoute="route('deactivate-player', ':id')"
+                                     :routeAfterProcess="route('player-managements.show', $data->id)"
+                                     method="PATCH"
+                                     confirmationText="Are you sure to deactivate this player {{ getUserFullName($data->user) }}'s account?"
+                                     errorText="Something went wrong when deactivating this player {{ getUserFullName($data->user) }}'s account!"/>
+
+        <x-process-data-confirmation btnClass=".setActivate"
+                                     :processRoute="route('activate-player', ':id')"
+                                     :routeAfterProcess="route('player-managements.show', $data->id)"
+                                     method="PATCH"
+                                     confirmationText="Are you sure to activate this player {{ getUserFullName($data->user) }}'s account?"
+                                     errorText="Something went wrong when activating this player {{ getUserFullName($data->user) }}'s account!"/>
+
+        <x-process-data-confirmation btnClass=".delete-user"
+                                     :processRoute="route('player-managements.destroy', ['player' => ':id'])"
+                                     :routeAfterProcess="route('player-managements.index')"
+                                     method="DELETE"
+                                     confirmationText="Are you sure to delete this player {{ getUserFullName($data->user) }}'s account?"
+                                     errorText="Something went wrong when deleting this player {{ getUserFullName($data->user) }}'s account!"/>
+
+        <x-process-data-confirmation btnClass=".delete-team"
+                                     :processRoute="route('player-managements.removeTeam', ['player' => $data->id, 'team' => ':id'])"
+                                     :routeAfterProcess="route('player-managements.show', $data->id)"
+                                     method="DELETE"
+                                     confirmationText="Are you sure to to remove player {{ getUserFullName($data->user) }} from this team?"
+                                     errorText="Something went wrong when removing player {{ getUserFullName($data->user) }} from this team!"/>
+    @endif
 
 @endsection
 @push('addon-script')
@@ -496,7 +483,7 @@
                         width: '15%'
                     },
                 ],
-                order: [[2, 'desc']],
+                order: [[2, 'asc']],
             });
 
             $('#matchHistoryTable').DataTable({
@@ -525,98 +512,7 @@
                         width: '15%'
                     },
                 ],
-                order: [[2, 'desc']],
-            });
-
-            $('.delete-user').on('click', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to delete this player?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('player-managements.destroy', ['player' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: "Player's account successfully deleted!",
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    allowOutsideClick: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('player-managements.index') }}";
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            body.on('click', '.delete-team', function () {
-                const idTeam = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert after delete this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, remove team!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('player-managements.removeTeam', ['player' => $data->id, 'team' => ':idTeam']) }}".replace(':idTeam', idTeam),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (response) {
-                                Swal.fire({
-                                    title: "Team successfully removed from player!",
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function (error) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Oops...",
-                                    text: "Something went wrong when deleting data!",
-                                });
-                            }
-                        });
-                    }
-                });
+                order: [[2, 'asc']],
             });
         });
     </script>

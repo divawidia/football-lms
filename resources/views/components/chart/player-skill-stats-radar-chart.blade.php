@@ -1,4 +1,4 @@
-<canvas id="{{ $chartId }}"></canvas>
+<canvas id="{{ $chartId }}" style="max-height: 400px"></canvas>
 
 @push('addon-script')
     <script>

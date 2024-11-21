@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerParentRequest;
 use App\Models\Player;
 use App\Models\PlayerParrent;
-use App\Models\User;
 use App\Repository\UserRepository;
 use App\Services\PlayerParentService;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
-use Yajra\DataTables\Facades\DataTables;
 
 class PlayerParentController extends Controller
 {
@@ -43,7 +44,7 @@ class PlayerParentController extends Controller
         $data = $request->validated();
         $this->playerParentService->store($data, $player);
 
-        $text = "Player's parent/guardian successfully added!";
+        $text = "Player ".$this->getUserFullName($player->user)."'s parent/guardian successfully added!";
         Alert::success($text);
         return redirect()->route('player-managements.show', $player->id);
     }
@@ -64,19 +65,22 @@ class PlayerParentController extends Controller
     {
         $data = $request->validated();
         $this->playerParentService->update($data, $parent);
-        $text = $data['firstName'].' '.$data['lastName'].' successfully updated!';
+        $text = "Player ".$this->getUserFullName($player->user)."'s parent/guardian successfully updated!";
         Alert::success($text);
         return redirect()->route('player-managements.show', $player->id);
     }
 
     public function destroy(Player $player, PlayerParrent $parent)
     {
-        $result = $this->playerParentService->destroy($parent);
+        try {
+            $data = $this->playerParentService->destroy($parent);
+            $message = "Player ".$this->getUserFullName($player->user)."'s parent/guardian successfully deleted.";
+            return ApiResponse::success($data, $message);
 
-        return response()->json([
-            'status' => 200,
-            'data' => $result,
-            'message' => 'Successfully deleted players parent'
-        ]);
+        } catch (Exception $e){
+            $message = "Error while deleting player ".$this->getUserFullName($player->user)."'s parent/guardian: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 }

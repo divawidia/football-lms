@@ -17,21 +17,19 @@ class AttendanceReportService extends Service
 {
     private PlayerRepository $playerRepository;
     private EventScheduleRepository $eventScheduleRepository;
-    public function __construct(PlayerRepository $playerRepository, EventScheduleRepository $eventScheduleRepository)
+    private DatatablesService $datatablesService;
+    public function __construct(PlayerRepository $playerRepository, EventScheduleRepository $eventScheduleRepository, DatatablesService $datatablesService)
     {
         $this->playerRepository = $playerRepository;
         $this->eventScheduleRepository = $eventScheduleRepository;
+        $this->datatablesService = $datatablesService;
     }
 
     public function makeAttendanceDatatables($data)
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                    $viewButton = '
-                        <a class="btn btn-sm btn-outline-secondary" href="' . route('attendance-report.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player attendance detail">
-                            <span class="material-icons">visibility</span>
-                        </a>';
-                return $viewButton;
+                return $this->datatablesService->buttonTooltips(route('attendance-report.show', $item->id), 'View player attendance detail', 'visibility');
             })
             ->editColumn('teams', function ($item) {
                 $playerTeam = '';
@@ -45,33 +43,16 @@ class AttendanceReportService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                             style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
-                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>';
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name);
             })
             ->addColumn('totalEvent', function ($item){
                 return count($item->schedules);
             })
             ->addColumn('match', function ($item){
-                $match = $item->schedules()->where('eventType', 'Match')->get();
-                return count($match);
+                return $item->schedules()->where('eventType', 'Match')->count();
             })
             ->addColumn('training', function ($item){
-                $match = $item->schedules()->where('eventType', 'Training')->get();
-                return count($match);
+                return $item->schedules()->where('eventType', 'Training')->count();
             })
             ->addColumn('attended', function ($item){
                 $attended = $item->schedules()->where('attendanceStatus', 'Attended')->get();
@@ -300,49 +281,22 @@ class AttendanceReportService extends Service
     }
 
     public function dataTablesTraining(Player $player){
-        $data = $this->eventScheduleRepository->getEventByModel($player, '0', 'Training', sortDateDirection: 'desc');
+        $data = $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Completed');
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('training-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View training detail">
-                            <span class="material-icons">visibility</span>
-                        </a>';
+                return $this->datatablesService->buttonTooltips(route('training-schedules.show', $item->id), 'View training session', 'visibility');
             })
             ->editColumn('team', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->teams[0]->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup);
             })
             ->editColumn('date', function ($item) {
-                $date = date('M d, Y', strtotime($item->date));
-                $startTime = date('h:i A', strtotime($item->startTime));
-                $endTime = date('h:i A', strtotime($item->endTime));
-                return $date.' ('.$startTime.' - '.$endTime.')';
+                return $this->datatablesService->startEndDate($item);
             })
             ->editColumn('status', function ($item) {
-                if ($item->status == '1') {
-                    return '<span class="badge badge-pill badge-success">Active</span>';
-                } elseif ($item->status == '0') {
-                    return '<span class="badge badge-pill badge-danger">Ended</span>';
-                }
+                return $this->datatablesService->eventStatus($item->status);
             })
             ->editColumn('attendanceStatus', function ($item) {
-                if ($item->pivot->attendanceStatus == 'Attended') {
-                    return '<span class="badge badge-pill badge-success">Attended</span>';
-                } else {
-                    return '<span class="badge badge-pill badge-danger">'.$item->pivot->attendanceStatus.'</span>';
-                }
+                return $this->datatablesService->attendanceStatus($item->pivot->attendanceStatus);
             })
             ->editColumn('note', function ($item) {
                 if ($item->pivot->note == null) {
@@ -352,95 +306,40 @@ class AttendanceReportService extends Service
                 }
             })
             ->editColumn('last_updated', function ($item) {
-                return date('M d, Y ~ h:i A', strtotime($item->pivot->updated_at));
+                return $this->convertToDatetime($item->pivot->updated_at);
             })
             ->rawColumns(['action','team','date','status', 'attendanceStatus', 'last_updated', 'note'])
             ->addIndexColumn()
             ->make();
     }
     public function dataTablesMatch(Player $player){
-        $data = $this->eventScheduleRepository->getEventByModel($player, '0', 'Match', sortDateDirection: 'desc');
+        $data = $this->eventScheduleRepository->getEventByModel($player, 'Match', 'Completed');
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View match detail">
-                            <span class="material-icons">visibility</span>
-                        </a>';
+                return $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->id), 'View match session', 'visibility');
             })
             ->editColumn('team', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->teams[0]->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup);
             })
             ->editColumn('opponentTeam', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[1]->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[1]->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->teams[1]->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesService->name($item->teams[1]->logo, $item->teams[1]->teamName, $item->teams[1]->ageGroup);
             })
             ->editColumn('competition', function ($item) {
                 if ($item->competition){
-                    $competition = '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->competition->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->competition->name . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->competition->type.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                    $competition = $this->datatablesService->name($item->competition->logo, $item->competition->name, $item->competition->type);
                 }else{
                     $competition = 'No Competition';
                 }
                 return $competition;
             })
             ->editColumn('date', function ($item) {
-                $date = date('M d, Y', strtotime($item->date));
-                $startTime = date('h:i A', strtotime($item->startTime));
-                $endTime = date('h:i A', strtotime($item->endTime));
-                return $date.' ('.$startTime.' - '.$endTime.')';
+                return $this->datatablesService->startEndDate($item);
             })
             ->editColumn('status', function ($item) {
-                if ($item->status == '1') {
-                    return '<span class="badge badge-pill badge-success">Active</span>';
-                } elseif ($item->status == '0') {
-                    return '<span class="badge badge-pill badge-danger">Ended</span>';
-                }
+                return $this->datatablesService->eventStatus($item->status);
             })
             ->editColumn('attendanceStatus', function ($item) {
-                if ($item->pivot->attendanceStatus == 'Attended') {
-                    return '<span class="badge badge-pill badge-success">Attended</span>';
-                } else {
-                    return '<span class="badge badge-pill badge-danger">'.$item->pivot->attendanceStatus.'</span>';
-                }
+                return $this->datatablesService->attendanceStatus($item->pivot->attendanceStatus);
             })
             ->editColumn('note', function ($item) {
                 if ($item->pivot->note == null) {
@@ -450,7 +349,7 @@ class AttendanceReportService extends Service
                 }
             })
             ->editColumn('last_updated', function ($item) {
-                return date('M d, Y ~ h:i A', strtotime($item->pivot->updated_at));
+                return $this->convertToDatetime($item->pivot->updated_at);
             })
             ->rawColumns(['action','team', 'competition','opponentTeam','date','status', 'attendanceStatus', 'last_updated', 'note'])
             ->addIndexColumn()

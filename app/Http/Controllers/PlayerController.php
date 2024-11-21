@@ -46,7 +46,16 @@ class PlayerController extends Controller
 
     public function removeTeam(Player $player, Team $team)
     {
-        return $this->playerService->removeTeam($player, $team);
+        try {
+            $data = $this->playerService->removeTeam($player, $team);
+            $message = "Player ".$this->getUserFullName($player->user)." successfully removed from team ".$team->teamName.".";
+            return ApiResponse::success($data, $message);
+
+        } catch (Exception $e){
+            $message = "Error while removing player ".$this->getUserFullName($player->user)." from team ".$team->teamName.": " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     /**

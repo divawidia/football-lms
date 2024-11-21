@@ -24,7 +24,17 @@ class DatatablesService extends Service
         return $badge;
     }
 
-    public function fourTypeStatus($status)
+    public function attendanceStatus($status): string
+    {
+        if ($status == 'Attended') {
+            $badge = '<span class="badge badge-pill badge-success">'.$status.'</span>';
+        }else {
+            $badge = '<span class="badge badge-pill badge-danger">'.$status.'</span>';
+        }
+        return $badge;
+    }
+
+    public function eventStatus($status): string
     {
         if ($status == 'Scheduled') {
             $status = '<span class="badge badge-pill badge-warning">'.$status .'</span>';

@@ -182,7 +182,7 @@ class EventScheduleService extends Service
                 return $this->datatablesService->startEndDate($item);
             })
             ->editColumn('status', function ($item) {
-                return $this->datatablesService->fourTypeStatus($item->status);
+                return $this->datatablesService->eventStatus($item->status);
             })
             ->rawColumns(['action','team','date','status'])
             ->make();
@@ -237,7 +237,7 @@ class EventScheduleService extends Service
                 return $this->datatablesService->startEndDate($item);
             })
             ->editColumn('status', function ($item) {
-                return $this->datatablesService->fourTypeStatus($item->status);
+                return $this->datatablesService->eventStatus($item->status);
             })
             ->rawColumns(['action','team', 'competition','opponentTeam','date','status'])
             ->make();

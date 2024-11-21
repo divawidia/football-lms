@@ -1,7 +1,7 @@
-<div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+<div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover mb-0" id="parentsTable">
+            <table class="table table-hover w-100" id="parentsTable">
                 <thead>
                 <tr>
                     <th>First Name</th>
@@ -20,11 +20,18 @@
         </div>
     </div>
 </div>
-
+@if(isAllAdmin())
+<x-process-data-confirmation btnClass=".delete-parent"
+                             :processRoute="route('player-parents.destroy', ['player' => $player->id, 'parent' => ':id'])"
+                             :routeAfterProcess="route('player-managements.show', $player->id)"
+                             method="DELETE"
+                             confirmationText="Are you sure to to delete player {{ getUserFullName($player->user) }}'s parent/guardian?"
+                             errorText="Something went wrong when removing player {{ getUserFullName($player->user) }}'s parent/guardian!"/>
+@endif
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            const parentsTable = $('#parentsTable').DataTable({
+            $('#parentsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -48,47 +55,6 @@
                     @endif
                 ]
             });
-
-            @if(isAllAdmin())
-            $('body').on('click', '.delete-parent', function () {
-                const idParent = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert after delete this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('player-parents.destroy', ['player' => $player, 'parent' => ':idParent']) }}".replace(':idParent', idParent),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Player's parent/guardian successfully deleted!",
-                                });
-                                parentsTable.ajax.reload();
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-            @endif
-
         });
     </script>
 @endpush
