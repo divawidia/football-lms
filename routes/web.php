@@ -254,6 +254,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::prefix('financial-reports')->group(function () {
                 Route::get('', [FinancialReportController::class, 'index'])->name('admin.financial-report.index');
                 Route::get('revenue', [FinancialReportController::class, 'revenueChartData'])->name('admin.financial-report.revenue-chart-data');
+                Route::get('subscription', [FinancialReportController::class, 'subscriptionChartData'])->name('admin.financial-report.subscription-chart-data');
             });
 
             Route::prefix('leaderboards')->group(function () {
