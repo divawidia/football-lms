@@ -2,32 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use App\Models\Admin;
-use App\Models\EventSchedule;
-use App\Models\User;
 use App\Repository\AdminRepository;
 use App\Repository\UserRepository;
 use App\Services\AdminService;
 use App\Services\DatatablesService;
-use Carbon\Carbon;
-use DateTime;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
 use RealRashid\SweetAlert\Facades\Alert;
-use Spatie\Permission\Models\Role;
-use Yajra\DataTables\Facades\DataTables;
-use Nnjeim\World\World;
-
 class AdminController extends Controller
 {
     private AdminService $adminService;
@@ -63,9 +50,9 @@ class AdminController extends Controller
     public function store(AdminRequest $request)
     {
         $data = $request->validated();
-        $this->adminService->store($data, $this->getAcademyId());
+        $admin = $this->adminService->store($data, $this->getAcademyId());
 
-        $text = $data['firstName'].' '.$data['lastName'].' account successfully added!';
+        $text = "Admin ".$this->getUserFullName($admin->user)."'s account successfully added!";
         Alert::success($text);
         return redirect()->route('admin-managements.index');
     }
@@ -87,11 +74,8 @@ class AdminController extends Controller
         $data = $request->validated();
         $result = $this->adminService->changePassword($data, $admin);
 
-        return response()->json([
-            'status' => 200,
-            'data' => $result,
-            'message' => 'Successfully change password'
-        ]);
+        $message = "Admin ".$this->getUserFullName($admin->user)."'s account password successfully updated!";
+        return ApiResponse::success($result, $message);
     }
 
     /**
@@ -114,7 +98,7 @@ class AdminController extends Controller
         $data = $request->validated();
         $this->adminService->update($data, $admin);
 
-        $text = $data['firstName'].' '.$data['lastName'].' account successfully updated!';
+        $text = "Admin ".$this->getUserFullName($admin->user)."'s account successfully updated!";
         Alert::success($text);
         return redirect()->route('admin-managements.index');
     }
@@ -123,44 +107,26 @@ class AdminController extends Controller
     {
         try {
             $data = $this->adminService->setStatus($admin, '0');
-            return response()->json([
-                'success' => true,
-                'status' => 200,
-                'message' => "Admin ".$this->getUserFullName($admin->user)."'s account status successfully set to deactivated.",
-                'data' => $data,
-            ]);
+            $message = "Admin ".$this->getUserFullName($admin->user)."'s account status successfully set to deactivated.";
+            return ApiResponse::success($data, $message);
 
         } catch (Exception $e){
             $message = 'Error while updating admin '.$this->getUserFullName($admin->user).' account status to deactivate: ' . $e->getMessage();
             Log::error($message);
-            return response()->json([
-                'success' => false,
-                'status' => 400,
-                'message' => $message,
-                'data' => $data,
-            ], 400);
+            return ApiResponse::error($message, null, $e->getCode());
         }
     }
 
     public function activate(Admin $admin){
         try {
             $data = $this->adminService->setStatus($admin, '1');
-            return response()->json([
-                'success' => true,
-                'status' => 200,
-                'message' => "Admin ".$this->getUserFullName($admin->user)."'s account status successfully set to activated.",
-                'data' => $data,
-            ]);
+            $message = "Admin ".$this->getUserFullName($admin->user)."'s account status successfully set to activated.";
+            return ApiResponse::success($data, $message);
 
         } catch (Exception $e){
             $message = 'Error while updating admin '.$this->getUserFullName($admin->user).' account status to activate: ' . $e->getMessage();
             Log::error($message);
-            return response()->json([
-                'success' => false,
-                'status' => 400,
-                'message' => $message,
-                'data' => $data,
-            ], 400);
+            return ApiResponse::error($message, null, $e->getCode());
         }
     }
 
@@ -171,22 +137,13 @@ class AdminController extends Controller
     {
         try {
             $data = $this->adminService->destroy($admin);
-            return response()->json([
-                'success' => true,
-                'status' => 200,
-                'message' => "Admin ".$this->getUserFullName($admin->user)."'s account successfully deleted.",
-                'data' => $data,
-            ]);
+            $message = "Admin ".$this->getUserFullName($admin->user)."'s account successfully deleted.";
+            return ApiResponse::success($data, $message);
 
         } catch (Exception $e){
             $message = 'Error while deleting admin '.$this->getUserFullName($admin->user).' account: ' . $e->getMessage();
             Log::error($message);
-            return response()->json([
-                'success' => false,
-                'status' => 400,
-                'message' => $message,
-                'data' => $data,
-            ], 400);
+            return ApiResponse::error($message, null, $e->getCode());
         }
     }
 }
