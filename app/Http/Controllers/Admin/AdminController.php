@@ -7,6 +7,7 @@ use App\Http\Requests\AdminRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use App\Models\Admin;
+use App\Models\EventSchedule;
 use App\Models\User;
 use App\Repository\AdminRepository;
 use App\Repository\UserRepository;
@@ -14,9 +15,11 @@ use App\Services\AdminService;
 use App\Services\DatatablesService;
 use Carbon\Carbon;
 use DateTime;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
@@ -118,17 +121,47 @@ class AdminController extends Controller
 
     public function deactivate(Admin $admin)
     {
-        $this->adminService->deactivate($admin);
-        $text = $admin->user->firstName.' '.$admin->user->lastName.' account status successfully updated!';
-        Alert::success($text);
-        return redirect()->route('admin-managements.show', $admin->id);
+        try {
+            $data = $this->adminService->setStatus($admin, '0');
+            return response()->json([
+                'success' => true,
+                'status' => 200,
+                'message' => 'Admin '.$this->getUserFullName($admin->user).' account status successfully set to deactivated.',
+                'data' => $data,
+            ]);
+
+        } catch (Exception $e){
+            $message = 'Error while updating admin '.$this->getUserFullName($admin->user).' account status to deactivate: ' . $e->getMessage();
+            Log::error($message);
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => $message,
+                'data' => $data,
+            ], 500);
+        }
     }
 
     public function activate(Admin $admin){
-        $this->adminService->activate($admin);
-        $text = $admin->user->firstName.' '.$admin->user->lastName.' account status successfully updated!';
-        Alert::success($text);
-        return redirect()->route('admin-managements.show', $admin->id);
+        try {
+            $data = $this->adminService->setStatus($admin, '1');
+            return response()->json([
+                'success' => true,
+                'status' => 200,
+                'message' => 'Admin '.$this->getUserFullName($admin->user).' account status successfully set to activated.',
+                'data' => $data,
+            ]);
+
+        } catch (Exception $e){
+            $message = 'Error while updating admin '.$this->getUserFullName($admin->user).' account status to activate: ' . $e->getMessage();
+            Log::error($message);
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => $message,
+                'data' => $data,
+            ], 500);
+        }
     }
 
     /**

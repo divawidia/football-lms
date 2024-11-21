@@ -52,7 +52,7 @@ class FinancialReportController extends Controller
         return response()->json([
             'success' => true,
             'status' => 200,
-            'message' => 'Successfully retrieve revenue data',
+            'message' => 'Successfully retrieve subscriptions data',
             'data' => $data,
         ]);
     }
