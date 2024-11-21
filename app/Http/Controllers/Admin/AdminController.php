@@ -135,10 +135,10 @@ class AdminController extends Controller
             Log::error($message);
             return response()->json([
                 'success' => false,
-                'status' => 500,
+                'status' => 400,
                 'message' => $message,
                 'data' => $data,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -157,10 +157,10 @@ class AdminController extends Controller
             Log::error($message);
             return response()->json([
                 'success' => false,
-                'status' => 500,
+                'status' => 400,
                 'message' => $message,
                 'data' => $data,
-            ], 500);
+            ], 400);
         }
     }
 
@@ -183,10 +183,10 @@ class AdminController extends Controller
             Log::error($message);
             return response()->json([
                 'success' => false,
-                'status' => 500,
+                'status' => 400,
                 'message' => $message,
                 'data' => $data,
-            ], 500);
+            ], 400);
         }
     }
 }
