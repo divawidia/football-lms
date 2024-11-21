@@ -35,7 +35,7 @@
                 Add New
             </a>
         </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+        <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="invoicesTable">
@@ -43,13 +43,16 @@
                         <tr>
                             <th>#</th>
                             <th>Inovice Number</th>
-                            <th>Name</th>
+                            <th>Contact</th>
                             <th>Email</th>
-                            <th>Amount Due</th>
                             <th>Due Date</th>
-                            <th>Status</th>
                             <th>Created At</th>
                             <th>Last Updated</th>
+                            <th>Subtotal</th>
+                            <th>Total Tax</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Payment Method</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -92,11 +95,14 @@
                     {data: 'invoiceNumber', name: 'invoiceNumber'},
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
-                    {data: 'ammount', name: 'ammount'},
                     {data: 'dueDate', name: 'dueDate'},
-                    {data: 'status', name: 'status'},
                     {data: 'createdAt', name: 'createdAt'},
                     {data: 'updatedAt', name: 'updatedAt'},
+                    {data: 'subtotal', name: 'subtotal'},
+                    {data: 'totalTax', name: 'totalTax'},
+                    {data: 'ammount', name: 'ammount'},
+                    {data: 'status', name: 'status'},
+                    {data: 'paymentMethod', name: 'paymentMethod'},
                     {
                         data: 'action',
                         name: 'action',
