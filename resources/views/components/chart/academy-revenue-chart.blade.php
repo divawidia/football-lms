@@ -10,7 +10,7 @@
                 @elseif($revenueGrowth < 0)
                     <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>
                 @endif
-                From Last Month
+                Revenue Growth From Last Month
             </div>
         </div>
         <div class="ml-3 align-self-start">
