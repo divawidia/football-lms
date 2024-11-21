@@ -103,7 +103,7 @@
                         <div class="card-title h5">payments type</div>
                     </div>
                     <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
-                        <canvas id="teamAgeChart"></canvas>
+                        <canvas id="paymentTypeChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -149,6 +149,7 @@
     <script>
         $(document).ready(function () {
             const invoiceStatusChart = document.getElementById('invoiceStatusChart');
+            const paymentTypeChart = document.getElementById('paymentTypeChart');
             new Chart(invoiceStatusChart, {
                 type: 'doughnut',
                 data: {
@@ -156,6 +157,20 @@
                     datasets: [{
                         label: '# of Invoices',
                         data: @json($invoiceStatus['data']),
+                        backgroundColor: ['#20F4CB', '#E52534', '#F9B300', '#00122A']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                },
+            });
+            new Chart(paymentTypeChart, {
+                type: 'doughnut',
+                data: {
+                    labels: @json($paymentType['label']),
+                    datasets: [{
+                        label: '# of Invoices',
+                        data: @json($paymentType['data']),
                         backgroundColor: ['#20F4CB', '#E52534', '#F9B300', '#00122A']
                     }]
                 },
