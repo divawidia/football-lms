@@ -43,4 +43,17 @@ class FinancialReportController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function subscriptionChartData(Request $request)
+    {
+        $filter = $request->input('filter');
+
+        $data = $this->financialReportService->playerSubscription($filter);
+        return response()->json([
+            'success' => true,
+            'status' => 200,
+            'message' => 'Successfully retrieve revenue data',
+            'data' => $data,
+        ]);
+    }
 }
