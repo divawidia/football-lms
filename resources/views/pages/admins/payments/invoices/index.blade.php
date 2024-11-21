@@ -85,7 +85,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->current() !!}',
+                    url: '{!! url()->current() !!}'
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},

@@ -159,6 +159,36 @@
                 </div>
             </div>
         </div>
+
+        <div class="page-separator">
+            <div class="page-separator__text">Invoices</div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="invoicesTable">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Inovice Number</th>
+                            <th>Contact</th>
+                            <th>Email</th>
+                            <th>Due Date</th>
+                            <th>Created At</th>
+                            <th>Last Updated</th>
+                            <th>Subtotal</th>
+                            <th>Total Tax</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -169,6 +199,35 @@
             const paymentTypeChart = document.getElementById('paymentTypeChart');
             const subscriptionChart = document.getElementById('subscriptionChart');
             let subscriptionLineChart;
+
+            $('#invoicesTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! url()->route('invoices.index') !!}'
+                },
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'invoiceNumber', name: 'invoiceNumber'},
+                    {data: 'name', name: 'name'},
+                    {data: 'email', name: 'email'},
+                    {data: 'dueDate', name: 'dueDate'},
+                    {data: 'createdAt', name: 'createdAt'},
+                    {data: 'updatedAt', name: 'updatedAt'},
+                    {data: 'subtotal', name: 'subtotal'},
+                    {data: 'totalTax', name: 'totalTax'},
+                    {data: 'ammount', name: 'ammount'},
+                    {data: 'status', name: 'status'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ]
+            });
 
             function doughnutChart(labels, data, datasetLabel, chartId){
                 return new Chart(chartId, {

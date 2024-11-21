@@ -204,7 +204,7 @@ class FinancialReportService extends Service
         $totalUnsubscribed = $this->subscriptionRepository->countSubscriptionByStatus('Unsubscribed',$startDate, $endDate);
         $totalPending = $this->subscriptionRepository->countSubscriptionByStatus('Pending Payment',$startDate, $endDate);
         $totalSubsbcription = $totalScheduled + $totalUnsubscribed + $totalPending;
-        
+
         $chart = [
             'labels' => $results->pluck('date'),
             'datasets' => [
@@ -219,7 +219,7 @@ class FinancialReportService extends Service
                 ],
             ],
         ];
-        
+
         return compact('totalPending', 'totalUnsubscribed', 'totalScheduled', 'totalSubsbcription', 'chart');
     }
 }
