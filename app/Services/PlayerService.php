@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Admin;
 use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\Team;
+use App\Notifications\AdminManagements\AdminAccountUpdated;
 use App\Notifications\PlayerCoachAddToTeam;
 use App\Notifications\PlayerManagements\PlayerAccountCreatedDeleted;
 use App\Notifications\PlayerManagements\PlayerAccountUpdated;
@@ -50,22 +52,17 @@ class PlayerService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if (isAllAdmin()){
+                    $statusButton = '';
                     if ($item->user->status == '1'){
-                        $statusButton = '<form action="' . route('deactivate-player', $item->id) . '" method="POST">
-                                            '.method_field("PATCH").'
-                                            '.csrf_field().'
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons text-danger">block</span> Deactivate Player
-                                            </button>
-                                        </form>';
-                    }else{
-                        $statusButton = '<form action="' . route('activate-player', $item->id) . '" method="POST">
-                                            '.method_field("PATCH").'
-                                            '.csrf_field().'
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons text-success">check_circle</span> Activate Player
-                                            </button>
-                                        </form>';
+                        $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
+                                                <span class="material-icons text-danger">check_circle</span>
+                                                Deactivate Admin
+                                        </button>';
+                    }elseif ($item->user->status == '0') {
+                        $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->id.'">
+                                                <span class="material-icons text-success">check_circle</span>
+                                                Activate Admin
+                                        </button>';
                     }
                     $actionBtn = '
                         <div class="dropdown">
@@ -545,17 +542,18 @@ class PlayerService extends Service
         $player->user->notify(new PlayerAccountUpdated($player, 'updated'));
         return $player;
     }
-    public function activate(Player $player)
-    {
-        $this->userRepository->updateUserStatus($player, '1');
-        $player->user->notify(new PlayerAccountUpdated($player, 'activated'));
-        return $player;
-    }
 
-    public function deactivate(Player $player)
+    public function setStatus(Player $player, $status)
     {
-        $this->userRepository->updateUserStatus($player, '0');
-        $player->user->notify(new PlayerAccountUpdated($player, 'deactivated'));
+        $this->userRepository->updateUserStatus($player, $status);
+
+        if ($status == '1') {
+            $message = 'activated';
+        } elseif ($status == '0') {
+            $message = 'deactivated';
+        }
+
+        $player->user->notify(new PlayerAccountUpdated($player, $message));
         return $player;
     }
 
