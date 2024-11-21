@@ -200,7 +200,12 @@ class FinancialReportService extends Service
         $selectDate = $queryFilter['selectDate'];
 
         $results = $this->subscriptionRepository->playerSubscriptionTrend('Scheduled', $selectDate,$startDate, $endDate);
-        return [
+        $totalScheduled = $this->subscriptionRepository->countSubscriptionByStatus('Scheduled',$startDate, $endDate);
+        $totalUnsubscribed = $this->subscriptionRepository->countSubscriptionByStatus('Unsubscribed',$startDate, $endDate);
+        $totalPending = $this->subscriptionRepository->countSubscriptionByStatus('Pending Payment',$startDate, $endDate);
+        $totalSubsbcription = $totalScheduled + $totalUnsubscribed + $totalPending;
+        
+        $chart = [
             'labels' => $results->pluck('date'),
             'datasets' => [
                 [
@@ -214,5 +219,7 @@ class FinancialReportService extends Service
                 ],
             ],
         ];
+        
+        return compact('totalPending', 'totalUnsubscribed', 'totalScheduled', 'totalSubsbcription', 'chart');
     }
 }

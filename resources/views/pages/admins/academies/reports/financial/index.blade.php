@@ -107,21 +107,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-7">
+            <div class="col-lg-7 d-flex">
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex flex-row align-items-center flex-0">
-                        <div class="h2 mb-0 mr-3" id="totalRevenue"></div>
+                        <div class="h2 mb-0 mr-3" id="totalSubscription"></div>
                         <div class="flex">
-                            <div class="card-title h5">new player's subscription</div>
-                            <div class="card-subtitle text-50 d-flex align-items-center">
-{{--                                {{ $dataOverview['revenueGrowth'] }}--}}
-{{--                                @if($dataOverview['revenueGrowth'] > 0)--}}
-{{--                                    <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>--}}
-{{--                                @elseif($dataOverview['revenueGrowth'] < 0)--}}
-{{--                                    <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>--}}
-{{--                                @endif--}}
-                                From Last Month
-                            </div>
+                            <div class="card-title h5">player's subscription</div>
                         </div>
                         <div class="ml-3 align-self-start">
                             <div class="dropdown mb-2">
@@ -134,6 +125,32 @@
                                     <button type="button" class="dropdown-item" id="allTime">All Time</button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="card-body flex-0 row">
+                        <div class="col-4">
+                            <small class="d-flex align-items-start text-muted mb-2">
+                                <span class="flex d-flex flex-column">
+                                    <span class="text-body"><strong>Scheduled</strong></span>
+                                    <span id="totalScheduled"></span>
+                                </span>
+                            </small>
+                        </div>
+                        <div class="col-4">
+                            <small class="d-flex align-items-start text-muted mb-2">
+                                <span class="flex d-flex flex-column">
+                                    <span class="text-body"><strong>Unsubcribed</strong></span>
+                                    <span id="totalUnsubscribed"></span>
+                                </span>
+                            </small>
+                        </div>
+                        <div class="col-4">
+                            <small class="d-flex align-items-start text-muted mb-2">
+                                <span class="flex d-flex flex-column">
+                                    <span class="text-body"><strong>Pending Payment</strong></span>
+                                    <span id="totalPending"></span>
+                                </span>
+                            </small>
                         </div>
                     </div>
                     <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
@@ -191,6 +208,10 @@
                             },
                         });
                         $('#filter-type-subscription').text(filterText)
+                        $('#totalSubscription').text(response.data.totalSubsbcription)
+                        $('#totalScheduled').text(response.data.totalScheduled + ' Player(s)')
+                        $('#totalUnsubscribed').text(response.data.totalUnsubscribed + ' Player(s)')
+                        $('#totalPending').text(response.data.totalPending + ' Player(s)')
                     },
                     error: function (err) {
                         console.error(err);
@@ -206,7 +227,6 @@
             });
 
             fetchSubscriptionChartData('allTime');
-
         });
     </script>
 @endpush
