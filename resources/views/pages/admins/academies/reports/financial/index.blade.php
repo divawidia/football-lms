@@ -91,7 +91,7 @@
                         <div class="card-title h5">INVOICE STATUS</div>
                     </div>
                     <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
-                        <canvas id="teamAgeChart"></canvas>
+                        <canvas id="invoiceStatusChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -147,6 +147,22 @@
 
 @push('addon-script')
     <script>
-
+        $(document).ready(function () {
+            const invoiceStatusChart = document.getElementById('invoiceStatusChart');
+            new Chart(invoiceStatusChart, {
+                type: 'doughnut',
+                data: {
+                    labels: @json($invoiceStatus['label']),
+                    datasets: [{
+                        label: '# of Invoices',
+                        data: @json($invoiceStatus['data']),
+                        backgroundColor: ['#20F4CB', '#E52534', '#F9B300', '#00122A']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                },
+            });
+        });
     </script>
 @endpush
