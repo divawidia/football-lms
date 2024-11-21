@@ -125,8 +125,8 @@
                         </div>
                         <div class="ml-3 align-self-start">
                             <div class="dropdown mb-2">
-                                <a href="" class="dropdown-toggle" data-toggle="dropdown" data-caret="false">Filter by : <span id="filter-type">All Time</span><i class="material-icons text-50 pb-1">expand_more</i></a>
-                                <div id="filterRevenue" class="dropdown-menu dropdown-menu-right">
+                                <a href="" class="dropdown-toggle" data-toggle="dropdown" data-caret="false">Filter by : <span id="filter-type-subscription">All Time</span><i class="material-icons text-50 pb-1">expand_more</i></a>
+                                <div id="filterSubscription" class="dropdown-menu dropdown-menu-right">
                                     <button type="button" class="dropdown-item" id="today">Today</button>
                                     <button type="button" class="dropdown-item" id="weekly">Weekly</button>
                                     <button type="button" class="dropdown-item" id="monthly">Monthly</button>
@@ -137,7 +137,7 @@
                         </div>
                     </div>
                     <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
-                        <canvas id="revenueChart"></canvas>
+                        <canvas id="subscriptionChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -150,6 +150,8 @@
         $(document).ready(function () {
             const invoiceStatusChart = document.getElementById('invoiceStatusChart');
             const paymentTypeChart = document.getElementById('paymentTypeChart');
+            const subscriptionChart = document.getElementById('subscriptionChart');
+            let subscriptionLineChart;
 
             function doughnutChart(labels, data, datasetLabel, chartId){
                 return new Chart(chartId, {
@@ -170,6 +172,40 @@
 
             doughnutChart(@json($paymentType['label']), @json($paymentType['data']), '# of Invoices', paymentTypeChart)
             doughnutChart(@json($invoiceStatus['label']), @json($invoiceStatus['data']), '# of Invoices', invoiceStatusChart)
+
+
+            function fetchSubscriptionChartData(filter, filterText) {
+                $.ajax({
+                    url: '{{ route('admin.financial-report.subscription-chart-data') }}',
+                    type: 'GET',
+                    data: {
+                        filter: filter,
+                    },
+                    success: function (response) {
+                        if (subscriptionLineChart) subscriptionLineChart.destroy(); // Destroy previous chart instance
+                        subscriptionLineChart = new Chart(subscriptionChart, {
+                            type: 'line',
+                            data: response.data.chart,
+                            options: {
+                                responsive: true,
+                            },
+                        });
+                        $('#filter-type-subscription').text(filterText)
+                    },
+                    error: function (err) {
+                        console.error(err);
+                        alert('Failed to fetch chart data.');
+                    },
+                });
+            }
+
+            $('#filterSubscription .dropdown-item').on('click', function () {
+                const filter = $(this).attr('id');
+                const filterText = $(this).text();
+                fetchSubscriptionChartData(filter, filterText);
+            });
+
+            fetchSubscriptionChartData('allTime');
 
         });
     </script>
