@@ -110,7 +110,7 @@
         <div class="tab-content">
             <div class="tab-pane fade show active" id="overview-tab" role="tabpanel">
 
-                {{--        Overview Section--}}
+                {{-- Overview Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Overview</div>
                 </div>
@@ -131,6 +131,7 @@
                 </div>
             </div>
 
+            {{-- Profile / Contact Histories --}}
             <div class="tab-pane fade" id="profile-tab" role="tabpanel">
                 <div class="row card-group-row">
                     <div class="col-sm-6 flex-column">
@@ -236,8 +237,9 @@
                 </div>
             </div>
 
+
+            {{-- Teams Histories --}}
             <div class="tab-pane fade" id="teams-tab" role="tabpanel">
-                {{--Teams Section--}}
                 <div class="page-separator">
                     <div class="page-separator__text">Teams</div>
                     @if(isAllAdmin())
@@ -269,20 +271,54 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Skill Stats Histories --}}
             <div class="tab-pane fade" id="skillStats-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
-                    <a href="{{ route('player-managements.skill-stats', $data->id) }}"
-                       class="btn btn-white border btn-sm ml-auto">
-                        View More
-                        <span class="material-icons ml-2 icon-16pt">chevron_right</span>
-                    </a>
+                    @if(isCoach())
+                        <a class="btn btn-outline-white addSkills" id="{{ $data->id }}" href="">
+                            <span class="material-icons mr-2">edit</span>
+                            Update Skills
+                        </a>
+                    @endif
+                </div>
+                <div class="card card-body">
+                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']" :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
+                </div>
+                {{--Skill Stats History Section--}}
+                <div class="page-separator">
+                    <div class="page-separator__text">Skill Stats History</div>
+                        <div class="form-group ml-auto">
+                            <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>
+                            <input id="startDateFilter"
+                                type="text"
+                                class="form-control"
+                                placeholder="Start Date"
+                               onfocus="(this.type='date')"
+                               onblur="(this.type='text')"/>
+                        </div>
+                        <div class="form-group ml-2">
+                            <label class="form-label mb-0" for="endDateFilter"></label>
+                            <input id="endDateFilter"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="End Date"
+                                   onfocus="(this.type='date')"
+                                   onblur="(this.type='text')"/>
+                        </div>
                 </div>
                 <div class="card">
-                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
-                                                      :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
+                    <div class="card-body">
+                        <canvas id="skillStatsHistoryChart"></canvas>
+                    </div>
                 </div>
+
+                {{--All Skill Stats Section--}}
+                <x-player-skill-stats-card :allSkills="$allSkills"/>
             </div>
+
+            {{-- Parents/Guardians Histories --}}
             <div class="tab-pane fade" id="parents-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Parents/Guardians</div>
@@ -298,6 +334,8 @@
                 </div>
                 <x-player-parents-tables :player="$data"/>
             </div>
+
+            {{-- Upcoming Matches --}}
             <div class="tab-pane fade" id="upcomingMatch-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Upcoming Matches</div>
@@ -332,6 +370,8 @@
                     @endforeach
                 </div>
             </div>
+
+            {{-- Training Histories --}}
             <div class="tab-pane fade" id="trainingHistories-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Training Histories</div>
@@ -360,6 +400,8 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Match Histories --}}
             <div class="tab-pane fade" id="matchHistories-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Match Histories</div>
@@ -390,6 +432,8 @@
                     </div>
                 </div>
             </div>
+
+            {{-- player performance review --}}
             <div class="tab-pane fade" id="performance-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">player performance review</div>
@@ -513,6 +557,26 @@
                     },
                 ],
                 order: [[2, 'asc']],
+            });
+
+            const skillStatsHistoryChart = $('#skillStatsHistoryChart');
+            new Chart(skillStatsHistoryChart, {
+                type: 'line',
+                data: {
+                    labels: @json($skillStatsHistory['label']),
+                    datasets: [
+                            @foreach($skillStatsHistory['data'] as $key => $value)
+                        {
+                            label: '{{ $key }}',
+                            data: @json($value),
+                            tension: 0.4,
+                        },
+                        @endforeach
+                    ]
+                },
+                options: {
+                    responsive: true,
+                },
             });
         });
     </script>
