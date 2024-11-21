@@ -94,7 +94,8 @@ class FinancialReportService extends Service
         return compact('label', 'data');
     }
 
-    public function revenue($filter){
+    public function filter($filter)
+    {
         $startDate = null;
         $endDate = null;
         switch ($filter) {
@@ -122,7 +123,14 @@ class FinancialReportService extends Service
                 $selectDate = DB::raw('YEAR(created_at) as date');
                 break;
         }
-
+        return compact('startDate', 'endDate', 'selectDate');
+    }
+    public function revenue($filter)
+    {
+        $queryFilter = $this->filter($filter);
+        $startDate = $queryFilter['startDate'];
+        $endDate = $queryFilter['endDate'];
+        $selectDate = $queryFilter['selectDate'];
 
         $results = $this->invoiceRepository->revenue($selectDate, $startDate, $endDate);
 
@@ -182,5 +190,15 @@ class FinancialReportService extends Service
             'sumUncollectInvoices',
             'totalRevenue'
         );
+    }
+
+    public function playerSubscription($filter)
+    {
+        $queryFilter = $this->filter($filter);
+        $startDate = $queryFilter['startDate'];
+        $endDate = $queryFilter['endDate'];
+        $selectDate = $queryFilter['selectDate'];
+
+
     }
 }

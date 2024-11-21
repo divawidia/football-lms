@@ -45,6 +45,15 @@ class SubscriptionRepository
             ->first();
     }
 
+    public function playerSubscriptionTrend($status, $startDate = null, $endDate = null)
+    {
+        $query = $this->subscription->where('status', $status);
+        if ($startDate != null && $endDate != null) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        return $query->count();
+    }
+
     public function find($id)
     {
         return $this->subscription->findOrFail($id);
