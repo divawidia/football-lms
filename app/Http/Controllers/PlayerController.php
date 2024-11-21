@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiResponse;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\PlayerRequest;
 use App\Http\Requests\PlayerTeamRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Models\Player;
-use App\Models\PlayerPosition;
 use App\Models\Team;
-use App\Models\User;
 use App\Services\PlayerService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Password;
-use Nnjeim\World\World;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PlayerController extends Controller
@@ -73,9 +68,9 @@ class PlayerController extends Controller
     {
         $data = $request->validated();
         $loggedUser = $this->getLoggedUser();
-        $this->playerService->store($data, $this->getAcademyId(), $loggedUser);
+        $player = $this->playerService->store($data, $this->getAcademyId(), $loggedUser);
 
-        $text = $data['firstName'].' '.$data['lastName'].' account successfully added!';
+        $text = "Player ".$this->getUserFullName($player->user)."'s account successfully added!";
         Alert::success($text);
         return redirect()->route('player-managements.index');
     }
@@ -154,7 +149,7 @@ class PlayerController extends Controller
 
         $this->playerService->update($data, $player);
 
-        $text =  $data['firstName'].' '.$data['lastName'].' successfully updated!';
+        $text = "Player ".$this->getUserFullName($player->user)."'s account successfully updated!";
         Alert::success($text);
         return redirect()->route('player-managements.show', $player->id);
     }
@@ -190,28 +185,38 @@ class PlayerController extends Controller
 
     public function deactivate(Player $player)
     {
-        $this->playerService->deactivate($player);
-        Alert::success($player->user->firstName . ' '. $player->user->lastName . ' account status successfully deactivated!');
-        return redirect()->route('player-managements.show', $player->id);
+        try {
+            $data = $this->playerService->setStatus($player, '0');
+            $message = "Player ".$this->getUserFullName($player->user)."'s account status successfully set to deactivated.";
+            return ApiResponse::success($data, $message);
+
+        } catch (Exception $e){
+            $message = "Error while updating player ".$this->getUserFullName($player->user)."'s account status to deactivate: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function activate(Player $player)
     {
-        $this->playerService->activate($player);
-        Alert::success($player->user->firstName . ' '. $player->user->lastName . ' account status successfully activated!');
-        return redirect()->route('player-managements.show', $player->id);
+        try {
+            $data = $this->playerService->setStatus($player, '1');
+            $message = "Player ".$this->getUserFullName($player->user)."'s account status successfully set to activated.";
+            return ApiResponse::success($data, $message);
+
+        } catch (Exception $e){
+            $message = "Error while updating player ".$this->getUserFullName($player->user)."'s account status to activated: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function changePassword(ChangePasswordRequest $request, Player $player)
     {
         $data = $request->validated();
         $result = $this->playerService->changePassword($data, $player);
-
-        return response()->json([
-            'status' => 200,
-            'data' => $result,
-            'message' => 'Successfully change password'
-        ]);
+        $message = "Player ".$this->getUserFullName($player->user)."'s account password successfully updated!";
+        return ApiResponse::success($result, $message);
     }
 
     /**
@@ -220,11 +225,15 @@ class PlayerController extends Controller
     public function destroy(Player $player)
     {
         $loggedUser = $this->getLoggedUser();
-        $result = $this->playerService->destroy($player, $loggedUser);
-        return response()->json([
-            'status' => 200,
-            'data' => $result,
-            'message' => 'Successfully delete player'
-        ]);
+        try {
+            $data = $this->playerService->destroy($player, $loggedUser);
+            $message = "Player ".$this->getUserFullName($player->user)."'s account successfully deleted.";
+            return ApiResponse::success($data, $message);
+
+        } catch (Exception $e){
+            $message = "Error while deleting player ".$this->getUserFullName($player->user)."'s account: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 }
