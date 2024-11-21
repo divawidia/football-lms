@@ -150,34 +150,27 @@
         $(document).ready(function () {
             const invoiceStatusChart = document.getElementById('invoiceStatusChart');
             const paymentTypeChart = document.getElementById('paymentTypeChart');
-            new Chart(invoiceStatusChart, {
-                type: 'doughnut',
-                data: {
-                    labels: @json($invoiceStatus['label']),
-                    datasets: [{
-                        label: '# of Invoices',
-                        data: @json($invoiceStatus['data']),
-                        backgroundColor: ['#20F4CB', '#E52534', '#F9B300', '#00122A']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                },
-            });
-            new Chart(paymentTypeChart, {
-                type: 'doughnut',
-                data: {
-                    labels: @json($paymentType['label']),
-                    datasets: [{
-                        label: '# of Invoices',
-                        data: @json($paymentType['data']),
-                        backgroundColor: ['#20F4CB', '#E52534', '#F9B300', '#00122A']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                },
-            });
+
+            function doughnutChart(labels, data, datasetLabel, chartId){
+                return new Chart(chartId, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: datasetLabel,
+                            data: data,
+                            backgroundColor: ['#20F4CB', '#E52534', '#F9B300', '#00122A']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                    },
+                });
+            }
+
+            doughnutChart(@json($paymentType['label']), @json($paymentType['data']), '# of Invoices', paymentTypeChart)
+            doughnutChart(@json($invoiceStatus['label']), @json($invoiceStatus['data']), '# of Invoices', invoiceStatusChart)
+
         });
     </script>
 @endpush
