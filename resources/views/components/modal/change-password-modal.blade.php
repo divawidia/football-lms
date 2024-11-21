@@ -63,16 +63,17 @@
             $('#formChangePasswordModal').on('submit', function (e) {
                 e.preventDefault();
                 const id = $('#userId').val();
+
                 $.ajax({
                     url: "{{ $route }}".replace(':id', id),
                     type: $(this).attr('method'),
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
-                    success: function () {
+                    success: function (response) {
                         $('#changePasswordModal').modal('hide');
                         Swal.fire({
-                            title: 'Accounts password successfully updated!',
+                            title: response.message,
                             icon: 'success',
                             showCancelButton: false,
                             allowOutsideClick: false,
@@ -87,7 +88,6 @@
                     },
                     error: function (xhr) {
                         const response = JSON.parse(xhr.responseText);
-                        console.log(response);
                         $.each(response.errors, function (key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#add_" + key).addClass('is-invalid');

@@ -16,11 +16,7 @@
             <h2 class="mb-0">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
                 <li class="breadcrumb-item">
-                    <a href="@if(isAllAdmin())
-                        {{ route('admin.dashboard') }}
-                        @elseif(isCoach())
-                        {{ route('coach.dashboard') }}
-                        @endif">
+                    <a href="{{ checkRoleDashboardRoute() }}">
                         Home
                     </a>
                 </li>
@@ -64,6 +60,29 @@
             </div>
         </div>
     </div>
+
+    @if(isAllAdmin())
+        <x-process-data-confirmation btnClass=".setDeactivate"
+                                     :processRoute="route('deactivate-player', ':id')"
+                                     :routeAfterProcess="route('player-managements.index')"
+                                     method="PATCH"
+                                     confirmationText="Are you sure to deactivate this player account's status?"
+                                     errorText="Something went wrong when deactivating this player account!"/>
+
+        <x-process-data-confirmation btnClass=".setActivate"
+                                     :processRoute="route('activate-player', ':id')"
+                                     :routeAfterProcess="route('player-managements.index')"
+                                     method="PATCH"
+                                     confirmationText="Are you sure to activate this player account's status?"
+                                     errorText="Something went wrong when activating this player account!"/>
+
+        <x-process-data-confirmation btnClass=". delete-user"
+                                     :processRoute="route('player-managements.destroy', ['player' => ':id'])"
+                                     :routeAfterProcess="route('player-managements.index')"
+                                     method="DELETE"
+                                     confirmationText="Are you sure to delete this player account?"
+                                     errorText="Something went wrong when deleting this player account!"/>
+    @endif
 @endsection
 @push('addon-script')
     <script>
@@ -92,47 +111,6 @@
                     },
                 ]
             });
-
-            @if(isAllAdmin())
-
-            body.on('click', '.delete-user', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to delete this player?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('player-managements.destroy', ['player' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Player's account successfully deleted!",
-                                });
-                                datatable.ajax.reload();
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-            @endif
         });
     </script>
 @endpush
