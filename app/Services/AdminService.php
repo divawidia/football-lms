@@ -35,8 +35,7 @@ class AdminService extends Service
                     $changePassBtn = '';
                     $statusButton = '';
                     $editAccBtn = '';
-
-                    if (getLoggedUser()->id == $item->id) {
+                    if (getLoggedUser()->id != $item->user->id) {
                         $editAccBtn = '<a class="dropdown-item" href="' . route('admin-managements.edit', $item->id) . '"><span class="material-icons mr-2">edit</span> Edit Admin</a>';
                         $deleteUserBtn = '
                             <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->id.'">
@@ -45,12 +44,12 @@ class AdminService extends Service
                         $changePassBtn = '<a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons mr-2">lock</span> Change Admin Password</a>';
                     }
 
-                    if ($item->user->status == '1' && getLoggedUser()->id == $item->id){
+                    if ($item->user->status == '1' && getLoggedUser()->id != $item->user->id){
                         $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
                                                 <span class="material-icons text-danger">check_circle</span>
                                                 Deactivate Admin
                                         </button>';
-                    }elseif($item->user->status == '0' && getLoggedUser()->id == $item->id) {
+                    }elseif($item->user->status == '0' && getLoggedUser()->id != $item->user->id) {
                         $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->id.'">
                                                 <span class="material-icons text-success">check_circle</span>
                                                 Activate Admin
