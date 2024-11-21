@@ -29,9 +29,9 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function () {
+                            success: function (response) {
                                 Swal.fire({
-                                    title: '{{ $successText }}',
+                                    title: response.message,
                                     icon: 'success',
                                     showCancelButton: false,
                                     allowOutsideClick: false,

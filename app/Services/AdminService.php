@@ -46,21 +46,15 @@ class AdminService extends Service
                     }
 
                     if ($item->user->status == '1' && getLoggedUser()->id == $item->id){
-                        $statusButton = '<form action="' . route('deactivate-admin', $item->id) . '" method="POST">
-                                            '.method_field("PATCH").'
-                                            '.csrf_field().'
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons mr-2 text-danger">block</span> Deactivate Admin</a>
-                                            </button>
-                                        </form>';
+                        $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
+                                                <span class="material-icons text-danger">check_circle</span>
+                                                Deactivate Admin
+                                        </button>';
                     }elseif($item->user->status == '0' && getLoggedUser()->id == $item->id) {
-                        $statusButton = '<form action="' . route('activate-admin', $item->id) . '" method="POST">
-                                            '.method_field("PATCH").'
-                                            '.csrf_field().'
-                                            <button type="submit" class="dropdown-item">
-                                                <span class="material-icons mr-2 text-success">check_circle</span> Activate Admin</a>
-                                            </button>
-                                        </form>';
+                        $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->id.'">
+                                                <span class="material-icons text-success">check_circle</span>
+                                                Activate Admin
+                                        </button>';
                     }
                     return '
                         <div class="dropdown">

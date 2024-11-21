@@ -54,12 +54,33 @@
             </div>
         </div>
     </div>
+
+    @if(isSuperAdmin())
+        <x-process-data-confirmation btnClass=".setDeactivate"
+                                     :processRoute="route('deactivate-admin', ':id')"
+                                     :routeAfterProcess="route('admin-managements.index')"
+                                     method="PATCH"
+                                     confirmationText="Are you sure to deactivate this admin account's status?"
+                                     errorText="Something went wrong when deactivating this admin account!"/>
+
+        <x-process-data-confirmation btnClass=".setActivate"
+                                     :processRoute="route('activate-admin', ':id')"
+                                     :routeAfterProcess="route('admin-managements.index')"
+                                     method="PATCH"
+                                     confirmationText="Are you sure to activate this admin account's status?"
+                                     errorText="Something went wrong when activating this admin account!"/>
+
+        <x-process-data-confirmation btnClass=".deleteAdmin"
+                                     :processRoute="route('admin-managements.destroy', ['admin' => ':id'])"
+                                     :routeAfterProcess="route('admin-managements.index')"
+                                     method="DELETE"
+                                     confirmationText="Are you sure to delete this admin account?"
+                                     errorText="Something went wrong when deleting this admin account!"/>
+    @endif
 @endsection
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            const body = $('body');
-            // AJAX DataTable
             $('#table').DataTable({
                 processing: true,
                 serverSide: true,
@@ -83,55 +104,6 @@
                     },
                 ]
             });
-
-            @if(isSuperAdmin())
-
-            // delete data alert
-            body.on('click', '.deleteAdmin', function () {
-                const id = $(this).attr('id');
-                Swal.fire({
-                    title: "Are you sure to delete this admin account?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('admin-managements.destroy', ['admin' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Admin successfully archived!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    allowOutsideClick: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-            @endif
         });
     </script>
 @endpush

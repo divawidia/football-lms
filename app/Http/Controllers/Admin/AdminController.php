@@ -126,7 +126,7 @@ class AdminController extends Controller
             return response()->json([
                 'success' => true,
                 'status' => 200,
-                'message' => 'Admin '.$this->getUserFullName($admin->user).' account status successfully set to deactivated.',
+                'message' => "Admin ".$this->getUserFullName($admin->user)."'s account status successfully set to deactivated.",
                 'data' => $data,
             ]);
 
@@ -148,7 +148,7 @@ class AdminController extends Controller
             return response()->json([
                 'success' => true,
                 'status' => 200,
-                'message' => 'Admin '.$this->getUserFullName($admin->user).' account status successfully set to activated.',
+                'message' => "Admin ".$this->getUserFullName($admin->user)."'s account status successfully set to activated.",
                 'data' => $data,
             ]);
 
@@ -174,7 +174,7 @@ class AdminController extends Controller
             return response()->json([
                 'success' => true,
                 'status' => 200,
-                'message' => 'Admin '.$this->getUserFullName($admin->user).' account successfully deleted.',
+                'message' => "Admin ".$this->getUserFullName($admin->user)."'s account successfully deleted.",
                 'data' => $data,
             ]);
 
