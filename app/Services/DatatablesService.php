@@ -37,6 +37,21 @@ class DatatablesService extends Service
         }
         return $status;
     }
+
+    public function invoiceStatus($status)
+    {
+        if ($status == 'Past Due') {
+            $status = '<span class="badge badge-pill badge-warning">'.$status .'</span>';
+        } elseif ($status == 'Open') {
+            $status = '<span class="badge badge-pill badge-info">'.$status .'</span>';
+        } elseif ($status == 'Paid') {
+            $status = '<span class="badge badge-pill badge-success">'.$status .'</span>';
+        } else {
+            $status = '<span class="badge badge-pill badge-danger">'.$status .'</span>';
+        }
+        return $status;
+    }
+
     public function startEndDate($data)
     {
         $date = $this->convertToDate($data->date);

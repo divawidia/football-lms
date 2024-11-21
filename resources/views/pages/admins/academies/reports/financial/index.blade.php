@@ -97,7 +97,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-5">
+            <div class="col-lg-5 d-flex">
                 <div class="card card-group-row__card">
                     <div class="card-body d-flex flex-row align-items-center flex-0">
                         <div class="card-title h5">payments type</div>
@@ -180,6 +180,7 @@
                             <th>Total Tax</th>
                             <th>Total Amount</th>
                             <th>Status</th>
+                            <th>Payment Method</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -219,6 +220,7 @@
                     {data: 'totalTax', name: 'totalTax'},
                     {data: 'ammount', name: 'ammount'},
                     {data: 'status', name: 'status'},
+                    {data: 'paymentMethod', name: 'paymentMethod'},
                     {
                         data: 'action',
                         name: 'action',

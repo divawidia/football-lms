@@ -40,13 +40,15 @@ class InvoiceService extends Service
     private InvoiceRepository $invoiceRepository;
     private SubscriptionRepository $subscriptionRepository;
     private Invoice $invoice;
+    private DatatablesService $datatablesService;
     public function __construct(
         ProductRepository $productRepository,
         TaxRepository $taxRepository,
         UserRepository $userRepository,
         Invoice $invoice,
         InvoiceRepository $invoiceRepository,
-        SubscriptionRepository $subscriptionRepository)
+        SubscriptionRepository $subscriptionRepository,
+        DatatablesService $datatablesService)
     {
         Config::$serverKey    = config('services.midtrans.serverKey');
         Config::$isProduction = config('services.midtrans.isProduction');
@@ -59,6 +61,7 @@ class InvoiceService extends Service
         $this->invoice = $invoice;
         $this->invoiceRepository = $invoiceRepository;
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->datatablesService = $datatablesService;
     }
     public function index()
     {
@@ -103,7 +106,7 @@ class InvoiceService extends Service
                                 more_vert
                             </span>
                           </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                 ' . $editButton . '
                                 <a class="dropdown-item edit" href="' . route('invoices.show', $item->id) . '" type="button">
                                     <span class="material-icons">visibility</span>
@@ -117,27 +120,19 @@ class InvoiceService extends Service
                         </div>';
             })
             ->editColumn('name', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->receiverUser->foto) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->receiverUser->firstName . ' ' . $item->receiverUser->lastName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->receiverUser->roles[0]['name'] . '</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                 return $this->datatablesService->name($item->receiverUser->foto, $this->getUserFullName($item->receiverUser), $item->receiverUser->roles[0]['name'], route('player-managements.show', $item->receiverUser->player->id));
             })
             ->editColumn('email', function ($item) {
                 return $item->receiverUser->email;
             })
             ->editColumn('ammount', function ($item) {
                 return $this->priceFormat($item->ammountDue);
+            })
+            ->editColumn('totalTax', function ($item) {
+                return $this->priceFormat($item->totalTax);
+            })
+            ->editColumn('subtotal', function ($item) {
+                return $this->priceFormat($item->subtotal);
             })
             ->editColumn('dueDate', function ($item) {
                 return $this->convertToDatetime($item->dueDate);
@@ -149,19 +144,9 @@ class InvoiceService extends Service
                 return $this->convertToDatetime($item->updated_at);
             })
             ->editColumn('status', function ($item) {
-                $badge = '';
-                if ($item->status == 'Open') {
-                    $badge = '<span class="badge badge-pill badge-info">'.$item->status.'</span>';
-                } elseif ($item->status == 'Paid') {
-                    $badge = '<span class="badge badge-pill badge-success">'.$item->status.'</span>';
-                } elseif ($item->status == 'Past Due') {
-                    $badge = '<span class="badge badge-pill badge-warning">'.$item->status.'</span>';
-                } elseif ($item->status == 'Uncollectible') {
-                    $badge = '<span class="badge badge-pill badge-danger">'.$item->status.'</span>';
-                }
-                return $badge;
+                return $this->datatablesService->invoiceStatus($item->status);
             })
-            ->rawColumns(['action', 'email', 'ammount','dueDate', 'name', 'status', 'createdAt','updatedAt'])
+            ->rawColumns(['action', 'email', 'ammount', 'totalTax', 'subtotal','dueDate', 'name', 'status', 'createdAt','updatedAt'])
             ->addIndexColumn()
             ->make();
     }
