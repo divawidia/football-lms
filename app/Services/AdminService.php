@@ -69,7 +69,7 @@ class AdminService extends Service
                                 more_vert
                             </span>
                           </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons mr-2">visibility</span> View Admin</a>
                             '.$editAccBtn.'
                             '. $statusButton .'
@@ -138,19 +138,18 @@ class AdminService extends Service
         return $admin;
     }
 
-    public function activate(Admin $admin)
+    public function setStatus(Admin $admin, $status)
     {
-        $admin->user()->update(['status' => '1']);
+        $admin->user()->update(['status' => $status]);
         $superAdminName = $this->getUserFullName($this->loggedUser);
-        $admin->user->notify(new AdminAccountUpdated($superAdminName, $admin, 'activated'));
-        return $admin;
-    }
 
-    public function deactivate(Admin $admin)
-    {
-        $admin->user()->update(['status' => '0']);
-        $superAdminName = $this->getUserFullName($this->loggedUser);
-        $admin->user->notify(new AdminAccountUpdated($superAdminName, $admin, 'deactivated'));
+        if ($status == '1') {
+            $message = 'activated';
+        } elseif ($status == '0') {
+            $message = 'deactivated';
+        }
+
+        $admin->user->notify(new AdminAccountUpdated($superAdminName, $admin, $message));
         return $admin;
     }
 
