@@ -52,7 +52,7 @@ class SubscriptionRepository
         if ($startDate != null && $endDate != null) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
-        return $query->get();
+        return $query->groupBy('date')->get();
     }
 
     public function find($id)
