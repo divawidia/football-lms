@@ -34,6 +34,9 @@
     </div>
 
     <div class="container page__container page-section">
+        <div class="page-separator">
+            <div class="page-separator__text">Upcoming Trainings</div>
+        </div>
         <x-training-tables :route="url()->current()" tableId="tables"/>
 
         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
