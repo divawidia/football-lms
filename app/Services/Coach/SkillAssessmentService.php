@@ -42,8 +42,11 @@ class SkillAssessmentService extends Service
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="' . route('skill-assessments.skill-stats', $item->id) . '"><span class="material-icons">edit</span> View Skill Player</a>
-                            <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> Update Player Skill</a>
-                            <button type="button" class="dropdown-item add-performance-review" id="' . $item->userId . '">
+                            <button type="button" class="dropdown-item addSkills" id="' . $item->id . '">
+                                <span class="material-icons">visibility</span>
+                                Update Player Skill
+                            </button>
+                            <button type="button" class="dropdown-item addPerformanceReview" id="' . $item->id . '">
                                 <span class="material-icons">add</span>
                                 Add Performance Review
                             </button>

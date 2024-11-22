@@ -6,7 +6,10 @@
     @yield('title')
 @endsection
 
-
+@section('modal')
+    <x-add-performance-review-modal :routeCreate="route('coach.performance-reviews.store', ['player'=> ':id'])"/>
+    <x-skill-assessments-modal/>
+@endsection
 
     @section('content')
         <div class="pt-32pt">
