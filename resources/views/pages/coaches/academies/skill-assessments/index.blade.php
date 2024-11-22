@@ -25,7 +25,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="table">
+                        <table class="table table-hover" id="table">
                             <thead>
                             <tr>
                                 <th>#</th>
@@ -68,8 +68,7 @@
                             data: 'action',
                             name: 'action',
                             orderable: false,
-                            searchable: false,
-                            width: '15%'
+                            searchable: false
                         },
                     ]
                 });
