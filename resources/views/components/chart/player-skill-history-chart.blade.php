@@ -1,4 +1,3 @@
-{--Skill Stats History Section--}}
 <div class="page-separator">
     <div class="page-separator__text">Skill Stats History</div>
     <div class="form-group ml-auto">

@@ -288,32 +288,7 @@
                     <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']" :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
                 </div>
                 {{--Skill Stats History Section--}}
-                <div class="page-separator">
-                    <div class="page-separator__text">Skill Stats History</div>
-                        <div class="form-group ml-auto">
-                            <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>
-                            <input id="startDateFilter"
-                                type="text"
-                                class="form-control"
-                                placeholder="Start Date"
-                               onfocus="(this.type='date')"
-                               onblur="(this.type='text')"/>
-                        </div>
-                        <div class="form-group ml-2">
-                            <label class="form-label mb-0" for="endDateFilter"></label>
-                            <input id="endDateFilter"
-                                   type="text"
-                                   class="form-control"
-                                   placeholder="End Date"
-                                   onfocus="(this.type='date')"
-                                   onblur="(this.type='text')"/>
-                        </div>
-                </div>
-                <div class="card">
-                    <div class="card-body" id="skillStatsHistoryCard">
-                        <canvas id="skillStatsHistoryChart"></canvas>
-                    </div>
-                </div>
+                <x-player-skill-history-chart :player="$data"/>
 
                 {{--All Skill Stats Section--}}
                 <x-player-skill-stats-card :allSkills="$allSkills"/>
