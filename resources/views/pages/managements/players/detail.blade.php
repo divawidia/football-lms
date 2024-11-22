@@ -367,7 +367,9 @@
                 @endif
                 <div class="row">
                     @foreach($overview['upcomingTrainings'] as $training)
-                        <x-training-card :training="$training"/>
+                        <div class="col-lg-6">
+                            <x-training-card :training="$training"/>
+                        </div>
                     @endforeach
                 </div>
             </div>

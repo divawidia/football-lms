@@ -270,9 +270,9 @@ class PlayerService extends Service
             $statsData[$result.'ThisMonth'] = $this->playerRepository->matchResults($player, $result, Carbon::now()->startOfMonth(),Carbon::now());
         }
 
-        $upcomingMatches = $this->eventScheduleRepository->getEventByModel($player, 'Match', '1', 2);
+        $upcomingMatches = $this->eventScheduleRepository->getEventByModel($player, 'Match', 'Scheduled', 2);
 
-        $upcomingTrainings = $this->eventScheduleRepository->getEventByModel($player, 'Training', '1',2);
+        $upcomingTrainings = $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Scheduled',2);
 
         $playerAge = $this->getAge($player->user->dob);
         $playerDob = $this->convertToDate($player->user->dob);
