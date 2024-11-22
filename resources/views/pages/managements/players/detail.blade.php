@@ -561,47 +561,6 @@
                 ],
                 order: [[2, 'asc']],
             });
-
-            const skillStatsHistoryChart = $('#skillStatsHistoryChart');
-            let myChart;
-
-            function fetchChartData(startDate, endDate) {
-                $.ajax({
-                    url: '{{ route('player-managements.skill-stats-history', $data->id) }}',
-                    type: 'GET',
-                    data: {
-                        startDate: startDate,
-                        endDate: endDate
-                    },
-                    success: function (response) {
-                        if (myChart) myChart.destroy(); // Destroy previous chart instance
-                        myChart = new Chart(skillStatsHistoryChart, {
-                            type: 'line',
-                            data: response.data,
-                            options: {
-                                responsive: true,
-                            },
-                        })
-                    },
-                    error: function (err) {
-                        console.error(err);
-                        alert('Failed to fetch chart data.');
-                    },
-                });
-            }
-
-            $('#startDateFilter').on('change', function () {
-                const startDate = $(this).val();
-                const endDate = $('#endDateFilter').val();
-                fetchChartData(startDate, endDate);
-            });
-            $('#endDateFilter').on('change', function () {
-                const startDate = $('#startDateFilter').val();
-                const endDate = $(this).val();
-                fetchChartData(startDate, endDate);
-            });
-
-            fetchChartData(null, null);
         });
     </script>
 @endpush
