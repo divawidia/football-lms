@@ -310,7 +310,7 @@
                         </div>
                 </div>
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body" id="skillStatsHistoryCard">
                         <canvas id="skillStatsHistoryChart"></canvas>
                     </div>
                 </div>
@@ -563,24 +563,45 @@
             });
 
             const skillStatsHistoryChart = $('#skillStatsHistoryChart');
-            new Chart(skillStatsHistoryChart, {
-                type: 'line',
-                data: {
-                    labels: @json($skillStatsHistory['label']),
-                    datasets: [
-                            @foreach($skillStatsHistory['data'] as $key => $value)
-                        {
-                            label: '{{ $key }}',
-                            data: @json($value),
-                            tension: 0.4,
-                        },
-                        @endforeach
-                    ]
-                },
-                options: {
-                    responsive: true,
-                },
+            let myChart;
+
+            function fetchChartData(startDate, endDate) {
+                $.ajax({
+                    url: '{{ route('player-managements.skill-stats-history', $data->id) }}',
+                    type: 'GET',
+                    data: {
+                        startDate: startDate,
+                        endDate: endDate
+                    },
+                    success: function (response) {
+                        if (myChart) myChart.destroy(); // Destroy previous chart instance
+                        myChart = new Chart(skillStatsHistoryChart, {
+                            type: 'line',
+                            data: response.data,
+                            options: {
+                                responsive: true,
+                            },
+                        })
+                    },
+                    error: function (err) {
+                        console.error(err);
+                        alert('Failed to fetch chart data.');
+                    },
+                });
+            }
+
+            $('#startDateFilter').on('change', function () {
+                const startDate = $(this).val();
+                const endDate = $('#endDateFilter').val();
+                fetchChartData(startDate, endDate);
             });
+            $('#endDateFilter').on('change', function () {
+                const startDate = $('#startDateFilter').val();
+                const endDate = $(this).val();
+                fetchChartData(startDate, endDate);
+            });
+
+            fetchChartData(null, null);
         });
     </script>
 @endpush

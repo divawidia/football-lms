@@ -10,8 +10,10 @@ use App\Http\Requests\UpdatePlayerRequest;
 use App\Models\Player;
 use App\Models\Team;
 use App\Services\PlayerService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PlayerController extends Controller
@@ -93,7 +95,7 @@ class PlayerController extends Controller
         $performanceReviews = $player->playerPerformanceReview;
         $playerSkillStats = $this->playerService->skillStatsChart($player);
         $hasntJoinedTeams = $this->playerService->hasntJoinedTeams($player);
-        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
+//        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
         $allSkills = $this->playerService->getSkillStats($player)->first();
 
         return view('pages.managements.players.detail', [
@@ -102,23 +104,32 @@ class PlayerController extends Controller
             'performanceReviews' => $performanceReviews,
             'playerSkillStats' => $playerSkillStats,
             'hasntJoinedTeams' => $hasntJoinedTeams,
-            'skillStatsHistory' => $skillStatsHistory,
+//            'skillStatsHistory' => $skillStatsHistory,
             'allSkills' => $allSkills,
         ]);
+    }
+
+    public function skillStatsHistory(Request $request, Player $player)
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $result = $this->playerService->skillStatsHistoryChart($player, $startDate, $endDate);
+
+        return ApiResponse::success($result);
     }
 
     public function skillStatsDetail(Player $player)
     {
 
         $skillStats =$this->playerService->skillStatsChart($player);
-        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
+//        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
         $allSkills = $this->playerService->getSkillStats($player)->first();
 
 
         return view('pages.managements.players.skill-detail', [
             'data' => $player,
             'skillStats' => $skillStats,
-            'skillStatsHistory' => $skillStatsHistory,
+//            'skillStatsHistory' => $skillStatsHistory,
             'allSkills' => $allSkills,
         ]);
     }
@@ -127,14 +138,14 @@ class PlayerController extends Controller
     {
         $player = $this->getLoggedPLayerUser();
         $skillStats =$this->playerService->skillStatsChart($player);
-        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
+//        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
         $allSkills = $this->playerService->getSkillStats($player)->first();
 
 
         return view('pages.managements.players.skill-detail', [
             'data' => $player,
             'skillStats' => $skillStats,
-            'skillStatsHistory' => $skillStatsHistory,
+//            'skillStatsHistory' => $skillStatsHistory,
             'allSkills' => $allSkills,
         ]);
     }

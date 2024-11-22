@@ -592,7 +592,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::prefix('player-managements')->group(function () {
             Route::prefix('{player}')->group(function () {
                 Route::get('parents', [PlayerParentController::class, 'index'])->name('player-parents.index');
-
+                Route::get('skill-stats-history', [PlayerController::class, 'skillStatsHistory'])->name('player-managements.skill-stats-history');
                 Route::get('performance-reviews-table', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('player-managements.performance-reviews');
             });
         });

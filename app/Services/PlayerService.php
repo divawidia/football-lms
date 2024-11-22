@@ -21,6 +21,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
+use function PHPUnit\Framework\isEmpty;
 
 class PlayerService extends Service
 {
@@ -410,102 +411,50 @@ class PlayerService extends Service
         return compact('label', 'data');
     }
 
-    public function skillStatsHistoryChart(Player $player){
-        $results =  $this->getSkillStats($player)->take(10)->get();
-        $results = $results->sortBy('created_at');
+    public function skillStatsHistoryChart(Player $player, $startDate, $endDate)
+    {
+        if ($startDate == null) {
+            $startDate = Carbon::now()->startOfYear();
+        }
+        if ($endDate == null) {
+            $endDate = Carbon::now();
+        }
+
+        $results =  $player->playerSkillStats()->whereBetween('created_at', [$startDate, $endDate])->get();
+//        $results = $results->sortBy('created_at');
 
         $label = [];
         $data = [];
+        $chartDataset = [];
+        $skills = $this->skillStatsLabel();
 
-        if ($results != null){
+        if (count($results) > 0){ //check if retrieved skill results is not null
             foreach ($results as $result){
                 $label[] = $this->convertToDate($result->created_at);
             }
-
-            $skills = $this->skillStatsLabel();
-
             foreach ($results as $result) {
                 foreach ($skills as $skill => $value) {
                     $data[$skill][] = $result[$value];
                 }
             }
-
-//        if ($player->position->category == 'Forward'){
-//            $data['label'] = [
-//                'Controlling',
-//                'Receiving',
-//                'Dribbling',
-//                'Shooting',
-//                'Power Kicking',
-//                'Offensive Play',
-//            ];
-//            foreach ($results as $result){
-//                $data['Controlling'][] = $result->controlling;
-//                $data['Receiving'][] = $result->recieving;
-//                $data['Dribbling'][] = $result->dribbling;
-//                $data['Shooting'][] = $result->shooting;
-//                $data['Power Kicking'][] = $result->powerKicking;
-//                $data['Offensive Play'][] = $result->offensivePlay;
-//            }
-//        }
-//        elseif ($player->position->category == 'Midfielder'){
-//            $data['label'] = [
-//                'Controlling',
-//                'Receiving',
-//                'Dribbling',
-//                'Passing',
-//                'Ball Handling',
-//                'Offensive Play',
-//            ];
-//
-//            foreach ($results as $result){
-//                $data['Controlling'][] = $result->controlling;
-//                $data['Receiving'][] = $result->recieving;
-//                $data['Dribbling'][] = $result->dribbling;
-//                $data['Passing'][] = $result->passing;
-//                $data['Ball Handling'][] = $result->ballHandling;
-//                $data['Offensive Play'][] = $result->offensivePlay;
-//            }
-//        }
-//        elseif ($player->position->category == 'Defender'){
-//            $data['label'] = [
-//                'Controlling',
-//                'Receiving',
-//                'Turning',
-//                'Passing',
-//                'Ball Handling',
-//                'Defensive Play',
-//            ];
-//            foreach ($results as $result){
-//                $data['Controlling'][] = $result->controlling;
-//                $data['Receiving'][] = $result->recieving;
-//                $data['Turning'][] = $result->turning;
-//                $data['Passing'][] = $result->passing;
-//                $data['Ball Handling'][] = $result->ballHandling;
-//                $data['Defensive Play'][] = $result->defensivePlay;
-//            }
-//        }
-//        elseif ($player->position->category == 'Defender' && $player->position->name == 'Goalkeeper (GK)' ){
-//            $data['label'] = [
-//                'Controlling',
-//                'Receiving',
-//                'Ball Handling',
-//                'Passing',
-//                'GoalKeeping',
-//                'Defensive Play',
-//            ];
-//            foreach ($results as $result){
-//                $data['Controlling'][] = $result->controlling;
-//                $data['Receiving'][] = $result->recieving;
-//                $data['Ball Handling'][] = $result->ballHandling;
-//                $data['Passing'][] = $result->passing;
-//                $data['GoalKeeping'][] = $result->goalKeeping;
-//                $data['Defensive Play'][] = $result->defensivePlay;
-//            }
-//        }
-
+        } else { //check if retrieved skill results is null then only fill data with skills label
+            foreach ($skills as $skill => $value) {
+                $data[$skill][] = $value;
+            }
         }
-        return compact('label', 'data');
+
+        foreach ($data as $key => $value) {
+            $chartDataset[] = [
+                'label' => $key,
+                'data'=> $value,
+                'tension'=> 0.4,
+            ];
+        }
+
+        return [
+            'labels' => $label,
+            'datasets'=> $chartDataset
+        ];
     }
 
     public function playerUpcomingMatches(Player $player)
