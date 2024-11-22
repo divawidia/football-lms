@@ -41,9 +41,9 @@ class SkillAssessmentService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('skill-assessments.skill-stats', $item->id) . '"><span class="material-icons">edit</span> View Skill Player</a>
+                            <a class="dropdown-item" href="' . route('skill-assessments.skill-stats', $item->id) . '"><span class="material-icons">visibility</span> View Skill Player</a>
                             <button type="button" class="dropdown-item addSkills" id="' . $item->id . '">
-                                <span class="material-icons">visibility</span>
+                                <span class="material-icons">edit</span>
                                 Update Player Skill
                             </button>
                             <button type="button" class="dropdown-item addPerformanceReview" id="' . $item->id . '">
