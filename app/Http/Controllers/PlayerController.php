@@ -122,14 +122,12 @@ class PlayerController extends Controller
     {
 
         $skillStats =$this->playerService->skillStatsChart($player);
-//        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
         $allSkills = $this->playerService->getSkillStats($player)->first();
 
 
         return view('pages.managements.players.skill-detail', [
             'data' => $player,
             'skillStats' => $skillStats,
-//            'skillStatsHistory' => $skillStatsHistory,
             'allSkills' => $allSkills,
         ]);
     }
@@ -138,14 +136,12 @@ class PlayerController extends Controller
     {
         $player = $this->getLoggedPLayerUser();
         $skillStats =$this->playerService->skillStatsChart($player);
-//        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
         $allSkills = $this->playerService->getSkillStats($player)->first();
 
 
         return view('pages.managements.players.skill-detail', [
             'data' => $player,
             'skillStats' => $skillStats,
-//            'skillStatsHistory' => $skillStatsHistory,
             'allSkills' => $allSkills,
         ]);
     }
