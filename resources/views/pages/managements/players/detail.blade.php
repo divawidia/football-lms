@@ -10,6 +10,7 @@
     <x-add-teams-to-player-coach-modal :route="route('player-managements.updateTeams', ['player' => $data->id])"
                                        :teams="$hasntJoinedTeams"/>
     <x-change-password-modal :route="route('player-managements.change-password', ['player' => ':id'])"/>
+    <x-skill-assessments-modal :route="route('skill-assessments.store', $data->id)"/>
 @endsection
 
 @section('content')
@@ -277,7 +278,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Skill Stats</div>
                     @if(isCoach())
-                        <a class="btn btn-outline-white addSkills" id="{{ $data->id }}" href="">
+                        <a class="btn btn-white addSkills ml-auto" id="{{ $data->id }}" href="">
                             <span class="material-icons mr-2">edit</span>
                             Update Skills
                         </a>
