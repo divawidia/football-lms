@@ -34,7 +34,7 @@
 
             function fetchChartData(startDate, endDate) {
                 $.ajax({
-                    url: '{{ route('player-managements.skill-stats-history', $data->id) }}',
+                    url: '{{ route('player-managements.skill-stats-history', $player->id) }}',
                     type: 'GET',
                     data: {
                         startDate: startDate,
