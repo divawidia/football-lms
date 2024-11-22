@@ -39,8 +39,7 @@
                         data: 'action',
                         name: 'action',
                         orderable: false,
-                        searchable: false,
-                        width: '15%'
+                        searchable: false
                     },
                 ],
                 order: [[2, 'asc']]
