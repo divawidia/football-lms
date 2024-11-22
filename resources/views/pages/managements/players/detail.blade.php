@@ -276,7 +276,7 @@
             {{-- Skill Stats Histories --}}
             <div class="tab-pane fade" id="skillStats-tab" role="tabpanel">
                 <div class="page-separator">
-                    <div class="page-separator__text">Skill Stats</div>
+                    <div class="page-separator__text">Latest Skill Stats</div>
                     @if(isCoach())
                         <a class="btn btn-white addSkills ml-auto" id="{{ $data->id }}" href="">
                             <span class="material-icons mr-2">edit</span>
@@ -287,11 +287,11 @@
                 <div class="card card-body">
                     <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']" :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
                 </div>
-                {{--Skill Stats History Section--}}
-                <x-player-skill-history-chart :player="$data"/>
-
                 {{--All Skill Stats Section--}}
                 <x-player-skill-stats-card :allSkills="$allSkills"/>
+
+                {{--Skill Stats History Section--}}
+                <x-player-skill-history-chart :player="$data"/>
             </div>
 
             {{-- Parents/Guardians Histories --}}

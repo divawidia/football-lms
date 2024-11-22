@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    <x-skill-assessments-modal :route="route('skill-assessments.store', $data->id)"/>
+    <x-skill-assessments-modal/>
 @endsection
 
 @section('content')
@@ -16,7 +16,7 @@
             <ul class="nav navbar-nav">
                 <li class="nav-item">
                     @if(isAllAdmin() || isCoach())
-                        <a href="{{ route('player-managements.show', $data->id) }}" class="nav-link text-70">
+                        <a href="{{ route('skill-assessments.index') }}" class="nav-link text-70">
                             <i class="material-icons icon--left">keyboard_backspace</i>
                             Back to Player Profile
                         </a>
@@ -31,8 +31,7 @@
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div
-                class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($data->user->foto) }}"
                  width="104"
                  height="104"
@@ -62,72 +61,11 @@
             </div>
         </div>
 
-        {{--Skill Stats History Section--}}
-        <div class="page-separator">
-            <div class="page-separator__text">Skill Stats History</div>
-            {{--            <div class="ml-auto mr-2 form-group">--}}
-            {{--                <label class="form-label mb-0" for="skill">Filter by skill</label>--}}
-            {{--                <select class="form-control form-select" id="skill" name="skill">--}}
-            {{--                    <option disabled selected>Select skill stats</option>--}}
-            {{--                    @foreach($skillLabels as $label => $value)--}}
-            {{--                        <option value="{{ $value }}">--}}
-            {{--                            {{ $label }}--}}
-            {{--                        </option>--}}
-            {{--                    @endforeach--}}
-            {{--                </select>--}}
-            {{--            </div>--}}
-            {{--            <div class="form-group mr-1">--}}
-            {{--                <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>--}}
-            {{--                <input id="startDateFilter"--}}
-            {{--                    type="text"--}}
-            {{--                    class="form-control"--}}
-            {{--                    placeholder="Start Date"--}}
-            {{--                   onfocus="(this.type='date')"--}}
-            {{--                   onblur="(this.type='text')"/>--}}
-            {{--            </div>--}}
-            {{--            <div class="form-group">--}}
-            {{--                <label class="form-label mb-0" for="endDateFilter"></label>--}}
-            {{--                <input id="endDateFilter"--}}
-            {{--                       type="text"--}}
-            {{--                       class="form-control"--}}
-            {{--                       placeholder="End Date"--}}
-            {{--                       onfocus="(this.type='date')"--}}
-            {{--                       onblur="(this.type='text')"/>--}}
-            {{--            </div>--}}
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <canvas id="skillStatsHistoryChart"></canvas>
-            </div>
-        </div>
-
         {{--All Skill Stats Section--}}
         <x-player-skill-stats-card :allSkills="$allSkills"/>
-    </div>
 
+        {{--Skill Stats History Section--}}
+        <x-player-skill-history-chart :player="$data"/>
+
+    </div>
 @endsection
-@push('addon-script')
-    <script>
-        $(document).ready(function () {
-            const skillStatsHistoryChart = $('#skillStatsHistoryChart');
-            new Chart(skillStatsHistoryChart, {
-                type: 'line',
-                data: {
-                    labels: @json($skillStatsHistory['label']),
-                    datasets: [
-                            @foreach($skillStatsHistory['data'] as $key => $value)
-                        {
-                            label: '{{ $key }}',
-                            data: @json($value),
-                            tension: 0.4,
-                        },
-                        @endforeach
-                    ]
-                },
-                options: {
-                    responsive: true,
-                },
-            });
-        });
-    </script>
-@endpush
