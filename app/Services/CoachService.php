@@ -22,13 +22,15 @@ class CoachService extends Service
     private TeamRepository $teamRepository;
     private UserRepository $userRepository;
     private CoachMatchStatsRepository $coachMatchStatsRepository;
+    private DatatablesService $datatablesService;
 
-    public function __construct(CoachRepository $coachRepository, TeamRepository $teamRepository, UserRepository $userRepository, CoachMatchStatsRepository $coachMatchStatsRepository)
+    public function __construct(CoachRepository $coachRepository, TeamRepository $teamRepository, UserRepository $userRepository, CoachMatchStatsRepository $coachMatchStatsRepository, DatatablesService $datatablesService)
     {
         $this->coachRepository = $coachRepository;
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
         $this->coachMatchStatsRepository = $coachMatchStatsRepository;
+        $this->datatablesService = $datatablesService;
     }
 
     public function index(): JsonResponse
@@ -37,21 +39,15 @@ class CoachService extends Service
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if ($item->user->status == '1') {
-                    $statusButton = '<form action="' . route('deactivate-coach', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons text-danger">block</span> Deactivate Coach
-                                                </button>
-                                            </form>';
+                    $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
+                                                <span class="material-icons text-danger">check_circle</span>
+                                                Deactivate Admin
+                                        </button>';
                 } else {
-                    $statusButton = '<form action="' . route('activate-coach', $item->id) . '" method="POST">
-                                                ' . method_field("PATCH") . '
-                                                ' . csrf_field() . '
-                                                <button type="submit" class="dropdown-item">
-                                                    <span class="material-icons text-success">check_circle</span> Activate Coach
-                                                </button>
-                                            </form>';
+                    $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->id.'">
+                                                <span class="material-icons text-success">check_circle</span>
+                                                Activate Admin
+                                        </button>';
                 }
                 return '
                             <div class="dropdown">
@@ -60,7 +56,7 @@ class CoachService extends Service
                                     more_vert
                                 </span>
                               </button>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item" href="' . route('coach-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Coach Profile</a>
                                 <a class="dropdown-item" href="' . route('coach-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Coach</a>
                                 ' . $statusButton . '
@@ -83,33 +79,10 @@ class CoachService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                             style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                    <a href="' . route('coach-managements.show', $item->id) . '">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
-                                    </a>
-                                        <small class="js-lists-values-email text-50">' . $item->specializations->name . '</small>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>';
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name, route('coach-managements.show', $item->id));
             })
             ->editColumn('status', function ($item){
-                $badge = '';
-                if ($item->user->status == '1') {
-                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
-                }elseif ($item->user->status == '0'){
-                    $badge = '<span class="badge badge-pill badge-danger">Non-Active</span>';
-                }
-                return $badge;
+                return $this->datatablesService->activeNonactiveStatus($item->user->status);
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
@@ -129,7 +102,7 @@ class CoachService extends Service
                                 more_vert
                             </span>
                           </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="'.route('coach-managements.edit', $item->id).'"><span class="material-icons">edit</span> Edit Team</a>
                             <a class="dropdown-item" href="'.route('coach-managements.show', $item->id).'"><span class="material-icons">visibility</span> View Team</a>
                             <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
@@ -139,24 +112,10 @@ class CoachService extends Service
                         </div>';
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->division . ' - '.$item->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesService->name($item->logo, $item->teamName, $item->division, route('team-managements.show', $item->id));
             })
             ->editColumn('date', function ($item){
-                return date('M d, Y', strtotime($item->pivot->created_at));
+                return $this->convertToDate($item->pivot->created_at);
             })
             ->rawColumns(['action', 'name','date'])
             ->make();
@@ -272,17 +231,18 @@ class CoachService extends Service
         $coach->user->notify(new CoachAccountUpdated($coach, 'updated'));
         return $coach;
     }
-    public function activate(Coach $coach)
-    {
-        $this->coachRepository->activate($coach);
-        $coach->user->notify(new CoachAccountUpdated($coach, 'activated'));
-        return $coach;
-    }
 
-    public function deactivate(Coach $coach)
+    public function setStatus(Coach $coach, $status)
     {
-        $this->coachRepository->deactivate($coach);
-        $coach->user->notify(new CoachAccountUpdated($coach, 'deactivated'));
+        $this->userRepository->updateUserStatus($coach, $status);
+
+        if ($status == '1') {
+            $message = 'activated';
+        } elseif ($status == '0') {
+            $message = 'deactivated';
+        }
+
+        $coach->user->notify(new CoachAccountUpdated($coach, $message));
         return $coach;
     }
 
@@ -297,7 +257,7 @@ class CoachService extends Service
         $this->deleteImage($coach->user->foto);
 
         $superAdminName = $this->getUserFullName($loggedUser);
-        Notification::send($this->userRepository->getAllAdminUsers(),new CoachAccountCreatedDeleted($superAdminName, $coach, 'created'));
+        Notification::send($this->userRepository->getAllAdminUsers(),new CoachAccountCreatedDeleted($superAdminName, $coach, 'deleted'));
 
         $this->coachRepository->delete($coach);
         return $coach;

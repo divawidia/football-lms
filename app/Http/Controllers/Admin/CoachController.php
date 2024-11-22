@@ -2,28 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\CoachRequest;
 use App\Http\Requests\PlayerTeamRequest;
 use App\Http\Requests\UpdateCoachRequest;
 use App\Models\Coach;
-use App\Models\CoachCertification;
-use App\Models\CoachSpecialization;
-use App\Models\PlayerPosition;
 use App\Models\Team;
-use App\Models\User;
 use App\Services\CoachService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Password;
-use Nnjeim\World\World;
-use RealRashid\SweetAlert\Facades\Alert;
-use Yajra\DataTables\Facades\DataTables;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CoachController extends Controller
 {
@@ -82,7 +71,8 @@ class CoachController extends Controller
     public function store(CoachRequest $request)
     {
         $data = $request->validated();
-        $this->coachService->store($data, $this->getAcademyId());
+        $loggedUser = $this->getLoggedUser();
+        $this->coachService->store($data, $this->getAcademyId(), $loggedUser);
         $this->successAlertAddUser($data, 'added');
         return redirect()->route('coach-managements.index');
     }
@@ -129,26 +119,40 @@ class CoachController extends Controller
         return redirect()->route('coach-managements.show', $coach->id);
     }
 
-    public function deactivate(Coach $coach){
-        $this->coachService->deactivate($coach);
-        $this->successAlertStatusUser($coach->user, 'deactivated');
-        return redirect()->route('coach-managements.show', $coach->id);
+    public function deactivate(Coach $coach)
+    {
+        try {
+            $data = $this->coachService->setStatus($coach, '0');
+            $message = "Coach ".$this->getUserFullName($coach->user)."'s account status successfully set to deactivated.";
+            return ApiResponse::success($data, $message);
+
+        } catch (Exception $e){
+            $message = "Error while updating player ".$this->getUserFullName($coach->user)."'s account status to deactivate: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
-    public function activate(Coach $coach){
-        $this->coachService->activate($coach);
-        $this->successAlertStatusUser($coach->user, 'activated');
-        return redirect()->route('coach-managements.show', $coach->id);
+    public function activate(Coach $coach)
+    {
+        try {
+            $data = $this->coachService->setStatus($coach, '1');
+            $message = "Coach ".$this->getUserFullName($coach->user)."'s account status successfully set to activated.";
+            return ApiResponse::success($data, $message);
+
+        } catch (Exception $e){
+            $message = "Error while updating player ".$this->getUserFullName($coach->user)."'s account status to activated: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
-    public function changePassword(ChangePasswordRequest $request, Coach $coach){
+    public function changePassword(ChangePasswordRequest $request, Coach $coach)
+    {
         $data = $request->validated();
         $result = $this->coachService->changePassword($data, $coach);
-        return response()->json([
-            'status' => 200,
-            'data' => $result,
-            'message' => 'Successfully change password'
-        ]);
+        $message = "Coach ".$this->getUserFullName($coach->user)."'s account password successfully updated!";
+        return ApiResponse::success($result, $message);
     }
 
     /**
@@ -156,11 +160,16 @@ class CoachController extends Controller
      */
     public function destroy(Coach $coach)
     {
-        $result = $this->coachService->destroy($coach);
-        return response()->json([
-            'status' => 200,
-            'data' => $result,
-            'message' => 'Successfully delete admin'
-        ]);
+        $loggedUser = $this->getLoggedUser();
+        try {
+            $data = $this->coachService->destroy($coach, $loggedUser);
+            $message = "Coach ".$this->getUserFullName($coach->user)."'s account successfully deleted.";
+            return ApiResponse::success($data, $message);
+
+        } catch (Exception $e){
+            $message = "Error while deleting coach ".$this->getUserFullName($coach->user)."'s account: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 }

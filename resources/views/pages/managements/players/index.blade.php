@@ -76,7 +76,7 @@
                                      confirmationText="Are you sure to activate this player account's status?"
                                      errorText="Something went wrong when activating this player account!"/>
 
-        <x-process-data-confirmation btnClass=". delete-user"
+        <x-process-data-confirmation btnClass=".delete-user"
                                      :processRoute="route('player-managements.destroy', ['player' => ':id'])"
                                      :routeAfterProcess="route('player-managements.index')"
                                      method="DELETE"

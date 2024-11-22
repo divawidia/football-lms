@@ -38,7 +38,7 @@ class CoachAccountCreatedDeleted extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"{$this->adminName} has {$this->status} a new coach account for {$this->coach->user->firstName} {$this->coach->user->lastName}. Please review the changes if necessary.",
+            'data' =>"{$this->adminName} has {$this->status} coach account for {$this->coach->user->firstName} {$this->coach->user->lastName}. Please review the changes if necessary.",
             'redirectRoute' => route('coach-managements.show', $this->coach->id)
         ];
     }

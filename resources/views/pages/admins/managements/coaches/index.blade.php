@@ -15,7 +15,6 @@
     <div class="pt-32pt">
         <div class="container">
             <h2 class="mb-0 text-left">@yield('title')</h2>
-
             <ol class="breadcrumb p-0 m-0">
                 <li class="breadcrumb-item">
                     <a href="{{ checkRoleDashboardRoute() }}">Home</a></li>
@@ -58,12 +57,34 @@
             </div>
         </div>
     </div>
+
+    @if(isAllAdmin())
+        <x-process-data-confirmation btnClass=".setDeactivate"
+                                     :processRoute="route('deactivate-coach', ':id')"
+                                     :routeAfterProcess="route('coach-managements.index')"
+                                     method="PATCH"
+                                     confirmationText="Are you sure to deactivate this coach account's status?"
+                                     errorText="Something went wrong when deactivating this coach account!"/>
+
+        <x-process-data-confirmation btnClass=".setActivate"
+                                     :processRoute="route('activate-coach', ':id')"
+                                     :routeAfterProcess="route('coach-managements.index')"
+                                     method="PATCH"
+                                     confirmationText="Are you sure to activate this coach account's status?"
+                                     errorText="Something went wrong when activating this coach account!"/>
+
+        <x-process-data-confirmation btnClass=".delete-user"
+                                     :processRoute="route('coach-managements.destroy', ['coach' => ':id'])"
+                                     :routeAfterProcess="route('coach-managements.index')"
+                                     method="DELETE"
+                                     confirmationText="Are you sure to delete this coach account?"
+                                     errorText="Something went wrong when deleting this coach account!"/>
+    @endif
 @endsection
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            const body = $('body');
-            const datatable = $('#table').DataTable({
+            $('#table').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -82,48 +103,9 @@
                         data: 'action',
                         name: 'action',
                         orderable: false,
-                        searchable: false,
-                        width: '15%'
+                        searchable: false
                     },
                 ]
-            });
-
-            body.on('click', '.delete-user', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('coach-managements.destroy', ['coach' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (response) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Coach's account successfully deleted!",
-                                });
-                                datatable.ajax.reload();
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
             });
         });
     </script>
