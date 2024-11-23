@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompetitionMatchRequest;
 use App\Http\Requests\CompetitionRequest;
 use App\Http\Requests\UpdateCompetitionRequest;
-use App\Models\Coach;
 use App\Models\Competition;
-use App\Models\Player;
-use App\Models\Team;
 use App\Services\CompetitionService;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class CompetitionController extends Controller
@@ -118,11 +114,13 @@ class CompetitionController extends Controller
     {
         try {
             $this->competitionService->setStatus($competition, $status);
-            return response()->json(['message' => 'Competition '.$competition->name.' status successfully mark to '.$status.'!']);
+            $message = "Competition ".$competition->name." status successfully set to ".$status.".";
+            return ApiResponse::success(message:  $message);
 
-        } catch (Exception $e) {
-            Log::error('Error marking invoice as Scheduled: ' . $e->getMessage());
-            return response()->json(['error' => 'An error occurred while marking the competition '.$competition->name.' as '.$status.'.'], 500);
+        } catch (Exception $e){
+            $message = "Error while setting competition ".$competition->name." status to ".$status.": " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
         }
     }
 
@@ -148,7 +146,15 @@ class CompetitionController extends Controller
      */
     public function destroy(Competition $competition)
     {
-        $this->competitionService->destroy($competition, $this->getLoggedUser());
-        return response()->json(['success' => true]);
+        try {
+            $this->competitionService->destroy($competition, $this->getLoggedUser());
+            $message = "Competition ".$competition->name." successfully deleted.";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while deleting competition ".$competition->name." : " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 }
