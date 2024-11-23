@@ -105,146 +105,203 @@
         </div>
     </div>
 
-    <div class="container page__container page-section">
-        <div class="page-separator">
-            <div class="page-separator__text">Overview</div>
+    <nav class="navbar navbar-light border-bottom border-top py-3">
+        <div class="container">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#overview-tab">Overview & Info</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#matches-tab">Matches</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#groups-tab">Group Divisions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#tables-tab">Group Tables</a>
+                </li>
+            </ul>
         </div>
-        <div class="row card-group-row mb-md-3">
-            @include('components.stats-card', ['title' => 'Total Teams', 'data'=>$overviewStats['totalTeams'], 'dataThisMonth'=>null])
-            @include('components.stats-card', ['title' => 'Total Groups', 'data'=>$overviewStats['totalGroups'], 'dataThisMonth'=>null])
-            @include('components.stats-card', ['title' => 'Total Match', 'data'=>$overviewStats['totalMatch'], 'dataThisMonth'=>null])
-            @include('components.stats-card', ['title' => "Total Our Team's Wins", 'data'=>$overviewStats['ourTeamsWins'], 'dataThisMonth'=>null])
-            @include('components.stats-card', ['title' => "Total Our Team's Draws", 'data'=>$overviewStats['ourTeamsDraws'], 'dataThisMonth'=>null])
-            @include('components.stats-card', ['title' => "Total Our Team's Losses", 'data'=>$overviewStats['ourTeamsLosses'], 'dataThisMonth'=>null])
-        </div>
+    </nav>
 
-        <div class="page-separator">
-            <div class="page-separator__text">Competition Info</div>
-        </div>
-        <div class="row card-group-row">
-            <div class="col-sm-6 card-group-row__col flex-column">
-                <div class="card card-sm card-group-row__card">
-                    <div class="card-body flex-column">
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
-                            <div class="ml-auto p-2 text-muted">
-                                @if ($competition->status == 'Scheduled')
-                                    <span class="badge badge-pill badge-warning">{{ $competition->status }}</span>
-                                @elseif($competition->status == 'Ongoing')
-                                    <span class="badge badge-pill badge-info">{{ $competition->status }}</span>
-                                @elseif($competition->status == 'Completed')
-                                    <span class="badge badge-pill badge-success">{{ $competition->status }}</span>
-                                @else
-                                    <span class="badge badge-pill badge-danger">{{ $competition->status }}</span>
-                                @endif
+    <div class="container page__container page-section">
+        <div class="tab-content">
+
+            {{-- Overview --}}
+            <div class="tab-pane fade show active" id="overview-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Overview</div>
+                </div>
+                <div class="row">
+                    @include('components.stats-card', ['title' => 'Total Teams', 'data'=>$overviewStats['totalTeams'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => 'Total Groups', 'data'=>$overviewStats['totalGroups'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => 'Total Match', 'data'=>$overviewStats['totalMatch'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => "Total Our Team's Wins", 'data'=>$overviewStats['ourTeamsWins'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => "Total Our Team's Draws", 'data'=>$overviewStats['ourTeamsDraws'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => "Total Our Team's Losses", 'data'=>$overviewStats['ourTeamsLosses'], 'dataThisMonth'=>null])
+                </div>
+
+                <div class="page-separator">
+                    <div class="page-separator__text">Competition Info</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
+                                    <div class="ml-auto p-2 text-muted">
+                                        @if ($competition->status == 'Scheduled')
+                                            <span class="badge badge-pill badge-warning">{{ $competition->status }}</span>
+                                        @elseif($competition->status == 'Ongoing')
+                                            <span class="badge badge-pill badge-info">{{ $competition->status }}</span>
+                                        @elseif($competition->status == 'Completed')
+                                            <span class="badge badge-pill badge-success">{{ $competition->status }}</span>
+                                        @else
+                                            <span class="badge badge-pill badge-danger">{{ $competition->status }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Start Date :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $competition->startDate }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">End Date :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $competition->endDate }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Location :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $competition->location }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Description :</p></div>
+                                    <div class="ml-auto p-2 text-muted">@php echo $competition->description @endphp</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Start Date :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $competition->startDate }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">End Date :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $competition->endDate }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Location :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $competition->location }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Description :</p></div>
-                            <div class="ml-auto p-2 text-muted">@php echo $competition->description @endphp</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Contact Name :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $competition->contactName }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Contact Phone :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ $competition->contactPhone }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($competition->created_at)) }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
+                                    <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($competition->updated_at)) }}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 card-group-row__col flex-column">
-                <div class="card card-sm card-group-row__card">
-                    <div class="card-body flex-column">
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Contact Name :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $competition->contactName }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Contact Phone :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ $competition->contactPhone }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($competition->created_at)) }}</div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="p-2"><p class="card-title mb-4pt">Last Updated :</p></div>
-                            <div class="ml-auto p-2 text-muted">{{ date('l, M d, Y. h:i A', strtotime($competition->updated_at)) }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="card-group-row__col flex-column">
-            <div class="page-separator">
-                <div class="page-separator__text">Match</div>
-                @if(isAllAdmin())
-                    <a href="#" id="addOpponentTeamMatch" class="btn btn-primary ml-auto btn-sm">
-                            <span class="material-icons mr-2">
-                                add
-                            </span>
-                        Add Opponent Team Match
-                    </a>
-                    <a href="#" id="addOurTeamMatch" class="btn btn-primary ml-2 btn-sm">
-                            <span class="material-icons mr-2">
-                                add
-                            </span>
-                        Add Our Team Match
-                    </a>
-                @endif
-            </div>
-            <div class="card card-sm card-group-row__card">
-                <div class="card-body flex-column">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="competitionMatchTable">
-                            <thead>
-                            <tr>
-                                <th>Team</th>
-                                <th>Opponent</th>
-                                <th>Score</th>
-                                <th>Match Date</th>
-                                <th>Location</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+            {{-- Matches --}}
+            <div class="tab-pane fade" id="matches-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Match</div>
+                    @if(isAllAdmin())
+                        <a href="#" id="addOpponentTeamMatch" class="btn btn-primary ml-auto btn-sm">
+                            <span class="material-icons mr-2">add</span>Add Opponent Team Match
+                        </a>
+                        <a href="#" id="addOurTeamMatch" class="btn btn-primary ml-2 btn-sm">
+                            <span class="material-icons mr-2">add</span>Add Our Team Match
+                        </a>
+                    @endif
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="competitionMatchTable">
+                                <thead>
+                                <tr>
+                                    <th>Team</th>
+                                    <th>Opponent</th>
+                                    <th>Score</th>
+                                    <th>Match Date</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="page-separator">
-            <div class="page-separator__text">Group Divisions</div>
-            @if(isAllAdmin())
-            <a href="{{ route('division-managements.create', $competition->id) }}" class="btn btn-primary ml-auto btn-sm">
-                <span class="material-icons mr-2">
-                    add
-                </span>
-                Add New
-            </a>
-            @endif
-        </div>
-        <div class="row">
-            @foreach($competition->groups as $group)
-                @if(count($competition->groups) <= 1)
-                    <div class="col-12">
-                @else
-                    <div class="col-lg-6">
-                @endif
+            {{-- Group Divisions --}}
+            <div class="tab-pane fade" id="groups-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Group Divisions</div>
+                    @if(isAllAdmin())
+                        <a href="{{ route('division-managements.create', $competition->id) }}" class="btn btn-primary ml-auto btn-sm">
+                            <span class="material-icons mr-2">add</span>Add New
+                        </a>
+                    @endif
+                </div>
+                <div class="row">
+                    @foreach($competition->groups as $group)
+                        <div class="@if(count($competition->groups) <= 1) col-12 @else col-lg-6 @endif">
+                            <div class="page-separator">
+                                <div class="page-separator__text">{{ $group->groupName }}</div>
+                                @if(isAllAdmin())
+                                    <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
+                                        <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
+                                            <span class="material-icons">edit</span>
+                                        </a>
+                                        <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
+                                            <span class="material-icons">add</span>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
+                                            <span class="material-icons">delete</span>
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover w-100" id="groupTable{{$group->id}}">
+                                            <thead>
+                                            <tr>
+                                                <th>Team Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Group Tables --}}
+            <div class="tab-pane fade" id="tables-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Group Tables</div>
+                </div>
+                @foreach($competition->groups as $group)
                     <div class="page-separator">
                         <div class="page-separator__text">{{ $group->groupName }}</div>
                         @if(isAllAdmin())
-                        <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
                                 <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
                                     <span class="material-icons">edit</span>
                                 </a>
@@ -254,17 +311,26 @@
                                 <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
                                     <span class="material-icons">delete</span>
                                 </button>
-                        </div>
+                            </div>
                         @endif
                     </div>
-                    <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                    <div class="card">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0" id="groupTable{{$group->id}}">
+                                <table class="table table-hover w-100" id="classTable{{$group->id}}">
                                     <thead>
                                     <tr>
-                                        <th>Team Name</th>
-                                        <th>Action</th>
+                                        <th>Team</th>
+                                        <th>Match Played</th>
+                                        <th>won</th>
+                                        <th>drawn</th>
+                                        <th>lost</th>
+                                        <th>goals For</th>
+                                        <th>goals Againts</th>
+                                        <th>goals Difference</th>
+                                        <th>red Cards</th>
+                                        <th>yellow Cards</th>
+                                        <th>points</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -273,56 +339,9 @@
                             </div>
                         </div>
                     </div>
-
-                </div>
-            @endforeach
-        </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Group Tables</div>
-        </div>
-        @foreach($competition->groups as $group)
-            <div class="page-separator">
-                <div class="page-separator__text">{{ $group->groupName }}</div>
-                @if(isAllAdmin())
-                    <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
-                        <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
-                            <span class="material-icons">edit</span>
-                        </a>
-                        <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
-                            <span class="material-icons">add</span>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
-                            <span class="material-icons">delete</span>
-                        </button>
-                    </div>
-                @endif
+                @endforeach
             </div>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="classTable{{$group->id}}">
-                            <thead>
-                            <tr>
-                                <th>Team</th>
-                                <th>Match Played</th>
-                                <th>won</th>
-                                <th>drawn</th>
-                                <th>lost</th>
-                                <th>goals For</th>
-                                <th>goals Againts</th>
-                                <th>goals Difference</th>
-                                <th>red Cards</th>
-                                <th>yellow Cards</th>
-                                <th>points</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        @endforeach
+        </div>
     </div>
 
     <x-process-data-confirmation btnClass=".delete"
@@ -330,7 +349,6 @@
                                  :routeAfterProcess="route('competition-managements.index')"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete competition {{ $competition->name }}?"
-                                 successText="Successfully deleted the competition {{ $competition->name }}!"
                                  errorText="Something went wrong when deleting the competition {{ $competition->name }}!"/>
 
     <x-process-data-confirmation btnClass=".cancelBtn"
@@ -338,7 +356,6 @@
                                  :routeAfterProcess="route('competition-managements.show', $competition->id)"
                                  method="PATCH"
                                  confirmationText="Are you sure to cancel competition {{ $competition->name }}?"
-                                 successText="Competition {{ $competition->name }} successfully mark as cancelled!"
                                  errorText="Something went wrong when marking the competition {{ $competition->name }} as cancelled!"/>
 
     <x-process-data-confirmation btnClass=".delete-group"
@@ -346,7 +363,6 @@
                                  :routeAfterProcess="route('competition-managements.show', $competition->id)"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this group division?"
-                                 successText="Group division successfully deleted!"
                                  errorText="Something went wrong when deleting the group division!"/>
 
 @endsection
