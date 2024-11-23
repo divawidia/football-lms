@@ -69,6 +69,13 @@ class DatatablesService extends Service
         $endTime = $this->convertToTime($data->endTime);
         return $date.' ('.$startTime.' - '.$endTime.')';
     }
+
+    public function competitionStartEndDate($data)
+    {
+        $startDate = $this->convertToDate($data->startDate);
+        $endDate = $this->convertToDate($data->endDate);
+        return $startDate.' - '.$endDate;
+    }
     public function name($image, $title, $subtitle, $showRoute = null)
     {
         if ($showRoute != null) {

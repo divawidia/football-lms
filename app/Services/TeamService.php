@@ -291,9 +291,7 @@ class TeamService extends Service
                 return $this->datatablesService->name($item->competition->logo, $item->competition->name, $item->competition->type, route('competition-managements.show', $item->competitionId));
             })
             ->editColumn('date', function ($item) {
-                $startDate = $this->convertToDate($item->competition->startDate);
-                $endDate = $this->convertToDate($item->competition->endDate);
-                return $startDate.' - '.$endDate;
+                return $this->datatablesService->competitionStartEndDate($item->competition);
             })
             ->editColumn('contact', function ($item) {
                 if ($item->competition->contactName != null && $item->competition->contactPhone != null){
