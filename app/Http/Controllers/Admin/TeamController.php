@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TeamRequest;
 use App\Models\Coach;
@@ -10,11 +11,13 @@ use App\Models\Team;
 use App\Models\User;
 use App\Services\OpponentTeamService;
 use App\Services\TeamService;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -111,7 +114,7 @@ class TeamController extends Controller
         $data = $request->validated();
         $loggedUser = $this->getLoggedUser();
 
-        $this->teamService->store($data, Auth::user()->academyId, $loggedUser);
+        $this->teamService->store($data, $this->getAcademyId(), $loggedUser);
 
         $text = 'Team '.$data['teamName'].' successfully added!';
         Alert::success($text);
@@ -123,7 +126,7 @@ class TeamController extends Controller
         $data = $request->validated();
         $loggedUser = $this->getLoggedUser();
 
-        $team = $this->teamService->store($data, Auth::user()->academyId, $loggedUser);
+        $team = $this->teamService->store($data, $this->getAcademyId(), $loggedUser);
 
         return response()->json($team, 201);
     }
@@ -167,20 +170,34 @@ class TeamController extends Controller
         return redirect()->route('team-managements.show', $team->id);
     }
 
-    public function deactivate(Team $team){
+    public function deactivate(Team $team)
+    {
         $loggedUser = $this->getLoggedUser();
-        $this->teamService->deactivate($team, $loggedUser);
+        try {
+            $data = $this->teamService->setStatus($team, '0', $loggedUser);
+            $message = "Team ".$team->teamName."'s status successfully set to deactivated.";
+            return ApiResponse::success($data, $message);
 
-        Alert::success('Team '.$team->teamName.' status successfully deactivated!');
-        return redirect()->route('team-managements.index');
+        } catch (Exception $e){
+            $message = "Error while updating team ".$team->teamName."'s status to deactivate: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
-    public function activate(Team $team){
+    public function activate(Team $team)
+    {
         $loggedUser = $this->getLoggedUser();
-        $this->teamService->activate($team, $loggedUser);
+        try {
+            $data = $this->teamService->setStatus($team, '1', $loggedUser);
+            $message = "Team ".$team->teamName."'s status successfully set to activated.";
+            return ApiResponse::success($data, $message);
 
-        Alert::success('Team '.$team->teamName.' status successfully activated!');
-        return redirect()->route('team-managements.index');
+        } catch (Exception $e){
+            $message = "Error while updating team ".$team->teamName."'s status to activated: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function addPlayerTeam(Team $team)
@@ -235,15 +252,30 @@ class TeamController extends Controller
 
     public function removePlayer(Team $team, Player $player)
     {
-        $this->teamService->removePlayer($team, $player);
+        try {
+            $this->teamService->removePlayer($team, $player);
+            $message = "Player ".$this->getUserFullName($player->user)." successfully removed from team ".$team->teamName.".";
+            return ApiResponse::success(message:  $message);
 
-        return response()->json(['success' => true]);
+        } catch (Exception $e){
+            $message = "Error while removing player ".$this->getUserFullName($player->user)." from team ".$team->teamName.": " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function removeCoach(Team $team, Coach $coach)
     {
-        $this->teamService->removeCoach($team, $coach);
-        return response()->json(['success' => true]);
+        try {
+            $this->teamService->removeCoach($team, $coach);
+            $message = "Coach ".$this->getUserFullName($coach->user)." successfully removed from team ".$team->teamName.".";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while removing coach ".$this->getUserFullName($coach->user)." from team ".$team->teamName.": " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     /**
@@ -252,8 +284,16 @@ class TeamController extends Controller
     public function destroy(Team $team)
     {
         $loggedUser = $this->getLoggedUser();
-        $this->teamService->destroy($team, $loggedUser);
+        try {
+            $data = $this->teamService->destroy($team, $loggedUser);
+            $message = "Team ".$team->teamName."'s successfully deleted.";
+            return ApiResponse::success($data, $message);
 
-        return response()->json(['success' => true]);
+        } catch (Exception $e){
+            $message = "Error while deleting team ".$team->teamName."'s: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
+
 }

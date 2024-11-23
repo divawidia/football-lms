@@ -47,21 +47,15 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('opponentTeam-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
                     @if($team->status == '1')
-                        <form action="{{ route('deactivate-team', $team->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons">block</span> Deactivate Team
-                            </button>
-                        </form>
+                        <button type="submit" class="dropdown-item setDeactivate" id="{{$team->id}}">
+                            <span class="material-icons text-danger">check_circle</span>
+                            Deactivate Team
+                        </button>
                     @else
-                        <form action="{{ route('activate-team', $team->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons">check_circle</span> Activate Team
-                            </button>
-                        </form>
+                        <button type="submit" class="dropdown-item setActivate" id="{{$team->id}}">
+                            <span class="material-icons text-success">check_circle</span>
+                            Activate Team
+                        </button>
                     @endif
                     <button type="button" class="dropdown-item delete-team" id="{{$team->id}}">
                         <span class="material-icons">delete</span> Delete Team
@@ -71,23 +65,47 @@
         </div>
     </div>
 
+    <nav class="navbar navbar-light border-bottom border-top py-3">
+        <div class="container">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#overview-tab">Overview & Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#latestMatch-tab">Latest Match</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#competitions-tab">Competitions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#upcomingMatch-tab">Upcoming Matches</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#matchHistories-tab">Matches Histories</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <div class="container page-section">
-        <div class="page-separator">
-            <div class="page-separator__text">Overview</div>
-        </div>
-        <div class="row card-group-row mb-4">
-            @include('components.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['matchPlayedThisMonth']])
-            @include('components.stats-card', ['title' => 'Goals','data' => $overview['teamScore'], 'dataThisMonth' => $overview['teamScoreThisMonth']])
-            @include('components.stats-card', ['title' => 'Goals Conceded','data' => $overview['goalsConceded'], 'dataThisMonth' => $overview['goalsConcededThisMonth']])
-            @include('components.stats-card', ['title' => 'Goals Difference','data' => $overview['goalsDifference'], 'dataThisMonth' => $overview['goalDifferenceThisMonth']])
-            @include('components.stats-card', ['title' => 'Clean Sheets','data' => $overview['cleanSheets'], 'dataThisMonth' => $overview['cleanSheetsThisMonth']])
-            @include('components.stats-card', ['title' => 'Own Goals','data' => $overview['teamOwnGoal'], 'dataThisMonth' => $overview['teamOwnGoalThisMonth']])
-            @include('components.stats-card', ['title' => 'Wins','data' => $overview['Win'], 'dataThisMonth' => $overview['WinThisMonth']])
-            @include('components.stats-card', ['title' => 'losses','data' => $overview['Lose'], 'dataThisMonth' => $overview['LoseThisMonth']])
-            @include('components.stats-card', ['title' => 'Draws','data' => $overview['Draw'], 'dataThisMonth' => $overview['DrawThisMonth']])
-        </div>
-        <div class="row card-group-row">
-            <div class="col-sm-6 card-group-row__col flex-column">
+        <div class="tab-content">
+
+            {{-- Overview --}}
+            <div class="tab-pane fade show active" id="overview-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Overview</div>
+                </div>
+                <div class="row card-group-row mb-4">
+                    @include('components.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['matchPlayedThisMonth']])
+                    @include('components.stats-card', ['title' => 'Goals','data' => $overview['teamScore'], 'dataThisMonth' => $overview['teamScoreThisMonth']])
+                    @include('components.stats-card', ['title' => 'Goals Conceded','data' => $overview['goalsConceded'], 'dataThisMonth' => $overview['goalsConcededThisMonth']])
+                    @include('components.stats-card', ['title' => 'Goals Difference','data' => $overview['goalsDifference'], 'dataThisMonth' => $overview['goalDifferenceThisMonth']])
+                    @include('components.stats-card', ['title' => 'Clean Sheets','data' => $overview['cleanSheets'], 'dataThisMonth' => $overview['cleanSheetsThisMonth']])
+                    @include('components.stats-card', ['title' => 'Own Goals','data' => $overview['teamOwnGoal'], 'dataThisMonth' => $overview['teamOwnGoalThisMonth']])
+                    @include('components.stats-card', ['title' => 'Wins','data' => $overview['Win'], 'dataThisMonth' => $overview['WinThisMonth']])
+                    @include('components.stats-card', ['title' => 'losses','data' => $overview['Lose'], 'dataThisMonth' => $overview['LoseThisMonth']])
+                    @include('components.stats-card', ['title' => 'Draws','data' => $overview['Draw'], 'dataThisMonth' => $overview['DrawThisMonth']])
+                </div>
                 <div class="page-separator">
                     <div class="page-separator__text">Team Profile</div>
                 </div>
@@ -97,9 +115,9 @@
                             <div class="p-2"><p class="card-title mb-4pt">Status :</p></div>
                             <div class="ml-auto p-2 text-muted">
                                 @if ($team->status == '1')
-                                    <span class="badge badge-pill badge-success">Aktif</span>
+                                    <span class="badge badge-pill badge-success">Active</span>
                                 @elseif($team->status == '0')
-                                    <span class="badge badge-pill badge-danger">Non Aktif</span>
+                                    <span class="badge badge-pill badge-danger">Non-active</span>
                                 @endif
                             </div>
                         </div>
@@ -114,7 +132,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 card-group-row__col flex-column">
+
+            {{-- Latest Match --}}
+            <div class="tab-pane fade" id="latestMatch-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Latest Match</div>
                 </div>
@@ -125,83 +145,105 @@
                     <x-match-card :match="$match" :latestMatch="true"/>
                 @endforeach
             </div>
-        </div>
 
-        {{-- Competitions/Events --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Competitions/Events</div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="competitionsTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Group Division</th>
-                            <th>Competition Date</th>
-                            <th>Location</th>
-                            <th>Contact</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+            {{-- Competitions/Events --}}
+            <div class="tab-pane fade" id="competitions-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Competitions/Events</div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="competitionsTable">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Group Division</th>
+                                    <th>Competition Date</th>
+                                    <th>Location</th>
+                                    <th>Contact</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        {{-- Upcoming Matches --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Upcoming Matches</div>
-        </div>
-        @if(count($upcomingMatches) == 0)
-            <x-warning-alert text="There are no matches scheduled at this time"/>
-        @endif
-        @foreach($upcomingMatches as $match)
-            <x-match-card :match="$match" :latestMatch="false"/>
-        @endforeach
+            {{-- Upcoming Matches --}}
+            <div class="tab-pane fade" id="upcomingMatch-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Upcoming Matches</div>
+                </div>
+                @if(count($upcomingMatches) == 0)
+                    <x-warning-alert text="There are no matches scheduled at this time"/>
+                @endif
+                @foreach($upcomingMatches as $match)
+                    <x-match-card :match="$match" :latestMatch="false"/>
+                @endforeach
+            </div>
 
-        {{-- Match Histories --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Match Histories</div>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="matchHistoryTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Opponent Team</th>
-                            <th>competition</th>
-                            <th>Match Date</th>
-                            <th>Team Score</th>
-                            <th>Opponent Team Score</th>
-                            <th>Location</th>
-                            <th>Note</th>
-                            <th>Match Status</th>
-                            <th>Last Updated</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+            {{-- Match Histories --}}
+            <div class="tab-pane fade" id="matchHistories-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Match Histories</div>
+                </div>
+                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="matchHistoryTable">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Opponent Team</th>
+                                    <th>competition</th>
+                                    <th>Match Date</th>
+                                    <th>Team Score</th>
+                                    <th>Opponent Team Score</th>
+                                    <th>Location</th>
+                                    <th>Note</th>
+                                    <th>Match Status</th>
+                                    <th>Last Updated</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    @if(isAllAdmin())
+    <x-process-data-confirmation btnClass=".setDeactivate"
+                                 :processRoute="route('deactivate-team', ':id')"
+                                 :routeAfterProcess="route('team-managements.show', $team->id)"
+                                 method="PATCH"
+                                 confirmationText="Are you sure to deactivate this team {{ $team->teamName }}?"
+                                 errorText="Something went wrong when deactivating this team {{ $team->teamName }}!"/>
+
+    <x-process-data-confirmation btnClass=".setActivate"
+                                 :processRoute="route('activate-team', ':id')"
+                                 :routeAfterProcess="route('team-managements.show', $team->id)"
+                                 method="PATCH"
+                                 confirmationText="Are you sure to activate this team {{ $team->teamName }}?"
+                                 errorText="Something went wrong when activating this team {{ $team->teamName }}!"/>
+
     <x-process-data-confirmation btnClass=".delete-team"
                                 :processRoute="route('opponentTeam-managements.destroy', ':id')"
                                 :routeAfterProcess="route('team-managements.index')"
                                  method="DELETE"
-                                confirmationText="Are you sure to delete this team {{$team->teamName}}?"
-                                successText="Successfully deleted team {{$team->teamName}}!"
-                                errorText="Something went wrong when deleting team {{$team->teamName}}!"/>
+                                 confirmationText="Are you sure to delete this team {{ $team->teamName }}?"
+                                 errorText="Something went wrong when deleting this team {{ $team->teamName }}!"/>
+    @endif
 @endsection
 @push('addon-script')
     <script>
@@ -226,7 +268,6 @@
                         name: 'action',
                         orderable: false,
                         searchable: false,
-                        width: '15%'
                     },
                 ],
                 order: [[3, 'desc']],
@@ -255,7 +296,6 @@
                         name: 'action',
                         orderable: false,
                         searchable: false,
-                        width: '15%'
                     },
                 ],
                 order: [[2, 'desc']],

@@ -81,27 +81,39 @@
             @endif
         </div>
         @if(isAllAdmin())
-        <x-process-data-confirmation btnClass=".delete-team"
-                                    :processRoute="route('team-managements.destroy', ':id')"
-                                    :routeAfterProcess="route('team-managements.index')"
-                                     method="DELETE"
-                                    confirmationText="Are you sure to delete this team?"
-                                    successText="Successfully deleted team!"
-                                    errorText="Something went wrong when deleting team!"/>
+            <x-process-data-confirmation btnClass=".setDeactivate"
+                                         :processRoute="route('deactivate-team', ':id')"
+                                         :routeAfterProcess="route('team-managements.index')"
+                                         method="PATCH"
+                                         confirmationText="Are you sure to deactivate this team status?"
+                                         errorText="Something went wrong when deactivating this team!"/>
 
-        <x-process-data-confirmation btnClass=".delete-opponentTeam"
-                                    :processRoute="route('opponentTeam-managements.destroy', ':id')"
-                                    :routeAfterProcess="route('team-managements.index')"
-                                     method="DELETE"
-                                    confirmationText="Are you sure to delete this team?"
-                                    successText="Successfully deleted team!"
-                                    errorText="Something went wrong when deleting team!"/>
+            <x-process-data-confirmation btnClass=".setActivate"
+                                         :processRoute="route('activate-team', ':id')"
+                                         :routeAfterProcess="route('team-managements.index')"
+                                         method="PATCH"
+                                         confirmationText="Are you sure to activate this team status?"
+                                         errorText="Something went wrong when activating this team!"/>
+
+            <x-process-data-confirmation btnClass=".delete-team"
+                                        :processRoute="route('team-managements.destroy', ':id')"
+                                        :routeAfterProcess="route('team-managements.index')"
+                                         method="DELETE"
+                                        confirmationText="Are you sure to delete this team?"
+                                        errorText="Something went wrong when deleting team!"/>
+
+            <x-process-data-confirmation btnClass=".delete-opponentTeam"
+                                        :processRoute="route('opponentTeam-managements.destroy', ':id')"
+                                        :routeAfterProcess="route('team-managements.index')"
+                                         method="DELETE"
+                                        confirmationText="Are you sure to delete this team?"
+                                        errorText="Something went wrong when deleting team!"/>
         @endif
     @endsection
     @push('addon-script')
         <script>
             $(document).ready(function() {
-                const datatable = $('#table').DataTable({
+                $('#table').DataTable({
                     processing: true,
                     serverSide: true,
                     ordering: true,
@@ -117,13 +129,12 @@
                             data: 'action',
                             name: 'action',
                             orderable: false,
-                            searchable: false,
-                            width: '15%'
+                            searchable: false
                         },
                     ]
                 });
                 @if(isAllAdmin())
-                    const opponentTable = $('#opponentTable').DataTable({
+                    $('#opponentTable').DataTable({
                         processing: true,
                         serverSide: true,
                         ordering: true,
@@ -137,8 +148,7 @@
                                 data: 'action',
                                 name: 'action',
                                 orderable: false,
-                                searchable: false,
-                                width: '15%'
+                                searchable: false
                             },
                         ]
                     });

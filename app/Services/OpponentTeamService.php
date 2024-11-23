@@ -21,38 +21,35 @@ class OpponentTeamService extends Service
     private UserRepository $userRepository;
     private EventScheduleRepository $eventScheduleRepository;
     private TeamMatchRepository $teamMatchRepository;
+    private DatatablesService $datatablesService;
 
     public function __construct(
         TeamRepository $teamRepository,
         UserRepository $userRepository,
         EventScheduleRepository $eventScheduleRepository,
-        TeamMatchRepository $teamMatchRepository)
+        TeamMatchRepository $teamMatchRepository,
+        DatatablesService $datatablesService)
     {
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
         $this->eventScheduleRepository = $eventScheduleRepository;
         $this->teamMatchRepository = $teamMatchRepository;
+        $this->datatablesService = $datatablesService;
     }
     public function index(): JsonResponse
     {
         $query = $this->teamRepository->getByTeamside('Opponent Team');
         return Datatables::of($query)->addColumn('action', function ($item) {
             if ($item->status == '1') {
-                $statusButton = '<form action="' . route('deactivate-team', $item->id) . '" method="POST">
-                                                    ' . method_field("PATCH") . '
-                                                    ' . csrf_field() . '
-                                                    <button type="submit" class="dropdown-item">
-                                                        <span class="material-icons">block</span> Deactivate Team
-                                                    </button>
-                                                </form>';
+                $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
+                                        <span class="material-icons text-danger">check_circle</span>
+                                        Deactivate Admin
+                                </button>';
             } else {
-                $statusButton = '<form action="' . route('activate-team', $item->id) . '" method="POST">
-                                                    ' . method_field("PATCH") . '
-                                                    ' . csrf_field() . '
-                                                    <button type="submit" class="dropdown-item">
-                                                        <span class="material-icons">check_circle</span> Activate Team
-                                                    </button>
-                                                </form>';
+                $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->id.'">
+                                        <span class="material-icons text-success">check_circle</span>
+                                        Activate Admin
+                                </button>';
             }
             return '
                             <div class="dropdown">
@@ -61,41 +58,21 @@ class OpponentTeamService extends Service
                                     more_vert
                                 </span>
                               </button>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
                                 <a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
                                 ' . $statusButton . '
                                 <button type="button" class="dropdown-item delete-opponentTeam" id="' . $item->id . '">
-                                    <span class="material-icons">delete</span> Delete Team
+                                    <span class="material-icons text-danger">delete</span> Delete Team
                                 </button>
                               </div>
                             </div>';
         })
             ->editColumn('name', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('opponentTeam-managements.show', $item->id));
             })
             ->editColumn('status', function ($item) {
-                $status = '';
-                if ($item->status == '1') {
-                    $status = '<span class="badge badge-pill badge-success">Aktif</span>';
-                } elseif ($item->status == '0') {
-                    $status = '<span class="badge badge-pill badge-danger">Non Aktif</span>';
-                }
-                return $status;
+                return $this->datatablesService->activeNonactiveStatus($item->status);
             })
             ->rawColumns(['action', 'name', 'status'])
             ->make();

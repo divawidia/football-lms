@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TeamRequest;
 use App\Models\Team;
 use App\Services\OpponentTeamService;
 use App\Services\TeamService;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class OpponentTeamController extends Controller
@@ -80,7 +83,6 @@ class OpponentTeamController extends Controller
     {
         return view('pages.admins.managements.opponentTeams.edit',[
             'team' => $team,
-
         ]);
     }
 
@@ -105,8 +107,15 @@ class OpponentTeamController extends Controller
     public function destroy(Team $team)
     {
         $loggedUser = $this->getLoggedUser();
-        $this->opponentTeamService->destroy($team, $loggedUser);
+        try {
+            $data = $this->opponentTeamService->destroy($team, $loggedUser);
+            $message = "Team ".$team->teamName."'s successfully deleted.";
+            return ApiResponse::success($data, $message);
 
-        return response()->json(['success' => true]);
+        } catch (Exception $e){
+            $message = "Error while deleting team ".$team->teamName."'s: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 }

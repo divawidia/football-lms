@@ -79,7 +79,7 @@ class CoachService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name, route('coach-managements.show', $item->id));
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name. ' - '.$item->certification->name, route('coach-managements.show', $item->id));
             })
             ->editColumn('status', function ($item){
                 return $this->datatablesService->activeNonactiveStatus($item->user->status);
