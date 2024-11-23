@@ -27,13 +27,15 @@ class GroupDivisionService extends Service
     private TeamRepository $teamRepository;
     private PlayerRepository $playerRepository;
     private CoachRepository $coachRepository;
+    private DatatablesService $datatablesService;
 
     public function __construct(
         GroupDivisionRepository $groupDivisionRepository,
         UserRepository $userRepository,
         TeamRepository $teamRepository,
         PlayerRepository $playerRepository,
-        CoachRepository $coachRepository
+        CoachRepository $coachRepository,
+        DatatablesService $datatablesService
     )
     {
         $this->groupDivisionRepository = $groupDivisionRepository;
@@ -41,12 +43,13 @@ class GroupDivisionService extends Service
         $this->teamRepository = $teamRepository;
         $this->playerRepository = $playerRepository;
         $this->coachRepository = $coachRepository;
+        $this->datatablesService = $datatablesService;
     }
     public function index(Competition $competition, GroupDivision $groupDivision): JsonResponse
     {
         $query = $groupDivision->teams;
         return Datatables::of($query)
-            ->addColumn('action', function ($item) use ($competition) {
+            ->addColumn('action', function ($item) use ($competition, $groupDivision){
                 if ($item->teamSide == 'Opponent Team'){
                     $editTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>';
                     $showTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>';
@@ -63,49 +66,21 @@ class GroupDivisionService extends Service
                                     more_vert
                                 </span>
                               </button>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                 '.$editTeam.'
                                 '.$showTeam.'
-                                <form action="'.route('division-managements.removeTeam', ['competition' => $competition->id,'group'=>$item->pivot->divisionId, 'team'=>$item->id]).'" method="POST">
-                                    '.method_field("PUT").'
-                                    '.csrf_field().'
-                                    <button type="submit" class="dropdown-item delete-team" id="' . $item->id . '">
-                                        <span class="material-icons">delete</span> Remove Team
-                                    </button>
-                                </form>
+                                <button type="submit" class="dropdown-item delete-group'.$groupDivision->id.'-team" id="' . $item->id . '">
+                                    <span class="material-icons text-danger">delete</span> Remove Team
+                                </button>
                               </div>
                             </div>';
-                } elseif (isCoach() || isPlayer()){
-                    $actionBtn = '
-                            <div class="dropdown">
-                              <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="material-icons">
-                                    more_vert
-                                </span>
-                              </button>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                '.$showTeam.'
-                              </div>
-                            </div>';
+                } else{
+                    $actionBtn = $this->datatablesService->buttonTooltips(route('team-managements.show', $item->id), 'View team detail', 'visibility');
                 }
                 return $actionBtn;
             })
             ->editColumn('teams', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('team-managements.show', $item->id));
             })
             ->rawColumns(['action', 'teams'])
             ->make();
@@ -118,8 +93,8 @@ class GroupDivisionService extends Service
 
     public function getTeams(GroupDivision $group, $exceptTeamId = null)
     {
-        $ourTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, $exceptTeamId, 'Academy Team');
-        $opponentTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, $exceptTeamId, 'Opponent Team');
+        $ourTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, 'Academy Team', $exceptTeamId);
+        $opponentTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, 'Opponent Team', $exceptTeamId);
         return compact('ourTeams', 'opponentTeams');
     }
 
@@ -160,9 +135,9 @@ class GroupDivisionService extends Service
 
     public function addTeam(Competition $competition, GroupDivision $group)
     {
-        $teams = $this->teamRepository->getTeamsHaventJoinedCompetition($competition, 'Academy Team');
+        $availableAcademyTeams = $this->teamRepository->getTeamsHaventJoinedCompetition($competition, 'Academy Team');
         $opponentTeams = $this->teamRepository->getTeamsHaventJoinedCompetition($competition, 'Opponent Team');
-        $availableAcademyTeams = $this->teamRepository->getTeamsJoinedGroupDivision($group, 'Academy Team');
+        $teams = $this->teamRepository->getTeamsJoinedGroupDivision($group, 'Academy Team');
         $players = $this->playerRepository->getAll();
         $coaches = $this->coachRepository->getAll();
         return compact('teams', 'opponentTeams', 'availableAcademyTeams','players', 'coaches');

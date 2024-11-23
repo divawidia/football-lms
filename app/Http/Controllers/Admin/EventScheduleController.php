@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttendanceStatusRequest;
 use App\Http\Requests\MatchScheduleRequest;
@@ -523,8 +524,23 @@ class EventScheduleController extends Controller
      */
     public function destroy(EventSchedule $schedule)
     {
-        $this->eventScheduleService->destroy($schedule);
+        try {
+            $this->eventScheduleService->destroy($schedule, $this->getLoggedUser());
+            if ($schedule->eventType == 'Training') {
+                $message = "Training session ".$schedule->eventName." successfully deleted.";
+            } else {
+                $message = "Match ".$schedule->teams[0]->teamName." Vs. ".$schedule->teams[1]->teamName." successfully deleted.";
+            }
+            return ApiResponse::success(message:  $message);
 
-        return response()->json(['success' => true]);
+        } catch (Exception $e){
+            if ($schedule->eventType == 'Training') {
+                $message = "Error while deleting training session ".$schedule->eventName."." . $e->getMessage();
+            } else {
+                $message = "Error while deleting match ".$schedule->teams[0]->teamName." Vs. ".$schedule->teams[1]->teamName." : " . $e->getMessage();
+            }
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 }

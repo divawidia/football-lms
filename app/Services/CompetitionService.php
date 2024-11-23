@@ -13,7 +13,6 @@ use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class CompetitionService extends Service
@@ -170,7 +169,7 @@ class CompetitionService extends Service
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="' . route('match-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Match</a>
                             <a class="dropdown-item" href="' . route('match-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Match</a>
-                            <button type="button" class="dropdown-item delete" id="' . $item->id . '">
+                            <button type="button" class="dropdown-item delete-match" id="' . $item->id . '">
                                 <span class="material-icons text-danger">delete</span> Delete Match
                             </button>
                           </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupDivisionRequest;
 use App\Models\Coach;
@@ -120,16 +121,21 @@ class GroupDivisionController extends Controller
 
     public function removeTeam(Competition $competition, GroupDivision $group, Team $team)
     {
-        $this->groupDivisionService->removeTeam($group, $team);
+        try {
+            $this->groupDivisionService->removeTeam($group, $team);
+            $message = "Team ".$team->teamName." successfully removed from group division ".$group->groupName.".";
+            return ApiResponse::success(message: $message);
 
-        $text = "Team ".$team->teamName." successfully removed from ".$group->name."!";
-        Alert::success($text);
-        return redirect()->route('competition-managements.show', ['competition'=>$competition->id]);
+        } catch (Exception $e){
+            $message = "Error while removing team ".$team->teamName." group division ".$group->groupName.": " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function edit(Competition $competition, GroupDivision $group)
     {
-        return response()->json($group);
+        return ApiResponse::success($group);
     }
 
     public function update(Request $request, Competition $competition, GroupDivision $group)
@@ -138,13 +144,29 @@ class GroupDivisionController extends Controller
             'groupName' => ['required', 'string']
         ]);
 
-        $groudDivision = $this->groupDivisionService->update($data, $group, $this->getLoggedUser());
-        return response()->json($groudDivision, 204);
+        try {
+            $data = $this->groupDivisionService->update($data, $group, $this->getLoggedUser());
+            $message = "Group division ".$group->groupName." successfully updated.";
+            return ApiResponse::success($data, $message);
+
+        } catch (Exception $e){
+            $message = "Error while updating group division ".$group->groupName.": " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function destroy(Competition $competition, GroupDivision $group)
     {
-        $data = $this->groupDivisionService->destroy($group, $this->getLoggedUser());
-        return response()->json($data, 204);
+        try {
+            $data = $this->groupDivisionService->destroy($group, $this->getLoggedUser());
+            $message = "Group division ".$group->groupName." successfully deleted.";
+            return ApiResponse::success($data, $message);
+
+        } catch (Exception $e){
+            $message = "Error while deleting group division ".$group->groupName.": " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 }

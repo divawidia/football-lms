@@ -59,7 +59,7 @@ class TeamRepository
             })->get();
     }
 
-    public function getTeamsJoinedGroupDivision(GroupDivision $groupDivision, $exceptTeamId = null, $teamSide)
+    public function getTeamsJoinedGroupDivision(GroupDivision $groupDivision, $teamSide, $exceptTeamId = null)
     {
         $query = $this->team->where('teamSide', $teamSide)
             ->whereHas('divisions', function (Builder $query) use ($groupDivision) {

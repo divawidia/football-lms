@@ -96,7 +96,7 @@
                             Cancel Competition
                         </button>
                     @endif
-                    <button type="button" class="dropdown-item delete" id="{{$competition->id}}">
+                    <button type="button" class="dropdown-item delete-competition" id="{{$competition->id}}">
                         <span class="material-icons text-danger">delete</span> Delete Competition
                     </button>
                 </div>
@@ -300,19 +300,6 @@
                 @foreach($competition->groups as $group)
                     <div class="page-separator">
                         <div class="page-separator__text">{{ $group->groupName }}</div>
-                        @if(isAllAdmin())
-                            <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
-                                <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
-                                    <span class="material-icons">edit</span>
-                                </a>
-                                <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
-                                    <span class="material-icons">add</span>
-                                </a>
-                                <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
-                                    <span class="material-icons">delete</span>
-                                </button>
-                            </div>
-                        @endif
                     </div>
                     <div class="card">
                         <div class="card-body">
@@ -339,12 +326,19 @@
                             </div>
                         </div>
                     </div>
+
+                    <x-process-data-confirmation btnClass=".delete-group{{ $group->id }}-team"
+                                                 :processRoute="route('division-managements.removeTeam', ['competition' => $competition->id, 'group' => $group->id,'team' => ':id'])"
+                                                 :routeAfterProcess="route('competition-managements.show', $competition->id)"
+                                                 method="PUT"
+                                                 confirmationText="Are you sure to delete this team from group division {{ $group->groupName }}?"
+                                                 errorText="Something went wrong when deleting this team from the group division {{ $group->groupName }}!"/>
                 @endforeach
             </div>
         </div>
     </div>
 
-    <x-process-data-confirmation btnClass=".delete"
+    <x-process-data-confirmation btnClass=".delete-competition"
                                  :processRoute="route('competition-managements.destroy', ['competition' => ':id'])"
                                  :routeAfterProcess="route('competition-managements.index')"
                                  method="DELETE"
@@ -358,6 +352,13 @@
                                  confirmationText="Are you sure to cancel competition {{ $competition->name }}?"
                                  errorText="Something went wrong when marking the competition {{ $competition->name }} as cancelled!"/>
 
+    <x-process-data-confirmation btnClass=".delete-match"
+                                 :processRoute="route('match-schedules.destroy', ['schedule' => ':id'])"
+                                 :routeAfterProcess="route('competition-managements.show', $competition->id)"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this match from competition {{ $competition->name }}?"
+                                 errorText="Something went wrong when deleting this match from competition {{ $competition->name }}!"/>
+
     <x-process-data-confirmation btnClass=".delete-group"
                                  :processRoute="route('division-managements.destroy', ['competition' => $competition->id, 'group' => ':id'])"
                                  :routeAfterProcess="route('competition-managements.show', $competition->id)"
@@ -365,11 +366,18 @@
                                  confirmationText="Are you sure to delete this group division?"
                                  errorText="Something went wrong when deleting the group division!"/>
 
+    <x-process-data-confirmation btnClass=".delete-competition"
+                                 :processRoute="route('competition-managements.destroy', ['competition' => $competition->id])"
+                                 :routeAfterProcess="route('competition-managements.show', $competition->id)"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this competition {{ $competition->name }}?"
+                                 errorText="Something went wrong when deleting the competition {{ $competition->name }}!"/>
+
 @endsection
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            const matchHistory = $('#competitionMatchTable').DataTable({
+            $('#competitionMatchTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -389,13 +397,12 @@
                         name: 'action',
                         orderable: false,
                         searchable: false,
-                        width: '15%'
                     },
                 ],
             });
 
             @foreach($competition->groups as $group)
-                const groupTable{{$group->id}} = $('#groupTable{{$group->id}}').DataTable({
+                $('#groupTable{{$group->id}}').DataTable({
                     processing: true,
                     serverSide: true,
                     ordering: true,
@@ -409,12 +416,11 @@
                             name: 'action',
                             orderable: false,
                             searchable: false,
-                            width: '15%'
                         },
                     ]
                 });
 
-            const classTable{{$group->id}} = $('#classTable{{$group->id}}').DataTable({
+            $('#classTable{{$group->id}}').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
