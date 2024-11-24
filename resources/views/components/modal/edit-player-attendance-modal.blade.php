@@ -43,7 +43,11 @@
     </div>
 </div>
 
-<x-modal-form-update-processing formId="#formEditPlayerAttendanceModal" updateDataId="#playerId" :routeUpdate="$routeUpdate" modalId="#editPlayerAttendanceModal" :routeAfterProcess="$routeAfterProcess"/>
+<x-modal-form-update-processing formId="#formEditPlayerAttendanceModal"
+                                updateDataId="#playerId"
+                                :routeUpdate="$routeUpdate"
+                                modalId="#editPlayerAttendanceModal"
+                                :routeAfterProcess="$routeAfterProcess"/>
 
 @push('addon-script')
     <script>

@@ -43,6 +43,12 @@
     </div>
 </div>
 
+<x-modal-form-update-processing formId="#formEditCoachAttendanceModal"
+                                updateDataId="#coachId"
+                                :routeUpdate="$routeUpdate"
+                                modalId="#editCoachAttendanceModal"
+                                :routeAfterProcess="$routeAfterProcess"/>
+
 @push('addon-script')
     <script>
         $(document).ready(function (){
@@ -70,43 +76,6 @@
                             icon: "error",
                             title: "Something went wrong when deleting data!",
                             text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            // update coach attendance data
-            $('#formEditCoachAttendanceModal').on('submit', function(e) {
-                e.preventDefault();
-                const id = $('#coachId').val();
-                $.ajax({
-                    url: "{{ $routeUpdate }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        $('#editCoachAttendanceModal').modal('hide');
-                        Swal.fire({
-                            title: 'Coach attendance successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        console.log(response);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#add_" + key).addClass('is-invalid');
                         });
                     }
                 });

@@ -356,9 +356,15 @@ class EventScheduleController extends Controller
     public function updateCoachAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Coach $coach)
     {
         $data = $request->validated();
-        $attendance = $this->eventScheduleService->updateCoachAttendanceStatus($data, $schedule, $coach);
-
-        return response()->json($attendance);
+        try {
+            $this->eventScheduleService->updateCoachAttendanceStatus($data, $schedule, $coach);
+            $message = "Coach ".$this->getUserFullName($coach->user)."'s attendance successfully set to ".$data['attendanceStatus'].".";
+            return ApiResponse::success(message:  $message);
+        } catch (Exception $e){
+            $message = "Error while updating attendance for coach ".$this->getUserFullName($coach->user).": " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function createNote(ScheduleNoteRequest $request, EventSchedule $schedule){

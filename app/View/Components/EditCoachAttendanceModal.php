@@ -10,13 +10,15 @@ class EditCoachAttendanceModal extends Component
 {
     public $routeGet;
     public $routeUpdate;
+    public $routeAfterProcess;
     /**
      * Create a new component instance.
      */
-    public function __construct($routeGet, $routeUpdate)
+    public function __construct($routeGet, $routeUpdate, $routeAfterProcess)
     {
         $this->routeGet = $routeGet;
         $this->routeUpdate = $routeUpdate;
+        $this->routeAfterProcess = $routeAfterProcess;
     }
 
     /**

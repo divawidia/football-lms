@@ -15,7 +15,8 @@
 
         <x-edit-coach-attendance-modal
             :routeGet="route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
-            :routeUpdate="route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
+            :routeUpdate="route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
+            :routeAfterProcess="route('training-schedules.show', $data['dataSchedule']->id)"/>/>
 
         <x-create-schedule-note-modal :routeCreate="route('training-schedules.create-note', $data['dataSchedule']->id)"
                                       :eventName="$data['dataSchedule']->eventName"/>
