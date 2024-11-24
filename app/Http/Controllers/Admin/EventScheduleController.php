@@ -18,12 +18,10 @@ use App\Models\EventSchedule;
 use App\Models\MatchScore;
 use App\Models\Player;
 use App\Models\ScheduleNote;
-use App\Repository\PlayerSkillStatsRepository;
 use App\Services\CompetitionService;
 use App\Services\EventScheduleService;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -369,47 +367,56 @@ class EventScheduleController extends Controller
 
     public function createNote(ScheduleNoteRequest $request, EventSchedule $schedule){
         $data = $request->validated();
-        $note = $this->eventScheduleService->createNote($data, $schedule);
-        if (request()->ajax()) {
-            return response()->json([
-                'status' => 200,
-                'data' => $note,
-                'message' => 'Success'
-            ]);
+        $loggedUser = $this->getLoggedUser();
+        try {
+            $this->eventScheduleService->createNote($data, $schedule, $loggedUser);
+            $message = "Note for this session successfully created.";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while creating a note for this session: ". $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
         }
     }
 
     public function editNote(EventSchedule $schedule, ScheduleNote $note)
     {
         try {
-            return response()->json([
-                'status' => 200,
-                'data' => $note,
-                'message' => 'Success'
-            ]);
-        }catch (\Throwable $throwable){
-            return response()->json([
-                'status' => 400,
-                'data' => $throwable,
-                'message' => 'Error'
-            ]);
+            $message = "Note data successfully retrieved.";
+            return ApiResponse::success($note, message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while retrieving note data: ". $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
         }
     }
 
     public function updateNote(ScheduleNoteRequest $request, EventSchedule $schedule, ScheduleNote $note){
         $data = $request->validated();
-        $note = $this->eventScheduleService->updateNote($data, $schedule, $note);
-        return response()->json([
-            'status' => 200,
-            'data' => $note,
-            'message' => 'Success'
-        ]);
+        try {
+            $this->eventScheduleService->updateNote($data, $schedule, $note, $this->getLoggedUser());
+            $message = "Note successfully updated.";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while updating note data: ". $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
     public function destroyNote(EventSchedule $schedule, ScheduleNote $note)
     {
-        $this->eventScheduleService->destroyNote($schedule, $note);
-
-        return response()->json(['success' => true]);
+        try {
+            $this->eventScheduleService->destroyNote($schedule, $note, $this->getLoggedUser());
+            $message = "Note for this session successfully deleted.";
+            return ApiResponse::success(message:  $message);
+        } catch (Exception $e){
+            $message = "Error while deleting note data: ". $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function getCompetitionTeam(Competition $competition){
@@ -454,13 +461,11 @@ class EventScheduleController extends Controller
     public function storeMatchScorer(MatchScoreRequest $request, EventSchedule $schedule){
         $data = $request->validated();
         $note = $this->eventScheduleService->storeMatchScorer($data, $schedule);
-        if (request()->ajax()) {
             return response()->json([
                 'status' => 200,
                 'data' => $note,
                 'message' => 'Success'
             ]);
-        }
     }
 
     public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer){
@@ -476,25 +481,21 @@ class EventScheduleController extends Controller
     {
         $data = $request->validated();
         $matchStats = $this->eventScheduleService->updateMatchStats($data, $schedule);
-        if (request()->ajax()) {
             return response()->json([
                 'status' => 200,
                 'data' => $matchStats,
                 'message' => 'Success'
             ]);
-        }
     }
 
     public function storeOwnGoal(MatchScoreRequest $request, EventSchedule $schedule){
         $data = $request->validated();
         $ownGoal = $this->eventScheduleService->storeOwnGoal($data, $schedule);
-        if (request()->ajax()) {
             return response()->json([
                 'status' => 200,
                 'data' => $ownGoal,
                 'message' => 'Success'
             ]);
-        }
     }
 
     public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer){
@@ -524,13 +525,11 @@ class EventScheduleController extends Controller
     {
         $data = $request->validated();
         $playerStats = $this->eventScheduleService->updatePlayerStats($data, $schedule, $player);
-        if (request()->ajax()) {
             return response()->json([
                 'status' => 200,
                 'data' => $playerStats,
                 'message' => 'Success'
             ]);
-        }
     }
 
     /**

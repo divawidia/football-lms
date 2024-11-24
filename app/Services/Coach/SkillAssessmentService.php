@@ -6,8 +6,10 @@ use App\Models\Coach;
 use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
+use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\PlayerSkillStatsRepository;
+use App\Services\DatatablesService;
 use App\Services\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -17,10 +19,18 @@ class SkillAssessmentService extends Service
 {
     private PlayerRepository $playerRepository;
     private PlayerSkillStatsRepository $playerSkillStatsRepository;
-    public function __construct(PlayerRepository $playerRepository, PlayerSkillStatsRepository $playerSkillStatsRepository)
+    private EventScheduleRepository $eventScheduleRepository;
+    private DatatablesService $datatablesService;
+    public function __construct(
+        PlayerRepository $playerRepository,
+        PlayerSkillStatsRepository $playerSkillStatsRepository,
+        EventScheduleRepository $eventScheduleRepository,
+        DatatablesService $datatablesService)
     {
         $this->playerRepository = $playerRepository;
         $this->playerSkillStatsRepository = $playerSkillStatsRepository;
+        $this->eventScheduleRepository = $eventScheduleRepository;
+        $this->datatablesService = $datatablesService;
     }
 
     // retrieve player data based on coach managed teams
@@ -65,24 +75,7 @@ class SkillAssessmentService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                             style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                        <a href="' . route('skill-assessments.skill-stats', $item->id) . '">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
-                                        </a>
-                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>';
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('skill-assessments.skill-stats', $item->id));
             })
             ->editColumn('age', function ($item) {
                 return $this->getAge($item->user->dob);
@@ -108,9 +101,7 @@ class SkillAssessmentService extends Service
             ->addColumn('action', function ($item) use ($schedule){
                 $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
                 if (isAllAdmin()){
-                    $button = '<a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.skill-stats', ['player'=>$item->id]) . '" data-toggle="tooltip" data-placement="bottom" title="View Player Skill Stats Detail">
-                                    <span class="material-icons">visibility</span>
-                               </a>';
+                    $button = $this->datatablesService->buttonTooltips(route('player-managements.skill-stats', ['player'=>$item->id]), 'View Player Skill Stats Detail', 'visibility');
                 } elseif(isCoach()){
                     if (!$stats){
                         $statsBtn = '<a class="dropdown-item addSkills" id="'.$item->id.'" data-eventId="'.$schedule->id.'"><span class="material-icons">edit</span> Evaluate Player Skills Stats</a>';
@@ -123,7 +114,7 @@ class SkillAssessmentService extends Service
                                             more_vert
                                         </span>
                                       </button>
-                                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                             <a class="dropdown-item" href="' . route('player-managements.skill-stats', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player Skill Stats</a>
                                             '.$statsBtn.'
                                       </div>
@@ -132,21 +123,7 @@ class SkillAssessmentService extends Service
                 return $button;
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center" style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
-                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>';
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('skill-assessments.skill-stats', $item->id));
             })
             ->editColumn('stats_status', function ($item) use ($schedule){
                 $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
@@ -208,18 +185,32 @@ class SkillAssessmentService extends Service
         $data = $this->convertInputData($data);
         $data['playerId'] = $player->id;
         $data['coachId'] = $coach->id;
-        return PlayerSkillStats::create($data);
+
+        $event = null;
+        if (array_key_exists('eventId', $data)) {
+            $event = $this->eventScheduleRepository->find($data['eventId']);
+        }
+        $skillStats = PlayerSkillStats::create($data);
+
+        $player->user->notify(new \App\Notifications\PlayerSkillStats($coach, 'assessed', $event));
+
+        return $skillStats;
     }
 
     public function update(array $data, PlayerSkillStats $playerSkillStats, $coachId)
     {
         $data = $this->convertInputData($data);
         $data['coachId'] = $coachId->id;
-        return $playerSkillStats->update($data);
+
+        $playerSkillStats->update($data);
+        $playerSkillStats->player->user->notify(new \App\Notifications\PlayerSkillStats($coachId, 'updated', $playerSkillStats->event));
+
+        return $playerSkillStats;
     }
 
     public function destroy(PlayerSkillStats $playerSkillStats)
     {
+        $playerSkillStats->player->user->notify(new \App\Notifications\PlayerSkillStats($playerSkillStats->coach, 'deleted', $playerSkillStats->event));
         return $playerSkillStats->delete();
     }
 }

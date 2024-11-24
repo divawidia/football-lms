@@ -9,6 +9,7 @@ use App\Models\Player;
 use App\Models\PlayerMatchStats;
 use App\Models\ScheduleNote;
 use App\Models\Team;
+use App\Notifications\MatchSchedules\MatchNote;
 use App\Notifications\MatchSchedules\MatchScheduleAttendance;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForAdmin;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForPlayerCoach;
@@ -17,6 +18,7 @@ use App\Notifications\MatchSchedules\MatchScheduleDeletedForPlayersCoaches;
 use App\Notifications\MatchSchedules\MatchScheduleUpdatedForAdmin;
 use App\Notifications\MatchSchedules\MatchScheduleUpdatedForPlayerCoach;
 use App\Notifications\MatchSchedules\MatchStatsPlayer;
+use App\Notifications\TrainingSchedules\TrainingNote;
 use App\Notifications\TrainingSchedules\TrainingScheduleAttendance;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForPlayer;
@@ -795,16 +797,38 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function createNote($data, EventSchedule $schedule){
+    public function createNote($data, EventSchedule $schedule, $loggedUser){
         $data['scheduleId'] = $schedule->id;
-        return ScheduleNote::create($data);
+        $note = ScheduleNote::create($data);
+        $teamParticipants = $this->userRepository->allTeamsParticipant($schedule->teams[0]);
+
+        if ($schedule->eventType == 'Training') {
+            Notification::send($teamParticipants, new TrainingNote($loggedUser, $schedule, 'created'));
+        } elseif ($schedule->eventType == 'Match') {
+            Notification::send($teamParticipants, new MatchNote($loggedUser, $schedule, 'created'));
+        }
+        return $note;
     }
-    public function updateNote($data, EventSchedule $schedule, ScheduleNote $note){
-        return $note->update($data);
+    public function updateNote($data, EventSchedule $schedule, ScheduleNote $note, $loggedUser){
+        $note->update($data);
+        $teamParticipants = $this->userRepository->allTeamsParticipant($schedule->teams[0]);
+        if ($schedule->eventType == 'Training') {
+            Notification::send($teamParticipants, new TrainingNote($loggedUser, $schedule, 'updated'));
+        } elseif ($schedule->eventType == 'Match') {
+            Notification::send($teamParticipants, new MatchNote($loggedUser, $schedule, 'updated'));
+        }
+        return $note;
     }
-    public function destroyNote(EventSchedule $schedule, ScheduleNote $note)
+    public function destroyNote(EventSchedule $schedule, ScheduleNote $note, $loggedUser)
     {
-        return $note->delete();
+        $note->delete();
+        $teamParticipants = $this->userRepository->allTeamsParticipant($schedule->teams[0]);
+        if ($schedule->eventType == 'Training') {
+            Notification::send($teamParticipants, new TrainingNote($loggedUser, $schedule, 'deleted'));
+        } elseif ($schedule->eventType == 'Match') {
+            Notification::send($teamParticipants, new MatchNote($loggedUser, $schedule, 'deleted'));
+        }
+        return $note;
     }
 
     public function storeMatchScorer($data, EventSchedule $schedule)

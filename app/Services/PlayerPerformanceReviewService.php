@@ -7,6 +7,7 @@ use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\PlayerPerformanceReview;
 use App\Models\PlayerSkillStats;
+use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerPerformanceReviewRepository;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -14,9 +15,17 @@ use Yajra\DataTables\Facades\DataTables;
 class PlayerPerformanceReviewService extends Service
 {
     private PlayerPerformanceReviewRepository $performanceReviewRepository;
-    public function __construct(PlayerPerformanceReviewRepository $performanceReviewRepository)
+    private EventScheduleRepository $eventScheduleRepository;
+    private DatatablesService $datatablesService;
+    public function __construct(
+        PlayerPerformanceReviewRepository $performanceReviewRepository,
+        EventScheduleRepository $eventScheduleRepository,
+        DatatablesService $datatablesService
+    )
     {
         $this->performanceReviewRepository = $performanceReviewRepository;
+        $this->eventScheduleRepository = $eventScheduleRepository;
+        $this->datatablesService = $datatablesService;
     }
 
     public function index(Player $player)
@@ -82,7 +91,7 @@ class PlayerPerformanceReviewService extends Service
                                             more_vert
                                         </span>
                                       </button>
-                                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                             <a class="dropdown-item" href="' . route('player-managements.performance-reviews-page', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View All Player Performance Review</a>
                                             '.$reviewBtn.'
                                       </div>
@@ -91,23 +100,7 @@ class PlayerPerformanceReviewService extends Service
                 return $button;
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center" style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                        <a href="'.route('player-managements.show', ['player'=>$item->id]).'">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
-                                        </a>
-                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>';
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->id));
             })
             ->editColumn('performance_review', function ($item) use ($schedule){
                 $review = $this->performanceReviewRepository->getByPlayer($item, $schedule)->first();
@@ -145,16 +138,25 @@ class PlayerPerformanceReviewService extends Service
     {
         $data['playerId'] = $player->id;
         $data['coachId'] = $coach->id;
-        return $this->performanceReviewRepository->create($data);
+        $event = null;
+        if (array_key_exists('eventId', $data)) {
+            $event = $this->eventScheduleRepository->find($data['eventId']);
+        }
+        $review = $this->performanceReviewRepository->create($data);
+        $player->user->notify(new \App\Notifications\PlayerPerformanceReview($coach, 'created', $event));
+        return $review;
     }
 
     public function update(array $data, PlayerPerformanceReview $review)
     {
-        return $review->update($data);
+        $review->update($data);
+        $review->player->user->notify(new \App\Notifications\PlayerPerformanceReview($review->coach, 'updated', $review->event));
+        return $review;
     }
 
     public function destroy(PlayerPerformanceReview $review)
     {
+        $review->player->user->notify(new \App\Notifications\PlayerPerformanceReview($review->coach, 'deleted', $review->event));
         return $review->delete();
     }
 }
