@@ -282,7 +282,7 @@ class EventScheduleService extends Service
                                 more_vert
                             </span>
                           </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item edit-player-stats" href="" id="'.$item->id.'"><span class="material-icons">edit</span> Edit Player Stats</a>
                             <a class="dropdown-item" href="' . route('player-managements.show', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player</a>
                           </div>
@@ -331,7 +331,7 @@ class EventScheduleService extends Service
                                             more_vert
                                         </span>
                                       </button>
-                                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                             <a class="dropdown-item" href="' . route('player-managements.skill-stats', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player Skill Stats</a>
                                             '.$statsBtn.'
                                             '.$reviewBtn.'
@@ -355,7 +355,7 @@ class EventScheduleService extends Service
             ->editColumn('stats_created', function ($item) use ($schedule){
                 $stats = $item->playerSkillStats()->where('eventId', $schedule->id)->first();
                 if ($stats){
-                    $date = date('M d, Y h:i A', strtotime($stats->created_at));
+                    $date = $this->convertToDatetime($stats->created_at);
                 } else{
                     $date = '-';
                 }
@@ -364,7 +364,7 @@ class EventScheduleService extends Service
             ->editColumn('stats_updated', function ($item) use ($schedule){
                 $stats = $item->playerSkillStats()->where('eventId', $schedule->id)->first();
                 if ($stats){
-                    $date = date('M d, Y h:i A', strtotime($stats->updated_at));
+                    $date = $this->convertToDatetime($stats->updated_at);
                 } else{
                     $date = '-';
                 }
@@ -382,7 +382,7 @@ class EventScheduleService extends Service
             ->editColumn('performance_review_created', function ($item) use ($schedule){
                 $review = $item->playerPerformanceReview()->where('eventId', $schedule->id)->first();
                 if ($review){
-                    $text = date('M d, Y h:i A', strtotime($review->created_at));
+                    $text = $this->convertToDatetime($review->created_at);
                 } else{
                     $text = '-';
                 }
@@ -391,7 +391,7 @@ class EventScheduleService extends Service
             ->editColumn('performance_review_last_updated', function ($item) use ($schedule){
                 $review = $item->playerPerformanceReview()->where('eventId', $schedule->id)->first();
                 if ($review){
-                    $text = date('M d, Y h:i A', strtotime($review->updated_at));
+                    $text = $this->convertToDatetime($review->updated_at);
                 } else{
                     $text = '-';
                 }
