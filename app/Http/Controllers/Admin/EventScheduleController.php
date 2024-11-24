@@ -170,7 +170,7 @@ class EventScheduleController extends Controller
     public function showTraining(EventSchedule $schedule)
     {
         $data = $this->eventScheduleService->show($schedule);
-        $players = $data['dataSchedule']->players()->paginate(6);
+        $players = $data['dataSchedule']->players;
         $coaches = $data['dataSchedule']->coaches;
 
         if ($this->isPlayer()){
@@ -341,8 +341,16 @@ class EventScheduleController extends Controller
     public function updatePlayerAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Player $player): JsonResponse
     {
         $data = $request->validated();
-        $attendance = $this->eventScheduleService->updatePlayerAttendanceStatus($data, $schedule, $player);
-        return response()->json($attendance);
+        try {
+            $this->eventScheduleService->updatePlayerAttendanceStatus($data, $schedule, $player);
+            $message = "Player ".$this->getUserFullName($player->user)."'s attendance successfully set to ".$data['attendanceStatus'].".";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while updating attendance for player ".$this->getUserFullName($player->user).": " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function updateCoachAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Coach $coach)

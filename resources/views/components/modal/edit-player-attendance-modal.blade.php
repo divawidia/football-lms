@@ -80,6 +80,15 @@
             $('#formEditPlayerAttendanceModal').on('submit', function(e) {
                 e.preventDefault();
                 const id = $('#playerId').val();
+
+                Swal.fire({
+                    title: 'Processing...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
                 $.ajax({
                     url: "{{ $routeUpdate }}".replace(':id', id),
                     type: $(this).attr('method'),
@@ -87,9 +96,10 @@
                     contentType: false,
                     processData: false,
                     success: function(res) {
+                        Swal.close();
                         $('#editPlayerAttendanceModal').modal('hide');
                         Swal.fire({
-                            title: 'Player attendance successfully updated!',
+                            title: res.message,
                             icon: 'success',
                             showCancelButton: false,
                             allowOutsideClick: false,
@@ -103,8 +113,8 @@
                         });
                     },
                     error: function(xhr) {
+                        Swal.close();
                         const response = JSON.parse(xhr.responseText);
-                        console.log(response);
                         $.each(response.errors, function(key, val) {
                             $('span.' + key + '_error').text(val[0]);
                             $("#add_" + key).addClass('is-invalid');
