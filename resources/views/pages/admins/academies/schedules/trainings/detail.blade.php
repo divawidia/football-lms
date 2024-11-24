@@ -10,7 +10,8 @@
     @if(isAllAdmin() || isCoach())
         <x-edit-player-attendance-modal
             :routeGet="route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
-            :routeUpdate="route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
+            :routeUpdate="route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
+            :routeAfterProcess="route('training-schedules.show', $data['dataSchedule']->id)"/>
 
         <x-edit-coach-attendance-modal
             :routeGet="route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"

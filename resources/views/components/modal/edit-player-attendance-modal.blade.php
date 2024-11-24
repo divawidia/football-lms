@@ -43,6 +43,8 @@
     </div>
 </div>
 
+<x-modal-form-update-processing formId="#formEditPlayerAttendanceModal" updateDataId="#playerId" :routeUpdate="$routeUpdate" modalId="#editPlayerAttendanceModal" :routeAfterProcess="$routeAfterProcess"/>
+
 @push('addon-script')
     <script>
         $(document).ready(function (){
@@ -75,54 +77,6 @@
                     }
                 });
             });
-
-            // update player attendance data
-            $('#formEditPlayerAttendanceModal').on('submit', function(e) {
-                e.preventDefault();
-                const id = $('#playerId').val();
-
-                Swal.fire({
-                    title: 'Processing...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                $.ajax({
-                    url: "{{ $routeUpdate }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        Swal.close();
-                        $('#editPlayerAttendanceModal').modal('hide');
-                        Swal.fire({
-                            title: res.message,
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        Swal.close();
-                        const response = JSON.parse(xhr.responseText);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#add_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
-
         });
     </script>
 @endpush

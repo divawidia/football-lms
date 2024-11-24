@@ -1,6 +1,5 @@
 @push('addon-script')
     <script>
-        $(document).ready(function (){
             $('{{ $formId }}').on('submit', function(e) {
                 e.preventDefault();
                 const id = $('{{ $updateDataId }}').val();
@@ -46,7 +45,5 @@
                     }
                 });
             });
-
-        });
     </script>
 @endpush
