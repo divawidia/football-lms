@@ -39,134 +39,7 @@
     <x-edit-team-match-stats-modal :eventSchedule="$data['dataSchedule']"/>
 
     <!-- Modal update player match stats -->
-    <div class="modal fade" id="playerMatchStatsModal" tabindex="-1" aria-labelledby="playerMatchStatsModal"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="post" id="formPlayerMatchStats">
-                    @method('PUT')
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="playerStatsName"></h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-6">
-                                <input type="hidden" id="playerStatsId">
-                                <div class="form-group">
-                                    <label class="form-label" for="minutesPlayed">Minutes Played</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="minutesPlayed"
-                                           name="minutesPlayed"
-                                           min="0"
-                                           value="{{ old('minutesPlayed') }}"
-                                           placeholder="Input team own goal">
-                                    <span class="invalid-feedback minutesPlayed_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="shots">Shots</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="shots"
-                                           name="shots"
-                                           min="0"
-                                           value="{{ old('shots') }}"
-                                           placeholder="Input team Shot">
-                                    <span class="invalid-feedback shots_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="passes">Passes</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="passes"
-                                           name="passes"
-                                           min="0"
-                                           value="{{ old('passes') }}"
-                                           placeholder="Input team Touches">
-                                    <span class="invalid-feedback passes_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="fouls">Fouls</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="fouls"
-                                           name="fouls"
-                                           min="0"
-                                           value="{{ old('fouls') }}"
-                                           placeholder="Input team Passes">
-                                    <span class="invalid-feedback fouls_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="yellowCards">Yellow Cards</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="yellowCards"
-                                           name="yellowCards"
-                                           min="0"
-                                           value="{{ old('yellowCards') }}"
-                                           placeholder="Input team Tackles">
-                                    <span class="invalid-feedback yellowCards_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="redCards">Red Cards</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="redCards"
-                                           name="redCards"
-                                           {{--                                           min="0"--}}
-                                           value="{{ old('redCards') }}"
-                                           placeholder="Input team Clearances">
-                                    <span class="invalid-feedback redCards_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="saves">Saves</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="saves"
-                                           name="saves"
-                                           {{--                                           min="0"--}}
-                                           value="{{ old('saves') }}"
-                                           placeholder="Input team Corners">
-                                    <span class="invalid-feedback saves_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <x-edit-player-match-stats-modal :eventSchedule="$data['dataSchedule']"/>
 @endsection
 
 @section('content')
@@ -816,14 +689,6 @@
                                  confirmationText="Are you sure to delete this own goal?"
                                  errorText="Something went wrong when deleting own goal scorer!"/>
 
-
-
-    {{-- update player match stats data --}}
-    <x-modal-form-update-processing formId="#formPlayerMatchStats"
-                                    updateDataId="#formPlayerMatchStats #playerStatsId"
-                                    :routeUpdate="route('match-schedules.update-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
-                                    modalId="#playerMatchStatsModal"/>
-
 @endsection
 @push('addon-script')
     <script>
@@ -857,38 +722,6 @@
                     },
                 ]
             });
-
-            $('body').on('click', '.edit-player-stats', function (e) {
-                e.preventDefault();
-                const id = $(this).attr('id');
-
-                $.ajax({
-                    url: "{{ route('match-schedules.show-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),
-
-                    type: 'get',
-                    success: function (res) {
-                        console.log(res)
-                        $('#playerMatchStatsModal').modal('show');
-
-                        const heading = document.getElementById('playerStatsName');
-                        heading.textContent = 'Update Player ' + res.data.playerData.firstName + ' ' + res.data.playerData.lastName + ' Stats';
-
-                        $.each(res.data.statsData, function (key, val) {
-                            $('#' + key).val(val);
-                        });
-
-                        $('#playerStatsId').val(res.data.statsData.playerId);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when deleting data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
         });
     </script>
 @endpush

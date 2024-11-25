@@ -477,8 +477,7 @@
                                        class="form-control"
                                        id="teamBFoulsConceded"
                                        name="teamBFoulsConceded"
-{{--                                       min="0"--}}
-
+                                       min="0"
                                        value="{{ old('teamBFoulsConceded', $eventSchedule->teams[1]->pivot->teamFoulsConceded) }}"
                                        placeholder="Input team Fouls Conceded">
                                 <span class="invalid-feedback teamBFoulsConceded_error" role="alert">
