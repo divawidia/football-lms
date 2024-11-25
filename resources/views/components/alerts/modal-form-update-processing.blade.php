@@ -38,9 +38,14 @@
                     error: function(xhr) {
                         Swal.close();
                         const response = JSON.parse(xhr.responseText);
+                        console.log(response)
                         $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#add_" + key).addClass('is-invalid');
+                            $('{{ $formId }} span.' + key + '_error').text(val[0]);
+                            $("{{ $formId }} #add_" + key).addClass('is-invalid');
+                        });
+                        Swal.fire({
+                            title: response.message,
+                            icon: 'error',
                         });
                     }
                 });

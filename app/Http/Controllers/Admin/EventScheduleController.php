@@ -291,48 +291,34 @@ class EventScheduleController extends Controller
     }
 
     public function getPlayerAttendance(EventSchedule $schedule, Player $player){
-        $data = $this->eventScheduleService->getPlayerAttendance($schedule, $player);
+        try {
+            $data = $this->eventScheduleService->getPlayerAttendance($schedule, $player);
+            $data = [
+                'user' => $data->user,
+                'playerAttendance'=>$data->pivot
+            ];
+            return ApiResponse::success($data, message:  'Successfully retrieved player attendance data');
 
-        if (request()->ajax()) {
-            if ($data) {
-                return response()->json([
-                    'status' => 200,
-                    'data' => [
-                        'user' => $data->user,
-                        'playerAttendance'=>$data->pivot
-                    ]
-                ]);
-            } else {
-                return response()->json([
-                    'status' => 404,
-                    'message' => 'Data not found!'
-                ]);
-            }
-        } else {
-            abort(404);
+        } catch (Exception $e){
+            $message = "Error while retrieving player attendance data: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
         }
     }
 
     public function getCoachAttendance(EventSchedule $schedule, Coach $coach){
-        $data = $this->eventScheduleService->getCoachAttendance($schedule, $coach);
+        try {
+            $data = $this->eventScheduleService->getCoachAttendance($schedule, $coach);
+            $data = [
+                'user' => $data->user,
+                'coachAttendance'=>$data->pivot
+            ];
+            return ApiResponse::success($data, message:  'Successfully retrieved coach attendance data');
 
-        if (request()->ajax()) {
-            if ($data) {
-                return response()->json([
-                    'status' => 200,
-                    'data' => [
-                        'user' => $data->user,
-                        'coachAttendance'=>$data->pivot
-                        ]
-                ]);
-            } else {
-                return response()->json([
-                    'status' => 404,
-                    'message' => 'Data not found!'
-                ]);
-            }
-        } else {
-            abort(404);
+        } catch (Exception $e){
+            $message = "Error while retrieving coach attendance data: " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
         }
     }
 
@@ -427,109 +413,121 @@ class EventScheduleController extends Controller
             $teams[] = $group->teams()->where('teamSide', 'Academy Team')->get();
             $opponentTeams[] = $group->teams()->where('teamSide', 'Opponent Team')->get();
         }
-        return response()->json([
-            'status' => 200,
-            'data' => [
+        $data = [
                 'teams' => $teams,
                 'opponentTeams' => $opponentTeams,
-                ],
-            'message' => 'Success'
-        ]);
+            ];
+        return ApiResponse::success($data, message:  "Successfully retrieved competition team data");
     }
 
     public function getFriendlyMatchTeam(){
         $data = $this->eventScheduleService->getFriendlyMatchTeam();
-        return response()->json([
-            'status' => 200,
-            'data' => [
-                'teams' => $data['teams'],
-                'opponentTeams' => $data['opponentTeams'],
-            ],
-            'message' => 'Success'
-        ]);
+        $data = [
+            'teams' => $data['teams'],
+            'opponentTeams' => $data['opponentTeams'],
+        ];
+        return ApiResponse::success($data, message:  "Successfully retrieved friendly match team data");
     }
 
     public function getAssistPlayer(EventSchedule $schedule, Player $player){
         $players = $schedule->players()->with('user', 'position')->where('players.id', '!=', $player->id)->get();
-        return response()->json([
-            'status' => 200,
-            'data' => $players,
-            'message' => 'Success'
-        ]);
+        return ApiResponse::success($players, message:  "Successfully retrieved assist player data");
     }
 
     public function storeMatchScorer(MatchScoreRequest $request, EventSchedule $schedule){
         $data = $request->validated();
-        $note = $this->eventScheduleService->storeMatchScorer($data, $schedule);
-            return response()->json([
-                'status' => 200,
-                'data' => $note,
-                'message' => 'Success'
-            ]);
+        try {
+            $scorer = $this->eventScheduleService->storeMatchScorer($data, $schedule);
+            $message = "Match scorer ".$this->getUserFullName($scorer->player->user)." successfully added.";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while adding match scorer ".$this->getUserFullName($scorer->player->user).":" . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer){
-        $matchScorer = $this->eventScheduleService->destroyMatchScorer($schedule, $scorer);
-        return response()->json([
-            'status' => 200,
-            'data' => $matchScorer,
-            'message' => 'Success'
-        ]);
+        try {
+            $this->eventScheduleService->destroyMatchScorer($schedule, $scorer);
+            $message = "Match scorer ".$this->getUserFullName($scorer->player->user)." successfully deleted.";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while deleting match scorer ".$this->getUserFullName($scorer->player->user).":" . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function updateMatchStats(MatchStatsRequest $request, EventSchedule $schedule)
     {
         $data = $request->validated();
-        $matchStats = $this->eventScheduleService->updateMatchStats($data, $schedule);
-            return response()->json([
-                'status' => 200,
-                'data' => $matchStats,
-                'message' => 'Success'
-            ]);
+
+        try {
+            $this->eventScheduleService->updateMatchStats($data, $schedule);
+            $message = "Match stats successfully updated.";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while updating match stats:" . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function storeOwnGoal(MatchScoreRequest $request, EventSchedule $schedule){
         $data = $request->validated();
-        $ownGoal = $this->eventScheduleService->storeOwnGoal($data, $schedule);
-            return response()->json([
-                'status' => 200,
-                'data' => $ownGoal,
-                'message' => 'Success'
-            ]);
+
+        try {
+            $ownGoal = $this->eventScheduleService->storeOwnGoal($data, $schedule);
+            $message = "Own goal ".$this->getUserFullName($ownGoal->player->user)." successfully added.";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while adding own goal ".$this->getUserFullName($ownGoal->player->user).":" . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer){
-        $ownGoal = $this->eventScheduleService->destroyOwnGoal($schedule, $scorer);
-        return response()->json([
-            'status' => 200,
-            'data' => $ownGoal,
-            'message' => 'Success'
-        ]);
+        try {
+            $this->eventScheduleService->destroyOwnGoal($schedule, $scorer);
+            $message = "Own goal ".$this->getUserFullName($scorer->player->user)." successfully deleted.";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while deleting own goal ".$this->getUserFullName($scorer->player->user).":" . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function indexPlayerMatchStats(EventSchedule $schedule)
     {
-            return $this->eventScheduleService->dataTablesPlayerStats($schedule);
+        return $this->eventScheduleService->dataTablesPlayerStats($schedule);
     }
 
     public function getPlayerStats(EventSchedule $schedule, Player $player){
         $player = $this->eventScheduleService->getPlayerStats($schedule, $player);
-        return response()->json([
-            'status' => 200,
-            'data' => $player,
-            'message' => 'Success'
-        ]);
+        return ApiResponse::success($player, message:  "Successfully retrieved player stats");
     }
 
     public function updatePlayerStats(PlayerMatchStatsRequest $request, EventSchedule $schedule, Player $player)
     {
         $data = $request->validated();
-        $playerStats = $this->eventScheduleService->updatePlayerStats($data, $schedule, $player);
-            return response()->json([
-                'status' => 200,
-                'data' => $playerStats,
-                'message' => 'Success'
-            ]);
+        try {
+            $this->eventScheduleService->updatePlayerStats($data, $schedule, $player);
+            $message = "Player ".$this->getUserFullName($player->user)." stats successfully updated.";
+            return ApiResponse::success(message:  $message);
+
+        } catch (Exception $e){
+            $message = "Error while updating player ".$this->getUserFullName($player->user)." stats:" . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     /**

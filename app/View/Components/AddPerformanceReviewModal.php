@@ -9,12 +9,14 @@ use Illuminate\View\Component;
 class AddPerformanceReviewModal extends Component
 {
     public $routeCreate;
+    public $routeAfterProcess;
     /**
      * Create a new component instance.
      */
-    public function __construct($routeCreate)
+    public function __construct($routeCreate, $routeAfterProcess)
     {
         $this->routeCreate = $routeCreate;
+        $this->routeAfterProcess = $routeAfterProcess;
     }
 
     /**

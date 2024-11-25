@@ -31,6 +31,11 @@
     </div>
 </div>
 
+<x-modal-form-update-processing formId="#formEditPerformanceReviewModal"
+                                updateDataId="#editPerformanceReviewModal #reviewId"
+                                :routeUpdate="route('coach.performance-reviews.update', ['review' => ':id'])"
+                                modalId="#editPerformanceReviewModal"
+                                :routeAfterProcess="$routeAfterProcess"/>
 @push('addon-script')
     <script>
         $(document).ready(function (){
@@ -60,47 +65,47 @@
                 });
             });
 
-            // update schedule data
-            $('#formEditPerformanceReviewModal').on('submit', function(e) {
-                e.preventDefault();
-                const reviewId = $(modalId+' #reviewId').val();
+            {{--// update schedule data--}}
+            {{--$('#formEditPerformanceReviewModal').on('submit', function(e) {--}}
+            {{--    e.preventDefault();--}}
+            {{--    const reviewId = $(modalId+' #reviewId').val();--}}
 
-                $.ajax({
-                    url: '{!! url()->route('coach.performance-reviews.update', ['review' => ':id']) !!}'.replace(':id', reviewId),
-                    method: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function() {
-                        $(modalId).modal('hide');
-                        Swal.fire({
-                            title: 'Performance review successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        const response = JSON.parse(xhr.responseText);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#add_" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when retrieving data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
+            {{--    $.ajax({--}}
+            {{--        url: '{!! url()->route('coach.performance-reviews.update', ['review' => ':id']) !!}'.replace(':id', reviewId),--}}
+            {{--        method: $(this).attr('method'),--}}
+            {{--        data: new FormData(this),--}}
+            {{--        contentType: false,--}}
+            {{--        processData: false,--}}
+            {{--        success: function() {--}}
+            {{--            $(modalId).modal('hide');--}}
+            {{--            Swal.fire({--}}
+            {{--                title: 'Performance review successfully updated!',--}}
+            {{--                icon: 'success',--}}
+            {{--                showCancelButton: false,--}}
+            {{--                allowOutsideClick: false,--}}
+            {{--                confirmButtonColor: "#1ac2a1",--}}
+            {{--                confirmButtonText:--}}
+            {{--                    'Ok!'--}}
+            {{--            }).then((result) => {--}}
+            {{--                if (result.isConfirmed) {--}}
+            {{--                    location.reload();--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        },--}}
+            {{--        error: function(xhr, textStatus, errorThrown) {--}}
+            {{--            const response = JSON.parse(xhr.responseText);--}}
+            {{--            $.each(response.errors, function(key, val) {--}}
+            {{--                $('span.' + key + '_error').text(val[0]);--}}
+            {{--                $("#add_" + key).addClass('is-invalid');--}}
+            {{--            });--}}
+            {{--            Swal.fire({--}}
+            {{--                icon: "error",--}}
+            {{--                title: "Something went wrong when retrieving data!",--}}
+            {{--                text: errorThrown,--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
         });
     </script>
 @endpush

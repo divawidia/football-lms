@@ -835,7 +835,7 @@ class EventScheduleService extends Service
     {
         $data['eventId'] = $schedule->id;
         $data['isOwnGoal'] = '0';
-        MatchScore::create($data);
+        $scorer = MatchScore::create($data);
         $player = $schedule->playerMatchStats()->find($data['playerId']);
         $assistPlayer = $schedule->playerMatchStats()->find($data['assistPlayerId']);
 
@@ -852,7 +852,7 @@ class EventScheduleService extends Service
             $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['teamScore' => $teamScore]);
         }
 
-        return $schedule;
+        return $scorer;
     }
     public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer)
     {
@@ -878,7 +878,7 @@ class EventScheduleService extends Service
     {
         $data['eventId'] = $schedule->id;
         $data['isOwnGoal'] = '1';
-        MatchScore::create($data);
+        $scorer = MatchScore::create($data);
         $player = $schedule->playerMatchStats()->find($data['playerId']);
 
         $playerOwnGoal = $player->pivot->ownGoal + 1;
@@ -894,7 +894,7 @@ class EventScheduleService extends Service
             $schedule->coachMatchStats()->updateExistingPivot($coach->id, ['teamOwnGoal' => $teamOwnGoal]);
         }
 
-        return $schedule;
+        return $scorer;
     }
 
     public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer)

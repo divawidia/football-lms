@@ -11,14 +11,16 @@ class EditScheduleNoteModal extends Component
     public $routeEdit;
     public $routeUpdate;
     public $eventName;
+    public $routeAfterProcess;
     /**
      * Create a new component instance.
      */
-    public function __construct($routeEdit, $routeUpdate, $eventName)
+    public function __construct($routeEdit, $routeUpdate, $eventName, $routeAfterProcess)
     {
         $this->routeEdit = $routeEdit;
         $this->routeUpdate = $routeUpdate;
         $this->eventName = $eventName;
+        $this->routeAfterProcess = $routeAfterProcess;
     }
 
     /**

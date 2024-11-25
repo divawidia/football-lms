@@ -8,11 +8,13 @@ use Illuminate\View\Component;
 
 class SkillAssessmentsModal extends Component
 {
+    public $routeAfterProcess;
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($routeAfterProcess)
     {
+        $this->routeAfterProcess = $routeAfterProcess;
     }
 
     /**

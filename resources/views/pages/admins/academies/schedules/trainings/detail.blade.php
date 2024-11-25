@@ -231,7 +231,6 @@
                                  :routeAfterProcess="route('training-schedules.index')"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this training session {{ $data['dataSchedule']->eventName }}?"
-                                 successText="Successfully deleted training session {{ $data['dataSchedule']->eventName }}!"
                                  errorText="Something went wrong when deleting training session {{ $data['dataSchedule']->eventName }}!"/>
 
     <x-process-data-confirmation btnClass=".cancelBtn"
@@ -239,7 +238,6 @@
                                  :routeAfterProcess="route('training-schedules.show', $data['dataSchedule']->id)"
                                  method="PATCH"
                                  confirmationText="Are you sure to cancel competition {{ $data['dataSchedule']->eventName }}?"
-                                 successText="Training session {{ $data['dataSchedule']->eventName }} successfully mark as cancelled!"
                                  errorText="Something went wrong when marking training session {{ $data['dataSchedule']->eventName }} as cancelled!"/>
 
 @endsection

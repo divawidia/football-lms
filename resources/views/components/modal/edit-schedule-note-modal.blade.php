@@ -30,6 +30,12 @@
     </div>
 </div>
 
+<x-modal-form-update-processing formId="#formUpdateNoteModal"
+                                updateDataId="#noteId"
+                                :routeUpdate="$routeUpdate"
+                                modalId="#editNoteModal"
+                                :routeAfterProcess="$routeAfterProcess"/>
+
 @push('addon-script')
     <script>
         $(document).ready(function (){
@@ -58,43 +64,43 @@
                 });
             });
 
-            // update schedule note data
-            $('#formUpdateNoteModal').on('submit', function(e) {
-                e.preventDefault();
-                const id = $('#noteId').val();
-                $.ajax({
-                    {{--url: "{{ route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),--}}
-                    url: "{{ $routeUpdate }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        $('#editNoteModal').modal('hide');
-                        Swal.fire({
-                            title: 'Training session note successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        console.log(response);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#edit_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
+            {{--// update schedule note data--}}
+            {{--$('#formUpdateNoteModal').on('submit', function(e) {--}}
+            {{--    e.preventDefault();--}}
+            {{--    const id = $('#noteId').val();--}}
+            {{--    $.ajax({--}}
+            {{--        --}}{{--url: "{{ route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),--}}
+            {{--        url: "{{ $routeUpdate }}".replace(':id', id),--}}
+            {{--        type: $(this).attr('method'),--}}
+            {{--        data: new FormData(this),--}}
+            {{--        contentType: false,--}}
+            {{--        processData: false,--}}
+            {{--        success: function(res) {--}}
+            {{--            $('#editNoteModal').modal('hide');--}}
+            {{--            Swal.fire({--}}
+            {{--                title: 'Training session note successfully updated!',--}}
+            {{--                icon: 'success',--}}
+            {{--                showCancelButton: false,--}}
+            {{--                allowOutsideClick: false,--}}
+            {{--                confirmButtonColor: "#1ac2a1",--}}
+            {{--                confirmButtonText:--}}
+            {{--                    'Ok!'--}}
+            {{--            }).then((result) => {--}}
+            {{--                if (result.isConfirmed) {--}}
+            {{--                    location.reload();--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        },--}}
+            {{--        error: function(xhr) {--}}
+            {{--            const response = JSON.parse(xhr.responseText);--}}
+            {{--            console.log(response);--}}
+            {{--            $.each(response.errors, function(key, val) {--}}
+            {{--                $('span.' + key + '_error').text(val[0]);--}}
+            {{--                $("#edit_" + key).addClass('is-invalid');--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
         });
     </script>
 @endpush

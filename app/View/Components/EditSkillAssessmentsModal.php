@@ -8,12 +8,13 @@ use Illuminate\View\Component;
 
 class EditSkillAssessmentsModal extends Component
 {
+    public $routeAfterProcess;
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($routeAfterProcess)
     {
-        //
+        $this->routeAfterProcess = $routeAfterProcess;
     }
 
     /**

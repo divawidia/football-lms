@@ -30,6 +30,11 @@
     </div>
 </div>
 
+<x-modal-form-update-processing formId="#formCreatePerformanceReviewModal"
+                                updateDataId="#formCreatePerformanceReviewModal #playerId"
+                                :routeUpdate="$routeCreate"
+                                modalId="#createPerformanceReviewModal"
+                                :routeAfterProcess="$routeAfterProcess"/>
 @push('addon-script')
     <script>
         $(document).ready(function (){
@@ -46,41 +51,41 @@
             });
 
             // create schedule note data
-            $('#formCreatePerformanceReviewModal').on('submit', function(e) {
-                e.preventDefault();
-                const playerId = $(modalId+' #playerId').val();
+            {{--$('#formCreatePerformanceReviewModal').on('submit', function(e) {--}}
+            {{--    e.preventDefault();--}}
+            {{--    const playerId = $(modalId+' #playerId').val();--}}
 
-                $.ajax({
-                    url: '{{ $routeCreate }}'.replace(':id', playerId),
-                    method: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function() {
-                        $('#createPerformanceReviewModal').modal('hide');
-                        Swal.fire({
-                            title: 'Performance review successfully added!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#add_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
+            {{--    $.ajax({--}}
+            {{--        url: '{{ $routeCreate }}'.replace(':id', playerId),--}}
+            {{--        method: $(this).attr('method'),--}}
+            {{--        data: new FormData(this),--}}
+            {{--        contentType: false,--}}
+            {{--        processData: false,--}}
+            {{--        success: function() {--}}
+            {{--            $('#createPerformanceReviewModal').modal('hide');--}}
+            {{--            Swal.fire({--}}
+            {{--                title: 'Performance review successfully added!',--}}
+            {{--                icon: 'success',--}}
+            {{--                showCancelButton: false,--}}
+            {{--                allowOutsideClick: false,--}}
+            {{--                confirmButtonColor: "#1ac2a1",--}}
+            {{--                confirmButtonText:--}}
+            {{--                    'Ok!'--}}
+            {{--            }).then((result) => {--}}
+            {{--                if (result.isConfirmed) {--}}
+            {{--                    location.reload();--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        },--}}
+            {{--        error: function(xhr) {--}}
+            {{--            const response = JSON.parse(xhr.responseText);--}}
+            {{--            $.each(response.errors, function(key, val) {--}}
+            {{--                $('span.' + key + '_error').text(val[0]);--}}
+            {{--                $("#add_" + key).addClass('is-invalid');--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
         });
     </script>
 @endpush

@@ -202,6 +202,12 @@
     </div>
 </div>
 
+<x-modal-form-update-processing formId="#formAddSkillStatsModal"
+                                updateDataId="#formAddSkillStatsModal #playerId"
+                                :routeUpdate="route('skill-assessments.store', ['player' => ':id'])"
+                                modalId="#addSkillStatsModal"
+                                :routeAfterProcess="$routeAfterProcess"/>
+
 @push('addon-script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
     <script>
@@ -224,45 +230,45 @@
                 $('#playerId').val(playerId);
             });
 
-            // store skill stats data when form submitted
-            $('#formAddSkillStatsModal').on('submit', function (e) {
-                e.preventDefault();
-                const playerId = $('#playerId').val();
-                $.ajax({
-                    url: "{{ route('skill-assessments.store', ['player' => ':id']) }}".replace(':id', playerId),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#addSkillStatsModal').modal('hide');
-                        Swal.fire({
-                            title: 'Player skill stats successfully added!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        $.each(response.errors, function (key, val) {
-                            $('#formAddSkillStatsModal span.' + key).text(val[0]);
-                            $("#formAddSkillStatsModal #" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when creating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
+            {{--// store skill stats data when form submitted--}}
+            {{--$('#formAddSkillStatsModal').on('submit', function (e) {--}}
+            {{--    e.preventDefault();--}}
+            {{--    const playerId = $('#playerId').val();--}}
+            {{--    $.ajax({--}}
+            {{--        url: "{{ route('skill-assessments.store', ['player' => ':id']) }}".replace(':id', playerId),--}}
+            {{--        type: $(this).attr('method'),--}}
+            {{--        data: new FormData(this),--}}
+            {{--        contentType: false,--}}
+            {{--        processData: false,--}}
+            {{--        success: function () {--}}
+            {{--            $('#addSkillStatsModal').modal('hide');--}}
+            {{--            Swal.fire({--}}
+            {{--                title: 'Player skill stats successfully added!',--}}
+            {{--                icon: 'success',--}}
+            {{--                showCancelButton: false,--}}
+            {{--                confirmButtonColor: "#1ac2a1",--}}
+            {{--                confirmButtonText:--}}
+            {{--                    'Ok!'--}}
+            {{--            }).then((result) => {--}}
+            {{--                if (result.isConfirmed) {--}}
+            {{--                    location.reload();--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        },--}}
+            {{--        error: function (jqXHR, textStatus, errorThrown) {--}}
+            {{--            const response = JSON.parse(jqXHR.responseText);--}}
+            {{--            $.each(response.errors, function (key, val) {--}}
+            {{--                $('#formAddSkillStatsModal span.' + key).text(val[0]);--}}
+            {{--                $("#formAddSkillStatsModal #" + key).addClass('is-invalid');--}}
+            {{--            });--}}
+            {{--            Swal.fire({--}}
+            {{--                icon: "error",--}}
+            {{--                title: "Something went wrong when creating data!",--}}
+            {{--                text: errorThrown,--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
         });
     </script>
 @endpush
