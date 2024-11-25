@@ -14,7 +14,7 @@
                         <span class="material-icons">edit</span>Edit Note
                     </a>
                     <button type="button" class="dropdown-item delete-note" id="{{ $note->id }}">
-                        <span class="material-icons">delete</span>Delete Note
+                        <span class="material-icons text-danger">delete</span>Delete Note
                     </button>
                 </div>
             </div>
@@ -27,57 +27,10 @@
     </div>
 </div>
 
-@push('addon-script')
-    <script>
-        $(document).ready(function () {
-            const body = $('body');
-
-            // delete schedule note alert
-            body.on('click', '.delete-note', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ $deleteRoute }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Training note successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    allowOutsideClick: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown,
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-@endpush
+{{--    delete own goal player confirmation   --}}
+<x-process-data-confirmation btnClass=".delete-note"
+                             :processRoute="$deleteRoute"
+                             :routeAfterProcess="route('match-schedules.show', ['schedule' => $note->scheduleId])"
+                             method="DELETE"
+                             confirmationText="Are you sure to delete this note?"
+                             errorText="Something went wrong when deleting the note!"/>

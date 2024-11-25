@@ -11,9 +11,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="form-label" for="add_note">Note</label>
+                        <label class="form-label" for="note">Note</label>
                         <small class="text-danger">*</small>
-                        <textarea class="form-control" id="add_note" name="note" placeholder="Input note here ..." required>{{ old('note') }}</textarea>
+                        <textarea class="form-control" id="note" name="note" placeholder="Input note here ..." rows="5"></textarea>
                         <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -28,48 +28,17 @@
     </div>
 </div>
 
+<x-modal-form-update-processing formId="#formCreateNoteModal"
+                                updateDataId=""
+                                :routeUpdate="$routeCreate"
+                                modalId="#createNoteModal"/>
+
 @push('addon-script')
     <script>
         $(document).ready(function (){
             $('#addNewNote').on('click', function(e) {
                 e.preventDefault();
                 $('#createNoteModal').modal('show');
-            });
-
-            // create schedule note data
-            $('#formCreateNoteModal').on('submit', function(e) {
-                e.preventDefault();
-                $.ajax({
-                    url: $(this).attr('action'),
-                    method: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        $('#createNoteModal').modal('hide');
-                        Swal.fire({
-                            title: 'Session note successfully added!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        console.log(response);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#add_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
             });
         });
     </script>

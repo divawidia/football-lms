@@ -4,6 +4,7 @@ namespace App\Notifications\TrainingSchedules;
 
 use App\Models\Coach;
 use App\Models\EventSchedule;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -11,20 +12,13 @@ use Illuminate\Notifications\Notification;
 class TrainingNote extends Notification
 {
     use Queueable;
-    protected Coach $coach;
+    protected User $user;
     protected EventSchedule $trainingSession;
     protected string $action; // Either 'created', 'updated' or 'deleted'
 
-    /**
-     * Create a new notification instance.
-     *
-     * @param $coach
-     * @param $trainingSession
-     * @param string $action
-     */
-    public function __construct($coach, $trainingSession, $action)
+    public function __construct($user, $trainingSession, $action)
     {
-        $this->coach = $coach;
+        $this->user = $user;
         $this->trainingSession = $trainingSession;
         $this->action = $action;
     }
@@ -47,7 +41,7 @@ class TrainingNote extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.' has '.$this->action.' a note for '.$this->trainingSession->teams[0]->teamName.' training session '.$this->trainingSession->eventName.'. Please check the note if needed!',
+            'data' => 'A note for '.$this->trainingSession->teams[0]->teamName.' training session '.$this->trainingSession->eventName.' has been '.$this->action.'. Please check the note if needed!',
             'redirectRoute' => route('training-schedules.show', $this->trainingSession->id)
         ];
     }

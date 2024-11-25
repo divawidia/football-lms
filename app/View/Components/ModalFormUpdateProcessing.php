@@ -12,18 +12,16 @@ class ModalFormUpdateProcessing extends Component
     public $updateDataId;
     public $routeUpdate;
     public $modalId;
-    public $routeAfterProcess;
 
     /**
      * Create a new component instance.
      */
-    public function __construct($formId, $updateDataId, $routeUpdate, $modalId, $routeAfterProcess)
+    public function __construct($formId, $updateDataId, $routeUpdate, $modalId)
     {
         $this->formId = $formId;
         $this->updateDataId = $updateDataId;
         $this->routeUpdate = $routeUpdate;
         $this->modalId = $modalId;
-        $this->routeAfterProcess = $routeAfterProcess;
     }
 
     /**

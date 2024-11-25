@@ -13,9 +13,9 @@
                     <input type="hidden" id="eventId" name="eventId"/>
                     <input type="hidden" id="playerId"/>
                     <div class="form-group">
-                        <label class="form-label" for="add_performanceReview">Performance Review</label>
+                        <label class="form-label" for="performanceReview">Performance Review</label>
                         <small class="text-danger">*</small>
-                        <textarea class="form-control" id="add_performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required rows="10"></textarea>
+                        <textarea class="form-control" id="performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required rows="10"></textarea>
                         <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -33,8 +33,7 @@
 <x-modal-form-update-processing formId="#formCreatePerformanceReviewModal"
                                 updateDataId="#formCreatePerformanceReviewModal #playerId"
                                 :routeUpdate="$routeCreate"
-                                modalId="#createPerformanceReviewModal"
-                                :routeAfterProcess="$routeAfterProcess"/>
+                                modalId="#createPerformanceReviewModal"/>
 @push('addon-script')
     <script>
         $(document).ready(function (){
@@ -49,43 +48,6 @@
                 $(modalId+' #eventId').val(eventId);
                 $(modalId+' #playerId').val(playerId);
             });
-
-            // create schedule note data
-            {{--$('#formCreatePerformanceReviewModal').on('submit', function(e) {--}}
-            {{--    e.preventDefault();--}}
-            {{--    const playerId = $(modalId+' #playerId').val();--}}
-
-            {{--    $.ajax({--}}
-            {{--        url: '{{ $routeCreate }}'.replace(':id', playerId),--}}
-            {{--        method: $(this).attr('method'),--}}
-            {{--        data: new FormData(this),--}}
-            {{--        contentType: false,--}}
-            {{--        processData: false,--}}
-            {{--        success: function() {--}}
-            {{--            $('#createPerformanceReviewModal').modal('hide');--}}
-            {{--            Swal.fire({--}}
-            {{--                title: 'Performance review successfully added!',--}}
-            {{--                icon: 'success',--}}
-            {{--                showCancelButton: false,--}}
-            {{--                allowOutsideClick: false,--}}
-            {{--                confirmButtonColor: "#1ac2a1",--}}
-            {{--                confirmButtonText:--}}
-            {{--                    'Ok!'--}}
-            {{--            }).then((result) => {--}}
-            {{--                if (result.isConfirmed) {--}}
-            {{--                    location.reload();--}}
-            {{--                }--}}
-            {{--            });--}}
-            {{--        },--}}
-            {{--        error: function(xhr) {--}}
-            {{--            const response = JSON.parse(xhr.responseText);--}}
-            {{--            $.each(response.errors, function(key, val) {--}}
-            {{--                $('span.' + key + '_error').text(val[0]);--}}
-            {{--                $("#add_" + key).addClass('is-invalid');--}}
-            {{--            });--}}
-            {{--        }--}}
-            {{--    });--}}
-            {{--});--}}
         });
     </script>
 @endpush

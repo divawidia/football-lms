@@ -22,7 +22,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="controlling" name="controlling" class="skills-range-slider" required/>
-                                <span class="invalid-feedback controlling" role="alert">
+                                <span class="invalid-feedback controlling_error" role="alert">
                                 <strong></strong>
                             </span>
                             </div>
@@ -37,7 +37,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="recieving" name="recieving" class="skills-range-slider" required/>
-                                <span class="invalid-feedback recieving" role="alert">
+                                <span class="invalid-feedback recieving_error" role="alert">
                                 <strong></strong>
                             </span>
                             </div>
@@ -52,7 +52,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="dribbling" name="dribbling" class="skills-range-slider" required/>
-                                <span class="invalid-feedback dribbling" role="alert">
+                                <span class="invalid-feedback dribbling_error" role="alert">
                                 <strong></strong>
                             </span>
                             </div>
@@ -67,7 +67,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="passing" name="passing" class="skills-range-slider" required/>
-                                <span class="invalid-feedback passing" role="alert">
+                                <span class="invalid-feedback passing_error" role="alert">
                                 <strong></strong>
                             </span>
                             </div>
@@ -82,7 +82,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="shooting" name="shooting" class="skills-range-slider" required/>
-                                <span class="invalid-feedback shooting" role="alert">
+                                <span class="invalid-feedback shooting_error" role="alert">
                                 <strong></strong>
                             </span>
                             </div>
@@ -97,7 +97,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="crossing" name="crossing" class="skills-range-slider" required/>
-                                <span class="invalid-feedback crossing" role="alert">
+                                <span class="invalid-feedback crossing_error" role="alert">
                                 <strong></strong>
                             </span>
                             </div>
@@ -112,7 +112,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="turning" name="turning" class="skills-range-slider" required/>
-                                <span class="invalid-feedback turning" role="alert">
+                                <span class="invalid-feedback turning_error" role="alert">
                                 <strong></strong>
                             </span>
                             </div>
@@ -127,7 +127,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="ballHandling" name="ballHandling" class="skills-range-slider" required/>
-                                <span class="invalid-feedback ballHandling" role="alert">
+                                <span class="invalid-feedback ballHandling_error" role="alert">
                                 <strong></strong>
                             </span>
                             </div>
@@ -142,7 +142,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="powerKicking" name="powerKicking" class="skills-range-slider" required/>
-                                <span class="invalid-feedback powerKicking" role="alert">
+                                <span class="invalid-feedback powerKicking_error" role="alert">
                                 <strong></strong>
                             </span>
                             </div>
@@ -157,7 +157,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="goalKeeping" name="goalKeeping" class="skills-range-slider" required/>
-                                <span class="invalid-feedback goalKeeping" role="alert">
+                                <span class="invalid-feedback goalKeeping_error" role="alert">
                                 <strong></strong>
                             </span>
                             </div>
@@ -172,7 +172,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="offensivePlay" name="offensivePlay" class="skills-range-slider" required/>
-                                <span class="invalid-feedback offensivePlay" role="alert">
+                                <span class="invalid-feedback offensivePlay_error" role="alert">
                                     <strong></strong>
                                 </span>
                             </div>
@@ -187,7 +187,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" id="defensivePlay" name="defensivePlay" class="skills-range-slider" required/>
-                                <span class="invalid-feedback defensivePlay" role="alert">
+                                <span class="invalid-feedback defensivePlay_error" role="alert">
                                     <strong></strong>
                                 </span>
                             </div>
@@ -204,10 +204,9 @@
 </div>
 
 <x-modal-form-update-processing formId="#formEditSkillStatsModal"
-                                updateDataId="#skillStatsId"
+                                updateDataId="#formEditSkillStatsModal #skillStatsId"
                                 :routeUpdate="route('skill-assessments.update', ['skillStats' => ':id'])"
-                                modalId="#editSkillStatsModal"
-                                :routeAfterProcess="$routeAfterProcess"/>
+                                modalId="#editSkillStatsModal"/>
 
 @push('addon-script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
@@ -245,46 +244,6 @@
                     }
                 });
             });
-
-            // store skill stats data when form submitted
-            {{--$('#formEditSkillStatsModal').on('submit', function (e) {--}}
-            {{--    e.preventDefault();--}}
-            {{--    const skillStatsId = $('#skillStatsId').val();--}}
-            {{--    $.ajax({--}}
-            {{--        url: "{{ url()->route('skill-assessments.update', ['skillStats' => ':id']) }}".replace(':id', skillStatsId),--}}
-            {{--        type: $(this).attr('method'),--}}
-            {{--        data: new FormData(this),--}}
-            {{--        contentType: false,--}}
-            {{--        processData: false,--}}
-            {{--        success: function () {--}}
-            {{--            $(modalId).modal('hide');--}}
-            {{--            Swal.fire({--}}
-            {{--                title: 'Player skill stats successfully updated!',--}}
-            {{--                icon: 'success',--}}
-            {{--                showCancelButton: false,--}}
-            {{--                confirmButtonColor: "#1ac2a1",--}}
-            {{--                confirmButtonText:--}}
-            {{--                    'Ok!'--}}
-            {{--            }).then((result) => {--}}
-            {{--                if (result.isConfirmed) {--}}
-            {{--                    location.reload();--}}
-            {{--                }--}}
-            {{--            });--}}
-            {{--        },--}}
-            {{--        error: function (jqXHR, textStatus, errorThrown) {--}}
-            {{--            const response = JSON.parse(jqXHR.responseText);--}}
-            {{--            $.each(response.errors, function (key, val) {--}}
-            {{--                $('#formEditSkillStatsModal span.' + key).text(val[0]);--}}
-            {{--                $("#formEditSkillStatsModal #" + key).addClass('is-invalid');--}}
-            {{--            });--}}
-            {{--            Swal.fire({--}}
-            {{--                icon: "error",--}}
-            {{--                title: "Something went wrong when creating data!",--}}
-            {{--                text: errorThrown,--}}
-            {{--            });--}}
-            {{--        }--}}
-            {{--    });--}}
-            {{--});--}}
         });
     </script>
 @endpush

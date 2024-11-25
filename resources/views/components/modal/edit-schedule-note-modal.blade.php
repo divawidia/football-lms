@@ -13,9 +13,9 @@
                 <div class="modal-body">
                     <input type="hidden" id="noteId">
                     <div class="form-group">
-                        <label class="form-label" for="edit_note">Note</label>
+                        <label class="form-label" for="note">Note</label>
                         <small class="text-danger">*</small>
-                        <textarea class="form-control" id="edit_note" name="note" placeholder="Input note here ..." required></textarea>
+                        <textarea class="form-control" id="note" name="note" placeholder="Input note here ..." rows="5"></textarea>
                         <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -33,8 +33,7 @@
 <x-modal-form-update-processing formId="#formUpdateNoteModal"
                                 updateDataId="#noteId"
                                 :routeUpdate="$routeUpdate"
-                                modalId="#editNoteModal"
-                                :routeAfterProcess="$routeAfterProcess"/>
+                                modalId="#editNoteModal"/>
 
 @push('addon-script')
     <script>
@@ -49,10 +48,8 @@
                     type: 'get',
                     success: function(res) {
                         $('#editNoteModal').modal('show');
-
-                        const heading = document.getElementById('edit_note');
-                        heading.textContent = res.data.note;
-                        $('#noteId').val(res.data.id);
+                        $('#formUpdateNoteModal #note').text(res.data.note);
+                        $('#formUpdateNoteModal #noteId').val(res.data.id);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         Swal.fire({
@@ -63,44 +60,6 @@
                     }
                 });
             });
-
-            {{--// update schedule note data--}}
-            {{--$('#formUpdateNoteModal').on('submit', function(e) {--}}
-            {{--    e.preventDefault();--}}
-            {{--    const id = $('#noteId').val();--}}
-            {{--    $.ajax({--}}
-            {{--        --}}{{--url: "{{ route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),--}}
-            {{--        url: "{{ $routeUpdate }}".replace(':id', id),--}}
-            {{--        type: $(this).attr('method'),--}}
-            {{--        data: new FormData(this),--}}
-            {{--        contentType: false,--}}
-            {{--        processData: false,--}}
-            {{--        success: function(res) {--}}
-            {{--            $('#editNoteModal').modal('hide');--}}
-            {{--            Swal.fire({--}}
-            {{--                title: 'Training session note successfully updated!',--}}
-            {{--                icon: 'success',--}}
-            {{--                showCancelButton: false,--}}
-            {{--                allowOutsideClick: false,--}}
-            {{--                confirmButtonColor: "#1ac2a1",--}}
-            {{--                confirmButtonText:--}}
-            {{--                    'Ok!'--}}
-            {{--            }).then((result) => {--}}
-            {{--                if (result.isConfirmed) {--}}
-            {{--                    location.reload();--}}
-            {{--                }--}}
-            {{--            });--}}
-            {{--        },--}}
-            {{--        error: function(xhr) {--}}
-            {{--            const response = JSON.parse(xhr.responseText);--}}
-            {{--            console.log(response);--}}
-            {{--            $.each(response.errors, function(key, val) {--}}
-            {{--                $('span.' + key + '_error').text(val[0]);--}}
-            {{--                $("#edit_" + key).addClass('is-invalid');--}}
-            {{--            });--}}
-            {{--        }--}}
-            {{--    });--}}
-            {{--});--}}
         });
     </script>
 @endpush

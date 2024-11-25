@@ -13,12 +13,12 @@
                 <div class="modal-body">
                     <input type="hidden" id="playerId">
                     <div class="form-group">
-                        <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
+                        <label class="form-label" for="attendanceStatus">Attendance Status</label>
                         <small class="text-danger">*</small>
-                        <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
+                        <select class="form-control form-select" id="attendanceStatus" name="attendanceStatus" required>
                             <option value="null" disabled>Select player's attendance status</option>
                             @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
-                                <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
+                                <option value="{{ $type }}">{{ $type }}</option>
                             @endforeach
                         </select>
                         <span class="invalid-feedback attendanceStatus_error" role="alert">
@@ -26,9 +26,9 @@
                             </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="add_note">Note</label>
+                        <label class="form-label" for="note">Note</label>
                         <small>(Optional)</small>
-                        <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
+                        <textarea class="form-control" id="note" name="note" placeholder="Input the detailed absent reason (if not attended)"></textarea>
                         <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -46,8 +46,7 @@
 <x-modal-form-update-processing formId="#formEditPlayerAttendanceModal"
                                 updateDataId="#playerId"
                                 :routeUpdate="$routeUpdate"
-                                modalId="#editPlayerAttendanceModal"
-                                :routeAfterProcess="$routeAfterProcess"/>
+                                modalId="#editPlayerAttendanceModal"/>
 
 @push('addon-script')
     <script>
@@ -65,11 +64,11 @@
 
                         $('#playerName').text('Update Player '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance');
                         if (res.data.playerAttendance.attendanceStatus === 'Required Action'){
-                            $('#editPlayerAttendanceModal #add_attendanceStatus').val('null');
+                            $('#editPlayerAttendanceModal #attendanceStatus').val('null');
                         } else {
-                            $('#editPlayerAttendanceModal #add_attendanceStatus').val(res.data.playerAttendance.attendanceStatus);
+                            $('#editPlayerAttendanceModal #attendanceStatus').val(res.data.playerAttendance.attendanceStatus);
                         }
-                        $('#editPlayerAttendanceModal #add_note').val(res.data.playerAttendance.note);
+                        $('#editPlayerAttendanceModal #note').val(res.data.playerAttendance.note);
                         $('#playerId').val(res.data.playerAttendance.playerId);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {

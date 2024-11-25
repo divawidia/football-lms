@@ -31,20 +31,20 @@
                                 'Ok!'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "{{ $routeAfterProcess }}";
+                                window.location.reload();
                             }
                         });
                     },
-                    error: function(xhr) {
+                    error: function(xhr, textStatus, errorThrown) {
                         Swal.close();
                         const response = JSON.parse(xhr.responseText);
-                        console.log(response)
                         $.each(response.errors, function(key, val) {
                             $('{{ $formId }} span.' + key + '_error').text(val[0]);
-                            $("{{ $formId }} #add_" + key).addClass('is-invalid');
+                            $("{{ $formId }} #" + key).addClass('is-invalid');
                         });
                         Swal.fire({
-                            title: response.message,
+                            title: errorThrown,
+                            text: response.message,
                             icon: 'error',
                         });
                     }

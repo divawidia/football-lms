@@ -13,9 +13,9 @@
                 <div class="modal-body">
                     <input type="hidden" id="coachId">
                     <div class="form-group">
-                        <label class="form-label" for="add_attendanceStatus">Attendance Status</label>
+                        <label class="form-label" for="attendanceStatus">Attendance Status</label>
                         <small class="text-danger">*</small>
-                        <select class="form-control form-select" id="add_attendanceStatus" name="attendanceStatus" required>
+                        <select class="form-control form-select" id="attendanceStatus" name="attendanceStatus" required>
                             <option value="null" disabled>Select player's attendance status</option>
                             @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
                                 <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
@@ -26,9 +26,9 @@
                             </span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="add_note">Note</label>
+                        <label class="form-label" for="note">Note</label>
                         <small>(Optional)</small>
-                        <textarea class="form-control" id="add_note" name="note" placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
+                        <textarea class="form-control" id="note" name="note" placeholder="Input the detailed absent reason (if not attended)">{{ old('note') }}</textarea>
                         <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -46,8 +46,7 @@
 <x-modal-form-update-processing formId="#formEditCoachAttendanceModal"
                                 updateDataId="#coachId"
                                 :routeUpdate="$routeUpdate"
-                                modalId="#editCoachAttendanceModal"
-                                :routeAfterProcess="$routeAfterProcess"/>
+                                modalId="#editCoachAttendanceModal"/>
 
 @push('addon-script')
     <script>
@@ -64,11 +63,11 @@
 
                         $('#coachName').text('Update Coach '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance');
                         if (res.data.coachAttendance.attendanceStatus === 'Required Action'){
-                            $('#editCoachAttendanceModal #add_attendanceStatus').val('null');
+                            $('#editCoachAttendanceModal #attendanceStatus').val('null');
                         } else {
-                            $('#editCoachAttendanceModal #add_attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
+                            $('#editCoachAttendanceModal #attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
                         }
-                        $('#editCoachAttendanceModal #add_note').val(res.data.coachAttendance.note);
+                        $('#editCoachAttendanceModal #note').val(res.data.coachAttendance.note);
                         $('#coachId').val(res.data.coachAttendance.coachId);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {

@@ -9,13 +9,11 @@
 @section('modal')
     <x-edit-player-attendance-modal
             :routeGet="route('match-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
-            :routeUpdate="route('match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
-            :routeAfterProcess="route('match-schedules.show', $data['dataSchedule']->id)"/>
+            :routeUpdate="route('match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
 
     <x-edit-coach-attendance-modal
             :routeGet="route('match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
-            :routeUpdate="route('match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
-            :routeAfterProcess="route('match-schedules.show', $data['dataSchedule']->id)"/>
+            :routeUpdate="route('match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
 
     <x-create-schedule-note-modal :routeCreate="route('match-schedules.create-note', $data['dataSchedule']->id)"
                                   :eventName="$data['dataSchedule']->eventName"/>
@@ -25,11 +23,10 @@
             :eventName="$data['dataSchedule']->eventName"
             :routeAfterProcess="route('match-schedules.show', $data['dataSchedule']->id)"/>
 
-    <x-skill-assessments-modal :routeAfterProcess="route('match-schedules.show', $data['dataSchedule']->id)"/>
-    <x-edit-skill-assessments-modal :routeAfterProcess="route('match-schedules.show', $data['dataSchedule']->id)"/>
+    <x-skill-assessments-modal/>
+    <x-edit-skill-assessments-modal/>
 
-    <x-add-performance-review-modal :routeCreate="route('coach.performance-reviews.store', ['player'=> ':id'])"
-                                    :routeAfterProcess="route('match-schedules.show', $data['dataSchedule']->id)"/>
+    <x-add-performance-review-modal :routeCreate="route('coach.performance-reviews.store', ['player'=> ':id'])"/>
     <x-edit-performance-review-modal :routeAfterProcess="route('match-schedules.show', $data['dataSchedule']->id)"/>
 
     <!-- Modal add team scorer -->
@@ -1358,16 +1355,14 @@
                     <div class="page-separator">
                         <div class="page-separator__text">Match Note</div>
                         @if(isAllAdmin() || isCoach())
-                            <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span
-                                    class="material-icons mr-2">add</span> Add new note</a>
+                            <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
                         @endif
                     </div>
                     @if(count($data['dataSchedule']->notes)==0)
                         <x-warning-alert text="Match session note haven't created yet by coach"/>
                     @endif
                     @foreach($data['dataSchedule']->notes as $note)
-                        <x-event-note-card :note="$note"
-                                           :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id'])"/>
+                        <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id'])"/>
                     @endforeach
                 </div>
 
@@ -1436,29 +1431,25 @@
     <x-modal-form-update-processing formId="#formTeamMatchStats"
                                     updateDataId=""
                                     :routeUpdate="route('match-schedules.update-match-stats', $data['dataSchedule']->id)"
-                                    modalId="#teamMatchStatsModal"
-                                    :routeAfterProcess="route('match-schedules.show', ['schedule' => $data['dataSchedule']->id])"/>
+                                    modalId="#teamMatchStatsModal"/>
 
     {{-- store team own goal data --}}
     <x-modal-form-update-processing formId="#formAddOwnGoalModal"
                                     updateDataId=""
                                     :routeUpdate="route('match-schedules.store-own-goal', $data['dataSchedule']->id)"
-                                    modalId="#createTeamOwnGoalModal"
-                                    :routeAfterProcess="route('match-schedules.show', ['schedule' => $data['dataSchedule']->id])"/>
+                                    modalId="#createTeamOwnGoalModal"/>
 
     {{-- update player match stats data --}}
     <x-modal-form-update-processing formId="#formPlayerMatchStats"
                                     updateDataId="#formPlayerMatchStats #playerStatsId"
                                     :routeUpdate="route('match-schedules.update-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
-                                    modalId="#playerMatchStatsModal"
-                                    :routeAfterProcess="route('match-schedules.show', ['schedule' => $data['dataSchedule']->id])"/>
+                                    modalId="#playerMatchStatsModal"/>
 
     {{-- store team scorer data --}}
     <x-modal-form-update-processing formId="#formAddScorerModal"
                                     updateDataId=""
                                     :routeUpdate="route('match-schedules.store-match-scorer', $data['dataSchedule']->id)"
-                                    modalId="#createTeamScorerModal"
-                                    :routeAfterProcess="route('match-schedules.show', ['schedule' => $data['dataSchedule']->id])"/>
+                                    modalId="#createTeamScorerModal"/>
 
 @endsection
 @push('addon-script')
@@ -1517,122 +1508,17 @@
                 });
             });
 
-            // store team scorer data
-            // $('#formAddScorerModal').on('submit', function (e) {
-            //     e.preventDefault();
-            //     $.ajax({
-            //         url: $(this).attr('action'),
-            //         method: $(this).attr('method'),
-            //         data: new FormData(this),
-            //         contentType: false,
-            //         processData: false,
-            //         success: function (res) {
-            //             $('#createTeamScorerModal').modal('hide');
-            //             Swal.fire({
-            //                 title: 'Match scorer successfully added!',
-            //                 icon: 'success',
-            //                 showCancelButton: false,
-            //                 confirmButtonColor: "#1ac2a1",
-            //                 confirmButtonText:
-            //                     'Ok!'
-            //             }).then((result) => {
-            //                 if (result.isConfirmed) {
-            //                     location.reload();
-            //                 }
-            //             });
-            //         },
-            //         error: function (xhr) {
-            //             const response = JSON.parse(xhr.responseText);
-            //             console.log(response);
-            //             $.each(response.errors, function (key, val) {
-            //                 $('span.' + key + '_error').text(val[0]);
-            //                 $("#edit_" + key).addClass('is-invalid');
-            //             });
-            //         }
-            //     });
-            // });
-
             // show update match stats modal
             $('#updateMatchStats').on('click', function (e) {
                 e.preventDefault();
                 $('#teamMatchStatsModal').modal('show');
             });
 
-            // update team match stats data
-            // $('#formTeamMatchStats').on('submit', function (e) {
-            //     e.preventDefault();
-            //     $.ajax({
-            //         url: $(this).attr('action'),
-            //         method: $(this).attr('method'),
-            //         data: new FormData(this),
-            //         contentType: false,
-            //         processData: false,
-            //         success: function (res) {
-            //             $('#teamMatchStatsModal').modal('hide');
-            //             Swal.fire({
-            //                 title: 'Match stats successfully added!',
-            //                 icon: 'success',
-            //                 showCancelButton: false,
-            //                 allowOutsideClick: false,
-            //                 confirmButtonColor: "#1ac2a1",
-            //                 confirmButtonText:
-            //                     'Ok!'
-            //             }).then((result) => {
-            //                 if (result.isConfirmed) {
-            //                     location.reload();
-            //                 }
-            //             });
-            //         },
-            //         error: function (xhr) {
-            //             const response = JSON.parse(xhr.responseText);
-            //             $.each(response.errors, function (key, val) {
-            //                 $('span.' + key + '_error').text(val[0]);
-            //                 $("#" + key).addClass('is-invalid');
-            //             });
-            //         }
-            //     });
-            // });
-
             // show add own goal modal
             $('#addOwnGoal').on('click', function (e) {
                 e.preventDefault();
                 $('#createTeamOwnGoalModal').modal('show');
             });
-
-            // store team own goal data
-            // $('#formAddOwnGoalModal').on('submit', function (e) {
-            //     e.preventDefault();
-            //     $.ajax({
-            //         url: $(this).attr('action'),
-            //         method: $(this).attr('method'),
-            //         data: new FormData(this),
-            //         contentType: false,
-            //         processData: false,
-            //         success: function (res) {
-            //             $('#teamMatchStatsModal').modal('hide');
-            //             Swal.fire({
-            //                 title: 'Team own goal successfully added!',
-            //                 icon: 'success',
-            //                 showCancelButton: false,
-            //                 confirmButtonColor: "#1ac2a1",
-            //                 confirmButtonText:
-            //                     'Ok!'
-            //             }).then((result) => {
-            //                 if (result.isConfirmed) {
-            //                     location.reload();
-            //                 }
-            //             });
-            //         },
-            //         error: function (xhr) {
-            //             const response = JSON.parse(xhr.responseText);
-            //             console.log(response);
-            //             $.each(response.errors, function (key, val) {
-            //                 $('span.' + key + '_error').text(val[0]);
-            //                 $("#" + key).addClass('is-invalid');
-            //             });
-            //         }
-            //     });
-            // });
 
             // show add own goal modal
             $('body').on('click', '.edit-player-stats', function (e) {
@@ -1665,44 +1551,6 @@
                     }
                 });
             });
-
-            // update player match stats data
-            {{--$('#formPlayerMatchStats').on('submit', function (e) {--}}
-            {{--    e.preventDefault();--}}
-            {{--    const id = $('#playerStatsId').val();--}}
-
-            {{--    $.ajax({--}}
-            {{--        url: "{{ route('match-schedules.update-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ":id"]) }}".replace(':id', id),--}}
-
-            {{--        method: $(this).attr('method'),--}}
-            {{--        data: new FormData(this),--}}
-            {{--        contentType: false,--}}
-            {{--        processData: false,--}}
-            {{--        success: function (res) {--}}
-            {{--            $('#playerMatchStatsModal').modal('hide');--}}
-            {{--            Swal.fire({--}}
-            {{--                title: 'Player stats successfully updated!',--}}
-            {{--                icon: 'success',--}}
-            {{--                showCancelButton: false,--}}
-            {{--                confirmButtonColor: "#1ac2a1",--}}
-            {{--                confirmButtonText:--}}
-            {{--                    'Ok!'--}}
-            {{--            }).then((result) => {--}}
-            {{--                if (result.isConfirmed) {--}}
-            {{--                    location.reload();--}}
-            {{--                }--}}
-            {{--            });--}}
-            {{--        },--}}
-            {{--        error: function (xhr) {--}}
-            {{--            const response = JSON.parse(xhr.responseText);--}}
-            {{--            console.log(response);--}}
-            {{--            $.each(response.errors, function (key, val) {--}}
-            {{--                $('span.' + key + '_error').text(val[0]);--}}
-            {{--                $("#" + key).addClass('is-invalid');--}}
-            {{--            });--}}
-            {{--        }--}}
-            {{--    });--}}
-            {{--});--}}
         });
     </script>
 @endpush

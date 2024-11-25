@@ -14,9 +14,9 @@
                     <input type="hidden" id="eventId" name="eventId"/>
                     <input type="hidden" id="reviewId"/>
                     <div class="form-group">
-                        <label class="form-label" for="edit_performanceReview">Performance Review</label>
+                        <label class="form-label" for="performanceReview">Performance Review</label>
                         <small class="text-danger">*</small>
-                        <textarea class="form-control" id="edit_performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required rows="10"></textarea>
+                        <textarea class="form-control" id="performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required rows="10"></textarea>
                         <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -34,8 +34,7 @@
 <x-modal-form-update-processing formId="#formEditPerformanceReviewModal"
                                 updateDataId="#editPerformanceReviewModal #reviewId"
                                 :routeUpdate="route('coach.performance-reviews.update', ['review' => ':id'])"
-                                modalId="#editPerformanceReviewModal"
-                                :routeAfterProcess="$routeAfterProcess"/>
+                                modalId="#editPerformanceReviewModal"/>
 @push('addon-script')
     <script>
         $(document).ready(function (){
@@ -53,7 +52,7 @@
                         $(modalId).modal('show');
                         $(modalId+' #eventId').val(eventId);
                         $(modalId+' #reviewId').val(reviewId);
-                        $(modalId+' #edit_performanceReview').text(res.data.performanceReview);
+                        $(modalId+' #performanceReview').text(res.data.performanceReview);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         Swal.fire({
@@ -64,48 +63,6 @@
                     }
                 });
             });
-
-            {{--// update schedule data--}}
-            {{--$('#formEditPerformanceReviewModal').on('submit', function(e) {--}}
-            {{--    e.preventDefault();--}}
-            {{--    const reviewId = $(modalId+' #reviewId').val();--}}
-
-            {{--    $.ajax({--}}
-            {{--        url: '{!! url()->route('coach.performance-reviews.update', ['review' => ':id']) !!}'.replace(':id', reviewId),--}}
-            {{--        method: $(this).attr('method'),--}}
-            {{--        data: new FormData(this),--}}
-            {{--        contentType: false,--}}
-            {{--        processData: false,--}}
-            {{--        success: function() {--}}
-            {{--            $(modalId).modal('hide');--}}
-            {{--            Swal.fire({--}}
-            {{--                title: 'Performance review successfully updated!',--}}
-            {{--                icon: 'success',--}}
-            {{--                showCancelButton: false,--}}
-            {{--                allowOutsideClick: false,--}}
-            {{--                confirmButtonColor: "#1ac2a1",--}}
-            {{--                confirmButtonText:--}}
-            {{--                    'Ok!'--}}
-            {{--            }).then((result) => {--}}
-            {{--                if (result.isConfirmed) {--}}
-            {{--                    location.reload();--}}
-            {{--                }--}}
-            {{--            });--}}
-            {{--        },--}}
-            {{--        error: function(xhr, textStatus, errorThrown) {--}}
-            {{--            const response = JSON.parse(xhr.responseText);--}}
-            {{--            $.each(response.errors, function(key, val) {--}}
-            {{--                $('span.' + key + '_error').text(val[0]);--}}
-            {{--                $("#add_" + key).addClass('is-invalid');--}}
-            {{--            });--}}
-            {{--            Swal.fire({--}}
-            {{--                icon: "error",--}}
-            {{--                title: "Something went wrong when retrieving data!",--}}
-            {{--                text: errorThrown,--}}
-            {{--            });--}}
-            {{--        }--}}
-            {{--    });--}}
-            {{--});--}}
         });
     </script>
 @endpush

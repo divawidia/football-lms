@@ -13,9 +13,9 @@
                 <div class="modal-body">
                     <input type="hidden" id="subscriptionId">
                     <div class="form-group">
-                        <label class="form-label" for="edit_taxId">Include Tax</label>
+                        <label class="form-label" for="taxId">Include Tax</label>
                         <small>(Optional)</small>
-                        <select class="form-control form-select" id="edit_taxId" name="taxId" required data-toggle="select">
+                        <select class="form-control form-select" id="taxId" name="taxId" required data-toggle="select">
                             <option disabled selected>Select tax</option>
                             <option value="{{ null }}">Without tax included</option>
                         </select>
@@ -32,6 +32,10 @@
         </div>
     </div>
 </div>
+<x-modal-form-update-processing formId="#formEditTaxModal"
+                                updateDataId="#formEditTaxModal #subscriptionId"
+                                :routeUpdate="route('subscriptions.update-tax', ['subscription' => ':id'])"
+                                modalId="#editTaxModal"/>
 
 @push('addon-script')
     <script>
@@ -41,67 +45,25 @@
             body.on('click', '.edit-tax', function(e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
+                const formId = '#formEditTaxModal';
 
                 $.ajax({
                     url: "{{ route('subscriptions.show', ':id') }}".replace(':id', id),
                     type: 'get',
                     success: function(res) {
-                        console.log(res)
                         $('#editTaxModal').modal('show');
-                        $('#editTaxTitle').text('Edit '+res.data.subscription.user.firstName+' '+res.data.subscription.user.lastName+' subscription of '+res.data.subscription.product.productName+"'s tax");
+                        $(formId+' #editTaxTitle').text('Edit '+res.data.subscription.user.firstName+' '+res.data.subscription.user.lastName+' subscription of '+res.data.subscription.product.productName+"'s tax");
                         $.each(res.data.taxes, function (key, value) {
-                            $('#edit_taxId').append('<option value="' + value.id + '">' + value.taxName + ' ~ '+value.percentage+'</option>');
+                            $(formId+' #taxId').append('<option value="' + value.id + '">' + value.taxName + ' ~ '+value.percentage+'</option>');
                         });
-                        $('#edit_taxId option[value="' + res.data.subscription.taxId + '"]').attr('selected', 'selected');
-                        $('#subscriptionId').val(res.data.subscription.id);
+                        $(formId+' #taxId option[value="' + res.data.subscription.taxId + '"]').attr('selected', 'selected');
+                        $(formId+' #subscriptionId').val(res.data.subscription.id);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         Swal.fire({
                             icon: "error",
                             title: "Something went wrong when deleting data!",
                             text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            // update schedule note data
-            $('#formEditTaxModal').on('submit', function(e) {
-                e.preventDefault();
-                const id = $('#subscriptionId').val();
-
-                $.ajax({
-                    url: "{{ route('subscriptions.update-tax', ['subscription' => ":id"]) }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function() {
-                        $('#editTaxModal').modal('hide');
-                        Swal.fire({
-                            title: "Player's subscription tax successfully updated!",
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when processing data!",
-                            text: errorThrown
-                        });
-                        const response = JSON.parse(jqXHR.responseText);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("#edit_" + key).addClass('is-invalid');
                         });
                     }
                 });
