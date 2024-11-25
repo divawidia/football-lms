@@ -32,60 +32,8 @@
     <!-- Modal add team scorer -->
     <x-add-team-scorer-modal :eventSchedule="$data['dataSchedule']"/>
 
-    <!-- Modal add own goal -->
-    <div class="modal fade" id="createTeamOwnGoalModal" tabindex="-1" aria-labelledby="createTeamOwnGoalModal"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="post" id="formAddOwnGoalModal">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="coachName">Add own goal of this match</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label class="form-label" for="add_playerId">Player Name</label>
-                            <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_playerId" name="playerId" required>
-                                <option disabled selected>Select team player who scored own goal</option>
-                                @foreach($data['dataSchedule']->players as $player)
-                                    <option value="{{ $player->id }}">
-                                        {{  $player->user->firstName }} {{  $player->user->lastName }}
-                                        ~ {{ $player->position->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <span class="invalid-feedback playerId_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="add_minuteScored">Minute Scored</label>
-                            <small class="text-danger">*</small>
-                            <input type="number"
-                                   class="form-control"
-                                   id="add_minuteScored"
-                                   name="minuteScored"
-                                   min="1"
-                                   max="160"
-                                   value="{{ old('minuteScored') }}"
-                                   placeholder="Pick minutes the player scored the own goal. Eg : 60">
-                            <span class="invalid-feedback minuteScored_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <!-- Modal add team own goal scorer -->
+    <x-add-team-own-goal-modal :eventSchedule="$data['dataSchedule']"/>
 
     <!-- Modal add team match stats -->
     <div class="modal fade" id="teamMatchStatsModal" tabindex="-1" aria-labelledby="teamMatchStatsModal"
@@ -1371,12 +1319,6 @@
                                     :routeUpdate="route('match-schedules.update-match-stats', $data['dataSchedule']->id)"
                                     modalId="#teamMatchStatsModal"/>
 
-    {{-- store team own goal data --}}
-    <x-modal-form-update-processing formId="#formAddOwnGoalModal"
-                                    updateDataId=""
-                                    :routeUpdate="route('match-schedules.store-own-goal', $data['dataSchedule']->id)"
-                                    modalId="#createTeamOwnGoalModal"/>
-
     {{-- update player match stats data --}}
     <x-modal-form-update-processing formId="#formPlayerMatchStats"
                                     updateDataId="#formPlayerMatchStats #playerStatsId"
@@ -1422,14 +1364,6 @@
                 e.preventDefault();
                 $('#teamMatchStatsModal').modal('show');
             });
-
-            // show add own goal modal
-            $('#addOwnGoal').on('click', function (e) {
-                e.preventDefault();
-                $('#createTeamOwnGoalModal').modal('show');
-            });
-
-            // show add own goal modal
             $('body').on('click', '.edit-player-stats', function (e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
@@ -1460,6 +1394,7 @@
                     }
                 });
             });
+
         });
     </script>
 @endpush
