@@ -438,9 +438,6 @@ class EventScheduleController extends Controller
         $players = $schedule->players()->with('user', 'position')->where('players.id', '!=', $player->id)->get();
         return ApiResponse::success($players, message:  "Successfully retrieved assist player data");
     }
-    public function getMatchTeam(EventSchedule $schedule){
-        return ApiResponse::success($schedule->teams, message:  "Successfully retrieved teams data");
-    }
 
     public function storeMatchScorer(MatchScoreRequest $request, EventSchedule $schedule){
         $data = $request->validated();
