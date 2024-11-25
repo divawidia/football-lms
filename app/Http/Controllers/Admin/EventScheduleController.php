@@ -186,7 +186,7 @@ class EventScheduleController extends Controller
     public function showMatch(EventSchedule $schedule)
     {
         $data = $this->eventScheduleService->show($schedule);
-        $players = $data['dataSchedule']->players()->paginate(6);
+        $players = $data['dataSchedule']->players;
         $coaches = $data['dataSchedule']->coaches;
 
         if ($this->isPlayer()){
@@ -429,6 +429,11 @@ class EventScheduleController extends Controller
         return ApiResponse::success($data, message:  "Successfully retrieved friendly match team data");
     }
 
+    public function getEventPLayers(EventSchedule $schedule)
+    {
+        $players = $schedule->players()->with('user', 'position')->get();
+        return ApiResponse::success($players, message:  "Successfully retrieved player data");
+    }
     public function getAssistPlayer(EventSchedule $schedule, Player $player){
         $players = $schedule->players()->with('user', 'position')->where('players.id', '!=', $player->id)->get();
         return ApiResponse::success($players, message:  "Successfully retrieved assist player data");

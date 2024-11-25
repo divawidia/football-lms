@@ -30,69 +30,7 @@
     <x-edit-performance-review-modal :routeAfterProcess="route('match-schedules.show', $data['dataSchedule']->id)"/>
 
     <!-- Modal add team scorer -->
-    <div class="modal fade" id="createTeamScorerModal" tabindex="-1" aria-labelledby="createTeamScorerModal"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="post" id="formAddScorerModal">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="coachName">Add team scorer of this match</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label class="form-label" for="add_playerId">Player Name</label>
-                            <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_playerId" name="playerId" required>
-                                <option disabled selected>Select team player who scored goal</option>
-                                @foreach($data['dataSchedule']->players as $player)
-                                    <option value="{{ $player->id }}">
-                                        {{  $player->user->firstName }} {{  $player->user->lastName }}
-                                        ~ {{ $player->position->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <span class="invalid-feedback playerId_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="add_assistPlayerId">Assist Player Name</label>
-                            <small class="text-danger">*</small>
-                            <select class="form-control form-select" id="add_assistPlayerId" name="assistPlayerId">
-                            </select>
-                            <span class="invalid-feedback assistPlayerId_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="add_minuteScored">Minute Scored</label>
-                            <small class="text-danger">*</small>
-                            <input type="number"
-                                   class="form-control"
-                                   id="add_minuteScored"
-                                   name="minuteScored"
-                                   min="1"
-                                   max="160"
-                                   value="{{ old('minuteScored') }}"
-                                   placeholder="Pick minutes the player scored the goal. Eg : 60"
-                                   required>
-                            <span class="invalid-feedback minuteScored_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <x-add-team-scorer-modal :eventSchedule="$data['dataSchedule']"/>
 
     <!-- Modal add own goal -->
     <div class="modal fade" id="createTeamOwnGoalModal" tabindex="-1" aria-labelledby="createTeamOwnGoalModal"
@@ -1445,12 +1383,6 @@
                                     :routeUpdate="route('match-schedules.update-player-match-stats', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
                                     modalId="#playerMatchStatsModal"/>
 
-    {{-- store team scorer data --}}
-    <x-modal-form-update-processing formId="#formAddScorerModal"
-                                    updateDataId=""
-                                    :routeUpdate="route('match-schedules.store-match-scorer', $data['dataSchedule']->id)"
-                                    modalId="#createTeamScorerModal"/>
-
 @endsection
 @push('addon-script')
     <script>
@@ -1483,29 +1415,6 @@
                         width: '15%'
                     },
                 ]
-            });
-
-            // show create team scorer modal
-            $('#addTeamScorer').on('click', function (e) {
-                e.preventDefault();
-                $('#createTeamScorerModal').modal('show');
-            });
-
-            // fetch assist player data
-            $('#add_playerId').on('change', function () {
-                const id = this.value;
-                $.ajax({
-                    url: "{{route('get-assist-player', ['schedule' => $data['dataSchedule']->id,'player'=>':id']) }}".replace(':id', id),
-
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (result) {
-                        $('#add_assistPlayerId').html('<option disabled selected>Select player who assisted scoring the goal</option>');
-                        $.each(result.data, function (key, value) {
-                            $('#add_assistPlayerId').append('<option value="' + value.id + '" data-avatar-src="' + '{{ Storage::url('') }}' + value.user.foto + '">' + value.user.firstName + ' ' + value.user.lastName + ' ~ ' + value.position.name + '</option>');
-                        });
-                    }
-                });
             });
 
             // show update match stats modal

@@ -45,10 +45,11 @@
                                 });
                             },
                             error: function (jqXHR, textStatus, errorThrown) {
+                                const response = JSON.parse(jqXHR.responseText);
                                 Swal.fire({
                                     icon: "error",
                                     title: "{{ $errorText }}",
-                                    text: errorThrown
+                                    text: response.message
                                 });
                             }
                         });
