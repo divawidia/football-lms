@@ -61,8 +61,8 @@
                 e.preventDefault();
                 $('#createTeamScorerModal').modal('show');
                 $(formId+' .invalid-feedback').empty();
-                $('select').removeClass('is-invalid');
-                $('input').removeClass('is-invalid');
+                $(formId+' select').removeClass('is-invalid');
+                $(formId+' input').removeClass('is-invalid');
 
                 $.ajax({
                     url: "{{route('get-event-player', ['schedule' => $eventSchedule->id]) }}",
