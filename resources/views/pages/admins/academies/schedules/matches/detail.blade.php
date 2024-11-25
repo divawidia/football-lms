@@ -47,10 +47,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ url()->previous() }}" class="nav-link text-70">
-                        <i class="material-icons icon--left">keyboard_backspace</i>
-                        Back
-                    </a>
+                    <a href="{{ url()->previous() }}" class="nav-link text-70"><i class="material-icons icon--left">keyboard_backspace</i>Back</a>
                 </li>
             </ul>
         </div>
@@ -513,86 +510,12 @@
                         <div class="page-separator__text">Attendance Overview</div>
                     </div>
                     <div class="row card-group-row">
-                        <div class="col-lg-4 col-md-6 card-group-row__col">
-                            <div class="card card-group-row__card">
-                                <div class="card-body d-flex align-items-center">
-                                    <div class="flex d-flex align-items-center">
-                                        <div class="h2 mb-0 mr-3">{{ $data['totalParticipant'] }}</div>
-                                        <div class="flex">
-                                            <div class="card-title">Total Participants</div>
-                                        </div>
-                                    </div>
-                                    <i class='bx bxs-group icon-32pt text-danger ml-8pt'></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 card-group-row__col">
-                            <div class="card card-group-row__card">
-                                <div class="card-body d-flex align-items-center">
-                                    <div class="flex d-flex align-items-center">
-                                        <div class="h2 mb-0 mr-3">{{ $data['totalAttend'] }}</div>
-                                        <div class="flex">
-                                            <div class="card-title">Attended</div>
-                                        </div>
-                                    </div>
-                                    <i class='bx bxs-user-check icon-32pt text-danger ml-8pt'></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 card-group-row__col">
-                            <div class="card card-group-row__card">
-                                <div class="card-body d-flex align-items-center">
-                                    <div class="flex d-flex align-items-center">
-                                        <div class="h2 mb-0 mr-3">{{ $data['totalDidntAttend'] }}</div>
-                                        <div class="flex">
-                                            <div class="card-title">Didn't Attended</div>
-                                        </div>
-                                    </div>
-                                    <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row card-group-row">
-                        <div class="col-lg-4 col-md-6 card-group-row__col">
-                            <div class="card card-group-row__card">
-                                <div class="card-body d-flex align-items-center">
-                                    <div class="flex d-flex align-items-center">
-                                        <div class="h2 mb-0 mr-3">{{ $data['totalIllness'] }}</div>
-                                        <div class="flex">
-                                            <div class="card-title">Illness</div>
-                                        </div>
-                                    </div>
-                                    <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 card-group-row__col">
-                            <div class="card card-group-row__card">
-                                <div class="card-body d-flex align-items-center">
-                                    <div class="flex d-flex align-items-center">
-                                        <div class="h2 mb-0 mr-3">{{ $data['totalInjured'] }}</div>
-                                        <div class="flex">
-                                            <div class="card-title">Injured</div>
-                                        </div>
-                                    </div>
-                                    <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 card-group-row__col">
-                            <div class="card card-group-row__card">
-                                <div class="card-body d-flex align-items-center">
-                                    <div class="flex d-flex align-items-center">
-                                        <div class="h2 mb-0 mr-3">{{ $data['totalOthers'] }}</div>
-                                        <div class="flex">
-                                            <div class="card-title">Others</div>
-                                        </div>
-                                    </div>
-                                    <i class='bx bxs-user-x icon-32pt text-danger ml-8pt'></i>
-                                </div>
-                            </div>
-                        </div>
+                        @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$data['totalParticipant'], 'dataThisMonth'=>null])
+                        @include('components.stats-card', ['title' => 'Attended', 'data'=>$data['totalAttend'], 'dataThisMonth'=>null])
+                        @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$data['totalDidntAttend'], 'dataThisMonth'=>null])
+                        @include('components.stats-card', ['title' => "Illness", 'data'=>$data['totalIllness'], 'dataThisMonth'=>null])
+                        @include('components.stats-card', ['title' => "Injured", 'data'=>$data['totalInjured'], 'dataThisMonth'=>null])
+                        @include('components.stats-card', ['title' => "Others", 'data'=>$data['totalOthers'], 'dataThisMonth'=>null])
                     </div>
 
                     {{--    Player Attendance    --}}
@@ -634,9 +557,7 @@
                         <div class="page-separator__text">player skills evaluation</div>
                     </div>
                     @if(isAllAdmin() || isCoach())
-                        <x-player-skill-event-tables
-                            :route="route('match-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
-                            tableId="playerSkillsTable"/>
+                        <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])" tableId="playerSkillsTable"/>
                     @elseif(isPlayer())
                         <x-player-skill-stats-card :allSkills="$data['allSkills']"/>
                     @endif
@@ -644,23 +565,20 @@
 
                 {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
                 <div class="tab-pane fade" id="performance-tab" role="tabpanel">
-                            <div class="page-separator">
-                                <div class="page-separator__text">player performance review</div>
-                            </div>
-                            @if(isAllAdmin() || isCoach())
-                                <x-player-performance-review-event-table
-                                    :route="route('match-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
-                                    tableId="playerPerformanceReviewTable"/>
-                            @elseif(isPlayer())
-                                @if(count($data['playerPerformanceReviews'])==0)
-                                    <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
-                                @else
-                                    @foreach($data['playerPerformanceReviews'] as $review)
-                                        <x-player-event-performance-review :review="$review"/>
-                                    @endforeach
-                                @endif
-                            @endif
-                        </div>
+                    <div class="page-separator">
+                        <div class="page-separator__text">player performance review</div>
+                    </div>
+                    @if(isAllAdmin() || isCoach())
+                        <x-player-performance-review-event-table :route="route('match-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])" tableId="playerPerformanceReviewTable"/>
+                    @elseif(isPlayer())
+                        @if(count($data['playerPerformanceReviews'])==0)
+                            <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
+                        @endif
+                        @foreach($data['playerPerformanceReviews'] as $review)
+                            <x-player-event-performance-review :review="$review"/>
+                        @endforeach
+                    @endif
+                </div>
             @endif
         </div>
     </div>
