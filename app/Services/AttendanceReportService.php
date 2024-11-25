@@ -150,12 +150,18 @@ class AttendanceReportService extends Service
         return compact('mostAttended', 'mostDidntAttend', 'mostAttendedPercentage', 'mostDidntAttendPercentage');
     }
 
-    public function attendanceLineChart(Player $player = null, Coach $coach = null)
+    public function attendanceLineChart($startDate, $endDate, Player $player = null, Coach $coach = null)
     {
-        $attendedData = $this->getAttendanceData($player, status: 'Attended');
-        $attendanceData = $this->getAttendanceData($player);
-        $didntAttendData = $this->getAttendanceData($player, status: 'didntAttended');
-        $attendanceDate = $this->getAttendanceData($player, isGetDateOnly: true);
+        if ($startDate == null) {
+            $startDate = Carbon::now()->startOfYear();
+        }
+        if ($endDate == null) {
+            $endDate = Carbon::now();
+        }
+//        $attendedData = $this->getAttendanceData($player, coach: 'Attended');
+        $attendanceData = $this->getAttendanceData($startDate, $endDate, $player);
+//        $didntAttendData = $this->getAttendanceData($player, coach: 'didntAttended');
+//        $attendanceDate = $this->getAttendanceData($player, coach: true);
 
         $labels = [];
         $attended = [];
@@ -176,7 +182,7 @@ class AttendanceReportService extends Service
         return compact('labels', 'attended', 'didntAttend');
     }
 
-    private function getAttendanceData(Player $player = null, Coach $coach = null, $status = null, $isGetDateOnly = false)
+    private function getAttendanceData($startDate, $endDate, Player $player = null, Coach $coach = null)
     {
         $query = DB::table('event_schedules as es')
             ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
@@ -206,12 +212,13 @@ class AttendanceReportService extends Service
 //        if ($isGetDateOnly == true){
 //            $query->select(DB::raw('es.date as date'));
 //        }
-        $query->where('es.status', '0');
+        $query->where('es.status', 'Completed');
         if ($player) {
             $query->where('p.id', $player->id);
         }
 
-        return $query->groupBy(DB::raw('date'))
+        return $query->whereBetween('date', [$startDate, $endDate])
+            ->groupBy(DB::raw('date'))
             ->orderBy('date')
             ->get();
     }

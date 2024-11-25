@@ -30,7 +30,7 @@ class AttendanceReportController extends Controller
             $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($player, $coach);
             $playerAttendanceDatatablesRoute = url()->route('coach.attendance-report.index');
         }
-        elseif (isPlayer()){
+        else {
             $player = $this->getLoggedPLayerUser();
             $data = $this->attendanceReportService->show($player);
             $data['mostDidntAttend'] = null;
