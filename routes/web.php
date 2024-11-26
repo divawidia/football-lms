@@ -618,6 +618,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::prefix('attendance-reports')->group(function () {
             Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
+//            Route::get('attendance-data', [AttendanceReportController::class, 'attendanceData'])->name('attendance-report.data');
 
             Route::prefix('{player}')->group(function () {
                 Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('attendance-report.trainingTable');

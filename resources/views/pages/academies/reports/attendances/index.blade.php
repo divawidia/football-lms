@@ -20,11 +20,41 @@
         </div>
 
         <div class="container page-section">
+            <div class="page-separator">
+                <div class="page-separator__text">Filter Report</div>
+                <div class="form-group ml-auto">
+                    <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>
+                    <input id="startDateFilter"
+                           type="text"
+                           class="form-control"
+                           placeholder="Start Date"
+                           onfocus="(this.type='date')"
+                           onblur="(this.type='text')"/>
+                </div>
+                <div class="form-group ml-2">
+                    <label class="form-label mb-0" for="endDateFilter"></label>
+                    <input id="endDateFilter"
+                           type="text"
+                           class="form-control"
+                           placeholder="End Date"
+                           onfocus="(this.type='date')"
+                           onblur="(this.type='text')"/>
+                </div>
+                <div class="form-group ml-2">
+                    <label class="form-label mb-0" for="team">Filter by team</label>
+                    <select class="form-control form-select" id="team" data-toggle="select">
+                        <option selected disabled>Select team</option>
+                        @foreach($teams as $team)
+                            <option value="{{ $team->id }}" data-avatar-src="{{ Storage::url($team->logo) }}">{{ $team->teamName }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="button" id="filterBtn" class="btn btn-primary btn-sm ml-2"><span class="material-icons mr-2">filter_list_alt</span> Filter</button>
+            </div>
 
             {{--    Overview    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Overview</div>
-{{--                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
             </div>
 
             <div class="row">
@@ -34,7 +64,7 @@
                             <h4 class="card-title">Player Attendance</h4>
                         </div>
                         <div class="card-body">
-                            <x-attendance-line-chart chartId="attendanceLineChart" :datas="$lineChart"/>
+                            <canvas id="attendanceHistoryChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -44,7 +74,7 @@
                             <h4 class="card-title">Player Attendance</h4>
                         </div>
                         <div class="card-body">
-                            <x-attendance-doughnut-chart chartId="attendanceDoughnutChart" :datas="$doughnutChart"/>
+                            <canvas id="attendanceStatusChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -56,23 +86,39 @@
                         <div class="page-separator">
                             <div class="page-separator__text">most attended player</div>
                         </div>
-                        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                        <div class="card">
                             <div class="card-body d-flex align-items-center flex-row text-left">
-                                <img src="{{ Storage::url($mostAttended->user->foto) }}"
+{{--                                <img src="{{ Storage::url($mostAttended->user->foto) }}"--}}
+{{--                                     width="50"--}}
+{{--                                     height="50"--}}
+{{--                                     class="rounded-circle img-object-fit-cover"--}}
+{{--                                     alt="player-photo">--}}
+{{--                                <div class="flex ml-3">--}}
+{{--                                    <h5 class="mb-0">{{ $mostAttended->user->firstName }} {{ $mostAttended->user->lastName }}</h5>--}}
+{{--                                    <p class="text-50 lh-1 mb-0">{{ $mostAttended->position->name }}</p>--}}
+{{--                                </div>--}}
+{{--                                <div class="h2 mb-0 mr-3">{{ $mostAttended->attended_count }}</div>--}}
+{{--                                <div class="ml-auto text-right">--}}
+{{--                                    <div class="card-title">Event Attended</div>--}}
+{{--                                    <p class="card-subtitle text-50">--}}
+{{--                                        {{ $mostAttendedPercentage }}% of total event--}}
+{{--                                    </p>--}}
+{{--                                </div>--}}
+                                <img src=""
                                      width="50"
                                      height="50"
                                      class="rounded-circle img-object-fit-cover"
-                                     alt="player-photo">
+                                     alt="player-photo"
+                                    id="mostAttendedImg">
                                 <div class="flex ml-3">
-                                    <h5 class="mb-0">{{ $mostAttended->user->firstName }} {{ $mostAttended->user->lastName }}</h5>
-                                    <p class="text-50 lh-1 mb-0">{{ $mostAttended->position->name }}</p>
+                                    <h5 class="mb-0" id="mostAttendedName"></h5>
+                                    <p class="text-50 lh-1 mb-0" id="mostAttendedPosition"></p>
                                 </div>
-                                <div class="h2 mb-0 mr-3">{{ $mostAttended->attended_count }}</div>
+                                <div class="h2 mb-0 mr-3" id="mostAttendedCount"></div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title">Event Attended</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ $mostAttendedPercentage }}% of total event
-                                    </p>
+                                    <p class="card-subtitle text-50" id="mostAttendedTotalEvent"></p>
+                                    <p class="card-subtitle text-50" id="mostAttendedPercentage"></p>
                                 </div>
                             </div>
                         </div>
@@ -83,21 +129,19 @@
                         </div>
                         <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                             <div class="card-body d-flex align-items-center flex-row text-left">
-                                <img src="{{ Storage::url($mostDidntAttend->user->foto) }}"
+                                <img src=""
                                      width="50"
                                      height="50"
                                      class="rounded-circle img-object-fit-cover"
                                      alt="player-photo">
                                 <div class="flex ml-3">
-                                    <h5 class="mb-0">{{ $mostDidntAttend->user->firstName }} {{ $mostDidntAttend->user->lastName }}</h5>
-                                    <p class="text-50 lh-1 mb-0">{{ $mostDidntAttend->position->name }}</p>
+                                    <h5 class="mb-0"></h5>
+                                    <p class="text-50 lh-1 mb-0"></p>
                                 </div>
-                                <div class="h2 mb-0 mr-3">{{ $mostDidntAttend->didnt_attended_count }}</div>
+                                <div class="h2 mb-0 mr-3"></div>
                                 <div class="ml-auto text-right">
                                     <div class="card-title">Event Absent</div>
-                                    <p class="card-subtitle text-50">
-                                        {{ $mostDidntAttendPercentage }}% of total event
-                                    </p>
+                                    <p class="card-subtitle text-50"></p>
                                 </div>
                             </div>
                         </div>
@@ -143,12 +187,12 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Training Histories</div>
                 </div>
-                <x-player-training-histories-table tableId="trainingHistoriesTable" :tableRoute="route('attendance-report.trainingTable', $data['player']->id)"/>
+{{--                <x-player-training-histories-table tableId="trainingHistoriesTable" :tableRoute="route('attendance-report.trainingTable', $data['player']->id)"/>--}}
 
                 <div class="page-separator">
                     <div class="page-separator__text">Match Histories</div>
                 </div>
-                <x-player-match-histories-table tableId="matchHistoriesTable" :tableRoute="route('attendance-report.matchDatatable', $data['player']->id)"/>
+{{--                <x-player-match-histories-table tableId="matchHistoriesTable" :tableRoute="route('attendance-report.matchDatatable', $data['player']->id)"/>--}}
             @endif
         </div>
     @endsection
@@ -156,7 +200,6 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            @if(isAllAdmin() || isCoach())
             $('#table').DataTable({
                 processing: true,
                 serverSide: true,
@@ -184,7 +227,62 @@
                     },
                 ]
             });
-            @endif
+
+            const attendanceHistoryChart = $('#attendanceHistoryChart');
+            const attendanceStatusChart = $('#attendanceStatusChart');
+            let lineChart;
+            let doughnutChart;
+
+            function fetchAttendanceData(startDate = null, endDate = null, team = null) {
+                $.ajax({
+                    url: '{{ url()->current() }}',
+                    type: 'GET',
+                    data: {
+                        startDate: startDate,
+                        endDate: endDate,
+                        team: team,
+                    },
+                    success: function (response) {
+                        if (lineChart) lineChart.destroy(); // Destroy previous chart instance
+                        lineChart = new Chart(attendanceHistoryChart, {
+                            type: 'line',
+                            data: response.data.lineChart,
+                            options: {
+                                responsive: true,
+                            },
+                        })
+
+                        if (doughnutChart) doughnutChart.destroy(); // Destroy previous chart instance
+                        doughnutChart = new Chart(attendanceStatusChart, {
+                            type: 'doughnut',
+                                data: response.data.doughnutChart,
+                            options: {
+                                responsive: true,
+                            },
+                        })
+
+                        $('#mostAttendedImg').attr('src', '{{ Storage::url('') }}'+response.data.mostAttendedPlayer.results.user.foto)
+                        $('#mostAttendedName').text(response.data.mostAttendedPlayer.results.user.firstName+' '+response.data.mostAttendedPlayer.results.user.lastName)
+                        $('#mostAttendedPosition').text(response.data.mostAttendedPlayer.results.position.name)
+                        $('#mostAttendedCount').text(response.data.mostAttendedPlayer.results.attended_count)
+                        $('#mostAttendedTotalEvent').text('From '+response.data.mostAttendedPlayer.results.schedules_count+' total events')
+                        $('#mostAttendedPercentage').text(response.data.mostAttendedPlayer.mostAttendedPercentage+'% attendance rate')
+                    },
+                    error: function (err) {
+                        console.error(err);
+                        alert('Failed to fetch chart data.');
+                    },
+                });
+            }
+
+            $('#filterBtn').on('click', function () {
+                const startDate = $('#startDateFilter').val();
+                const endDate = $('#endDateFilter').val();
+                const team = $('#team').val();
+                fetchAttendanceData(startDate, endDate, team);
+            });
+
+            fetchAttendanceData();
         });
     </script>
 @endpush

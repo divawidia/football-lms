@@ -2,56 +2,83 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Player;
+use App\Models\Team;
+use App\Repository\TeamRepository;
 use App\Services\AttendanceReportService;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AttendanceReportController extends Controller
 {
     private AttendanceReportService $attendanceReportService;
+    private TeamRepository $teamRepository;
 
-    public function __construct(AttendanceReportService $attendanceReportService)
+    public function __construct(
+        AttendanceReportService $attendanceReportService,
+        TeamRepository $teamRepository
+    )
     {
         $this->attendanceReportService = $attendanceReportService;
+        $this->teamRepository = $teamRepository;
     }
     public function index(){
         if (isAllAdmin()){
-            $data = $this->attendanceReportService->index();
-            $lineChart = $this->attendanceReportService->attendanceLineChart();
-            $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart();
+            $data = null;
+            $teams = $this->teamRepository->getByTeamside('Academy Team');
             $playerAttendanceDatatablesRoute = url()->route('admin.attendance-report.index');
         }
         elseif (isCoach()){
             $coach = $this->getLoggedCoachUser();
-            $player = null;
-            $data = $this->attendanceReportService->coachIndex($coach);
-            $lineChart = $this->attendanceReportService->attendanceLineChart($player, $coach);
-            $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($player, $coach);
+            $data = null;
+            $teams = $coach->teams;
             $playerAttendanceDatatablesRoute = url()->route('coach.attendance-report.index');
         }
         else {
+            $teams = null;
             $player = $this->getLoggedPLayerUser();
             $data = $this->attendanceReportService->show($player);
-            $data['mostDidntAttend'] = null;
-            $data['mostAttended'] = null;
-            $data['mostAttendedPercentage'] = null;
-            $data['mostDidntAttendPercentage'] = null;
-            $lineChart = $this->attendanceReportService->attendanceLineChart($player);
-            $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($player);
             $playerAttendanceDatatablesRoute = null;
+        }
+
+        if (\request()->ajax()) {
+            $startDate = \request()->input('startDate');
+            $endDate = \request()->input('endDate');
+            $team = \request()->input('team');
+
+            if ($team) {
+                $team = $this->teamRepository->find($team);
+                $lineChart = $this->attendanceReportService->attendanceLineChart($startDate, $endDate, teams: $team);
+                $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($startDate, $endDate, teams: $team);
+                $mostAttendedPlayer = $this->attendanceReportService->mostAttendedPlayer($startDate, $endDate, $team);
+                $mostDidntAttendPlayer = $this->attendanceReportService->mostDidntAttendPlayer($startDate, $endDate, $team);
+            }
+//            elseif ($player) {
+//                $lineChart = $this->attendanceReportService->attendanceLineChart($startDate, $endDate, $player);
+//                $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($startDate, $endDate, $player);
+//                $mostAttendedPlayer = null;
+//                $mostDidntAttendPlayer = null;
+//            }
+            else {
+                $lineChart = $this->attendanceReportService->attendanceLineChart($startDate, $endDate);
+                $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($startDate, $endDate);
+                $mostAttendedPlayer = $this->attendanceReportService->mostAttendedPlayer($startDate, $endDate);
+                $mostDidntAttendPlayer = $this->attendanceReportService->mostDidntAttendPlayer($startDate, $endDate);
+            }
+
+            $data = compact('lineChart', 'doughnutChart', 'mostAttendedPlayer', 'mostDidntAttendPlayer');
+
+            return ApiResponse::success($data);
         }
 
         return view('pages.academies.reports.attendances.index', [
             'data' => $data,
-            'mostDidntAttend' => $data['mostDidntAttend'],
-            'mostAttended' => $data['mostAttended'],
-            'mostAttendedPercentage' => $data['mostAttendedPercentage'],
-            'mostDidntAttendPercentage' => $data['mostDidntAttendPercentage'],
-            'lineChart' => $lineChart,
-            'doughnutChart' => $doughnutChart,
+            'teams' => $teams,
             'playerAttendanceDatatablesRoute' => $playerAttendanceDatatablesRoute,
-            ]);
+        ]);
     }
 
     public function adminIndex()

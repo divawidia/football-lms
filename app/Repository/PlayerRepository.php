@@ -34,49 +34,37 @@ class PlayerRepository
         return $this->player->whereIn('id', $playerIds)->get();
     }
 
-    public function getMostAttendedPLayer()
+    public function getAttendedPLayer($startDate, $endDate, $teams = null, $mostAttended = true, $mostDidntAttend = false)
     {
-        return $this->player->with('schedules', 'user')
-            ->withCount(['schedules', 'schedules as attended_count' => function ($query){
-                $query->where('attendanceStatus', 'Attended');
-            }])
-            ->orderBy('attended_count', 'desc')
-            ->first();
-    }
-    public function getMostAttendedCoachsPLayer($teams)
-    {
-        return $this->player->with('schedules', 'user')
-            ->withTeams($teams)
-            ->withCount(['schedules', 'schedules as attended_count' => function ($query){
-                $query->where('attendanceStatus', 'Attended');
-            }])
-            ->orderBy('attended_count', 'desc')
-            ->first();
-    }
+        $query = $this->player->with('user', 'position');
 
-    public function getMostDidntAttendPLayer()
-    {
-        return $this->player->with('schedules', 'user')
-            ->withCount(['schedules', 'schedules as didnt_attended_count' => function ($query){
-                $query->where('attendanceStatus', 'Illness')
-                    ->orWhere('attendanceStatus', 'Injured')
-                    ->orWhere('attendanceStatus', 'Other');
-            }])
-            ->orderBy('didnt_attended_count', 'desc')
-            ->first();
-    }
-
-    public function getMostDidntAttendCoachsPLayer($teams)
-    {
-        return $this->player->with('schedules', 'user')
-            ->withTeams($teams)
-            ->withCount(['schedules', 'schedules as didnt_attended_count' => function ($query){
-                $query->where('attendanceStatus', 'Illness')
-                    ->orWhere('attendanceStatus', 'Injured')
-                    ->orWhere('attendanceStatus', 'Other');
-            }])
-            ->orderBy('didnt_attended_count', 'desc')
-            ->first();
+        if ($teams) {
+            $query->withTeams($teams);
+        }
+        if ($mostAttended) {
+            $query->withCount([
+                'schedules as attended_count' => function ($q) use ($startDate, $endDate){
+                    $q->whereBetween('date', [$startDate, $endDate]);
+                    $q->where('attendanceStatus', 'Attended');
+                },
+                'schedules as schedules_count' => function ($q) use ($startDate, $endDate){
+                    $q->whereBetween('date', [$startDate, $endDate]);
+                }
+            ])->orderByDesc('attended_count');
+        } elseif ($mostDidntAttend) {
+            $query->withCount([
+                'schedules as didnt_attended_count' => function ($q) use ($startDate, $endDate){
+                    $q->whereBetween('date', [$startDate, $endDate])
+                        ->where('attendanceStatus', 'Illness')
+                        ->orWhere('attendanceStatus', 'Injured')
+                        ->orWhere('attendanceStatus', 'Other');
+                },
+                'schedules as schedules_count' => function ($q) use ($startDate, $endDate){
+                    $q->whereBetween('date', [$startDate, $endDate]);
+                }
+            ])->orderByDesc('didnt_attended_count');
+        }
+        return $query->first();
     }
 
     public function find($id)

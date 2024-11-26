@@ -61,7 +61,12 @@ class FinancialReportService extends Service
 
         $thisMonthTotalRevenues = $this->invoiceRepository->calculateInvoiceByStatus('Paid', $startMonth, $now, sumAmount: true);
         $previousMonthTotalRevenues = $this->invoiceRepository->calculateInvoiceByStatus('Paid', $startOfLastMonth, $endOfLastMonth, sumAmount: true);
-        $revenueGrowth = (($thisMonthTotalRevenues - $previousMonthTotalRevenues) / $previousMonthTotalRevenues) * 100;
+        if ($previousMonthTotalRevenues > 0) {
+            $revenueGrowth = (($thisMonthTotalRevenues - $previousMonthTotalRevenues) / $previousMonthTotalRevenues) * 100;
+        } else {
+            $revenueGrowth = null;
+        }
+
         return $this->formatPercentage($revenueGrowth);
     }
 
@@ -156,13 +161,6 @@ class FinancialReportService extends Service
         $sumUncollectInvoices = $this->invoiceRepository->calculateInvoiceByStatus('Uncollectible', $startDate, $endDate, sumAmount: true);
         $sumUncollectInvoices = $this->formatNumber($sumUncollectInvoices);
 
-//        $label = [];
-//        $data = [];
-//        foreach ($results as $result){
-//            $label[] = $result->month_revenue;
-//            $data[] = $result->total_ammount;
-//        }
-//        return compact('label', 'data');
         $chart = [
             'labels' => $results->pluck('date'),
             'datasets' => [
