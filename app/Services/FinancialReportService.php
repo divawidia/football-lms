@@ -74,10 +74,20 @@ class FinancialReportService extends Service
     {
         $result = $this->subscriptionRepository->recurringRevenue();
 
+        if ($result != null) {
+            $yrr = $this->formatNumber($result->yrr);
+            $qrr = $this->formatNumber($result->qrr);
+            $mrr = $this->formatNumber($result->mrr);
+        } else {
+            $yrr = null;
+            $qrr = null;
+            $mrr = null;
+        }
+
         return [
-            'yrr' => $this->formatNumber($result->yrr),
-            'qrr' => $this->formatNumber($result->qrr),
-            'mrr' => $this->formatNumber($result->mrr),
+            'yrr' => $yrr,
+            'qrr' => $qrr,
+            'mrr' => $mrr,
         ];
     }
 

@@ -18,6 +18,7 @@
         "nnjeim/world": "^1.1",
         "onokumus/metismenu": "dev-master",
         "realrashid/sweet-alert": "^7.2",
+        "sentry/sentry-laravel": "^4.10",
         "spatie/laravel-permission": "^6.9",
         "yajra/laravel-datatables-oracle": "10.*"
     },
