@@ -62,12 +62,12 @@ class FinancialReportService extends Service
         $thisMonthTotalRevenues = $this->invoiceRepository->calculateInvoiceByStatus('Paid', $startMonth, $now, sumAmount: true);
         $previousMonthTotalRevenues = $this->invoiceRepository->calculateInvoiceByStatus('Paid', $startOfLastMonth, $endOfLastMonth, sumAmount: true);
         if ($previousMonthTotalRevenues > 0) {
-            $revenueGrowth = (($thisMonthTotalRevenues - $previousMonthTotalRevenues) / $previousMonthTotalRevenues) * 100;
+            $revenueGrowth = $this->formatPercentage((($thisMonthTotalRevenues - $previousMonthTotalRevenues) / $previousMonthTotalRevenues) * 100);
         } else {
             $revenueGrowth = null;
         }
 
-        return $this->formatPercentage($revenueGrowth);
+        return $revenueGrowth;
     }
 
     public function estimatedRecuringRevenue()
