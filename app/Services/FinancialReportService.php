@@ -73,8 +73,7 @@ class FinancialReportService extends Service
     public function estimatedRecuringRevenue()
     {
         $result = $this->subscriptionRepository->recurringRevenue();
-
-        if ($result != null) {
+        if ($result->mrr != null and $result->qrr != null and $result->yrr != null) {
             $yrr = $this->formatNumber($result->yrr);
             $qrr = $this->formatNumber($result->qrr);
             $mrr = $this->formatNumber($result->mrr);
