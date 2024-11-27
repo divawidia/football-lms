@@ -20,58 +20,65 @@
         </div>
 
         <div class="container page-section">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="form-group mb-0 mb-lg-3">
-                        <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>
-                        <input id="startDateFilter"
-                               type="text"
-                               class="form-control"
-                               placeholder="Start Date"
-                               onfocus="(this.type='date')"
-                               onblur="(this.type='text')"/>
+            {{--    Filter    --}}
+            <div class="page-separator">
+                <div class="page-separator__text">Attendance Report Filter</div>
+            </div>
+            <div class="card card-form d-flex flex-column flex-sm-row">
+                <div class="card-form__body card-body-form-group flex">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group mb-0 mb-lg-3">
+                                <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>
+                                <input id="startDateFilter"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="Start Date"
+                                       onfocus="(this.type='date')"
+                                       onblur="(this.type='text')"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label class="form-label mb-0" for="endDateFilter"></label>
+                                <input id="endDateFilter"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="End Date"
+                                       onfocus="(this.type='date')"
+                                       onblur="(this.type='text')"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label class="form-label mb-0" for="team">Filter by team</label>
+                                <select class="form-control form-select" id="team" data-toggle="select">
+                                    <option selected disabled>Select team</option>
+                                    @foreach($teams as $team)
+                                        <option value="{{ $team->id }}" data-avatar-src="{{ Storage::url($team->logo) }}">{{ $team->teamName }}</option>
+                                    @endforeach
+                                    <option value="{{ null }}">All teams</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label class="form-label mb-0" for="eventType">Filter by event type</label>
+                                <select class="form-control form-select" id="eventType" data-toggle="select">
+                                    <option selected disabled>Select event type</option>
+                                    <option value="Match">Match</option>
+                                    <option value="Training">Training</option>
+                                    <option value="{{ null }}">Both event type</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    <div class="form-group">
-                        <label class="form-label mb-0" for="endDateFilter"></label>
-                        <input id="endDateFilter"
-                               type="text"
-                               class="form-control"
-                               placeholder="End Date"
-                               onfocus="(this.type='date')"
-                               onblur="(this.type='text')"/>
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <div class="form-group">
-                        <label class="form-label mb-0" for="team">Filter by team</label>
-                        <select class="form-control form-select" id="team" data-toggle="select">
-                            <option selected disabled>Select team</option>
-                            @foreach($teams as $team)
-                                <option value="{{ $team->id }}" data-avatar-src="{{ Storage::url($team->logo) }}">{{ $team->teamName }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="form-group">
-                        <label class="form-label mb-0" for="eventType">Filter by event type</label>
-                        <select class="form-control form-select" id="eventType" data-toggle="select">
-                            <option selected disabled>Select event type</option>
-                            <option value="Match">Match</option>
-                            <option value="Training">Training</option>
-                            <option value="{{ null }}">Both event type</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-lg-1">
-                    <button type="button" id="filterBtn" class="btn btn-primary btn-sm my-lg-4"><span class="material-icons mr-2">filter_list_alt</span> Filter</button>
-                </div>
+                <button class="btn bg-alt border-left border-top border-top-sm-0 rounded-0" type="button" id="filterBtn"><i class="material-icons text-primary icon-20pt">refresh</i></button>
             </div>
 
             {{--    Overview    --}}
-            <div class="page-separator pt-3">
+            <div class="page-separator">
                 <div class="page-separator__text">Player Attendance Overview</div>
             </div>
 

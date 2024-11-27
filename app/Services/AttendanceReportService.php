@@ -120,6 +120,48 @@ class AttendanceReportService extends Service
         return $this->makeAttendanceDatatables($query);
     }
 
+    public function eventIndex($startDate, $endDate, $teams = null, $eventType = null)
+    {
+        $data = $this->eventScheduleRepository->getEvent('Completed', $eventType, null, $startDate, $endDate, $teams);
+        return Datatables::of($data)
+            ->addColumn('action', function ($item) {
+                if ($item->eventType == 'Training') {
+                    $btn = $this->datatablesService->buttonTooltips(route('training-schedules.show', $item->id), 'View training session', 'visibility');
+                } else {
+                    $btn = $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->id), 'View match session', 'visibility');
+                }
+                return $btn;
+            })
+            ->addColumn('team', function ($item) {
+                return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup, route('team-managements.show', $item->teams[0]->id));
+            })
+            ->editColumn('eventName', function ($item) {
+                if ($item->eventType == 'Training') {
+                    $data = $item->eventName;
+                } else {
+                    $data = $item->teams[0]->teamName.' Vs. '.$item->teams[1]->teamName;
+                }
+                return $data;
+            })
+            ->addColumn('totalPlayers', function ($item) {
+                return count($item->players);
+            })
+            ->addColumn('playerIllness', function ($item) {
+                return $item->players()->where('attendanceStatus', 'Illness')->count();
+            })
+            ->addColumn('playerInjured', function ($item) {
+                return $item->players()->where('attendanceStatus', 'Injured')->count();
+            })
+            ->addColumn('playerOther', function ($item) {
+                return $item->players()->where('attendanceStatus', 'Other')->count();
+            })
+            ->editColumn('status', function ($item) {
+                return $this->datatablesService->eventStatus($item->status);
+            })
+            ->rawColumns(['action','team','date','status'])
+            ->make();
+    }
+
     public function mostAttendedPlayer($startDate, $endDate, $teams = null, $eventType = null): array
     {
         $filter = $this->dateFilter($startDate, $endDate);

@@ -26,12 +26,23 @@ class EventScheduleRepository
         return $this->eventSchedule->all();
     }
 
-    public function getEvent($eventType, $status, $take = null)
+    public function getEvent($status, $eventType = null, $take = null, $startDate = null, $endDate = null, $teams = null)
     {
-        $query = $this->eventSchedule->with('teams', 'competition')
-            ->where('eventType', $eventType)
+        $query = $this->eventSchedule->with('teams', 'competition', 'players')
             ->where('status', $status)
             ->where('isOpponentTeamMatch', '0');
+        if ($eventType) {
+            $query->where('eventType', $eventType);
+        }
+        if ($teams != null) {
+            $teamIds = collect($teams)->pluck('id')->all();
+            $query->whereHas('teams', function (Builder $q) use ($teamIds) {
+                $q->whereIn('teamId', $teamIds);
+            });
+        }
+        if ($startDate != null && $endDate != null){
+            $query->whereBetween('date', [$startDate, $endDate]);
+        }
         if ($take){
             $query->take($take);
         }
