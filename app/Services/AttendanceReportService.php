@@ -144,19 +144,19 @@ class AttendanceReportService extends Service
                 return count($item->players);
             })
             ->addColumn('playerAttended', function ($item) {
-                return $item->players()->where('attendanceStatus', 'Attended')->count();
+                return $this->eventScheduleRepository->playerAttendanceCount('Attended', $item->id);
             })
             ->addColumn('playerIllness', function ($item) {
-                return $item->players()->where('attendanceStatus', 'Illness')->count();
+                return $this->eventScheduleRepository->playerAttendanceCount('Illness', $item->id);
             })
             ->addColumn('playerInjured', function ($item) {
-                return $item->players()->where('attendanceStatus', 'Injured')->count();
+                return $this->eventScheduleRepository->playerAttendanceCount('Injured', $item->id);
             })
             ->addColumn('playerOther', function ($item) {
-                return $item->players()->where('attendanceStatus', 'Other')->count();
+                return $this->eventScheduleRepository->playerAttendanceCount('Other', $item->id);
             })
             ->addColumn('playerRequiredAction', function ($item) {
-                return $item->players()->where('attendanceStatus', 'Required Action')->count();
+                return $this->eventScheduleRepository->playerAttendanceCount('Required Action', $item->id);
             })
             ->editColumn('status', function ($item) {
                 return $this->datatablesService->eventStatus($item->status);

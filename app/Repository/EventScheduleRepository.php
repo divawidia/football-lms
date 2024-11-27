@@ -10,6 +10,7 @@ use App\Models\Player;
 use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
@@ -186,6 +187,13 @@ class EventScheduleRepository
         return $query->whereBetween('date', [$startDate, $endDate])
             ->groupBy(DB::raw('pa.attendanceStatus'))
             ->get();
+    }
+
+    public function playerAttendanceCount($status, $id) : int {
+        return $this->find($id)->players()->where('attendanceStatus', $status)->count();
+    }
+    public function coachesAttendanceCount($status, $id) : int {
+        return $this->find($id)->players()->where('attendanceStatus', $status)->count();
     }
 
     public function find($id)

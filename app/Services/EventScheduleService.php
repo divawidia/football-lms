@@ -406,41 +406,23 @@ class EventScheduleService extends Service
     public function show(EventSchedule $schedule, Player $player = null){
         $totalParticipant = count($schedule->players) + count($schedule->coaches);
 
-        $playerAttended = $schedule->players()
-            ->where('attendanceStatus', 'Attended')
-            ->get();
+        $playerAttended = $this->eventScheduleRepository->playerAttendanceCount('Attended', $schedule->id);
+        $playerIllness = $this->eventScheduleRepository->playerAttendanceCount('Illness', $schedule->id);
+        $playerInjured = $this->eventScheduleRepository->playerAttendanceCount('Injured', $schedule->id);
+        $playerOther = $this->eventScheduleRepository->playerAttendanceCount('Other', $schedule->id);
+        $playerDidntAttend = $playerIllness + $playerInjured + $playerOther;
 
-        $playerIllness = $schedule->players()
-            ->where('attendanceStatus', 'Illness')
-            ->get();
-        $playerInjured = $schedule->players()
-            ->where('attendanceStatus', 'Injured')
-            ->get();
-        $playerOther = $schedule->players()
-            ->where('attendanceStatus', 'Other')
-            ->get();
-        $playerDidntAttend = count($playerIllness) + count($playerInjured) + count($playerOther);
+        $coachAttended = $this->eventScheduleRepository->coachesAttendanceCount('Attended', $schedule->id);
+        $coachIllness = $this->eventScheduleRepository->coachesAttendanceCount('Illness', $schedule->id);
+        $coachInjured = $this->eventScheduleRepository->coachesAttendanceCount('Injured', $schedule->id);
+        $coachOther = $this->eventScheduleRepository->coachesAttendanceCount('Other', $schedule->id);
+        $coachDidntAttend = $coachIllness + $coachInjured + $coachOther;
 
-        $coachAttended = $schedule->coaches()
-            ->where('attendanceStatus', 'Attended')
-            ->get();
-
-        $coachIllness = $schedule->coaches()
-            ->where('attendanceStatus', 'Illness')
-            ->get();
-        $coachInjured = $schedule->coaches()
-            ->where('attendanceStatus', 'Injured')
-            ->get();
-        $coachOther = $schedule->coaches()
-            ->where('attendanceStatus', 'Other')
-            ->get();
-        $coachDidntAttend = count($coachIllness) + count($coachInjured) + count($coachOther);
-
-        $totalAttend = count($playerAttended) + count($coachAttended);
+        $totalAttend = $playerAttended + $coachAttended;
         $totalDidntAttend = $playerDidntAttend + $coachDidntAttend;
-        $totalIllness = count($playerIllness) + count($coachIllness);
-        $totalInjured = count($playerInjured) + count($coachInjured);
-        $totalOthers = count($playerOther) + count($coachOther);
+        $totalIllness = $playerIllness + $coachIllness;
+        $totalInjured = $playerInjured + $coachInjured;
+        $totalOthers = $playerOther + $coachOther;
 
         $dataSchedule = $schedule;
 
