@@ -65,11 +65,11 @@ class EventScheduleService extends Service
 
     public function indexMatch(): Collection
     {
-        return $this->eventScheduleRepository->getEvent('Match', 'Scheduled');
+        return $this->eventScheduleRepository->getEvent('Scheduled', 'Match');
     }
     public function indexTraining(): Collection
     {
-        return $this->eventScheduleRepository->getEvent('Training', 'Scheduled');
+        return $this->eventScheduleRepository->getEvent( 'Scheduled', 'Training');
     }
 
     public function coachTeamsIndexTraining(Coach $coach): Collection

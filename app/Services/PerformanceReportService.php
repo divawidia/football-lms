@@ -217,7 +217,7 @@ class PerformanceReportService extends Service
         );
     }
     public function latestMatch(){
-        return $this->eventScheduleRepository->getEvent('Match', '0', 2);
+        return $this->eventScheduleRepository->getEvent('Completed','Match', 2);
     }
 
     public function coachLatestMatch(Coach $coach){
@@ -321,7 +321,7 @@ class PerformanceReportService extends Service
             ->make();
     }
     public function matchHistory(){
-        $data = $this->eventScheduleRepository->getEvent('Match', '0');
+        $data = $this->eventScheduleRepository->getEvent('Completed', 'Match');
         return $this->matchHistoryDatatables($data);
     }
     public function modelMatchHistory($model){
