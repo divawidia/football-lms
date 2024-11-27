@@ -2,15 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerRepository;
 use Carbon\Carbon;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class AttendanceReportService extends Service
@@ -120,9 +116,10 @@ class AttendanceReportService extends Service
         return $this->makeAttendanceDatatables($query);
     }
 
-    public function eventIndex($startDate, $endDate, $teams = null, $eventType = null)
+    public function eventIndex($startDate, $endDate, $teams = null, $eventType = null): JsonResponse
     {
-        $data = $this->eventScheduleRepository->getEvent('Completed', $eventType, null, $startDate, $endDate, $teams);
+        $filter = $this->dateFilter($startDate, $endDate);
+        $data = $this->eventScheduleRepository->getEvent('Completed', $eventType, null, $filter['startDate'], $filter['endDate'], $teams);
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if ($item->eventType == 'Training') {
@@ -146,6 +143,9 @@ class AttendanceReportService extends Service
             ->addColumn('totalPlayers', function ($item) {
                 return count($item->players);
             })
+            ->addColumn('playerAttended', function ($item) {
+                return $item->players()->where('attendanceStatus', 'Attended')->count();
+            })
             ->addColumn('playerIllness', function ($item) {
                 return $item->players()->where('attendanceStatus', 'Illness')->count();
             })
@@ -155,10 +155,24 @@ class AttendanceReportService extends Service
             ->addColumn('playerOther', function ($item) {
                 return $item->players()->where('attendanceStatus', 'Other')->count();
             })
+            ->addColumn('playerRequiredAction', function ($item) {
+                return $item->players()->where('attendanceStatus', 'Required Action')->count();
+            })
             ->editColumn('status', function ($item) {
                 return $this->datatablesService->eventStatus($item->status);
             })
-            ->rawColumns(['action','team','date','status'])
+            ->rawColumns([
+                'action',
+                'team',
+                'eventName',
+                'totalPlayers',
+                'playerAttended',
+                'playerIllness',
+                'playerInjured',
+                'playerOther',
+                'playerRequiredAction',
+                'status'
+            ])
             ->make();
     }
 

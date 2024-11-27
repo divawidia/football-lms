@@ -46,7 +46,7 @@ class EventScheduleRepository
         if ($take){
             $query->take($take);
         }
-        return $query->orderBy('date')->get();
+        return $query->orderBy('date', 'desc')->get();
     }
 
     public function getUpcomingEvent($eventType, $hour)

@@ -160,6 +160,36 @@
                 </div>
 
                 <div class="page-separator">
+                    <div class="page-separator__text">Events</div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="eventsTable">
+                                <thead>
+                                <tr>
+                                    <th>Team</th>
+                                    <th>Event Name</th>
+                                    <th>Date</th>
+                                    <th>Event Type</th>
+                                    <th>Status</th>
+                                    <th>Total Players</th>
+                                    <th>Total Attended</th>
+                                    <th>Total Ill</th>
+                                    <th>Total Injured</th>
+                                    <th>Total Others</th>
+                                    <th>Total Required Action</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-separator">
                     <div class="page-separator__text">player attendance</div>
                 </div>
                 <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
@@ -234,10 +264,49 @@
                         name: 'action',
                         orderable: false,
                         searchable: false,
-                        width: '15%'
                     },
                 ]
             });
+
+            function eventsTable(startDate = null, endDate = null, team = null, eventType = null){
+                return $('#eventsTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{!! url()->route('attendance-report.events-index') !!}',
+                        type: "GET",
+                        data: function(d) {
+                            d.startDate = startDate;
+                            d.endDate = endDate;
+                            d.team = team;
+                            d.eventType = eventType;
+                            return d;
+                        }
+                    },
+                    columns: [
+                        { data: 'team', name: 'team' },
+                        { data: 'eventName', name: 'eventName' },
+                        { data: 'date', name: 'date' },
+                        { data: 'eventType', name: 'eventType'},
+                        { data: 'status', name: 'status'},
+                        { data: 'totalPlayers', name: 'totalPlayers'},
+                        { data: 'playerAttended', name: 'playerAttended'},
+                        { data: 'playerIllness', name: 'playerIllness'},
+                        { data: 'playerInjured', name: 'playerInjured'},
+                        { data: 'playerOther', name: 'playerOther'},
+                        { data: 'playerRequiredAction', name: 'playerRequiredAction'},
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                        },
+                    ],
+                    order: [[2, 'desc']],
+                    bDestroy: true
+                });
+            }
 
             const attendanceHistoryChart = $('#attendanceHistoryChart');
             const attendanceStatusChart = $('#attendanceStatusChart');
@@ -300,9 +369,11 @@
                 const team = $('#team').val();
                 const eventType = $('#eventType').val();
                 fetchAttendanceData(startDate, endDate, team, eventType);
+                eventsTable(startDate, endDate, team, eventType);
             });
 
             fetchAttendanceData();
+            eventsTable();
         });
     </script>
 @endpush

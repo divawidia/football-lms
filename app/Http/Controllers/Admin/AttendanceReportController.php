@@ -55,6 +55,7 @@ class AttendanceReportController extends Controller
                 $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($startDate, $endDate, $team, $eventType);
                 $mostAttendedPlayer = $this->attendanceReportService->mostAttendedPlayer($startDate, $endDate, $team, $eventType);
                 $mostDidntAttendPlayer = $this->attendanceReportService->mostDidntAttendPlayer($startDate, $endDate, $team, $eventType);
+                $events = $this->attendanceReportService->eventIndex($startDate, $endDate, $team, $eventType);
             }
 //            elseif ($player) {
 //                $lineChart = $this->attendanceReportService->attendanceLineChart($startDate, $endDate, $player);
@@ -67,9 +68,10 @@ class AttendanceReportController extends Controller
                 $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($startDate, $endDate, eventType: $eventType);
                 $mostAttendedPlayer = $this->attendanceReportService->mostAttendedPlayer($startDate, $endDate, eventType: $eventType);
                 $mostDidntAttendPlayer = $this->attendanceReportService->mostDidntAttendPlayer($startDate, $endDate, eventType: $eventType);
+                $events = $this->attendanceReportService->eventIndex($startDate, $endDate, eventType:  $eventType);
             }
 
-            $data = compact('lineChart', 'doughnutChart', 'mostAttendedPlayer', 'mostDidntAttendPlayer');
+            $data = compact('lineChart', 'doughnutChart', 'mostAttendedPlayer', 'mostDidntAttendPlayer', 'events');
 
             return ApiResponse::success($data);
         }
@@ -79,6 +81,23 @@ class AttendanceReportController extends Controller
             'teams' => $teams,
             'playerAttendanceDatatablesRoute' => $playerAttendanceDatatablesRoute,
         ]);
+    }
+
+    public function eventsIndex()
+    {
+        if (request()->ajax()) {
+            $startDate = request()->input('startDate');
+            $endDate = request()->input('endDate');
+            $team = request()->input('team');
+            $eventType = request()->input('eventType');
+            if ($team) {
+                $team = $this->teamRepository->whereId($team);
+                return $this->attendanceReportService->eventIndex($startDate, $endDate, $team, $eventType);
+            }
+            else {
+                return $this->attendanceReportService->eventIndex($startDate, $endDate, eventType: $eventType);
+            }
+        }
     }
 
     public function adminIndex()
