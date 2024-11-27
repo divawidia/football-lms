@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Player;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerRepository;
+use App\Repository\TeamRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
@@ -14,14 +15,21 @@ class AttendanceReportService extends Service
     private PlayerRepository $playerRepository;
     private EventScheduleRepository $eventScheduleRepository;
     private DatatablesService $datatablesService;
-    public function __construct(PlayerRepository $playerRepository, EventScheduleRepository $eventScheduleRepository, DatatablesService $datatablesService)
+    private TeamRepository $teamRepository;
+    public function __construct(
+        PlayerRepository $playerRepository, 
+        EventScheduleRepository $eventScheduleRepository, 
+        DatatablesService $datatablesService,
+        TeamRepository $teamRepository
+    )
     {
         $this->playerRepository = $playerRepository;
         $this->eventScheduleRepository = $eventScheduleRepository;
         $this->datatablesService = $datatablesService;
+        $this->teamRepository = $teamRepository;
     }
 
-    public function makeAttendanceDatatables($data): JsonResponse
+    public function makeAttendanceDatatables($data, $startDate, $endDate, $eventType = null): JsonResponse
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
@@ -39,85 +47,96 @@ class AttendanceReportService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name);
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->id));
             })
-            ->addColumn('totalEvent', function ($item){
-                return count($item->schedules);
+            ->addColumn('totalEvent', function ($item) use ($startDate, $endDate, $eventType){
+                return $this->eventScheduleRepository->playerAttendance($item, null, $startDate, $endDate, $eventType);
             })
-            ->addColumn('match', function ($item){
-                return $item->schedules()->where('eventType', 'Match')->count();
+            ->addColumn('match', function ($item) use ($startDate, $endDate, $eventType) {
+                if ($eventType == 'Training') {
+                    $data = 0;
+                } else {
+                    $data = $this->eventScheduleRepository->playerAttendance($item, null, $startDate, $endDate, 'Match');
+                }
+                return $data;
             })
-            ->addColumn('training', function ($item){
-                return $item->schedules()->where('eventType', 'Training')->count();
+            ->addColumn('training', function ($item) use ($startDate, $endDate, $eventType) {
+                if ($eventType == 'Match') {
+                    $data = 0;
+                } else {
+                    $data = $this->eventScheduleRepository->playerAttendance($item, null, $startDate, $endDate, 'Training');
+                }
+                return $data;
             })
-            ->addColumn('attended', function ($item){
-                $attended = $item->schedules()->where('attendanceStatus', 'Attended')->get();
-                $totalAttended = count($attended);
-                $totalEvent = count($item->schedules);
+            ->addColumn('attended', function ($item) use ($startDate, $endDate, $eventType) {
+                $attended = $this->eventScheduleRepository->playerAttendance($item, 'Attended', $startDate, $endDate, $eventType);
+                $totalEvent = $this->eventScheduleRepository->playerAttendance($item, null, $startDate, $endDate, $eventType);
                 if ($totalEvent == 0){
                     return 'No event yet';
                 }else{
-                    $percentage = $totalAttended/count($item->schedules)*100;
-                    return $totalAttended . ' ('.round($percentage, 1).'%)';
+                    $percentage = $attended/$totalEvent*100;
+                    return $attended . ' ('.round($percentage, 1).'%)';
                 }
             })
-            ->addColumn('absent', function ($item){
-                $illness = $item->schedules()
-                    ->where('attendanceStatus', 'Illness')
-                    ->get();
-                $injured = $item->schedules()
-                    ->where('attendanceStatus', 'Injured')
-                    ->get();
-                $others = $item->schedules()
-                    ->where('attendanceStatus', 'Others')
-                    ->get();
+            ->addColumn('absent', function ($item) use ($startDate, $endDate, $eventType) {
+                $illness = $this->eventScheduleRepository->playerAttendance($item, 'Illness', $startDate, $endDate, $eventType);
+                $injured = $this->eventScheduleRepository->playerAttendance($item, 'Injured', $startDate, $endDate, $eventType);
+                $others = $this->eventScheduleRepository->playerAttendance($item, 'Others', $startDate, $endDate, $eventType);
 
-                $totalDidntAttended = count($illness) + count($injured) + count($others);
-                $totalEvent = count($item->schedules);
+                $totalDidntAttended = $illness + $injured + $others;
+                $totalEvent = $this->eventScheduleRepository->playerAttendance($item, null, $startDate, $endDate, $eventType);
                 if ($totalEvent == 0){
                     return 'No event yet';
                 }else{
-                    $percentage = $totalDidntAttended/count($item->schedules)*100;
+                    $percentage = $totalDidntAttended/$totalEvent*100;
                     return $totalDidntAttended . ' ('.round($percentage, 1).'%)';
                 }
             })
-            ->addColumn('illness', function ($item){
-                $didntAttend = $item->schedules()
-                    ->where('attendanceStatus', 'Illness')
-                    ->get();
-                return count($didntAttend);
+            ->addColumn('illness', function ($item) use ($startDate, $endDate, $eventType) {
+                return  $this->eventScheduleRepository->playerAttendance($item, 'Illness', $startDate, $endDate, $eventType);
             })
-            ->addColumn('injured', function ($item){
-                $didntAttend = $item->schedules()
-                    ->where('attendanceStatus', 'Injured')
-                    ->get();
-                return count($didntAttend);
+            ->addColumn('injured', function ($item) use ($startDate, $endDate, $eventType) {
+                return $this->eventScheduleRepository->playerAttendance($item, 'Injured', $startDate, $endDate, $eventType);
             })
-            ->addColumn('others', function ($item){
-                $didntAttend = $item->schedules()
-                    ->where('attendanceStatus', 'Others')
-                    ->get();
-                return count($didntAttend);
+            ->addColumn('others', function ($item) use ($startDate, $endDate, $eventType) {
+                return $this->eventScheduleRepository->playerAttendance($item, 'Others', $startDate, $endDate, $eventType);
             })
-            ->rawColumns(['action','teams', 'name','totalEvent', 'match', 'training', 'attended', 'absent', 'illness', 'injured', 'others'])
+            ->addColumn('requiredAction', function ($item) use ($startDate, $endDate, $eventType) {
+                return $this->eventScheduleRepository->playerAttendance($item, 'Required Action', $startDate, $endDate, $eventType);
+            })
+            ->rawColumns(['action','teams', 'name','totalEvent', 'match', 'training', 'attended', 'absent', 'illness', 'injured', 'others', 'requiredAction'])
             ->make();
     }
-    public function attendanceDatatables(): JsonResponse
+    public function attendanceDatatables($teams = null, $startDate, $endDate, $eventType = null): JsonResponse
     {
-        $query = $this->playerRepository->getAll();
-        return $this->makeAttendanceDatatables($query);
+        if ($teams) {
+            $teams = $this->teamRepository->whereId($teams);
+            $query = $this->playerRepository->getPLayersByTeams($teams);
+        } else {
+            $query = $this->playerRepository->getAll();
+        }
+        $filter = $this->dateFilter($startDate, $endDate);
+        return $this->makeAttendanceDatatables($query, $filter['startDate'], $filter['endDate'], $eventType);
     }
-    public function coachAttendanceDatatables($coach): JsonResponse
+    public function coachAttendanceDatatables($coach, $teams = null, $startDate, $endDate, $eventType = null): JsonResponse
     {
-        $teams = $coach->teams()->get();
-
-        // query player data that included in teams that managed by logged in coach
-        $query = $this->playerRepository->getPLayersByTeams($teams);
-        return $this->makeAttendanceDatatables($query);
+        if ($teams) {
+            $teams = $this->teamRepository->whereId($teams);
+            $query = $this->playerRepository->getPLayersByTeams($teams);
+        } else {
+            $teams = $coach->teams;
+            // query player data that included in teams that managed by logged in coach
+            $query = $this->playerRepository->getPLayersByTeams($teams);
+        }   
+        $filter = $this->dateFilter($startDate, $endDate);     
+        return $this->makeAttendanceDatatables($query, $filter['startDate'], $filter['endDate'], $eventType);
     }
 
     public function eventIndex($startDate, $endDate, $teams = null, $eventType = null): JsonResponse
     {
+        if ($teams) {
+            $teams = $this->teamRepository->whereId($teams);
+        }
         $filter = $this->dateFilter($startDate, $endDate);
         $data = $this->eventScheduleRepository->getEvent('Completed', $eventType, null, $filter['startDate'], $filter['endDate'], $teams);
         return Datatables::of($data)

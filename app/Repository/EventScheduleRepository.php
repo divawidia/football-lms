@@ -196,6 +196,23 @@ class EventScheduleRepository
         return $this->find($id)->players()->where('attendanceStatus', $status)->count();
     }
 
+    public function playerAttendance(Player $player, $status, $startDate, $endDate, $eventType = null) {
+        $query = $player->schedules()
+            ->where('isOpponentTeamMatch', '0')
+            ->where('status', 'Completed');
+
+        if ($startDate != null && $endDate != null){
+            $query->whereBetween('date', [$startDate, $endDate]);
+        }
+        if ($status) {
+            $query->where('attendanceStatus', $status);
+        }
+        if ($eventType) {
+            $query->where('eventType', $eventType);
+        }
+        return $query->count();
+    }
+
     public function find($id)
     {
         return $this->eventSchedule->findOrFail($id);

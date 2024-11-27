@@ -208,6 +208,7 @@
                                     <th>Injured</th>
                                     <th>Illness</th>
                                     <th>Others</th>
+                                    <th>Required Action</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -241,32 +242,44 @@
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! $playerAttendanceDatatablesRoute !!}',
-                },
-                columns: [
-                    { data: 'name', name: 'name' },
-                    { data: 'teams', name: 'teams' },
-                    { data: 'totalEvent', name: 'totalEvent' },
-                    { data: 'match', name: 'match'},
-                    { data: 'training', name: 'training'},
-                    { data: 'attended', name: 'attended'},
-                    { data: 'absent', name: 'absent'},
-                    { data: 'illness', name: 'illness'},
-                    { data: 'injured', name: 'injured'},
-                    { data: 'others', name: 'others'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
+            function playersTable(startDate = null, endDate = null, team = null, eventType = null){
+                $('#table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{!! $playerAttendanceDatatablesRoute !!}',
+                        type: "GET",
+                        data: function(d) {
+                            d.startDate = startDate;
+                            d.endDate = endDate;
+                            d.team = team;
+                            d.eventType = eventType;
+                            return d;
+                        }
                     },
-                ]
-            });
+                    columns: [
+                        { data: 'name', name: 'name' },
+                        { data: 'teams', name: 'teams' },
+                        { data: 'totalEvent', name: 'totalEvent' },
+                        { data: 'match', name: 'match'},
+                        { data: 'training', name: 'training'},
+                        { data: 'attended', name: 'attended'},
+                        { data: 'absent', name: 'absent'},
+                        { data: 'illness', name: 'illness'},
+                        { data: 'injured', name: 'injured'},
+                        { data: 'others', name: 'others'},
+                        { data: 'requiredAction', name: 'requiredAction'},
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                        },
+                    ],
+                    bDestroy: true
+                });
+            }
 
             function eventsTable(startDate = null, endDate = null, team = null, eventType = null){
                 return $('#eventsTable').DataTable({
@@ -370,10 +383,12 @@
                 const eventType = $('#eventType').val();
                 fetchAttendanceData(startDate, endDate, team, eventType);
                 eventsTable(startDate, endDate, team, eventType);
+                playersTable(startDate, endDate, team, eventType);
             });
 
             fetchAttendanceData();
             eventsTable();
+            playersTable();
         });
     </script>
 @endpush

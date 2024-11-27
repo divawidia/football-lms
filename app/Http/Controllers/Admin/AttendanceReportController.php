@@ -83,31 +83,31 @@ class AttendanceReportController extends Controller
         ]);
     }
 
-    public function eventsIndex()
+    public function eventsIndex(Request $request)
     {
-        if (request()->ajax()) {
-            $startDate = request()->input('startDate');
-            $endDate = request()->input('endDate');
-            $team = request()->input('team');
-            $eventType = request()->input('eventType');
-            if ($team) {
-                $team = $this->teamRepository->whereId($team);
-                return $this->attendanceReportService->eventIndex($startDate, $endDate, $team, $eventType);
-            }
-            else {
-                return $this->attendanceReportService->eventIndex($startDate, $endDate, eventType: $eventType);
-            }
-        }
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $team = $request->input('team');
+        $eventType = $request->input('eventType');
+        return $this->attendanceReportService->eventIndex($startDate, $endDate, $team, $eventType);
     }
 
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
-        return $this->attendanceReportService->attendanceDatatables();
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $team = $request->input('team');
+        $eventType = $request->input('eventType');
+        return $this->attendanceReportService->attendanceDatatables($team, $startDate, $endDate, $eventType);
     }
 
-    public function coachIndex(){
+    public function coachIndex(Request $request){
         $coach = $this->getLoggedCoachUser();
-        return $this->attendanceReportService->coachAttendanceDatatables($coach);
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $team = $request->input('team');
+        $eventType = $request->input('eventType');
+        return $this->attendanceReportService->coachAttendanceDatatables($coach, $team, $startDate, $endDate, $eventType);
     }
 
     public function show(Player $player){
