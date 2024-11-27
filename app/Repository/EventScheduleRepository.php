@@ -10,6 +10,8 @@ use App\Models\Player;
 use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 
 class EventScheduleRepository
 {
@@ -107,6 +109,72 @@ class EventScheduleRepository
         }
 
         return $query->get();
+    }
+
+    public function getAttendanceTrend($startDate, $endDate,  $teams = null, $eventType = null)
+    {
+        $query = $this->eventSchedule->from('event_schedules AS es')
+            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
+            ->join('players as p', 'pa.playerId', '=', 'p.id');
+
+        if ($teams != null) {
+            $teamIds = collect($teams)->pluck('id')->all();
+            $query->join('player_teams', function (JoinClause $join) use ($teamIds) {
+                $join->on('p.id', '=', 'player_teams.playerId')
+                    ->whereIn('teamId', $teamIds);
+            });
+        }
+        $query->select(
+            DB::raw('es.date as date'),
+            DB::raw("COUNT(CASE WHEN pa.attendanceStatus = 'Attended' THEN 1 END) AS total_attended_players"),
+            DB::raw("COUNT(CASE WHEN pa.attendanceStatus = 'Illness' THEN 1 END) AS total_of_ill_players"),
+            DB::raw("COUNT(CASE WHEN pa.attendanceStatus = 'Injured' THEN 1 END) AS total_of_injured_players"),
+            DB::raw("COUNT(CASE WHEN pa.attendanceStatus = 'Other' THEN 1 END) AS total_of_other_attendance_status_players")
+        );
+
+        $query->where('es.status', 'Completed');
+
+        if ($eventType != null) {
+            $query->where('es.eventType', $eventType);
+        }
+//        if ($player) {
+//            $query->where('p.id', $player->id);
+//        }
+
+        return $query->whereBetween('date', [$startDate, $endDate])
+            ->groupBy(DB::raw('date'))
+            ->orderBy('date')
+            ->get();
+    }
+
+    public function countAttendanceByStatus($startDate, $endDate, $teams = null, $eventType = null)
+    {
+        $query = $this->eventSchedule->from('event_schedules AS es')
+            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
+            ->join('players as p', 'pa.playerId', '=', 'p.id');
+
+        if ($teams != null){
+            $teamIds = collect($teams)->pluck('id')->all();
+            $query->join('player_teams', function (JoinClause $join) use ($teamIds) {
+                $join->on('p.id', '=', 'player_teams.playerId')
+                    ->whereIn('teamId', $teamIds);
+            });
+        }
+
+        $query->select(DB::raw('pa.attendanceStatus as status'), DB::raw('COUNT(pa.playerId) AS total_players'))
+            ->where('pa.attendanceStatus', '!=', 'Required Action')
+            ->where('es.status', 'Completed');
+
+        if ($eventType != null) {
+            $query->where('es.eventType', $eventType);
+        }
+//        if ($player) {
+//            $query->where('p.id', $player->id);
+//        }
+
+        return $query->whereBetween('date', [$startDate, $endDate])
+            ->groupBy(DB::raw('pa.attendanceStatus'))
+            ->get();
     }
 
     public function find($id)

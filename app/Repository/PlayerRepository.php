@@ -34,36 +34,40 @@ class PlayerRepository
         return $this->player->whereIn('id', $playerIds)->get();
     }
 
-    public function getAttendedPLayer($startDate, $endDate, $teams = null, $mostAttended = true, $mostDidntAttend = false)
+    public function getAttendedPLayer($startDate, $endDate, $teams = null, $eventType = null, $mostAttended = true, $mostDidntAttend = false)
     {
         $query = $this->player->with('user', 'position');
 
         if ($teams) {
             $query->withTeams($teams);
         }
+        if ($eventType != null) {
+            $query->whereRelation('schedules', 'eventType', $eventType);
+        }
         if ($mostAttended) {
             $query->withCount([
                 'schedules as attended_count' => function ($q) use ($startDate, $endDate){
-                    $q->whereBetween('date', [$startDate, $endDate]);
-                    $q->where('attendanceStatus', 'Attended');
+                    $q->whereBetween('date', [$startDate, $endDate])
+                        ->where('status', 'Completed')
+                        ->where('attendanceStatus', 'Attended');
                 },
                 'schedules as schedules_count' => function ($q) use ($startDate, $endDate){
-                    $q->whereBetween('date', [$startDate, $endDate]);
+                    $q->whereBetween('date', [$startDate, $endDate])->where('status', 'Completed');
                 }
             ])->orderByDesc('attended_count');
         } elseif ($mostDidntAttend) {
             $query->withCount([
                 'schedules as didnt_attended_count' => function ($q) use ($startDate, $endDate){
                     $q->whereBetween('date', [$startDate, $endDate])
-                        ->where('attendanceStatus', 'Illness')
-                        ->orWhere('attendanceStatus', 'Injured')
-                        ->orWhere('attendanceStatus', 'Other');
+                        ->where('status', 'Completed')
+                        ->where('attendanceStatus', '!=','Attended');
                 },
                 'schedules as schedules_count' => function ($q) use ($startDate, $endDate){
-                    $q->whereBetween('date', [$startDate, $endDate]);
+                    $q->whereBetween('date', [$startDate, $endDate])->where('status', 'Completed');
                 }
             ])->orderByDesc('didnt_attended_count');
         }
+
         return $query->first();
     }
 

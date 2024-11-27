@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerRepository;
@@ -119,22 +120,32 @@ class AttendanceReportService extends Service
         return $this->makeAttendanceDatatables($query);
     }
 
-    public function mostAttendedPlayer($startDate, $endDate, $teams = null): array
+    public function mostAttendedPlayer($startDate, $endDate, $teams = null, $eventType = null): array
     {
         $filter = $this->dateFilter($startDate, $endDate);
-        $results = $this->playerRepository->getAttendedPLayer($filter['startDate'], $filter['endDate'], $teams);
-//        dd($results->schedules_count);
-        $attended_count = $results->attended_count;
-        $schedules_count = $results->schedules_count;
-        $mostAttendedPercentage = round($attended_count / $schedules_count * 100, 1);
+        $results = $this->playerRepository->getAttendedPLayer($filter['startDate'], $filter['endDate'], $teams, $eventType);
+        if ($results != null and $results->schedules_count > 0) {
+            $attended_count = $results->attended_count;
+            $schedules_count = $results->schedules_count;
+            $mostAttendedPercentage = round($attended_count / $schedules_count * 100, 1);
+        } else {
+            $mostAttendedPercentage = null;
+        }
+
         return compact('results', 'mostAttendedPercentage');
     }
 
-    public function mostDidntAttendPlayer($startDate, $endDate, $teams = null): array
+    public function mostDidntAttendPlayer($startDate, $endDate, $teams = null, $eventType = null): array
     {
         $filter = $this->dateFilter($startDate, $endDate);
-        $results = $this->playerRepository->getAttendedPLayer($filter['startDate'], $filter['endDate'], $teams, mostAttended: false, mostDidntAttend: true);
-        $mostDidntAttendPercentage = round($results->didnt_attended_count / $results->schedules_count * 100, 1);
+        $results = $this->playerRepository->getAttendedPLayer($filter['startDate'], $filter['endDate'], $teams, $eventType, mostAttended: false, mostDidntAttend: true);
+        if ($results != null and $results->schedules_count > 0) {
+            $didnt_attended_count = $results->didnt_attended_count;
+            $schedules_count = $results->schedules_count;
+            $mostDidntAttendPercentage = round($didnt_attended_count / $schedules_count * 100, 1);
+        } else {
+            $mostDidntAttendPercentage = null;
+        }
         return compact('results', 'mostDidntAttendPercentage');
     }
 
@@ -149,11 +160,10 @@ class AttendanceReportService extends Service
         return compact('startDate', 'endDate');
     }
 
-    public function attendanceLineChart($startDate, $endDate,  $teams = null)
+    public function attendanceLineChart($startDate, $endDate,  $teams = null, $eventType = null)
     {
         $filter = $this->dateFilter($startDate, $endDate);
-
-        $attendanceData = $this->getAttendanceData($filter['startDate'], $filter['endDate'], $teams);
+        $attendanceData = $this->eventScheduleRepository->getAttendanceTrend($filter['startDate'], $filter['endDate'], $teams, $eventType);
 
         return [
             'labels' => $attendanceData->pluck('date'),
@@ -184,64 +194,10 @@ class AttendanceReportService extends Service
         ];
     }
 
-    private function getAttendanceData($startDate, $endDate,  $teams = null): Collection
-    {
-        $query = DB::table('event_schedules as es')
-            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
-            ->join('players as p', 'pa.playerId', '=', 'p.id');
-
-        if ($teams != null) {
-            $teamIds = collect($teams)->pluck('id')->all();
-            $query->join('player_teams', function (JoinClause $join) use ($teams) {
-                $join->on('p.id', '=', 'player_teams.playerId')
-                    ->whereIn('teamId', $teams);
-            });
-        }
-        $query->select(
-            DB::raw('es.date as date'),
-            DB::raw("COUNT(CASE WHEN pa.attendanceStatus = 'Attended' THEN 1 END) AS total_attended_players"),
-            DB::raw("COUNT(CASE WHEN pa.attendanceStatus != 'Illness' THEN 1 END) AS total_of_ill_players"),
-            DB::raw("COUNT(CASE WHEN pa.attendanceStatus != 'Injured' THEN 1 END) AS total_of_injured_players"),
-            DB::raw("COUNT(CASE WHEN pa.attendanceStatus != 'Other' THEN 1 END) AS total_of_other_attendance_status_players")
-        );
-
-        $query->where('es.status', 'Completed');
-
-//        if ($player) {
-//            $query->where('p.id', $player->id);
-//        }
-
-        return $query->whereBetween('date', [$startDate, $endDate])
-            ->groupBy(DB::raw('date'))
-            ->orderBy('date')
-            ->get();
-    }
-
-    public function attendanceDoughnutChart($startDate, $endDate, $teams = null): array
+    public function attendanceDoughnutChart($startDate, $endDate, $teams = null, $eventType = null): array
     {
         $filter = $this->dateFilter($startDate, $endDate);
-        $query = DB::table('event_schedules as es')
-            ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
-            ->join('players as p', 'pa.playerId', '=', 'p.id');
-
-        if ($teams){
-            $teamIds = collect($teams)->pluck('id')->all();
-            $query->join('player_teams', function (JoinClause $join) use ($teams) {
-                $join->on('p.id', '=', 'player_teams.playerId')
-                    ->whereIn('teamId', $teams);
-            });
-        }
-
-        $query->select(DB::raw('pa.attendanceStatus as status'), DB::raw('COUNT(pa.playerId) AS total_players'))
-            ->where('pa.attendanceStatus', '!=', 'Required Action');
-
-//        if ($player) {
-//            $query->where('p.id', $player->id);
-//        }
-
-        $result = $query->whereBetween('date', [$filter['startDate'], $filter['endDate']])
-            ->groupBy(DB::raw('pa.attendanceStatus'))
-            ->get();
+        $result = $this->eventScheduleRepository->countAttendanceByStatus($filter['startDate'], $filter['endDate'], $teams, $eventType);
 
         return [
             'labels' => $result->pluck('status'),

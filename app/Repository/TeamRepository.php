@@ -93,6 +93,11 @@ class TeamRepository
         return $this->team->findOrFail($id);
     }
 
+    public function whereId($id)
+    {
+        return $this->team->where('id', $id)->get();
+    }
+
     public function create(array $data)
     {
         return $this->team->create($data);

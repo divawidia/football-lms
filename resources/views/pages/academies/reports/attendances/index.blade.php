@@ -20,48 +20,66 @@
         </div>
 
         <div class="container page-section">
-            <div class="page-separator">
-                <div class="page-separator__text">Filter Report</div>
-                <div class="form-group ml-auto">
-                    <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>
-                    <input id="startDateFilter"
-                           type="text"
-                           class="form-control"
-                           placeholder="Start Date"
-                           onfocus="(this.type='date')"
-                           onblur="(this.type='text')"/>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="form-group mb-0 mb-lg-3">
+                        <label class="form-label mb-0" for="startDateFilter">Filter by date range</label>
+                        <input id="startDateFilter"
+                               type="text"
+                               class="form-control"
+                               placeholder="Start Date"
+                               onfocus="(this.type='date')"
+                               onblur="(this.type='text')"/>
+                    </div>
                 </div>
-                <div class="form-group ml-2">
-                    <label class="form-label mb-0" for="endDateFilter"></label>
-                    <input id="endDateFilter"
-                           type="text"
-                           class="form-control"
-                           placeholder="End Date"
-                           onfocus="(this.type='date')"
-                           onblur="(this.type='text')"/>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label class="form-label mb-0" for="endDateFilter"></label>
+                        <input id="endDateFilter"
+                               type="text"
+                               class="form-control"
+                               placeholder="End Date"
+                               onfocus="(this.type='date')"
+                               onblur="(this.type='text')"/>
+                    </div>
                 </div>
-                <div class="form-group ml-2">
-                    <label class="form-label mb-0" for="team">Filter by team</label>
-                    <select class="form-control form-select" id="team" data-toggle="select">
-                        <option selected disabled>Select team</option>
-                        @foreach($teams as $team)
-                            <option value="{{ $team->id }}" data-avatar-src="{{ Storage::url($team->logo) }}">{{ $team->teamName }}</option>
-                        @endforeach
-                    </select>
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label class="form-label mb-0" for="team">Filter by team</label>
+                        <select class="form-control form-select" id="team" data-toggle="select">
+                            <option selected disabled>Select team</option>
+                            @foreach($teams as $team)
+                                <option value="{{ $team->id }}" data-avatar-src="{{ Storage::url($team->logo) }}">{{ $team->teamName }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-                <button type="button" id="filterBtn" class="btn btn-primary btn-sm ml-2"><span class="material-icons mr-2">filter_list_alt</span> Filter</button>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label class="form-label mb-0" for="eventType">Filter by event type</label>
+                        <select class="form-control form-select" id="eventType" data-toggle="select">
+                            <option selected disabled>Select event type</option>
+                            <option value="Match">Match</option>
+                            <option value="Training">Training</option>
+                            <option value="{{ null }}">Both event type</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-1">
+                    <button type="button" id="filterBtn" class="btn btn-primary btn-sm my-lg-4"><span class="material-icons mr-2">filter_list_alt</span> Filter</button>
+                </div>
             </div>
 
             {{--    Overview    --}}
-            <div class="page-separator">
-                <div class="page-separator__text">Overview</div>
+            <div class="page-separator pt-3">
+                <div class="page-separator__text">Player Attendance Overview</div>
             </div>
 
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                         <div class="card-header">
-                            <h4 class="card-title">Player Attendance</h4>
+                            <h4 class="card-title">Attendance Status Trend</h4>
                         </div>
                         <div class="card-body">
                             <canvas id="attendanceHistoryChart"></canvas>
@@ -71,7 +89,7 @@
                 <div class="col-lg-4 d-flex align-items-stretch">
                     <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                         <div class="card-header">
-                            <h4 class="card-title">Player Attendance</h4>
+                            <h4 class="card-title">Total Players by Attendance Status</h4>
                         </div>
                         <div class="card-body">
                             <canvas id="attendanceStatusChart"></canvas>
@@ -88,22 +106,6 @@
                         </div>
                         <div class="card">
                             <div class="card-body d-flex align-items-center flex-row text-left">
-{{--                                <img src="{{ Storage::url($mostAttended->user->foto) }}"--}}
-{{--                                     width="50"--}}
-{{--                                     height="50"--}}
-{{--                                     class="rounded-circle img-object-fit-cover"--}}
-{{--                                     alt="player-photo">--}}
-{{--                                <div class="flex ml-3">--}}
-{{--                                    <h5 class="mb-0">{{ $mostAttended->user->firstName }} {{ $mostAttended->user->lastName }}</h5>--}}
-{{--                                    <p class="text-50 lh-1 mb-0">{{ $mostAttended->position->name }}</p>--}}
-{{--                                </div>--}}
-{{--                                <div class="h2 mb-0 mr-3">{{ $mostAttended->attended_count }}</div>--}}
-{{--                                <div class="ml-auto text-right">--}}
-{{--                                    <div class="card-title">Event Attended</div>--}}
-{{--                                    <p class="card-subtitle text-50">--}}
-{{--                                        {{ $mostAttendedPercentage }}% of total event--}}
-{{--                                    </p>--}}
-{{--                                </div>--}}
                                 <img src=""
                                      width="50"
                                      height="50"
@@ -133,15 +135,17 @@
                                      width="50"
                                      height="50"
                                      class="rounded-circle img-object-fit-cover"
-                                     alt="player-photo">
+                                     alt="player-photo"
+                                     id="mostDidntAttendImg">
                                 <div class="flex ml-3">
-                                    <h5 class="mb-0"></h5>
-                                    <p class="text-50 lh-1 mb-0"></p>
+                                    <h5 class="mb-0" id="mostDidntAttendName"></h5>
+                                    <p class="text-50 lh-1 mb-0" id="mostDidntAttendPosition"></p>
                                 </div>
-                                <div class="h2 mb-0 mr-3"></div>
+                                <div class="h2 mb-0 mr-3" id="mostDidntAttendCount"></div>
                                 <div class="ml-auto text-right">
-                                    <div class="card-title">Event Absent</div>
-                                    <p class="card-subtitle text-50"></p>
+                                    <div class="card-title" >Event Absent</div>
+                                    <p class="card-subtitle text-50" id="mostDidntAttendTotalEvent"></p>
+                                    <p class="card-subtitle text-50" id="mostDidntAttendPercentage"></p>
                                 </div>
                             </div>
                         </div>
@@ -233,7 +237,7 @@
             let lineChart;
             let doughnutChart;
 
-            function fetchAttendanceData(startDate = null, endDate = null, team = null) {
+            function fetchAttendanceData(startDate = null, endDate = null, team = null, eventType = null) {
                 $.ajax({
                     url: '{{ url()->current() }}',
                     type: 'GET',
@@ -241,6 +245,7 @@
                         startDate: startDate,
                         endDate: endDate,
                         team: team,
+                        eventType: eventType,
                     },
                     success: function (response) {
                         if (lineChart) lineChart.destroy(); // Destroy previous chart instance
@@ -267,6 +272,13 @@
                         $('#mostAttendedCount').text(response.data.mostAttendedPlayer.results.attended_count)
                         $('#mostAttendedTotalEvent').text('From '+response.data.mostAttendedPlayer.results.schedules_count+' total events')
                         $('#mostAttendedPercentage').text(response.data.mostAttendedPlayer.mostAttendedPercentage+'% attendance rate')
+
+                        $('#mostDidntAttendImg').attr('src', '{{ Storage::url('') }}'+response.data.mostDidntAttendPlayer.results.user.foto)
+                        $('#mostDidntAttendName').text(response.data.mostDidntAttendPlayer.results.user.firstName+' '+response.data.mostAttendedPlayer.results.user.lastName)
+                        $('#mostDidntAttendPosition').text(response.data.mostDidntAttendPlayer.results.position.name)
+                        $('#mostDidntAttendCount').text(response.data.mostDidntAttendPlayer.results.didnt_attended_count)
+                        $('#mostDidntAttendTotalEvent').text('From '+response.data.mostDidntAttendPlayer.results.schedules_count+' total events')
+                        $('#mostDidntAttendPercentage').text(response.data.mostDidntAttendPlayer.mostDidntAttendPercentage+'% absent rate')
                     },
                     error: function (err) {
                         console.error(err);
@@ -279,7 +291,8 @@
                 const startDate = $('#startDateFilter').val();
                 const endDate = $('#endDateFilter').val();
                 const team = $('#team').val();
-                fetchAttendanceData(startDate, endDate, team);
+                const eventType = $('#eventType').val();
+                fetchAttendanceData(startDate, endDate, team, eventType);
             });
 
             fetchAttendanceData();
