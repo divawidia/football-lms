@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="h2 mb-0 mr-3" id="mostAttendedCount"></div>
                                 <div class="ml-auto text-right">
-                                    <div class="card-title">Event Attended</div>
+                                    <div class="card-title" id="attendedTitle">Event Attended</div>
                                     <p class="card-subtitle text-50" id="mostAttendedTotalEvent"></p>
                                     <p class="card-subtitle text-50" id="mostAttendedPercentage"></p>
                                 </div>
@@ -150,7 +150,7 @@
                                 </div>
                                 <div class="h2 mb-0 mr-3" id="mostDidntAttendCount"></div>
                                 <div class="ml-auto text-right">
-                                    <div class="card-title" >Event Absent</div>
+                                    <div class="card-title" id="absentTitle">Event Absent</div>
                                     <p class="card-subtitle text-50" id="mostDidntAttendTotalEvent"></p>
                                     <p class="card-subtitle text-50" id="mostDidntAttendPercentage"></p>
                                 </div>
@@ -355,19 +355,42 @@
                             },
                         })
 
-                        $('#mostAttendedImg').attr('src', '{{ Storage::url('') }}'+response.data.mostAttendedPlayer.results.user.foto)
-                        $('#mostAttendedName').text(response.data.mostAttendedPlayer.results.user.firstName+' '+response.data.mostAttendedPlayer.results.user.lastName)
-                        $('#mostAttendedPosition').text(response.data.mostAttendedPlayer.results.position.name)
-                        $('#mostAttendedCount').text(response.data.mostAttendedPlayer.results.attended_count)
-                        $('#mostAttendedTotalEvent').text('From '+response.data.mostAttendedPlayer.results.schedules_count+' total events')
-                        $('#mostAttendedPercentage').text(response.data.mostAttendedPlayer.mostAttendedPercentage+'% attendance rate')
-
-                        $('#mostDidntAttendImg').attr('src', '{{ Storage::url('') }}'+response.data.mostDidntAttendPlayer.results.user.foto)
-                        $('#mostDidntAttendName').text(response.data.mostDidntAttendPlayer.results.user.firstName+' '+response.data.mostAttendedPlayer.results.user.lastName)
-                        $('#mostDidntAttendPosition').text(response.data.mostDidntAttendPlayer.results.position.name)
-                        $('#mostDidntAttendCount').text(response.data.mostDidntAttendPlayer.results.didnt_attended_count)
-                        $('#mostDidntAttendTotalEvent').text('From '+response.data.mostDidntAttendPlayer.results.schedules_count+' total events')
-                        $('#mostDidntAttendPercentage').text(response.data.mostDidntAttendPlayer.mostDidntAttendPercentage+'% absent rate')
+                        if (response.data.mostAttendedPlayer.mostAttendedPercentage === null) {
+                            $('#mostAttendedImg').attr('src', '').hide()
+                            $('#mostAttendedName').text('No data found')
+                            $('#mostAttendedPosition').text('')
+                            $('#mostAttendedCount').text('')
+                            $('#mostAttendedTotalEvent').text('')
+                            $('#mostAttendedPercentage').text('')
+                            $('#attendedTitle').text('')
+                        } else {
+                            $('#mostAttendedImg').attr('src', '{{ Storage::url('') }}'+response.data.mostAttendedPlayer.results.user.foto).show()
+                            $('#mostAttendedName').text(response.data.mostAttendedPlayer.results.user.firstName+' '+response.data.mostAttendedPlayer.results.user.lastName)
+                            $('#mostAttendedPosition').text(response.data.mostAttendedPlayer.results.position.name)
+                            $('#mostAttendedCount').text(response.data.mostAttendedPlayer.results.attended_count)
+                            $('#attendedTitle').text('Event Attended')
+                            $('#mostAttendedTotalEvent').text('From '+response.data.mostAttendedPlayer.results.schedules_count+' total events')
+                            $('#mostAttendedPercentage').text(response.data.mostAttendedPlayer.mostAttendedPercentage+'% attendance rate')
+                        }
+                        
+                        if (response.data.mostDidntAttendPlayer.mostDidntAttendPercentage === null) {
+                            $('#mostDidntAttendImg').attr('src', '').hide()
+                            $('#mostDidntAttendName').text('No data found')
+                            $('#mostDidntAttendPosition').text('')
+                            $('#mostDidntAttendCount').text('')
+                            $('#mostDidntAttendTotalEvent').text('')
+                            $('#mostDidntAttendPercentage').text('')
+                            $('#absentTitle').text('')
+                        } else {
+                            $('#mostDidntAttendImg').attr('src', '{{ Storage::url('') }}'+response.data.mostDidntAttendPlayer.results.user.foto).show()
+                            $('#mostDidntAttendName').text(response.data.mostDidntAttendPlayer.results.user.firstName+' '+response.data.mostAttendedPlayer.results.user.lastName)
+                            $('#mostDidntAttendPosition').text(response.data.mostDidntAttendPlayer.results.position.name)
+                            $('#mostDidntAttendCount').text(response.data.mostDidntAttendPlayer.results.didnt_attended_count)
+                            $('#absentTitle').text('Event Absent')
+                            $('#mostDidntAttendTotalEvent').text('From '+response.data.mostDidntAttendPlayer.results.schedules_count+' total events')
+                            $('#mostDidntAttendPercentage').text(response.data.mostDidntAttendPlayer.mostDidntAttendPercentage+'% absent rate')
+                        }
+                        
                     },
                     error: function (err) {
                         console.error(err);
