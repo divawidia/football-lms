@@ -245,7 +245,7 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('attendance-reports')->group(function () {
                 Route::get('admin', [AttendanceReportController::class, 'adminIndex'])->name('admin.attendance-report.index');
-                Route::get('events', [AttendanceReportController::class, 'eventsIndex'])->name('attendance-report.events-index');
+                
             });
 
             Route::prefix('performance-reports')->group(function () {
@@ -540,6 +540,8 @@ Route::group(['middleware' => ['auth']], function () {
         });
 
         Route::prefix('attendance-reports')->group(function () {
+            Route::get('events', [AttendanceReportController::class, 'eventsIndex'])->name('attendance-report.events-index');
+            
             Route::prefix('{player}')->group(function () {
                 Route::get('', [AttendanceReportController::class, 'show'])->name('attendance-report.show');
             });

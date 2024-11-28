@@ -134,7 +134,7 @@ class AttendanceReportService extends Service
 
     public function eventIndex($startDate, $endDate, $teams = null, $eventType = null): JsonResponse
     {
-        if ($teams) {
+        if (is_string($teams)) {
             $teams = $this->teamRepository->whereId($teams);
         }
         $filter = $this->dateFilter($startDate, $endDate);

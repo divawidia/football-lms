@@ -9,6 +9,7 @@ use App\Models\Team;
 use App\Repository\TeamRepository;
 use App\Services\AttendanceReportService;
 use Exception;
+use Hamcrest\Core\IsNot;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -43,33 +44,22 @@ class AttendanceReportController extends Controller
             $data = $this->attendanceReportService->show($player);
             $playerAttendanceDatatablesRoute = null;
         }
-
+        
         if (\request()->ajax()) {
             $startDate = \request()->input('startDate');
             $endDate = \request()->input('endDate');
             $team = \request()->input('team');
             $eventType = \request()->input('eventType');
-            if ($team) {
+            if ($team == null and $this->getLoggedUser()->getRoleNames() == isCoach()) {
+                $team = $coach->teams;
+            } elseif ($team != null) {
                 $team = $this->teamRepository->whereId($team);
-                $lineChart = $this->attendanceReportService->attendanceLineChart($startDate, $endDate, $team, $eventType);
-                $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($startDate, $endDate, $team, $eventType);
-                $mostAttendedPlayer = $this->attendanceReportService->mostAttendedPlayer($startDate, $endDate, $team, $eventType);
-                $mostDidntAttendPlayer = $this->attendanceReportService->mostDidntAttendPlayer($startDate, $endDate, $team, $eventType);
-                $events = $this->attendanceReportService->eventIndex($startDate, $endDate, $team, $eventType);
             }
-//            elseif ($player) {
-//                $lineChart = $this->attendanceReportService->attendanceLineChart($startDate, $endDate, $player);
-//                $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($startDate, $endDate, $player);
-//                $mostAttendedPlayer = null;
-//                $mostDidntAttendPlayer = null;
-//            }
-            else {
-                $lineChart = $this->attendanceReportService->attendanceLineChart($startDate, $endDate, eventType: $eventType);
-                $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($startDate, $endDate, eventType: $eventType);
-                $mostAttendedPlayer = $this->attendanceReportService->mostAttendedPlayer($startDate, $endDate, eventType: $eventType);
-                $mostDidntAttendPlayer = $this->attendanceReportService->mostDidntAttendPlayer($startDate, $endDate, eventType: $eventType);
-                $events = $this->attendanceReportService->eventIndex($startDate, $endDate, eventType:  $eventType);
-            }
+            $lineChart = $this->attendanceReportService->attendanceLineChart($startDate, $endDate, $team, $eventType);
+            $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($startDate, $endDate, $team, $eventType);
+            $mostAttendedPlayer = $this->attendanceReportService->mostAttendedPlayer($startDate, $endDate, $team, $eventType);
+            $mostDidntAttendPlayer = $this->attendanceReportService->mostDidntAttendPlayer($startDate, $endDate, $team, $eventType);
+            $events = $this->attendanceReportService->eventIndex($startDate, $endDate, $team, $eventType);
 
             $data = compact('lineChart', 'doughnutChart', 'mostAttendedPlayer', 'mostDidntAttendPlayer', 'events');
 
