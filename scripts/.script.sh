@@ -38,6 +38,9 @@ echo "Successfully run migration ..."
 
 php artisan optimize:clear
 
+# syncing task schedule with the database to monitor scheduler
+php artisan schedule-monitor:sync
+
 # Exit maintenance mode
 php artisan up
 

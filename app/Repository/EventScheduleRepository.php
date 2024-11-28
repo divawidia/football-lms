@@ -83,7 +83,7 @@ class EventScheduleRepository
     {
         return $player->schedules()
             ->where('eventType', $eventType)
-            ->where('status', '0')
+            ->where('status', 'Completed')
             ->take($take)
             ->orderBy('date', 'desc')
             ->get();

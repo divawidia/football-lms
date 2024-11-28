@@ -36,6 +36,12 @@ return [
         'isProduction' => env('MIDTRANS_IS_PRODUCTION'),
         'isSanitized' => env('MIDTRANS_IS_SANITIZED'),
         'is3ds' => env('MIDTRANDS_IS_3DS'),
-    ]
+    ],
+    'oh_dear' => [
+        'pulse' => [
+            'api_key' => env('OH_DEAR_API_TOKEN'),
+            'site_id' => env('OH_DEAR_SITE_ID'),
+        ],
+    ],
 
 ];

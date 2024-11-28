@@ -15,6 +15,8 @@ use App\Console\Commands\SubscriptionDueSoonNotification;
 use App\Console\Commands\TrainingReminderNotification;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Spatie\ScheduleMonitor\Models\MonitoredScheduledTaskLogItem;
+
 class Kernel extends ConsoleKernel
 {
     protected $commands = [
@@ -49,6 +51,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:start-match-data')->everyMinute();
         $schedule->command('update:completed-training-status')->everyMinute();
         $schedule->command('update:completed-match-status')->everyMinute();
+        $schedule->command('model:prune', ['--model' => MonitoredScheduledTaskLogItem::class])->daily();
     }
 
     /**
