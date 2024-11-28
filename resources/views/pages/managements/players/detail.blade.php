@@ -288,10 +288,10 @@
                     <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']" :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
                 </div>
                 {{--All Skill Stats Section--}}
-                <x-player-skill-stats-card :allSkills="$allSkills"/>
+                <x-cards.player-skill-stats-card :allSkills="$allSkills"/>
 
                 {{--Skill Stats History Section--}}
-                <x-player-skill-history-chart :player="$data"/>
+                <x-chart.player-skill-history-chart :player="$data"/>
             </div>
 
             {{-- Parents/Guardians Histories --}}
