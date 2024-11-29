@@ -62,7 +62,7 @@
         </div>
 
         {{--All Skill Stats Section--}}
-        <x-player-skill-stats-card :allSkills="$allSkills"/>
+        <x-cards.player-skill-stats-card :allSkills="$allSkills"/>
 
         {{--Skill Stats History Section--}}
         <x-player-skill-history-chart :player="$data"/>

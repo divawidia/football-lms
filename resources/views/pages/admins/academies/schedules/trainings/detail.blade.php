@@ -197,7 +197,7 @@
                         :route="route('training-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
                         tableId="playerSkillsTable"/>
                 @elseif(isPlayer())
-                    <x-player-skill-stats-card :allSkills="$data['allSkills']"/>
+                    <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
                 @endif
             </div>
 
