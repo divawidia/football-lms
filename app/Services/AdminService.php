@@ -163,7 +163,8 @@ class AdminService extends Service
         $admin->user->roles()->detach();
         $admin->user()->delete();
         $superAdminName = $this->getUserFullName($this->loggedUser);
-        $admin->user->notify(new AdminAccountCreatedDeleted($superAdminName, $admin, 'deleted'));
+
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminAccountCreatedDeleted($superAdminName, $admin, 'deleted'));
 
         $admin->delete();
         return $admin;
