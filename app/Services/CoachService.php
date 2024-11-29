@@ -6,6 +6,7 @@ use App\Models\Coach;
 use App\Models\Team;
 use App\Notifications\CoachManagements\CoachAccountCreatedDeleted;
 use App\Notifications\CoachManagements\CoachAccountUpdated;
+use App\Notifications\PlayerCoachAddToTeam;
 use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
@@ -132,7 +133,7 @@ class CoachService extends Service
     {
         $coach->teams()->attach($teamData);
         $team =$this->teamRepository->find($teamData)->first();
-        $coach->user->notify(new PlayerCoachRemoveToTeam($team));
+        $coach->user->notify(new PlayerCoachAddToTeam($team));
         return $coach;
     }
 
@@ -248,7 +249,7 @@ class CoachService extends Service
 
     public function changePassword($data, Coach $coach){
         $this->coachRepository->changePassword($data, $coach);
-        $coach->user->notify(new CoachAccountUpdated($coach, 'updated password'));
+        $coach->user->notify(new CoachAccountUpdated($coach, 'updated the password'));
         return $coach;
     }
 

@@ -520,7 +520,7 @@ class PlayerService extends Service
 
     public function changePassword($data, Player $player){
         $this->userRepository->changePassword($data, $player);
-        $player->user->notify(new PlayerAccountUpdated($player, 'updated password'));
+        $player->user->notify(new PlayerAccountUpdated($player, 'updated the password'));
         return $player;
     }
 
