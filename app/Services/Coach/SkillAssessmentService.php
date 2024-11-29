@@ -186,15 +186,13 @@ class SkillAssessmentService extends Service
         $data['playerId'] = $player->id;
         $data['coachId'] = $coach->id;
 
-        $event = null;
-        if (array_key_exists('eventId', $data)) {
+        if ($data['eventId'] != null) {
             $event = $this->eventScheduleRepository->find($data['eventId']);
+            $player->user->notify(new \App\Notifications\PlayerSkillStats($coach, 'assessed', $event));
+        } else {
+            $player->user->notify(new \App\Notifications\PlayerSkillStats($coach, 'assessed', null));
         }
-        $skillStats = PlayerSkillStats::create($data);
-
-        $player->user->notify(new \App\Notifications\PlayerSkillStats($coach, 'assessed', $event));
-
-        return $skillStats;
+        return PlayerSkillStats::create($data);
     }
 
     public function update(array $data, PlayerSkillStats $playerSkillStats, $coachId)

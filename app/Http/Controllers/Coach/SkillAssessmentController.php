@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Coach;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SkillAssessmentRequest;
 use App\Models\EventSchedule;
@@ -53,9 +54,10 @@ class SkillAssessmentController extends Controller
         $data = $request->validated();
         $coach = $this->getLoggedCoachUser();
 
-        $response = $this->skillAssessmentService->store($data, $player, $coach);
+        $this->skillAssessmentService->store($data, $player, $coach);
 
-        return response()->json($response);
+        $message = "Player ".$this->getUserFullName($player->user)."'s skills successfully updated.";
+        return ApiResponse::success(message:  $message);
     }
 
     public function update(SkillAssessmentRequest $request, PlayerSkillStats $skillStats)
@@ -63,15 +65,16 @@ class SkillAssessmentController extends Controller
         $data = $request->validated();
         $coachId = $this->getLoggedCoachUser();
 
-        $response = $this->skillAssessmentService->update($data, $skillStats,$coachId);
+        $this->skillAssessmentService->update($data, $skillStats,$coachId);
 
-        return response()->json($response);
+        $message = "Player ".$this->getUserFullName($$skillStats->player->user)."'s skills successfully updated.";
+        return ApiResponse::success(message:  $message);
     }
 
     public function destroy(PlayerSkillStats $skillStats)
     {
-        $response = $this->skillAssessmentService->destroy($skillStats);
-
-        return response()->json($response);
+        $this->skillAssessmentService->destroy($skillStats);
+        $message = "Player ".$this->getUserFullName($$skillStats->player->user)."'s skills successfully deleted.";
+        return ApiResponse::success(message:  $message);
     }
 }

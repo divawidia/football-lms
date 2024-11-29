@@ -12,7 +12,7 @@ class PlayerSkillStats extends Notification
 {
     use Queueable;
     protected Coach $coach;
-    protected EventSchedule $event;
+    protected $event;
     protected string $action; // Either 'created', 'updated' or 'deleted'
 
     /**
@@ -22,7 +22,7 @@ class PlayerSkillStats extends Notification
      * @param $trainingSession
      * @param string $action
      */
-    public function __construct($coach, $action, $event = null)
+    public function __construct($coach, string $action, $event)
     {
         $this->coach = $coach;
         $this->event = $event;
@@ -46,13 +46,16 @@ class PlayerSkillStats extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        if ($this->event->eventType == 'Training') {
-            $message = 'Your skills have been '.$this->action.' by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.' in the '.$this->event->teams[0]->teamName.' training session '.$this->event->eventName.'.';
-        } elseif ($this->event->eventType == 'Match') {
-            $message = 'Your skills have been '.$this->action.' by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.' in the match '.$this->event->teams[0]->teamName.' Vs. '.$this->event->teams[1]->teamName.' session.';
+        if ($this->event != null) {
+            if ($this->event->eventType == 'Training') {
+                $message = 'Your skills have been '.$this->action.' by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.' in the '.$this->event->teams[0]->teamName.' training session '.$this->event->eventName.'.';
+            } elseif ($this->event->eventType == 'Match') {
+                $message = 'Your skills have been '.$this->action.' by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.' in the match '.$this->event->teams[0]->teamName.' Vs. '.$this->event->teams[1]->teamName.' session.';
+            }
         } else {
             $message = 'Your skills have been '.$this->action.' by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.'.';
         }
+
         return [
             'data' => $message,
             'redirectRoute' => route('player.skill-stats')
