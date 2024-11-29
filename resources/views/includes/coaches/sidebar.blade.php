@@ -3,12 +3,12 @@
         <div class="sidebar sidebar-dark-pickled-bluewood sidebar-left">
             <!-- Sidebar Content -->
 
-            <div class="d-flex align-items-center navbar-height">
-                <form action="" class="search-form search-form--black mx-16pt pr-0 pl-16pt">
-                    <input type="text" class="form-control pl-0" placeholder="Search">
-                    <button class="btn" type="submit"><i class="material-icons">search</i></button>
-                </form>
-            </div>
+{{--            <div class="d-flex align-items-center navbar-height">--}}
+{{--                <form action="" class="search-form search-form--black mx-16pt pr-0 pl-16pt">--}}
+{{--                    <input type="text" class="form-control pl-0" placeholder="Search">--}}
+{{--                    <button class="btn" type="submit"><i class="material-icons">search</i></button>--}}
+{{--                </form>--}}
+{{--            </div>--}}
 
             <!-- LOGO -->
             <div class="navbar-brand-box">
