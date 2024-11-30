@@ -44,7 +44,7 @@ class UserController extends Controller
         $data = $request->validated();
         $this->userService->update($data, $user);
 
-        $text = $data['firstName'].' '.$data['lastName'].' account successfully updated!';
+        $text = $this->getUserFullName($user)."'s account successfully updated!";
         Alert::success($text);
 
         return redirect()->route($this->checkRoleRedirect());
@@ -63,7 +63,7 @@ class UserController extends Controller
             return back()->with('error', 'Current password is incorrect.');
         }
         $this->userService->changePassword($data, $user);
-        $text = $data['firstName'].' '.$data['lastName'].' accounts password successfully updated!';
+        $text = $this->getUserFullName($user)."'s accounts password successfully updated!";
         Alert::success($text);
         return redirect()->route($this->checkRoleRedirect());
     }
