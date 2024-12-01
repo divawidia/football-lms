@@ -96,7 +96,7 @@ class AdminController extends Controller
     public function update(UpdateAdminRequest $request, Admin $admin)
     {
         $data = $request->validated();
-        $this->adminService->update($data, $admin);
+        $admin = $this->adminService->update($data, $admin);
 
         $text = "Admin ".$this->getUserFullName($admin->user)."'s account successfully updated!";
         Alert::success($text);

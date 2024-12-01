@@ -167,7 +167,7 @@ class PlayerController extends Controller
     {
         $data = $request->validated();
 
-        $this->playerService->update($data, $player);
+        $player = $this->playerService->update($data, $player);
 
         $text = "Player ".$this->getUserFullName($player->user)."'s account successfully updated!";
         Alert::success($text);
