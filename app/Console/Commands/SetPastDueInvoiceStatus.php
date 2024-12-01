@@ -39,7 +39,7 @@ class SetPastDueInvoiceStatus extends Command
         $now = Carbon::now();
 
         // Update records where end_date is less than the current date
-        $invoices = Invoice::where('dueDate', '<=', $now)->where('status', 'Open')->get();
+        $invoices = Invoice::whereDate('dueDate', '<=', $now)->where('status', 'Open')->get();
         foreach ($invoices as $invoice){
             $this->invoiceService->pastDue($invoice);
         }
