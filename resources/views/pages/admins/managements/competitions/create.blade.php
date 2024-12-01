@@ -124,7 +124,7 @@
                                                    class="custom-file-input"
                                                    name="logo"
                                                    id="add_logoTeam"
-                                                   accept="image/jpg, image/jpeg, image/png">>
+                                                   accept="image/jpg, image/jpeg, image/png">F
                                             <label class="custom-file-label" for="logo">Choose file</label>
                                             <span class="invalid-feedback logo_error" role="alert">
                                                 <strong></strong>
@@ -318,7 +318,7 @@
                                                    class="custom-file-input @error('logo') is-invalid @enderror"
                                                    name="logo"
                                                    id="logo"
-                                                   accept="image/jpg, image/jpeg, image/png">>
+                                                   accept="image/jpg, image/jpeg, image/png">
                                             <label class="custom-file-label" for="logo">Choose file</label>
                                             @error('logo')
                                             <span class="invalid-feedback" role="alert">
