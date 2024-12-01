@@ -39,7 +39,7 @@
                                                    class="custom-file-input"
                                                    name="logo"
                                                    id="add_logo"
-                                                   accept="image/jpg, image/jpeg, image/png">>
+                                                   accept="image/jpg, image/jpeg, image/png">
                                             <label class="custom-file-label" for="logo">Choose file</label>
                                             <span class="invalid-feedback logo_error" role="alert">
                                                 <strong></strong>
