@@ -40,7 +40,7 @@ class CompletedCompetitionStatus extends Command
         $now = Carbon::now();
 
         // Update records where end_date is less than the current date
-        $competitions = Competition::whereDate('endDate', '<=', $now)->where('status', '!=', 'Cancelled')->get();
+        $competitions = Competition::whereDate('endDate', '<=', $now)->where('status', '=', 'Ongoing')->get();
         foreach ($competitions as $competition){
             $this->competitionService->setStatus($competition, 'Completed');
             $this->info('Competition '.$competition->name.' status data successfully updated to completed.');
