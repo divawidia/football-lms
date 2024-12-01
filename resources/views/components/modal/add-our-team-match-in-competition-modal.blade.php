@@ -117,6 +117,10 @@
     </div>
 </div>
 
+<x-modal-form-update-processing formId="#formAddOurTeamMatch"
+                                updateDataId=""
+                                :routeUpdate="route('competition-managements.store-match', $competition->id)"
+                                modalId="#addOurTeamMatchModal"/>
 @push('addon-script')
     <script>
         $(document).ready(function (){
@@ -166,43 +170,6 @@
                     }
                 });
             });
-
-            // update player attendance data
-            $(formId).on('submit', function(e) {
-                e.preventDefault();
-                $.ajax({
-                    url: "{{ route('competition-managements.store-match', $competition->id) }}",
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function() {
-                        $('#addOurTeamMatchModal').modal('hide');
-                        Swal.fire({
-                            title: "Our team's match in competition {{ $competition->name }} successfully added!",
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        console.log(response);
-                        $.each(response.errors, function(key, val) {
-                            $(formId+' span.' + key + '_error').text(val[0]);
-                            $(formId+" #add_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
-
         });
     </script>
 @endpush

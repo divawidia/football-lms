@@ -1014,12 +1014,9 @@ class EventScheduleService extends Service
 
     public function destroy(EventSchedule $schedule, $loggedUser)
     {
-        $schedule->teams()->detach();
-        $schedule->players()->detach();
-        $schedule->coaches()->detach();
-
-        $deletedBy = $this->getUserFullName($loggedUser);
         $team = $schedule->teams()->first();
+        $deletedBy = $this->getUserFullName($loggedUser);
+
         $admins = $this->userRepository->getAllAdminUsers();
         $adminsCoachesTeamsParticipant = $this->userRepository->allTeamsParticipant($team, players: false);
         $playersTeamsParticipants = $this->userRepository->allTeamsParticipant($team, admins: false, coaches: false);
@@ -1032,7 +1029,9 @@ class EventScheduleService extends Service
             Notification::send($admins, new MatchScheduleDeletedForAdmin($schedule, $deletedBy));
             Notification::send($playersCoachesTeamsParticipants, new MatchScheduleDeletedForPlayersCoaches($schedule));
         }
-
+        $schedule->teams()->detach();
+        $schedule->players()->detach();
+        $schedule->coaches()->detach();
         $schedule->delete();
         return $schedule;
     }
