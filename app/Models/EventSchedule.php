@@ -23,7 +23,8 @@ class EventSchedule extends Model
         'place',
         'note',
         'status',
-        'isOpponentTeamMatch'
+        'isOpponentTeamMatch',
+        'isReminderNotified',
     ];
 
     public function teams()

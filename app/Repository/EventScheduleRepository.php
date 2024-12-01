@@ -55,6 +55,7 @@ class EventScheduleRepository
         return $this->eventSchedule->with('teams', 'competition')
             ->where('eventType', $eventType)
             ->where('status', 'Scheduled')
+            ->where('isReminderNotified', 0)
             ->whereBetween('startDateTime', [Carbon::now(), Carbon::now()->addHours($hour)])
             ->orderBy('startDateTime')->get();
     }
