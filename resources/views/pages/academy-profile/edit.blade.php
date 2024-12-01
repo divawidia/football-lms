@@ -46,7 +46,8 @@
                                         <input type="file"
                                                class="custom-file-input @error('logo') is-invalid @enderror"
                                                name="logo"
-                                               id="logo">
+                                               id="logo"
+                                               accept="image/jpg, image/jpeg, image/png">>
                                         <label class="custom-file-label" for="logo">Choose file</label>
                                     </div>
                                 </div>
