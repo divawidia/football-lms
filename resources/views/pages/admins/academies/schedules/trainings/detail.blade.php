@@ -62,7 +62,7 @@
                         </a>
                         @if($data['dataSchedule']->status != 'Cancelled' && $data['dataSchedule']->status != 'Completed')
                             <button type="submit" class="dropdown-item cancelBtn" id="{{ $data['dataSchedule']->id }}">
-                                <span class="material-icons text-danger">block</span>Cancel Competition
+                                <span class="material-icons text-danger">block</span>Cancel Training
                             </button>
                         @endif
                         <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">

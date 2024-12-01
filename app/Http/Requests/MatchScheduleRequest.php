@@ -31,6 +31,7 @@ class MatchScheduleRequest extends FormRequest
             'endTime' => ['required', 'date_format:H:i', 'after:startTime'],
             'teamId' => ['required', Rule::exists('teams', 'id')],
             'opponentTeamId' => ['required', Rule::exists('teams', 'id')],
+            'isOpponentTeamMatch' => ['required', Rule::in('0', '1')],
         ];
     }
 }

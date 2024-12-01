@@ -31,6 +31,7 @@
                     <div role="group" aria-labelledby="label-question" class="m-0 form-group">
                         <div class="row">
                             <div class="col-lg-6">
+                                <input type="hidden" name="isOpponentTeamMatch" value="0">
                                 <div class="form-group">
                                     <label class="form-label" for="matchType">Match Type</label>
                                     <small class="text-danger">*</small>

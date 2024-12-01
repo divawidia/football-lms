@@ -238,14 +238,13 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('edit', [EventScheduleController::class, 'editMatch'])->name('match-schedules.edit');
                     Route::put('update', [EventScheduleController::class, 'updateMatch'])->name('match-schedules.update');
                     Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('match-schedules.destroy');
-                    Route::patch('end-match', [EventScheduleController::class, 'endMatch'])->name('end-match');
-                    Route::patch('activate', [EventScheduleController::class, 'activateMatch'])->name('activate-match');
+                    Route::patch('cancel', [EventScheduleController::class, 'cancelled'])->name('cancel-match');
                 });
             });
 
             Route::prefix('attendance-reports')->group(function () {
                 Route::get('admin', [AttendanceReportController::class, 'adminIndex'])->name('admin.attendance-report.index');
-                
+
             });
 
             Route::prefix('performance-reports')->group(function () {
@@ -541,7 +540,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::prefix('attendance-reports')->group(function () {
             Route::get('events', [AttendanceReportController::class, 'eventsIndex'])->name('attendance-report.events-index');
-            
+
             Route::prefix('{player}')->group(function () {
                 Route::get('', [AttendanceReportController::class, 'show'])->name('attendance-report.show');
             });

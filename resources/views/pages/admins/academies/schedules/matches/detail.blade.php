@@ -607,6 +607,14 @@
                                  confirmationText="Are you sure to delete this own goal?"
                                  errorText="Something went wrong when deleting own goal scorer!"/>
 
+    {{--   cancel match  --}}
+    <x-process-data-confirmation btnClass=".cancelBtn"
+                                 :processRoute="route('cancel-match', ['schedule' => $data['dataSchedule']->id])"
+                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $data['dataSchedule']->id])"
+                                 method="PATCH"
+                                 confirmationText="Are you sure to cancel this match session?"
+                                 errorText="Something went wrong when cancelling match session!"/>
+
 @endsection
 @push('addon-script')
     <script>

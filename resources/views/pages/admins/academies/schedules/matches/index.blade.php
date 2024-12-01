@@ -37,4 +37,20 @@
             </div>
         </div>
     </div>
+
+    {{--    delete match confirmation   --}}
+    <x-process-data-confirmation btnClass=".delete"
+                                 :processRoute="route('match-schedules.destroy', ['schedule' => ':id'])"
+                                 :routeAfterProcess="route('match-schedules.index')"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this match session?"
+                                 errorText="Something went wrong when deleting the match session!"/>
+
+    {{--   cancel match  --}}
+    <x-process-data-confirmation btnClass=".cancelMatchBtn"
+                                 :processRoute="route('cancel-match', ['schedule' => ':id'])"
+                                 :routeAfterProcess="route('match-schedules.index')"
+                                 method="PATCH"
+                                 confirmationText="Are you sure to cancel this match session?"
+                                 errorText="Something went wrong when cancelling match session!"/>
 @endsection
