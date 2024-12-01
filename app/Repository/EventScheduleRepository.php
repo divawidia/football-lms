@@ -63,7 +63,6 @@ class EventScheduleRepository
         return $this->eventSchedule->with('teams', 'competition')
             ->where('eventType', $eventType)
             ->where('status', 'Ongoing')
-            ->orWhere('status', 'Scheduled')
             ->whereDate('endDatetime', '<=', Carbon::now())
             ->orderBy('endDateTime')->get();
     }
