@@ -48,7 +48,7 @@ class StartMatchStatus extends Command
      */
     public function handle()
     {
-        $matches = $this->eventScheduleRepository->getUpcomingEvent('Match', 0);
+        $matches = $this->eventScheduleRepository->getScheduledEvent('Match');
         foreach ($matches as $data) {
             $this->eventScheduleService->setStatus($data, 'Ongoing');
         }

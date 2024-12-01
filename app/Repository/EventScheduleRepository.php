@@ -58,6 +58,14 @@ class EventScheduleRepository
             ->whereBetween('startDateTime', [Carbon::now(), Carbon::now()->addHours($hour)])
             ->orderBy('startDateTime')->get();
     }
+    public function getScheduledEvent($eventType)
+    {
+        return $this->eventSchedule->with('teams', 'competition')
+            ->where('eventType', $eventType)
+            ->where('status', 'Scheduled')
+            ->whereDate('startDatetime', '<=', Carbon::now())
+            ->orderBy('startDateTime')->get();
+    }
     public function getEndingEvent($eventType)
     {
         return $this->eventSchedule->with('teams', 'competition')

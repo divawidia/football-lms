@@ -48,7 +48,7 @@ class StartTrainingStatus extends Command
      */
     public function handle()
     {
-        $trainings = $this->eventScheduleRepository->getUpcomingEvent('Training', 0);
+        $trainings = $this->eventScheduleRepository->getScheduledEvent('Training');
         foreach ($trainings as $data) {
             $this->eventScheduleService->setStatus($data, 'Ongoing');
         }
