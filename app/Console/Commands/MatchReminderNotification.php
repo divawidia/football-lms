@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Invoice;
 use App\Models\Subscription;
 use App\Notifications\Invoices\InvoiceDueSoon;
+use App\Notifications\MatchSchedules\MatchScheduleReminder;
 use App\Notifications\Subscriptions\SubscriptionDueDateReminderAdmin;
 use App\Notifications\Subscriptions\SubscriptionDueDateReminderPlayer;
 use App\Notifications\TrainingSchedules\TrainingScheduleReminder;
@@ -53,7 +54,7 @@ class MatchReminderNotification extends Command
                 $data->update(['isReminderNotified' => '1']);
                 $team = $data->teams()->first();
                 $allTeamParticipant = $this->userRepository->allTeamsParticipant($team, admins: false);
-                Notification::send($allTeamParticipant, new TrainingScheduleReminder($data, $team));
+                Notification::send($allTeamParticipant, new MatchScheduleReminder($data, $team));
             }
         }
 

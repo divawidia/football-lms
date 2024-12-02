@@ -40,7 +40,7 @@ class TrainingScheduleReminder extends Notification
         return (new MailMessage)
             ->subject("Training Session Reminder")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("Reminder: You have training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} scheduled for tomorrow at ".convertToDatetime($this->trainingSchedule->startDatetime).".")
+            ->line("Reminder: You have training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} scheduled at ".convertToDatetime($this->trainingSchedule->startDatetime).".")
             ->line("Training Topic: {$this->trainingSchedule->eventName}")
             ->line("Team: {$this->team->teamName}")
             ->line("Location: {$this->trainingSchedule->place}")
@@ -60,7 +60,7 @@ class TrainingScheduleReminder extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Reminder! : The training session '.$this->trainingSchedule->eventName.' for your team '.$this->team->teamName.' is tomorrow at '.convertToDatetime($this->trainingSchedule->startDatetime).'. Please arrive on time!',
+            'data' =>'Reminder! : The training session '.$this->trainingSchedule->eventName.' for your team '.$this->team->teamName.' at '.convertToDatetime($this->trainingSchedule->startDatetime).'. Please arrive on time!',
             'redirectRoute' => route('training-schedules.show', $this->trainingSchedule->id)
         ];
     }

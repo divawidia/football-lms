@@ -40,7 +40,7 @@ class MatchScheduleReminder extends Notification
         return (new MailMessage)
             ->subject("Match Session Reminder")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("Reminder: Your match session for your team {$this->matchSchedule->teams[0]->teamName} scheduled for tomorrow at ".convertToDatetime($this->matchSchedule->startDatetime).".")
+            ->line("Reminder: Your match session for your team {$this->matchSchedule->teams[0]->teamName} scheduled at ".convertToDatetime($this->matchSchedule->startDatetime).".")
             ->line("Match Teams: {$this->matchSchedule->teams[0]->teamName} Vs. {$this->matchSchedule->teams[1]->teamName}")
             ->line("Match Type: {$this->matchSchedule->matchType}")
             ->line("Location: {$this->matchSchedule->place}")
@@ -60,7 +60,7 @@ class MatchScheduleReminder extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Reminder! : The match session '.$this->matchSchedule->teams[0]->teamName.' Vs. '.$this->matchSchedule->teams[1]->teamName.' is tomorrow at '.convertToDatetime($this->matchSchedule->startDatetime).'. Please arrive on time and be prepared!',
+            'data' =>'Reminder! : The match session '.$this->matchSchedule->teams[0]->teamName.' Vs. '.$this->matchSchedule->teams[1]->teamName.' at '.convertToDatetime($this->matchSchedule->startDatetime).'. Please arrive on time and be prepared!',
             'redirectRoute' => route('match-schedules.show', $this->matchSchedule->id)
         ];
     }
