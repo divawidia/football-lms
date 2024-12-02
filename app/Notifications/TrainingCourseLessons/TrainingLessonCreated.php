@@ -17,7 +17,7 @@ class TrainingLessonCreated extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct($trainingCourse, $lesson, $createdByName = null, $role)
+    public function __construct($trainingCourse, $lesson, $createdByName, $role)
     {
         $this->trainingCourse = $trainingCourse;
         $this->lesson = $lesson;

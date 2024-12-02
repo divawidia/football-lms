@@ -160,13 +160,14 @@ class TrainingVideoLessonService extends Service
     public function store(array $data, TrainingVideo $trainingVideo, $loggedUser){
         $data['trainingVideoId'] = $trainingVideo->id;
         $players = $trainingVideo->players()->select('playerId')->get();
+        $playersId = $players->pluck('playerId');
         $lesson = TrainingVideoLesson::create($data);
-        $lesson->players()->attach($players);
+        $lesson->players()->attach($playersId);
 
         $createdUserName = $this->getUserFullName($loggedUser);
 
         try {
-            Notification::send($this->lessonUserPlayers($lesson), new TrainingLessonCreated($trainingVideo, $lesson, role: 'player'));
+            Notification::send($this->lessonUserPlayers($lesson), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, role: 'player'));
             Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'admin'));
             Notification::send($this->userRepository->getAllByRole('coach'), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'coach'));
         } catch (Exception $exception) {
@@ -188,6 +189,7 @@ class TrainingVideoLessonService extends Service
         } catch (Exception $exception) {
             Log::error('Error while sending update lesson '.$trainingVideoLesson->lessonTitle.' notification: ' . $exception->getMessage());
         }
+        return $trainingVideoLesson;
     }
 
     public function markAsComplete($playerId, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)

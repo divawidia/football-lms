@@ -52,7 +52,7 @@
                         @if($playerCompletionProgress < 100)
                             <a href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->id, 'lesson' => $uncompletePlayerTrainingLesson->id]) }}" id="resumeTraining" class="btn btn-sm btn-primary mt-4">
                                 <span class="material-icons mr-2">play_arrow</span>
-                                Resume Training
+                                Resume Training Course
                             </a>
                         @endif
                     @endif
@@ -60,7 +60,7 @@
                         <div class="btn-toolbar" role="toolbar">
                             <a href="" id="editTrainingVideo" class="btn btn-sm btn-white">
                                 <span class="material-icons mr-2">edit</span>
-                                Edit Training
+                                Edit Training Course
                             </a>
                             @if($data->status == "1")
                                 <form action="{{ route('training-videos.unpublish', $data->id) }}" method="POST">
@@ -68,7 +68,7 @@
                                     @csrf
                                     <button type="submit" class="btn btn-sm btn-white mx-2">
                                         <span class="material-icons mr-2">block</span>
-                                        Unpublish Training
+                                        Unpublish Training Course
                                     </button>
                                 </form>
                             @else
@@ -77,13 +77,13 @@
                                     @csrf
                                     <button type="submit" class="btn btn-sm btn-white mx-2">
                                         <span class="material-icons mr-2">check_circle</span>
-                                        Publish Training
+                                        Publish Training Course
                                     </button>
                                 </form>
                             @endif
                             <button type="button" class="btn btn-sm btn-white delete-training" id="{{ $data->id }}">
                                 <span class="material-icons mr-2">delete</span>
-                                Delete Training
+                                Delete Training Course
                             </button>
                         </div>
                     @endif
@@ -241,6 +241,27 @@
 
         @endif
     </div>
+
+    <x-process-data-confirmation btnClass=".delete-training"
+                                 :processRoute="route('training-videos.destroy', ['trainingVideo' => ':id'])"
+                                 :routeAfterProcess="route('training-videos.index')"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this training course?"
+                                 errorText="Something went wrong when deleting training course!"/>
+
+    <x-process-data-confirmation btnClass=".deleteLesson"
+                                 :processRoute="route('training-videos.lessons-destroy', ['trainingVideo'=>$data->id, 'lesson' => ':id'])"
+                                 :routeAfterProcess="route('training-videos.show', $data->id)"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this training lesson?"
+                                 errorText="Something went wrong when deleting training lesson!"/>
+
+    <x-process-data-confirmation btnClass=".deletePlayer"
+                                 :processRoute="route('training-videos.remove-player', ['trainingVideo'=>$data->id, 'player' => ':id'])"
+                                 :routeAfterProcess="route('training-videos.show', $data->id)"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to remove this player from training course?"
+                                 errorText="Something went wrong when removing the player from training course!"/>
 @endsection
 
 @push('addon-script')
@@ -496,51 +517,6 @@
                 });
             });
 
-            body.on('click', '.delete-training', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('training-videos.destroy', ['trainingVideo' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (res) {
-                                Swal.fire({
-                                    title: 'Training video successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('training-videos.index') }}";
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown,
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
             // show edit form modal when edit lesson button clicked
             body.on('click', '.editLesson', function (e) {
                 e.preventDefault();
@@ -611,98 +587,6 @@
                             icon: "error",
                             title: "Something went wrong when updating data!",
                             text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            // delete lesson data
-            body.on('click', '.deleteLesson', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to delete this lesson?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('training-videos.lessons-destroy', ['trainingVideo'=>$data->id, 'lesson' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (res) {
-                                Swal.fire({
-                                    title: 'Training lesson successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('training-videos.show', $data->id) }}";
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown,
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            // remove player from training
-            body.on('click', '.deletePlayer', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to remove this player?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('training-videos.remove-player', ['trainingVideo'=>$data->id, 'player' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (res) {
-                                Swal.fire({
-                                    title: 'Player successfully removed from training!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        playersTable.ajax.reload(null, false);
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when removing player!",
-                                    text: errorThrown,
-                                });
-                            }
                         });
                     }
                 });

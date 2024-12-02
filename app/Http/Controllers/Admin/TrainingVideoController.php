@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingVideoRequest;
 use App\Models\Player;
@@ -12,7 +13,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use mysql_xdevapi\Exception;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class TrainingVideoController extends Controller
@@ -120,8 +120,8 @@ class TrainingVideoController extends Controller
         $data = $request->validated();
 
         $trainingVideos = $this->trainingVideoService->update($data, $trainingVideo);
-
-        return response()->json($trainingVideos);
+        $message = "Training course ".$trainingVideo->trainingTitle." successfully updated.";
+        return ApiResponse::success($trainingVideos, $message);
     }
 
     public function unpublish(TrainingVideo $trainingVideo){
@@ -165,7 +165,9 @@ class TrainingVideoController extends Controller
 
     public function removePLayer(TrainingVideo $trainingVideo, Player $player): JsonResponse
     {
-        return response()->json($this->trainingVideoService->removePlayer($trainingVideo, $player));
+        $result = $this->trainingVideoService->removePlayer($trainingVideo, $player);
+        $message = "Player ".$this->getUserFullName($player->user)." successfully removed from training course.";
+        return ApiResponse::success($result, $message);
     }
 
     /**
@@ -173,8 +175,8 @@ class TrainingVideoController extends Controller
      */
     public function destroy(TrainingVideo $trainingVideo): JsonResponse
     {
-        $this->trainingVideoService->destroy($trainingVideo);
-
-        return response()->json(200);
+        $result = $this->trainingVideoService->destroy($trainingVideo);
+        $message = "Training course ".$trainingVideo->trainingTitle." successfully deleted.";
+        return ApiResponse::success($result, $message);
     }
 }

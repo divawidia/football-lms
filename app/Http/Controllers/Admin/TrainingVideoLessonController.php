@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingVideoLessonRequest;
 use App\Models\Player;
@@ -37,7 +38,8 @@ class TrainingVideoLessonController extends Controller
     public function store(TrainingVideoLessonRequest $request, TrainingVideo $trainingVideo)
     {
         $data = $request->validated();
-        $lesson = $this->trainingVideoLessonService->store($data, $trainingVideo);
+        $loggedUser = $this->getLoggedUser();
+        $lesson = $this->trainingVideoLessonService->store($data, $trainingVideo, $loggedUser);
         return response()->json($lesson);
     }
 
@@ -82,16 +84,19 @@ class TrainingVideoLessonController extends Controller
     public function update(TrainingVideoLessonRequest $request, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
         $data = $request->validated();
-
-        return response()->json($this->trainingVideoLessonService->update($data, $lesson));
+        $loggedUser = $this->getLoggedUser();
+        $result = $this->trainingVideoLessonService->update($data, $lesson, $loggedUser);
+        $message = "Lesson ".$lesson->lessonTitle." successfully updated.";
+        return ApiResponse::success($result, $message);
     }
 
     public function markAsComplete(Request $request, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
         try {
             $playerId = $request->input('playerId');
-            $this->trainingVideoLessonService->markAsComplete($playerId, $trainingVideo, $lesson);
-            return response()->json(['message' => 'Video marked as complete']);
+            $result = $this->trainingVideoLessonService->markAsComplete($playerId, $trainingVideo, $lesson);
+            $message = "Lesson ".$lesson->lessonTitle." marked as complete.";
+            return ApiResponse::success($result, $message);
         } catch (Exception $e) {
             Log::error('Error marking video as complete: ' . $e->getMessage());
             return response()->json(['error' => 'An error occurred while marking the video as complete.'], 500);
@@ -107,24 +112,26 @@ class TrainingVideoLessonController extends Controller
 
     public function publish(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
-        $this->trainingVideoLessonService->publish($lesson);
+        $this->trainingVideoLessonService->setStatus($lesson, '1');
 
-        $text = 'Lesson status successfully published!';
+        $text = 'Lesson '.$lesson->lessonTitle.' status successfully published!';
         Alert::success($text);
         return redirect()->route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$lesson->id]);
     }
 
     public function unpublish(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
-        $this->trainingVideoLessonService->unpublish($lesson);
+        $this->trainingVideoLessonService->setStatus($lesson, '0');
 
-        $text = 'Lesson status successfully unpublished!';
+        $text = 'Lesson '.$lesson->lessonTitle.' status successfully unpublished!';
         Alert::success($text);
         return redirect()->route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$lesson->id]);
     }
 
     public function destroy(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson): JsonResponse
     {
-        return response()->json($this->trainingVideoLessonService->destroy($lesson));
+        $result = $this->trainingVideoLessonService->destroy($lesson);
+        $message = "Lesson ".$lesson->lessonTitle." successfully deleted.";
+        return ApiResponse::success($result, $message);
     }
 }

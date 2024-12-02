@@ -179,6 +179,12 @@
         </div>
     @endif
 
+    <x-process-data-confirmation btnClass=".deleteLesson"
+                                 :processRoute="route('training-videos.lessons-destroy', ['trainingVideo'=>$data->trainingVideoId, 'lesson' => ':id'])"
+                                 :routeAfterProcess="route('training-videos.show', $data->trainingVideoId)"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to delete this lesson?"
+                                 errorText="Something went wrong when deleting lesson!"/>
 @endsection
 
 @push('addon-script')
@@ -365,52 +371,6 @@
                             icon: "error",
                             title: "Something went wrong when updating data!",
                             text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            // delete lesson data
-            body.on('click', '.deleteLesson', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to delete this lesson?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('training-videos.lessons-destroy', ['trainingVideo'=>$data->id, 'lesson' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Training lesson successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('training-videos.show', $data->id) }}";
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown,
-                                });
-                            }
                         });
                     }
                 });

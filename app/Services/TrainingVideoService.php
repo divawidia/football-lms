@@ -217,7 +217,7 @@ class TrainingVideoService extends Service
             $lesson->players()->attach($data['players']);
         }
 
-        $players = $this->userRepository->getInArray('player', $data['player']);
+        $players = $this->userRepository->getInArray('player', $data['players']);
 
         try {
             Notification::send($players, new AssignPlayersToTrainingCourse($trainingVideo));
