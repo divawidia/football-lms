@@ -70,7 +70,7 @@ class TrainingVideoController extends Controller
         if (isPlayer()){
             $player = $this->getLoggedPLayerUser();
             $playerCompletionProgress = $this->trainingVideoService->playerCompletionProgress($player, $trainingVideo);
-            $uncompletePlayerTrainingLesson = $this->trainingVideoService->uncompletePlayerTrainingLesson($player);
+            $uncompletePlayerTrainingLesson = $this->trainingVideoService->uncompletePlayerTrainingLesson($player, $trainingVideo);
         }
 
         return view('pages.academies.training-videos.detail',[
