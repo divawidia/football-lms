@@ -74,7 +74,7 @@ class SubscriptionService extends Service
                                 more_vert
                             </span>
                           </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                 <button type="button" class="dropdown-item edit-tax" id="' . $item->id . '">
                                     <span class="material-icons">edit</span>
                                     Edit subscriptions tax
@@ -83,13 +83,6 @@ class SubscriptionService extends Service
                                     <span class="material-icons">visibility</span>
                                     Show Subscription
                                 </a>
-                                <form method="POST" action="' . route('subscriptions.create-new-invoice', $item->id) . '">
-                                    ' . csrf_field() . '
-                                    <button class="dropdown-item edit" type="submit">
-                                        <span class="material-icons">receipt</span>
-                                        Renew Subscriptions Invoice
-                                    </button>
-                                </form>
                                 ' . $statusButton . '
                                 <button type="button" class="dropdown-item deleteSubscription" id="' . $item->id . '">
                                     <span class="material-icons text-danger">delete</span>

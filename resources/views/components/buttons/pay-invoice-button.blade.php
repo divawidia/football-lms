@@ -4,9 +4,10 @@
 </a>
 
 @push('addon-script')
-    <script type="text/javascript"
-            src="https://app.midtrans.com/snap/snap.js"
-            data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
+{{--    <script type="text/javascript"--}}
+{{--            src="https://app.midtrans.com/snap/snap.js"--}}
+{{--            data-client-key="{{ config('services.midtrans.clientKey') }}"></script>--}}
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
     <script>
         $(document).ready(function () {
             const body = $('body');
