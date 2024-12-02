@@ -173,99 +173,113 @@
             </table>
         </div>
     </div>
+
+    <x-process-data-confirmation btnClass=".restoreInvoice"
+                                 :processRoute="route('invoices.restore', ['invoice' => $data['invoice']->id])"
+                                 :routeAfterProcess="route('invoices.index')"
+                                 method="POST"
+                                 confirmationText="Are you sure to restore this invoice?"
+                                 errorText="Something went wrong when restoring the invoice!"/>
+
+    <x-process-data-confirmation btnClass=".forceDeleteInvoice"
+                                 :processRoute="route('invoices.permanent-delete', ['invoice' => $data['invoice']->id])"
+                                 :routeAfterProcess="route('invoices.index')"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to permanently delete this invoice?"
+                                 errorText="Something went wrong when deleting the invoice!"/>
 @endsection
 @push('addon-script')
     <script>
         $(document).ready(function () {
             // restore invoice
-            $('.restoreInvoice').on('click', function () {
-                Swal.fire({
-                    title: "Are you sure to restore this invoice?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, restore it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('invoices.restore', ['invoice' => $data['invoice']->id]) }}",
-                            type: 'POST',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Invoice successfully restored!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.href = '{{ route('invoices.index') }}';
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when archiving data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
-            });
+            {{--$('.restoreInvoice').on('click', function () {--}}
+            {{--    Swal.fire({--}}
+            {{--        title: "Are you sure to restore this invoice?",--}}
+            {{--        text: "You won't be able to revert this!",--}}
+            {{--        icon: "warning",--}}
+            {{--        showCancelButton: true,--}}
+            {{--        confirmButtonColor: "#1ac2a1",--}}
+            {{--        cancelButtonColor: "#E52534",--}}
+            {{--        confirmButtonText: "Yes, restore it!"--}}
+            {{--    }).then((result) => {--}}
+            {{--        if (result.isConfirmed) {--}}
+            {{--            $.ajax({--}}
+            {{--                url: "{{ route('invoices.restore', ['invoice' => $data['invoice']->id]) }}",--}}
+            {{--                type: 'POST',--}}
+            {{--                data: {--}}
+            {{--                    _token: "{{ csrf_token() }}"--}}
+            {{--                },--}}
+            {{--                success: function () {--}}
+            {{--                    Swal.fire({--}}
+            {{--                        title: 'Invoice successfully restored!',--}}
+            {{--                        icon: 'success',--}}
+            {{--                        showCancelButton: false,--}}
+            {{--                        confirmButtonColor: "#1ac2a1",--}}
+            {{--                        confirmButtonText:--}}
+            {{--                            'Ok!'--}}
+            {{--                    }).then((result) => {--}}
+            {{--                        if (result.isConfirmed) {--}}
+            {{--                            location.href = '{{ route('invoices.index') }}';--}}
+            {{--                        }--}}
+            {{--                    });--}}
+            {{--                },--}}
+            {{--                error: function (jqXHR, textStatus, errorThrown) {--}}
+            {{--                    Swal.fire({--}}
+            {{--                        icon: "error",--}}
+            {{--                        title: "Something went wrong when archiving data!",--}}
+            {{--                        text: errorThrown--}}
+            {{--                    });--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
 
             // force delete invoice
-            $('.forceDeleteInvoice').on('click', function () {
-                let id = $(this).attr('id');
+            {{--$('.forceDeleteInvoice').on('click', function () {--}}
+            {{--    let id = $(this).attr('id');--}}
 
-                Swal.fire({
-                    title: "Are you sure to permanently delete this invoice?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('invoices.permanent-delete', ['invoice' => $data['invoice']->id]) }}",
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Invoice successfully permanently deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.href = '{{ route('invoices.index') }}';
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when archiving data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
-            });
+            {{--    Swal.fire({--}}
+            {{--        title: "Are you sure to permanently delete this invoice?",--}}
+            {{--        text: "You won't be able to revert this!",--}}
+            {{--        icon: "warning",--}}
+            {{--        showCancelButton: true,--}}
+            {{--        confirmButtonColor: "#1ac2a1",--}}
+            {{--        cancelButtonColor: "#E52534",--}}
+            {{--        confirmButtonText: "Yes, delete it!"--}}
+            {{--    }).then((result) => {--}}
+            {{--        if (result.isConfirmed) {--}}
+            {{--            $.ajax({--}}
+            {{--                url: "{{ route('invoices.permanent-delete', ['invoice' => $data['invoice']->id]) }}",--}}
+            {{--                type: 'DELETE',--}}
+            {{--                data: {--}}
+            {{--                    _token: "{{ csrf_token() }}"--}}
+            {{--                },--}}
+            {{--                success: function () {--}}
+            {{--                    Swal.fire({--}}
+            {{--                        title: 'Invoice successfully permanently deleted!',--}}
+            {{--                        icon: 'success',--}}
+            {{--                        showCancelButton: false,--}}
+            {{--                        confirmButtonColor: "#1ac2a1",--}}
+            {{--                        confirmButtonText:--}}
+            {{--                            'Ok!'--}}
+            {{--                    }).then((result) => {--}}
+            {{--                        if (result.isConfirmed) {--}}
+            {{--                            location.href = '{{ route('invoices.index') }}';--}}
+            {{--                        }--}}
+            {{--                    });--}}
+            {{--                },--}}
+            {{--                error: function (jqXHR, textStatus, errorThrown) {--}}
+            {{--                    Swal.fire({--}}
+            {{--                        icon: "error",--}}
+            {{--                        title: "Something went wrong when archiving data!",--}}
+            {{--                        text: errorThrown--}}
+            {{--                    });--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
         });
     </script>
 @endpush

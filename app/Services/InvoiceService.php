@@ -526,7 +526,6 @@ class InvoiceService extends Service
     public function destroy(Invoice $invoice)
     {
         $playerName = $this->getUserFullName($invoice->receiverUser);
-        $invoice->delete();
         $this->userRepository->find($invoice->receiverUserId)->notify(new InvoiceArchivedPlayer(
             $invoice,
             $playerName,
@@ -535,7 +534,7 @@ class InvoiceService extends Service
             $invoice,
             $playerName,
         ));
-        return $invoice;
+        return $invoice->delete();
     }
 
     public function deletedDataIndex(){
@@ -549,7 +548,7 @@ class InvoiceService extends Service
                                 more_vert
                             </span>
                          </button>
-                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item edit" href="' . route('invoices.show-archived', $item->id) . '" type="button">
                                 <span class="material-icons">visibility</span>
                                 Show Invoice

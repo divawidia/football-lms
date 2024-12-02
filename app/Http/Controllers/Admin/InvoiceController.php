@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceRequest;
 use App\Models\Invoice;
@@ -178,9 +179,9 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
-        $this->invoiceService->destroy($invoice);
-
-        return response()->json(['message' => 'Invoice successfully successfully deleted!']);
+        $result = $this->invoiceService->destroy($invoice);
+        $message = "Invoice successfully archived.";
+        return ApiResponse::success($result, $message);
     }
 
     public function deletedData()
@@ -196,13 +197,15 @@ class InvoiceController extends Controller
     {
         $result = $this->invoiceService->restoreData($id);
 
-        return response()->json($result);
+        $message = "Invoice successfully restored.";
+        return ApiResponse::success($result, $message);
     }
 
     public function permanentDeleteData(string $id)
     {
         $result = $this->invoiceService->permanentDeleteData($id);
 
-        return response()->json($result);
+        $message = "Invoice successfully permanently deleted.";
+        return ApiResponse::success($result, $message);
     }
 }

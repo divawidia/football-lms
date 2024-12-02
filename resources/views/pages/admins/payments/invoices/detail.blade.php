@@ -179,102 +179,116 @@
             </table>
         </div>
     </div>
+
+    <x-process-data-confirmation btnClass=".setStatus"
+                                 :processRoute="route('invoices.set-uncollectible', ':id')"
+                                 :routeAfterProcess="route('invoices.show', $data['invoice']->id)"
+                                 method="PATCH"
+                                 confirmationText="Are you sure to set this invoice to uncollectible?"
+                                 errorText="Something went wrong when setting the invoice to uncollectible!"/>
+
+    <x-process-data-confirmation btnClass=".deleteInvoice"
+                                 :processRoute="route('invoices.destroy', ['invoice' => $data['invoice']->id])"
+                                 :routeAfterProcess="route('invoices.index')"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to archive this invoice?"
+                                 errorText="Something went wrong when archiving the invoice!"/>
 @endsection
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            const body = $('body');
-            function updateInvoiceStatus(status, route){
-                $.ajax({
-                    url: route,
-                    method: 'PATCH',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function() {
-                        Swal.fire({
-                            title: 'Invoice successfully mark as '+status+'!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when processing invoice status!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            }
+            {{--const body = $('body');--}}
+            {{--function updateInvoiceStatus(status, route){--}}
+            {{--    $.ajax({--}}
+            {{--        url: route,--}}
+            {{--        method: 'PATCH',--}}
+            {{--        data: {--}}
+            {{--            _token: '{{ csrf_token() }}'--}}
+            {{--        },--}}
+            {{--        success: function() {--}}
+            {{--            Swal.fire({--}}
+            {{--                title: 'Invoice successfully mark as '+status+'!',--}}
+            {{--                icon: 'success',--}}
+            {{--                showCancelButton: false,--}}
+            {{--                allowOutsideClick: false,--}}
+            {{--                confirmButtonColor: "#1ac2a1",--}}
+            {{--                confirmButtonText:--}}
+            {{--                    'Ok!'--}}
+            {{--            }).then((result) => {--}}
+            {{--                if (result.isConfirmed) {--}}
+            {{--                    location.reload();--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        },--}}
+            {{--        error: function(jqXHR, textStatus, errorThrown) {--}}
+            {{--            Swal.fire({--}}
+            {{--                icon: "error",--}}
+            {{--                title: "Something went wrong when processing invoice status!",--}}
+            {{--                text: errorThrown,--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--}--}}
 
-            body.on('click', '.setStatus', function (e){
-                e.preventDefault();
-                const invoiceId = $(this).attr('id');
-                const status = $(this).attr('data-status');
+            {{--body.on('click', '.setStatus', function (e){--}}
+            {{--    e.preventDefault();--}}
+            {{--    const invoiceId = $(this).attr('id');--}}
+            {{--    const status = $(this).attr('data-status');--}}
 
-                if (status === 'paid'){
-                    updateInvoiceStatus(status, '{{ route('invoices.set-paid', ':id') }}'.replace(':id', invoiceId))
-                } else if(status === 'uncollectible'){
-                    updateInvoiceStatus(status, '{{ route('invoices.set-uncollectible', ':id') }}'.replace(':id', invoiceId))
-                } else if(status === 'past-due'){
-                    updateInvoiceStatus(status, '{{ route('invoices.set-past-due', ':id') }}'.replace(':id', invoiceId))
-                } else if(status === 'open'){
-                    updateInvoiceStatus(status, '{{ route('invoices.set-open', ':id') }}'.replace(':id', invoiceId))
-                }
-            });
+            {{--    if (status === 'paid'){--}}
+            {{--        updateInvoiceStatus(status, '{{ route('invoices.set-paid', ':id') }}'.replace(':id', invoiceId))--}}
+            {{--    } else if(status === 'uncollectible'){--}}
+            {{--        updateInvoiceStatus(status, '{{ route('invoices.set-uncollectible', ':id') }}'.replace(':id', invoiceId))--}}
+            {{--    } else if(status === 'past-due'){--}}
+            {{--        updateInvoiceStatus(status, '{{ route('invoices.set-past-due', ':id') }}'.replace(':id', invoiceId))--}}
+            {{--    } else if(status === 'open'){--}}
+            {{--        updateInvoiceStatus(status, '{{ route('invoices.set-open', ':id') }}'.replace(':id', invoiceId))--}}
+            {{--    }--}}
+            {{--});--}}
 
             // archive invoice
-            $('.deleteInvoice').on('click', function () {
-                Swal.fire({
-                    title: "Are you sure to archive this invoice?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('invoices.destroy', ['invoice' => $data['invoice']->id]) }}",
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Invoice successfully archived!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.href = '{{ route('invoices.index') }}';
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when archiving data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
-            });
+            {{--$('.deleteInvoice').on('click', function () {--}}
+            {{--    Swal.fire({--}}
+            {{--        title: "Are you sure to archive this invoice?",--}}
+            {{--        text: "You won't be able to revert this!",--}}
+            {{--        icon: "warning",--}}
+            {{--        showCancelButton: true,--}}
+            {{--        confirmButtonColor: "#1ac2a1",--}}
+            {{--        cancelButtonColor: "#E52534",--}}
+            {{--        confirmButtonText: "Yes, delete it!"--}}
+            {{--    }).then((result) => {--}}
+            {{--        if (result.isConfirmed) {--}}
+            {{--            $.ajax({--}}
+            {{--                url: "{{ route('invoices.destroy', ['invoice' => $data['invoice']->id]) }}",--}}
+            {{--                type: 'DELETE',--}}
+            {{--                data: {--}}
+            {{--                    _token: "{{ csrf_token() }}"--}}
+            {{--                },--}}
+            {{--                success: function () {--}}
+            {{--                    Swal.fire({--}}
+            {{--                        title: 'Invoice successfully archived!',--}}
+            {{--                        icon: 'success',--}}
+            {{--                        showCancelButton: false,--}}
+            {{--                        confirmButtonColor: "#1ac2a1",--}}
+            {{--                        confirmButtonText:--}}
+            {{--                            'Ok!'--}}
+            {{--                    }).then((result) => {--}}
+            {{--                        if (result.isConfirmed) {--}}
+            {{--                            location.href = '{{ route('invoices.index') }}';--}}
+            {{--                        }--}}
+            {{--                    });--}}
+            {{--                },--}}
+            {{--                error: function (jqXHR, textStatus, errorThrown) {--}}
+            {{--                    Swal.fire({--}}
+            {{--                        icon: "error",--}}
+            {{--                        title: "Something went wrong when archiving data!",--}}
+            {{--                        text: errorThrown--}}
+            {{--                    });--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
         });
     </script>
 @endpush

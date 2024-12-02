@@ -69,7 +69,6 @@
                                  :routeAfterProcess="route('invoices.index')"
                                  method="PATCH"
                                  confirmationText="Are you sure to mark this invoice to uncollectible?"
-                                 successText="Successfully mark the invoice to uncollectible!"
                                  errorText="Something went wrong when marking the invoice to uncollectible!"/>
 
     <x-process-data-confirmation btnClass=".deleteInvoice"
@@ -77,7 +76,6 @@
                                  :routeAfterProcess="route('invoices.index')"
                                  method="DELETE"
                                  confirmationText="Are you sure to archive this invoice?"
-                                 successText="Invoice successfully archived!"
                                  errorText="Something went wrong when archiving data!"/>
 @endsection
 @push('addon-script')
