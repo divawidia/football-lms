@@ -33,13 +33,13 @@
                             }
                         });
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when processing payment!",
-                            text: errorThrown,
-                        });
-                    }
+                    // error: function(jqXHR, textStatus, errorThrown) {
+                    //     Swal.fire({
+                    //         icon: "error",
+                    //         title: "Something went wrong when processing payment!",
+                    //         text: errorThrown,
+                    //     });
+                    // }
                 });
             }
 
@@ -87,7 +87,7 @@
                     onPending: function(result){
                         Swal.fire({
                             title: 'Invoice payment still pending!',
-                            icon: 'error',
+                            icon: 'info',
                             showCancelButton: false,
                             confirmButtonColor: "#1ac2a1",
                             confirmButtonText:
