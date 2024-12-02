@@ -19,6 +19,7 @@ class Subscription extends Model
         'nextDueDate',
         'ammountDue',
         'status',
+        'isReminderNotified',
     ];
 
     public function invoices()

@@ -35,8 +35,9 @@ class InvoiceDueSoonNotification extends Command
     public function handle()
     {
         // Update records where end_date is less than the current date
-        $invoices = Invoice::whereDate('dueDate', '=', Carbon::now()->addHour())->where('status', 'Open')->get();
+        $invoices = Invoice::where('dueDate', '=', Carbon::now()->addHour())->where('status', 'Open')->where('isReminderNotified', '0')->get();
         foreach ($invoices as $invoice) {
+            $invoice->update(['isReminderNotified' => '1']);
             $playerName = $invoice->receiverUser->firstName.' '.$invoice->receiverUser->lastName;
             $invoice->receiverUser->notify(new InvoiceDueSoon($invoice, $playerName));
         }

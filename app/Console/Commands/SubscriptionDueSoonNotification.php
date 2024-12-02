@@ -41,8 +41,9 @@ class SubscriptionDueSoonNotification extends Command
      */
     public function handle()
     {
-        $datas = Subscription::whereBetween('nextDueDate', [Carbon::now(), Carbon::now()->addDays(3)])->where('status', 'Scheduled')->get();
+        $datas = Subscription::whereBetween('nextDueDate', [Carbon::now(), Carbon::now()->addDays(3)])->where('status', 'Scheduled')->where('isReminderNotified', '0')->get();
         foreach ($datas as $data) {
+            $data->update(['isReminderNotified' => '1']);
             $playerName = $data->user->firstName.' '.$data->user->lastName;
             $data->user->notify(new SubscriptionDueDateReminderPlayer($data, $playerName));
             Notification::send($this->userRepository->getAllAdminUsers(), new SubscriptionDueDateReminderAdmin($data, $playerName));

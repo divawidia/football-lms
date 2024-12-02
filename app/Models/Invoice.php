@@ -22,7 +22,8 @@ class Invoice extends Model
         'subtotal',
         'snapToken',
         'status',
-        'paymentMethod'
+        'paymentMethod',
+        'isReminderNotified',
     ];
 
     public function findDeletedData($invoiceId)
