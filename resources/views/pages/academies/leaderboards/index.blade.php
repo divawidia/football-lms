@@ -23,7 +23,7 @@
             {{--    Overview    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Team Leaderboard</div>
-                <a href="" id="addTeamScorer" class="btn btn-white btn-outline-secondary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>
+{{--                <a href="" id="addTeamScorer" class="btn btn-white btn-outline-secondary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
             </div>
 
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
