@@ -18,7 +18,8 @@
                     LOGO
                 @endif
             </a>
-            <strong class="m-0 h5">Login to access your Account </strong>
+            <strong class="h4">{{ academyData()->academyName }}</strong>
+            <p class="m-0">Login to your account</p>
         </div>
         @error('status')
         <div class="alert alert-danger text-center">
