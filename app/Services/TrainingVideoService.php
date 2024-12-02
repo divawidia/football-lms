@@ -99,7 +99,7 @@ class TrainingVideoService extends Service
     }
 
     public function playerLessons(TrainingVideo $trainingVideo, Player $player){
-        $data = $player->lessons;
+        $data = $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->get();
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideo) {
                 return '<div class="btn-toolbar" role="toolbar">
@@ -146,7 +146,7 @@ class TrainingVideoService extends Service
     public function playerCompletionProgress(Player $player, TrainingVideo $trainingVideo)
     {
         $totalLesson = $trainingVideo->lessons()->count();
-        $totalPlayerComplete = $player->lessons()->where('completionStatus', '1')->count();
+        $totalPlayerComplete = $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->where('completionStatus', '1')->count();
         $progress = $totalPlayerComplete/$totalLesson*100;
         return round($progress, 2);
     }
@@ -156,9 +156,9 @@ class TrainingVideoService extends Service
         return $trainingVideo->players()->updateExistingPivot($player->id, ['status' => 'Completed', 'completed_at' => Carbon::now()]);
     }
 
-    public function uncompletePlayerTrainingLesson(Player $player)
+    public function uncompletePlayerTrainingLesson(Player $player, TrainingVideo $trainingVideo)
     {
-        return $player->lessons()->where('completionStatus', '0')->first();
+        return $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->where('completionStatus', '0')->first();
     }
 
 

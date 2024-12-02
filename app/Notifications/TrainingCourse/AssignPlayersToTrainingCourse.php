@@ -38,8 +38,8 @@ class AssignPlayersToTrainingCourse extends Notification
             ->subject("You Have Been Assigned to a New Training Course")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("You have been assigned to the training course: {$this->trainingCourse->trainingTitle}")
-            ->line("Total Lessons: {$this->trainingCourse->totalLesson} Lessons")
-            ->line("Total Duration: {$this->trainingCourse->totalDuration}")
+//            ->line("Total Lessons: {$this->trainingCourse->totalLesson} Lessons")
+//            ->line("Total Duration: {$this->trainingCourse->totalDuration}")
             ->line("Difficulty Level: {$this->trainingCourse->level}")
             ->action('View course detail', route('training-videos.show', $this->trainingCourse->id))
             ->line("Please ensure you review the course materials and complete the course as soon as possible. You can find more details in your account dashboard.");

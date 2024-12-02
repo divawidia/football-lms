@@ -195,10 +195,12 @@ class TrainingVideoLessonService extends Service
     public function markAsComplete($playerId, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
     {
         $player = $this->playerRepository->find($playerId);
+        $completionProgress = $this->trainingVideoService->playerCompletionProgress($player, $trainingVideo);
 
         $lesson->players()->updateExistingPivot($playerId, ['completionStatus' => '1', 'completed_at' => Carbon::now()]);
+        $trainingVideo->players()->updateExistingPivot($playerId, ['progress' => $completionProgress]);
 
-        if ($this->trainingVideoService->playerCompletionProgress($player, $trainingVideo) == 100){
+        if ($completionProgress == 100){
             $this->trainingVideoService->setPlayerProgressToComplete($player, $trainingVideo);
         }
         return response()->json(['message' => 'Video marked as complete']);
