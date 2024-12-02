@@ -55,7 +55,7 @@ class EventScheduleRepository
         return $this->eventSchedule->with('teams', 'competition')
             ->where('eventType', $eventType)
             ->where('status', 'Scheduled')
-            ->where('isReminderNotified', 0)
+            ->where('isReminderNotified', '=','0')
             ->whereBetween('startDateTime', [Carbon::now(), Carbon::now()->addHours($hour)])
             ->orderBy('startDateTime')->get();
     }
@@ -64,16 +64,16 @@ class EventScheduleRepository
         return $this->eventSchedule->with('teams', 'competition')
             ->where('eventType', $eventType)
             ->where('status', 'Scheduled')
-            ->whereDate('startDatetime', '<=', Carbon::now())
-            ->orderBy('startDateTime')->get();
+            ->where('startDatetime', '<=', Carbon::now())
+            ->get();
     }
     public function getEndingEvent($eventType)
     {
         return $this->eventSchedule->with('teams', 'competition')
             ->where('eventType', $eventType)
             ->where('status', 'Ongoing')
-            ->whereDate('endDatetime', '<=', Carbon::now())
-            ->orderBy('endDateTime')->get();
+            ->where('endDatetime', '<=', Carbon::now())
+            ->get();
     }
 
     public function getEventByModel($model, $eventType, $status, $take = null, $sortDateDirection = 'asc')

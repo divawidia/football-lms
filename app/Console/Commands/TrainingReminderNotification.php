@@ -49,7 +49,7 @@ class TrainingReminderNotification extends Command
     {
         $trainings = $this->eventScheduleRepository->getUpcomingEvent('Training', 24);
         foreach ($trainings as $data) {
-            $data->update(['isReminderNotified' => 1]);
+            $data->update(['isReminderNotified' => '1']);
             $team = $data->teams()->first();
             $allTeamParticipant = $this->userRepository->allTeamsParticipant($team, admins: false);
             Notification::send($allTeamParticipant, new TrainingScheduleReminder($data, $team));
