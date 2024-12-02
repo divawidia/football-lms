@@ -62,7 +62,11 @@
                                     </span>
                                     <span class="d-flex">
                                         <span class="flex d-flex flex-column">
+                                            @if(array_key_exists('data', $notification->data))
                                             <span class="text-black-70">{{ $notification->data['data'] }}</span>
+                                            @else
+                                                <span class="text-black-70">{{ $notification->data['message'] }}</span>
+                                            @endif
                                         </span>
                                     </span>
                                 </a>

@@ -46,7 +46,7 @@
                         <span class="material-icons">edit</span>
                         Edit subscription tax
                     </button>
-                    @if($data['subscription']->status == 'scheduled')
+                    @if($data['subscription']->status == 'Scheduled')
                         <form action="{{ route('subscriptions.set-unsubscribed', $data['subscription']->id) }}" method="POST">
                             @method("PATCH")
                             @csrf
@@ -55,7 +55,7 @@
                                 Mark as Unsubscribed
                             </button>
                         </form>
-                    @elseif($data['subscription']->status == 'unsubscribed')
+                    @elseif($data['subscription']->status == 'Unsubscribed')
                         <form action="{{  route('subscriptions.set-scheduled', $data['subscription']->id) }}" method="POST">
                             @method("PATCH")
                             @csrf

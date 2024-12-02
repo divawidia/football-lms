@@ -53,7 +53,7 @@ class SubscriptionUnsubscribeAdmin extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => '⚠️ Alert: The player'.$this->playerName.' subscriptions for '.$this->subscription->product->productName.' has ended. They no longer have access to training resources and sessions. Consider following up if they may be interested in renewing.',
+            'data' => '⚠️ Alert: The player'.$this->playerName.' subscriptions for '.$this->subscription->product->productName.' has ended. They no longer have access to training resources and sessions. Consider following up if they may be interested in renewing.',
             'redirectRoute' => route('subscriptions.show', $this->subscription->id)
         ];
     }

@@ -58,7 +58,7 @@ class SubscriptionExpiredPlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => '⚠️ Reminder: Your subscription of '.$this->productName.' is due on '.$this->dueDate.'. Ensure you renew on time to keep your access to exclusive training resources and sessions!',
+            'data' => '⚠️ Reminder: Your subscription of '.$this->productName.' is due on '.$this->dueDate.'. Ensure you renew on time to keep your access to exclusive training resources and sessions!',
             'redirectRoute' => route('billing-and-payments.index')
         ];
     }

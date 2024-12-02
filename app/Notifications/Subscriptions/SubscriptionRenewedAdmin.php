@@ -58,7 +58,7 @@ class SubscriptionRenewedAdmin extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'Subscription of '.$this->productName.' for player '.$this->playerName.' has been renewed.',
+            'data' => 'Subscription of '.$this->productName.' for player '.$this->playerName.' has been renewed.',
             'redirectRoute' => route('billing-and-payments.show', $this->subscriptionId)
         ];
     }

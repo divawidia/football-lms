@@ -52,7 +52,7 @@ class SubscriptionUnsubscribePlayer extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => '⛔ Subscription Ended: Your subscription for '.$this->subscription->product->productName.' has expired, and your access to our resources has been paused. Renew now to regain access to all training materials and sessions.',
+            'data' => '⛔ Subscription Ended: Your subscription for '.$this->subscription->product->productName.' has expired, and your access to our resources has been paused. Renew now to regain access to all training materials and sessions.',
             'redirectRoute' => route('billing-and-payments.index')
         ];
     }
