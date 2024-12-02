@@ -31,9 +31,11 @@ use App\Repository\PlayerPerformanceReviewRepository;
 use App\Repository\PlayerSkillStatsRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -1022,17 +1024,22 @@ class EventScheduleService extends Service
         $playersTeamsParticipants = $this->userRepository->allTeamsParticipant($team, admins: false, coaches: false);
         $playersCoachesTeamsParticipants = $this->userRepository->allTeamsParticipant($team, admins: false);
 
-        if ($schedule->eventType == 'Training') {
-            Notification::send($adminsCoachesTeamsParticipant, new TrainingScheduleDeletedForCoachAdmin($schedule, $team, $deletedBy));
-            Notification::send($playersTeamsParticipants, new TrainingScheduleDeletedForPlayers($schedule));
-        } elseif ($schedule->eventType == 'Match' && $schedule->isOpponentTeamMatch == '0') {
-            Notification::send($admins, new MatchScheduleDeletedForAdmin($schedule, $deletedBy));
-            Notification::send($playersCoachesTeamsParticipants, new MatchScheduleDeletedForPlayersCoaches($schedule));
+        try {
+            if ($schedule->eventType == 'Training') {
+                Notification::send($adminsCoachesTeamsParticipant, new TrainingScheduleDeletedForCoachAdmin($schedule, $team, $deletedBy));
+                Notification::send($playersTeamsParticipants, new TrainingScheduleDeletedForPlayers($schedule));
+            } elseif ($schedule->eventType == 'Match' && $schedule->isOpponentTeamMatch == '0') {
+                Notification::send($admins, new MatchScheduleDeletedForAdmin($schedule, $deletedBy));
+                Notification::send($playersCoachesTeamsParticipants, new MatchScheduleDeletedForPlayersCoaches($schedule));
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
         }
-        $schedule->teams()->detach();
-        $schedule->players()->detach();
-        $schedule->coaches()->detach();
-        $schedule->delete();
-        return $schedule;
+        
+//        $schedule->teams()->detach();
+//        $schedule->players()->detach();
+//        $schedule->coaches()->detach();
+//        $schedule->delete();
+        return $schedule->delete();
     }
 }

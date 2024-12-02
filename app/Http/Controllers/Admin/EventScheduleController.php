@@ -541,13 +541,13 @@ class EventScheduleController extends Controller
     public function destroy(EventSchedule $schedule)
     {
         try {
-            $this->eventScheduleService->destroy($schedule, $this->getLoggedUser());
             if ($schedule->eventType == 'Training') {
                 $message = "Training session ".$schedule->eventName." successfully deleted.";
             } else {
                 $message = "Match ".$schedule->teams[0]->teamName." Vs. ".$schedule->teams[1]->teamName." successfully deleted.";
             }
-            return ApiResponse::success(message:  $message);
+            $data = $this->eventScheduleService->destroy($schedule, $this->getLoggedUser());
+            return ApiResponse::success($data, message:  $message);
 
         } catch (Exception $e){
             if ($schedule->eventType == 'Training') {

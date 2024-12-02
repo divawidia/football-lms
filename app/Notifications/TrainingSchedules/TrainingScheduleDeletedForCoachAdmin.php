@@ -60,7 +60,7 @@ class TrainingScheduleDeletedForCoachAdmin extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'The training session '.$this->trainingSchedule->eventName.' schedule for team '.$this->team->teamName.' at '.convertToDatetime($this->trainingSchedule->startDatetime).' has been deleted by '.$this->adminName,
+            'data' =>'The training session '.$this->trainingSchedule->eventName.' schedule for team '.$this->team->teamName.' at '.convertToDatetime($this->trainingSchedule->startDatetime).' has been deleted by '.$this->deletedBy,
             'redirectRoute' => route('training-schedules.index')
         ];
     }
