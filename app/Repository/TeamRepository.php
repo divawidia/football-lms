@@ -24,9 +24,13 @@ class TeamRepository
         return $this->team->all();
     }
 
-    public function getByTeamside($teamSide)
+    public function getByTeamside($teamSide, $exceptTeamId=null)
     {
-        return $this->team->where('teamSide', $teamSide)->get();
+        $query = $this->team->where('teamSide', $teamSide);
+        if ($exceptTeamId != null){
+            $query->where('id', '!=', $exceptTeamId);
+        }
+        return $query->get();
     }
 
     public function getInArray($ids)

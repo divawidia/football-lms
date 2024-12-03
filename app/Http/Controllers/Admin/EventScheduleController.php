@@ -22,6 +22,7 @@ use App\Services\CompetitionService;
 use App\Services\EventScheduleService;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -135,6 +136,12 @@ class EventScheduleController extends Controller
         return view('pages.admins.academies.schedules.matches.create', [
             'competitions' => $this->competitionService->getActiveCompetition(),
         ]);
+    }
+    public function getInternalMatchTeams(Request $request)
+    {
+        $exceptTeamId = $request->input('exceptTeamId');
+        $data = $this->eventScheduleService->internalMatchTeams($exceptTeamId);
+        return ApiResponse::success($data);
     }
 
     /**

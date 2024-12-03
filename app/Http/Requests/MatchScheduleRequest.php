@@ -23,7 +23,7 @@ class MatchScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'matchType' => ['required', Rule::in('Friendly Match', 'Competition')],
+            'matchType' => ['required', Rule::in('Friendly Match', 'Competition', 'Internal Match')],
             'competitionId' => ['nullable', Rule::exists('competitions', 'id')],
             'place' => ['required', 'string'],
             'date' => ['required', 'date'],

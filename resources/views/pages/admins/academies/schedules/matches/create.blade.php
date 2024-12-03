@@ -23,13 +23,12 @@
         </div>
     </div>
 
-    <div class="container page__container page-section">
-        <div class="list-group">
-            <form action="{{ route('match-schedules.store') }}" method="post">
+    <div class="container page-section">
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ route('match-schedules.store') }}" method="post">
                 @csrf
-                <div class="list-group-item">
-                    <div role="group" aria-labelledby="label-question" class="m-0 form-group">
-                        <div class="row">
+                    <div class="row">
                             <div class="col-lg-6">
                                 <input type="hidden" name="isOpponentTeamMatch" value="0">
                                 <div class="form-group">
@@ -37,7 +36,7 @@
                                     <small class="text-danger">*</small>
                                     <select class="form-control form-select matchType-form @error('matchType') is-invalid @enderror" id="matchType" name="matchType" data-toggle="select" required>
                                         <option disabled selected>Select match type</option>
-                                        @foreach(['Friendly Match', 'Competition'] AS $type)
+                                        @foreach(['Friendly Match', 'Competition', 'Internal Match'] AS $type)
                                             <option value="{{ $type }}" @selected(old('attendanceStatus') == $type)>{{ $type }}</option>
                                         @endforeach
                                     </select>
@@ -187,13 +186,12 @@
                                 </div>
                             </div>
                         </div>
+                    <div class="d-flex justify-content-end">
+                        <a class="btn btn-secondary mx-2" href="{{ url()->previous() }}"><span class="material-icons mr-2">close</span> Cancel</a>
+                        <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
                     </div>
-                </div>
-                <div class="list-group-item d-flex justify-content-end">
-                    <a class="btn btn-secondary mx-2" href="{{ route('competition-managements.index') }}"><span class="material-icons mr-2">close</span> Cancel</a>
-                    <button type="submit" class="btn btn-primary"><span class="material-icons mr-2">add</span> Submit</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 @endsection

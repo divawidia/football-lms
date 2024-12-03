@@ -455,6 +455,10 @@ class EventScheduleService extends Service
         return $teams;
     }
 
+    public function internalMatchTeams($exceptTeamId = null)
+    {
+        return $this->teamRepository->getByTeamside('Academy Team', $exceptTeamId);
+    }
     public function storeTraining(array $data, $userId){
         $data['userId'] = $userId;
         $data['eventType'] = 'Training';
@@ -1035,7 +1039,7 @@ class EventScheduleService extends Service
         } catch (Exception $e) {
             Log::error($e->getMessage());
         }
-        
+
 //        $schedule->teams()->detach();
 //        $schedule->players()->detach();
 //        $schedule->coaches()->detach();
