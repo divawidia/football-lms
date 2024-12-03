@@ -230,8 +230,9 @@ Route::group(['middleware' => ['auth']], function () {
             Route::prefix('match-schedules')->group(function () {
                 Route::get('admins-matches', [EventScheduleController::class, 'adminIndexMatch'])->name('admin.match-schedules.index');
                 Route::get('create', [EventScheduleController::class, 'createMatch'])->name('match-schedules.create');
-                Route::get('get-competition-teams/{competition}', [EventScheduleController::class, 'getCompetitionTeam'])->name('match-schedules.get-competition-team');
-                Route::get('get-friendlymatch-teams', [EventScheduleController::class, 'getFriendlyMatchTeam'])->name('match-schedules.get-friendlymatch-team');
+                Route::get('competition-teams/{competition}', [EventScheduleController::class, 'getCompetitionTeam'])->name('match-schedules.get-competition-team');
+                Route::get('friendly-match-teams', [EventScheduleController::class, 'getFriendlyMatchTeam'])->name('match-schedules.get-friendlymatch-team');
+                Route::get('internal-match-teams', [EventScheduleController::class, 'getInternalMatchTeams'])->name('match-schedules.internal-match-teams');
                 Route::post('store', [EventScheduleController::class, 'storeMatch'])->name('match-schedules.store');
 
                 Route::prefix('{schedule}')->group(function () {
