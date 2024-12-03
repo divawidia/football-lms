@@ -200,8 +200,8 @@
     <script>
         $(document).ready(function () {
             $('.competition-section').hide();
-
-            $('.matchType-form').on('change', function () {
+            const matchType = $('.matchType-form')
+            matchType.on('change', function () {
                 const type = this.value;
 
                 if (type === 'Competition'){
@@ -218,19 +218,58 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function (result) {
-                            $('#teamId').html('<option disabled selected>Select team in this match</option>');
+                            $('#teamId').html('<option disabled selected>Select team of this match</option>');
                             $.each(result.data.teams, function (key, value) {
-                                $('#teamId').append('<option value=' + value.id + '>' + value.teamName + '</option>');
+                                $('#teamId').append('<option value=' + value.id + ' data-avatar-src={{ Storage::url('') }}'+value.logo+'>' + value.teamName + '</option>');
                             });
 
-                            $('#opponentTeamId').html('<option disabled selected>Select opponent team in this match</option>');
+                            $('#opponentTeamId').html('<option disabled selected>Select opponent team of this match</option>');
                             $.each(result.data.opponentTeams, function (key, value) {
-                                $('#opponentTeamId').append('<option value=' + value.id + '>' + value.teamName + '</option>');
+                                $('#opponentTeamId').append('<option value=' + value.id + ' data-avatar-src={{ Storage::url('') }}'+value.logo+'>' + value.teamName + '</option>');
+                            });
+                        }
+                    });
+                } else if (type === 'Internal Match') {
+                    $('.competition-section').hide();
+                    $('#competitionId').val("null");
+                    $('#teamId').html('');
+                    $('#opponentTeamId').html('');
+                    $.ajax({
+                        url: "{{route('match-schedules.internal-match-teams')}}",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (result) {
+                            $('#teamId').html('<option disabled selected>Select home team of this match</option>');
+                            $.each(result.data, function (key, value) {
+                                $('#teamId').append('<option value=' + value.id + ' data-avatar-src={{ Storage::url('') }}'+value.logo+'>' + value.teamName + '</option>');
                             });
                         }
                     });
                 }
             });
+
+
+                $('#teamId').on('change', function () {
+                    if (matchType.val() === 'Internal Match') {
+                        const exceptTeamId = $(this).val();
+                        $.ajax({
+                            url: "{{route('match-schedules.internal-match-teams') }}",
+                            type: 'GET',
+                            data: {
+                                exceptTeamId: exceptTeamId
+                            },
+                            dataType: 'json',
+                            success: function (result) {
+                                $('#opponentTeamId').html('<option disabled selected>Select away team of this match</option>');
+                                $.each(result.data, function (key, value) {
+                                    $('#opponentTeamId').append('<option value=' + value.id + ' data-avatar-src={{ Storage::url('') }}'+value.logo+'>' + value.teamName + '</option>');
+                                });
+                            }
+                        });
+                    }
+                });
+
+
 
             $('#competitionId').on('change', function () {
                 const id = this.value;
@@ -240,18 +279,18 @@
                     type: 'GET',
                     dataType: 'json',
                     success: function (result) {
-                        $('#teamId').html('<option disabled selected>Select team in this match</option>');
+                        $('#teamId').html('<option disabled selected>Select team of this match</option>');
                         $.each(result.data.teams, function (key, value) {
                             $.each(value, function (key, value) {
                                 // console.log(value);
-                                $('#teamId').append('<option value=' + value.id + '>' + value.teamName + '</option>');
+                                $('#teamId').append('<option value=' + value.id + ' data-avatar-src={{ Storage::url('') }}'+value.logo+'>' + value.teamName + '</option>');
                             });
                         });
 
-                        $('#opponentTeamId').html('<option disabled selected>Select opponent team in this match</option>');
+                        $('#opponentTeamId').html('<option disabled selected>Select opponent team of this match</option>');
                         $.each(result.data.opponentTeams, function (key, value) {
                             $.each(value, function (key, value) {
-                                $('#opponentTeamId').append('<option value=' + value.id + '>' + value.teamName + '</option>');
+                                $('#opponentTeamId').append('<option value=' + value.id + ' data-avatar-src={{ Storage::url('') }}'+value.logo+'>' + value.teamName + '</option>');
                             });
                         });
                     }
