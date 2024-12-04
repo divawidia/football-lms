@@ -472,9 +472,9 @@ class EventScheduleService extends Service
         $creatorUserName = $this->getUserFullName($loggedUser);
 
         $teamsCoachesAdmins = $this->userRepository->allTeamsParticipant($team, players: false);
-        Notification::send($teamsCoachesAdmins, new TrainingScheduleCreatedForCoachAdmin($schedule, $team, $creatorUserName));
-
         $teamsPlayers = $this->userRepository->allTeamsParticipant($team, admins: false, coaches: false);
+
+        Notification::send($teamsCoachesAdmins, new TrainingScheduleCreatedForCoachAdmin($schedule, $team, $creatorUserName));
         Notification::send($teamsPlayers, new TrainingScheduleCreatedForPlayer($schedule, $team));
 
         $schedule->teams()->attach($data['teamId']);
