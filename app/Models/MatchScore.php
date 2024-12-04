@@ -15,7 +15,8 @@ class MatchScore extends Model
         'assistPlayerId',
         'eventId',
         'minuteScored',
-        'isOwnGoal'
+        'isOwnGoal',
+        'teamId'
     ];
 
     public function player()
@@ -29,5 +30,9 @@ class MatchScore extends Model
     public function event()
     {
         return $this->belongsTo(EventSchedule::class, 'eventId', 'id');
+    }
+    public function team()
+    {
+        return $this->belongsTo(Team::class, 'teamId', 'id');
     }
 }
