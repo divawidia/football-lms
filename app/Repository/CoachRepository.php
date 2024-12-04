@@ -6,6 +6,7 @@ use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
 use App\Models\Team;
+use Illuminate\Database\Eloquent\Builder;
 
 class CoachRepository
 {
@@ -27,6 +28,14 @@ class CoachRepository
     public function getInArray($coachIds)
     {
         return $this->coach->whereIn('id', $coachIds)->get();
+    }
+    public function getCoachNotJoinSpecificTeam(Team $team)
+    {
+        return $this->coach->with('user')
+            ->whereDoesntHave('teams', function (Builder $query) use ($team){
+                $query->where('teamId', $team->id);
+            })
+            ->get();
     }
     public function getAllCoachSpecialization()
     {

@@ -10,7 +10,9 @@ use App\Notifications\PlayerCoachAddToTeam;
 use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Notifications\TeamsManagements\TeamCreatedDeleted;
 use App\Notifications\TeamsManagements\TeamUpdated;
+use App\Repository\CoachRepository;
 use App\Repository\EventScheduleRepository;
+use App\Repository\PlayerRepository;
 use App\Repository\TeamMatchRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
@@ -27,18 +29,24 @@ class TeamService extends Service
     private EventScheduleRepository $eventScheduleRepository;
     private TeamMatchRepository $teamMatchRepository;
     private DatatablesService $datatablesService;
+    private PlayerRepository $playerRepository;
+    private CoachRepository $coachRepository;
 
     public function __construct(
         TeamRepository $teamRepository,
         UserRepository $userRepository,
         EventScheduleRepository $eventScheduleRepository,
         TeamMatchRepository $teamMatchRepository,
+        PlayerRepository $playerRepository,
+        CoachRepository $coachRepository,
         DatatablesService $datatablesService)
     {
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
         $this->eventScheduleRepository = $eventScheduleRepository;
         $this->teamMatchRepository = $teamMatchRepository;
+        $this->playerRepository = $playerRepository;
+        $this->coachRepository = $coachRepository;
         $this->datatablesService = $datatablesService;
     }
     public function indexDatatables($teamsData)
@@ -361,6 +369,15 @@ class TeamService extends Service
         $scheduled = $this->eventScheduleRepository->getTeamsEvents($team, 'Training', 'Scheduled', true, 2);
         $ongoing = $this->eventScheduleRepository->getTeamsEvents($team, 'Training', 'Ongoing', true, 2);
         return $scheduled->merge($ongoing);
+    }
+
+    public function playersNotJoinTheTeam(Team $team)
+    {
+        return $this->playerRepository->getPlayerNotJoinSpecificTeam($team);
+    }
+    public function coachesNotJoinTheTeam(Team $team)
+    {
+        return $this->coachRepository->getCoachNotJoinSpecificTeam($team);
     }
 
     public function teamTrainingHistories(Team $team){

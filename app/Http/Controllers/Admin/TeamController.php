@@ -142,6 +142,8 @@ class TeamController extends Controller
             'latestMatches' => $this->teamService->teamLatestMatch($team),
             'upcomingMatches' => $this->teamService->teamUpcomingMatch($team),
             'upcomingTrainings' => $this->teamService->teamUpcomingTraining($team),
+            'players' => $this->teamService->playersNotJoinTheTeam($team),
+            'coaches' => $this->teamService->coachesNotJoinTheTeam($team),
         ]);
     }
 
@@ -200,41 +202,14 @@ class TeamController extends Controller
         }
     }
 
-    public function addPlayerTeam(Team $team)
-    {
-        $players = Player::with('user')->whereDoesntHave('teams', function (Builder $query) use ($team){
-            $query->where('teamId', $team->id);
-        })->get();
-
-        return view('pages.admins.managements.teams.editPlayer',[
-            'team' => $team,
-            'players' => $players,
-        ]);
-    }
-
     public function updatePlayerTeam(Request $request, Team $team)
     {
         $data = $request->validate([
             'players' => ['required', Rule::exists('players', 'id')],
         ]);
-
-        $this->teamService->updatePlayerTeam($data, $team);
-
-        $text = 'Team '.$team->teamName.' Players successfully updated!';
-        Alert::success($text);
-        return redirect()->route('team-managements.show', $team->id);
-    }
-
-    public function addCoachesTeam(Team $team)
-    {
-        $coaches = Coach::with('user')->whereDoesntHave('teams', function (Builder $query) use ($team){
-            $query->where('teamId', $team->id);
-        })->get();
-
-        return view('pages.admins.managements.teams.editCoach',[
-            'team' => $team,
-            'coaches' => $coaches,
-        ]);
+        $result = $this->teamService->updatePlayerTeam($data, $team);
+        $text = "Team ".$team->teamName." successfully added new players!";
+        return ApiResponse::success($result, $text);
     }
 
     public function updateCoachTeam(Request $request, Team $team)
@@ -242,12 +217,9 @@ class TeamController extends Controller
         $data = $request->validate([
             'coaches' => ['required', Rule::exists('coaches', 'id')]
         ]);
-
-        $this->teamService->updateCoachTeam($data, $team);
-
-        $text = 'Team '.$team->teamName.' Coaches successfully updated!';
-        Alert::success($text);
-        return redirect()->route('team-managements.show', $team->id);
+        $result = $this->teamService->updateCoachTeam($data, $team);
+        $text = "Team ".$team->teamName." successfully added new coaches!";
+        return ApiResponse::success($result, $text);
     }
 
     public function removePlayer(Team $team, Player $player)

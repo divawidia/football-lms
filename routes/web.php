@@ -171,9 +171,7 @@ Route::group(['middleware' => ['auth']], function () {
                         Route::delete('destroy', [TeamController::class, 'destroy'])->name('team-managements.destroy');
                         Route::patch('deactivate', [TeamController::class, 'deactivate'])->name('deactivate-team');
                         Route::patch('activate', [TeamController::class, 'activate'])->name('activate-team');
-                        Route::get('edit-players', [TeamController::class, 'addPlayerTeam'])->name('team-managements.addPlayerTeam');
                         Route::put('update-players', [TeamController::class, 'updatePlayerTeam'])->name('team-managements.updatePlayerTeam');
-                        Route::get('edit-coaches', [TeamController::class, 'addCoachesTeam'])->name('team-managements.addCoachesTeam');
                         Route::put('update-coaches', [TeamController::class, 'updateCoachTeam'])->name('team-managements.updateCoachTeam');
                         Route::put('remove-player/{player}', [TeamController::class, 'removePlayer'])->name('team-managements.removePlayer');
                         Route::put('remove-coach/{coach}', [TeamController::class, 'removeCoach'])->name('team-managements.removeCoach');

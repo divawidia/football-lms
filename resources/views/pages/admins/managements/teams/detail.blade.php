@@ -6,6 +6,11 @@
     @yield('title')
 @endsection
 
+@section('modal')
+    <x-modal.add-players-to-team :route="route('team-managements.updatePlayerTeam', ['team' => $team->id])" :players="$players"/>
+    <x-modal.add-coaches-to-team :route="route('team-managements.updateCoachTeam', ['team' => $team->id])" :coaches="$coaches"/>
+@endsection
+
 @section('content')
     <nav class="navbar navbar-light border-bottom border-top px-0">
         <div class="container page__container">
@@ -180,9 +185,9 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Players</div>
                     @if(isAllAdmin())
-                        <a href="{{ route('team-managements.addPlayerTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
-                            <span class="material-icons mr-2">add</span>Add New
-                        </a>
+                        <button type="button" class="btn btn-primary ml-auto btn-sm" id="add-players">
+                            <span class="material-icons mr-2">add</span>Add players
+                        </button>
                     @endif
                 </div>
                 <div class="card">
@@ -222,9 +227,9 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Coaches/Staffs</div>
                     @if(isAllAdmin())
-                        <a href="{{ route('team-managements.addCoachesTeam', $team->id) }}" class="btn btn-primary ml-auto btn-sm">
-                            <span class="material-icons mr-2">add</span>Add New
-                        </a>
+                        <button type="button" class="btn btn-primary ml-auto btn-sm" id="add-coaches">
+                            <span class="material-icons mr-2">add</span>Add coaches
+                        </button>
                     @endif
                 </div>
                 <div class="card">

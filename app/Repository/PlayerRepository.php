@@ -34,6 +34,15 @@ class PlayerRepository
         return $this->player->whereIn('id', $playerIds)->get();
     }
 
+    public function getPlayerNotJoinSpecificTeam(Team $team)
+    {
+        return $this->player->with('user')
+            ->whereDoesntHave('teams', function (Builder $query) use ($team){
+                $query->where('teamId', $team->id);
+            })
+            ->get();
+    }
+
     public function getAttendedPLayer($startDate, $endDate, $teams = null, $eventType = null, $mostAttended = true, $mostDidntAttend = false)
     {
         $query = $this->player->with('user', 'position');
