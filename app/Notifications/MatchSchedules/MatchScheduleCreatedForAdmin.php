@@ -17,10 +17,9 @@ class MatchScheduleCreatedForAdmin extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct($matchSchedule, $team, $createdBy)
+    public function __construct($matchSchedule, $createdBy)
     {
         $this->matchSchedule = $matchSchedule;
-        $this->team = $team;
         $this->createdBy = $createdBy;
     }
 
@@ -31,7 +30,8 @@ class MatchScheduleCreatedForAdmin extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+//        return ['mail', 'database'];
+        return ['database'];
     }
 
     /**

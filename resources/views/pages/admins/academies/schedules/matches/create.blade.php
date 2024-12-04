@@ -82,7 +82,7 @@
                                         <label class="form-label mb-0" for="teamId">Teams</label>
                                         <small class="text-danger">*</small>
                                     </div>
-                                    <select class="form-control form-select @error('teamId') is-invalid @enderror" id="teamId" name="teamId" data-toggle="select">
+                                    <select class="form-control form-select @error('teamId') is-invalid @enderror" id="teamId" name="teamId" data-toggle="select" required>
                                     </select>
                                     @error('teamId')
                                     <span class="invalid-feedback" role="alert">
@@ -95,7 +95,7 @@
                                         <label class="form-label mb-0" for="opponentTeamId">Opponent Teams</label>
                                         <small class="text-danger">*</small>
                                     </div>
-                                    <select class="form-control form-select @error('opponentTeamId') is-invalid @enderror" id="opponentTeamId" name="opponentTeamId" data-toggle="select">
+                                    <select class="form-control form-select @error('opponentTeamId') is-invalid @enderror" id="opponentTeamId" name="opponentTeamId" data-toggle="select" required>
                                     </select>
                                     @error('opponentTeamId')
                                     <span class="invalid-feedback" role="alert">
@@ -177,7 +177,8 @@
                                            id="place"
                                            name="place"
                                            value="{{ old('place') }}"
-                                           placeholder="E.g. : Football field ...">
+                                           placeholder="E.g. : Football field ..."
+                                           required>
                                     @error('place')
                                     <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
