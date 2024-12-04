@@ -11,7 +11,7 @@ use Nnjeim\World\Models\State;
 
 class Academy extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'email',
