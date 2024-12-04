@@ -55,23 +55,12 @@
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex mb-3 mb-md-0">
-                <h2 class="text-white mb-0">Match {{ $data['dataSchedule']->teams[0]->teamName }}
-                    Vs {{ $data['dataSchedule']->teams[1]->teamName }}</h2>
-                <p class="lead text-white-50">
-                    {{ $data['dataSchedule']->eventType }} ~ {{ $data['dataSchedule']->matchType }}
-                    @if($data['dataSchedule']->competition)
-                        ~ {{$data['dataSchedule']->competition->name}}
-                    @endif
-                </p>
+                <h2 class="text-white mb-0">Match {{ $data['dataSchedule']->teams[0]->teamName }} Vs {{ $data['dataSchedule']->teams[1]->teamName }}</h2>
+                <p class="lead text-white-50">{{ $data['dataSchedule']->eventType }} ~ {{ $data['dataSchedule']->matchType }} @if($data['dataSchedule']->competition) ~ {{$data['dataSchedule']->competition->name}}@endif</p>
             </div>
             @if(isAllAdmin())
                 <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Action
-                        <span class="material-icons ml-3">
-                            keyboard_arrow_down
-                        </span>
-                    </button>
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action<span class="material-icons ml-3">keyboard_arrow_down</span></button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}">
                             <span class="material-icons">edit</span> Edit Match Schedule
@@ -211,7 +200,7 @@
                 @if($data['dataSchedule']->isOpponentTeamMatch == 0)
                     {{--    Match Scorer    --}}
                     <div class="page-separator">
-                        <div class="page-separator__text">Scorer(s)</div>
+                        <div class="page-separator__text">{{ $data['dataSchedule']->teams[0]->teamName }} Scorer(s)</div>
                         @if(isAllAdmin() || isCoach())
                             <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span
                                     class="material-icons mr-2">add</span> Add team scorer</a>
@@ -221,15 +210,7 @@
                         @endif
                     </div>
                     @if(count($data['dataSchedule']->matchScores)==0)
-                        <div class="alert alert-light border-left-accent" role="alert">
-                            <div class="d-flex flex-wrap align-items-center">
-                                <i class="material-icons mr-8pt">error_outline</i>
-                                <div class="media-body"
-                                     style="min-width: 180px">
-                                    <small class="text-black-100">You haven't added any team scorer yet</small>
-                                </div>
-                            </div>
-                        </div>
+                        <x-warning-alert text="You haven't added any team scorer yet"/>
                     @else
                         <div class="row">
                             @foreach($data['dataSchedule']->matchScores as $matchScore)
@@ -257,9 +238,9 @@
                                                     class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif"
                                                     type="button" id="{{ $matchScore->id }}" data-toggle="tooltip"
                                                     data-placement="bottom" title="Delete scorer">
-                                    <span class="material-icons">
-                                        close
-                                    </span>
+                                                    <span class="material-icons">
+                                                        close
+                                                    </span>
                                                 </button>
                                             @endif
                                         </div>
@@ -267,6 +248,59 @@
                                 </div>
                             @endforeach
                         </div>
+                    @endif
+
+                    @if($data['dataSchedule']->matchType == 'Internal Match')
+                        <div class="page-separator">
+                            <div class="page-separator__text">{{ $data['dataSchedule']->teams[1]->teamName }} Scorer(s)</div>
+                            @if(isAllAdmin() || isCoach())
+                                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span
+                                        class="material-icons mr-2">add</span> Add team scorer</a>
+                                <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span
+                                        class="material-icons mr-2">add</span>
+                                    Add own goal</a>
+                            @endif
+                        </div>
+                        @if(count($data['dataSchedule']->matchScores)==0)
+                            <x-warning-alert text="You haven't added any team scorer yet"/>
+                        @else
+                            <div class="row">
+                                @foreach($data['dataSchedule']->matchScores as $matchScore)
+                                    <div class="col-md-6">
+                                        <div class="card" id="{{$matchScore->id}}">
+                                            <div class="card-body d-flex align-items-center flex-row text-left">
+                                                <img src="{{ Storage::url($matchScore->player->user->foto) }}"
+                                                     width="50"
+                                                     height="50"
+                                                     class="rounded-circle img-object-fit-cover"
+                                                     alt="instructor">
+                                                <div class="flex ml-3">
+                                                    <h5 class="mb-0 d-flex">{{ $matchScore->player->user->firstName  }} {{ $matchScore->player->user->lastName  }}
+                                                        <p class="text-50 ml-2 mb-0">({{ $matchScore->minuteScored }}')</p></h5>
+                                                    <p class="text-50 lh-1 mb-0">{{ $matchScore->player->position->name }}</p>
+                                                    @if($matchScore->isOwnGoal == 1)
+                                                        <p class="text-50 lh-1 mb-0"><strong>Own Goal</strong></p>
+                                                    @elseif($matchScore->assistPlayer)
+                                                        <p class="text-50 lh-1 mb-0">Assist
+                                                            : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
+                                                    @endif
+                                                </div>
+                                                @if(isAllAdmin() || isCoach())
+                                                    <button
+                                                        class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif"
+                                                        type="button" id="{{ $matchScore->id }}" data-toggle="tooltip"
+                                                        data-placement="bottom" title="Delete scorer">
+                                                    <span class="material-icons">
+                                                        close
+                                                    </span>
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     @endif
                 @endif
             </div>
