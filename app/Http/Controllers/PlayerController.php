@@ -178,7 +178,8 @@ class PlayerController extends Controller
     {
         $data = $request->validated();
         $player = $this->playerService->updateTeams($data, $player);
-        return response()->json($player, 204);
+        $message = "Player ".$this->getUserFullName($player->user)." successfully added to a new team";
+        return ApiResponse::success($player, $message);
     }
 
     public function upcomingMatches(Player $player){

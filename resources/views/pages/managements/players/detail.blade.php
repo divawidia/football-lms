@@ -325,7 +325,7 @@
                     <x-warning-alert text="There are no matches scheduled at this time"/>
                 @endif
                 @foreach($overview['upcomingMatches'] as $match)
-                    <x-match-card :match="$match"/>
+                    <x-match-card :match="$match" :latestMatch="false"/>
                 @endforeach
             </div>
             <div class="tab-pane fade" id="upcomingTraining-tab" role="tabpanel">

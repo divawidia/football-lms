@@ -43,7 +43,7 @@ class CoachController extends Controller
     {
         $data = $request->validated();
         $coach = $this->coachService->updateTeams($data, $coach);
-        $message = "Coach ".$this->getUserFullName($coach->user)."'s team successfully added to a new team";
+        $message = "Coach ".$this->getUserFullName($coach->user)." successfully added to a new team";
         return ApiResponse::success($coach, $message);
     }
 
