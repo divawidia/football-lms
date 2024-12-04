@@ -57,6 +57,10 @@
     </div>
 </div>
 
+<x-modal-form-update-processing formId="#formAddTeam"
+                                updateDataId=""
+                                :routeUpdate="$route"
+                                modalId="#addTeamModal"/>
 @push('addon-script')
     <script>
         $(document).ready(function () {
@@ -65,40 +69,40 @@
                 $('#addTeamModal').modal('show');
             });
 
-            $('#formAddTeam').on('submit', function (e) {
-                e.preventDefault();
+            {{--$('#formAddTeam').on('submit', function (e) {--}}
+            {{--    e.preventDefault();--}}
 
-                $.ajax({
-                    url: "{{ $route }}",
-                    method: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#addTeamModal').modal('hide');
-                        Swal.fire({
-                            title: "Team successfully added!",
-                            icon: 'success',
-                            showCancelButton: false,
-                            allowOutsideClick: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        $.each(response.errors, function (key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("select#add_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
+            {{--    $.ajax({--}}
+            {{--        url: "{{ $route }}",--}}
+            {{--        method: $(this).attr('method'),--}}
+            {{--        data: new FormData(this),--}}
+            {{--        contentType: false,--}}
+            {{--        processData: false,--}}
+            {{--        success: function () {--}}
+            {{--            $('#addTeamModal').modal('hide');--}}
+            {{--            Swal.fire({--}}
+            {{--                title: "Team successfully added!",--}}
+            {{--                icon: 'success',--}}
+            {{--                showCancelButton: false,--}}
+            {{--                allowOutsideClick: false,--}}
+            {{--                confirmButtonColor: "#1ac2a1",--}}
+            {{--                confirmButtonText:--}}
+            {{--                    'Ok!'--}}
+            {{--            }).then((result) => {--}}
+            {{--                if (result.isConfirmed) {--}}
+            {{--                    location.reload();--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        },--}}
+            {{--        error: function (xhr) {--}}
+            {{--            const response = JSON.parse(xhr.responseText);--}}
+            {{--            $.each(response.errors, function (key, val) {--}}
+            {{--                $('span.' + key + '_error').text(val[0]);--}}
+            {{--                $("select#add_" + key).addClass('is-invalid');--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
         });
     </script>
 @endpush

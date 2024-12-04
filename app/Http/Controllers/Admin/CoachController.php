@@ -12,6 +12,7 @@ use App\Models\Coach;
 use App\Models\Team;
 use App\Services\CoachService;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
 class CoachController extends Controller
@@ -33,22 +34,24 @@ class CoachController extends Controller
         return view('pages.admins.managements.coaches.index');
     }
 
-    public function coachTeams(Coach $coach)
+    public function coachTeams(Coach $coach): JsonResponse
     {
-            return $this->coachService->coachTeams($coach);
-
+        return $this->coachService->coachTeams($coach);
     }
 
-    public function updateTeams(PlayerTeamRequest $request, Coach $coach)
+    public function updateTeams(PlayerTeamRequest $request, Coach $coach): JsonResponse
     {
         $data = $request->validated();
         $coach = $this->coachService->updateTeams($data, $coach);
-        return response()->json($coach, 204);
+        $message = "Coach ".$this->getUserFullName($coach->user)."'s team successfully added to a new team";
+        return ApiResponse::success($coach, $message);
     }
 
-    public function removeTeam(Coach $coach, Team $team)
+    public function removeTeam(Coach $coach, Team $team): JsonResponse
     {
-        return $this->coachService->removeTeam($coach, $team);
+        $result = $this->coachService->removeTeam($coach, $team);
+        $message = "Coach ".$this->getUserFullName($coach->user)." successfully removed from team ".$team->teamName.".";
+        return ApiResponse::success($result, $message);
     }
 
     /**
