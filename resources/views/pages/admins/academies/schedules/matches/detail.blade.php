@@ -208,7 +208,7 @@
                                 <span class="material-icons mr-2">add</span> 
                                 Add team scorer
                             </button>
-                            <button type="button" data-team="addOwnGoal" class="btn btn-primary btn-sm ml-2 addOwnGoal">
+                            <button type="button" data-team="homeTeam" class="btn btn-primary btn-sm ml-2 addOwnGoal">
                                 <span class="material-icons mr-2">add</span>
                                 Add own goal
                             </button>
@@ -262,9 +262,10 @@
                             @if(isAllAdmin() || isCoach())
                                 <button type="button" data-team="awayTeam" class="btn btn-primary btn-sm ml-auto addTeamScorer"><span
                                         class="material-icons mr-2">add</span> Add team scorer</button>
-                                <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span
-                                        class="material-icons mr-2">add</span>
-                                    Add own goal</a>
+                                <button type="button" data-team="awayTeam" class="btn btn-primary btn-sm ml-2 addOwnGoal">
+                                    <span class="material-icons mr-2">add</span>
+                                    Add own goal
+                                </button>
                             @endif
                         </div>
                         @if(count($awayTeamMatchScorers)==0)

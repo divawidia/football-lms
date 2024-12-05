@@ -469,12 +469,6 @@ class EventScheduleController extends Controller
 
         return ApiResponse::success($responseData, message:  "Successfully retrieved player data");
     }
-    public function getAssistPlayer(Request $request, EventSchedule $schedule, Player $player){
-        $team = $request->input('team');
-
-        $players = $schedule->players()->with('user', 'position')->where('players.id', '!=', $player->id)->get();
-        return ApiResponse::success($players, message:  "Successfully retrieved assist player data");
-    }
 
     public function storeMatchScorer(MatchScoreRequest $request, EventSchedule $schedule){
         $data = $request->validated();
@@ -485,7 +479,7 @@ class EventScheduleController extends Controller
                 $scorer = $this->eventScheduleService->storeMatchScorer($data, $schedule);
             }
             
-            $message = "Match scorer ".$this->getUserFullName($scorer->player->user)." successfully added.";
+            $message = $this->getUserFullName($scorer->player->user)."'s score successfully added.";
             return ApiResponse::success(message:  $message);
 
         } catch (Exception $e){
@@ -503,7 +497,7 @@ class EventScheduleController extends Controller
                 $this->eventScheduleService->destroyMatchScorer($schedule, $scorer);
             }
         
-            $message = "Match scorer ".$this->getUserFullName($scorer->player->user)." successfully deleted.";
+            $message = $this->getUserFullName($scorer->player->user)."'s score successfully deleted.";
             return ApiResponse::success(message:  $message);
 
         } catch (Exception $e){
@@ -531,10 +525,13 @@ class EventScheduleController extends Controller
 
     public function storeOwnGoal(MatchScoreRequest $request, EventSchedule $schedule){
         $data = $request->validated();
-
         try {
-            $ownGoal = $this->eventScheduleService->storeOwnGoal($data, $schedule);
-            $message = "Own goal ".$this->getUserFullName($ownGoal->player->user)." successfully added.";
+            if ($data['dataTeam'] == 'awayTeam') {
+                $ownGoal = $this->eventScheduleService->storeOwnGoal($data, $schedule, true);
+            } else {
+                $ownGoal = $this->eventScheduleService->storeOwnGoal($data, $schedule);
+            }
+            $message = $this->getUserFullName($ownGoal->player->user)."'s own goal successfully added.";
             return ApiResponse::success(message:  $message);
 
         } catch (Exception $e){
@@ -546,8 +543,12 @@ class EventScheduleController extends Controller
 
     public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer){
         try {
-            $this->eventScheduleService->destroyOwnGoal($schedule, $scorer);
-            $message = "Own goal ".$this->getUserFullName($scorer->player->user)." successfully deleted.";
+            if ($scorer->teamId == $schedule->teams[1]->id) {
+                $this->eventScheduleService->destroyOwnGoal($schedule, $scorer, true);
+            } else {
+                $this->eventScheduleService->destroyOwnGoal($schedule, $scorer);
+            }
+            $message = $this->getUserFullName($scorer->player->user)."'s own goal successfully deleted.";
             return ApiResponse::success(message:  $message);
 
         } catch (Exception $e){

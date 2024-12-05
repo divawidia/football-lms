@@ -11,10 +11,12 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" id="dataTeam" name="dataTeam">
+                    <input type="hidden" id="teamId" name="teamId">
                     <div class="form-group">
                         <label class="form-label" for="playerId">Player Name</label>
                         <small class="text-danger">*</small>
-                        <select class="form-control form-select" id="playerId" name="playerId" required></select>
+                        <select class="form-control form-select" id="playerId" name="playerId" data-toggle="select" required></select>
                         <span class="invalid-feedback playerId_error" role="alert"><strong></strong></span>
                     </div>
                     <div class="form-group">
@@ -53,21 +55,29 @@
             const formId = '#formAddOwnGoal';
 
             // show add own goal modal
-            $('#addOwnGoal').on('click', function (e) {
+            $('.addOwnGoal').on('click', function (e) {
                 e.preventDefault();
+                const team = $(this).attr('data-team')
+
                 $('#createTeamOwnGoalModal').modal('show');
                 $(formId+' .invalid-feedback').empty();
-                $('select').removeClass('is-invalid');
-                $('input').removeClass('is-invalid');
+                $(formId+' select').removeClass('is-invalid');
+                $(formId+' input').removeClass('is-invalid');
 
                 $.ajax({
                     url: "{{route('get-event-player', ['schedule' => $eventSchedule->id]) }}",
                     type: 'GET',
+                    data: {
+                        team: team,
+                    },
                     dataType: 'json',
                     success: function (result) {
+                        $(formId+' .modal-title').text('Add '+result.data.team.teamName+' Match Own Goal')
+                        $(formId+' #dataTeam').val(team)
+                        $(formId+' #teamId').val(result.data.team.id)
                         $(formId+' #playerId').html('<option disabled selected>Select player who scored the own goal</option>');
-                        $.each(result.data, function (key, value) {
-                            $(formId+' #playerId').append('<option value="' + value.id + '">' + value.user.firstName + ' ' + value.user.lastName + ' ~ ' + value.position.name + '</option>');
+                        $.each(result.data.players, function (key, value) {
+                            $(formId+' #playerId').append('<option value="' + value.id + '" data-avatar-src={{ Storage::url('') }}' + value.user.foto + '>' + value.user.firstName + ' ' + value.user.lastName + ' ~ ' + value.position.name + '</option>');
                         });
                     },
                     error: function(jqXHR, textStatus, errorThrown) {

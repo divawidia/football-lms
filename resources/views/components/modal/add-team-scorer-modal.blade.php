@@ -77,9 +77,9 @@
                     },
                     dataType: 'json',
                     success: function (result) {
-                        $('#formAddScorerModal .modal-title').text('Add '+result.data.team.teamName+' Match Scorer')
-                        $('#dataTeam').val(team)
-                        $('#teamId').val(result.data.team.id)
+                        $(formId+' .modal-title').text('Add '+result.data.team.teamName+' Match Scorer')
+                        $(formId+' #dataTeam').val(team)
+                        $(formId+' #teamId').val(result.data.team.id)
                         $(formId+' #playerId').html('<option disabled selected>Select player who scored the goal</option>');
                         $.each(result.data.players, function (key, value) {
                             $(formId+' #playerId').append('<option value="' + value.id + '" data-avatar-src={{ Storage::url('') }}' + value.user.foto + '>' + value.user.firstName + ' ' + value.user.lastName + ' ~ ' + value.position.name + '</option>');
