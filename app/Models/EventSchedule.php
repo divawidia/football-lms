@@ -96,7 +96,8 @@ class EventSchedule extends Model
         return $this->belongsToMany(Coach::class, 'coach_attendance', 'scheduleId', 'coachId')
             ->withPivot(
                 'attendanceStatus',
-                'note'
+                'note',
+                'teamId',
             )->withTimestamps();
     }
 
@@ -110,7 +111,8 @@ class EventSchedule extends Model
         return $this->belongsToMany(Player::class, 'player_attendance', 'scheduleId', 'playerId')
             ->withPivot(
                 'attendanceStatus',
-                'note'
+                'note',
+                'teamId',
             )->withTimestamps();
     }
 
@@ -133,6 +135,7 @@ class EventSchedule extends Model
                 'yellowCards',
                 'redCards',
                 'saves',
+                'teamId',
             )->withTimestamps();
     }
 
