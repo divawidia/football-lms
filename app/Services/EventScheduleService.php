@@ -504,9 +504,9 @@ class EventScheduleService extends Service
             Notification::send($this->userRepository->getAllAdminUsers(), new MatchScheduleCreatedForAdmin($schedule, $creatorUserName));
             Notification::send($teamsPlayersCoaches, new MatchScheduleCreatedForPlayerCoach($schedule));
 
-            $schedule->players()->attach($team->players);
+            $schedule->players()->attach($team->players, ['teamId' => $team->id]);
             $schedule->playerMatchStats()->attach($team->players, ['teamId' => $team->id]);
-            $schedule->coaches()->attach($team->coaches);
+            $schedule->coaches()->attach($team->coaches, ['teamId' => $team->id]);
             $schedule->coachMatchStats()->attach($team->coaches, ['teamId' => $team->id]);
 
         } elseif ($data['isOpponentTeamMatch'] == '0' and $data['matchType'] == 'Internal Match') {
@@ -520,13 +520,13 @@ class EventScheduleService extends Service
             Notification::send($awayTeamsPlayersCoaches, new MatchScheduleCreatedForPlayerCoach($schedule));
             Notification::send($homeTeamsPlayersCoaches, new MatchScheduleCreatedForPlayerCoach($schedule));
 
-            $schedule->players()->attach($awayTeam->players);
-            $schedule->players()->attach($homeTeam->players);
+            $schedule->players()->attach($awayTeam->players, ['teamId' => $awayTeam->id]);
+            $schedule->players()->attach($homeTeam->players, ['teamId' => $homeTeam->id]);
             $schedule->playerMatchStats()->attach($awayTeam->players, ['teamId' => $awayTeam->id]);
             $schedule->playerMatchStats()->attach($homeTeam->players, ['teamId' => $homeTeam->id]);
 
-            $schedule->coaches()->attach($awayTeam->coaches);
-            $schedule->coaches()->attach($homeTeam->coaches);
+            $schedule->coaches()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
+            $schedule->coaches()->attach($homeTeam->coaches, ['teamId' => $homeTeam->id]);
             $schedule->coachMatchStats()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
             $schedule->coachMatchStats()->attach($homeTeam->coaches, ['teamId' => $homeTeam->id]);
         }
