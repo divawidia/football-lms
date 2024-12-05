@@ -479,7 +479,12 @@ class EventScheduleController extends Controller
     public function storeMatchScorer(MatchScoreRequest $request, EventSchedule $schedule){
         $data = $request->validated();
         try {
-            $scorer = $this->eventScheduleService->storeMatchScorer($data, $schedule);
+            if ($data['dataTeam'] == 'awayTeam') {
+                $scorer = $this->eventScheduleService->storeMatchScorer($data, $schedule, true);
+            } else {
+                $scorer = $this->eventScheduleService->storeMatchScorer($data, $schedule);
+            }
+            
             $message = "Match scorer ".$this->getUserFullName($scorer->player->user)." successfully added.";
             return ApiResponse::success(message:  $message);
 
@@ -492,7 +497,12 @@ class EventScheduleController extends Controller
 
     public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer){
         try {
-            $this->eventScheduleService->destroyMatchScorer($schedule, $scorer);
+            if ($scorer->teamId == $schedule->teams[1]->id) {
+                $this->eventScheduleService->destroyMatchScorer($schedule, $scorer, true);
+            } else {
+                $this->eventScheduleService->destroyMatchScorer($schedule, $scorer);
+            }
+        
             $message = "Match scorer ".$this->getUserFullName($scorer->player->user)." successfully deleted.";
             return ApiResponse::success(message:  $message);
 

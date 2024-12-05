@@ -11,7 +11,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="dataTeam">
+                    <input type="hidden" id="dataTeam" name="dataTeam">
+                    <input type="hidden" id="teamId" name="teamId">
                     <div class="form-group">
                         <label class="form-label" for="playerId">Player Name</label>
                         <small class="text-danger">*</small>
@@ -78,6 +79,7 @@
                     success: function (result) {
                         $('#formAddScorerModal .modal-title').text('Add '+result.data.team.teamName+' Match Scorer')
                         $('#dataTeam').val(team)
+                        $('#teamId').val(result.data.team.id)
                         $(formId+' #playerId').html('<option disabled selected>Select player who scored the goal</option>');
                         $.each(result.data.players, function (key, value) {
                             $(formId+' #playerId').append('<option value="' + value.id + '" data-avatar-src={{ Storage::url('') }}' + value.user.foto + '>' + value.user.firstName + ' ' + value.user.lastName + ' ~ ' + value.position.name + '</option>');

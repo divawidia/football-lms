@@ -26,6 +26,8 @@ class MatchScoreRequest extends FormRequest
             'playerId' => ['required', Rule::exists('players', 'id')],
             'assistPlayerId' => ['nullable', Rule::exists('players', 'id')],
             'minuteScored' => ['required', 'min:1', 'max:160', 'numeric'],
+            'dataTeam' => ['required', Rule::in('homeTeam', 'awayTeam')],
+            'teamId' => ['required', Rule::exists('teams', 'id')],
         ];
     }
 }
