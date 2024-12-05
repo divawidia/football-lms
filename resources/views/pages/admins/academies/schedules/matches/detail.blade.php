@@ -202,11 +202,12 @@
                     <div class="page-separator">
                         <div class="page-separator__text">{{ $data['dataSchedule']->teams[0]->teamName }} Scorer(s)</div>
                         @if(isAllAdmin() || isCoach())
-                            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span
-                                    class="material-icons mr-2">add</span> Add team scorer</a>
-                            <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span
-                                    class="material-icons mr-2">add</span>
-                                Add own goal</a>
+                            <button type="button" data-team="homeTeam" class="btn btn-primary btn-sm ml-auto addTeamScorer">
+                                <span class="material-icons mr-2">add</span> Add team scorer
+                            </button>
+                            <button type="button" data-team="addOwnGoal" class="btn btn-primary btn-sm ml-2 addOwnGoal">
+                                <span class="material-icons mr-2">add</span>
+                                Add own goal</button>
                         @endif
                     </div>
                     @if(count($data['dataSchedule']->matchScores)==0)
@@ -254,8 +255,8 @@
                         <div class="page-separator">
                             <div class="page-separator__text">{{ $data['dataSchedule']->teams[1]->teamName }} Scorer(s)</div>
                             @if(isAllAdmin() || isCoach())
-                                <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span
-                                        class="material-icons mr-2">add</span> Add team scorer</a>
+                                <button type="button" data-team="awayTeam" class="btn btn-primary btn-sm ml-auto addTeamScorer"><span
+                                        class="material-icons mr-2">add</span> Add team scorer</button>
                                 <a href="" id="addOwnGoal" class="btn btn-primary btn-sm ml-2"><span
                                         class="material-icons mr-2">add</span>
                                     Add own goal</a>

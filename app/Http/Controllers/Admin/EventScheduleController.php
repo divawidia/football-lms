@@ -436,12 +436,33 @@ class EventScheduleController extends Controller
         return ApiResponse::success($data, message:  "Successfully retrieved friendly match team data");
     }
 
-    public function getEventPLayers(EventSchedule $schedule)
+    public function getEventPLayers(Request $request, EventSchedule $schedule)
     {
-        $players = $schedule->players()->with('user', 'position')->get();
-        return ApiResponse::success($players, message:  "Successfully retrieved player data");
+        $team = $request->input('team');
+        $exceptPlayerId = $request->input('exceptPlayerId');
+
+        if ($team == 'homeTeam') {
+            $teamData = $schedule->teams[0];
+
+        } else {
+            $teamData = $schedule->teams[1];
+        }
+        $players = $schedule->players()
+            ->with('user', 'position')
+            ->whereRelation('teams', 'teamId', $teamData->id)
+            ->where('players.id', '!=', $exceptPlayerId)
+            ->get();
+
+        $responseData = [
+            'players' => $players,
+            'team' => $teamData
+        ];
+
+        return ApiResponse::success($responseData, message:  "Successfully retrieved player data");
     }
-    public function getAssistPlayer(EventSchedule $schedule, Player $player){
+    public function getAssistPlayer(Request $request, EventSchedule $schedule, Player $player){
+        $team = $request->input('team');
+
         $players = $schedule->players()->with('user', 'position')->where('players.id', '!=', $player->id)->get();
         return ApiResponse::success($players, message:  "Successfully retrieved assist player data");
     }
