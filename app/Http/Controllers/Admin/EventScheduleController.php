@@ -193,9 +193,15 @@ class EventScheduleController extends Controller
     public function showMatch(EventSchedule $schedule)
     {
         $data = $this->eventScheduleService->show($schedule);
-        $players = $data['dataSchedule']->players;
-        $coaches = $data['dataSchedule']->coaches;
-
+        $players = $schedule->players;
+        $coaches = $schedule->coaches;
+        $homeTeamMatchScorers = $this->eventScheduleService->getmatchScorers($schedule, $schedule->teams[0]);
+        $awayTeamMatchScorers = null;
+        
+        if ($schedule->matchType == 'Internal Match'){
+            $awayTeamMatchScorers = $this->eventScheduleService->getmatchScorers($schedule, $schedule->teams[1]);
+        }
+    
         if ($this->isPlayer()){
             $player = $this->getLoggedPLayerUser();
             $data = $this->eventScheduleService->show($schedule, $player);
@@ -203,8 +209,11 @@ class EventScheduleController extends Controller
 
         return view('pages.admins.academies.schedules.matches.detail', [
             'data' => $data,
+            'schedule' => $schedule,
             'players' => $players,
-            'coaches' => $coaches
+            'coaches' => $coaches,
+            'homeTeamMatchScorers' => $homeTeamMatchScorers,
+            'awayTeamMatchScorers' => $awayTeamMatchScorers,
         ]);
     }
 

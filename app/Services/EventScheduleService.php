@@ -438,6 +438,10 @@ class EventScheduleService extends Service
 
         return compact('totalParticipant', 'totalAttend', 'totalDidntAttend', 'totalIllness', 'totalInjured', 'totalOthers', 'dataSchedule', 'allSkills', 'playerPerformanceReviews');
     }
+    public function getmatchScorers(EventSchedule $schedule, $team) 
+    {
+        return $schedule->matchScores()->where('teamId', '=',$team->id)->get();
+    }
 
     public function getFriendlyMatchTeam()
     {

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Match {{ $data['dataSchedule']->teams[0]->teamName }} Vs {{ $data['dataSchedule']->teams[1]->teamName }}
+    Match {{ $schedule->teams[0]->teamName }} Vs {{ $schedule->teams[1]->teamName }}
 @endsection
 @section('page-title')
     @yield('title')
@@ -8,38 +8,38 @@
 
 @section('modal')
     <x-edit-player-attendance-modal
-            :routeGet="route('match-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
-            :routeUpdate="route('match-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
+            :routeGet="route('match-schedules.player', ['schedule' => $schedule->id, 'player' => ':id'])"
+            :routeUpdate="route('match-schedules.update-player', ['schedule' => $schedule->id, 'player' => ':id'])"/>
 
     <x-edit-coach-attendance-modal
-            :routeGet="route('match-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
-            :routeUpdate="route('match-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
+            :routeGet="route('match-schedules.coach', ['schedule' => $schedule->id, 'coach' => ':id'])"
+            :routeUpdate="route('match-schedules.update-coach', ['schedule' => $schedule->id, 'coach' => ':id'])"/>
 
-    <x-create-schedule-note-modal :routeCreate="route('match-schedules.create-note', $data['dataSchedule']->id)"
-                                  :eventName="$data['dataSchedule']->eventName"/>
+    <x-create-schedule-note-modal :routeCreate="route('match-schedules.create-note', $schedule->id)"
+                                  :eventName="$schedule->eventName"/>
     <x-edit-schedule-note-modal
-            :routeEdit="route('match-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
-            :routeUpdate="route('match-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
-            :eventName="$data['dataSchedule']->eventName"
-            :routeAfterProcess="route('match-schedules.show', $data['dataSchedule']->id)"/>
+            :routeEdit="route('match-schedules.edit-note', ['schedule' => $schedule->id, 'note' => ':id'])"
+            :routeUpdate="route('match-schedules.update-note', ['schedule' => $schedule->id, 'note' => ':id'])"
+            :eventName="$schedule->eventName"
+            :routeAfterProcess="route('match-schedules.show', $schedule->id)"/>
 
     <x-skill-assessments-modal/>
     <x-edit-skill-assessments-modal/>
 
     <x-add-performance-review-modal :routeCreate="route('coach.performance-reviews.store', ['player'=> ':id'])"/>
-    <x-edit-performance-review-modal :routeAfterProcess="route('match-schedules.show', $data['dataSchedule']->id)"/>
+    <x-edit-performance-review-modal :routeAfterProcess="route('match-schedules.show', $schedule->id)"/>
 
     <!-- Modal add team scorer -->
-    <x-add-team-scorer-modal :eventSchedule="$data['dataSchedule']"/>
+    <x-add-team-scorer-modal :eventSchedule="$schedule"/>
 
     <!-- Modal add team own goal scorer -->
-    <x-add-team-own-goal-modal :eventSchedule="$data['dataSchedule']"/>
+    <x-add-team-own-goal-modal :eventSchedule="$schedule"/>
 
     <!-- Modal add team match stats -->
-    <x-edit-team-match-stats-modal :eventSchedule="$data['dataSchedule']"/>
+    <x-edit-team-match-stats-modal :eventSchedule="$schedule"/>
 
     <!-- Modal update player match stats -->
-    <x-edit-player-match-stats-modal :eventSchedule="$data['dataSchedule']"/>
+    <x-edit-player-match-stats-modal :eventSchedule="$schedule"/>
 @endsection
 
 @section('content')
@@ -55,23 +55,23 @@
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex mb-3 mb-md-0">
-                <h2 class="text-white mb-0">Match {{ $data['dataSchedule']->teams[0]->teamName }} Vs {{ $data['dataSchedule']->teams[1]->teamName }}</h2>
-                <p class="lead text-white-50">{{ $data['dataSchedule']->eventType }} ~ {{ $data['dataSchedule']->matchType }} @if($data['dataSchedule']->competition) ~ {{$data['dataSchedule']->competition->name}}@endif</p>
+                <h2 class="text-white mb-0">Match {{ $schedule->teams[0]->teamName }} Vs {{ $schedule->teams[1]->teamName }}</h2>
+                <p class="lead text-white-50">{{ $schedule->eventType }} ~ {{ $schedule->matchType }} @if($schedule->competition) ~ {{$schedule->competition->name}}@endif</p>
             </div>
             @if(isAllAdmin())
                 <div class="dropdown">
                     <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action<span class="material-icons ml-3">keyboard_arrow_down</span></button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('match-schedules.edit', $data['dataSchedule']->id) }}">
+                        <a class="dropdown-item" href="{{ route('match-schedules.edit', $schedule->id) }}">
                             <span class="material-icons">edit</span> Edit Match Schedule
                         </a>
-                        @if($data['dataSchedule']->status != 'Cancelled' && $data['dataSchedule']->status != 'Completed')
-                            <button type="submit" class="dropdown-item cancelBtn" id="{{ $data['dataSchedule']->id }}">
+                        @if($schedule->status != 'Cancelled' && $schedule->status != 'Completed')
+                            <button type="submit" class="dropdown-item cancelBtn" id="{{ $schedule->id }}">
                                 <span class="material-icons text-danger">block</span>
                                 Cancel Match
                             </button>
                         @endif
-                        <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
+                        <button type="button" class="dropdown-item delete" id="{{$schedule->id}}">
                             <span class="material-icons text-danger">delete</span> Delete Match
                         </button>
                     </div>
@@ -85,33 +85,33 @@
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
                     Status :
-                    @if ($data['dataSchedule']->status == 'Scheduled')
-                        <span class="badge badge-pill badge-warning">{{ $data['dataSchedule']->status }}</span>
-                    @elseif($data['dataSchedule']->status == 'Ongoing')
-                        <span class="badge badge-pill badge-info">{{ $data['dataSchedule']->status }}</span>
-                    @elseif($data['dataSchedule']->status == 'Completed')
-                        <span class="badge badge-pill badge-success">{{ $data['dataSchedule']->status }}</span>
+                    @if ($schedule->status == 'Scheduled')
+                        <span class="badge badge-pill badge-warning">{{ $schedule->status }}</span>
+                    @elseif($schedule->status == 'Ongoing')
+                        <span class="badge badge-pill badge-info">{{ $schedule->status }}</span>
+                    @elseif($schedule->status == 'Completed')
+                        <span class="badge badge-pill badge-success">{{ $schedule->status }}</span>
                     @else
-                        <span class="badge badge-pill badge-danger">{{ $data['dataSchedule']->status }}</span>
+                        <span class="badge badge-pill badge-danger">{{ $schedule->status }}</span>
                     @endif
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                    {{ date('D, M d Y', strtotime($data['dataSchedule']->date)) }}
+                    {{ date('D, M d Y', strtotime($schedule->date)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }}
-                    - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
+                    {{ date('h:i A', strtotime($schedule->startTime)) }}
+                    - {{ date('h:i A', strtotime($schedule->endTime)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                    {{ $data['dataSchedule']->place }}
+                    {{ $schedule->place }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <div class="media align-items-center">
                         <span class="media-left mr-16pt">
-                            <img src="{{Storage::url($data['dataSchedule']->user->foto) }}"
+                            <img src="{{Storage::url($schedule->user->foto) }}"
                                  width="30"
                                  alt="avatar"
                                  class="rounded-circle">
@@ -119,7 +119,7 @@
                         <div class="media-body">
                             <a class="card-title m-0"
                                href="">Created
-                                by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
+                                by {{$schedule->user->firstName}} {{$schedule->user->lastName}}</a>
                             <p class="text-50 lh-1 mb-0">Admin</p>
                         </div>
                     </div>
@@ -137,7 +137,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#matchStats-tab">Match Stats</a>
                 </li>
-                @if($data['dataSchedule']->isOpponentTeamMatch == 0)
+                @if($schedule->isOpponentTeamMatch == 0)
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#playerStats-tab">Player Stats</a>
                     </li>
@@ -168,26 +168,26 @@
                     <div class="card-body">
                         <div class="row d-flex">
                             <div class="col-4 d-flex flex-column flex-md-row align-items-center">
-                                <img src="{{ Storage::url($data['dataSchedule']->teams[0]->logo) }}"
+                                <img src="{{ Storage::url($schedule->teams[0]->logo) }}"
                                      width="50"
                                      height="50"
                                      class="rounded-circle img-object-fit-cover"
                                      alt="instructor">
                                 <div class="ml-md-3 text-center text-md-left">
-                                    <h5 class="mb-0">{{ $data['dataSchedule']->teams[0]->teamName }}</h5>
-                                    <p class="text-50 lh-1 mb-0">{{ $data['dataSchedule']->teams[0]->ageGroup }}</p>
+                                    <h5 class="mb-0">{{ $schedule->teams[0]->teamName }}</h5>
+                                    <p class="text-50 lh-1 mb-0">{{ $schedule->teams[0]->ageGroup }}</p>
                                 </div>
                             </div>
                             <div class="col-4 text-center">
-                                <h2 class="mb-0">{{ $data['dataSchedule']->teams[0]->pivot->teamScore }}
-                                    - {{ $data['dataSchedule']->teams[1]->pivot->teamScore }}</h2>
+                                <h2 class="mb-0">{{ $schedule->teams[0]->pivot->teamScore }}
+                                    - {{ $schedule->teams[1]->pivot->teamScore }}</h2>
                             </div>
                             <div class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
                                 <div class="mr-md-3 text-center text-md-right">
-                                    <h5 class="mb-0">{{ $data['dataSchedule']->teams[1]->teamName }}</h5>
-                                    <p class="text-50 lh-1 mb-0">{{ $data['dataSchedule']->teams[1]->ageGroup }}</p>
+                                    <h5 class="mb-0">{{ $schedule->teams[1]->teamName }}</h5>
+                                    <p class="text-50 lh-1 mb-0">{{ $schedule->teams[1]->ageGroup }}</p>
                                 </div>
-                                <img src="{{ Storage::url($data['dataSchedule']->teams[1]->logo) }}"
+                                <img src="{{ Storage::url($schedule->teams[1]->logo) }}"
                                      width="50"
                                      height="50"
                                      class="rounded-circle img-object-fit-cover"
@@ -197,24 +197,29 @@
                     </div>
                 </div>
 
-                @if($data['dataSchedule']->isOpponentTeamMatch == 0)
-                    {{--    Match Scorer    --}}
+                {{--    Match Scorer    --}}
+                @if($schedule->isOpponentTeamMatch == 0)
+
                     <div class="page-separator">
-                        <div class="page-separator__text">{{ $data['dataSchedule']->teams[0]->teamName }} Scorer(s)</div>
+                        <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} Scorer(s)</div>
+                        
                         @if(isAllAdmin() || isCoach())
                             <button type="button" data-team="homeTeam" class="btn btn-primary btn-sm ml-auto addTeamScorer">
-                                <span class="material-icons mr-2">add</span> Add team scorer
+                                <span class="material-icons mr-2">add</span> 
+                                Add team scorer
                             </button>
                             <button type="button" data-team="addOwnGoal" class="btn btn-primary btn-sm ml-2 addOwnGoal">
                                 <span class="material-icons mr-2">add</span>
-                                Add own goal</button>
+                                Add own goal
+                            </button>
                         @endif
                     </div>
-                    @if(count($data['dataSchedule']->matchScores)==0)
+                    
+                    @if(count($homeTeamMatchScorers)==0)
                         <x-warning-alert text="You haven't added any team scorer yet"/>
                     @else
                         <div class="row">
-                            @foreach($data['dataSchedule']->matchScores as $matchScore)
+                            @foreach($homeTeamMatchScorers as $matchScore)
                                 <div class="col-md-6">
                                     <div class="card" id="{{$matchScore->id}}">
                                         <div class="card-body d-flex align-items-center flex-row text-left">
@@ -251,9 +256,9 @@
                         </div>
                     @endif
 
-                    @if($data['dataSchedule']->matchType == 'Internal Match')
+                    @if($schedule->matchType == 'Internal Match')
                         <div class="page-separator">
-                            <div class="page-separator__text">{{ $data['dataSchedule']->teams[1]->teamName }} Scorer(s)</div>
+                            <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Scorer(s)</div>
                             @if(isAllAdmin() || isCoach())
                                 <button type="button" data-team="awayTeam" class="btn btn-primary btn-sm ml-auto addTeamScorer"><span
                                         class="material-icons mr-2">add</span> Add team scorer</button>
@@ -262,11 +267,11 @@
                                     Add own goal</a>
                             @endif
                         </div>
-                        @if(count($data['dataSchedule']->matchScores)==0)
+                        @if(count($awayTeamMatchScorers)==0)
                             <x-warning-alert text="You haven't added any team scorer yet"/>
                         @else
                             <div class="row">
-                                @foreach($data['dataSchedule']->matchScores as $matchScore)
+                                @foreach($awayTeamMatchScorers as $matchScore)
                                     <div class="col-md-6">
                                         <div class="card" id="{{$matchScore->id}}">
                                             <div class="card-body d-flex align-items-center flex-row text-left">
@@ -282,8 +287,8 @@
                                                     @if($matchScore->isOwnGoal == 1)
                                                         <p class="text-50 lh-1 mb-0"><strong>Own Goal</strong></p>
                                                     @elseif($matchScore->assistPlayer)
-                                                        <p class="text-50 lh-1 mb-0">Assist
-                                                            : {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
+                                                        <p class="text-50 lh-1 mb-0">
+                                                            Assist: {{ $matchScore->assistPlayer->user->firstName }} {{ $matchScore->assistPlayer->user->lastName }}</p>
                                                     @endif
                                                 </div>
                                                 @if(isAllAdmin() || isCoach())
@@ -320,20 +325,20 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-6 d-flex align-items-center">
-                                <img src="{{ Storage::url($data['dataSchedule']->teams[0]->logo) }}"
+                                <img src="{{ Storage::url($schedule->teams[0]->logo) }}"
                                      width="50"
                                      height="50"
                                      class="rounded-circle img-object-fit-cover"
                                      alt="instructor">
                                 <div class="flex ml-3">
-                                    <h5 class="mb-0">{{ $data['dataSchedule']->teams[0]->teamName }}</h5>
+                                    <h5 class="mb-0">{{ $schedule->teams[0]->teamName }}</h5>
                                 </div>
                             </div>
                             <div class="col-6 d-flex justify-content-end align-items-center">
                                 <div class="mr-3">
-                                    <h5 class="mb-0">{{ $data['dataSchedule']->teams[1]->teamName }}</h5>
+                                    <h5 class="mb-0">{{ $schedule->teams[1]->teamName }}</h5>
                                 </div>
-                                <img src="{{ Storage::url($data['dataSchedule']->teams[1]->logo) }}"
+                                <img src="{{ Storage::url($schedule->teams[1]->logo) }}"
                                      width="50"
                                      height="50"
                                      class="rounded-circle img-object-fit-cover"
@@ -345,143 +350,143 @@
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamPossesion }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamPossesion }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Possession %</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamPossesion }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamPossesion }}</strong>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamShotOnTarget }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamShotOnTarget }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Shots on target</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamShotOnTarget }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamShotOnTarget }}</strong>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamShots }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamShots }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Shots</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamShots }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamShots }}</strong>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamTouches }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamTouches }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Touches</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamTouches }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamTouches }}</strong>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamPasses }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamPasses }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Passes</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamPasses }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamPasses }}</strong>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamTackles }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamTackles }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Tackles</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamTackles }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamTackles }}</strong>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamClearances }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamClearances }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Clearances</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamClearances }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamClearances }}</strong>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamCorners }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamCorners }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Corners</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamCorners }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamCorners }}</strong>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamOffsides }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamOffsides }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Offsides</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamOffsides }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamOffsides }}</strong>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamYellowCards }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamYellowCards }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Yellow cards</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamYellowCards }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamYellowCards }}</strong>
                                 </div>
                             </div>
                         </li>
                         <li class="list-group-item">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamRedCards }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[0]->pivot->teamRedCards }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Red cards</strong>
                                 </div>
                                 <div class="col-4">
-                                    <strong class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamRedCards }}</strong>
+                                    <strong class="flex">{{ $schedule->teams[1]->pivot->teamRedCards }}</strong>
                                 </div>
                             </div>
                         </li>
@@ -489,14 +494,14 @@
                             <div class="row text-center">
                                 <div class="col-4">
                                     <strong
-                                        class="flex">{{ $data['dataSchedule']->teams[0]->pivot->teamFoulsConceded }}</strong>
+                                        class="flex">{{ $schedule->teams[0]->pivot->teamFoulsConceded }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Fouls conceded</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong
-                                        class="flex">{{ $data['dataSchedule']->teams[1]->pivot->teamFoulsConceded }}</strong>
+                                        class="flex">{{ $schedule->teams[1]->pivot->teamFoulsConceded }}</strong>
                                 </div>
                             </div>
                         </li>
@@ -504,7 +509,7 @@
                 </div>
             </div>
 
-            @if($data['dataSchedule']->isOpponentTeamMatch == 0)
+            @if($schedule->isOpponentTeamMatch == 0)
                 {{--    Player Stats    --}}
                 <div class="tab-pane fade" id="playerStats-tab" role="tabpanel">
                     <div class="page-separator">
@@ -578,11 +583,11 @@
                             <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
                         @endif
                     </div>
-                    @if(count($data['dataSchedule']->notes)==0)
+                    @if(count($schedule->notes)==0)
                         <x-warning-alert text="Match session note haven't created yet by coach"/>
                     @endif
-                    @foreach($data['dataSchedule']->notes as $note)
-                        <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id'])"/>
+                    @foreach($schedule->notes as $note)
+                        <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
                     @endforeach
                 </div>
 
@@ -592,7 +597,7 @@
                         <div class="page-separator__text">player skills evaluation</div>
                     </div>
                     @if(isAllAdmin() || isCoach())
-                        <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])" tableId="playerSkillsTable"/>
+                        <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="playerSkillsTable"/>
                     @elseif(isPlayer())
                         <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
                     @endif
@@ -604,7 +609,7 @@
                         <div class="page-separator__text">player performance review</div>
                     </div>
                     @if(isAllAdmin() || isCoach())
-                        <x-player-performance-review-event-table :route="route('match-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])" tableId="playerPerformanceReviewTable"/>
+                        <x-player-performance-review-event-table :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])" tableId="playerPerformanceReviewTable"/>
                     @elseif(isPlayer())
                         @if(count($data['playerPerformanceReviews'])==0)
                             <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
@@ -623,29 +628,29 @@
                                  :processRoute="route('match-schedules.destroy', ['schedule' => ':id'])"
                                  :routeAfterProcess="route('match-schedules.index')"
                                  method="DELETE"
-                                 confirmationText="Are you sure to delete this match {{ $data['dataSchedule']->teams[0]->teamName }} Vs. {{ $data['dataSchedule']->teams[1]->teamName }}?"
-                                 errorText="Something went wrong when deleting the match {{ $data['dataSchedule']->teams[0]->teamName }} Vs. {{ $data['dataSchedule']->teams[1]->teamName }}!"/>
+                                 confirmationText="Are you sure to delete this match {{ $schedule->teams[0]->teamName }} Vs. {{ $schedule->teams[1]->teamName }}?"
+                                 errorText="Something went wrong when deleting the match {{ $schedule->teams[0]->teamName }} Vs. {{ $schedule->teams[1]->teamName }}!"/>
 
     {{--    delete team scorer confirmation   --}}
     <x-process-data-confirmation btnClass=".delete-scorer"
-                                 :processRoute="route('match-schedules.destroy-match-scorer', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id'])"
-                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $data['dataSchedule']->id])"
+                                 :processRoute="route('match-schedules.destroy-match-scorer', ['schedule' => $schedule->id, 'scorer'=>':id'])"
+                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $schedule->id])"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this scorer?"
                                  errorText="Something went wrong when deleting match scorer!"/>
 
     {{--    delete own goal player confirmation   --}}
     <x-process-data-confirmation btnClass=".delete-own-goal"
-                                 :processRoute="route('match-schedules.destroy-own-goal', ['schedule' => $data['dataSchedule']->id, 'scorer'=>':id'])"
-                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $data['dataSchedule']->id])"
+                                 :processRoute="route('match-schedules.destroy-own-goal', ['schedule' => $schedule->id, 'scorer'=>':id'])"
+                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $schedule->id])"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this own goal?"
                                  errorText="Something went wrong when deleting own goal scorer!"/>
 
     {{--   cancel match  --}}
     <x-process-data-confirmation btnClass=".cancelBtn"
-                                 :processRoute="route('cancel-match', ['schedule' => $data['dataSchedule']->id])"
-                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $data['dataSchedule']->id])"
+                                 :processRoute="route('cancel-match', ['schedule' => $schedule->id])"
+                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $schedule->id])"
                                  method="PATCH"
                                  confirmationText="Are you sure to cancel this match session?"
                                  errorText="Something went wrong when cancelling match session!"/>
@@ -659,7 +664,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('match-schedules.index-player-match-stats', $data['dataSchedule']->id) !!}',
+                    url: '{!! route('match-schedules.index-player-match-stats', $schedule->id) !!}',
                 },
                 columns: [
                     {data: 'name', name: 'name'},
