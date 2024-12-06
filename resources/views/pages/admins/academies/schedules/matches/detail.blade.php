@@ -151,6 +151,12 @@
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Attendance-tab">{{ $schedule->teams[1]->teamName }} Match Attendance</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[0]->id }}Notes-tab">{{ $schedule->teams[0]->teamName }} Match Session Notes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Notes-tab">{{ $schedule->teams[1]->teamName }} Match Session Notes</a>
+                        </li>
                     @else
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#playerStats-tab">Player Stats</a>
@@ -159,10 +165,10 @@
                             <a class="nav-link" data-toggle="tab" href="#attendance-tab">Match Attendance</a>
                         </li>
                     @endif
-                    
-                    
+
+
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#notes-tab">Match Note</a>
+                        <a class="nav-link" data-toggle="tab" href="#notes-tab">Match Session Notes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#skills-tab">skills evaluation</a>
@@ -219,10 +225,10 @@
 
                     <div class="page-separator">
                         <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} Scorer(s)</div>
-                        
-                        @if(isAllAdmin() || isCoach())
+
+                        @if(isAllAdmin())
                             <button type="button" data-team="homeTeam" class="btn btn-primary btn-sm ml-auto addTeamScorer">
-                                <span class="material-icons mr-2">add</span> 
+                                <span class="material-icons mr-2">add</span>
                                 Add team scorer
                             </button>
                             <button type="button" data-team="homeTeam" class="btn btn-primary btn-sm ml-2 addOwnGoal">
@@ -231,7 +237,7 @@
                             </button>
                         @endif
                     </div>
-                    
+
                     @if(count($homeTeamMatchScorers)==0)
                         <x-warning-alert text="You haven't added any team scorer yet"/>
                     @else
@@ -276,7 +282,7 @@
                     @if($schedule->matchType == 'Internal Match')
                         <div class="page-separator">
                             <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Scorer(s)</div>
-                            @if(isAllAdmin() || isCoach())
+                            @if(isAllAdmin())
                                 <button type="button" data-team="awayTeam" class="btn btn-primary btn-sm ml-auto addTeamScorer"><span
                                         class="material-icons mr-2">add</span> Add team scorer</button>
                                 <button type="button" data-team="awayTeam" class="btn btn-primary btn-sm ml-2 addOwnGoal">
@@ -333,7 +339,7 @@
             <div class="tab-pane fade" id="matchStats-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Match Stats</div>
-                    @if(isAllAdmin() || isCoach())
+                    @if(isAllAdmin())
                         <a href="" id="updateMatchStats" class="btn btn-primary btn-sm ml-auto"><span
                                 class="material-icons mr-2">add</span>
                             Update match stats</a>
@@ -528,7 +534,7 @@
             </div>
 
             @if($schedule->isOpponentTeamMatch == 0)
-                
+
                 @if ($schedule->matchType == 'Internal Match')
                         {{--    Player Stats    --}}
                         <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}PlayerStats-tab" role="tabpanel">
@@ -595,7 +601,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         {{--     Attendance    --}}
                         <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}Attendance-tab" role="tabpanel">
                             <div class="page-separator">
@@ -626,7 +632,6 @@
                                 @include('pages.admins.academies.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
                             </div>
                         </div>
-
                         <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Attendance-tab" role="tabpanel">
                             <div class="page-separator">
                                 <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Attendance Overview</div>
@@ -655,6 +660,36 @@
                             <div class=".coach-attendance">
                                 @include('pages.admins.academies.schedules.coach-attendance-data', ['coaches' => $awayCoaches])
                             </div>
+                        </div>
+
+                        {{--    Match Note    --}}
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}Notes-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} Match Note</div>
+                                @if(isAllAdmin() || isCoach())
+                                    <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+                                @endif
+                            </div>
+                            @if(count($schedule->notes)==0)
+                                <x-warning-alert text="Match session note haven't created yet by coach"/>
+                            @endif
+                            @foreach($schedule->notes as $note)
+                                <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
+                            @endforeach
+                        </div>
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Notes-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Match Note</div>
+                                @if(isAllAdmin() || isCoach())
+                                    <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+                                @endif
+                            </div>
+                            @if(count($schedule->notes)==0)
+                                <x-warning-alert text="Match session note haven't created yet by coach"/>
+                            @endif
+                            @foreach($schedule->notes as $note)
+                                <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
+                            @endforeach
                         </div>
                     @else
                         <div class="tab-pane fade" id="playerStats-tab" role="tabpanel">
@@ -719,27 +754,24 @@
                                 @include('pages.admins.academies.schedules.coach-attendance-data')
                             </div>
                         </div>
+                        {{--    Match Note    --}}
+                        <div class="tab-pane fade" id="notes-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">Match Note</div>
+                                @if(isAllAdmin() || isCoach())
+                                    <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+                                @endif
+                            </div>
+                            @if(count($schedule->notes)==0)
+                                <x-warning-alert text="Match session note haven't created yet by coach"/>
+                            @endif
+                            @foreach($schedule->notes as $note)
+                                <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
+                            @endforeach
+                        </div>
                     @endif
-                    
-                
 
-                
 
-                {{--    Training Note    --}}
-                <div class="tab-pane fade" id="notes-tab" role="tabpanel">
-                    <div class="page-separator">
-                        <div class="page-separator__text">Match Note</div>
-                        @if(isAllAdmin() || isCoach())
-                            <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
-                        @endif
-                    </div>
-                    @if(count($schedule->notes)==0)
-                        <x-warning-alert text="Match session note haven't created yet by coach"/>
-                    @endif
-                    @foreach($schedule->notes as $note)
-                        <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
-                    @endforeach
-                </div>
 
                 {{--    PLAYER SKILLS EVALUATION SECTION    --}}
                 <div class="tab-pane fade" id="skills-tab" role="tabpanel">
@@ -907,7 +939,7 @@
                     ]
                 });
             @endif
-            
+
         });
     </script>
 @endpush
