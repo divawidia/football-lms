@@ -193,9 +193,20 @@ class EventScheduleController extends Controller
     public function showMatch(EventSchedule $schedule)
     {
         $data = $this->eventScheduleService->show($schedule);
-        $homePlayers = $schedule->players()->where('teamId', $schedule->teams[0]->id)->get();
+
+        if ($schedule->players[0]->teamId != null) {
+            $homePlayers = $schedule->players()->where('teamId', $schedule->teams[0]->id)->get();
+        } else {
+            $homePlayers = $schedule->players;
+        }
+
+        if ($schedule->coaches[0]->teamId != null) {
+            $homeCoaches = $schedule->coaches()->where('teamId', $schedule->teams[0]->id)->get();
+        } else {
+            $homeCoaches = $schedule->coaches;
+        }
+
         $awayPlayers = null;
-        $homeCoaches = $schedule->coaches()->where('teamId', $schedule->teams[0]->id)->get();
         $awayCoaches = null;
         $homeTeamMatchScorers = $this->eventScheduleService->getmatchScorers($schedule, $schedule->teams[0]);
         $awayTeamMatchScorers = null;

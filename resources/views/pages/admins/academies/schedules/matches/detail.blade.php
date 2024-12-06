@@ -802,12 +802,12 @@
                                 <div class="page-separator__text">Attendance Overview</div>
                             </div>
                             <div class="row card-group-row">
-                                @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$data['totalParticipant'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => 'Attended', 'data'=>$data['totalAttend'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$data['totalDidntAttend'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Illness", 'data'=>$data['totalIllness'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Injured", 'data'=>$data['totalInjured'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Others", 'data'=>$data['totalOthers'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$homeTeamAttendance['totalParticipant'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => 'Attended', 'data'=>$homeTeamAttendance['totalAttend'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$homeTeamAttendance['totalDidntAttend'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Illness", 'data'=>$homeTeamAttendance['totalIllness'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Injured", 'data'=>$homeTeamAttendance['totalInjured'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Others", 'data'=>$homeTeamAttendance['totalOthers'], 'dataThisMonth'=>null])
                             </div>
 
                             {{--    Player Attendance    --}}
@@ -815,7 +815,7 @@
                                 <div class="page-separator__text">Player Attendance</div>
                             </div>
                             <div class=".player-attendance">
-                                @include('pages.admins.academies.schedules.player-attendance-data')
+                                @include('pages.admins.academies.schedules.player-attendance-data', ['players' => $homePlayers])
                             </div>
 
                             {{--    Coach Attendance    --}}
@@ -823,7 +823,7 @@
                                 <div class="page-separator__text">Coach Attendance</div>
                             </div>
                             <div class=".coach-attendance">
-                                @include('pages.admins.academies.schedules.coach-attendance-data')
+                                @include('pages.admins.academies.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
                             </div>
                         </div>
                         {{--    Match Note    --}}
@@ -831,7 +831,7 @@
                             <div class="page-separator">
                                 <div class="page-separator__text">Match Note</div>
                                 @if(isAllAdmin() || isCoach())
-                                    <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+                                    <a href="" data-team="{{$schedule->teams[0]->id}}" class="btn btn-primary btn-sm ml-auto addNewNote"><span class="material-icons mr-2">add</span> Add new note</a>
                                 @endif
                             </div>
                             @if(count($schedule->notes)==0)
@@ -869,12 +869,6 @@
                             @endif
                         </div>
                     @endif
-
-
-
-
-
-
             @endif
         </div>
     </div>

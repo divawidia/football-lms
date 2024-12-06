@@ -423,18 +423,24 @@ class EventScheduleService extends Service
     }
     public function eventAttendance(EventSchedule $schedule, $team = null) {
 
-        $totalParticipant = $schedule->players()->where('teamId', $team->id)->count() + $schedule->coaches()->where('teamId', $team->id)->count();
+        if ($schedule->players[0]->teamId != null) {
+            $totalParticipant = $schedule->players()->where('teamId', $team->id)->count() + $schedule->coaches()->where('teamId', $team->id)->count();
+        } else {
+            $team = null;
+            $totalParticipant = $schedule->players()->count() + $schedule->coaches()->count();
+        }
 
-        $playerAttended = $this->eventScheduleRepository->playerAttendanceCount('Attended', $schedule->id, $team->id);
-        $playerIllness = $this->eventScheduleRepository->playerAttendanceCount('Illness', $schedule->id, $team->id);
-        $playerInjured = $this->eventScheduleRepository->playerAttendanceCount('Injured', $schedule->id, $team->id);
-        $playerOther = $this->eventScheduleRepository->playerAttendanceCount('Other', $schedule->id, $team->id);
+
+        $playerAttended = $this->eventScheduleRepository->playerAttendanceCount('Attended', $schedule->id, $team);
+        $playerIllness = $this->eventScheduleRepository->playerAttendanceCount('Illness', $schedule->id, $team);
+        $playerInjured = $this->eventScheduleRepository->playerAttendanceCount('Injured', $schedule->id, $team);
+        $playerOther = $this->eventScheduleRepository->playerAttendanceCount('Other', $schedule->id, $team);
         $playerDidntAttend = $playerIllness + $playerInjured + $playerOther;
 
-        $coachAttended = $this->eventScheduleRepository->coachesAttendanceCount('Attended', $schedule->id, $team->id);
-        $coachIllness = $this->eventScheduleRepository->coachesAttendanceCount('Illness', $schedule->id, $team->id);
-        $coachInjured = $this->eventScheduleRepository->coachesAttendanceCount('Injured', $schedule->id, $team->id);
-        $coachOther = $this->eventScheduleRepository->coachesAttendanceCount('Other', $schedule->id, $team->id);
+        $coachAttended = $this->eventScheduleRepository->coachesAttendanceCount('Attended', $schedule->id, $team);
+        $coachIllness = $this->eventScheduleRepository->coachesAttendanceCount('Illness', $schedule->id, $team);
+        $coachInjured = $this->eventScheduleRepository->coachesAttendanceCount('Injured', $schedule->id, $team);
+        $coachOther = $this->eventScheduleRepository->coachesAttendanceCount('Other', $schedule->id, $team);
         $coachDidntAttend = $coachIllness + $coachInjured + $coachOther;
 
         $totalAttend = $playerAttended + $coachAttended;
@@ -447,7 +453,12 @@ class EventScheduleService extends Service
 
     public function getmatchScorers(EventSchedule $schedule, $team)
     {
-        return $schedule->matchScores()->where('teamId', '=',$team->id)->get();
+        if ($schedule->matchScores[0]->teamId != null) {
+            $data = $schedule->matchScores()->where('teamId', '=',$team->id)->get();
+        } else {
+            $data = $schedule->matchScores;
+        }
+        return $data;
     }
 
     public function getFriendlyMatchTeam()

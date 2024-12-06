@@ -197,10 +197,10 @@ class EventScheduleRepository
             ->get();
     }
 
-    public function playerAttendanceCount($status, $id, $teamId = null) : int {
+    public function playerAttendanceCount($status, $id, $team = null) : int {
         $query = $this->find($id)->players()->where('attendanceStatus', $status);
-        if ($teamId) {
-            $query->where('teamId', $teamId);
+        if ($team) {
+            $query->where('teamId', $team->id);
         }
         return $query->count();
     }
