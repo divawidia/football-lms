@@ -27,6 +27,12 @@
                 ordering: true,
                 ajax: {
                     url: '{{ $route }}',
+                    @if($teamId)
+                        data: {
+                            teamId: {{ $teamId }},
+                        }
+                    @endif
+
                 },
                 pageLength: 5,
                 columns: [

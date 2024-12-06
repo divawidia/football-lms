@@ -29,9 +29,10 @@ class SkillAssessmentController extends Controller
         return view('pages.coaches.academies.skill-assessments.index');
     }
 
-    public function indexAllPlayerInEvent(EventSchedule $schedule)
+    public function indexAllPlayerInEvent(Request $request, EventSchedule $schedule)
     {
-        return $this->skillAssessmentService->indexAllPlayerInEvent($schedule);
+        $teamId = $request->input('teamId');
+        return $this->skillAssessmentService->indexAllPlayerInEvent($schedule, $teamId);
     }
 
     public function create(Player $player){

@@ -94,9 +94,14 @@ class SkillAssessmentService extends Service
             ->make();
     }
 
-    public function indexAllPlayerInEvent(EventSchedule $schedule)
+    public function indexAllPlayerInEvent(EventSchedule $schedule, $teamId = null)
     {
-        $data = $schedule->players;
+        if ($teamId) {
+            $data = $schedule->players()->where('teamId', $teamId)->get();
+        } else {
+            $data = $schedule->players;
+        }
+
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($schedule){
                 $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();

@@ -157,6 +157,12 @@
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Notes-tab">{{ $schedule->teams[1]->teamName }} Match Session Notes</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[0]->id }}Skills-tab">{{ $schedule->teams[0]->teamName }} skills evaluation</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Skills-tab">{{ $schedule->teams[1]->teamName }} skills evaluation</a>
+                        </li>
                     @else
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#playerStats-tab">Player Stats</a>
@@ -164,15 +170,17 @@
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#attendance-tab">Match Attendance</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#notes-tab">Match Session Notes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#skills-tab">skills evaluation</a>
+                        </li>
                     @endif
 
 
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#notes-tab">Match Session Notes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#skills-tab">skills evaluation</a>
-                    </li>
+
+
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#performance-tab">performance review</a>
                     </li>
@@ -694,12 +702,23 @@
                         </div>
 
                         {{--    PLAYER SKILLS EVALUATION SECTION    --}}
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}Skills-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">player skills evaluation</div>
+                            </div>
+                            @if(isAllAdmin() || isCoach())
+                                <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="team{{ $schedule->teams[0]->id }}PlayerSkillsTable" :teamId="$schedule->teams[0]->id"/>
+                            @elseif(isPlayer())
+                                <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
+                            @endif
+                        </div>
+
                         <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Skills-tab" role="tabpanel">
                             <div class="page-separator">
                                 <div class="page-separator__text">player skills evaluation</div>
                             </div>
                             @if(isAllAdmin() || isCoach())
-                                <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="playerSkillsTable"/>
+                                <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="team{{ $schedule->teams[1]->id }}PlayerSkillsTable" :teamId="$schedule->teams[1]->id"/>
                             @elseif(isPlayer())
                                 <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
                             @endif
@@ -782,21 +801,22 @@
                                 <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
                             @endforeach
                         </div>
+                        {{--    PLAYER SKILLS EVALUATION SECTION    --}}
+                        <div class="tab-pane fade" id="skills-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">player skills evaluation</div>
+                            </div>
+                            @if(isAllAdmin() || isCoach())
+                                <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="playerSkillsTable"/>
+                            @elseif(isPlayer())
+                                <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
+                            @endif
+                        </div>
                     @endif
 
 
 
-                {{--    PLAYER SKILLS EVALUATION SECTION    --}}
-                <div class="tab-pane fade" id="skills-tab" role="tabpanel">
-                    <div class="page-separator">
-                        <div class="page-separator__text">player skills evaluation</div>
-                    </div>
-                    @if(isAllAdmin() || isCoach())
-                        <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="playerSkillsTable"/>
-                    @elseif(isPlayer())
-                        <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
-                    @endif
-                </div>
+
 
                 {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
                 <div class="tab-pane fade" id="performance-tab" role="tabpanel">
