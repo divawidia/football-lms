@@ -104,10 +104,10 @@ class CoachService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="'.route('coach-managements.edit', $item->id).'"><span class="material-icons">edit</span> Edit Team</a>
-                            <a class="dropdown-item" href="'.route('coach-managements.show', $item->id).'"><span class="material-icons">visibility</span> View Team</a>
+                            <a class="dropdown-item" href="'.route('team-managements.edit', $item->id).'"><span class="material-icons">edit</span> Edit Team</a>
+                            <a class="dropdown-item" href="'.route('team-managements.show', $item->id).'"><span class="material-icons">visibility</span> View Team</a>
                             <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
-                                <span class="material-icons">delete</span> Remove coach from Team
+                                <span class="material-icons text-danger">delete</span> Remove coach from Team
                             </button>
                           </div>
                         </div>';
