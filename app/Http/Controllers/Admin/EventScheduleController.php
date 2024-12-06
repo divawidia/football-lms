@@ -18,6 +18,7 @@ use App\Models\EventSchedule;
 use App\Models\MatchScore;
 use App\Models\Player;
 use App\Models\ScheduleNote;
+use App\Models\Team;
 use App\Services\CompetitionService;
 use App\Services\EventScheduleService;
 use Exception;
@@ -194,13 +195,13 @@ class EventScheduleController extends Controller
     {
         $data = $this->eventScheduleService->show($schedule);
 
-        if ($schedule->players[0]->teamId != null) {
+        if ($schedule->players[0]->pivot->teamId != null) {
             $homePlayers = $schedule->players()->where('teamId', $schedule->teams[0]->id)->get();
         } else {
             $homePlayers = $schedule->players;
         }
 
-        if ($schedule->coaches[0]->teamId != null) {
+        if ($schedule->coaches[0]->pivot->teamId != null) {
             $homeCoaches = $schedule->coaches()->where('teamId', $schedule->teams[0]->id)->get();
         } else {
             $homeCoaches = $schedule->coaches;
@@ -214,6 +215,7 @@ class EventScheduleController extends Controller
         $awayTeamAttendance = null;
         $homeTeamNotes = $schedule->notes()->where('teamId', $schedule->teams[0]->id)->get();
         $awayTeamNotes = null;
+        $userTeams = null;
 
         if ($schedule->matchType == 'Internal Match'){
             $awayPlayers = $schedule->players()->where('teamId', $schedule->teams[1]->id)->get();
@@ -221,6 +223,17 @@ class EventScheduleController extends Controller
             $awayTeamMatchScorers = $this->eventScheduleService->getmatchScorers($schedule, $schedule->teams[1]);
             $awayTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->teams[1]);
             $awayTeamNotes = $schedule->notes()->where('teamId', $schedule->teams[1]->id)->get();
+
+            if ($this->isCoach()) {
+                $coach = $this->getLoggedCoachUser();
+                $userTeams = collect($coach->teams)->pluck('id')->all();
+
+            } elseif ($this->isPlayer()) {
+                $player = $this->getLoggedPLayerUser();
+                $userTeams = collect($player->teams)->pluck('id')->all();
+            } else {
+                $userTeams = collect(Team::all())->pluck('id')->all();
+            }
         }
 
         if ($this->isPlayer()){
@@ -241,6 +254,7 @@ class EventScheduleController extends Controller
             'awayTeamAttendance' => $awayTeamAttendance,
             'homeTeamNotes' => $homeTeamNotes,
             'awayTeamNotes' => $awayTeamNotes,
+            'userTeams' => $userTeams,
         ]);
     }
 

@@ -423,7 +423,7 @@ class EventScheduleService extends Service
     }
     public function eventAttendance(EventSchedule $schedule, $team = null) {
 
-        if ($schedule->players[0]->teamId != null) {
+        if ($schedule->players[0]->pivot->teamId != null) {
             $totalParticipant = $schedule->players()->where('teamId', $team->id)->count() + $schedule->coaches()->where('teamId', $team->id)->count();
         } else {
             $team = null;
@@ -453,11 +453,15 @@ class EventScheduleService extends Service
 
     public function getmatchScorers(EventSchedule $schedule, $team)
     {
-        if ($schedule->matchScores[0]->teamId != null) {
-            $data = $schedule->matchScores()->where('teamId', '=',$team->id)->get();
-        } else {
-            $data = $schedule->matchScores;
+        $data = [];
+        if($schedule->matchScores()->first()) {
+            if ($schedule->matchScores()->first()->teamId != null) {
+                $data = $schedule->matchScores()->where('teamId', '=',$team->id)->get();
+            } else {
+                $data = $schedule->matchScores;
+            }
         }
+
         return $data;
     }
 

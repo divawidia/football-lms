@@ -204,10 +204,10 @@ class EventScheduleRepository
         }
         return $query->count();
     }
-    public function coachesAttendanceCount($status, $id, $teamId = null) : int {
+    public function coachesAttendanceCount($status, $id, $team = null) : int {
         $query = $this->find($id)->coaches()->where('attendanceStatus', $status);
-        if ($teamId) {
-            $query->where('teamId', $teamId);
+        if ($team) {
+            $query->where('teamId', $team->id);
         }
         return $query->count();
     }
