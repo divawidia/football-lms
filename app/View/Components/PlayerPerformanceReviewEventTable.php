@@ -10,14 +10,16 @@ class PlayerPerformanceReviewEventTable extends Component
 {
     public $tableId;
     public $route;
+    public $teamId;
 
     /**
      * Create a new component instance.
      */
-    public function __construct($tableId, $route)
+    public function __construct($tableId, $route, $teamId = null)
     {
         $this->tableId = $tableId;
         $this->route = $route;
+        $this->teamId = $teamId;
     }
 
     /**

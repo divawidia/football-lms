@@ -38,9 +38,10 @@ class PlayerPerformanceReviewController extends Controller
         return $this->performanceReviewService->index($player);
     }
 
-    public function indexAllPlayerInEvent(EventSchedule $schedule)
+    public function indexAllPlayerInEvent(Request $request, EventSchedule $schedule)
     {
-        return $this->performanceReviewService->indexAllPlayerInEvent($schedule);
+        $teamId  =$request->input('teamId');
+        return $this->performanceReviewService->indexAllPlayerInEvent($schedule, $teamId);
     }
 
     public function edit(PlayerPerformanceReview $review): JsonResponse

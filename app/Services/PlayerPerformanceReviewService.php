@@ -69,9 +69,14 @@ class PlayerPerformanceReviewService extends Service
     }
 
 
-    public function indexAllPlayerInEvent(EventSchedule $schedule)
+    public function indexAllPlayerInEvent(EventSchedule $schedule, $teamId = null)
     {
-        $data = $schedule->players;
+        if ($teamId) {
+            $data = $schedule->players()->where('teamId', $teamId)->get();
+        } else {
+            $data = $schedule->players;
+        }
+
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($schedule){
                 $review = $this->performanceReviewRepository->getByPlayer($item, $schedule)->first();

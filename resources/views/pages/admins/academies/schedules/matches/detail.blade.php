@@ -163,6 +163,12 @@
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Skills-tab">{{ $schedule->teams[1]->teamName }} skills evaluation</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[0]->id }}Performance-tab">{{ $schedule->teams[0]->teamName }} performance review</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Performance-tab">{{ $schedule->teams[1]->teamName }} performance review</a>
+                        </li>
                     @else
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#playerStats-tab">Player Stats</a>
@@ -176,14 +182,15 @@
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#skills-tab">skills evaluation</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#performance-tab">performance review</a>
+                        </li>
                     @endif
 
 
 
 
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#performance-tab">performance review</a>
-                    </li>
+
                 @endif
             </ul>
         </div>
@@ -704,7 +711,7 @@
                         {{--    PLAYER SKILLS EVALUATION SECTION    --}}
                         <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}Skills-tab" role="tabpanel">
                             <div class="page-separator">
-                                <div class="page-separator__text">player skills evaluation</div>
+                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} player skills evaluation</div>
                             </div>
                             @if(isAllAdmin() || isCoach())
                                 <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="team{{ $schedule->teams[0]->id }}PlayerSkillsTable" :teamId="$schedule->teams[0]->id"/>
@@ -715,12 +722,45 @@
 
                         <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Skills-tab" role="tabpanel">
                             <div class="page-separator">
-                                <div class="page-separator__text">player skills evaluation</div>
+                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} player skills evaluation</div>
                             </div>
                             @if(isAllAdmin() || isCoach())
                                 <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="team{{ $schedule->teams[1]->id }}PlayerSkillsTable" :teamId="$schedule->teams[1]->id"/>
                             @elseif(isPlayer())
                                 <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
+                            @endif
+                        </div>
+
+                        {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}Performance-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} player performance review</div>
+                            </div>
+                            @if(isAllAdmin() || isCoach())
+                                <x-player-performance-review-event-table :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])" tableId="team{{ $schedule->teams[0]->id }}PlayerPerformanceReviewTable" :teamId="$schedule->teams[0]->id"/>
+                            @elseif(isPlayer())
+                                @if(count($data['playerPerformanceReviews'])==0)
+                                    <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
+                                @endif
+                                @foreach($data['playerPerformanceReviews'] as $review)
+                                    <x-player-event-performance-review :review="$review"/>
+                                @endforeach
+                            @endif
+                        </div>
+                        {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Performance-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} player performance review</div>
+                            </div>
+                            @if(isAllAdmin() || isCoach())
+                                <x-player-performance-review-event-table :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])" tableId="team{{ $schedule->teams[1]->id }}PlayerPerformanceReviewTable" :teamId="$schedule->teams[1]->id"/>
+                            @elseif(isPlayer())
+                                @if(count($data['playerPerformanceReviews'])==0)
+                                    <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
+                                @endif
+                                @foreach($data['playerPerformanceReviews'] as $review)
+                                    <x-player-event-performance-review :review="$review"/>
+                                @endforeach
                             @endif
                         </div>
                     @else
@@ -812,28 +852,29 @@
                                 <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
                             @endif
                         </div>
+                        {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
+                        <div class="tab-pane fade" id="performance-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">player performance review</div>
+                            </div>
+                            @if(isAllAdmin() || isCoach())
+                                <x-player-performance-review-event-table :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])" tableId="playerPerformanceReviewTable"/>
+                            @elseif(isPlayer())
+                                @if(count($data['playerPerformanceReviews'])==0)
+                                    <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
+                                @endif
+                                @foreach($data['playerPerformanceReviews'] as $review)
+                                    <x-player-event-performance-review :review="$review"/>
+                                @endforeach
+                            @endif
+                        </div>
                     @endif
 
 
 
 
 
-                {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
-                <div class="tab-pane fade" id="performance-tab" role="tabpanel">
-                    <div class="page-separator">
-                        <div class="page-separator__text">player performance review</div>
-                    </div>
-                    @if(isAllAdmin() || isCoach())
-                        <x-player-performance-review-event-table :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])" tableId="playerPerformanceReviewTable"/>
-                    @elseif(isPlayer())
-                        @if(count($data['playerPerformanceReviews'])==0)
-                            <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
-                        @endif
-                        @foreach($data['playerPerformanceReviews'] as $review)
-                            <x-player-event-performance-review :review="$review"/>
-                        @endforeach
-                    @endif
-                </div>
+
             @endif
         </div>
     </div>
