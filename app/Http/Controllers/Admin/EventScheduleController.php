@@ -201,14 +201,14 @@ class EventScheduleController extends Controller
         $awayTeamMatchScorers = null;
         $homeTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->teams[0]);
         $awayTeamAttendance = null;
-        
+
         if ($schedule->matchType == 'Internal Match'){
             $awayPlayers = $schedule->players()->where('teamId', $schedule->teams[1]->id)->get();
             $awayCoaches = $schedule->coaches()->where('teamId', $schedule->teams[1]->id)->get();
             $awayTeamMatchScorers = $this->eventScheduleService->getmatchScorers($schedule, $schedule->teams[1]);
             $awayTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->teams[1]);
         }
-    
+
         if ($this->isPlayer()){
             $player = $this->getLoggedPLayerUser();
             $data = $this->eventScheduleService->show($schedule, $player);
@@ -383,7 +383,7 @@ class EventScheduleController extends Controller
         $loggedUser = $this->getLoggedUser();
         try {
             $this->eventScheduleService->createNote($data, $schedule, $loggedUser);
-            $message = "Note for this session successfully created.";
+            $message = "Note for this ".$schedule->eventType." session successfully created.";
             return ApiResponse::success(message:  $message);
 
         } catch (Exception $e){
@@ -489,7 +489,7 @@ class EventScheduleController extends Controller
             } else {
                 $scorer = $this->eventScheduleService->storeMatchScorer($data, $schedule);
             }
-            
+
             $message = $this->getUserFullName($scorer->player->user)."'s score successfully added.";
             return ApiResponse::success(message:  $message);
 
@@ -507,7 +507,7 @@ class EventScheduleController extends Controller
             } else {
                 $this->eventScheduleService->destroyMatchScorer($schedule, $scorer);
             }
-        
+
             $message = $this->getUserFullName($scorer->player->user)."'s score successfully deleted.";
             return ApiResponse::success(message:  $message);
 

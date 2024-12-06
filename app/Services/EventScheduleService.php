@@ -280,7 +280,7 @@ class EventScheduleService extends Service
         }else {
             $data = $schedule->playerMatchStats;
         }
-    
+
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if (isAllAdmin() || isCoach()){
@@ -422,7 +422,7 @@ class EventScheduleService extends Service
         return compact('allSkills', 'playerPerformanceReviews');
     }
     public function eventAttendance(EventSchedule $schedule, $team = null) {
-        
+
         $totalParticipant = $schedule->players()->where('teamId', $team->id)->count() + $schedule->coaches()->where('teamId', $team->id)->count();
 
         $playerAttended = $this->eventScheduleRepository->playerAttendanceCount('Attended', $schedule->id, $team->id);
@@ -445,7 +445,7 @@ class EventScheduleService extends Service
         return compact('totalParticipant', 'totalAttend', 'totalDidntAttend', 'totalIllness', 'totalInjured', 'totalOthers');
     }
 
-    public function getmatchScorers(EventSchedule $schedule, $team) 
+    public function getmatchScorers(EventSchedule $schedule, $team)
     {
         return $schedule->matchScores()->where('teamId', '=',$team->id)->get();
     }
@@ -820,8 +820,8 @@ class EventScheduleService extends Service
     public function createNote($data, EventSchedule $schedule, $loggedUser){
         $data['scheduleId'] = $schedule->id;
         $note = ScheduleNote::create($data);
-        $teamParticipants = $this->userRepository->allTeamsParticipant($schedule->teams[0]);
 
+        $teamParticipants = $this->userRepository->allTeamsParticipant($schedule->teams[0]);
         if ($schedule->eventType == 'Training') {
             Notification::send($teamParticipants, new TrainingNote($loggedUser, $schedule, 'created'));
         } elseif ($schedule->eventType == 'Match') {
@@ -1030,7 +1030,7 @@ class EventScheduleService extends Service
                 ]);
             }
         }
-        
+
 
         if ($schedule->matchType == 'Internal Match') {
             $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, [
