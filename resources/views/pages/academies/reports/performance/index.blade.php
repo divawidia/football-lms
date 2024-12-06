@@ -205,30 +205,30 @@
             });
 
             @foreach($activeCompetitions as $competition)
-            @foreach($competition->groups as $group)
-            const classTable{{$group->id}} = $('#classTable{{$group->id}}').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
-                },
-                columns: [
-                    {data: 'teams', name: 'teams'},
-                    {data: 'pivot.matchPlayed', name: 'pivot.matchPlayed'},
-                    {data: 'pivot.won', name: 'pivot.won'},
-                    {data: 'pivot.drawn', name: 'pivot.drawn'},
-                    {data: 'pivot.lost', name: 'pivot.lost'},
-                    {data: 'pivot.goalsFor', name: 'pivot.goalsFor'},
-                    {data: 'pivot.goalsAgaints', name: 'pivot.goalsAgaints'},
-                    {data: 'pivot.goalsDifference', name: 'pivot.goalsDifference'},
-                    {data: 'pivot.redCards', name: 'pivot.redCards'},
-                    {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
-                    {data: 'pivot.points', name: 'pivot.points'},
-                ],
-                order: [[10, 'desc']]
-            });
-            @endforeach
+                @foreach($competition->groups as $group)
+                    const classTable{{$group->id}} = $('#classTable{{$group->id}}').DataTable({
+                        processing: true,
+                        serverSide: true,
+                        ordering: true,
+                        ajax: {
+                            url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
+                        },
+                        columns: [
+                            {data: 'teams', name: 'teams'},
+                            {data: 'pivot.matchPlayed', name: 'pivot.matchPlayed'},
+                            {data: 'pivot.won', name: 'pivot.won'},
+                            {data: 'pivot.drawn', name: 'pivot.drawn'},
+                            {data: 'pivot.lost', name: 'pivot.lost'},
+                            {data: 'pivot.goalsFor', name: 'pivot.goalsFor'},
+                            {data: 'pivot.goalsAgaints', name: 'pivot.goalsAgaints'},
+                            {data: 'pivot.goalsDifference', name: 'pivot.goalsDifference'},
+                            {data: 'pivot.redCards', name: 'pivot.redCards'},
+                            {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                            {data: 'pivot.points', name: 'pivot.points'},
+                        ],
+                        order: [[10, 'desc']]
+                    });
+                @endforeach
             @endforeach
 
             {{--$('#competitionFilter').on('change', function (e){--}}

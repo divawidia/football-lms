@@ -274,8 +274,13 @@ class EventScheduleService extends Service
         return $this->makeDataTablesMatch($data);
     }
 
-    public function dataTablesPlayerStats(EventSchedule $schedule){
-        $data = $schedule->playerMatchStats;
+    public function dataTablesPlayerStats(EventSchedule $schedule, $teamId = null){
+        if ($teamId) {
+            $data = $schedule->playerMatchStats()->where('teamId', $teamId)->get();
+        }else {
+            $data = $schedule->playerMatchStats;
+        }
+    
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if (isAllAdmin() || isCoach()){
@@ -406,28 +411,6 @@ class EventScheduleService extends Service
     }
 
     public function show(EventSchedule $schedule, Player $player = null){
-        $totalParticipant = count($schedule->players) + count($schedule->coaches);
-
-        $playerAttended = $this->eventScheduleRepository->playerAttendanceCount('Attended', $schedule->id);
-        $playerIllness = $this->eventScheduleRepository->playerAttendanceCount('Illness', $schedule->id);
-        $playerInjured = $this->eventScheduleRepository->playerAttendanceCount('Injured', $schedule->id);
-        $playerOther = $this->eventScheduleRepository->playerAttendanceCount('Other', $schedule->id);
-        $playerDidntAttend = $playerIllness + $playerInjured + $playerOther;
-
-        $coachAttended = $this->eventScheduleRepository->coachesAttendanceCount('Attended', $schedule->id);
-        $coachIllness = $this->eventScheduleRepository->coachesAttendanceCount('Illness', $schedule->id);
-        $coachInjured = $this->eventScheduleRepository->coachesAttendanceCount('Injured', $schedule->id);
-        $coachOther = $this->eventScheduleRepository->coachesAttendanceCount('Other', $schedule->id);
-        $coachDidntAttend = $coachIllness + $coachInjured + $coachOther;
-
-        $totalAttend = $playerAttended + $coachAttended;
-        $totalDidntAttend = $playerDidntAttend + $coachDidntAttend;
-        $totalIllness = $playerIllness + $coachIllness;
-        $totalInjured = $playerInjured + $coachInjured;
-        $totalOthers = $playerOther + $coachOther;
-
-        $dataSchedule = $schedule;
-
         $allSkills = null;
         $playerPerformanceReviews = null;
         if ($player){
@@ -436,8 +419,32 @@ class EventScheduleService extends Service
 
         }
 
-        return compact('totalParticipant', 'totalAttend', 'totalDidntAttend', 'totalIllness', 'totalInjured', 'totalOthers', 'dataSchedule', 'allSkills', 'playerPerformanceReviews');
+        return compact('allSkills', 'playerPerformanceReviews');
     }
+    public function eventAttendance(EventSchedule $schedule, $team = null) {
+        
+        $totalParticipant = $schedule->players()->where('teamId', $team->id)->count() + $schedule->coaches()->where('teamId', $team->id)->count();
+
+        $playerAttended = $this->eventScheduleRepository->playerAttendanceCount('Attended', $schedule->id, $team->id);
+        $playerIllness = $this->eventScheduleRepository->playerAttendanceCount('Illness', $schedule->id, $team->id);
+        $playerInjured = $this->eventScheduleRepository->playerAttendanceCount('Injured', $schedule->id, $team->id);
+        $playerOther = $this->eventScheduleRepository->playerAttendanceCount('Other', $schedule->id, $team->id);
+        $playerDidntAttend = $playerIllness + $playerInjured + $playerOther;
+
+        $coachAttended = $this->eventScheduleRepository->coachesAttendanceCount('Attended', $schedule->id, $team->id);
+        $coachIllness = $this->eventScheduleRepository->coachesAttendanceCount('Illness', $schedule->id, $team->id);
+        $coachInjured = $this->eventScheduleRepository->coachesAttendanceCount('Injured', $schedule->id, $team->id);
+        $coachOther = $this->eventScheduleRepository->coachesAttendanceCount('Other', $schedule->id, $team->id);
+        $coachDidntAttend = $coachIllness + $coachInjured + $coachOther;
+
+        $totalAttend = $playerAttended + $coachAttended;
+        $totalDidntAttend = $playerDidntAttend + $coachDidntAttend;
+        $totalIllness = $playerIllness + $coachIllness;
+        $totalInjured = $playerInjured + $coachInjured;
+        $totalOthers = $playerOther + $coachOther;
+        return compact('totalParticipant', 'totalAttend', 'totalDidntAttend', 'totalIllness', 'totalInjured', 'totalOthers');
+    }
+
     public function getmatchScorers(EventSchedule $schedule, $team) 
     {
         return $schedule->matchScores()->where('teamId', '=',$team->id)->get();
@@ -972,21 +979,6 @@ class EventScheduleService extends Service
 
     public function updateMatchStats(array $data, EventSchedule $schedule)
     {
-//        $schedule->coachMatchStats()->updateExistingPivot($schedule->teams[0]->id, [
-//                'teamPossesion' => $data['teamAPossession'],
-//                'teamShotOnTarget' => $data['teamAShotOnTarget'],
-//                'teamShots' => $data['teamAShots'],
-//                'teamTouches' => $data['teamATouches'],
-//                'teamTackles' => $data['teamATackles'],
-//                'teamClearances' => $data['teamAClearances'],
-//                'teamCorners' => $data['teamACorners'],
-//                'teamOffsides' => $data['teamAOffsides'],
-//                'teamYellowCards' => $data['teamAYellowCards'],
-//                'teamRedCards' => $data['teamARedCards'],
-//                'teamFoulsConceded' => $data['teamAFoulsConceded'],
-//                'teamPasses' => $data['teamAPasses'],
-//            ]);
-
         if ($schedule->isOpponentTeamMatch == '1'){
             $schedule->teams()->updateExistingPivot($schedule->teams[0]->id, [
                 'teamScore' => $data['teamATeamScore'],
@@ -1020,7 +1012,8 @@ class EventScheduleService extends Service
                 'teamPasses' => $data['teamAPasses'],
             ]);
             // update match stats data of each coach match stats
-            foreach ($schedule->coaches as $coach){
+            $coaches = $schedule->coachMatchStats()->where('teamId', $schedule->teams[0]->id)->get();
+            foreach ($coaches as $coach){
                 $schedule->coachMatchStats()->updateExistingPivot($coach->id, [
                     'teamPossesion' => $data['teamAPossession'],
                     'teamShotOnTarget' => $data['teamAShotOnTarget'],
@@ -1036,25 +1029,60 @@ class EventScheduleService extends Service
                     'teamPasses' => $data['teamAPasses'],
                 ]);
             }
-
         }
+        
 
-        $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, [
-            'teamScore' => $data['teamBTeamScore'],
-            'teamOwnGoal' => $data['teamBOwnGoal'],
-            'teamPossesion' => $data['teamBPossession'],
-            'teamShotOnTarget' => $data['teamBShotOnTarget'],
-            'teamShots' => $data['teamBShots'],
-            'teamTouches' => $data['teamBTouches'],
-            'teamTackles' => $data['teamBTackles'],
-            'teamClearances' => $data['teamBClearances'],
-            'teamCorners' => $data['teamBCorners'],
-            'teamOffsides' => $data['teamBOffsides'],
-            'teamYellowCards' => $data['teamBYellowCards'],
-            'teamRedCards' => $data['teamBRedCards'],
-            'teamFoulsConceded' => $data['teamBFoulsConceded'],
-            'teamPasses' => $data['teamBPasses'],
-        ]);
+        if ($schedule->matchType == 'Internal Match') {
+            $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, [
+                'teamPossesion' => $data['teamBPossession'],
+                'teamShotOnTarget' => $data['teamBShotOnTarget'],
+                'teamShots' => $data['teamBShots'],
+                'teamTouches' => $data['teamBTouches'],
+                'teamTackles' => $data['teamBTackles'],
+                'teamClearances' => $data['teamBClearances'],
+                'teamCorners' => $data['teamBCorners'],
+                'teamOffsides' => $data['teamBOffsides'],
+                'teamYellowCards' => $data['teamBYellowCards'],
+                'teamRedCards' => $data['teamBRedCards'],
+                'teamFoulsConceded' => $data['teamBFoulsConceded'],
+                'teamPasses' => $data['teamBPasses'],
+            ]);
+
+            $coaches = $schedule->coachMatchStats()->where('teamId', $schedule->teams[1]->id)->get();
+            foreach ($coaches as $coach){
+                $schedule->coachMatchStats()->updateExistingPivot($coach->id, [
+                    'teamPossesion' => $data['teamBPossession'],
+                    'teamShotOnTarget' => $data['teamBShotOnTarget'],
+                    'teamShots' => $data['teamBShots'],
+                    'teamTouches' => $data['teamBTouches'],
+                    'teamTackles' => $data['teamBTackles'],
+                    'teamClearances' => $data['teamBClearances'],
+                    'teamCorners' => $data['teamBCorners'],
+                    'teamOffsides' => $data['teamBOffsides'],
+                    'teamYellowCards' => $data['teamBYellowCards'],
+                    'teamRedCards' => $data['teamBRedCards'],
+                    'teamFoulsConceded' => $data['teamBFoulsConceded'],
+                    'teamPasses' => $data['teamBPasses'],
+                ]);
+            }
+        } else {
+            $schedule->teams()->updateExistingPivot($schedule->teams[1]->id, [
+                'teamScore' => $data['teamBTeamScore'],
+                'teamOwnGoal' => $data['teamBOwnGoal'],
+                'teamPossesion' => $data['teamBPossession'],
+                'teamShotOnTarget' => $data['teamBShotOnTarget'],
+                'teamShots' => $data['teamBShots'],
+                'teamTouches' => $data['teamBTouches'],
+                'teamTackles' => $data['teamBTackles'],
+                'teamClearances' => $data['teamBClearances'],
+                'teamCorners' => $data['teamBCorners'],
+                'teamOffsides' => $data['teamBOffsides'],
+                'teamYellowCards' => $data['teamBYellowCards'],
+                'teamRedCards' => $data['teamBRedCards'],
+                'teamFoulsConceded' => $data['teamBFoulsConceded'],
+                'teamPasses' => $data['teamBPasses'],
+            ]);
+        }
 
         return $schedule;
     }

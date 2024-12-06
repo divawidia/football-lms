@@ -65,6 +65,7 @@
                                        name="teamAPossession"
                                        min="0"
                                        max="100"
+                                       required
                                        value="{{ old('teamAPossession', $eventSchedule->teams[0]->pivot->teamPossesion) }}"
                                        placeholder="Input team possession">
                                 <span class="invalid-feedback teamAPossession_error" role="alert">
@@ -79,6 +80,7 @@
                                        id="teamAShotOnTarget"
                                        name="teamAShotOnTarget"
                                        min="0"
+                                       required
                                        value="{{ old('teamAShotOnTarget', $eventSchedule->teams[0]->pivot->teamShotOnTarget) }}"
                                        placeholder="Input team Shot on Target">
                                 <span class="invalid-feedback teamAShotOnTarget_error" role="alert">
@@ -94,6 +96,7 @@
                                            id="teamAShots"
                                            name="teamAShots"
                                            min="0"
+                                           required
                                            value="{{ old('teamAShots', $eventSchedule->teams[0]->pivot->teamShots) }}"
                                            placeholder="Input team Shot">
                                     <span class="invalid-feedback teamAShots_error" role="alert">
@@ -112,6 +115,7 @@
                                            id="teamAShots"
                                            name="teamAShots"
                                            min="0"
+                                           required
                                            value="{{ old('teamAShots', $eventSchedule->teams[0]->pivot->teamShots) }}"
                                            placeholder="Input team Shot">
                                     <span class="invalid-feedback teamAShots_error" role="alert">
@@ -127,7 +131,7 @@
                                        id="teamATouches"
                                        name="teamATouches"
                                        min="0"
-
+                                        required
                                        value="{{ old('teamATouches', $eventSchedule->teams[0]->pivot->teamTouches) }}"
                                        placeholder="Input team Touches">
                                 <span class="invalid-feedback teamATouches_error" role="alert">
@@ -272,35 +276,37 @@
                     </div>
                     <div class="row">
                         <div class="col-6 col-md-3">
-                            <div class="form-group">
-                                <label class="form-label" for="teamBTeamScore">Team Score</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBTeamScore"
-                                       name="teamBTeamScore"
-                                       min="0"
-                                       max="100"
-                                       value="{{ old('teamBTeamScore', $eventSchedule->teams[1]->pivot->teamScore) }}"
-                                       placeholder="Input team Team Score">
-                                <span class="invalid-feedback teamBTeamScore_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamBOwnGoal">Own Goal</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBOwnGoal"
-                                       name="teamBOwnGoal"
-                                       min="0"
-                                       value="{{ old('teamBOwnGoal', $eventSchedule->teams[1]->pivot->teamOwnGoal) }}"
-                                       placeholder="Input team own goal">
-                                <span class="invalid-feedback teamBOwnGoal_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
+                            @if ($eventSchedule->matchType != 'Internal Match')
+                                <div class="form-group">
+                                    <label class="form-label" for="teamBTeamScore">Team Score</label>
+                                    <small class="text-danger">*</small>
+                                    <input type="number"
+                                        class="form-control"
+                                        id="teamBTeamScore"
+                                        name="teamBTeamScore"
+                                        min="0"
+                                        max="100"
+                                        value="{{ old('teamBTeamScore', $eventSchedule->teams[1]->pivot->teamScore) }}"
+                                        placeholder="Input team Team Score">
+                                    <span class="invalid-feedback teamBTeamScore_error" role="alert">
+                                            <strong></strong>
+                                        </span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="teamBOwnGoal">Own Goal</label>
+                                    <small class="text-danger">*</small>
+                                    <input type="number"
+                                        class="form-control"
+                                        id="teamBOwnGoal"
+                                        name="teamBOwnGoal"
+                                        min="0"
+                                        value="{{ old('teamBOwnGoal', $eventSchedule->teams[1]->pivot->teamOwnGoal) }}"
+                                        placeholder="Input team own goal">
+                                    <span class="invalid-feedback teamBOwnGoal_error" role="alert">
+                                            <strong></strong>
+                                        </span>
+                                </div>
+                            @endif
                             <div class="form-group">
                                 <label class="form-label" for="teamBPossession">Possession</label>
                                 <small class="text-danger">*</small>

@@ -193,13 +193,20 @@ class EventScheduleController extends Controller
     public function showMatch(EventSchedule $schedule)
     {
         $data = $this->eventScheduleService->show($schedule);
-        $players = $schedule->players;
-        $coaches = $schedule->coaches;
+        $homePlayers = $schedule->players()->where('teamId', $schedule->teams[0]->id)->get();
+        $awayPlayers = null;
+        $homeCoaches = $schedule->coaches()->where('teamId', $schedule->teams[0]->id)->get();
+        $awayCoaches = null;
         $homeTeamMatchScorers = $this->eventScheduleService->getmatchScorers($schedule, $schedule->teams[0]);
         $awayTeamMatchScorers = null;
+        $homeTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->teams[0]);
+        $awayTeamAttendance = null;
         
         if ($schedule->matchType == 'Internal Match'){
+            $awayPlayers = $schedule->players()->where('teamId', $schedule->teams[1]->id)->get();
+            $awayCoaches = $schedule->coaches()->where('teamId', $schedule->teams[1]->id)->get();
             $awayTeamMatchScorers = $this->eventScheduleService->getmatchScorers($schedule, $schedule->teams[1]);
+            $awayTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->teams[1]);
         }
     
         if ($this->isPlayer()){
@@ -210,10 +217,14 @@ class EventScheduleController extends Controller
         return view('pages.admins.academies.schedules.matches.detail', [
             'data' => $data,
             'schedule' => $schedule,
-            'players' => $players,
-            'coaches' => $coaches,
+            'homePlayers' => $homePlayers,
+            'awayPlayers' => $awayPlayers,
+            'homeCoaches' => $homeCoaches,
+            'awayCoaches' => $awayCoaches,
             'homeTeamMatchScorers' => $homeTeamMatchScorers,
             'awayTeamMatchScorers' => $awayTeamMatchScorers,
+            'homeTeamAttendance' => $homeTeamAttendance,
+            'awayTeamAttendance' => $awayTeamAttendance,
         ]);
     }
 
@@ -558,9 +569,10 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function indexPlayerMatchStats(EventSchedule $schedule)
+    public function indexPlayerMatchStats(Request $request, EventSchedule $schedule)
     {
-        return $this->eventScheduleService->dataTablesPlayerStats($schedule);
+        $teamId = $request->input('teamId');
+        return $this->eventScheduleService->dataTablesPlayerStats($schedule, $teamId);
     }
 
     public function getPlayerStats(EventSchedule $schedule, Player $player){

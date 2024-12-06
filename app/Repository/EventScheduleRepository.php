@@ -197,11 +197,19 @@ class EventScheduleRepository
             ->get();
     }
 
-    public function playerAttendanceCount($status, $id) : int {
-        return $this->find($id)->players()->where('attendanceStatus', $status)->count();
+    public function playerAttendanceCount($status, $id, $teamId = null) : int {
+        $query = $this->find($id)->players()->where('attendanceStatus', $status);
+        if ($teamId) {
+            $query->where('teamId', $teamId);
+        }
+        return $query->count();
     }
-    public function coachesAttendanceCount($status, $id) : int {
-        return $this->find($id)->players()->where('attendanceStatus', $status)->count();
+    public function coachesAttendanceCount($status, $id, $teamId = null) : int {
+        $query = $this->find($id)->coaches()->where('attendanceStatus', $status);
+        if ($teamId) {
+            $query->where('teamId', $teamId);
+        }
+        return $query->count();
     }
 
     public function playerAttendance(Player $player, $status, $startDate, $endDate, $eventType = null) {

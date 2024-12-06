@@ -138,12 +138,29 @@
                     <a class="nav-link" data-toggle="tab" href="#matchStats-tab">Match Stats</a>
                 </li>
                 @if($schedule->isOpponentTeamMatch == 0)
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#playerStats-tab">Player Stats</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#attendance-tab">Match Attendance</a>
-                    </li>
+                    @if ($schedule->matchType == 'Internal Match')
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[0]->id }}PlayerStats-tab">{{ $schedule->teams[0]->teamName }} Player Stats</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}PlayerStats-tab">{{ $schedule->teams[1]->teamName }} Player Stats</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[0]->id }}Attendance-tab">{{ $schedule->teams[0]->teamName }} Match Attendance</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Attendance-tab">{{ $schedule->teams[1]->teamName }} Match Attendance</a>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#playerStats-tab">Player Stats</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#attendance-tab">Match Attendance</a>
+                        </li>
+                    @endif
+                    
+                    
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#notes-tab">Match Note</a>
                     </li>
@@ -511,70 +528,202 @@
             </div>
 
             @if($schedule->isOpponentTeamMatch == 0)
-                {{--    Player Stats    --}}
-                <div class="tab-pane fade" id="playerStats-tab" role="tabpanel">
-                    <div class="page-separator">
-                        <div class="page-separator__text">Player Stats</div>
-                    </div>
-                    <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0" id="playerStatTable">
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Minutes Played</th>
-                                        <th>Goals</th>
-                                        <th>Assists</th>
-                                        <th>Own Goals</th>
-                                        <th>Shots</th>
-                                        <th>Passes</th>
-                                        <th>Fouls</th>
-                                        <th>Yellow Cards</th>
-                                        <th>Red Cards</th>
-                                        <th>Saves</th>
-                                        <th>Last Updated</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+                
+                @if ($schedule->matchType == 'Internal Match')
+                        {{--    Player Stats    --}}
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}PlayerStats-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">Player Stats</div>
+                            </div>
+                            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0" id="team{{ $schedule->teams[0]->id }}PlayerStatsTable">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Minutes Played</th>
+                                                <th>Goals</th>
+                                                <th>Assists</th>
+                                                <th>Own Goals</th>
+                                                <th>Shots</th>
+                                                <th>Passes</th>
+                                                <th>Fouls</th>
+                                                <th>Yellow Cards</th>
+                                                <th>Red Cards</th>
+                                                <th>Saves</th>
+                                                <th>Last Updated</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}PlayerStats-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">Player Stats</div>
+                            </div>
+                            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0" id="team{{ $schedule->teams[1]->id }}PlayerStatsTable">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Minutes Played</th>
+                                                <th>Goals</th>
+                                                <th>Assists</th>
+                                                <th>Own Goals</th>
+                                                <th>Shots</th>
+                                                <th>Passes</th>
+                                                <th>Fouls</th>
+                                                <th>Yellow Cards</th>
+                                                <th>Red Cards</th>
+                                                <th>Saves</th>
+                                                <th>Last Updated</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {{--     Attendance    --}}
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}Attendance-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} Attendance Overview</div>
+                            </div>
+                            <div class="row card-group-row">
+                                @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$homeTeamAttendance['totalParticipant'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => 'Attended', 'data'=>$homeTeamAttendance['totalAttend'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$homeTeamAttendance['totalDidntAttend'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Illness", 'data'=>$homeTeamAttendance['totalIllness'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Injured", 'data'=>$homeTeamAttendance['totalInjured'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Others", 'data'=>$homeTeamAttendance['totalOthers'], 'dataThisMonth'=>null])
+                            </div>
 
-                {{--     Attendance    --}}
-                <div class="tab-pane fade" id="attendance-tab" role="tabpanel">
-                    <div class="page-separator">
-                        <div class="page-separator__text">Attendance Overview</div>
-                    </div>
-                    <div class="row card-group-row">
-                        @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$data['totalParticipant'], 'dataThisMonth'=>null])
-                        @include('components.stats-card', ['title' => 'Attended', 'data'=>$data['totalAttend'], 'dataThisMonth'=>null])
-                        @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$data['totalDidntAttend'], 'dataThisMonth'=>null])
-                        @include('components.stats-card', ['title' => "Illness", 'data'=>$data['totalIllness'], 'dataThisMonth'=>null])
-                        @include('components.stats-card', ['title' => "Injured", 'data'=>$data['totalInjured'], 'dataThisMonth'=>null])
-                        @include('components.stats-card', ['title' => "Others", 'data'=>$data['totalOthers'], 'dataThisMonth'=>null])
-                    </div>
+                            {{--    Player Attendance    --}}
+                            <div class="page-separator">
+                                <div class="page-separator__text">Player Attendance</div>
+                            </div>
+                            <div class=".player-attendance">
+                                @include('pages.admins.academies.schedules.player-attendance-data', ['players' => $homePlayers])
+                            </div>
 
-                    {{--    Player Attendance    --}}
-                    <div class="page-separator">
-                        <div class="page-separator__text">Player Attendance</div>
-                    </div>
-                    <div class=".player-attendance">
-                        @include('pages.admins.academies.schedules.player-attendance-data')
-                    </div>
+                            {{--    Coach Attendance    --}}
+                            <div class="page-separator">
+                                <div class="page-separator__text">Coach Attendance</div>
+                            </div>
+                            <div class=".coach-attendance">
+                                @include('pages.admins.academies.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
+                            </div>
+                        </div>
 
-                    {{--    Coach Attendance    --}}
-                    <div class="page-separator">
-                        <div class="page-separator__text">Coach Attendance</div>
-                    </div>
-                    <div class=".coach-attendance">
-                        @include('pages.admins.academies.schedules.coach-attendance-data')
-                    </div>
-                </div>
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Attendance-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Attendance Overview</div>
+                            </div>
+                            <div class="row card-group-row">
+                                @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$awayTeamAttendance['totalParticipant'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => 'Attended', 'data'=>$awayTeamAttendance['totalAttend'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$awayTeamAttendance['totalDidntAttend'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Illness", 'data'=>$awayTeamAttendance['totalIllness'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Injured", 'data'=>$awayTeamAttendance['totalInjured'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Others", 'data'=>$awayTeamAttendance['totalOthers'], 'dataThisMonth'=>null])
+                            </div>
+
+                            {{--    Player Attendance    --}}
+                            <div class="page-separator">
+                                <div class="page-separator__text">Player Attendance</div>
+                            </div>
+                            <div class=".player-attendance">
+                                @include('pages.admins.academies.schedules.player-attendance-data', ['players' => $awayPlayers])
+                            </div>
+
+                            {{--    Coach Attendance    --}}
+                            <div class="page-separator">
+                                <div class="page-separator__text">Coach Attendance</div>
+                            </div>
+                            <div class=".coach-attendance">
+                                @include('pages.admins.academies.schedules.coach-attendance-data', ['coaches' => $awayCoaches])
+                            </div>
+                        </div>
+                    @else
+                        <div class="tab-pane fade" id="playerStats-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">Player Stats</div>
+                            </div>
+                            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0" id="playerStatTable">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Minutes Played</th>
+                                                <th>Goals</th>
+                                                <th>Assists</th>
+                                                <th>Own Goals</th>
+                                                <th>Shots</th>
+                                                <th>Passes</th>
+                                                <th>Fouls</th>
+                                                <th>Yellow Cards</th>
+                                                <th>Red Cards</th>
+                                                <th>Saves</th>
+                                                <th>Last Updated</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{--     Attendance    --}}
+                        <div class="tab-pane fade" id="attendance-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">Attendance Overview</div>
+                            </div>
+                            <div class="row card-group-row">
+                                @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$data['totalParticipant'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => 'Attended', 'data'=>$data['totalAttend'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$data['totalDidntAttend'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Illness", 'data'=>$data['totalIllness'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Injured", 'data'=>$data['totalInjured'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Others", 'data'=>$data['totalOthers'], 'dataThisMonth'=>null])
+                            </div>
+
+                            {{--    Player Attendance    --}}
+                            <div class="page-separator">
+                                <div class="page-separator__text">Player Attendance</div>
+                            </div>
+                            <div class=".player-attendance">
+                                @include('pages.admins.academies.schedules.player-attendance-data')
+                            </div>
+
+                            {{--    Coach Attendance    --}}
+                            <div class="page-separator">
+                                <div class="page-separator__text">Coach Attendance</div>
+                            </div>
+                            <div class=".coach-attendance">
+                                @include('pages.admins.academies.schedules.coach-attendance-data')
+                            </div>
+                        </div>
+                    @endif
+                    
+                
+
+                
 
                 {{--    Training Note    --}}
                 <div class="tab-pane fade" id="notes-tab" role="tabpanel">
@@ -660,35 +809,105 @@
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            $('#playerStatTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! route('match-schedules.index-player-match-stats', $schedule->id) !!}',
-                },
-                columns: [
-                    {data: 'name', name: 'name'},
-                    {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
-                    {data: 'pivot.goals', name: 'pivot.goals'},
-                    {data: 'pivot.assists', name: 'pivot.assists'},
-                    {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
-                    {data: 'pivot.shots', name: 'pivot.shots'},
-                    {data: 'pivot.passes', name: 'pivot.passes'},
-                    {data: 'pivot.fouls', name: 'pivot.fouls'},
-                    {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
-                    {data: 'pivot.redCards', name: 'pivot.redCards'},
-                    {data: 'pivot.saves', name: 'pivot.saves'},
-                    {data: 'updated_at', name: 'updated_at'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
+            @if ($schedule->matchType == 'Internal Match')
+                $('#team{{ $schedule->teams[0]->id }}PlayerStatsTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{{ route('match-schedules.index-player-match-stats', $schedule->id) }}',
+                        type: "GET",
+                        data: {
+                            teamId: {{ $schedule->teams[0]->id }}
+                        },
                     },
-                ]
-            });
+                    columns: [
+                        {data: 'name', name: 'name'},
+                        {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
+                        {data: 'pivot.goals', name: 'pivot.goals'},
+                        {data: 'pivot.assists', name: 'pivot.assists'},
+                        {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
+                        {data: 'pivot.shots', name: 'pivot.shots'},
+                        {data: 'pivot.passes', name: 'pivot.passes'},
+                        {data: 'pivot.fouls', name: 'pivot.fouls'},
+                        {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                        {data: 'pivot.redCards', name: 'pivot.redCards'},
+                        {data: 'pivot.saves', name: 'pivot.saves'},
+                        {data: 'updated_at', name: 'updated_at'},
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            width: '15%'
+                        },
+                    ]
+                });
+                $('#team{{ $schedule->teams[1]->id }}PlayerStatsTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{{ route('match-schedules.index-player-match-stats', $schedule->id) }}',
+                        type: "GET",
+                        data: {
+                            teamId: {{ $schedule->teams[1]->id }}
+                        },
+                    },
+                    columns: [
+                        {data: 'name', name: 'name'},
+                        {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
+                        {data: 'pivot.goals', name: 'pivot.goals'},
+                        {data: 'pivot.assists', name: 'pivot.assists'},
+                        {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
+                        {data: 'pivot.shots', name: 'pivot.shots'},
+                        {data: 'pivot.passes', name: 'pivot.passes'},
+                        {data: 'pivot.fouls', name: 'pivot.fouls'},
+                        {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                        {data: 'pivot.redCards', name: 'pivot.redCards'},
+                        {data: 'pivot.saves', name: 'pivot.saves'},
+                        {data: 'updated_at', name: 'updated_at'},
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            width: '15%'
+                        },
+                    ]
+                });
+            @else
+                $('#playerStatTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{!! route('match-schedules.index-player-match-stats', $schedule->id) !!}',
+                    },
+                    columns: [
+                        {data: 'name', name: 'name'},
+                        {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
+                        {data: 'pivot.goals', name: 'pivot.goals'},
+                        {data: 'pivot.assists', name: 'pivot.assists'},
+                        {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
+                        {data: 'pivot.shots', name: 'pivot.shots'},
+                        {data: 'pivot.passes', name: 'pivot.passes'},
+                        {data: 'pivot.fouls', name: 'pivot.fouls'},
+                        {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                        {data: 'pivot.redCards', name: 'pivot.redCards'},
+                        {data: 'pivot.saves', name: 'pivot.saves'},
+                        {data: 'updated_at', name: 'updated_at'},
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            width: '15%'
+                        },
+                    ]
+                });
+            @endif
+            
         });
     </script>
 @endpush
