@@ -201,12 +201,15 @@ class EventScheduleController extends Controller
         $awayTeamMatchScorers = null;
         $homeTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->teams[0]);
         $awayTeamAttendance = null;
+        $homeTeamNotes = $schedule->notes()->where('teamId', $schedule->teams[0]->id)->get();
+        $awayTeamNotes = null;
 
         if ($schedule->matchType == 'Internal Match'){
             $awayPlayers = $schedule->players()->where('teamId', $schedule->teams[1]->id)->get();
             $awayCoaches = $schedule->coaches()->where('teamId', $schedule->teams[1]->id)->get();
             $awayTeamMatchScorers = $this->eventScheduleService->getmatchScorers($schedule, $schedule->teams[1]);
             $awayTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->teams[1]);
+            $awayTeamNotes = $schedule->notes()->where('teamId', $schedule->teams[1]->id)->get();
         }
 
         if ($this->isPlayer()){
@@ -225,6 +228,8 @@ class EventScheduleController extends Controller
             'awayTeamMatchScorers' => $awayTeamMatchScorers,
             'homeTeamAttendance' => $homeTeamAttendance,
             'awayTeamAttendance' => $awayTeamAttendance,
+            'homeTeamNotes' => $homeTeamNotes,
+            'awayTeamNotes' => $awayTeamNotes,
         ]);
     }
 

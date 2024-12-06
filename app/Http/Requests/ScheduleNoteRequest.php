@@ -23,7 +23,7 @@ class ScheduleNoteRequest extends FormRequest
     {
         return [
             'note' => ['required', 'string'],
-            'teamId' => ['required'],
+            'teamId' => ['nullable'],
         ];
     }
 }

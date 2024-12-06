@@ -1,10 +1,10 @@
 <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <form action="{{ $routeCreate }}" method="post" id="formCreateNoteModal">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="coachName">Create note for {{ $eventName }} Session</h5>
+                    <h5 class="modal-title" id="coachName">Create note for this {{ $eventName }} Session</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -14,10 +14,10 @@
                     <div class="form-group">
                         <label class="form-label" for="note">Note</label>
                         <small class="text-danger">*</small>
-                        <textarea class="form-control" id="note" name="note" placeholder="Input note here ..." rows="5"></textarea>
+                        <textarea class="form-control createNoteEditor" id="note" name="note" rows="10" required></textarea>
                         <span class="invalid-feedback note_error" role="alert">
-                                <strong></strong>
-                            </span>
+                            <strong></strong>
+                        </span>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -1,5 +1,5 @@
 <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <form action="" method="post" id="formUpdateNoteModal">
                 @method('PUT')
@@ -15,7 +15,7 @@
                     <div class="form-group">
                         <label class="form-label" for="note">Note</label>
                         <small class="text-danger">*</small>
-                        <textarea class="form-control" id="note" name="note" placeholder="Input note here ..." rows="5"></textarea>
+                        <textarea class="form-control" id="note" name="note" rows="10" required></textarea>
                         <span class="invalid-feedback note_error" role="alert">
                                 <strong></strong>
                             </span>
@@ -38,18 +38,18 @@
 @push('addon-script')
     <script>
         $(document).ready(function (){
+            const formId = '#formUpdateNoteModal'
             $('.edit-note').on('click', function(e) {
                 e.preventDefault();
                 const id = $(this).attr('id');
 
                 $.ajax({
-                    {{--url: "{{ route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ":id"]) }}".replace(':id', id),--}}
                     url: "{{ $routeEdit }}".replace(':id', id),
                     type: 'get',
                     success: function(res) {
                         $('#editNoteModal').modal('show');
-                        $('#formUpdateNoteModal #note').text(res.data.note);
-                        $('#formUpdateNoteModal #noteId').val(res.data.id);
+                        $(formId+' #note').text(res.data.note);
+                        $(formId+' #noteId').val(res.data.id);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         Swal.fire({

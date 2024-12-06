@@ -21,9 +21,7 @@
         @endif
     </div>
     <div class="card-body">
-        @php
-            echo $note->note
-        @endphp
+        <textarea class="form-control" rows="10">{{$note->note}}</textarea>
     </div>
 </div>
 

@@ -16,11 +16,11 @@
             :routeUpdate="route('match-schedules.update-coach', ['schedule' => $schedule->id, 'coach' => ':id'])"/>
 
     <x-create-schedule-note-modal :routeCreate="route('match-schedules.create-note', $schedule->id)"
-                                  :eventName="$schedule->eventName"/>
+                                  :eventName="$schedule->eventType"/>
     <x-edit-schedule-note-modal
             :routeEdit="route('match-schedules.edit-note', ['schedule' => $schedule->id, 'note' => ':id'])"
             :routeUpdate="route('match-schedules.update-note', ['schedule' => $schedule->id, 'note' => ':id'])"
-            :eventName="$schedule->eventName"
+            :eventName="$schedule->eventType"
             :routeAfterProcess="route('match-schedules.show', $schedule->id)"/>
 
     <x-skill-assessments-modal/>
@@ -670,26 +670,39 @@
                                     <a href="" data-team="{{$schedule->teams[0]->id}}" class="btn btn-primary btn-sm ml-auto addNewNote"><span class="material-icons mr-2">add</span> Add new note</a>
                                 @endif
                             </div>
-                            @if(count($schedule->notes)==0)
+                            @if(count($homeTeamNotes)==0)
                                 <x-warning-alert text="Match session note haven't created yet by coach"/>
                             @endif
-                            @foreach($schedule->notes as $note)
+                            @foreach($homeTeamNotes as $note)
                                 <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
                             @endforeach
                         </div>
+
                         <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Notes-tab" role="tabpanel">
                             <div class="page-separator">
                                 <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Match Note</div>
                                 @if(isAllAdmin() || isCoach())
-                                    <a href="" data-team="{{$schedule->teams[0]->id}}" class="btn btn-primary btn-sm ml-auto addNewNote"><span class="material-icons mr-2">add</span> Add new note</a>
+                                    <a href="" data-team="{{$schedule->teams[1]->id}}" class="btn btn-primary btn-sm ml-auto addNewNote"><span class="material-icons mr-2">add</span> Add new note</a>
                                 @endif
                             </div>
-                            @if(count($schedule->notes)==0)
+                            @if(count($awayTeamNotes)==0)
                                 <x-warning-alert text="Match session note haven't created yet by coach"/>
                             @endif
-                            @foreach($schedule->notes as $note)
+                            @foreach($awayTeamNotes as $note)
                                 <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
                             @endforeach
+                        </div>
+
+                        {{--    PLAYER SKILLS EVALUATION SECTION    --}}
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Skills-tab" role="tabpanel">
+                            <div class="page-separator">
+                                <div class="page-separator__text">player skills evaluation</div>
+                            </div>
+                            @if(isAllAdmin() || isCoach())
+                                <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="playerSkillsTable"/>
+                            @elseif(isPlayer())
+                                <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
+                            @endif
                         </div>
                     @else
                         <div class="tab-pane fade" id="playerStats-tab" role="tabpanel">

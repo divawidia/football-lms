@@ -193,10 +193,8 @@ const editorConfig = {
     }
 };
 
-// const classSelectors = ['.editorTrainingVideo', '.editorLesson'];
-
+// const classSelectors = ['.editorTrainingVideo', '.editorLesson', '.createNoteEditor'];
+//
 // classSelectors.forEach(classSelectors => {
 //     ClassicEditor.create(document.querySelector(classSelectors), editorConfig);
 // });
-
-// ClassicEditor.create(document.querySelector('#editor'), editorConfig);
