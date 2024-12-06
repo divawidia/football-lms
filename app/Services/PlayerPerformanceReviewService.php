@@ -49,8 +49,8 @@ class PlayerPerformanceReviewService extends Service
             ->editColumn('event', function ($item) {
                 if ($item->event->eventType == 'Training'){
                     $text = $item->event->eventName;
-                } elseif ($item->event->eventType == 'Match'){
-                    $text = 'Match '.$item->event->teams[0]. ' Vs. '.$item->event->teams[1];
+                } else {
+                    $text = 'Match '.$item->event->teams[0]->teamName. ' Vs. '.$item->event->teams[1]->teamName;
                 }
                 return $text;
             })

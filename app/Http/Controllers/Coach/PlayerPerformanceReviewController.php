@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Coach;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerPerformanceReviewRequest;
 use App\Http\Requests\SkillAssessmentRequest;
@@ -58,19 +59,22 @@ class PlayerPerformanceReviewController extends Controller
         $data = $request->validated();
         $coach = $this->getLoggedCoachUser();
         $response = $this->performanceReviewService->store($data, $player, $coach);
-        return response()->json($response);
+        $message = $this->getUserFullName($player->user)."'s performance review successfully created.";
+        return ApiResponse::success($response, $message);
     }
 
     public function update(PlayerPerformanceReviewRequest $request, PlayerPerformanceReview $review)
     {
         $data = $request->validated();
         $response = $this->performanceReviewService->update($data, $review);
-        return response()->json($response);
+        $message = $this->getUserFullName($review->player->user)."'s performance review successfully updated.";
+        return ApiResponse::success($response, $message);
     }
 
     public function destroy(PlayerPerformanceReview $review)
     {
         $response = $this->performanceReviewService->destroy($review);
-        return response()->json($response);
+        $message = $this->getUserFullName($review->player->user)."'s performance review successfully deleted.";
+        return ApiResponse::success($response, $message);
     }
 }

@@ -28,7 +28,7 @@
         <div class="row">
             @foreach($dataOverview['teamsManaged'] as $team)
                 <div class="col-lg-6">
-                    <a class="card" href="">
+                    <a class="card" href="{{route('team-managements.show', $team->id)}}">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-6 d-flex flex-column flex-md-row align-items-center">
