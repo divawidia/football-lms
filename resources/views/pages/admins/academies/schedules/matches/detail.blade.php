@@ -667,7 +667,7 @@
                             <div class="page-separator">
                                 <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} Match Note</div>
                                 @if(isAllAdmin() || isCoach())
-                                    <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+                                    <a href="" data-team="{{$schedule->teams[0]->id}}" class="btn btn-primary btn-sm ml-auto addNewNote"><span class="material-icons mr-2">add</span> Add new note</a>
                                 @endif
                             </div>
                             @if(count($schedule->notes)==0)
@@ -681,7 +681,7 @@
                             <div class="page-separator">
                                 <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Match Note</div>
                                 @if(isAllAdmin() || isCoach())
-                                    <a href="" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+                                    <a href="" data-team="{{$schedule->teams[0]->id}}" class="btn btn-primary btn-sm ml-auto addNewNote"><span class="material-icons mr-2">add</span> Add new note</a>
                                 @endif
                             </div>
                             @if(count($schedule->notes)==0)

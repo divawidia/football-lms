@@ -10,6 +10,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" id="teamId" name="teamId">
                     <div class="form-group">
                         <label class="form-label" for="note">Note</label>
                         <small class="text-danger">*</small>
@@ -36,9 +37,11 @@
 @push('addon-script')
     <script>
         $(document).ready(function (){
-            $('#addNewNote').on('click', function(e) {
+            $('.addNewNote').on('click', function(e) {
                 e.preventDefault();
+                const team = $(this).attr('data-team')
                 $('#createNoteModal').modal('show');
+                $('#formCreateNoteModal #teamId').val(team)
             });
         });
     </script>
