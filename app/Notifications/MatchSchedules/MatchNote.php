@@ -6,10 +6,11 @@ use App\Models\Coach;
 use App\Models\EventSchedule;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class MatchNote extends Notification
+class MatchNote extends Notification implements ShouldQueue
 {
     use Queueable;
     protected EventSchedule $matchSession;
