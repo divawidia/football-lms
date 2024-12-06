@@ -12,10 +12,15 @@ class ScheduleNote extends Model
     protected $fillable = [
         'note',
         'scheduleId',
+        'teamId',
     ];
 
     public function schedule()
     {
         return $this->belongsTo(EventSchedule::class, 'competitionId');
+    }
+    public function team()
+    {
+        return $this->belongsTo(Team::class, 'teamId');
     }
 }
