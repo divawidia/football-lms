@@ -36,21 +36,21 @@ class AdminService extends Service
                     $statusButton = '';
                     $editAccBtn = '';
                     if (getLoggedUser()->id != $item->user->id) {
-                        $editAccBtn = '<a class="dropdown-item" href="' . route('admin-managements.edit', $item->id) . '"><span class="material-icons mr-2">edit</span> Edit Admin</a>';
+                        $editAccBtn = '<a class="dropdown-item" href="' . route('admin-managements.edit', $item->hash) . '"><span class="material-icons mr-2">edit</span> Edit Admin</a>';
                         $deleteUserBtn = '
-                            <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->id.'">
+                            <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->hash.'">
                                 <span class="material-icons mr-2 text-danger">delete</span> Delete Admin
                             </button>';
-                        $changePassBtn = '<a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons mr-2">lock</span> Change Admin Password</a>';
+                        $changePassBtn = '<a class="dropdown-item changePassword" id="'.$item->hash.'"><span class="material-icons mr-2">lock</span> Change Admin Password</a>';
                     }
 
                     if ($item->user->status == '1' && getLoggedUser()->id != $item->user->id){
-                        $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
+                        $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->hash.'">
                                                 <span class="material-icons text-danger">check_circle</span>
                                                 Deactivate Admin
                                         </button>';
                     }elseif($item->user->status == '0' && getLoggedUser()->id != $item->user->id) {
-                        $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->id.'">
+                        $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->hash.'">
                                                 <span class="material-icons text-success">check_circle</span>
                                                 Activate Admin
                                         </button>';
@@ -63,7 +63,7 @@ class AdminService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons mr-2">visibility</span> View Admin</a>
+                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->hash) . '"><span class="material-icons mr-2">visibility</span> View Admin</a>
                             '.$editAccBtn.'
                             '. $statusButton .'
                             '.$changePassBtn.'
@@ -71,11 +71,11 @@ class AdminService extends Service
                           </div>
                         </div>';
                 } elseif (isAdmin()){
-                    return '<a class="btn btn-sm btn-outline-secondary" href="' . route('admin-managements.show', $item->id) . '"><span class="material-icons">visibility</span></a>';
+                    return '<a class="btn btn-sm btn-outline-secondary" href="' . route('admin-managements.show', $item->hash) . '"><span class="material-icons">visibility</span></a>';
                 }
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position, route('admin-managements.show', $item->id));
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position, route('admin-managements.show', $item->hash));
             })
             ->editColumn('status', function ($item){
                 return $this->datatablesService->activeNonactiveStatus($item->user->status);
