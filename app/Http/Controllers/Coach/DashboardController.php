@@ -29,7 +29,7 @@ class DashboardController extends Controller
         $upcomingMatches = $this->dashboardService->upcomingMatch();
         $upcomingTrainings = $this->dashboardService->upcomingTraining();
 
-        return view('pages.coaches.dashboard', [
+        return view('pages.dashboards.coach', [
             'dataOverview' => $dataOverview,
             'latestMatches' => $latestMatches,
             'upcomingMatches' => $upcomingMatches,

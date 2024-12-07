@@ -55,12 +55,12 @@ class PlayerService extends Service
                 if (isAllAdmin()){
                     $statusButton = '';
                     if ($item->user->status == '1'){
-                        $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
+                        $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->hash.'">
                                                 <span class="material-icons text-danger">check_circle</span>
                                                 Deactivate Admin
                                         </button>';
                     }elseif ($item->user->status == '0') {
-                        $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->id.'">
+                        $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->hash.'">
                                                 <span class="material-icons text-success">check_circle</span>
                                                 Activate Admin
                                         </button>';
@@ -73,18 +73,18 @@ class PlayerService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="' . route('player-managements.edit', $item->id) . '"><span class="material-icons">edit</span>Edit Player</a>
-                            <a class="dropdown-item" href="' . route('player-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Player</a>
+                            <a class="dropdown-item" href="' . route('player-managements.edit', $item->hash) . '"><span class="material-icons">edit</span>Edit Player</a>
+                            <a class="dropdown-item" href="' . route('player-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Player</a>
                             '. $statusButton .'
-                            <a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons">lock</span> Change Player Password</a>
-                            <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
+                            <a class="dropdown-item changePassword" id="'.$item->hash.'"><span class="material-icons">lock</span> Change Player Password</a>
+                            <button type="button" class="dropdown-item delete-user" id="' . $item->hash . '">
                                 <span class="material-icons text-danger">delete</span> Delete Player
                             </button>
                           </div>
                         </div>';
                 } elseif (isCoach()){
                     $actionBtn = '
-                      <a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
+                      <a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->hash) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
                         <span class="material-icons">
                             visibility
                         </span>
@@ -113,7 +113,7 @@ class PlayerService extends Service
                             <div class="media-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex d-flex flex-column">
-                                        <a href="'.route('player-managements.show', $item->id).'">
+                                        <a href="'.route('player-managements.show', $item->hash).'">
                                             <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
                                         </a>
                                         <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
@@ -166,9 +166,9 @@ class PlayerService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="'.route('team-managements.edit', $item->id).'"><span class="material-icons">edit</span> Edit Team</a>
-                            <a class="dropdown-item" href="'.route('team-managements.show', $item->id).'"><span class="material-icons">visibility</span> View Team</a>
-                            <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
+                            <a class="dropdown-item" href="'.route('team-managements.edit', $item->hash).'"><span class="material-icons">edit</span> Edit Team</a>
+                            <a class="dropdown-item" href="'.route('team-managements.show', $item->hash).'"><span class="material-icons">visibility</span> View Team</a>
+                            <button type="button" class="dropdown-item delete-team" id="' . $item->hash . '">
                                 <span class="material-icons">delete</span> Remove Player from Team
                             </button>
                           </div>

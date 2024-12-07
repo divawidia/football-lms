@@ -27,7 +27,7 @@ class PlayerPerformanceReviewController extends Controller
     public function index()
     {
         $player = $this->getLoggedPLayerUser();
-        return view('pages.coaches.academies.skill-assessments.index');
+        return view('pages.academies.skill-assessments.index');
     }
 
     public function playerPerformancePage(Player $player)

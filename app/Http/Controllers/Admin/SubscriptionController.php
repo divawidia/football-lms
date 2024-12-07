@@ -29,7 +29,7 @@ class SubscriptionController extends Controller
             return $this->subscriptionService->index();
         }
 
-        return view('pages.admins.payments.subscriptions.index');
+        return view('pages.payments.subscriptions.index');
     }
 
     public function playerIndex()
@@ -48,7 +48,7 @@ class SubscriptionController extends Controller
         if (\request()->ajax()){
             return response()->json(['data' => $data, 'message' => 'Successfully retrieve players subscription data']);
         }
-        return view('pages.admins.payments.subscriptions.detail', [
+        return view('pages.payments.subscriptions.detail', [
             'data' => $data
         ]);
     }
@@ -85,7 +85,7 @@ class SubscriptionController extends Controller
     public function create()
     {
         $data = $this->subscriptionService->create();
-        return view('pages.admins.payments.subscriptions.create', [
+        return view('pages.payments.subscriptions.create', [
             'taxes' => $data['taxes'],
             'contacts' => $data['players'],
         ]);

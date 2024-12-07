@@ -79,7 +79,7 @@ class SubscriptionService extends Service
                                     <span class="material-icons">edit</span>
                                     Edit subscriptions tax
                                 </button>
-                                <a class="dropdown-item edit" href="' . route('subscriptions.show', $item->id) . '" type="button">
+                                <a class="dropdown-item edit" href="' . route('subscriptions.show', $item->hash) . '" type="button">
                                     <span class="material-icons">visibility</span>
                                     Show Subscription
                                 </a>
@@ -185,7 +185,7 @@ class SubscriptionService extends Service
         return Datatables::of($subscription->invoices)
             ->addColumn('action', function ($item) {
                 return
-                    '<a class="btn btn-sm btn-outline-secondary" href="' . route('invoices.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="Show subscription detail">
+                    '<a class="btn btn-sm btn-outline-secondary" href="' . route('invoices.show', $item->hash) . '" data-toggle="tooltip" data-placement="bottom" title="Show subscription detail">
                         <span class="material-icons">
                             visibility
                         </span>

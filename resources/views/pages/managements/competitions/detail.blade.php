@@ -89,7 +89,7 @@
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('competition-managements.edit', $competition->id) }}"><span class="material-icons">edit</span> Edit Competition Info</a>
+                    <a class="dropdown-item" href="{{ route('competition-managements.edit', $competition->hash) }}"><span class="material-icons">edit</span> Edit Competition Info</a>
                     @if($competition->status != 'Cancelled' && $competition->status != 'Completed')
                         <button type="submit" class="dropdown-item cancelBtn" id="{{ $competition->id }}">
                             <span class="material-icons text-danger">block</span>
@@ -247,7 +247,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Group Divisions</div>
                     @if(isAllAdmin())
-                        <a href="{{ route('division-managements.create', $competition->id) }}" class="btn btn-primary ml-auto btn-sm">
+                        <a href="{{ route('division-managements.create', $competition->hash) }}" class="btn btn-primary ml-auto btn-sm">
                             <span class="material-icons mr-2">add</span>Add New
                         </a>
                     @endif
@@ -262,7 +262,7 @@
                                         <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
                                             <span class="material-icons">edit</span>
                                         </a>
-                                        <a href="{{ route('division-managements.addTeam', ['competition' => $competition->id, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
+                                        <a href="{{ route('division-managements.addTeam', ['competition' => $competition->hash, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
                                             <span class="material-icons">add</span>
                                         </a>
                                         <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
@@ -328,8 +328,8 @@
                     </div>
 
                     <x-process-data-confirmation btnClass=".delete-group{{ $group->id }}-team"
-                                                 :processRoute="route('division-managements.removeTeam', ['competition' => $competition->id, 'group' => $group->id,'team' => ':id'])"
-                                                 :routeAfterProcess="route('competition-managements.show', $competition->id)"
+                                                 :processRoute="route('division-managements.removeTeam', ['competition' => $competition->hash, 'group' => $group->id,'team' => ':id'])"
+                                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"
                                                  method="PUT"
                                                  confirmationText="Are you sure to delete this team from group division {{ $group->groupName }}?"
                                                  errorText="Something went wrong when deleting this team from the group division {{ $group->groupName }}!"/>
@@ -347,28 +347,28 @@
 
     <x-process-data-confirmation btnClass=".cancelBtn"
                                  :processRoute="route('cancelled-competition', ['competition' => ':id'])"
-                                 :routeAfterProcess="route('competition-managements.show', $competition->id)"
+                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"
                                  method="PATCH"
                                  confirmationText="Are you sure to cancel competition {{ $competition->name }}?"
                                  errorText="Something went wrong when marking the competition {{ $competition->name }} as cancelled!"/>
 
     <x-process-data-confirmation btnClass=".delete-match"
                                  :processRoute="route('match-schedules.destroy', ['schedule' => ':id'])"
-                                 :routeAfterProcess="route('competition-managements.show', $competition->id)"
+                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this match from competition {{ $competition->name }}?"
                                  errorText="Something went wrong when deleting this match from competition {{ $competition->name }}!"/>
 
     <x-process-data-confirmation btnClass=".delete-group"
-                                 :processRoute="route('division-managements.destroy', ['competition' => $competition->id, 'group' => ':id'])"
-                                 :routeAfterProcess="route('competition-managements.show', $competition->id)"
+                                 :processRoute="route('division-managements.destroy', ['competition' => $competition->hash, 'group' => ':id'])"
+                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this group division?"
                                  errorText="Something went wrong when deleting the group division!"/>
 
     <x-process-data-confirmation btnClass=".delete-competition"
-                                 :processRoute="route('competition-managements.destroy', ['competition' => $competition->id])"
-                                 :routeAfterProcess="route('competition-managements.show', $competition->id)"
+                                 :processRoute="route('competition-managements.destroy', ['competition' => $competition->hash])"
+                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this competition {{ $competition->name }}?"
                                  errorText="Something went wrong when deleting the competition {{ $competition->name }}!"/>
@@ -383,7 +383,7 @@
                 ordering: true,
                 pageLength: 5,
                 ajax: {
-                    url: '{!! route('competition-managements.matches', $competition->id) !!}',
+                    url: '{!! route('competition-managements.matches', $competition->hash) !!}',
                 },
                 columns: [
                     { data: 'team', name: 'team' },
@@ -407,7 +407,7 @@
                     serverSide: true,
                     ordering: true,
                     ajax: {
-                        url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
+                        url: '{!! route('division-managements.index', ['competition'=>$competition->hash,'group'=>$group->id]) !!}',
                     },
                     columns: [
                         { data: 'teams', name: 'teams' },
@@ -425,7 +425,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
+                    url: '{!! route('division-managements.index', ['competition'=>$competition->hash,'group'=>$group->id]) !!}',
                 },
                 columns: [
                     { data: 'teams', name: 'teams' },
@@ -450,7 +450,7 @@
 
                 $.ajax({
                     method: 'GET',
-                    url: "{{ route('division-managements.edit', ['competition' => $competition->id, 'group' => ':id']) }}".replace(':id', id),
+                    url: "{{ route('division-managements.edit', ['competition' => $competition->hash, 'group' => ':id']) }}".replace(':id', id),
                     success: function(res) {
                         $("#editGroupModal").modal('show');
                         $('#groupId').val(id);
@@ -474,7 +474,7 @@
 
                 $.ajax({
                     method: $(this).attr('method'),
-                    url: "{{ route('division-managements.update', ['competition' => $competition->id, 'group' => ':id']) }}".replace(':id', id),
+                    url: "{{ route('division-managements.update', ['competition' => $competition->hash, 'group' => ':id']) }}".replace(':id', id),
                     data: new FormData(this),
                     contentType: false,
                     processData: false,

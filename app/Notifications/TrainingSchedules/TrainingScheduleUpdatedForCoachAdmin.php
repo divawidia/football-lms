@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingScheduleUpdatedForCoachAdmin extends Notification
+class TrainingScheduleUpdatedForCoachAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $trainingSchedule;
@@ -33,7 +33,8 @@ class TrainingScheduleUpdatedForCoachAdmin extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+//        return ['mail', 'database'];
+        return ['database'];
     }
 
     /**

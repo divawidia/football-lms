@@ -55,7 +55,7 @@ class TeamService extends Service
             ->addColumn('action', function ($item) {
                 $actionButton = '';
                 if (isCoach() || isPlayer()){
-                    $actionButton = $this->datatablesService->buttonTooltips(route('team-managements.show', $item->id), 'View Team', 'visibility');
+                    $actionButton = $this->datatablesService->buttonTooltips(route('team-managements.show', $item->hash), 'View Team', 'visibility');
                 } elseif (isAllAdmin()){
                     if ($item->status == '1') {
                         $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
@@ -76,8 +76,8 @@ class TeamService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
-                            <a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
+                            <a class="dropdown-item" href="' . route('team-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Team</a>
+                            <a class="dropdown-item" href="' . route('team-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Team</a>
                             ' . $statusButton . '
                             <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
                                 <span class="material-icons text-danger">delete</span> Delete Team
@@ -94,7 +94,7 @@ class TeamService extends Service
                 return count($item->coaches).' Coach(es)';
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('team-managements.show', $item->id));
+                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('team-managements.show', $item->hash));
             })
             ->editColumn('status', function ($item) {
                 return $this->datatablesService->activeNonactiveStatus($item->status);
@@ -126,7 +126,7 @@ class TeamService extends Service
             ->addColumn('action', function ($item) {
                 $actionButton = '';
                 if (isCoach()){
-                    $actionButton =  $this->datatablesService->buttonTooltips(route('player-managements.show', $item->id), 'View player', 'visibility');
+                    $actionButton =  $this->datatablesService->buttonTooltips(route('player-managements.show', $item->hash), 'View player', 'visibility');
                 } elseif (isAllAdmin()){
                     $actionButton =  '
                                 <div class="dropdown">
@@ -136,8 +136,8 @@ class TeamService extends Service
                                     </span>
                                   </button>
                                   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="' . route('player-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Player</a>
-                                    <a class="dropdown-item" href="' . route('player-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Player</a>
+                                    <a class="dropdown-item" href="' . route('player-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Player</a>
+                                    <a class="dropdown-item" href="' . route('player-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Player</a>
                                     <button type="button" class="dropdown-item remove-player" id="' . $item->id . '">
                                         <span class="material-icons">delete</span> Remove Player From Team
                                     </button>
@@ -151,7 +151,7 @@ class TeamService extends Service
             })
             ->editColumn('name', function ($item) {
                 if (isAllAdmin() || isCoach()){
-                    $playerName = $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->id));
+                    $playerName = $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
                 } else {
                     $playerName = $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name);
                 }
@@ -220,9 +220,7 @@ class TeamService extends Service
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 $actionButton = '';
-                if (isCoach()){
-                    $actionButton = $this->datatablesService->buttonTooltips(route('coach-managements.show', $item->id), 'View coach', 'visibility');
-                } elseif (isAllAdmin()){
+                if (isAllAdmin()){
                     $actionButton =  '
                         <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -231,8 +229,8 @@ class TeamService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('coach-managements.edit', $item->userId) . '"><span class="material-icons">edit</span> Edit Coach</a>
-                            <a class="dropdown-item" href="' . route('coach-managements.show', $item->userId) . '"><span class="material-icons">visibility</span> View Coach</a>
+                            <a class="dropdown-item" href="' . route('coach-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Coach</a>
+                            <a class="dropdown-item" href="' . route('coach-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Coach</a>
                             <button type="button" class="dropdown-item remove-coach" id="' . $item->id . '">
                                 <span class="material-icons">delete</span> Remove Coach From Team
                             </button>
@@ -245,7 +243,7 @@ class TeamService extends Service
                 return $this->getAge($item->user->dob);
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name. ' - '.$item->certification->name, route('coach-managements.show', $item->id));
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name. ' - '.$item->certification->name, route('coach-managements.show', $item->hash));
             })
             ->editColumn('joinedDate', function ($item) {
                 return $this->datatablesService->convertToDatetime($item->pivot->created_at);
@@ -265,7 +263,7 @@ class TeamService extends Service
             ->addColumn('action', function ($item) {
                 $actionButton = '';
                 if (isCoach() || isPlayer()){
-                    $actionButton =  $this->datatablesService->buttonTooltips(route('competition-managements.show', $item->competitionId), 'View Competition', 'visibility');
+                    $actionButton =  $this->datatablesService->buttonTooltips(route('competition-managements.show', $item->competition->hash), 'View Competition', 'visibility');
                 } elseif (isAllAdmin()){
                     $statusButton = '';
                     if ($item->competition->status != 'Cancelled' && $item->competition->status != 'Completed') {
@@ -281,8 +279,8 @@ class TeamService extends Service
                                 </span>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('competition-managements.edit', $item->competitionId) . '"><span class="material-icons">edit</span> Edit Competition</a>
-                                <a class="dropdown-item" href="' . route('competition-managements.show', $item->competitionId) . '"><span class="material-icons">visibility</span> View Competition</a>
+                                <a class="dropdown-item" href="' . route('competition-managements.edit', $item->competition->hash) . '"><span class="material-icons">edit</span> Edit Competition</a>
+                                <a class="dropdown-item" href="' . route('competition-managements.show', $item->competition->hash) . '"><span class="material-icons">visibility</span> View Competition</a>
                                 ' . $statusButton . '
                                 <button type="button" class="dropdown-item delete" id="' . $item->competitionId . '">
                                     <span class="material-icons">delete</span> Delete Competition
@@ -296,7 +294,7 @@ class TeamService extends Service
                 return '<span class="badge badge-pill badge-danger">'.$item->groupName.'</span>';
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->competition->logo, $item->competition->name, $item->competition->type, route('competition-managements.show', $item->competitionId));
+                return $this->datatablesService->name($item->competition->logo, $item->competition->name, $item->competition->type, route('competition-managements.show', $item->competition->hash));
             })
             ->editColumn('date', function ($item) {
                 return $this->datatablesService->competitionStartEndDate($item->competition);
@@ -385,7 +383,7 @@ class TeamService extends Service
 
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return $this->datatablesService->buttonTooltips(route('training-schedules.show', $item->id), 'View training session', 'visibility');
+                return $this->datatablesService->buttonTooltips(route('training-schedules.show', $item->hash), 'View training session', 'visibility');
             })
             ->editColumn('date', function ($item) {
                 return $this->datatablesService->startEndDate($item);
@@ -413,7 +411,7 @@ class TeamService extends Service
 
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->id), 'View match session', 'visibility');
+                return $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
             })
             ->editColumn('opponentTeam', function ($item) use ($team){
                 if ($team->teamSide == 'Academy Team'){
@@ -421,11 +419,11 @@ class TeamService extends Service
                 } else {
                     $data = $item->teams[0];
                 }
-                return $this->datatablesService->name($data->logo, $data->teamName, $data->ageGroup, route('team-managements.show', $data->id));
+                return $this->datatablesService->name($data->logo, $data->teamName, $data->ageGroup, route('team-managements.show', $data->hash));
             })
             ->editColumn('competition', function ($item) {
                 if ($item->competition){
-                    $competition = $this->datatablesService->name($item->competition->logo, $item->competition->teamName, $item->competition->type, route('competition-managements.show', $item->competition->id));
+                    $competition = $this->datatablesService->name($item->competition->logo, $item->competition->teamName, $item->competition->type, route('competition-managements.show', $item->competition->hash));
                 }else{
                     $competition = 'No Competition';
                 }

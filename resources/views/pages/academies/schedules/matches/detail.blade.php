@@ -8,26 +8,25 @@
 
 @section('modal')
     <x-edit-player-attendance-modal
-            :routeGet="route('match-schedules.player', ['schedule' => $schedule->id, 'player' => ':id'])"
-            :routeUpdate="route('match-schedules.update-player', ['schedule' => $schedule->id, 'player' => ':id'])"/>
+            :routeGet="route('match-schedules.player', ['schedule' => $schedule->hash, 'player' => ':id'])"
+            :routeUpdate="route('match-schedules.update-player', ['schedule' => $schedule->hash, 'player' => ':id'])"/>
 
     <x-edit-coach-attendance-modal
-            :routeGet="route('match-schedules.coach', ['schedule' => $schedule->id, 'coach' => ':id'])"
-            :routeUpdate="route('match-schedules.update-coach', ['schedule' => $schedule->id, 'coach' => ':id'])"/>
+            :routeGet="route('match-schedules.coach', ['schedule' => $schedule->hash, 'coach' => ':id'])"
+            :routeUpdate="route('match-schedules.update-coach', ['schedule' => $schedule->hash, 'coach' => ':id'])"/>
 
-    <x-create-schedule-note-modal :routeCreate="route('match-schedules.create-note', $schedule->id)"
+    <x-create-schedule-note-modal :routeCreate="route('match-schedules.create-note', $schedule->hash)"
                                   :eventName="$schedule->eventType"/>
     <x-edit-schedule-note-modal
-            :routeEdit="route('match-schedules.edit-note', ['schedule' => $schedule->id, 'note' => ':id'])"
-            :routeUpdate="route('match-schedules.update-note', ['schedule' => $schedule->id, 'note' => ':id'])"
-            :eventName="$schedule->eventType"
-            :routeAfterProcess="route('match-schedules.show', $schedule->id)"/>
+            :routeEdit="route('match-schedules.edit-note', ['schedule' => $schedule->hash, 'note' => ':id'])"
+            :routeUpdate="route('match-schedules.update-note', ['schedule' => $schedule->hash, 'note' => ':id'])"
+            :eventName="$schedule->eventType"/>
 
     <x-skill-assessments-modal/>
     <x-edit-skill-assessments-modal/>
 
     <x-add-performance-review-modal :routeCreate="route('coach.performance-reviews.store', ['player'=> ':id'])"/>
-    <x-edit-performance-review-modal :routeAfterProcess="route('match-schedules.show', $schedule->id)"/>
+    <x-edit-performance-review-modal :routeAfterProcess="route('match-schedules.show', $schedule->hash)"/>
 
     <!-- Modal add team scorer -->
     <x-add-team-scorer-modal :eventSchedule="$schedule"/>
@@ -68,16 +67,16 @@
                             aria-haspopup="true" aria-expanded="false">Action<span class="material-icons ml-3">keyboard_arrow_down</span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('match-schedules.edit', $schedule->id) }}">
+                        <a class="dropdown-item" href="{{ route('match-schedules.edit', $schedule->hash) }}">
                             <span class="material-icons">edit</span> Edit Match Schedule
                         </a>
                         @if($schedule->status != 'Cancelled' && $schedule->status != 'Completed')
-                            <button type="submit" class="dropdown-item cancelBtn" id="{{ $schedule->id }}">
+                            <button type="submit" class="dropdown-item cancelBtn" id="{{ $schedule->hash }}">
                                 <span class="material-icons text-danger">block</span>
                                 Cancel Match
                             </button>
                         @endif
-                        <button type="button" class="dropdown-item delete" id="{{$schedule->id}}">
+                        <button type="button" class="dropdown-item delete" id="{{$schedule->hash}}">
                             <span class="material-icons text-danger">delete</span> Delete Match
                         </button>
                     </div>
@@ -646,7 +645,7 @@
                                 <div class="page-separator__text">Player Attendance</div>
                             </div>
                             <div class=".player-attendance">
-                                @include('pages.academies.reports.schedules.player-attendance-data', ['players' => $homePlayers])
+                                @include('pages.academies.schedules.player-attendance-data', ['players' => $homePlayers])
                             </div>
 
                             {{--    Coach Attendance    --}}
@@ -654,7 +653,7 @@
                                 <div class="page-separator__text">Coach Attendance</div>
                             </div>
                             <div class=".coach-attendance">
-                                @include('pages.academies.reports.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
+                                @include('pages.academies.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
                             </div>
                         </div>
                         {{--    Match Note    --}}
@@ -672,7 +671,7 @@
                             @endif
                             @foreach($homeTeamNotes as $note)
                                 <x-event-note-card :note="$note"
-                                                   :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
+                                                   :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->hash, 'note'=>':id'])"/>
                             @endforeach
                         </div>
                         {{--    PLAYER SKILLS EVALUATION SECTION    --}}
@@ -684,7 +683,7 @@
                             </div>
                             @if(isAllAdmin() || isCoach())
                                 <x-player-skill-event-tables
-                                        :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])"
+                                        :route="route('match-schedules.player-skills', ['schedule' => $schedule->hash])"
                                         tableId="team{{ $schedule->teams[0]->id }}PlayerSkillsTable"
                                         :teamId="$schedule->teams[0]->id"/>
                             @elseif(isPlayer())
@@ -701,7 +700,7 @@
                             </div>
                             @if(isAllAdmin() || isCoach())
                                 <x-player-performance-review-event-table
-                                        :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])"
+                                        :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->hash])"
                                         tableId="team{{ $schedule->teams[0]->id }}PlayerPerformanceReviewTable"
                                         :teamId="$schedule->teams[0]->id"/>
                             @elseif(isPlayer())
@@ -772,7 +771,7 @@
                                 <div class="page-separator__text">Player Attendance</div>
                             </div>
                             <div class=".player-attendance">
-                                @include('pages.academies.reports.schedules.player-attendance-data', ['players' => $awayPlayers])
+                                @include('pages.academies.schedules.player-attendance-data', ['players' => $awayPlayers])
                             </div>
 
                             {{--    Coach Attendance    --}}
@@ -780,7 +779,7 @@
                                 <div class="page-separator__text">Coach Attendance</div>
                             </div>
                             <div class=".coach-attendance">
-                                @include('pages.academies.reports.schedules.coach-attendance-data', ['coaches' => $awayCoaches])
+                                @include('pages.academies.schedules.coach-attendance-data', ['coaches' => $awayCoaches])
                             </div>
                         </div>
                         {{--    Match Note    --}}
@@ -798,7 +797,7 @@
                             @endif
                             @foreach($awayTeamNotes as $note)
                                 <x-event-note-card :note="$note"
-                                                   :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
+                                                   :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->hash, 'note'=>':id'])"/>
                             @endforeach
                         </div>
                         {{--    PLAYER SKILLS EVALUATION SECTION    --}}
@@ -810,7 +809,7 @@
                             </div>
                             @if(isAllAdmin() || isCoach())
                                 <x-player-skill-event-tables
-                                        :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])"
+                                        :route="route('match-schedules.player-skills', ['schedule' => $schedule->hash])"
                                         tableId="team{{ $schedule->teams[1]->id }}PlayerSkillsTable"
                                         :teamId="$schedule->teams[1]->id"/>
                             @elseif(isPlayer())
@@ -827,7 +826,7 @@
                             </div>
                             @if(isAllAdmin() || isCoach())
                                 <x-player-performance-review-event-table
-                                        :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])"
+                                        :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->hash])"
                                         tableId="team{{ $schedule->teams[1]->id }}PlayerPerformanceReviewTable"
                                         :teamId="$schedule->teams[1]->id"/>
                             @elseif(isPlayer())
@@ -894,7 +893,7 @@
                             <div class="page-separator__text">Player Attendance</div>
                         </div>
                         <div class=".player-attendance">
-                            @include('pages.academies.reports.schedules.player-attendance-data', ['players' => $homePlayers])
+                            @include('pages.academies.schedules.player-attendance-data', ['players' => $homePlayers])
                         </div>
 
                         {{--    Coach Attendance    --}}
@@ -902,7 +901,7 @@
                             <div class="page-separator__text">Coach Attendance</div>
                         </div>
                         <div class=".coach-attendance">
-                            @include('pages.academies.reports.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
+                            @include('pages.academies.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
                         </div>
                     </div>
                     {{--    Match Note    --}}
@@ -920,7 +919,7 @@
                         @endif
                         @foreach($schedule->notes as $note)
                             <x-event-note-card :note="$note"
-                                               :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
+                                               :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->hash, 'note'=>':id'])"/>
                         @endforeach
                     </div>
                     {{--    PLAYER SKILLS EVALUATION SECTION    --}}
@@ -930,7 +929,7 @@
                         </div>
                         @if(isAllAdmin() || isCoach())
                             <x-player-skill-event-tables
-                                    :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])"
+                                    :route="route('match-schedules.player-skills', ['schedule' => $schedule->hash])"
                                     tableId="playerSkillsTable"/>
                         @elseif(isPlayer())
                             <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
@@ -943,7 +942,7 @@
                         </div>
                         @if(isAllAdmin() || isCoach())
                             <x-player-performance-review-event-table
-                                    :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])"
+                                    :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->hash])"
                                     tableId="playerPerformanceReviewTable"/>
                         @elseif(isPlayer())
                             @if(count($data['playerPerformanceReviews'])==0)
@@ -970,24 +969,24 @@
 
     {{--    delete team scorer confirmation   --}}
     <x-process-data-confirmation btnClass=".delete-scorer"
-                                 :processRoute="route('match-schedules.destroy-match-scorer', ['schedule' => $schedule->id, 'scorer'=>':id'])"
-                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $schedule->id])"
+                                 :processRoute="route('match-schedules.destroy-match-scorer', ['schedule' => $schedule->hash, 'scorer'=>':id'])"
+                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $schedule->hash])"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this scorer?"
                                  errorText="Something went wrong when deleting match scorer!"/>
 
     {{--    delete own goal player confirmation   --}}
     <x-process-data-confirmation btnClass=".delete-own-goal"
-                                 :processRoute="route('match-schedules.destroy-own-goal', ['schedule' => $schedule->id, 'scorer'=>':id'])"
-                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $schedule->id])"
+                                 :processRoute="route('match-schedules.destroy-own-goal', ['schedule' => $schedule->hash, 'scorer'=>':id'])"
+                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $schedule->hash])"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this own goal?"
                                  errorText="Something went wrong when deleting own goal scorer!"/>
 
     {{--   cancel match  --}}
     <x-process-data-confirmation btnClass=".cancelBtn"
-                                 :processRoute="route('cancel-match', ['schedule' => $schedule->id])"
-                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $schedule->id])"
+                                 :processRoute="route('cancel-match', ['schedule' => $schedule->hash])"
+                                 :routeAfterProcess="route('match-schedules.show', ['schedule' => $schedule->hash])"
                                  method="PATCH"
                                  confirmationText="Are you sure to cancel this match session?"
                                  errorText="Something went wrong when cancelling match session!"/>
@@ -997,79 +996,79 @@
     <script>
         $(document).ready(function () {
             @if ($schedule->matchType == 'Internal Match')
-            $('#team{{ $schedule->teams[0]->id }}PlayerStatsTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{{ route('match-schedules.index-player-match-stats', $schedule->id) }}',
-                    type: "GET",
-                    data: {
-                        teamId: {{ $schedule->teams[0]->id }}
+                $('#team{{ $schedule->teams[0]->id }}PlayerStatsTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{{ route('match-schedules.index-player-match-stats', $schedule->hash) }}',
+                        type: "GET",
+                        data: {
+                            teamId: {{ $schedule->teams[0]->id }}
+                        },
                     },
-                },
-                columns: [
-                    {data: 'name', name: 'name'},
-                    {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
-                    {data: 'pivot.goals', name: 'pivot.goals'},
-                    {data: 'pivot.assists', name: 'pivot.assists'},
-                    {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
-                    {data: 'pivot.shots', name: 'pivot.shots'},
-                    {data: 'pivot.passes', name: 'pivot.passes'},
-                    {data: 'pivot.fouls', name: 'pivot.fouls'},
-                    {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
-                    {data: 'pivot.redCards', name: 'pivot.redCards'},
-                    {data: 'pivot.saves', name: 'pivot.saves'},
-                    {data: 'updated_at', name: 'updated_at'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
+                    columns: [
+                        {data: 'name', name: 'name'},
+                        {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
+                        {data: 'pivot.goals', name: 'pivot.goals'},
+                        {data: 'pivot.assists', name: 'pivot.assists'},
+                        {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
+                        {data: 'pivot.shots', name: 'pivot.shots'},
+                        {data: 'pivot.passes', name: 'pivot.passes'},
+                        {data: 'pivot.fouls', name: 'pivot.fouls'},
+                        {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                        {data: 'pivot.redCards', name: 'pivot.redCards'},
+                        {data: 'pivot.saves', name: 'pivot.saves'},
+                        {data: 'updated_at', name: 'updated_at'},
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            width: '15%'
+                        },
+                    ]
+                });
+                $('#team{{ $schedule->teams[1]->id }}PlayerStatsTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: '{{ route('match-schedules.index-player-match-stats', $schedule->hash) }}',
+                        type: "GET",
+                        data: {
+                            teamId: {{ $schedule->teams[1]->id }}
+                        },
                     },
-                ]
-            });
-            $('#team{{ $schedule->teams[1]->id }}PlayerStatsTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{{ route('match-schedules.index-player-match-stats', $schedule->id) }}',
-                    type: "GET",
-                    data: {
-                        teamId: {{ $schedule->teams[1]->id }}
-                    },
-                },
-                columns: [
-                    {data: 'name', name: 'name'},
-                    {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
-                    {data: 'pivot.goals', name: 'pivot.goals'},
-                    {data: 'pivot.assists', name: 'pivot.assists'},
-                    {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
-                    {data: 'pivot.shots', name: 'pivot.shots'},
-                    {data: 'pivot.passes', name: 'pivot.passes'},
-                    {data: 'pivot.fouls', name: 'pivot.fouls'},
-                    {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
-                    {data: 'pivot.redCards', name: 'pivot.redCards'},
-                    {data: 'pivot.saves', name: 'pivot.saves'},
-                    {data: 'updated_at', name: 'updated_at'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
-                ]
-            });
+                    columns: [
+                        {data: 'name', name: 'name'},
+                        {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
+                        {data: 'pivot.goals', name: 'pivot.goals'},
+                        {data: 'pivot.assists', name: 'pivot.assists'},
+                        {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
+                        {data: 'pivot.shots', name: 'pivot.shots'},
+                        {data: 'pivot.passes', name: 'pivot.passes'},
+                        {data: 'pivot.fouls', name: 'pivot.fouls'},
+                        {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                        {data: 'pivot.redCards', name: 'pivot.redCards'},
+                        {data: 'pivot.saves', name: 'pivot.saves'},
+                        {data: 'updated_at', name: 'updated_at'},
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false,
+                            width: '15%'
+                        },
+                    ]
+                });
             @else
             $('#playerStatTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('match-schedules.index-player-match-stats', $schedule->id) !!}',
+                    url: '{!! route('match-schedules.index-player-match-stats', $schedule->hash) !!}',
                 },
                 columns: [
                     {data: 'name', name: 'name'},

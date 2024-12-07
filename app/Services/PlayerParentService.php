@@ -42,8 +42,8 @@ class PlayerParentService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('player-parents.edit', ['player'=>$player->id,'parent'=>$item->id]) . '"><span class="material-icons">edit</span> Edit Parent/Guardian</a>
-                            <button type="button" class="dropdown-item delete-parent" id=' . $item->id . '>
+                            <a class="dropdown-item" href="' . route('player-parents.edit', ['player'=>$player->hash,'parent'=>$item->hash]) . '"><span class="material-icons">edit</span> Edit Parent/Guardian</a>
+                            <button type="button" class="dropdown-item delete-parent" id=' . $item->hash . '>
                                 <span class="material-icons text-danger">delete</span> Delete Parent/Guardian
                             </button>
                           </div>

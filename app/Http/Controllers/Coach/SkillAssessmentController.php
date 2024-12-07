@@ -26,7 +26,7 @@ class SkillAssessmentController extends Controller
         if (\request()->ajax()){
             return $this->skillAssessmentService->index($this->getLoggedCoachUser());
         }
-        return view('pages.coaches.academies.skill-assessments.index');
+        return view('pages.academies.skill-assessments.index');
     }
 
     public function indexAllPlayerInEvent(Request $request, EventSchedule $schedule)
@@ -36,7 +36,7 @@ class SkillAssessmentController extends Controller
     }
 
     public function create(Player $player){
-        return view('pages.coaches.academies.skill-assessments.create', [
+        return view('pages.academies.skill-assessments.create', [
             'data' => $player,
         ]);
     }

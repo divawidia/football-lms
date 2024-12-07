@@ -21,7 +21,7 @@ class DashboardController extends Controller
         $latestMatches = $this->playerService->playerLatestMatch($player);
         $latestTrainings = $this->playerService->playerLatestTraining($player);
 
-        return view('pages.players.dashboard', [
+        return view('pages.dashboards.player', [
             'data' => $player,
             'teams'=> $teams,
             'overview' => $overview,

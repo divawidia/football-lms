@@ -50,7 +50,7 @@
                             <h5 class="text-white mb-0">{{ $playerCompletionProgress }}%</h5>
                         </div>
                         @if($playerCompletionProgress < 100)
-                            <a href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->id, 'lesson' => $uncompletePlayerTrainingLesson->id]) }}" id="resumeTraining" class="btn btn-sm btn-primary mt-4">
+                            <a href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->hash, 'lesson' => $uncompletePlayerTrainingLesson->hash]) }}" id="resumeTraining" class="btn btn-sm btn-primary mt-4">
                                 <span class="material-icons mr-2">play_arrow</span>
                                 Resume Training Course
                             </a>
@@ -93,23 +93,26 @@
                 class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">
                 <div class="container page__container">
                     <ul class="nav navbar-nav flex align-items-sm-center">
-                        <li class="nav-item navbar-list__item">
-                            <div class="media align-items-center">
+                        @if(isAllAdmin() || isCoach())
+                            <li class="nav-item navbar-list__item">
+                                <div class="media align-items-center">
                                 <span class="media-left mr-16pt">
                                     <img src="{{ Storage::url($data->user->foto) }}"
                                          width="40"
                                          alt="avatar"
                                          class="rounded-circle">
                                 </span>
-                                <div class="media-body">
-                                    <a class="card-title m-0"
-                                       href="{{ route('admin-managements.show', $data->user->id) }}">
-                                        {{ $data->user->firstName }} {{ $data->user->lastName }}
-                                    </a>
-                                    <p class="text-50 lh-1 mb-0">{{ $data->user->roles[0]->name }}</p>
+                                    <div class="media-body">
+                                        <a class="card-title m-0"
+                                           href="{{ route('admin-managements.show', $data->user->id) }}">
+                                            {{ $data->user->firstName }} {{ $data->user->lastName }}
+                                        </a>
+                                        <p class="text-50 lh-1 mb-0">{{ $data->user->roles[0]->name }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
+                            </li>
+                        @endif
+
                         <li class="nav-item navbar-list__item">
                             <i class="material-icons text-muted icon--left">schedule</i>
                             {{ $totalDuration }}
@@ -224,7 +227,7 @@
                     <p class="text-70 mb-24pt">{{ $lesson->description }}</p>
 
                     <div class="card mb-32pt mb-lg-64pt">
-                        <a class="accordion__toggle" href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->id, 'lesson' => $lesson->id]) }}">
+                        <a class="accordion__toggle" href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->hash, 'lesson' => $lesson->hash]) }}">
                             @if($lesson->players()->where('playerId', $player->id)->first(['player_lesson.completionStatus'])->completionStatus == '1')
                                 <span class="accordion__toggle-icon material-icons text-success">check_circle</span>
                                 <strong class="card-title mx-4">Completed</strong>

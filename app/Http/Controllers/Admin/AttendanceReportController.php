@@ -39,18 +39,22 @@ class AttendanceReportController extends Controller
             $playerAttendanceDatatablesRoute = url()->route('coach.attendance-report.index');
         }
         else {
-            $teams = null;
             $player = $this->getLoggedPLayerUser();
+            $teams = $player->teams;
             $data = $this->attendanceReportService->show($player);
-            $playerAttendanceDatatablesRoute = null;
+            return view('pages.academies.reports.attendances.player-detail', [
+                'data' => $data,
+                'player' => $player
+            ]);
         }
-        
+
         if (\request()->ajax()) {
             $startDate = \request()->input('startDate');
             $endDate = \request()->input('endDate');
             $team = \request()->input('team');
             $eventType = \request()->input('eventType');
             if ($team == null and $this->getLoggedUser()->getRoleNames() == isCoach()) {
+                $coach = $this->getLoggedCoachUser();
                 $team = $coach->teams;
             } elseif ($team != null) {
                 $team = $this->teamRepository->whereId($team);

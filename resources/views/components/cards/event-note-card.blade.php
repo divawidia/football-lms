@@ -26,9 +26,18 @@
 </div>
 
 {{--    delete own goal player confirmation   --}}
-<x-process-data-confirmation btnClass=".delete-note"
-                             :processRoute="$deleteRoute"
-                             :routeAfterProcess="route('match-schedules.show', ['schedule' => $note->scheduleId])"
-                             method="DELETE"
-                             confirmationText="Are you sure to delete this note?"
-                             errorText="Something went wrong when deleting the note!"/>
+@if($note->schedule->eventType == 'Training')
+    <x-process-data-confirmation btnClass=".delete-note"
+                              :processRoute="$deleteRoute"
+                              :routeAfterProcess="route('training-schedules.show', ['schedule' => $note->schedule->hash])"
+                              method="DELETE"
+                              confirmationText="Are you sure to delete this note?"
+                              errorText="Something went wrong when deleting the note!"/>
+@else
+    <x-process-data-confirmation btnClass=".delete-note"
+                              :processRoute="$deleteRoute"
+                              :routeAfterProcess="route('match-schedules.show', ['schedule' => $note->schedule->hash])"
+                              method="DELETE"
+                              confirmationText="Are you sure to delete this note?"
+                              errorText="Something went wrong when deleting the note!"/>
+@endif

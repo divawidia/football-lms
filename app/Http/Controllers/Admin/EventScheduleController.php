@@ -56,7 +56,7 @@ class EventScheduleController extends Controller
             $tableRoute = url()->route('player.training-schedules.index');
         }
 
-        return view('pages.admins.academies.schedules.trainings.index', [
+        return view('pages.academies.schedules.trainings.index', [
             'events' => $events,
             'tableRoute' => $tableRoute,
         ]);
@@ -95,7 +95,7 @@ class EventScheduleController extends Controller
             $tableRoute = url()->route('player.match-schedules.index');
         }
 
-        return view('pages.admins.academies.schedules.matches.index', [
+        return view('pages.academies.schedules.matches.index', [
             'events' => $events,
             'tableRoute' => $tableRoute,
         ]);
@@ -127,14 +127,14 @@ class EventScheduleController extends Controller
             $coach = $this->getLoggedCoachUser();
             $teams = $this->eventScheduleService->createTraining($coach);
         }
-        return view('pages.admins.academies.schedules.trainings.create', [
+        return view('pages.academies.schedules.trainings.create', [
             'teams' => $teams,
         ]);
     }
 
     public function createMatch()
     {
-        return view('pages.admins.academies.schedules.matches.create', [
+        return view('pages.academies.schedules.matches.create', [
             'competitions' => $this->competitionService->getActiveCompetition(),
         ]);
     }
@@ -176,18 +176,21 @@ class EventScheduleController extends Controller
     public function showTraining(EventSchedule $schedule)
     {
         $data = $this->eventScheduleService->show($schedule);
-        $players = $data['dataSchedule']->players;
-        $coaches = $data['dataSchedule']->coaches;
+        $players = $schedule->players;
+        $coaches = $schedule->coaches;
+        $attendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->teams[0]);
 
         if ($this->isPlayer()){
             $player = $this->getLoggedPLayerUser();
             $data = $this->eventScheduleService->show($schedule, $player);
         }
 
-        return view('pages.admins.academies.schedules.trainings.detail', [
+        return view('pages.academies.schedules.trainings.detail', [
             'data' => $data,
+            'schedule' => $schedule,
             'players' => $players,
             'coaches' => $coaches,
+            'attendance' => $attendance
         ]);
     }
 
@@ -241,7 +244,7 @@ class EventScheduleController extends Controller
             $data = $this->eventScheduleService->show($schedule, $player);
         }
 
-        return view('pages.admins.academies.schedules.matches.detail', [
+        return view('pages.academies.schedules.matches.detail', [
             'data' => $data,
             'schedule' => $schedule,
             'homePlayers' => $homePlayers,
@@ -269,7 +272,7 @@ class EventScheduleController extends Controller
             $coach = $this->getLoggedCoachUser();
             $teams = $this->eventScheduleService->createTraining($coach);
         }
-        return view('pages.admins.academies.schedules.trainings.edit', [
+        return view('pages.academies.schedules.trainings.edit', [
             'teams' => $teams,
             'data' => $schedule
         ]);
@@ -277,7 +280,7 @@ class EventScheduleController extends Controller
 
     public function editMatch(EventSchedule $schedule)
     {
-        return view('pages.admins.academies.schedules.matches.edit', [
+        return view('pages.academies.schedules.matches.edit', [
             'competitions' => $this->competitionService->getActiveCompetition(),
             'data' => $schedule
         ]);

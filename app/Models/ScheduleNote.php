@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class ScheduleNote extends Model
@@ -16,9 +17,9 @@ class ScheduleNote extends Model
         'teamId',
     ];
 
-    public function schedule()
+    public function schedule(): BelongsTo
     {
-        return $this->belongsTo(EventSchedule::class, 'competitionId');
+        return $this->belongsTo(EventSchedule::class, 'scheduleId');
     }
     public function team()
     {

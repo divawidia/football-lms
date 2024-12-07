@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingScheduleReminder extends Notification
+class TrainingScheduleReminder extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $trainingSchedule;
@@ -29,7 +29,8 @@ class TrainingScheduleReminder extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+//        return ['mail', 'database'];
+        return ['database'];
     }
 
     /**

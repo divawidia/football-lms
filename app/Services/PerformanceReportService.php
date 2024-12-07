@@ -84,14 +84,14 @@ class PerformanceReportService extends Service
         $totalMatchPlayed = EventSchedule::whereHas('teams', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
-            ->where('status', '0')
+            ->where('status', 'Completed')
             ->where('eventType', 'Match')
             ->count();
         $thisMonthTotalMatchPlayed = EventSchedule::whereHas('teams', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
             ->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->where('status', '0')
+            ->where('status', 'Completed')
             ->where('eventType', 'Match')
             ->count();
 
@@ -221,7 +221,7 @@ class PerformanceReportService extends Service
     }
 
     public function coachLatestMatch(Coach $coach){
-        return $this->eventScheduleRepository->getEventByModel($coach, 'Match', '0', 2);
+        return $this->eventScheduleRepository->getEventByModel($coach, 'Match', 'Completed', 2);
     }
 
 
@@ -237,16 +237,16 @@ class PerformanceReportService extends Service
                                 more_vert
                             </span>
                           </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('match-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Match</a>
-                            <a class="dropdown-item" href="' . route('match-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Match</a>
+                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="' . route('match-schedules.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Match</a>
+                            <a class="dropdown-item" href="' . route('match-schedules.show', $item->hash) . '"><span class="material-icons">visibility</span> View Match</a>
                             <button type="button" class="dropdown-item delete" id="' . $item->id . '">
                                 <span class="material-icons">delete</span> Delete Match
                             </button>
                           </div>
                         </div>';
                 } elseif (isCoach() || isPlayer()){
-                    $actionBtn = '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->id) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
+                    $actionBtn = '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->hash) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
                                         <span class="material-icons">visibility</span>
                                   </a>';
                 }
@@ -325,7 +325,7 @@ class PerformanceReportService extends Service
         return $this->matchHistoryDatatables($data);
     }
     public function modelMatchHistory($model){
-        $data = $this->eventScheduleRepository->getEventByModel($model, 'Match', '0');
+        $data = $this->eventScheduleRepository->getEventByModel($model, 'Match', 'Completed');
         return $this->matchHistoryDatatables($data);
     }
 }

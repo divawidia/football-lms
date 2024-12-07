@@ -23,10 +23,12 @@ class TrainingVideoService extends Service
 {
     private TrainingVideoRepository $trainingVideoRepository;
     private UserRepository $userRepository;
-    public function __construct(TrainingVideoRepository $trainingVideoRepository, UserRepository $userRepository)
+    private DatatablesService $datatablesService;
+    public function __construct(TrainingVideoRepository $trainingVideoRepository, UserRepository $userRepository, DatatablesService $datatablesService)
     {
         $this->trainingVideoRepository = $trainingVideoRepository;
         $this->userRepository = $userRepository;
+        $this->datatablesService = $datatablesService;
     }
 
     public function index(){
@@ -42,7 +44,7 @@ class TrainingVideoService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideo) {
                 return '<div class="btn-toolbar" role="toolbar">
-                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.show-player', ['trainingVideo' => $trainingVideo->id, 'player' => $item->id]).'" data-toggle="tooltip" data-placement="bottom" title="View Player">
+                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.show-player', ['trainingVideo' => $trainingVideo->hash, 'player' => $item->hash]).'" data-toggle="tooltip" data-placement="bottom" title="View Player">
                                 <span class="material-icons">visibility</span>
                              </a>
                             <button type="button" class="btn btn-sm btn-outline-secondary deletePlayer" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Remove Player">
@@ -51,21 +53,7 @@ class TrainingVideoService extends Service
                         </div>';
             })
             ->editColumn('name', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' '.$item->user->lastName.'</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
             ->editColumn('progress', function ($item) {
                 return $item->pivot->progress .'%';
@@ -103,7 +91,7 @@ class TrainingVideoService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideo) {
                 return '<div class="btn-toolbar" role="toolbar">
-                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$item->id]).'" data-toggle="tooltip" data-placement="bottom" title="View lesson">
+                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->hash,'lesson'=>$item->hash]).'" data-toggle="tooltip" data-placement="bottom" title="View lesson">
                                 <span class="material-icons">visibility</span>
                              </a>
                         </div>';
@@ -141,7 +129,7 @@ class TrainingVideoService extends Service
     public function playerShow(TrainingVideo $trainingVideo, Player $player)
     {
         $playerCompletionProgress = $this->playerCompletionProgress($player, $trainingVideo);
-        $uncompletePlayerTrainingLesson = $this->uncompletePlayerTrainingLesson($player);
+        $uncompletePlayerTrainingLesson = $this->uncompletePlayerTrainingLesson($player, $trainingVideo);
     }
     public function playerCompletionProgress(Player $player, TrainingVideo $trainingVideo)
     {

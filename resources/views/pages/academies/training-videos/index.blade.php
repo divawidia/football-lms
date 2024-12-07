@@ -44,17 +44,17 @@
                 @foreach($data as $training)
                     <div class="col-sm-6 col-lg-4">
                         <div class="card card-sm card--elevated p-relative o-hidden">
-                            <a href="{{ route('training-videos.show', $training->id) }}">
+                            <a href="{{ route('training-videos.show', $training->hash) }}">
                                 <img class="img-index-page" src="{{ Storage::url($training->previewPhoto) }}" alt="training-preview">
                             </a>
                             <div class="card-body">
                                 <div class="d-flex">
                                     <div class="flex">
                                         <a class="card-title mb-4pt"
-                                           href="{{ route('training-videos.show', $training->id) }}">{{$training->trainingTitle}}</a>
+                                           href="{{ route('training-videos.show', $training->hash) }}">{{$training->trainingTitle}}</a>
                                     </div>
-                                    <a href="{{ route('training-videos.show', $training->id) }}"
-                                       class="ml-4pt material-icons text-20 card-course__icon-favorite">edit</a>
+{{--                                    <a href="{{ route('training-videos.edit', $training->hash) }}"--}}
+{{--                                       class="ml-4pt material-icons text-20 card-course__icon-favorite">edit</a>--}}
                                 </div>
                                 <div class="d-flex">
                                     <div class="d-flex align-items-center mr-2">

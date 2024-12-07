@@ -52,7 +52,7 @@ class GroupDivisionController extends Controller
     public function create(Competition $competition){
         $data = $this->groupDivisionService->create($competition);
 
-        return view('pages.admins.managements.competitions.groups.create', [
+        return view('pages.managements.competitions.groups.create', [
             'teams' => $data['teams'],
             'opponentTeams' => $data['opponentTeams'],
             'competition' => $competition,
@@ -93,7 +93,7 @@ class GroupDivisionController extends Controller
         // get team data where teams is our academy team and has been added in the group division, this variable is used for detect if team are already added in the group division
         $data = $this->groupDivisionService->addTeam($competition, $group);
 
-        return view('pages.admins.managements.competitions.groups.addTeam', [
+        return view('pages.managements.competitions.groups.addTeam', [
             'teams' => $data['teams'],
             'availableAcademyTeams' => $data['availableAcademyTeams'],
             'opponentTeams' => $data['opponentTeams'],

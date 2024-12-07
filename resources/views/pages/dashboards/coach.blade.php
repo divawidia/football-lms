@@ -28,7 +28,7 @@
         <div class="row">
             @foreach($dataOverview['teamsManaged'] as $team)
                 <div class="col-lg-6">
-                    <a class="card" href="{{route('team-managements.show', $team->id)}}">
+                    <a class="card" href="{{route('team-managements.show', $team->hash)}}">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-6 d-flex flex-column flex-md-row align-items-center">
@@ -272,7 +272,7 @@
             </div>
         @endif
         @foreach($upcomingMatches as $match)
-            <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
+            <a class="card" href="{{ route('match-schedules.show', $match->hash) }}">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-4 d-flex flex-column flex-md-row align-items-center">
@@ -341,7 +341,7 @@
         <div class="row">
             @foreach($upcomingTrainings as $training)
                 <div class="col-lg-6">
-                    <a class="card" href="{{ route('training-schedules.show', $training->id) }}">
+                    <a class="card" href="{{ route('training-schedules.show', $training->hash) }}">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-6 d-flex flex-column flex-md-row align-items-center">

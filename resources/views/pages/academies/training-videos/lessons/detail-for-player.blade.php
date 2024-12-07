@@ -11,7 +11,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('training-videos.show', $data->trainingVideoId) }}" class="nav-link text-70"><i
+                    <a href="{{ route('training-videos.show', $data->trainingVideo->hash) }}" class="nav-link text-70"><i
                                 class="material-icons icon--left">keyboard_backspace</i> Back
                         to {{ $data->trainingVideo->trainingTitle }}</a>
                 </li>
@@ -26,7 +26,7 @@
                     <a class="@if($data->id == $lesson->id) bg-accent-2 @endif" data-toggle="tooltip"
                        data-placement="bottom"
                        title="{{ $lesson->lessonTitle }}"
-                       href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $trainingVideo->id, 'lesson' => $lesson->id]) }}">
+                       href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $trainingVideo->hash, 'lesson' => $lesson->hash]) }}">
                         @if($lesson->players()->where('playerId', $loggedPlayerUser->id)->first(['player_lesson.completionStatus'])->completionStatus)
                             <span class="material-icons text-success">check_circle</span>
                         @else
@@ -59,7 +59,7 @@
             <p class="hero__lead measure-hero-lead text-white-50 mb-24pt">{!! $data->description !!}</p>
                 <div class="btn-toolbar" role="toolbar">
                     @if($trainingVideo->lessons()->first()->id != $data->id)
-                        <a class="btn btn-sm btn-white" href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $trainingVideo->id, 'lesson' => $previousId]) }}" id="previousBtn">
+                        <a class="btn btn-sm btn-white" href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $trainingVideo->hash, 'lesson' => $previousId->hash]) }}" id="previousBtn">
                             <span class="material-icons icon-24pt mr-2">chevron_left</span>
                             Previous Lesson
                         </a>
@@ -113,7 +113,7 @@
                 <p class="text-70 mb-24pt">{{ $lesson->description }}</p>
 
                 <div class="card mb-32pt mb-lg-64pt @if($data->id == $lesson->id) bg-accent-2 text-white @endif">
-                    <a class="accordion__toggle" href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $trainingVideo->id, 'lesson' => $lesson->id]) }}">
+                    <a class="accordion__toggle" href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $trainingVideo->hash, 'lesson' => $lesson->hash]) }}">
                         @if($lesson->players()->where('playerId', $loggedPlayerUser->id)->first(['player_lesson.completionStatus'])->completionStatus == '1')
                             <span class="accordion__toggle-icon material-icons text-success">check_circle</span>
                             <strong class="card-title mx-4">Completed</strong>
@@ -142,7 +142,7 @@
 
         function markVideoAsComplete() {
             $.ajax({
-                url: '{{ url()->route('training-videos.mark-as-complete', ['trainingVideo' => $trainingVideo->id, 'lesson' => $data->id]) }}', // Route to handle video completion
+                url: '{{ url()->route('training-videos.mark-as-complete', ['trainingVideo' => $trainingVideo->hash, 'lesson' => $data->hash]) }}', // Route to handle video completion
                 method: 'POST',
                 data: {
                     playerId: '{{ $loggedPlayerUser->id }}', // Pass the video ID to backend
@@ -151,9 +151,9 @@
                 success: function(response) {
                     console.log(response.message);
                     @if($nextId != null)
-                        window.location.href = '{{ route('training-videos.show-player-lesson', ['trainingVideo' => $trainingVideo->id, 'lesson' => $nextId]) }}'
+                        window.location.href = '{{ route('training-videos.show-player-lesson', ['trainingVideo' => $trainingVideo->hash, 'lesson' => $nextId->hash]) }}'
                     @else
-                        window.location.href = '{{ route('training-videos.completed', ['trainingVideo' => $trainingVideo->id]) }}'
+                        window.location.href = '{{ route('training-videos.completed', ['trainingVideo' => $trainingVideo->hash]) }}'
                     @endif
                 },
                 error: function(xhr) {

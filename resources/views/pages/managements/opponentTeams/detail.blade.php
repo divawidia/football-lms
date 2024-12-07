@@ -45,7 +45,7 @@
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('opponentTeam-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
+                    <a class="dropdown-item" href="{{ route('opponentTeam-managements.edit', $team->hash) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
                     @if($team->status == '1')
                         <button type="submit" class="dropdown-item setDeactivate" id="{{$team->id}}">
                             <span class="material-icons text-danger">check_circle</span>
@@ -225,14 +225,14 @@
     @if(isAllAdmin())
     <x-process-data-confirmation btnClass=".setDeactivate"
                                  :processRoute="route('deactivate-team', ':id')"
-                                 :routeAfterProcess="route('team-managements.show', $team->id)"
+                                 :routeAfterProcess="route('team-managements.show', $team->hash)"
                                  method="PATCH"
                                  confirmationText="Are you sure to deactivate this team {{ $team->teamName }}?"
                                  errorText="Something went wrong when deactivating this team {{ $team->teamName }}!"/>
 
     <x-process-data-confirmation btnClass=".setActivate"
                                  :processRoute="route('activate-team', ':id')"
-                                 :routeAfterProcess="route('team-managements.show', $team->id)"
+                                 :routeAfterProcess="route('team-managements.show', $team->hash)"
                                  method="PATCH"
                                  confirmationText="Are you sure to activate this team {{ $team->teamName }}?"
                                  errorText="Something went wrong when activating this team {{ $team->teamName }}!"/>
@@ -253,7 +253,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->route('team-managements.teamCompetitions', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.teamCompetitions', $team->hash) !!}',
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
@@ -278,7 +278,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->route('team-managements.match-histories', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.match-histories', $team->hash) !!}',
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},

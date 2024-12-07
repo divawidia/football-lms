@@ -4,22 +4,25 @@ namespace App\Services\Player;
 
 use App\Models\Invoice;
 use App\Models\User;
+use App\Services\DatatablesService;
 use App\Services\Service;
 use Yajra\DataTables\Facades\DataTables;
 
 class BillingPaymentsService extends Service
 {
     private User $user;
-    public function __construct(User $user)
+    private DatatablesService $datatablesService;
+    public function __construct(User $user, DatatablesService $datatablesService)
     {
         $this->user = $user;
+        $this->datatablesService = $datatablesService;
     }
     public function index()
     {
         $data = $this->user->invoices()->latest();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return'<a class="btn btn-sm btn-outline-secondary" href="' . route('billing-and-payments.show', $item->id) . '">
+                return'<a class="btn btn-sm btn-outline-secondary" href="' . route('billing-and-payments.show', $item->hash) . '">
                             <span class="material-icons mr-2">
                                 visibility
                             </span>
@@ -39,17 +42,7 @@ class BillingPaymentsService extends Service
                 return $this->convertToDatetime($item->updatedAt);
             })
             ->editColumn('status', function ($item) {
-                $badge = '';
-                if ($item->status == 'Open') {
-                    $badge = '<span class="badge badge-pill badge-info">'.$item->status.'</span>';
-                } elseif ($item->status == 'Paid') {
-                    $badge = '<span class="badge badge-pill badge-success">'.$item->status.'</span>';
-                } elseif ($item->status == 'Past Due') {
-                    $badge = '<span class="badge badge-pill badge-warning">'.$item->status.'</span>';
-                } elseif ($item->status == 'Uncollectible') {
-                    $badge = '<span class="badge badge-pill badge-danger">'.$item->status.'</span>';
-                }
-                return $badge;
+                return $this->datatablesService->invoiceStatus($item->status);
             })
             ->rawColumns(['action', 'ammount','dueDate', 'status', 'createdAt','updatedAt'])
             ->addIndexColumn()

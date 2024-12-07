@@ -51,11 +51,11 @@ class GroupDivisionService extends Service
         return Datatables::of($query)
             ->addColumn('action', function ($item) use ($competition, $groupDivision){
                 if ($item->teamSide == 'Opponent Team'){
-                    $editTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>';
-                    $showTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>';
+                    $editTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Team</a>';
+                    $showTeam = '<a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Team</a>';
                 }else{
-                    $editTeam = '<a class="dropdown-item" href="' . route('team-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>';
-                    $showTeam = '<a class="dropdown-item" href="' . route('team-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>';
+                    $editTeam = '<a class="dropdown-item" href="' . route('team-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Team</a>';
+                    $showTeam = '<a class="dropdown-item" href="' . route('team-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Team</a>';
                 }
 
                 if (isAllAdmin()){
@@ -75,12 +75,12 @@ class GroupDivisionService extends Service
                               </div>
                             </div>';
                 } else{
-                    $actionBtn = $this->datatablesService->buttonTooltips(route('team-managements.show', $item->id), 'View team detail', 'visibility');
+                    $actionBtn = $this->datatablesService->buttonTooltips(route('team-managements.show', $item->hash), 'View team detail', 'visibility');
                 }
                 return $actionBtn;
             })
             ->editColumn('teams', function ($item) {
-                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('team-managements.show', $item->id));
+                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('team-managements.show', $item->hash));
             })
             ->rawColumns(['action', 'teams'])
             ->make();

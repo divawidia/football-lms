@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Training {{ $data['dataSchedule']->eventName  }}
+    Training {{ $schedule->eventName  }}
 @endsection
 @section('page-title')
     @yield('title')
@@ -9,20 +9,20 @@
 @section('modal')
     @if(isAllAdmin() || isCoach())
         <x-edit-player-attendance-modal
-                :routeGet="route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
-                :routeUpdate="route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
+                :routeGet="route('training-schedules.player', ['schedule' => $schedule->hash, 'player' => ':id'])"
+                :routeUpdate="route('training-schedules.update-player', ['schedule' => $schedule->hash, 'player' => ':id'])"/>
 
         <x-edit-coach-attendance-modal
-                :routeGet="route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
-                :routeUpdate="route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
+                :routeGet="route('training-schedules.coach', ['schedule' => $schedule->hash, 'coach' => ':id'])"
+                :routeUpdate="route('training-schedules.update-coach', ['schedule' => $schedule->hash, 'coach' => ':id'])"/>
 
-        <x-create-schedule-note-modal :routeCreate="route('training-schedules.create-note', $data['dataSchedule']->id)"
-                                      :eventName="$data['dataSchedule']->eventName"/>
+        <x-create-schedule-note-modal :routeCreate="route('training-schedules.create-note', $schedule->hash)"
+                                      :eventName="$schedule->eventName"/>
 
         <x-edit-schedule-note-modal
-                :routeEdit="route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
-                :routeUpdate="route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
-                :eventName="$data['dataSchedule']->eventName"/>
+                :routeEdit="route('training-schedules.edit-note', ['schedule' => $schedule->hash, 'note' => ':id'])"
+                :routeUpdate="route('training-schedules.update-note', ['schedule' => $schedule->hash, 'note' => ':id'])"
+                :eventName="$schedule->eventName"/>
 
         <x-skill-assessments-modal/>
         <x-edit-skill-assessments-modal/>
@@ -48,9 +48,9 @@
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex">
-                <h2 class="text-white mb-0">{{ $data['dataSchedule']->eventName  }}</h2>
-                <p class="lead text-white-50 d-flex align-items-center">{{ $data['dataSchedule']->eventType }}
-                    ~ {{ $data['dataSchedule']->teams[0]->teamName }}</p>
+                <h2 class="text-white mb-0">{{ $schedule->eventName  }}</h2>
+                <p class="lead text-white-50 d-flex align-items-center">{{ $schedule->eventType }}
+                    ~ {{ $schedule->teams[0]->teamName }}</p>
             </div>
             @if(isAllAdmin() || isCoach())
                 <div class="dropdown">
@@ -60,15 +60,15 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item"
-                           href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}">
+                           href="{{ route('training-schedules.edit', $schedule->hash) }}">
                             <span class="material-icons">edit</span> Edit Training Schedule
                         </a>
-                        @if($data['dataSchedule']->status != 'Cancelled' && $data['dataSchedule']->status != 'Completed')
-                            <button type="submit" class="dropdown-item cancelBtn" id="{{ $data['dataSchedule']->id }}">
+                        @if($schedule->status != 'Cancelled' && $schedule->status != 'Completed')
+                            <button type="submit" class="dropdown-item cancelBtn" id="{{ $schedule->hash }}">
                                 <span class="material-icons text-danger">block</span>Cancel Training
                             </button>
                         @endif
-                        <button type="button" class="dropdown-item delete" id="{{$data['dataSchedule']->id}}">
+                        <button type="button" class="dropdown-item delete" id="{{$schedule->hash}}">
                             <span class="material-icons text-danger">delete</span> Delete Training
                         </button>
                     </div>
@@ -82,42 +82,44 @@
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
                     Status :
-                    @if ($data['dataSchedule']->status == 'Scheduled')
-                        <span class="badge badge-pill badge-warning">{{ $data['dataSchedule']->status }}</span>
-                    @elseif($data['dataSchedule']->status == 'Ongoing')
-                        <span class="badge badge-pill badge-info">{{ $data['dataSchedule']->status }}</span>
-                    @elseif($data['dataSchedule']->status == 'Completed')
-                        <span class="badge badge-pill badge-success">{{ $data['dataSchedule']->status }}</span>
+                    @if ($schedule->status == 'Scheduled')
+                        <span class="badge badge-pill badge-warning">{{ $schedule->status }}</span>
+                    @elseif($schedule->status == 'Ongoing')
+                        <span class="badge badge-pill badge-info">{{ $schedule->status }}</span>
+                    @elseif($schedule->status == 'Completed')
+                        <span class="badge badge-pill badge-success">{{ $schedule->status }}</span>
                     @else
-                        <span class="badge badge-pill badge-danger">{{ $data['dataSchedule']->status }}</span>
+                        <span class="badge badge-pill badge-danger">{{ $schedule->status }}</span>
                     @endif
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                    {{ date('D, M d Y', strtotime($data['dataSchedule']->date)) }}
+                    {{ date('D, M d Y', strtotime($schedule->date)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }}
-                    - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
+                    {{ date('h:i A', strtotime($schedule->startTime)) }}
+                    - {{ date('h:i A', strtotime($schedule->endTime)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                    {{ $data['dataSchedule']->place }}
+                    {{ $schedule->place }}
                 </li>
-                <li class="nav-item navbar-list__item">
-                    <div class="media align-items-center">
+                @if(isAllAdmin())
+                    <li class="nav-item navbar-list__item">
+                        <div class="media align-items-center">
                         <span class="media-left mr-16pt">
-                            <img src="{{Storage::url($data['dataSchedule']->user->foto) }}" width="30" alt="avatar"
+                            <img src="{{Storage::url($schedule->user->foto) }}" width="30" alt="avatar"
                                  class="rounded-circle">
                         </span>
-                        <div class="media-body">
-                            <a class="card-title m-0" href="">Created
-                                by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
-                            <p class="text-50 lh-1 mb-0">Admin</p>
+                            <div class="media-body">
+                                <a class="card-title m-0" href="">Created
+                                    by {{$schedule->user->firstName}} {{$schedule->user->lastName}}</a>
+                                <p class="text-50 lh-1 mb-0">Admin</p>
+                            </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
+                @endif
             </ul>
         </div>
     </div>
@@ -151,12 +153,12 @@
                     <div class="page-separator__text">Overview</div>
                 </div>
                 <div class="row card-group-row">
-                    @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$data['totalParticipant'], 'dataThisMonth'=>null])
-                    @include('components.stats-card', ['title' => 'Attended', 'data'=>$data['totalAttend'], 'dataThisMonth'=>null])
-                    @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$data['totalDidntAttend'], 'dataThisMonth'=>null])
-                    @include('components.stats-card', ['title' => "Illness", 'data'=>$data['totalIllness'], 'dataThisMonth'=>null])
-                    @include('components.stats-card', ['title' => "Injured", 'data'=>$data['totalInjured'], 'dataThisMonth'=>null])
-                    @include('components.stats-card', ['title' => "Others", 'data'=>$data['totalOthers'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$attendance['totalParticipant'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => 'Attended', 'data'=>$attendance['totalAttend'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$attendance['totalDidntAttend'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => "Illness", 'data'=>$attendance['totalIllness'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => "Injured", 'data'=>$attendance['totalInjured'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => "Others", 'data'=>$attendance['totalOthers'], 'dataThisMonth'=>null])
                 </div>
 
                 {{--    Player Attendance    --}}
@@ -164,7 +166,7 @@
                     <div class="page-separator__text">Player Attendance</div>
                 </div>
                 <div class=".player-attendance">
-                    @include('pages.academies.reports.schedules.player-attendance-data')
+                    @include('pages.academies.schedules.player-attendance-data')
                 </div>
 
                 {{--    Coach Attendance    --}}
@@ -172,7 +174,7 @@
                     <div class="page-separator__text">Coach Attendance</div>
                 </div>
                 <div class=".coach-attendance">
-                    @include('pages.academies.reports.schedules.coach-attendance-data')
+                    @include('pages.academies.schedules.coach-attendance-data')
                 </div>
             </div>
 
@@ -181,16 +183,17 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Training Note</div>
                     @if(isAllAdmin() || isCoach())
-                        <a href="#" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span
-                                    class="material-icons mr-2">add</span> Add new note</a>
+                        <a href="" data-team="{{$schedule->teams[0]->id}}"
+                           class="btn btn-primary btn-sm ml-auto addNewNote"><span
+                                class="material-icons mr-2">add</span> Add new note</a>
                     @endif
                 </div>
-                @if(count($data['dataSchedule']->notes)==0)
+                @if(count($schedule->notes)==0)
                     <x-warning-alert text="Training session note haven't created yet by coach"/>
                 @endif
-                @foreach($data['dataSchedule']->notes as $note)
+                @foreach($schedule->notes as $note)
                     <x-event-note-card :note="$note"
-                                       :deleteRoute="route('training-schedules.destroy-note', ['schedule' => $data['dataSchedule']->id, 'note'=>':id'])"/>
+                                       :deleteRoute="route('training-schedules.destroy-note', ['schedule' => $schedule->hash, 'note'=>':id'])"/>
                 @endforeach
             </div>
 
@@ -201,7 +204,7 @@
                 </div>
                 @if(isAllAdmin() || isCoach())
                     <x-player-skill-event-tables
-                            :route="route('training-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
+                            :route="route('training-schedules.player-skills', ['schedule' => $schedule->hash])"
                             tableId="playerSkillsTable"/>
                 @elseif(isPlayer())
                     <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
@@ -215,7 +218,7 @@
                 </div>
                 @if(isAllAdmin() || isCoach())
                     <x-player-performance-review-event-table
-                            :route="route('training-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
+                            :route="route('training-schedules.player-performance-review', ['schedule' => $schedule->hash])"
                             tableId="playerPerformanceReviewTable"/>
                 @elseif(isPlayer())
                     @if(count($data['playerPerformanceReviews'])==0)
@@ -235,14 +238,14 @@
                                  :processRoute="route('training-schedules.destroy', ['schedule' => ':id'])"
                                  :routeAfterProcess="route('training-schedules.index')"
                                  method="DELETE"
-                                 confirmationText="Are you sure to delete this training session {{ $data['dataSchedule']->eventName }}?"
-                                 errorText="Something went wrong when deleting training session {{ $data['dataSchedule']->eventName }}!"/>
+                                 confirmationText="Are you sure to delete this training session {{ $schedule->eventName }}?"
+                                 errorText="Something went wrong when deleting training session {{ $schedule->eventName }}!"/>
 
     <x-process-data-confirmation btnClass=".cancelBtn"
                                  :processRoute="route('cancel-training', ['schedule' => ':id'])"
-                                 :routeAfterProcess="route('training-schedules.show', $data['dataSchedule']->id)"
+                                 :routeAfterProcess="route('training-schedules.show', $schedule->hash)"
                                  method="PATCH"
-                                 confirmationText="Are you sure to cancel competition {{ $data['dataSchedule']->eventName }}?"
-                                 errorText="Something went wrong when marking training session {{ $data['dataSchedule']->eventName }} as cancelled!"/>
+                                 confirmationText="Are you sure to cancel competition {{ $schedule->eventName }}?"
+                                 errorText="Something went wrong when marking training session {{ $schedule->eventName }} as cancelled!"/>
 
 @endsection

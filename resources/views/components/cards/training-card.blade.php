@@ -1,4 +1,4 @@
-<a class="card" href="{{ route('training-schedules.show', $training->id) }}">
+<a class="card" href="{{ route('training-schedules.show', $training->hash) }}">
     <div class="card-body">
         <div class="row">
             <div class="col-6 d-flex flex-column flex-md-row align-items-center">

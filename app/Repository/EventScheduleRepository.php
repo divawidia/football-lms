@@ -141,7 +141,7 @@ class EventScheduleRepository
             $teamIds = collect($teams)->pluck('id')->all();
             $query->join('player_teams', function (JoinClause $join) use ($teamIds) {
                 $join->on('p.id', '=', 'player_teams.playerId')
-                    ->whereIn('teamId', $teamIds);
+                    ->whereIn('player_teams.teamId', $teamIds);
             });
         }
         $query->select(
@@ -177,7 +177,7 @@ class EventScheduleRepository
             $teamIds = collect($teams)->pluck('id')->all();
             $query->join('player_teams', function (JoinClause $join) use ($teamIds) {
                 $join->on('p.id', '=', 'player_teams.playerId')
-                    ->whereIn('teamId', $teamIds);
+                    ->whereIn('player_teams.teamId', $teamIds);
             });
         }
 

@@ -349,8 +349,6 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['role:coach,web']], function () {
-
-//        Route::prefix('coach')->group(function () {
             Route::get('coach-dashboard', [CoachDashboardController::class, 'index'])->name('coach.dashboard');
 
             Route::prefix('player-managements')->group(function () {
@@ -358,7 +356,6 @@ Route::group(['middleware' => ['auth']], function () {
 
                 Route::prefix('{player}')->group(function () {
                     Route::prefix('performance-reviews')->group(function () {
-//                        Route::get('', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('coach.player-managements.performance-reviews');
                         Route::post('store', [PlayerPerformanceReviewController::class, 'store'])->name('coach.performance-reviews.store');
                     });
 
@@ -432,7 +429,8 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('players-matches', [EventScheduleController::class, 'playerIndexMatch'])->name('player.match-schedules.index');
         });
 
-        Route::prefix('attendance-reports')->group(function () {
+        Route::prefix('player-attendance-reports')->group(function () {
+            Route::get('', [AttendanceReportController::class, 'index'])->name('player.attendance-report.index');
             Route::get('training-history', [AttendanceReportController::class, 'playerTrainingHistories'])->name('player.attendance-report.trainingTable');
             Route::get('match-history', [AttendanceReportController::class, 'playerMatchHistories'])->name('player.attendance-report.matchDatatable');
         });
@@ -471,7 +469,6 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('match-training', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('coach.player-managements.performance-reviews');
                     Route::get('', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player-managements.performance-reviews-page');
                 });
-
             });
         });
 
@@ -480,7 +477,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('store', [EventScheduleController::class, 'storeTraining'])->name('training-schedules.store');
 
             Route::prefix('{schedule}')->group(function () {
-                Route::get('', [EventScheduleController::class, 'showTraining'])->name('training-schedules.show');
+//                Route::get('', [EventScheduleController::class, 'showTraining'])->name('training-schedules.show');
                 Route::get('edit', [EventScheduleController::class, 'editTraining'])->name('training-schedules.edit');
                 Route::put('update', [EventScheduleController::class, 'updateTraining'])->name('training-schedules.update');
                 Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('training-schedules.destroy');

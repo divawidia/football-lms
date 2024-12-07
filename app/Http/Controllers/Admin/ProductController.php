@@ -33,7 +33,7 @@ class ProductController extends Controller
             return $this->productService->index();
         }
 
-        return view('pages.admins.payments.products.index', [
+        return view('pages.payments.products.index', [
             'categories' => $this->productCategoryService->getAllData()
         ]);
     }

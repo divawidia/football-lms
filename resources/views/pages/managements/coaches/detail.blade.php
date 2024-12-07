@@ -8,7 +8,7 @@
 
 @section('modal')
     <x-change-password-modal :route="route('coach-managements.change-password', ['coach' => ':id'])"/>
-    <x-add-teams-to-player-coach-modal :route="route('coach-managements.updateTeams', ['coach' => $data->id])" :teams="$teams"/>
+    <x-add-teams-to-player-coach-modal :route="route('coach-managements.updateTeams', ['coach' => $data->hash])" :teams="$teams"/>
 @endsection
 
 @section('content')
@@ -43,7 +43,7 @@
                     </span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('coach-managements.edit', $data->id) }}"><span
+                    <a class="dropdown-item" href="{{ route('coach-managements.edit', $data->hash) }}"><span
                             class="material-icons">edit</span> Edit Coach Profile</a>
                     @if($data->user->status == '1')
                         <button type="submit" class="dropdown-item setDeactivate" id="{{$data->id}}">
@@ -239,14 +239,14 @@
     @if(isAllAdmin())
         <x-process-data-confirmation btnClass=".setDeactivate"
                                      :processRoute="route('deactivate-coach', ':id')"
-                                     :routeAfterProcess="route('coach-managements.show', $data->id)"
+                                     :routeAfterProcess="route('coach-managements.show', $data->hash)"
                                      method="PATCH"
                                      confirmationText="Are you sure to deactivate this coach {{ getUserFullName($data->user) }}'s account?"
                                      errorText="Something went wrong when deactivating this coach {{ getUserFullName($data->user) }}'s account!"/>
 
         <x-process-data-confirmation btnClass=".setActivate"
                                      :processRoute="route('activate-coach', ':id')"
-                                     :routeAfterProcess="route('coach-managements.show', $data->id)"
+                                     :routeAfterProcess="route('coach-managements.show', $data->hash)"
                                      method="PATCH"
                                      confirmationText="Are you sure to activate this coach {{ getUserFullName($data->user) }}'s account?"
                                      errorText="Something went wrong when activating this coach {{ getUserFullName($data->user) }}'s account!"/>
@@ -260,7 +260,7 @@
 
         <x-process-data-confirmation btnClass=".delete-team"
                                      :processRoute="route('coach-managements.removeTeam', ['coach' => $data->id, 'team' => ':id'])"
-                                     :routeAfterProcess="route('coach-managements.show', $data->id)"
+                                     :routeAfterProcess="route('coach-managements.show', $data->hash)"
                                      method="DELETE"
                                      confirmationText="Are you sure to to remove coach {{ getUserFullName($data->user) }} from this team?"
                                      errorText="Something went wrong when removing coach {{ getUserFullName($data->user) }} from this team!"/>
@@ -275,7 +275,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('coach-managements.coach-teams', $data->id) !!}',
+                    url: '{!! route('coach-managements.coach-teams', $data->hash) !!}',
                 },
                 columns: [
                     {data: 'name', name: 'name'},

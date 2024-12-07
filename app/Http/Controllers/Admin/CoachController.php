@@ -31,7 +31,7 @@ class CoachController extends Controller
         if (request()->ajax()) {
             return $this->coachService->index();
         }
-        return view('pages.admins.managements.coaches.index');
+        return view('pages.managements.coaches.index');
     }
 
     public function coachTeams(Coach $coach): JsonResponse
@@ -60,7 +60,7 @@ class CoachController extends Controller
     public function create()
     {
         $data = $this->coachService->create();
-        return view('pages.admins.managements.coaches.create', [
+        return view('pages.managements.coaches.create', [
             'countries' => $this->coachService->getCountryData(),
             'certifications' => $data['certifications'],
             'specializations' => $data['specializations'],
@@ -87,7 +87,7 @@ class CoachController extends Controller
     {
         $data = $this->coachService->show($coach);
 
-        return view('pages.admins.managements.coaches.detail', [
+        return view('pages.managements.coaches.detail', [
             'data' => $coach,
             'fullName' => $data['fullName'],
             'age' => $data['age'],
@@ -102,7 +102,7 @@ class CoachController extends Controller
     public function edit(Coach $coach)
     {
         $data = $this->coachService->edit();
-        return view('pages.admins.managements.coaches.edit',[
+        return view('pages.managements.coaches.edit',[
             'data' => $coach,
             'fullName' => $this->coachService->getUserFullName($coach->user),
             'certifications' => $data['certifications'],

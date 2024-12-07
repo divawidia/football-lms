@@ -23,7 +23,7 @@ class FinancialReportController extends Controller
         $invoiceStatus = $this->financialReportService->invoiceStatus();
         $paymentType = $this->financialReportService->paymentType();
 
-        return view('pages.admins.academies.reports.financial.index', [
+        return view('pages.academies.reports.financial.index', [
             'requireActionInvoice' => $requireActionInvoice,
             'recurringRevenue' => $recurringRevenue,
             'revenueGrowth' => $revenueGrowth,

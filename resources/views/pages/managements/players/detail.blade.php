@@ -7,10 +7,10 @@
 @endsection
 
 @section('modal')
-    <x-add-teams-to-player-coach-modal :route="route('player-managements.updateTeams', ['player' => $data->id])"
+    <x-add-teams-to-player-coach-modal :route="route('player-managements.updateTeams', ['player' => $data->hash])"
                                        :teams="$hasntJoinedTeams"/>
     <x-change-password-modal :route="route('player-managements.change-password', ['player' => ':id'])"/>
-    <x-skill-assessments-modal :route="route('skill-assessments.store', $data->id)"/>
+    <x-skill-assessments-modal :route="route('skill-assessments.store', $data->hash)"/>
 @endsection
 
 @section('content')
@@ -48,21 +48,21 @@
                         </span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('player-managements.edit', $data->id) }}"><span
+                        <a class="dropdown-item" href="{{ route('player-managements.edit', $data->hash) }}"><span
                                 class="material-icons">edit</span> Edit Player</a>
                         @if($data->user->status == '1')
-                            <button type="submit" class="dropdown-item setDeactivate" id="{{$data->id}}">
+                            <button type="submit" class="dropdown-item setDeactivate" id="{{$data->hash}}">
                                 <span class="material-icons text-danger">check_circle</span>
                                 Deactivate Player
                             </button>
                         @elseif($data->user->status == '0')
-                            <button type="submit" class="dropdown-item setActivate" id="{{$data->id}}">
+                            <button type="submit" class="dropdown-item setActivate" id="{{$data->hash}}">
                                 <span class="material-icons text-success">check_circle</span>
                                 Activate Player
                             </button>
                         @endif
-                        <a class="dropdown-item changePassword" id="{{ $data->id }}"><span class="material-icons">lock</span> Change Player Password</a>
-                        <button type="button" class="dropdown-item delete-user" id="{{$data->id}}">
+                        <a class="dropdown-item changePassword" id="{{ $data->hash }}"><span class="material-icons">lock</span> Change Player Password</a>
+                        <button type="button" class="dropdown-item delete-user" id="{{$data->hash}}">
                             <span class="material-icons text-danger">delete</span> Delete Player
                         </button>
                     </div>
@@ -278,7 +278,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Latest Skill Stats</div>
                     @if(isCoach())
-                        <a class="btn btn-white addSkills ml-auto" id="{{ $data->id }}" href="">
+                        <a class="btn btn-white addSkills ml-auto" id="{{ $data->hash }}" href="">
                             <span class="material-icons mr-2">edit</span>
                             Update Skills
                         </a>
@@ -299,7 +299,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Parents/Guardians</div>
                     @if(isAllAdmin())
-                        <a href="{{  route('player-parents.create', $data->id) }}" class="btn btn-sm btn-primary ml-auto"
+                        <a href="{{  route('player-parents.create', $data->hash) }}" class="btn btn-sm btn-primary ml-auto"
                            id="add-new">
                 <span class="material-icons mr-2">
                     add
@@ -315,7 +315,7 @@
             <div class="tab-pane fade" id="upcomingMatch-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Upcoming Matches</div>
-                    <a href="{{ route('player-managements.upcoming-matches', $data->id) }}"
+                    <a href="{{ route('player-managements.upcoming-matches', $data->hash) }}"
                        class="btn btn-white border btn-sm ml-auto">
                         View More
                         <span class="material-icons ml-2 icon-16pt">chevron_right</span>
@@ -331,7 +331,7 @@
             <div class="tab-pane fade" id="upcomingTraining-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Upcoming Trainings</div>
-                    <a href="{{ route('player-managements.upcoming-trainings', $data->id) }}"
+                    <a href="{{ route('player-managements.upcoming-trainings', $data->hash) }}"
                        class="btn btn-white border btn-sm ml-auto">
                         View More
                         <span class="material-icons ml-2 icon-16pt">chevron_right</span>
@@ -417,7 +417,7 @@
                     <div class="page-separator__text">player performance review</div>
                 </div>
                 <x-player-performance-review-table
-                    :route="route('player-managements.performance-reviews', ['player' => $data->id])"
+                    :route="route('player-managements.performance-reviews', ['player' => $data->hash])"
                     tableId="performanceReviewTable"/>
             </div>
         </div>
@@ -426,14 +426,14 @@
     @if(isAllAdmin())
         <x-process-data-confirmation btnClass=".setDeactivate"
                                      :processRoute="route('deactivate-player', ':id')"
-                                     :routeAfterProcess="route('player-managements.show', $data->id)"
+                                     :routeAfterProcess="route('player-managements.show', $data->hash)"
                                      method="PATCH"
                                      confirmationText="Are you sure to deactivate this player {{ getUserFullName($data->user) }}'s account?"
                                      errorText="Something went wrong when deactivating this player {{ getUserFullName($data->user) }}'s account!"/>
 
         <x-process-data-confirmation btnClass=".setActivate"
                                      :processRoute="route('activate-player', ':id')"
-                                     :routeAfterProcess="route('player-managements.show', $data->id)"
+                                     :routeAfterProcess="route('player-managements.show', $data->hash)"
                                      method="PATCH"
                                      confirmationText="Are you sure to activate this player {{ getUserFullName($data->user) }}'s account?"
                                      errorText="Something went wrong when activating this player {{ getUserFullName($data->user) }}'s account!"/>
@@ -446,8 +446,8 @@
                                      errorText="Something went wrong when deleting this player {{ getUserFullName($data->user) }}'s account!"/>
 
         <x-process-data-confirmation btnClass=".delete-team"
-                                     :processRoute="route('player-managements.removeTeam', ['player' => $data->id, 'team' => ':id'])"
-                                     :routeAfterProcess="route('player-managements.show', $data->id)"
+                                     :processRoute="route('player-managements.removeTeam', ['player' => $data->hash, 'team' => ':id'])"
+                                     :routeAfterProcess="route('player-managements.show', $data->hash)"
                                      method="DELETE"
                                      confirmationText="Are you sure to to remove player {{ getUserFullName($data->user) }} from this team?"
                                      errorText="Something went wrong when removing player {{ getUserFullName($data->user) }} from this team!"/>
@@ -464,7 +464,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('player-managements.playerTeams', $data->id) !!}',
+                    url: '{!! route('player-managements.playerTeams', $data->hash) !!}',
                 },
                 columns: [
                     {data: 'name', name: 'name'},
@@ -486,7 +486,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('attendance-report.trainingTable', $data->id) !!}',
+                    url: '{!! route('attendance-report.trainingTable', $data->hash) !!}',
                 },
                 columns: [
                     {data: 'eventName', name: 'eventName'},
@@ -513,7 +513,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('attendance-report.matchDatatable', $data->id) !!}',
+                    url: '{!! route('attendance-report.matchDatatable', $data->hash) !!}',
                 },
                 columns: [
                     {data: 'team', name: 'team'},

@@ -47,7 +47,7 @@ class TeamController extends Controller
             $teamRoutes = url()->route('player.team-managements.player-teams');
         }
 
-        return view('pages.admins.managements.teams.index', [
+        return view('pages.managements.teams.index', [
             'teamRoutes' => $teamRoutes
         ]);
     }
@@ -100,7 +100,7 @@ class TeamController extends Controller
         $players = Player::all();
         $coaches = Coach::all();
 
-        return view('pages.admins.managements.teams.create', [
+        return view('pages.managements.teams.create', [
             'players' => $players,
             'coaches' => $coaches
         ]);
@@ -136,7 +136,7 @@ class TeamController extends Controller
      */
     public function show(Team $team)
     {
-        return view('pages.admins.managements.teams.detail', [
+        return view('pages.managements.teams.detail', [
             'team' => $team,
             'overview' => $this->teamService->teamOverviewStats($team),
             'latestMatches' => $this->teamService->teamLatestMatch($team),
@@ -152,7 +152,7 @@ class TeamController extends Controller
      */
     public function edit(Team $team)
     {
-        return view('pages.admins.managements.teams.edit',[
+        return view('pages.managements.teams.edit',[
             'team' => $team
         ]);
     }

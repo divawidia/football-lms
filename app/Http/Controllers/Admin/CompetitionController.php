@@ -28,7 +28,7 @@ class CompetitionController extends Controller
         if (request()->ajax()) {
             return $this->competitionService->datatables();
         }
-        return view('pages.admins.managements.competitions.index');
+        return view('pages.managements.competitions.index');
     }
 
     /**
@@ -37,7 +37,7 @@ class CompetitionController extends Controller
     public function create()
     {
         $data = $this->competitionService->create();
-        return view('pages.admins.managements.competitions.create', [
+        return view('pages.managements.competitions.create', [
             'teams' => $data['teams'],
             'opponentTeams' => $data['opponentTeams'],
             'players' => $data['players'],
@@ -76,7 +76,7 @@ class CompetitionController extends Controller
     public function show(Competition $competition)
     {
         $overviewStats = $this->competitionService->overviewStats($competition);
-        return view('pages.admins.managements.competitions.detail', [
+        return view('pages.managements.competitions.detail', [
             'competition' => $competition,
             'overviewStats' => $overviewStats,
         ]);
@@ -91,7 +91,7 @@ class CompetitionController extends Controller
      */
     public function edit(Competition $competition)
     {
-        return view('pages.admins.managements.competitions.edit',[
+        return view('pages.managements.competitions.edit',[
             'competition' => $competition,
         ]);
     }

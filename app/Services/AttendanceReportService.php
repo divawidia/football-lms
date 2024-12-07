@@ -17,8 +17,8 @@ class AttendanceReportService extends Service
     private DatatablesService $datatablesService;
     private TeamRepository $teamRepository;
     public function __construct(
-        PlayerRepository $playerRepository, 
-        EventScheduleRepository $eventScheduleRepository, 
+        PlayerRepository $playerRepository,
+        EventScheduleRepository $eventScheduleRepository,
         DatatablesService $datatablesService,
         TeamRepository $teamRepository
     )
@@ -33,7 +33,7 @@ class AttendanceReportService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return $this->datatablesService->buttonTooltips(route('attendance-report.show', $item->id), 'View player attendance detail', 'visibility');
+                return $this->datatablesService->buttonTooltips(route('attendance-report.show', $item->hash), 'View player attendance detail', 'visibility');
             })
             ->editColumn('teams', function ($item) {
                 $playerTeam = '';
@@ -47,7 +47,7 @@ class AttendanceReportService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->id));
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
             ->addColumn('totalEvent', function ($item) use ($startDate, $endDate, $eventType){
                 return $this->eventScheduleRepository->playerAttendance($item, null, $startDate, $endDate, $eventType);
@@ -127,8 +127,8 @@ class AttendanceReportService extends Service
             $teams = $coach->teams;
             // query player data that included in teams that managed by logged in coach
             $query = $this->playerRepository->getPLayersByTeams($teams);
-        }   
-        $filter = $this->dateFilter($startDate, $endDate);     
+        }
+        $filter = $this->dateFilter($startDate, $endDate);
         return $this->makeAttendanceDatatables($query, $filter['startDate'], $filter['endDate'], $eventType);
     }
 
@@ -142,14 +142,14 @@ class AttendanceReportService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if ($item->eventType == 'Training') {
-                    $btn = $this->datatablesService->buttonTooltips(route('training-schedules.show', $item->id), 'View training session', 'visibility');
+                    $btn = $this->datatablesService->buttonTooltips(route('training-schedules.show', $item->hash), 'View training session', 'visibility');
                 } else {
-                    $btn = $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->id), 'View match session', 'visibility');
+                    $btn = $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
                 }
                 return $btn;
             })
             ->addColumn('team', function ($item) {
-                return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup, route('team-managements.show', $item->teams[0]->id));
+                return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup, route('team-managements.show', $item->teams[0]->hash));
             })
             ->editColumn('eventName', function ($item) {
                 if ($item->eventType == 'Training') {
@@ -239,7 +239,6 @@ class AttendanceReportService extends Service
     {
         $filter = $this->dateFilter($startDate, $endDate);
         $attendanceData = $this->eventScheduleRepository->getAttendanceTrend($filter['startDate'], $filter['endDate'], $teams, $eventType);
-
         return [
             'labels' => $attendanceData->pluck('date'),
             'datasets' => [
@@ -324,7 +323,7 @@ class AttendanceReportService extends Service
         $data = $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Completed');
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return $this->datatablesService->buttonTooltips(route('training-schedules.show', $item->id), 'View training session', 'visibility');
+                return $this->datatablesService->buttonTooltips(route('training-schedules.show', $item->hash), 'View training session', 'visibility');
             })
             ->editColumn('team', function ($item) {
                 return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup);
@@ -357,7 +356,7 @@ class AttendanceReportService extends Service
         $data = $this->eventScheduleRepository->getEventByModel($player, 'Match', 'Completed');
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->id), 'View match session', 'visibility');
+                return $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
             })
             ->editColumn('team', function ($item) {
                 return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup);

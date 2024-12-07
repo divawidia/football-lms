@@ -16,7 +16,9 @@
                     <div class="form-group">
                         <label class="form-label" for="playerId">Player Name</label>
                         <small class="text-danger">*</small>
-                        <select class="form-control form-select" id="playerId" name="playerId" required data-toggle="select" ></select>
+                        <select class="form-control form-select" id="playerId" name="playerId" required data-toggle="select" >
+                            <option disabled selected>Select player who assisted the goal</option>
+                        </select>
                         <span class="invalid-feedback playerId_error" role="alert"><strong></strong></span>
                     </div>
                     <div class="form-group">
@@ -80,7 +82,6 @@
                         $(formId+' .modal-title').text('Add '+result.data.team.teamName+' Match Scorer')
                         $(formId+' #dataTeam').val(team)
                         $(formId+' #teamId').val(result.data.team.id)
-                        $(formId+' #playerId').html('<option disabled selected>Select player who scored the goal</option>');
                         $.each(result.data.players, function (key, value) {
                             $(formId+' #playerId').append('<option value="' + value.id + '" data-avatar-src={{ Storage::url('') }}' + value.user.foto + '>' + value.user.firstName + ' ' + value.user.lastName + ' ~ ' + value.position.name + '</option>');
                         });

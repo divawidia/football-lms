@@ -51,7 +51,7 @@ class SkillAssessmentService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('skill-assessments.skill-stats', $item->id) . '"><span class="material-icons">visibility</span> View Skill Player</a>
+                            <a class="dropdown-item" href="' . route('skill-assessments.skill-stats', $item->hash) . '"><span class="material-icons">visibility</span> View Skill Player</a>
                             <button type="button" class="dropdown-item addSkills" id="' . $item->id . '">
                                 <span class="material-icons">edit</span>
                                 Update Player Skill
@@ -75,7 +75,7 @@ class SkillAssessmentService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('skill-assessments.skill-stats', $item->id));
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('skill-assessments.skill-stats', $item->hash));
             })
             ->editColumn('age', function ($item) {
                 return $this->getAge($item->user->dob);
@@ -106,7 +106,7 @@ class SkillAssessmentService extends Service
             ->addColumn('action', function ($item) use ($schedule){
                 $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
                 if (isAllAdmin()){
-                    $button = $this->datatablesService->buttonTooltips(route('player-managements.skill-stats', ['player'=>$item->id]), 'View Player Skill Stats Detail', 'visibility');
+                    $button = $this->datatablesService->buttonTooltips(route('player-managements.skill-stats', ['player'=>$item->hash]), 'View Player Skill Stats Detail', 'visibility');
                 } elseif(isCoach()){
                     if (!$stats){
                         $statsBtn = '<a class="dropdown-item addSkills" id="'.$item->id.'" data-eventId="'.$schedule->id.'"><span class="material-icons">edit</span> Evaluate Player Skills Stats</a>';
@@ -120,7 +120,7 @@ class SkillAssessmentService extends Service
                                         </span>
                                       </button>
                                       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="' . route('player-managements.skill-stats', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View Player Skill Stats</a>
+                                            <a class="dropdown-item" href="' . route('player-managements.skill-stats', ['player'=>$item->hash]) . '"><span class="material-icons">visibility</span> View Player Skill Stats</a>
                                             '.$statsBtn.'
                                       </div>
                                 </div>';
@@ -128,7 +128,7 @@ class SkillAssessmentService extends Service
                 return $button;
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('skill-assessments.skill-stats', $item->id));
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
             ->editColumn('stats_status', function ($item) use ($schedule){
                 $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();

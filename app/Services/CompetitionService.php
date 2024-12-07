@@ -51,7 +51,7 @@ class CompetitionService extends Service
     }
     public function getActiveCompetition()
     {
-        return $this->competitionRepository->getAll(status: '1');
+        return $this->competitionRepository->getAll(status: 'Ongoing');
     }
 
     public function modelTeamsCompetition($model, $status = null){
@@ -82,8 +82,8 @@ class CompetitionService extends Service
                                 </span>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('competition-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Competition</a>
-                                <a class="dropdown-item" href="' . route('competition-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Competition</a>
+                                <a class="dropdown-item" href="' . route('competition-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Competition</a>
+                                <a class="dropdown-item" href="' . route('competition-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Competition</a>
                                 ' . $statusButton . '
                                 <button type="button" class="dropdown-item delete" id="' . $item->id . '">
                                     <span class="material-icons text-danger">delete</span> Delete Competition
@@ -113,7 +113,7 @@ class CompetitionService extends Service
                 return $teams;
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->logo, $item->name, $item->type, route('competition-managements.show', $item->id));
+                return $this->datatablesService->name($item->logo, $item->name, $item->type, route('competition-managements.show', $item->hash));
             })
             ->editColumn('date', function ($item) {
                 return $this->datatablesService->competitionStartEndDate($item);
@@ -167,23 +167,23 @@ class CompetitionService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('match-schedules.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Match</a>
-                            <a class="dropdown-item" href="' . route('match-schedules.show', $item->id) . '"><span class="material-icons">visibility</span> View Match</a>
+                            <a class="dropdown-item" href="' . route('match-schedules.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Match</a>
+                            <a class="dropdown-item" href="' . route('match-schedules.show', $item->hash) . '"><span class="material-icons">visibility</span> View Match</a>
                             <button type="button" class="dropdown-item delete-match" id="' . $item->id . '">
                                 <span class="material-icons text-danger">delete</span> Delete Match
                             </button>
                           </div>
                         </div>';
                 } else {
-                    $actionBtn = $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->id), 'View match session', 'visibility');
+                    $actionBtn = $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
                 }
                 return $actionBtn;
             })
             ->editColumn('team', function ($item) {
-                return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup, route('team-managements.show', $item->teams[0]->id));
+                return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup, route('team-managements.show', $item->teams[0]->hash));
             })
             ->editColumn('opponentTeam', function ($item) {
-                return $this->datatablesService->name($item->teams[1]->logo, $item->teams[1]->teamName, $item->teams[1]->ageGroup, route('team-managements.show', $item->teams[1]->id));
+                return $this->datatablesService->name($item->teams[1]->logo, $item->teams[1]->teamName, $item->teams[1]->ageGroup, route('team-managements.show', $item->teams[1]->hash));
             })
             ->editColumn('score', function ($item){
                 return '<p class="mb-0"><strong class="js-lists-values-lead">' .$item->teams[0]->pivot->teamScore . ' - ' . $item->teams[1]->pivot->teamScore.'</strong></p>';

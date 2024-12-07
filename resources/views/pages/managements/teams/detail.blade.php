@@ -7,8 +7,8 @@
 @endsection
 
 @section('modal')
-    <x-modal.add-players-to-team :route="route('team-managements.updatePlayerTeam', ['team' => $team->id])" :players="$players"/>
-    <x-modal.add-coaches-to-team :route="route('team-managements.updateCoachTeam', ['team' => $team->id])" :coaches="$coaches"/>
+    <x-modal.add-players-to-team :route="route('team-managements.updatePlayerTeam', ['team' => $team->hash])" :players="$players"/>
+    <x-modal.add-coaches-to-team :route="route('team-managements.updateCoachTeam', ['team' => $team->hash])" :coaches="$coaches"/>
 @endsection
 
 @section('content')
@@ -50,7 +50,7 @@
                         Action<span class="material-icons ml-3">keyboard_arrow_down</span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('team-managements.edit', $team->id) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
+                        <a class="dropdown-item" href="{{ route('team-managements.edit', $team->hash) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
                         @if($team->status == '1')
                             <button type="submit" class="dropdown-item setDeactivate" id="{{$team->id}}">
                                 <span class="material-icons text-danger">check_circle</span>
@@ -67,13 +67,6 @@
                         </button>
                     </div>
                 </div>
-            @elseif(isCoach())
-                <a class="btn btn-outline-white">
-                    <span class="material-icons mr-3">
-                        edit
-                    </span>
-                    Action
-                </a>
             @endif
         </div>
     </div>
@@ -379,14 +372,14 @@
     @if(isAllAdmin())
         <x-process-data-confirmation btnClass=".setDeactivate"
                                      :processRoute="route('deactivate-team', ':id')"
-                                     :routeAfterProcess="route('team-managements.show', $team->id)"
+                                     :routeAfterProcess="route('team-managements.show', $team->hash)"
                                      method="PATCH"
                                      confirmationText="Are you sure to deactivate this team {{ $team->teamName }}?"
                                      errorText="Something went wrong when deactivating this team {{ $team->teamName }}!"/>
 
         <x-process-data-confirmation btnClass=".setActivate"
                                      :processRoute="route('activate-team', ':id')"
-                                     :routeAfterProcess="route('team-managements.show', $team->id)"
+                                     :routeAfterProcess="route('team-managements.show', $team->hash)"
                                      method="PATCH"
                                      confirmationText="Are you sure to activate this team {{ $team->teamName }}?"
                                      errorText="Something went wrong when activating this team {{ $team->teamName }}!"/>
@@ -399,15 +392,15 @@
                                      errorText="Something went wrong when deleting this team {{ $team->teamName }}!"/>
 
         <x-process-data-confirmation btnClass=".remove-player"
-                                     :processRoute="route('team-managements.removePlayer', ['team' => $team->id, 'player' => ':id'])"
-                                     :routeAfterProcess="route('team-managements.show', $team->id)"
+                                     :processRoute="route('team-managements.removePlayer', ['team' => $team->hash, 'player' => ':id'])"
+                                     :routeAfterProcess="route('team-managements.show', $team->hash)"
                                      method="PUT"
                                      confirmationText="Are you sure to to remove this player from team {{ $team->teamName }}?"
                                      errorText="Something went wrong when removing this player from team {{ $team->teamName }}!"/>
 
         <x-process-data-confirmation btnClass=".remove-coach"
-                                     :processRoute="route('team-managements.removeCoach', ['team' => $team->id, 'coach' => ':id'])"
-                                     :routeAfterProcess="route('team-managements.show', $team->id)"
+                                     :processRoute="route('team-managements.removeCoach', ['team' => $team->hash, 'coach' => ':id'])"
+                                     :routeAfterProcess="route('team-managements.show', $team->hash)"
                                      method="PUT"
                                      confirmationText="Are you sure to to remove this coach from team {{ $team->teamName }}?"
                                      errorText="Something went wrong when removing this coach from team {{ $team->teamName }}!"/>
@@ -421,7 +414,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->route('team-managements.teamPlayers', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.teamPlayers', $team->hash) !!}',
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
@@ -453,7 +446,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->route('team-managements.teamCoaches', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.teamCoaches', $team->hash) !!}',
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
@@ -475,7 +468,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->route('team-managements.teamCompetitions', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.teamCompetitions', $team->hash) !!}',
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
@@ -500,7 +493,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->route('team-managements.training-histories', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.training-histories', $team->hash) !!}',
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
@@ -525,7 +518,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->route('team-managements.match-histories', $team->id) !!}',
+                    url: '{!! url()->route('team-managements.match-histories', $team->hash) !!}',
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},

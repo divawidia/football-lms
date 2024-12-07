@@ -34,7 +34,7 @@ class OpponentTeamController extends Controller
      */
     public function create()
     {
-        return view('pages.admins.managements.opponentTeams.create');
+        return view('pages.managements.opponentTeams.create');
     }
 
     /**
@@ -67,7 +67,7 @@ class OpponentTeamController extends Controller
      */
     public function show(Team $team)
     {
-        return view('pages.admins.managements.opponentTeams.detail', [
+        return view('pages.managements.opponentTeams.detail', [
             'team' => $team,
             'overview' => $this->opponentTeamService->teamOverviewStats($team),
             'latestMatches' => $this->teamService->teamLatestMatch($team),
@@ -81,7 +81,7 @@ class OpponentTeamController extends Controller
      */
     public function edit(Team $team)
     {
-        return view('pages.admins.managements.opponentTeams.edit',[
+        return view('pages.managements.opponentTeams.edit',[
             'team' => $team,
         ]);
     }

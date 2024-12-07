@@ -27,11 +27,13 @@ class TrainingVideoLessonService extends Service
     private PlayerRepository $playerRepository;
     private TrainingVideoService $trainingVideoService;
     private UserRepository $userRepository;
-    public function __construct(PlayerRepository $playerRepository, TrainingVideoService $trainingVideoService,  UserRepository $userRepository)
+    private DatatablesService $datatablesService;
+    public function __construct(PlayerRepository $playerRepository, TrainingVideoService $trainingVideoService,  UserRepository $userRepository,  DatatablesService $datatablesService)
     {
         $this->playerRepository = $playerRepository;
         $this->trainingVideoService = $trainingVideoService;
         $this->userRepository = $userRepository;
+        $this->datatablesService = $datatablesService;
     }
 
     public function getTotalDuration(TrainingVideoLesson $trainingVideoLesson): string
@@ -43,7 +45,7 @@ class TrainingVideoLessonService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideo) {
                 if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('training-videos.lessons-unpublish', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$item->id]) . '" method="POST">
+                    $statusButton = '<form action="' . route('training-videos.lessons-unpublish', ['trainingVideo'=>$trainingVideo->hash,'lesson'=>$item->hash]) . '" method="POST">
                                         ' . method_field("PATCH") . '
                                         ' . csrf_field() . '
                                         <button type="submit" class="btn btn-sm btn-outline-secondary mr-1" data-toggle="tooltip" data-placement="bottom" title="Unpublish lesson">
@@ -51,7 +53,7 @@ class TrainingVideoLessonService extends Service
                                         </button>
                                     </form>';
                 } else {
-                    $statusButton = '<form action="' . route('training-videos.lessons-publish', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$item->id]) . '" method="POST">
+                    $statusButton = '<form action="' . route('training-videos.lessons-publish', ['trainingVideo'=>$trainingVideo->hash,'lesson'=>$item->hash]) . '" method="POST">
                                         ' . method_field("PATCH") . '
                                         ' . csrf_field() . '
                                         <button type="submit" class="btn btn-sm btn-outline-secondary mr-1" data-toggle="tooltip" data-placement="bottom" title="Publish lesson">
@@ -63,7 +65,7 @@ class TrainingVideoLessonService extends Service
                             <button class="btn btn-sm btn-outline-secondary mr-1 editLesson" id="'.$item->id.'" type="button" data-toggle="tooltip" data-placement="bottom" title="Edit lesson">
                                 <span class="material-icons">edit</span>
                              </button>
-                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$item->id]).'" data-toggle="tooltip" data-placement="bottom" title="View lesson">
+                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->hash,'lesson'=>$item->hash]).'" data-toggle="tooltip" data-placement="bottom" title="View lesson">
                                 <span class="material-icons">visibility</span>
                              </a>
                              '.$statusButton.'
@@ -105,27 +107,13 @@ class TrainingVideoLessonService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideoLesson) {
                 return '<div class="btn-toolbar" role="toolbar">
-                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.show-player', ['trainingVideo' => $trainingVideoLesson->trainingVideoId, 'player' => $item->id]).'" data-toggle="tooltip" data-placement="bottom" title="View Player">
+                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.show-player', ['trainingVideo' => $trainingVideoLesson->trainingVideo->hash, 'player' => $item->hash]).'" data-toggle="tooltip" data-placement="bottom" title="View Player">
                                 <span class="material-icons">visibility</span>
                              </a>
                         </div>';
             })
             ->editColumn('name', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' '.$item->user->lastName.'</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
             ->editColumn('assignedAt', function ($item) {
                 return $this->convertToDatetime($item->pivot->created_at);

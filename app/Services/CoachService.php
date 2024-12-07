@@ -58,8 +58,8 @@ class CoachService extends Service
                                 </span>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('coach-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Coach Profile</a>
-                                <a class="dropdown-item" href="' . route('coach-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Coach</a>
+                                <a class="dropdown-item" href="' . route('coach-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Coach Profile</a>
+                                <a class="dropdown-item" href="' . route('coach-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Coach</a>
                                 ' . $statusButton . '
                                 <a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons">lock</span> Change Coach Password</a>
                                 <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
@@ -80,7 +80,7 @@ class CoachService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name. ' - '.$item->certification->name, route('coach-managements.show', $item->id));
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name. ' - '.$item->certification->name, route('coach-managements.show', $item->hash));
             })
             ->editColumn('status', function ($item){
                 return $this->datatablesService->activeNonactiveStatus($item->user->status);
@@ -104,8 +104,8 @@ class CoachService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="'.route('team-managements.edit', $item->id).'"><span class="material-icons">edit</span> Edit Team</a>
-                            <a class="dropdown-item" href="'.route('team-managements.show', $item->id).'"><span class="material-icons">visibility</span> View Team</a>
+                            <a class="dropdown-item" href="'.route('team-managements.edit', $item->hash).'"><span class="material-icons">edit</span> Edit Team</a>
+                            <a class="dropdown-item" href="'.route('team-managements.show', $item->hash).'"><span class="material-icons">visibility</span> View Team</a>
                             <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
                                 <span class="material-icons text-danger">delete</span> Remove coach from Team
                             </button>
@@ -113,7 +113,7 @@ class CoachService extends Service
                         </div>';
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->logo, $item->teamName, $item->division, route('team-managements.show', $item->id));
+                return $this->datatablesService->name($item->logo, $item->teamName, $item->division, route('team-managements.show', $item->hash));
             })
             ->editColumn('date', function ($item){
                 return $this->convertToDate($item->pivot->created_at);

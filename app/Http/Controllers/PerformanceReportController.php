@@ -32,7 +32,7 @@ class PerformanceReportController extends Controller
             $coach = $this->getLoggedCoachUser();
             $latestMatches = $this->performanceReportService->coachLatestMatch($coach);
             $overviewStats = $this->performanceReportService->coachOverviewStats($coach);
-            $activeCompetitions = $this->competitionService->modelTeamsCompetition($coach, '1');
+            $activeCompetitions = $this->competitionService->modelTeamsCompetition($coach, 'Ongoing');
             $allCompetitions = $this->competitionService->modelTeamsCompetition($coach);
             $matchHistoryRoutes = url()->route('coach.performance-report.index');
         } elseif (isPlayer()){
@@ -40,7 +40,7 @@ class PerformanceReportController extends Controller
             $playerSkillStats = $this->playerService->skillStatsChart($player);
             $latestMatches = $this->playerService->playerLatestMatch($player);
             $latestTrainings = $this->playerService->playerLatestTraining($player);
-            $activeCompetitions = $this->competitionService->modelTeamsCompetition($player, '1');
+            $activeCompetitions = $this->competitionService->modelTeamsCompetition($player, 'Ongoing');
             $allCompetitions = $this->competitionService->modelTeamsCompetition($player);
             $overviewStats = $this->playerService->show($player);
             $performanceReviews = $player->playerPerformanceReview;

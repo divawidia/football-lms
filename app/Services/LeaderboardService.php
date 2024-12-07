@@ -13,16 +13,18 @@ class LeaderboardService extends Service
 {
     private PlayerRepository $playerRepository;
     private TeamRepository $teamRepository;
-    public function __construct(PlayerRepository $playerRepository, TeamRepository $teamRepository){
+    private DatatablesService $datatablesService;
+    public function __construct(PlayerRepository $playerRepository, TeamRepository $teamRepository, DatatablesService $datatablesService){
         $this->playerRepository = $playerRepository;
         $this->teamRepository = $teamRepository;
+        $this->datatablesService = $datatablesService;
     }
 
     public function playerLeaderboardDatatables($data)
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View player">
+                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->hash) . '" data-toggle="tooltip" data-placement="bottom" title="View player">
                             <span class="material-icons">visibility</span>
                         </a>';
                 return $btn;
@@ -39,22 +41,7 @@ class LeaderboardService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                             style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
-                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>';
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
             ->addColumn('apps', function ($item){
                 return $item->playerMatchStats()->where('minutesPlayed', '>', '0')->count();
@@ -125,28 +112,14 @@ class LeaderboardService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('team-managements.show', $item->id) . '" data-toggle="tooltip" data-placement="bottom" title="View team">
+                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('team-managements.show', $item->hash) . '" data-toggle="tooltip" data-placement="bottom" title="View team">
                             <span class="material-icons">visibility</span>
                         </a>';
 
                 return $btn;
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                             style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                        <p class="mb-0"><strong class="js-lists-values-lead">'. $item->teamName .'</strong></p>
-                                        <small class="js-lists-values-email text-50">' . $item->ageGroup . '</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>';
+                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('team-managements.show', $item->hash));
             })
             ->addColumn('match', function ($item){
                 return $item->schedules()
@@ -192,7 +165,6 @@ class LeaderboardService extends Service
     }
     public function teamLeaderboard()
     {
-//        $query = Team::with('matches')->where('teamSide', 'Academy Team')->get();
         $query = $this->teamRepository->getByTeamside('Academy Team');
         return $this->teamLeaderboardsDatatables($query);
     }

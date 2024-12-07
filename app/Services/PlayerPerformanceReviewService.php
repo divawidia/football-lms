@@ -34,10 +34,10 @@ class PlayerPerformanceReviewService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($player){
                 if ($item->event->eventType == 'Training'){
-                    $route = route('training-schedules.show', ['schedule'=>$item->event->id]);
+                    $route = route('training-schedules.show', ['schedule'=>$item->event->hash]);
                     $btnText = 'View Training Detail';
                 } elseif ($item->event->eventType == 'Match'){
-                    $route = route('match-schedules.show', ['schedule'=>$item->event->id]);
+                    $route = route('match-schedules.show', ['schedule'=>$item->event->hash]);
                     $btnText = 'View Match Detail';
                 }
 
@@ -81,7 +81,7 @@ class PlayerPerformanceReviewService extends Service
             ->addColumn('action', function ($item) use ($schedule){
                 $review = $this->performanceReviewRepository->getByPlayer($item, $schedule)->first();
                 if (isAllAdmin()){
-                    $button = '<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.performance-reviews', ['player'=>$item->id]) . '" data-toggle="tooltip" data-placement="bottom" title="View All Player Performance Review">
+                    $button = '<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.performance-reviews', ['player'=>$item->hash]) . '" data-toggle="tooltip" data-placement="bottom" title="View All Player Performance Review">
                                     <span class="material-icons">visibility</span>
                                </a>';
                 } elseif(isCoach()){
@@ -97,7 +97,7 @@ class PlayerPerformanceReviewService extends Service
                                         </span>
                                       </button>
                                       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="' . route('player-managements.performance-reviews-page', ['player'=>$item->id]) . '"><span class="material-icons">visibility</span> View All Player Performance Review</a>
+                                            <a class="dropdown-item" href="' . route('player-managements.performance-reviews-page', ['player'=>$item->hash]) . '"><span class="material-icons">visibility</span> View All Player Performance Review</a>
                                             '.$reviewBtn.'
                                       </div>
                                 </div>';
@@ -105,7 +105,7 @@ class PlayerPerformanceReviewService extends Service
                 return $button;
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->id));
+                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
             ->editColumn('performance_review', function ($item) use ($schedule){
                 $review = $this->performanceReviewRepository->getByPlayer($item, $schedule)->first();

@@ -59,8 +59,8 @@ class OpponentTeamService extends Service
                                 </span>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->id) . '"><span class="material-icons">edit</span> Edit Team</a>
-                                <a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->id) . '"><span class="material-icons">visibility</span> View Team</a>
+                                <a class="dropdown-item" href="' . route('opponentTeam-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Team</a>
+                                <a class="dropdown-item" href="' . route('opponentTeam-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Team</a>
                                 ' . $statusButton . '
                                 <button type="button" class="dropdown-item delete-opponentTeam" id="' . $item->id . '">
                                     <span class="material-icons text-danger">delete</span> Delete Team
@@ -69,7 +69,7 @@ class OpponentTeamService extends Service
                             </div>';
         })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('opponentTeam-managements.show', $item->id));
+                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('opponentTeam-managements.show', $item->hash));
             })
             ->editColumn('status', function ($item) {
                 return $this->datatablesService->activeNonactiveStatus($item->status);

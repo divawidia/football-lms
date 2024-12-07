@@ -70,7 +70,7 @@
                         </a>
                         <ul class="collapse sm-indent" id="reportsMenu">
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="{{ route('attendance-report.index') }}">
+                                <a class="sidebar-menu-button" href="{{ route('player.attendance-report.index') }}">
                                     <span class="sidebar-menu-text">Attendance</span>
                                 </a>
                             </li>
@@ -93,6 +93,7 @@
                             <span class="sidebar-menu-text">Training Course</span>
                         </a>
                     </li>
+                    <div class="sidebar-heading">Payments</div>
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button" href="{{ route('billing-and-payments.index') }}">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">receipt</span>

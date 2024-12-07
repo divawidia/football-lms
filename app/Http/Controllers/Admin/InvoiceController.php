@@ -28,7 +28,7 @@ class InvoiceController extends Controller
             return $this->invoiceService->index();
         }
 
-        return view('pages.admins.payments.invoices.index');
+        return view('pages.payments.invoices.index');
     }
 
     /**
@@ -37,7 +37,7 @@ class InvoiceController extends Controller
     public function create()
     {
         $data = $this->invoiceService->invoiceForms();
-        return view('pages.admins.payments.invoices.create', [
+        return view('pages.payments.invoices.create', [
             'products' => $data['products'],
             'taxes' => $data['taxes'],
             'contacts' => $data['players'],
@@ -89,7 +89,7 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
-        return view('pages.admins.payments.invoices.detail', [
+        return view('pages.payments.invoices.detail', [
             'data' => $this->invoiceService->show($invoice)
         ]);
     }
@@ -97,7 +97,7 @@ class InvoiceController extends Controller
     public function showArchived(string $id)
     {
         $data = $this->invoiceService->showArchived($id);
-        return view('pages.admins.payments.invoices.detail-archived', [
+        return view('pages.payments.invoices.detail-archived', [
             'data' => $data
         ]);
     }
@@ -108,7 +108,7 @@ class InvoiceController extends Controller
     public function edit(Invoice $invoice)
     {
         $data = $this->invoiceService->invoiceForms();
-        return view('pages.admins.payments.invoices.edit', [
+        return view('pages.payments.invoices.edit', [
             'data' => $invoice,
             'products' => $data['products'],
             'taxes' => $data['taxes'],
@@ -190,7 +190,7 @@ class InvoiceController extends Controller
             return $this->invoiceService->deletedDataIndex();
         }
 
-        return view('pages.admins.payments.invoices.archived');
+        return view('pages.payments.invoices.archived');
     }
 
     public function restoreData(string $id)

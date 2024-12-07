@@ -3,10 +3,11 @@
 namespace App\Notifications\CoachManagements;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CoachAccountUpdated extends Notification
+class CoachAccountUpdated extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $coach;
