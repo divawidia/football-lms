@@ -24,6 +24,7 @@
         "sentry/sentry-laravel": "^4.10",
         "spatie/laravel-permission": "^6.9",
         "spatie/laravel-schedule-monitor": "^3.8",
+        "veelasky/laravel-hashid": "^3.1",
         "yajra/laravel-datatables-oracle": "10.*"
     },
     "require-dev": {
