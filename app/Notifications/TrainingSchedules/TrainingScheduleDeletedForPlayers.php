@@ -27,8 +27,8 @@ class TrainingScheduleDeletedForPlayers extends Notification implements ShouldQu
      */
     public function via(object $notifiable): array
     {
-//        return ['mail', 'database'];
-        return ['database'];
+        return ['mail', 'database'];
+//        return ['database'];
     }
 
     /**

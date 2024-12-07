@@ -27,8 +27,8 @@ class MatchScheduleDeletedForPlayersCoaches extends Notification implements Shou
      */
     public function via(object $notifiable): array
     {
-//        return ['mail', 'database'];
-        return ['database'];
+        return ['mail', 'database'];
+//        return ['database'];
     }
 
     /**
