@@ -7,12 +7,12 @@
 @endsection
 
 @section('modal')
-    @include('pages.admins.payments.products.form-modal.products.create')
-    @include('pages.admins.payments.products.form-modal.products.edit')
-    @include('pages.admins.payments.products.form-modal.product-categories.create')
-    @include('pages.admins.payments.products.form-modal.product-categories.edit')
-    @include('pages.admins.payments.products.form-modal.taxes.create')
-    @include('pages.admins.payments.products.form-modal.taxes.edit')
+    @include('pages.payments.products.form-modal.products.create')
+    @include('pages.payments.products.form-modal.products.edit')
+    @include('pages.payments.products.form-modal.product-categories.create')
+    @include('pages.payments.products.form-modal.product-categories.edit')
+    @include('pages.payments.products.form-modal.taxes.create')
+    @include('pages.payments.products.form-modal.taxes.edit')
 @endsection
 
 @section('content')
@@ -220,12 +220,12 @@
                 subscriptionCycleForm.hide();
             });
 
-            function subscriptionCycleDisplay(formId){
+            function subscriptionCycleDisplay(formId) {
                 const priceOption = $(formId + ' .priceOption');
-                if (priceOption.val() === 'subscription'){
+                if (priceOption.val() === 'subscription') {
                     subscriptionCycleForm.show()
                     subscriptionCycleSelect.attr('required');
-                }else if (priceOption.val() === 'one time payment') {
+                } else if (priceOption.val() === 'one time payment') {
                     subscriptionCycleForm.hide();
                     subscriptionCycleSelect.val("(NULL)").removeAttr('required');
                 }

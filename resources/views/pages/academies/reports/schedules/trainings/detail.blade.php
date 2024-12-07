@@ -9,19 +9,20 @@
 @section('modal')
     @if(isAllAdmin() || isCoach())
         <x-edit-player-attendance-modal
-            :routeGet="route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
-            :routeUpdate="route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
+                :routeGet="route('training-schedules.player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"
+                :routeUpdate="route('training-schedules.update-player', ['schedule' => $data['dataSchedule']->id, 'player' => ':id'])"/>
 
         <x-edit-coach-attendance-modal
-            :routeGet="route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
-            :routeUpdate="route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
+                :routeGet="route('training-schedules.coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"
+                :routeUpdate="route('training-schedules.update-coach', ['schedule' => $data['dataSchedule']->id, 'coach' => ':id'])"/>
 
-        <x-create-schedule-note-modal :routeCreate="route('training-schedules.create-note', $data['dataSchedule']->id)" :eventName="$data['dataSchedule']->eventName"/>
+        <x-create-schedule-note-modal :routeCreate="route('training-schedules.create-note', $data['dataSchedule']->id)"
+                                      :eventName="$data['dataSchedule']->eventName"/>
 
         <x-edit-schedule-note-modal
-            :routeEdit="route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
-            :routeUpdate="route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
-            :eventName="$data['dataSchedule']->eventName"/>
+                :routeEdit="route('training-schedules.edit-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
+                :routeUpdate="route('training-schedules.update-note', ['schedule' => $data['dataSchedule']->id, 'note' => ':id'])"
+                :eventName="$data['dataSchedule']->eventName"/>
 
         <x-skill-assessments-modal/>
         <x-edit-skill-assessments-modal/>
@@ -53,11 +54,13 @@
             </div>
             @if(isAllAdmin() || isCoach())
                 <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
                         Action<span class="material-icons ml-3">keyboard_arrow_down</span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}">
+                        <a class="dropdown-item"
+                           href="{{ route('training-schedules.edit', $data['dataSchedule']->id) }}">
                             <span class="material-icons">edit</span> Edit Training Schedule
                         </a>
                         @if($data['dataSchedule']->status != 'Cancelled' && $data['dataSchedule']->status != 'Completed')
@@ -95,7 +98,8 @@
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }} - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
+                    {{ date('h:i A', strtotime($data['dataSchedule']->startTime)) }}
+                    - {{ date('h:i A', strtotime($data['dataSchedule']->endTime)) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -104,10 +108,12 @@
                 <li class="nav-item navbar-list__item">
                     <div class="media align-items-center">
                         <span class="media-left mr-16pt">
-                            <img src="{{Storage::url($data['dataSchedule']->user->foto) }}" width="30" alt="avatar" class="rounded-circle">
+                            <img src="{{Storage::url($data['dataSchedule']->user->foto) }}" width="30" alt="avatar"
+                                 class="rounded-circle">
                         </span>
                         <div class="media-body">
-                            <a class="card-title m-0" href="">Created by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
+                            <a class="card-title m-0" href="">Created
+                                by {{$data['dataSchedule']->user->firstName}} {{$data['dataSchedule']->user->lastName}}</a>
                             <p class="text-50 lh-1 mb-0">Admin</p>
                         </div>
                     </div>
@@ -158,7 +164,7 @@
                     <div class="page-separator__text">Player Attendance</div>
                 </div>
                 <div class=".player-attendance">
-                    @include('pages.admins.academies.schedules.player-attendance-data')
+                    @include('pages.academies.reports.schedules.player-attendance-data')
                 </div>
 
                 {{--    Coach Attendance    --}}
@@ -166,7 +172,7 @@
                     <div class="page-separator__text">Coach Attendance</div>
                 </div>
                 <div class=".coach-attendance">
-                    @include('pages.admins.academies.schedules.coach-attendance-data')
+                    @include('pages.academies.reports.schedules.coach-attendance-data')
                 </div>
             </div>
 
@@ -175,7 +181,8 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Training Note</div>
                     @if(isAllAdmin() || isCoach())
-                        <a href="#" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Add new note</a>
+                        <a href="#" id="addNewNote" class="btn btn-primary btn-sm ml-auto"><span
+                                    class="material-icons mr-2">add</span> Add new note</a>
                     @endif
                 </div>
                 @if(count($data['dataSchedule']->notes)==0)
@@ -194,8 +201,8 @@
                 </div>
                 @if(isAllAdmin() || isCoach())
                     <x-player-skill-event-tables
-                        :route="route('training-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
-                        tableId="playerSkillsTable"/>
+                            :route="route('training-schedules.player-skills', ['schedule' => $data['dataSchedule']->id])"
+                            tableId="playerSkillsTable"/>
                 @elseif(isPlayer())
                     <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
                 @endif
@@ -208,11 +215,12 @@
                 </div>
                 @if(isAllAdmin() || isCoach())
                     <x-player-performance-review-event-table
-                        :route="route('training-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
-                        tableId="playerPerformanceReviewTable"/>
+                            :route="route('training-schedules.player-performance-review', ['schedule' => $data['dataSchedule']->id])"
+                            tableId="playerPerformanceReviewTable"/>
                 @elseif(isPlayer())
                     @if(count($data['playerPerformanceReviews'])==0)
-                        <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
+                        <x-warning-alert
+                                text="You haven't get any performance review from your coach for this match session"/>
                     @else
                         @foreach($data['playerPerformanceReviews'] as $review)
                             <x-player-event-performance-review :review="$review"/>

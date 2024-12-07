@@ -55,12 +55,18 @@
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex mb-3 mb-md-0">
-                <h2 class="text-white mb-0">Match {{ $schedule->teams[0]->teamName }} Vs {{ $schedule->teams[1]->teamName }}</h2>
-                <p class="lead text-white-50">{{ $schedule->eventType }} ~ {{ $schedule->matchType }} @if($schedule->competition) ~ {{$schedule->competition->name}}@endif</p>
+                <h2 class="text-white mb-0">Match {{ $schedule->teams[0]->teamName }}
+                    Vs {{ $schedule->teams[1]->teamName }}</h2>
+                <p class="lead text-white-50">{{ $schedule->eventType }}
+                    ~ {{ $schedule->matchType }} @if($schedule->competition)
+                        ~ {{$schedule->competition->name}}
+                    @endif</p>
             </div>
             @if(isAllAdmin())
                 <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action<span class="material-icons ml-3">keyboard_arrow_down</span></button>
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">Action<span class="material-icons ml-3">keyboard_arrow_down</span>
+                    </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="{{ route('match-schedules.edit', $schedule->id) }}">
                             <span class="material-icons">edit</span> Edit Match Schedule
@@ -141,41 +147,61 @@
                     @if ($schedule->matchType == 'Internal Match')
                         @if(in_array($schedule->teams[0]->id, $userTeams))
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[0]->id }}PlayerStats-tab">{{ $schedule->teams[0]->teamName }} Player Stats</a>
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#team{{ $schedule->teams[0]->id }}PlayerStats-tab">{{ $schedule->teams[0]->teamName }}
+                                    Player Stats</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[0]->id }}Attendance-tab">{{ $schedule->teams[0]->teamName }} Match Attendance</a>
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#team{{ $schedule->teams[0]->id }}Attendance-tab">{{ $schedule->teams[0]->teamName }}
+                                    Match Attendance</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[0]->id }}Notes-tab">{{ $schedule->teams[0]->teamName }} Match Session Notes</a>
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#team{{ $schedule->teams[0]->id }}Notes-tab">{{ $schedule->teams[0]->teamName }}
+                                    Match Session Notes</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[0]->id }}Skills-tab">{{ $schedule->teams[0]->teamName }} skills evaluation</a>
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#team{{ $schedule->teams[0]->id }}Skills-tab">{{ $schedule->teams[0]->teamName }}
+                                    skills evaluation</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[0]->id }}Performance-tab">{{ $schedule->teams[0]->teamName }} performance review</a>
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#team{{ $schedule->teams[0]->id }}Performance-tab">{{ $schedule->teams[0]->teamName }}
+                                    performance review</a>
                             </li>
                         @endif
                         @if(in_array($schedule->teams[1]->id, $userTeams))
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}PlayerStats-tab">{{ $schedule->teams[1]->teamName }} Player Stats</a>
-                                </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#team{{ $schedule->teams[1]->id }}PlayerStats-tab">{{ $schedule->teams[1]->teamName }}
+                                    Player Stats</a>
+                            </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Attendance-tab">{{ $schedule->teams[1]->teamName }} Match Attendance</a>
-                                </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#team{{ $schedule->teams[1]->id }}Attendance-tab">{{ $schedule->teams[1]->teamName }}
+                                    Match Attendance</a>
+                            </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Notes-tab">{{ $schedule->teams[1]->teamName }} Match Session Notes</a>
-                                </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#team{{ $schedule->teams[1]->id }}Notes-tab">{{ $schedule->teams[1]->teamName }}
+                                    Match Session Notes</a>
+                            </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Skills-tab">{{ $schedule->teams[1]->teamName }} skills evaluation</a>
-                                </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#team{{ $schedule->teams[1]->id }}Skills-tab">{{ $schedule->teams[1]->teamName }}
+                                    skills evaluation</a>
+                            </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#team{{ $schedule->teams[1]->id }}Performance-tab">{{ $schedule->teams[1]->teamName }} performance review</a>
-                                </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#team{{ $schedule->teams[1]->id }}Performance-tab">{{ $schedule->teams[1]->teamName }}
+                                    performance review</a>
+                            </li>
                         @endif
                     @else
                         <li class="nav-item">
@@ -194,10 +220,6 @@
                             <a class="nav-link" data-toggle="tab" href="#performance-tab">performance review</a>
                         </li>
                     @endif
-
-
-
-
 
                 @endif
             </ul>
@@ -250,7 +272,8 @@
                         <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} Scorer(s)</div>
 
                         @if(isAllAdmin())
-                            <button type="button" data-team="homeTeam" class="btn btn-primary btn-sm ml-auto addTeamScorer">
+                            <button type="button" data-team="homeTeam"
+                                    class="btn btn-primary btn-sm ml-auto addTeamScorer">
                                 <span class="material-icons mr-2">add</span>
                                 Add team scorer
                             </button>
@@ -276,7 +299,8 @@
                                                  alt="instructor">
                                             <div class="flex ml-3">
                                                 <h5 class="mb-0 d-flex">{{ $matchScore->player->user->firstName  }} {{ $matchScore->player->user->lastName  }}
-                                                    <p class="text-50 ml-2 mb-0">({{ $matchScore->minuteScored }}')</p></h5>
+                                                    <p class="text-50 ml-2 mb-0">({{ $matchScore->minuteScored }}')</p>
+                                                </h5>
                                                 <p class="text-50 lh-1 mb-0">{{ $matchScore->player->position->name }}</p>
                                                 @if($matchScore->isOwnGoal == 1)
                                                     <p class="text-50 lh-1 mb-0"><strong>Own Goal</strong></p>
@@ -287,9 +311,9 @@
                                             </div>
                                             @if(isAllAdmin() || isCoach())
                                                 <button
-                                                    class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif"
-                                                    type="button" id="{{ $matchScore->id }}" data-toggle="tooltip"
-                                                    data-placement="bottom" title="Delete scorer">
+                                                        class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif"
+                                                        type="button" id="{{ $matchScore->id }}" data-toggle="tooltip"
+                                                        data-placement="bottom" title="Delete scorer">
                                                     <span class="material-icons">
                                                         close
                                                     </span>
@@ -306,9 +330,12 @@
                         <div class="page-separator">
                             <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Scorer(s)</div>
                             @if(isAllAdmin())
-                                <button type="button" data-team="awayTeam" class="btn btn-primary btn-sm ml-auto addTeamScorer"><span
-                                        class="material-icons mr-2">add</span> Add team scorer</button>
-                                <button type="button" data-team="awayTeam" class="btn btn-primary btn-sm ml-2 addOwnGoal">
+                                <button type="button" data-team="awayTeam"
+                                        class="btn btn-primary btn-sm ml-auto addTeamScorer"><span
+                                            class="material-icons mr-2">add</span> Add team scorer
+                                </button>
+                                <button type="button" data-team="awayTeam"
+                                        class="btn btn-primary btn-sm ml-2 addOwnGoal">
                                     <span class="material-icons mr-2">add</span>
                                     Add own goal
                                 </button>
@@ -329,7 +356,8 @@
                                                      alt="instructor">
                                                 <div class="flex ml-3">
                                                     <h5 class="mb-0 d-flex">{{ $matchScore->player->user->firstName  }} {{ $matchScore->player->user->lastName  }}
-                                                        <p class="text-50 ml-2 mb-0">({{ $matchScore->minuteScored }}')</p></h5>
+                                                        <p class="text-50 ml-2 mb-0">({{ $matchScore->minuteScored }}
+                                                            ')</p></h5>
                                                     <p class="text-50 lh-1 mb-0">{{ $matchScore->player->position->name }}</p>
                                                     @if($matchScore->isOwnGoal == 1)
                                                         <p class="text-50 lh-1 mb-0"><strong>Own Goal</strong></p>
@@ -340,9 +368,10 @@
                                                 </div>
                                                 @if(isAllAdmin() || isCoach())
                                                     <button
-                                                        class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif"
-                                                        type="button" id="{{ $matchScore->id }}" data-toggle="tooltip"
-                                                        data-placement="bottom" title="Delete scorer">
+                                                            class="btn btn-sm btn-outline-secondary @if($matchScore->isOwnGoal == 1) delete-own-goal @else delete-scorer @endif"
+                                                            type="button" id="{{ $matchScore->id }}"
+                                                            data-toggle="tooltip"
+                                                            data-placement="bottom" title="Delete scorer">
                                                     <span class="material-icons">
                                                         close
                                                     </span>
@@ -364,7 +393,7 @@
                     <div class="page-separator__text">Match Stats</div>
                     @if(isAllAdmin())
                         <a href="" id="updateMatchStats" class="btn btn-primary btn-sm ml-auto"><span
-                                class="material-icons mr-2">add</span>
+                                    class="material-icons mr-2">add</span>
                             Update match stats</a>
                     @endif
                 </div>
@@ -541,14 +570,14 @@
                             <div class="row text-center">
                                 <div class="col-4">
                                     <strong
-                                        class="flex">{{ $schedule->teams[0]->pivot->teamFoulsConceded }}</strong>
+                                            class="flex">{{ $schedule->teams[0]->pivot->teamFoulsConceded }}</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong class="flex">Fouls conceded</strong>
                                 </div>
                                 <div class="col-4">
                                     <strong
-                                        class="flex">{{ $schedule->teams[1]->pivot->teamFoulsConceded }}</strong>
+                                            class="flex">{{ $schedule->teams[1]->pivot->teamFoulsConceded }}</strong>
                                 </div>
                             </div>
                         </li>
@@ -562,14 +591,16 @@
 
                     @if(in_array($schedule->teams[0]->id, $userTeams))
                         {{--    Player Stats    --}}
-                        <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}PlayerStats-tab" role="tabpanel">
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}PlayerStats-tab"
+                             role="tabpanel">
                             <div class="page-separator">
                                 <div class="page-separator__text">Player Stats</div>
                             </div>
                             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-hover mb-0" id="team{{ $schedule->teams[0]->id }}PlayerStatsTable">
+                                        <table class="table table-hover mb-0"
+                                               id="team{{ $schedule->teams[0]->id }}PlayerStatsTable">
                                             <thead>
                                             <tr>
                                                 <th>Name</th>
@@ -597,7 +628,9 @@
                         {{--     Attendance    --}}
                         <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}Attendance-tab" role="tabpanel">
                             <div class="page-separator">
-                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} Attendance Overview</div>
+                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} Attendance
+                                    Overview
+                                </div>
                             </div>
                             <div class="row card-group-row">
                                 @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$homeTeamAttendance['totalParticipant'], 'dataThisMonth'=>null])
@@ -613,7 +646,7 @@
                                 <div class="page-separator__text">Player Attendance</div>
                             </div>
                             <div class=".player-attendance">
-                                @include('pages.admins.academies.schedules.player-attendance-data', ['players' => $homePlayers])
+                                @include('pages.academies.reports.schedules.player-attendance-data', ['players' => $homePlayers])
                             </div>
 
                             {{--    Coach Attendance    --}}
@@ -621,7 +654,7 @@
                                 <div class="page-separator__text">Coach Attendance</div>
                             </div>
                             <div class=".coach-attendance">
-                                @include('pages.admins.academies.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
+                                @include('pages.academies.reports.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
                             </div>
                         </div>
                         {{--    Match Note    --}}
@@ -629,37 +662,52 @@
                             <div class="page-separator">
                                 <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} Match Note</div>
                                 @if(isAllAdmin() || isCoach())
-                                    <a href="" data-team="{{$schedule->teams[0]->id}}" class="btn btn-primary btn-sm ml-auto addNewNote"><span class="material-icons mr-2">add</span> Add new note</a>
+                                    <a href="" data-team="{{$schedule->teams[0]->id}}"
+                                       class="btn btn-primary btn-sm ml-auto addNewNote"><span
+                                                class="material-icons mr-2">add</span> Add new note</a>
                                 @endif
                             </div>
                             @if(count($homeTeamNotes)==0)
                                 <x-warning-alert text="Match session note haven't created yet by coach"/>
                             @endif
                             @foreach($homeTeamNotes as $note)
-                                <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
+                                <x-event-note-card :note="$note"
+                                                   :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
                             @endforeach
                         </div>
                         {{--    PLAYER SKILLS EVALUATION SECTION    --}}
                         <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}Skills-tab" role="tabpanel">
                             <div class="page-separator">
-                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} player skills evaluation</div>
+                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} player skills
+                                    evaluation
+                                </div>
                             </div>
                             @if(isAllAdmin() || isCoach())
-                                <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="team{{ $schedule->teams[0]->id }}PlayerSkillsTable" :teamId="$schedule->teams[0]->id"/>
+                                <x-player-skill-event-tables
+                                        :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])"
+                                        tableId="team{{ $schedule->teams[0]->id }}PlayerSkillsTable"
+                                        :teamId="$schedule->teams[0]->id"/>
                             @elseif(isPlayer())
                                 <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
                             @endif
                         </div>
                         {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
-                        <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}Performance-tab" role="tabpanel">
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[0]->id }}Performance-tab"
+                             role="tabpanel">
                             <div class="page-separator">
-                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} player performance review</div>
+                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} player performance
+                                    review
+                                </div>
                             </div>
                             @if(isAllAdmin() || isCoach())
-                                <x-player-performance-review-event-table :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])" tableId="team{{ $schedule->teams[0]->id }}PlayerPerformanceReviewTable" :teamId="$schedule->teams[0]->id"/>
+                                <x-player-performance-review-event-table
+                                        :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])"
+                                        tableId="team{{ $schedule->teams[0]->id }}PlayerPerformanceReviewTable"
+                                        :teamId="$schedule->teams[0]->id"/>
                             @elseif(isPlayer())
                                 @if(count($data['playerPerformanceReviews'])==0)
-                                    <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
+                                    <x-warning-alert
+                                            text="You haven't get any performance review from your coach for this match session"/>
                                 @endif
                                 @foreach($data['playerPerformanceReviews'] as $review)
                                     <x-player-event-performance-review :review="$review"/>
@@ -668,122 +716,17 @@
                         </div>
                     @endif
                     @if(in_array($schedule->teams[1]->id, $userTeams))
-                            {{--    Player Stats    --}}
-                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}PlayerStats-tab" role="tabpanel">
+                        {{--    Player Stats    --}}
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}PlayerStats-tab"
+                             role="tabpanel">
                             <div class="page-separator">
                                 <div class="page-separator__text">Player Stats</div>
                             </div>
                             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-hover mb-0" id="team{{ $schedule->teams[1]->id }}PlayerStatsTable">
-                                            <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Minutes Played</th>
-                                                <th>Goals</th>
-                                                <th>Assists</th>
-                                                <th>Own Goals</th>
-                                                <th>Shots</th>
-                                                <th>Passes</th>
-                                                <th>Fouls</th>
-                                                <th>Yellow Cards</th>
-                                                <th>Red Cards</th>
-                                                <th>Saves</th>
-                                                <th>Last Updated</th>
-                                                <th>Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                            {{--     Attendance    --}}
-                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Attendance-tab" role="tabpanel">
-                            <div class="page-separator">
-                                <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Attendance Overview</div>
-                            </div>
-                            <div class="row card-group-row">
-                                @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$awayTeamAttendance['totalParticipant'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => 'Attended', 'data'=>$awayTeamAttendance['totalAttend'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$awayTeamAttendance['totalDidntAttend'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Illness", 'data'=>$awayTeamAttendance['totalIllness'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Injured", 'data'=>$awayTeamAttendance['totalInjured'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Others", 'data'=>$awayTeamAttendance['totalOthers'], 'dataThisMonth'=>null])
-                            </div>
-
-                            {{--    Player Attendance    --}}
-                            <div class="page-separator">
-                                <div class="page-separator__text">Player Attendance</div>
-                            </div>
-                            <div class=".player-attendance">
-                                @include('pages.admins.academies.schedules.player-attendance-data', ['players' => $awayPlayers])
-                            </div>
-
-                            {{--    Coach Attendance    --}}
-                            <div class="page-separator">
-                                <div class="page-separator__text">Coach Attendance</div>
-                            </div>
-                            <div class=".coach-attendance">
-                                @include('pages.admins.academies.schedules.coach-attendance-data', ['coaches' => $awayCoaches])
-                            </div>
-                        </div>
-                            {{--    Match Note    --}}
-                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Notes-tab" role="tabpanel">
-                            <div class="page-separator">
-                                <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Match Note</div>
-                                @if(isAllAdmin() || isCoach())
-                                    <a href="" data-team="{{$schedule->teams[1]->id}}" class="btn btn-primary btn-sm ml-auto addNewNote"><span class="material-icons mr-2">add</span> Add new note</a>
-                                @endif
-                            </div>
-                            @if(count($awayTeamNotes)==0)
-                                <x-warning-alert text="Match session note haven't created yet by coach"/>
-                            @endif
-                            @foreach($awayTeamNotes as $note)
-                                <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
-                            @endforeach
-                        </div>
-                            {{--    PLAYER SKILLS EVALUATION SECTION    --}}
-                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Skills-tab" role="tabpanel">
-                            <div class="page-separator">
-                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} player skills evaluation</div>
-                            </div>
-                            @if(isAllAdmin() || isCoach())
-                                <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="team{{ $schedule->teams[1]->id }}PlayerSkillsTable" :teamId="$schedule->teams[1]->id"/>
-                            @elseif(isPlayer())
-                                <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
-                            @endif
-                        </div>
-                        {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
-                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Performance-tab" role="tabpanel">
-                            <div class="page-separator">
-                                <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} player performance review</div>
-                            </div>
-                            @if(isAllAdmin() || isCoach())
-                                <x-player-performance-review-event-table :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])" tableId="team{{ $schedule->teams[1]->id }}PlayerPerformanceReviewTable" :teamId="$schedule->teams[1]->id"/>
-                            @elseif(isPlayer())
-                                @if(count($data['playerPerformanceReviews'])==0)
-                                    <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
-                                @endif
-                                @foreach($data['playerPerformanceReviews'] as $review)
-                                    <x-player-event-performance-review :review="$review"/>
-                                @endforeach
-                            @endif
-                        </div>
-                    @endif
-                @else
-                    {{--    Player Stats    --}}
-                        <div class="tab-pane fade" id="playerStats-tab" role="tabpanel">
-                            <div class="page-separator">
-                                <div class="page-separator__text">Player Stats</div>
-                            </div>
-                            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover mb-0" id="playerStatTable">
+                                        <table class="table table-hover mb-0"
+                                               id="team{{ $schedule->teams[1]->id }}PlayerStatsTable">
                                             <thead>
                                             <tr>
                                                 <th>Name</th>
@@ -809,17 +752,19 @@
                             </div>
                         </div>
                         {{--     Attendance    --}}
-                        <div class="tab-pane fade" id="attendance-tab" role="tabpanel">
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Attendance-tab" role="tabpanel">
                             <div class="page-separator">
-                                <div class="page-separator__text">Attendance Overview</div>
+                                <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Attendance
+                                    Overview
+                                </div>
                             </div>
                             <div class="row card-group-row">
-                                @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$homeTeamAttendance['totalParticipant'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => 'Attended', 'data'=>$homeTeamAttendance['totalAttend'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$homeTeamAttendance['totalDidntAttend'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Illness", 'data'=>$homeTeamAttendance['totalIllness'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Injured", 'data'=>$homeTeamAttendance['totalInjured'], 'dataThisMonth'=>null])
-                                @include('components.stats-card', ['title' => "Others", 'data'=>$homeTeamAttendance['totalOthers'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$awayTeamAttendance['totalParticipant'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => 'Attended', 'data'=>$awayTeamAttendance['totalAttend'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$awayTeamAttendance['totalDidntAttend'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Illness", 'data'=>$awayTeamAttendance['totalIllness'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Injured", 'data'=>$awayTeamAttendance['totalInjured'], 'dataThisMonth'=>null])
+                                @include('components.stats-card', ['title' => "Others", 'data'=>$awayTeamAttendance['totalOthers'], 'dataThisMonth'=>null])
                             </div>
 
                             {{--    Player Attendance    --}}
@@ -827,7 +772,7 @@
                                 <div class="page-separator__text">Player Attendance</div>
                             </div>
                             <div class=".player-attendance">
-                                @include('pages.admins.academies.schedules.player-attendance-data', ['players' => $homePlayers])
+                                @include('pages.academies.reports.schedules.player-attendance-data', ['players' => $awayPlayers])
                             </div>
 
                             {{--    Coach Attendance    --}}
@@ -835,45 +780,60 @@
                                 <div class="page-separator__text">Coach Attendance</div>
                             </div>
                             <div class=".coach-attendance">
-                                @include('pages.admins.academies.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
+                                @include('pages.academies.reports.schedules.coach-attendance-data', ['coaches' => $awayCoaches])
                             </div>
                         </div>
                         {{--    Match Note    --}}
-                        <div class="tab-pane fade" id="notes-tab" role="tabpanel">
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Notes-tab" role="tabpanel">
                             <div class="page-separator">
-                                <div class="page-separator__text">Match Note</div>
+                                <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} Match Note</div>
                                 @if(isAllAdmin() || isCoach())
-                                    <a href="" data-team="{{$schedule->teams[0]->id}}" class="btn btn-primary btn-sm ml-auto addNewNote"><span class="material-icons mr-2">add</span> Add new note</a>
+                                    <a href="" data-team="{{$schedule->teams[1]->id}}"
+                                       class="btn btn-primary btn-sm ml-auto addNewNote"><span
+                                                class="material-icons mr-2">add</span> Add new note</a>
                                 @endif
                             </div>
-                            @if(count($schedule->notes)==0)
+                            @if(count($awayTeamNotes)==0)
                                 <x-warning-alert text="Match session note haven't created yet by coach"/>
                             @endif
-                            @foreach($schedule->notes as $note)
-                                <x-event-note-card :note="$note" :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
+                            @foreach($awayTeamNotes as $note)
+                                <x-event-note-card :note="$note"
+                                                   :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
                             @endforeach
                         </div>
                         {{--    PLAYER SKILLS EVALUATION SECTION    --}}
-                        <div class="tab-pane fade" id="skills-tab" role="tabpanel">
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Skills-tab" role="tabpanel">
                             <div class="page-separator">
-                                <div class="page-separator__text">player skills evaluation</div>
+                                <div class="page-separator__text">{{ $schedule->teams[0]->teamName }} player skills
+                                    evaluation
+                                </div>
                             </div>
                             @if(isAllAdmin() || isCoach())
-                                <x-player-skill-event-tables :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])" tableId="playerSkillsTable"/>
+                                <x-player-skill-event-tables
+                                        :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])"
+                                        tableId="team{{ $schedule->teams[1]->id }}PlayerSkillsTable"
+                                        :teamId="$schedule->teams[1]->id"/>
                             @elseif(isPlayer())
                                 <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
                             @endif
                         </div>
                         {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
-                        <div class="tab-pane fade" id="performance-tab" role="tabpanel">
+                        <div class="tab-pane fade" id="team{{ $schedule->teams[1]->id }}Performance-tab"
+                             role="tabpanel">
                             <div class="page-separator">
-                                <div class="page-separator__text">player performance review</div>
+                                <div class="page-separator__text">{{ $schedule->teams[1]->teamName }} player performance
+                                    review
+                                </div>
                             </div>
                             @if(isAllAdmin() || isCoach())
-                                <x-player-performance-review-event-table :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])" tableId="playerPerformanceReviewTable"/>
+                                <x-player-performance-review-event-table
+                                        :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])"
+                                        tableId="team{{ $schedule->teams[1]->id }}PlayerPerformanceReviewTable"
+                                        :teamId="$schedule->teams[1]->id"/>
                             @elseif(isPlayer())
                                 @if(count($data['playerPerformanceReviews'])==0)
-                                    <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
+                                    <x-warning-alert
+                                            text="You haven't get any performance review from your coach for this match session"/>
                                 @endif
                                 @foreach($data['playerPerformanceReviews'] as $review)
                                     <x-player-event-performance-review :review="$review"/>
@@ -881,6 +841,121 @@
                             @endif
                         </div>
                     @endif
+                @else
+                    {{--    Player Stats    --}}
+                    <div class="tab-pane fade" id="playerStats-tab" role="tabpanel">
+                        <div class="page-separator">
+                            <div class="page-separator__text">Player Stats</div>
+                        </div>
+                        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0" id="playerStatTable">
+                                        <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Minutes Played</th>
+                                            <th>Goals</th>
+                                            <th>Assists</th>
+                                            <th>Own Goals</th>
+                                            <th>Shots</th>
+                                            <th>Passes</th>
+                                            <th>Fouls</th>
+                                            <th>Yellow Cards</th>
+                                            <th>Red Cards</th>
+                                            <th>Saves</th>
+                                            <th>Last Updated</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{--     Attendance    --}}
+                    <div class="tab-pane fade" id="attendance-tab" role="tabpanel">
+                        <div class="page-separator">
+                            <div class="page-separator__text">Attendance Overview</div>
+                        </div>
+                        <div class="row card-group-row">
+                            @include('components.stats-card', ['title' => 'Total Participants', 'data'=>$homeTeamAttendance['totalParticipant'], 'dataThisMonth'=>null])
+                            @include('components.stats-card', ['title' => 'Attended', 'data'=>$homeTeamAttendance['totalAttend'], 'dataThisMonth'=>null])
+                            @include('components.stats-card', ['title' => "Didn't Attended", 'data'=>$homeTeamAttendance['totalDidntAttend'], 'dataThisMonth'=>null])
+                            @include('components.stats-card', ['title' => "Illness", 'data'=>$homeTeamAttendance['totalIllness'], 'dataThisMonth'=>null])
+                            @include('components.stats-card', ['title' => "Injured", 'data'=>$homeTeamAttendance['totalInjured'], 'dataThisMonth'=>null])
+                            @include('components.stats-card', ['title' => "Others", 'data'=>$homeTeamAttendance['totalOthers'], 'dataThisMonth'=>null])
+                        </div>
+
+                        {{--    Player Attendance    --}}
+                        <div class="page-separator">
+                            <div class="page-separator__text">Player Attendance</div>
+                        </div>
+                        <div class=".player-attendance">
+                            @include('pages.academies.reports.schedules.player-attendance-data', ['players' => $homePlayers])
+                        </div>
+
+                        {{--    Coach Attendance    --}}
+                        <div class="page-separator">
+                            <div class="page-separator__text">Coach Attendance</div>
+                        </div>
+                        <div class=".coach-attendance">
+                            @include('pages.academies.reports.schedules.coach-attendance-data', ['coaches' => $homeCoaches])
+                        </div>
+                    </div>
+                    {{--    Match Note    --}}
+                    <div class="tab-pane fade" id="notes-tab" role="tabpanel">
+                        <div class="page-separator">
+                            <div class="page-separator__text">Match Note</div>
+                            @if(isAllAdmin() || isCoach())
+                                <a href="" data-team="{{$schedule->teams[0]->id}}"
+                                   class="btn btn-primary btn-sm ml-auto addNewNote"><span class="material-icons mr-2">add</span>
+                                    Add new note</a>
+                            @endif
+                        </div>
+                        @if(count($schedule->notes)==0)
+                            <x-warning-alert text="Match session note haven't created yet by coach"/>
+                        @endif
+                        @foreach($schedule->notes as $note)
+                            <x-event-note-card :note="$note"
+                                               :deleteRoute="route('match-schedules.destroy-note', ['schedule' => $schedule->id, 'note'=>':id'])"/>
+                        @endforeach
+                    </div>
+                    {{--    PLAYER SKILLS EVALUATION SECTION    --}}
+                    <div class="tab-pane fade" id="skills-tab" role="tabpanel">
+                        <div class="page-separator">
+                            <div class="page-separator__text">player skills evaluation</div>
+                        </div>
+                        @if(isAllAdmin() || isCoach())
+                            <x-player-skill-event-tables
+                                    :route="route('match-schedules.player-skills', ['schedule' => $schedule->id])"
+                                    tableId="playerSkillsTable"/>
+                        @elseif(isPlayer())
+                            <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
+                        @endif
+                    </div>
+                    {{--    PLAYER PERFORMANCE REVIEW SECTION   --}}
+                    <div class="tab-pane fade" id="performance-tab" role="tabpanel">
+                        <div class="page-separator">
+                            <div class="page-separator__text">player performance review</div>
+                        </div>
+                        @if(isAllAdmin() || isCoach())
+                            <x-player-performance-review-event-table
+                                    :route="route('match-schedules.player-performance-review', ['schedule' => $schedule->id])"
+                                    tableId="playerPerformanceReviewTable"/>
+                        @elseif(isPlayer())
+                            @if(count($data['playerPerformanceReviews'])==0)
+                                <x-warning-alert
+                                        text="You haven't get any performance review from your coach for this match session"/>
+                            @endif
+                            @foreach($data['playerPerformanceReviews'] as $review)
+                                <x-player-event-performance-review :review="$review"/>
+                            @endforeach
+                        @endif
+                    </div>
+                @endif
             @endif
         </div>
     </div>
@@ -922,102 +997,102 @@
     <script>
         $(document).ready(function () {
             @if ($schedule->matchType == 'Internal Match')
-                $('#team{{ $schedule->teams[0]->id }}PlayerStatsTable').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ordering: true,
-                    ajax: {
-                        url: '{{ route('match-schedules.index-player-match-stats', $schedule->id) }}',
-                        type: "GET",
-                        data: {
-                            teamId: {{ $schedule->teams[0]->id }}
-                        },
+            $('#team{{ $schedule->teams[0]->id }}PlayerStatsTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{{ route('match-schedules.index-player-match-stats', $schedule->id) }}',
+                    type: "GET",
+                    data: {
+                        teamId: {{ $schedule->teams[0]->id }}
                     },
-                    columns: [
-                        {data: 'name', name: 'name'},
-                        {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
-                        {data: 'pivot.goals', name: 'pivot.goals'},
-                        {data: 'pivot.assists', name: 'pivot.assists'},
-                        {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
-                        {data: 'pivot.shots', name: 'pivot.shots'},
-                        {data: 'pivot.passes', name: 'pivot.passes'},
-                        {data: 'pivot.fouls', name: 'pivot.fouls'},
-                        {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
-                        {data: 'pivot.redCards', name: 'pivot.redCards'},
-                        {data: 'pivot.saves', name: 'pivot.saves'},
-                        {data: 'updated_at', name: 'updated_at'},
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false,
-                            width: '15%'
-                        },
-                    ]
-                });
-                $('#team{{ $schedule->teams[1]->id }}PlayerStatsTable').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ordering: true,
-                    ajax: {
-                        url: '{{ route('match-schedules.index-player-match-stats', $schedule->id) }}',
-                        type: "GET",
-                        data: {
-                            teamId: {{ $schedule->teams[1]->id }}
-                        },
+                },
+                columns: [
+                    {data: 'name', name: 'name'},
+                    {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
+                    {data: 'pivot.goals', name: 'pivot.goals'},
+                    {data: 'pivot.assists', name: 'pivot.assists'},
+                    {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
+                    {data: 'pivot.shots', name: 'pivot.shots'},
+                    {data: 'pivot.passes', name: 'pivot.passes'},
+                    {data: 'pivot.fouls', name: 'pivot.fouls'},
+                    {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                    {data: 'pivot.redCards', name: 'pivot.redCards'},
+                    {data: 'pivot.saves', name: 'pivot.saves'},
+                    {data: 'updated_at', name: 'updated_at'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
                     },
-                    columns: [
-                        {data: 'name', name: 'name'},
-                        {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
-                        {data: 'pivot.goals', name: 'pivot.goals'},
-                        {data: 'pivot.assists', name: 'pivot.assists'},
-                        {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
-                        {data: 'pivot.shots', name: 'pivot.shots'},
-                        {data: 'pivot.passes', name: 'pivot.passes'},
-                        {data: 'pivot.fouls', name: 'pivot.fouls'},
-                        {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
-                        {data: 'pivot.redCards', name: 'pivot.redCards'},
-                        {data: 'pivot.saves', name: 'pivot.saves'},
-                        {data: 'updated_at', name: 'updated_at'},
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false,
-                            width: '15%'
-                        },
-                    ]
-                });
+                ]
+            });
+            $('#team{{ $schedule->teams[1]->id }}PlayerStatsTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{{ route('match-schedules.index-player-match-stats', $schedule->id) }}',
+                    type: "GET",
+                    data: {
+                        teamId: {{ $schedule->teams[1]->id }}
+                    },
+                },
+                columns: [
+                    {data: 'name', name: 'name'},
+                    {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
+                    {data: 'pivot.goals', name: 'pivot.goals'},
+                    {data: 'pivot.assists', name: 'pivot.assists'},
+                    {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
+                    {data: 'pivot.shots', name: 'pivot.shots'},
+                    {data: 'pivot.passes', name: 'pivot.passes'},
+                    {data: 'pivot.fouls', name: 'pivot.fouls'},
+                    {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                    {data: 'pivot.redCards', name: 'pivot.redCards'},
+                    {data: 'pivot.saves', name: 'pivot.saves'},
+                    {data: 'updated_at', name: 'updated_at'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
+                    },
+                ]
+            });
             @else
-                $('#playerStatTable').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ordering: true,
-                    ajax: {
-                        url: '{!! route('match-schedules.index-player-match-stats', $schedule->id) !!}',
+            $('#playerStatTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! route('match-schedules.index-player-match-stats', $schedule->id) !!}',
+                },
+                columns: [
+                    {data: 'name', name: 'name'},
+                    {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
+                    {data: 'pivot.goals', name: 'pivot.goals'},
+                    {data: 'pivot.assists', name: 'pivot.assists'},
+                    {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
+                    {data: 'pivot.shots', name: 'pivot.shots'},
+                    {data: 'pivot.passes', name: 'pivot.passes'},
+                    {data: 'pivot.fouls', name: 'pivot.fouls'},
+                    {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
+                    {data: 'pivot.redCards', name: 'pivot.redCards'},
+                    {data: 'pivot.saves', name: 'pivot.saves'},
+                    {data: 'updated_at', name: 'updated_at'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
                     },
-                    columns: [
-                        {data: 'name', name: 'name'},
-                        {data: 'pivot.minutesPlayed', name: 'pivot.minutesPlayed'},
-                        {data: 'pivot.goals', name: 'pivot.goals'},
-                        {data: 'pivot.assists', name: 'pivot.assists'},
-                        {data: 'pivot.ownGoal', name: 'pivot.ownGoal'},
-                        {data: 'pivot.shots', name: 'pivot.shots'},
-                        {data: 'pivot.passes', name: 'pivot.passes'},
-                        {data: 'pivot.fouls', name: 'pivot.fouls'},
-                        {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
-                        {data: 'pivot.redCards', name: 'pivot.redCards'},
-                        {data: 'pivot.saves', name: 'pivot.saves'},
-                        {data: 'updated_at', name: 'updated_at'},
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false,
-                            width: '15%'
-                        },
-                    ]
-                });
+                ]
+            });
             @endif
 
         });

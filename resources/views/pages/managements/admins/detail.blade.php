@@ -43,27 +43,27 @@
                     </span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('admin-managements.edit', $data->id) }}">
+                        <a class="dropdown-item" href="{{ route('admin-managements.edit', $data->hash) }}">
                             <span class="material-icons mr-2 ">edit</span>
                             Edit admin profile
                         </a>
                         @if($data->user->status == '1')
-                            <button type="submit" class="dropdown-item setDeactivate" id="{{$data->id}}">
+                            <button type="submit" class="dropdown-item setDeactivate" id="{{$data->hash}}">
                                 <span class="material-icons text-danger">check_circle</span>
                                 Deactivate Admin
                             </button>
 
                         @elseif($data->user->status == '0')
-                            <button type="submit" class="dropdown-item setActivate" id="{{$data->id}}">
+                            <button type="submit" class="dropdown-item setActivate" id="{{$data->hash}}">
                                 <span class="material-icons text-success">check_circle</span>
                                 Activate Admin
                             </button>
                         @endif
-                        <a class="dropdown-item changePassword" id="{{ $data->id }}">
+                        <a class="dropdown-item changePassword" id="{{ $data->hash }}">
                             <span class="material-icons mr-2 ">lock</span>
                             Change admins Account Password
                         </a>
-                        <button type="button" class="dropdown-item deleteAdmin" id="{{$data->id}}">
+                        <button type="button" class="dropdown-item deleteAdmin" id="{{$data->hash}}">
                             <span class="material-icons mr-2 text-danger">delete</span>
                             Delete admin
                         </button>

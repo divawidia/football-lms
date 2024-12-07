@@ -31,7 +31,7 @@ class AdminController extends Controller
             return $this->adminService->index();
         }
 
-        return view('pages.admins.managements.admins.index');
+        return view('pages.managements.admins.index');
     }
 
     /**
@@ -39,7 +39,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        return view('pages.admins.managements.admins.create', [
+        return view('pages.managements.admins.create', [
             'countries' => $this->adminService->getCountryData()
         ]);
     }
@@ -62,7 +62,7 @@ class AdminController extends Controller
      */
     public function show(Admin $admin)
     {
-        return view('pages.admins.managements.admins.detail', [
+        return view('pages.managements.admins.detail', [
             'data' => $admin,
             'fullName' => $this->adminService->getUserFullName($admin->user),
             'age' => $this->adminService->getAge($admin->user->dob)
@@ -83,7 +83,7 @@ class AdminController extends Controller
      */
     public function edit(Admin $admin)
     {
-        return view('pages.admins.managements.admins.edit',[
+        return view('pages.managements.admins.edit',[
             'data' => $admin,
             'fullName' => $this->adminService->getUserFullName($admin->user),
             'countries' => $this->adminService->getCountryData()
