@@ -11,10 +11,11 @@ use Nnjeim\World\Models\City;
 use Nnjeim\World\Models\Country;
 use Nnjeim\World\Models\State;
 use Spatie\Permission\Traits\HasRoles;
+use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HashableId;
 
     /**
      * The attributes that are mass assignable.

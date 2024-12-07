@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class Competition extends Model
 {
-    use HasFactory;
+    use HasFactory, HashableId;
 
     protected $fillable = [
         'name',
