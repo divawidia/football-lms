@@ -20,7 +20,7 @@
                                class="form-control"
                                placeholder="Input training's title ..."
                                required>
-                        <span class="invalid-feedback trainingTitle" role="alert">
+                        <span class="invalid-feedback trainingTitle_error" role="alert">
                             <strong></strong>
                         </span>
                     </div>
@@ -35,7 +35,7 @@
                                        id="previewPhoto"
                                        accept="image/jpg, image/jpeg, image/png">
                                 <label class="custom-file-label" for="previewPhoto">Choose image</label>
-                                <span class="invalid-feedback previewPhoto" role="alert">
+                                <span class="invalid-feedback previewPhoto_error" role="alert">
                                     <strong></strong>
                                 </span>
                             </div>
@@ -51,7 +51,7 @@
                                 <option value="{{ $level }}">{{ $level }}</option>
                             @endforeach
                         </select>
-                        <span class="invalid-feedback level" role="alert">
+                        <span class="invalid-feedback level_error" role="alert">
                             <strong></strong>
                         </span>
                     </div>
@@ -59,7 +59,7 @@
                         <label class="form-label" for="description">Description</label>
                         <small class="text-sm">(Optional)</small>
                         <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                        <span class="invalid-feedback description" role="alert">
+                        <span class="invalid-feedback description_error " role="alert">
                             <strong></strong>
                         </span>
                     </div>

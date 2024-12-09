@@ -427,7 +427,7 @@
             let done = false;
 
             function onPlayerStateChange(event) {
-                if (event.data == YT.PlayerState.PLAYING && !done) {
+                if (event.data === YT.PlayerState.PLAYING && !done) {
                     setTimeout(stopVideo, 6000);
                     done = true;
                 }
