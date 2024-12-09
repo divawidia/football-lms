@@ -6,14 +6,17 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class CreateTrainingCourseModal extends Component
+class EditTrainingCourseModal extends Component
 {
+    public $routeEdit;
+    public $routeUpdate;
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($routeEdit, $routeUpdate)
     {
-        //
+        $this->routeEdit = $routeEdit;
+        $this->routeUpdate = $routeUpdate;
     }
 
     /**
@@ -21,6 +24,6 @@ class CreateTrainingCourseModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.create-training-course-modal');
+        return view('components.modal.edit-training-course-modal');
     }
 }

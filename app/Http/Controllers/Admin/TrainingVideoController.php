@@ -103,11 +103,7 @@ class TrainingVideoController extends Controller
      */
     public function edit(TrainingVideo $trainingVideo): JsonResponse
     {
-        return response()->json([
-            'status' => '200',
-            'data' => $trainingVideo,
-            'message' => 'Success'
-        ]);
+        return ApiResponse::success($trainingVideo);
     }
 
     /**
@@ -118,7 +114,7 @@ class TrainingVideoController extends Controller
         $data = $request->validated();
 
         $trainingVideos = $this->trainingVideoService->update($data, $trainingVideo);
-        $message = "Training course ".$trainingVideo->trainingTitle." successfully updated.";
+        $message = "Training course: ".$trainingVideo->trainingTitle." successfully updated.";
         return ApiResponse::success($trainingVideos, $message);
     }
 
