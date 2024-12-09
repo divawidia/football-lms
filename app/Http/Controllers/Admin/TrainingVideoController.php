@@ -120,16 +120,14 @@ class TrainingVideoController extends Controller
 
     public function unpublish(TrainingVideo $trainingVideo){
         $this->trainingVideoService->setStatus($trainingVideo, '0');
-
-        Alert::success('Training '.$trainingVideo->trainingTitle.' status successfully unpublished!');
-        return redirect()->route('training-videos.show', $trainingVideo->id);
+        $message = "Training course: ".$trainingVideo->trainingTitle."'s status successfully unpublished!.";
+        return ApiResponse::success(message: $message);
     }
 
     public function publish(TrainingVideo $trainingVideo){
         $this->trainingVideoService->setStatus($trainingVideo, '1');
-
-        Alert::success('Training '.$trainingVideo->trainingTitle.' status successfully published!');
-        return redirect()->route('training-videos.show', $trainingVideo->id);
+        $message = "Training course: ".$trainingVideo->trainingTitle."'s status successfully published!.";
+        return ApiResponse::success(message: $message);
     }
 
     public function assignPlayer(TrainingVideo $trainingVideo)

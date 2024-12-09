@@ -63,26 +63,19 @@
                                 Edit Training Course
                             </a>
                             @if($data->status == "1")
-                                <form action="{{ route('training-videos.unpublish', $data->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-white mx-2">
-                                        <span class="material-icons mr-2">block</span>
-                                        Unpublish Training Course
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-white mx-2 unpublishTraining">
+                                    <span class="material-icons mr-2 text-danger">block</span>
+                                    Unpublish Training Course
+                                </button>
                             @else
-                                <form action="{{ route('training-videos.publish', $data->id) }}" method="POST">
-                                    @method("PATCH")
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-white mx-2">
-                                        <span class="material-icons mr-2">check_circle</span>
-                                        Publish Training Course
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-white mx-2 publishTraining">
+                                    <span class="material-icons mr-2 text-success">check_circle</span>
+                                    Publish Training Course
+                                </button>
                             @endif
+
                             <button type="button" class="btn btn-sm btn-white delete-training" id="{{ $data->id }}">
-                                <span class="material-icons mr-2">delete</span>
+                                <span class="material-icons mr-2 text-danger">delete</span>
                                 Delete Training Course
                             </button>
                         </div>
@@ -246,22 +239,43 @@
     </div>
 
     <x-process-data-confirmation btnClass=".delete-training"
-                                 :processRoute="route('training-videos.destroy', ['trainingVideo' => ':id'])"
+                                 :processRoute="route('training-videos.destroy', $data->hash)"
                                  :routeAfterProcess="route('training-videos.index')"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this training course?"
                                  errorText="Something went wrong when deleting training course!"/>
 
+    <x-process-data-confirmation btnClass=".unpublishTraining"
+                                 :processRoute="route('training-videos.unpublish', $data->hash)"
+                                 :routeAfterProcess="route('training-videos.show', $data->hash)"
+                                 method="PATCH"
+                                 confirmationText="Are you sure to unpublish this training course?"
+                                 errorText="Something went wrong when unpublishing training course!"/>
+
+    <x-process-data-confirmation btnClass=".publishTraining"
+                                 :processRoute="route('training-videos.publish', $data->hash)"
+                                 :routeAfterProcess="route('training-videos.show', $data->hash)"
+                                 method="PATCH"
+                                 confirmationText="Are you sure to publish this training course?"
+                                 errorText="Something went wrong when publishing training course!"/>
+
     <x-process-data-confirmation btnClass=".deleteLesson"
-                                 :processRoute="route('training-videos.lessons-destroy', ['trainingVideo'=>$data->id, 'lesson' => ':id'])"
-                                 :routeAfterProcess="route('training-videos.show', $data->id)"
+                                 :processRoute="route('training-videos.lessons-destroy', ['trainingVideo'=>$data->hash, 'lesson' => ':id'])"
+                                 :routeAfterProcess="route('training-videos.show', $data->hash)"
                                  method="DELETE"
                                  confirmationText="Are you sure to delete this training lesson?"
                                  errorText="Something went wrong when deleting training lesson!"/>
 
     <x-process-data-confirmation btnClass=".deletePlayer"
-                                 :processRoute="route('training-videos.remove-player', ['trainingVideo'=>$data->id, 'player' => ':id'])"
-                                 :routeAfterProcess="route('training-videos.show', $data->id)"
+                                 :processRoute="route('training-videos.remove-player', ['trainingVideo'=>$data->hash, 'player' => ':id'])"
+                                 :routeAfterProcess="route('training-videos.show', $data->hash)"
+                                 method="DELETE"
+                                 confirmationText="Are you sure to remove this player from training course?"
+                                 errorText="Something went wrong when removing the player from training course!"/>
+
+    <x-process-data-confirmation btnClass=".deletePlayer"
+                                 :processRoute="route('training-videos.remove-player', ['trainingVideo'=>$data->hash, 'player' => ':id'])"
+                                 :routeAfterProcess="route('training-videos.show', $data->hash)"
                                  method="DELETE"
                                  confirmationText="Are you sure to remove this player from training course?"
                                  errorText="Something went wrong when removing the player from training course!"/>
@@ -297,7 +311,7 @@
                 ]
             });
 
-            const playersTable = $('#playersTable').DataTable({
+             $('#playersTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -352,7 +366,7 @@
             }
 
             // When the player is ready, get the video duration and show video
-            function onPlayerReady(event) {
+            function onPlayerReady() {
                 const duration = player.getDuration(); // Get the duration in seconds
                 // event.target.playVideo();
                 $('.totalDuration').val(duration);
@@ -391,7 +405,7 @@
                     errorSpan.text('');
                     inputUrl.removeClass('is-invalid');
 
-                    if (player.attr('src') != undefined) {
+                    if (player.attr('src') !== undefined) {
                         player.remove();
                         preview.html('<div id="' + playerId.replace(/^#/, '') + '"></div>')
                     }
