@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="layout-login-centered-boxed__form card">
-        <div class="d-flex flex-column justify-content-center align-items-center mt-2 mb-5 navbar-light">
+        <div class="d-flex flex-column justify-content-center align-items-center mt-2 mb-5 text-center">
             <a href=""
                class="navbar-brand flex-column mb-2 align-items-center mr-0"
                style="min-width: 0">

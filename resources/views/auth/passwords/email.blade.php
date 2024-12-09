@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="layout-login-centered-boxed__form card">
-        <div class="d-flex flex-column justify-content-center align-items-center mt-2 mb-5 navbar-light">
+        <div class="d-flex flex-column justify-content-center align-items-center mt-2 mb-5 text-center">
             <a href=""
                class="navbar-brand flex-column mb-2 align-items-center mr-0"
                style="min-width: 0">
@@ -18,7 +18,8 @@
                     LOGO
                 @endif
             </a>
-            <strong class="m-0 h5">Reset Your Account's Password</strong>
+            <strong class="h4">{{ academyData()->academyName }}</strong>
+            <p class="m-0">Reset Your Account's Password</p>
         </div>
 
         @if (session('status'))
