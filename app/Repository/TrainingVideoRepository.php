@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
+use App\Models\Player;
 use App\Models\Tax;
 use App\Models\TrainingVideo;
 use App\Models\User;
@@ -27,9 +28,9 @@ class TrainingVideoRepository
         return $this->trainingVideo->paginate($count);
     }
 
-    public function playerPaginate($count)
+    public function playerPaginate(Player $player, $count)
     {
-        return $this->trainingVideo->paginate($count);
+        return $player->trainingVideos()->where('status', '1')->paginate($count);
     }
 
     public function find($id)

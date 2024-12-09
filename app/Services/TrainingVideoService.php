@@ -36,7 +36,7 @@ class TrainingVideoService extends Service
     }
     public function playerIndex(Player $player)
     {
-        return $player->trainingVideos()->paginate(16);
+        return $this->trainingVideoRepository->playerPaginate($player, 9);
     }
 
     public function players(TrainingVideo $trainingVideo){
