@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    @include('pages.academies.training-videos.form-modal.create')
+    <x-modal.create-training-course-modal/>
 @endsection
 
 @section('content')
@@ -42,7 +42,7 @@
         @else
             <div class="row">
                 @foreach($data as $training)
-                    <div class="col-sm-6 col-lg-4">
+                    <div class="col-sm-6">
                         <div class="card card-sm card--elevated p-relative o-hidden">
                             <a href="{{ route('training-videos.show', $training->hash) }}">
                                 <img class="img-index-page" src="{{ Storage::url($training->previewPhoto) }}" alt="training-preview">
@@ -71,6 +71,16 @@
                                         <span class="material-icons icon-16pt text-50 mr-4pt">assessment</span>
                                         <p class="flex text-50 lh-1 mb-0"><small>{{ $training->level }}</small></p>
                                     </div>
+                                    @if($training->status == '1')
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge badge-pill badge-success ml-1">Published</span>
+                                        </div>
+
+                                    @else
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -80,53 +90,3 @@
         @endif
     </div>
 @endsection
-@push('addon-script')
-    <script>
-        $(document).ready(function () {
-            @if(isAllAdmin() || isCoach())
-                $('#addTrainingVideo').on('click', function (e) {
-                    e.preventDefault();
-                    $('#addTrainingVideoModal').modal('show');
-                });
-
-                $('#formAddTrainingVideoModal').on('submit', function (e) {
-                    e.preventDefault();
-                    $.ajax({
-                        url: "{{ route('training-videos.store') }}",
-                        type: $(this).attr('method'),
-                        data: new FormData(this),
-                        contentType: false,
-                        processData: false,
-                        success: function () {
-                            $('#editTrainingVideoModal').modal('hide');
-                            Swal.fire({
-                                title: 'Training video successfully created!',
-                                icon: 'success',
-                                showCancelButton: false,
-                                confirmButtonColor: "#1ac2a1",
-                                confirmButtonText:
-                                    'Ok!'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    location.reload();
-                                }
-                            });
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            const response = JSON.parse(jqXHR.responseText);
-                            $.each(response.errors, function (key, val) {
-                                $('span.' + key).text(val[0]);
-                                $("#" + key).addClass('is-invalid');
-                            });
-                            Swal.fire({
-                                icon: "error",
-                                title: "Something went wrong when creating data!",
-                                text: errorThrown,
-                            });
-                        }
-                    });
-                });
-            @endif
-        });
-    </script>
-@endpush

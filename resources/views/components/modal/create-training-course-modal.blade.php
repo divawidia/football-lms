@@ -72,3 +72,19 @@
         </div>
     </div>
 </div>
+
+<x-modal-form-update-processing formId="#formAddTrainingVideoModal"
+                                updateDataId=""
+                                :routeUpdate="route('training-videos.store')"
+                                modalId="#addTrainingVideoModal"/>
+
+@push('addon-script')
+    <script>
+        $(document).ready(function (){
+            $('#addTrainingVideo').on('click', function (e) {
+                e.preventDefault();
+                $('#addTrainingVideoModal').modal('show');
+            });
+        });
+    </script>
+@endpush

@@ -52,11 +52,9 @@ class TrainingVideoController extends Controller
     public function store(TrainingVideoRequest $request)
     {
         $data = $request->validated();
-
-        $trainingVideos = $this->trainingVideoService->store($data, Auth::user()->id);
-
-        Alert::success('Training Videos '. $data['trainingTitle'] .' successfully created!');
-        return redirect()->route('training-videos.show', $trainingVideos->id);
+        $trainingVideos = $this->trainingVideoService->store($data, $this->getLoggedUserId());
+        $message = 'Training course: '. $data['trainingTitle'] .' successfully created!';
+        return ApiResponse::success($trainingVideos, $message);
     }
 
     /**

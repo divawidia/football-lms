@@ -128,7 +128,7 @@
                         <li class="nav-item navbar-list__item">
                             <i class="material-icons text-muted icon--left">visibility</i>
                             @if($data->status == '1')
-                                Status : <span class="badge badge-pill badge-success ml-1">Publishes</span>
+                                Status : <span class="badge badge-pill badge-success ml-1">Published</span>
                             @else
                                 Status : <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
                             @endif
