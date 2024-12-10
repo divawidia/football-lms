@@ -8,6 +8,7 @@ use App\Models\CoachSpecialization;
 use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\Team;
+use App\Models\TrainingVideo;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -41,6 +42,14 @@ class PlayerRepository
                 $query->where('teamId', $team->id);
             })
             ->get();
+    }
+
+    public function getPlayerNotAssignedTrainingCourse(TrainingVideo $trainingVideo)
+    {
+        return $this->player->with('user')
+            ->whereDoesntHave('trainingVideos', function (Builder $query) use ($trainingVideo){
+                $query->where('trainingVideoId', $trainingVideo->id);
+            })->get();
     }
 
     public function getAttendedPLayer($startDate, $endDate, $teams = null, $eventType = null, $mostAttended = true, $mostDidntAttend = false)

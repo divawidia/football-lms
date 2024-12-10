@@ -10,6 +10,7 @@ use App\Notifications\TrainingCourse\TrainingCourseCreated;
 use App\Notifications\TrainingCourse\TrainingCourseDeleted;
 use App\Notifications\TrainingCourse\TrainingCourseStatus;
 use App\Notifications\TrainingCourse\TrainingCourseUpdated;
+use App\Repository\PlayerRepository;
 use App\Repository\TrainingVideoRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
@@ -23,11 +24,13 @@ class TrainingVideoService extends Service
 {
     private TrainingVideoRepository $trainingVideoRepository;
     private UserRepository $userRepository;
+    private PlayerRepository $playerRepository;
     private DatatablesService $datatablesService;
-    public function __construct(TrainingVideoRepository $trainingVideoRepository, UserRepository $userRepository, DatatablesService $datatablesService)
+    public function __construct(TrainingVideoRepository $trainingVideoRepository, UserRepository $userRepository, PlayerRepository $playerRepository, DatatablesService $datatablesService)
     {
         $this->trainingVideoRepository = $trainingVideoRepository;
         $this->userRepository = $userRepository;
+        $this->playerRepository = $playerRepository;
         $this->datatablesService = $datatablesService;
     }
 
@@ -130,6 +133,11 @@ class TrainingVideoService extends Service
     {
         $playerCompletionProgress = $this->playerCompletionProgress($player, $trainingVideo);
         $uncompletePlayerTrainingLesson = $this->uncompletePlayerTrainingLesson($player, $trainingVideo);
+    }
+
+    public function playersNotAssignedToTrainingCourse(TrainingVideo $trainingVideo)
+    {
+        return $this->playerRepository->getPlayerNotAssignedTrainingCourse($trainingVideo);
     }
     public function playerCompletionProgress(Player $player, TrainingVideo $trainingVideo)
     {

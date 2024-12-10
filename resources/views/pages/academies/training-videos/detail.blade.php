@@ -10,7 +10,8 @@
 @section('modal')
     <x-modal.add-training-course-lesson-modal :routeStore="route('training-videos.lessons-store', $data->hash)"/>
     @include('pages.academies.training-videos.lessons.form-modal.edit')
-    <x-modal.edit-training-course-modal :routeEdit="route('training-videos.edit', $data->id)" :routeUpdate="route('training-videos.update', $data->id)"/>
+    <x-modal.edit-training-course-modal :routeEdit="route('training-videos.edit', $data->id)" :routeUpdate="route('training-videos.update', $data->hash)"/>
+    <x-modal.add-players-to-team :route="route('training-videos.update-player', ['trainingVideo' => $data->hash])" :players="$player"/>
 @endsection
 
 @section('content')
@@ -180,10 +181,8 @@
             {{--    Assigned Player    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Assigned Player(s)</div>
-                <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}"
-                   class="btn btn-primary btn-sm ml-auto">
-                    <span class="material-icons mr-2">add</span>
-                    Add Player
+                <a href="" class="btn btn-primary btn-sm ml-auto" id="add-players">
+                    <span class="material-icons mr-2">add</span>Add Player
                 </a>
             </div>
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">

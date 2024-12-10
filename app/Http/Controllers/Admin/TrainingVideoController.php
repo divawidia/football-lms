@@ -62,7 +62,7 @@ class TrainingVideoController extends Controller
      */
     public function show(TrainingVideo $trainingVideo)
     {
-        $player = null;
+        $player = $this->trainingVideoService->playersNotAssignedToTrainingCourse($trainingVideo);
         $playerCompletionProgress = null;
         $uncompletePlayerTrainingLesson = null;
         if (isPlayer()){
@@ -149,10 +149,8 @@ class TrainingVideoController extends Controller
         ]);
 
         $this->trainingVideoService->updatePlayer($data, $trainingVideo);
-
         $text = 'Players successfully added to training '.$trainingVideo->trainingTitle.'!';
-        Alert::success($text);
-        return redirect()->route('training-videos.show', $trainingVideo->id);
+        return ApiResponse::success(message: $text);
     }
 
     public function removePLayer(TrainingVideo $trainingVideo, Player $player): JsonResponse

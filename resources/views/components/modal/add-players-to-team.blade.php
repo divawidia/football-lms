@@ -5,7 +5,7 @@
                 @method('put')
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Team's PLayers</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add Players</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -16,7 +16,7 @@
                             <div class="form-group mb-3">
                                 <label class="form-label" for="players">Players</label>
                                 <small class="text-danger">*</small>
-                                <p>Select the desired players to add to the team</p>
+                                <p>Select the desired players</p>
                                 @if(count($players) == 0)
                                     <x-warning-alert text="Currently you haven't create any player in your academy or there is no players left, please create your new player" :createRoute="route('player-managements.create')"/>
                                 @else
@@ -57,7 +57,7 @@
                                 :routeUpdate="$route"
                                 modalId="#addPlayerModal"/>
 @push('addon-script')
-    <script>
+    <script type="module">
         $(document).ready(function () {
             $('#add-players').on('click', function (e) {
                 e.preventDefault();
