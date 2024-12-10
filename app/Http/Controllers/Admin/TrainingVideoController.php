@@ -149,7 +149,7 @@ class TrainingVideoController extends Controller
         ]);
 
         $this->trainingVideoService->updatePlayer($data, $trainingVideo);
-        $text = 'Players successfully added to training '.$trainingVideo->trainingTitle.'!';
+        $text = 'Players successfully added to training course: '.$trainingVideo->trainingTitle.'!';
         return ApiResponse::success(message: $text);
     }
 

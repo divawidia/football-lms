@@ -52,17 +52,23 @@
     </div>
 </div>
 
-<x-modal-form-update-processing formId="#formAddPlayer"
-                                updateDataId=""
-                                :routeUpdate="$route"
-                                modalId="#addPlayerModal"/>
 @push('addon-script')
     <script type="module">
+        import { processModalForm } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+
         $(document).ready(function () {
             $('#add-players').on('click', function (e) {
                 e.preventDefault();
                 $('#addPlayerModal').modal('show');
             });
+
+            // ajax store from
+            processModalForm(
+                '#formAddPlayer',
+                "{{ $route }}",
+                null,
+                '#addPlayerModal'
+            );
         });
     </script>
 @endpush
