@@ -41,15 +41,11 @@
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">visibility</i>
-                    @if($training->pivot->status == 'Completed')
-                        Completion Status : <span class="badge badge-pill badge-success ml-1">Completed</span>
-                    @else
-                        Completion Status : <span class="badge badge-pill badge-warning ml-1">On Progress</span>
-                    @endif
+                    Completion Status : {!! $status !!}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">schedule</i>
-                    Progress : {{ $training->pivot->progress }} %
+                    Progress : {{ $progress }} %
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">date_range</i>

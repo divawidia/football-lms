@@ -73,12 +73,7 @@ class TrainingVideoService extends Service
                 return $data;
             })
             ->editColumn('status', function ($item) use ($trainingVideo){
-                if ($this->playerCompletionProgress($item, $trainingVideo) == 100) {
-                    $badge = '<span class="badge badge-pill badge-success">Completed</span>';
-                } else {
-                    $badge = '<span class="badge badge-pill badge-warning">On Progress</span>';
-                }
-                return $badge;
+                return $this->playerCompletionStatus($item, $trainingVideo);
             })
             ->rawColumns(['action','name','progress','assignedAt', 'status'])
             ->addIndexColumn()
@@ -145,6 +140,16 @@ class TrainingVideoService extends Service
         $totalPlayerComplete = $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->where('completionStatus', '1')->count();
         $progress = $totalPlayerComplete/$totalLesson*100;
         return round($progress, 2);
+    }
+
+    public function playerCompletionStatus(Player $player, TrainingVideo $trainingVideo)
+    {
+        if ($this->playerCompletionProgress($player, $trainingVideo) == 100) {
+            $badge = '<span class="badge badge-pill badge-success">Completed</span>';
+        } else {
+            $badge = '<span class="badge badge-pill badge-warning">On Progress</span>';
+        }
+        return $badge;
     }
 
     public function setPlayerProgressToComplete(Player $player, TrainingVideo $trainingVideo)
