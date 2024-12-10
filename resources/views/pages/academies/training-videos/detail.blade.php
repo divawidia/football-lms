@@ -9,7 +9,7 @@
 
 @section('modal')
     <x-modal.add-training-course-lesson-modal :routeStore="route('training-videos.lessons-store', $data->hash)"/>
-    @include('pages.academies.training-videos.lessons.form-modal.edit')
+    <x-modal.edit-training-course-lesson-modal :trainingVideo="$data"/>
     <x-modal.edit-training-course-modal :routeEdit="route('training-videos.edit', $data->id)" :routeUpdate="route('training-videos.update', $data->hash)"/>
     <x-modal.add-players-to-team :route="route('training-videos.update-player', ['trainingVideo' => $data->hash])" :players="$player"/>
 @endsection
@@ -240,13 +240,10 @@
 
 @push('addon-script')
     <script type="module">
-        import { onYouTubeIframeAPIReady } from "{{ Vite::asset('resources/js/youtube.js') }}" ;
         import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
 
         $(document).ready(function () {
-            const body = $('body');
-
-            const lessonsTable = $('#lessonsTable').DataTable({
+            $('#lessonsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -349,83 +346,6 @@
                 "Something went wrong when removing the player from training course!",
                 "{{ csrf_token() }}"
             );
-
-
-
-            // show edit form modal when edit lesson button clicked
-            body.on('click', '.editLesson', function (e) {
-                e.preventDefault();
-                const id = $(this).attr('id');
-                $.ajax({
-                    url: "{{ route('training-videos.lessons-edit', ['trainingVideo'=>$data->id, 'lesson' => ':id']) }}".replace(':id', id),
-                    type: 'get',
-                    success: function (res) {
-                        $('#editLessonModal').modal('show');
-
-                        $('#formEditLessonModal #lessonFormTitle').text('Edit Lesson ' + res.data.lessonTitle);
-                        $('#formEditLessonModal #lessonId').val(res.data.id);
-                        $('#edit-lessonTitle').val(res.data.lessonTitle);
-                        $('#edit-description').text(res.data.description);
-                        $('#edit-lessonVideoURL').val(res.data.lessonVideoURL);
-                        $('#formEditLessonModal .totalDuration').val(res.data.totalDuration);
-                        $('#formEditLessonModal #videoId').val(res.data.videoId);
-                        $('#edit-player').remove();
-                        $('#formEditLessonModal #preview-container').html('<div id="edit-player"></div>')
-                        onYouTubeIframeAPIReady(res.data.videoId, 'edit-player');
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when deleting data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-
-
-            // update lesson data when form submitted
-            $('#formEditLessonModal').on('submit', function (e) {
-                e.preventDefault();
-                const id = $('#lessonId').val();
-
-                $.ajax({
-                    url: "{{ route('training-videos.lessons-update', ['trainingVideo'=>$data->id, 'lesson' => ':id']) }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#editLessonModal').modal('hide');
-                        Swal.fire({
-                            title: 'Training lesson successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                lessonsTable.ajax.reload(null, false);
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        console.log(response)
-                        $.each(response.errors, function (key, val) {
-                            $('span.' + key).text(val[0]);
-                            $("#edit-" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
         });
     </script>
 @endpush

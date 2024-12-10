@@ -75,7 +75,7 @@
 
         $(document).ready(function (){
             const body = $('body');
-            const formId = $('#formEditLessonModal');
+            const formId = '#formEditLessonModal';
 
             // show edit form modal when edit lesson button clicked
             body.on('click', '.editLesson', function (e) {
