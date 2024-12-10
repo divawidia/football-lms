@@ -237,53 +237,12 @@
 
         @endif
     </div>
-
-    <x-process-data-confirmation btnClass=".delete-training"
-                                 :processRoute="route('training-videos.destroy', $data->hash)"
-                                 :routeAfterProcess="route('training-videos.index')"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to delete this training course?"
-                                 errorText="Something went wrong when deleting training course!"/>
-
-    <x-process-data-confirmation btnClass=".unpublishTraining"
-                                 :processRoute="route('training-videos.unpublish', $data->hash)"
-                                 :routeAfterProcess="route('training-videos.show', $data->hash)"
-                                 method="PATCH"
-                                 confirmationText="Are you sure to unpublish this training course?"
-                                 errorText="Something went wrong when unpublishing training course!"/>
-
-    <x-process-data-confirmation btnClass=".publishTraining"
-                                 :processRoute="route('training-videos.publish', $data->hash)"
-                                 :routeAfterProcess="route('training-videos.show', $data->hash)"
-                                 method="PATCH"
-                                 confirmationText="Are you sure to publish this training course?"
-                                 errorText="Something went wrong when publishing training course!"/>
-
-    <x-process-data-confirmation btnClass=".deleteLesson"
-                                 :processRoute="route('training-videos.lessons-destroy', ['trainingVideo'=>$data->hash, 'lesson' => ':id'])"
-                                 :routeAfterProcess="route('training-videos.show', $data->hash)"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to delete this training lesson?"
-                                 errorText="Something went wrong when deleting training lesson!"/>
-
-    <x-process-data-confirmation btnClass=".deletePlayer"
-                                 :processRoute="route('training-videos.remove-player', ['trainingVideo'=>$data->hash, 'player' => ':id'])"
-                                 :routeAfterProcess="route('training-videos.show', $data->hash)"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to remove this player from training course?"
-                                 errorText="Something went wrong when removing the player from training course!"/>
-
-    <x-process-data-confirmation btnClass=".deletePlayer"
-                                 :processRoute="route('training-videos.remove-player', ['trainingVideo'=>$data->hash, 'player' => ':id'])"
-                                 :routeAfterProcess="route('training-videos.show', $data->hash)"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to remove this player from training course?"
-                                 errorText="Something went wrong when removing the player from training course!"/>
 @endsection
 
 @push('addon-script')
     <script type="module">
         import { onYouTubeIframeAPIReady } from "{{ Vite::asset('resources/js/youtube.js') }}" ;
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
 
         $(document).ready(function () {
             const body = $('body');
@@ -336,6 +295,63 @@
                     },
                 ]
             });
+
+             // unpublish training course
+             processWithConfirmation(
+                 '.unpublishTraining',
+                 "{{ route('training-videos.unpublish', $data->hash) }}",
+                 "{{ route('training-videos.show', $data->hash) }}",
+                 'PATCH',
+                 "Are you sure to unpublish this training course?",
+                 "Something went wrong when unpublishing training course!",
+                "{{ csrf_token() }}"
+             );
+
+             // delete training course
+            processWithConfirmation(
+                '.delete-training',
+                "{{ route('training-videos.destroy', $data->hash) }}",
+                "{{ route('training-videos.index') }}",
+                'DELETE',
+                "Are you sure to delete this training course?",
+                "Something went wrong when deleting training course!",
+                "{{ csrf_token() }}"
+            );
+
+            // publish training course
+            processWithConfirmation(
+                '.publishTraining',
+                "{{ route('training-videos.publish', $data->hash) }}",
+                "{{ route('training-videos.show', $data->hash) }}",
+                'PATCH',
+                "Are you sure to publish this training course?",
+                "Something went wrong when publishing training course!",
+                "{{ csrf_token() }}"
+            );
+
+            // delete lesson
+            processWithConfirmation(
+                '.deleteLesson',
+                "{{ route('training-videos.lessons-destroy', ['trainingVideo'=>$data->hash, 'lesson' => ':id']) }}",
+                "{{ route('training-videos.show', $data->hash) }}",
+                'DELETE',
+                "Are you sure to delete this lesson?",
+                "Something went wrong when deleting lesson!",
+                "{{ csrf_token() }}"
+            );
+
+            // remove player
+            processWithConfirmation(
+                '.deletePlayer',
+                "{{ route('training-videos.remove-player', ['trainingVideo'=>$data->hash, 'player' => ':id']) }}",
+                "{{ route('training-videos.show', $data->hash) }}",
+                'DELETE',
+                "Are you sure to remove this player from training course?",
+                "Something went wrong when removing the player from training course!",
+                "{{ csrf_token() }}"
+            );
+
+
 
             // show edit form modal when edit lesson button clicked
             body.on('click', '.editLesson', function (e) {
