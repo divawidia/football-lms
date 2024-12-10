@@ -38,7 +38,11 @@
         @endif
 
         @if(count($data)==0)
+            @if(isAllAdmin() || isCoach())
                 <x-warning-alert text="You haven't created any training course yet"/>
+            @elseif(isPlayer())
+                <x-warning-alert text="You haven't assigned to any training course yet"/>
+            @endif
         @else
             <div class="row">
                 @foreach($data as $training)
@@ -59,27 +63,28 @@
                                 <div class="d-flex">
                                     <div class="d-flex align-items-center mr-2">
                                         <span class="material-icons icon-16pt text-50 mr-4pt">access_time</span>
-                                        <p class="flex text-50 lh-1 mb-0"><small>{{ $training->totalMinute }}
-                                                hours</small></p>
+                                        <p class="flex text-50 lh-1 mb-0"><small>{{ secondToMinute($training->lessons()->sum('totalDuration')) }}</small></p>
                                     </div>
                                     <div class="d-flex align-items-center mr-2">
                                         <span class="material-icons icon-16pt text-50 mr-4pt">play_circle_outline</span>
-                                        <p class="flex text-50 lh-1 mb-0"><small>{{ $training->totalLesson }}
+                                        <p class="flex text-50 lh-1 mb-0"><small>{{ $training->lessons()->count() }}
                                                 lessons</small></p>
                                     </div>
                                     <div class="d-flex align-items-center">
                                         <span class="material-icons icon-16pt text-50 mr-4pt">assessment</span>
                                         <p class="flex text-50 lh-1 mb-0"><small>{{ $training->level }}</small></p>
                                     </div>
-                                    @if($training->status == '1')
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge badge-pill badge-success ml-1">Published</span>
-                                        </div>
+                                    @if(isAllAdmin() || isCoach())
+                                        @if($training->status == '1')
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge badge-pill badge-success ml-1">Published</span>
+                                            </div>
 
-                                    @else
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
-                                        </div>
+                                        @else
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
+                                            </div>
+                                        @endif
                                     @endif
                                 </div>
                             </div>

@@ -30,7 +30,7 @@ class TrainingVideoRepository
 
     public function playerPaginate(Player $player, $count)
     {
-        return $player->trainingVideos()->where('status', '1')->paginate($count);
+        return $player->trainingVideos()->where('training_videos.status', '1')->paginate($count);
     }
 
     public function find($id)

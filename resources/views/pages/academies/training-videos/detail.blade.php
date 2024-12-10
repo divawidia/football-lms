@@ -8,10 +8,13 @@
 
 
 @section('modal')
-    <x-modal.add-training-course-lesson-modal :routeStore="route('training-videos.lessons-store', $data->hash)"/>
-    <x-modal.edit-training-course-lesson-modal :trainingVideo="$data"/>
-    <x-modal.edit-training-course-modal :routeEdit="route('training-videos.edit', $data->id)" :routeUpdate="route('training-videos.update', $data->hash)"/>
-    <x-modal.add-players-to-team :route="route('training-videos.update-player', ['trainingVideo' => $data->hash])" :players="$player"/>
+    @if(isAllAdmin()||isCoach())
+        <x-modal.add-training-course-lesson-modal :routeStore="route('training-videos.lessons-store', $data->hash)"/>
+        <x-modal.edit-training-course-lesson-modal :trainingVideo="$data"/>
+        <x-modal.edit-training-course-modal :routeEdit="route('training-videos.edit', $data->id)" :routeUpdate="route('training-videos.update', $data->hash)"/>
+        <x-modal.add-players-to-team :route="route('training-videos.update-player', ['trainingVideo' => $data->hash])" :players="$player"/>
+    @endif
+
 @endsection
 
 @section('content')
@@ -119,14 +122,16 @@
                             <i class="material-icons text-muted icon--left">assessment</i>
                             {{ $data->level }}
                         </li>
-                        <li class="nav-item navbar-list__item">
-                            <i class="material-icons text-muted icon--left">visibility</i>
-                            @if($data->status == '1')
-                                Status : <span class="badge badge-pill badge-success ml-1">Published</span>
-                            @else
-                                Status : <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
-                            @endif
-                        </li>
+                        @if(isAllAdmin() || isCoach())
+                            <li class="nav-item navbar-list__item">
+                                <i class="material-icons text-muted icon--left">visibility</i>
+                                @if($data->status == '1')
+                                    Status : <span class="badge badge-pill badge-success ml-1">Published</span>
+                                @else
+                                    Status : <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
+                                @endif
+                            </li>
+                        @endif
                         <li class="nav-item navbar-list__item">
                             <i class="material-icons text-muted icon--left">date_range</i>
                             Last updated : {{ date('M d, Y ~ H:i', strtotime($data->updated_at)) }}
