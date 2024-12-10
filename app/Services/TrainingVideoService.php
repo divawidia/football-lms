@@ -58,8 +58,8 @@ class TrainingVideoService extends Service
             ->editColumn('name', function ($item) {
                 return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
-            ->editColumn('progress', function ($item) {
-                return $item->pivot->progress .'%';
+            ->editColumn('progress', function ($item) use ($trainingVideo) {
+                return $this->playerCompletionProgress($item, $trainingVideo) .'%';
             })
             ->editColumn('assignedAt', function ($item) {
                 return $this->convertToDatetime($item->pivot->created_at);
@@ -72,10 +72,10 @@ class TrainingVideoService extends Service
                 }
                 return $data;
             })
-            ->editColumn('status', function ($item) {
-                if ($item->pivot->status == 'Completed') {
+            ->editColumn('status', function ($item) use ($trainingVideo){
+                if ($this->playerCompletionProgress($item, $trainingVideo) == 100) {
                     $badge = '<span class="badge badge-pill badge-success">Completed</span>';
-                } elseif ($item->pivot->status == 'On Progress') {
+                } else {
                     $badge = '<span class="badge badge-pill badge-warning">On Progress</span>';
                 }
                 return $badge;
