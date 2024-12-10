@@ -12,7 +12,7 @@ import './read-more'
 import './image'
 import './accordion'
 import './player'
-import './youtube-import'
+import './youtube'
 
 (function() {
   'use strict';

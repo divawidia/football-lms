@@ -8,7 +8,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 let player;
 
 // Load the YouTube Iframe API and create a player
-function onYouTubeIframeAPIReady(videoId, playerId) {
+export function onYouTubeIframeAPIReady(videoId, playerId) {
     player = new YT.Player(playerId, {
         height: '250',
         width: '100%',
