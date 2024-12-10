@@ -8,7 +8,7 @@
 
 
 @section('modal')
-    @include('pages.academies.training-videos.lessons.form-modal.create')
+    <x-modal.add-training-course-lesson-modal :routeStore="route('training-videos.lessons-store', $data->hash)"/>
     @include('pages.academies.training-videos.lessons.form-modal.edit')
     <x-modal.edit-training-course-modal :routeEdit="route('training-videos.edit', $data->id)" :routeUpdate="route('training-videos.update', $data->id)"/>
 @endsection
@@ -335,138 +335,138 @@
                 ]
             });
 
-            $('#addLesson').on('click', function (e) {
-                e.preventDefault();
-                $('#addLessonModal').modal('show');
-            });
+            // $('#addLesson').on('click', function (e) {
+            //     e.preventDefault();
+            //     $('#addLessonModal').modal('show');
+            // });
 
-            // This code loads the IFrame Player API code asynchronously.
-            const tag = document.createElement('script');
-
-            tag.src = "https://www.youtube.com/iframe_api";
-            const firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-            let player;
-
-            // Load the YouTube Iframe API and create a player
-            function onYouTubeIframeAPIReady(videoId, playerId) {
-                player = new YT.Player(playerId, {
-                    height: '250',
-                    width: '100%',
-                    videoId: videoId,
-                    // playerVars: {
-                    //     'playsinline': 1
-                    // },
-                    events: {
-                        'onReady': onPlayerReady,
-                        'onStateChange': onPlayerStateChange
-                    }
-                });
-            }
-
-            // When the player is ready, get the video duration and show video
-            function onPlayerReady() {
-                const duration = player.getDuration(); // Get the duration in seconds
-                // event.target.playVideo();
-                $('.totalDuration').val(duration);
-            }
-
-            let done = false;
-
-            function onPlayerStateChange(event) {
-                if (event.data === YT.PlayerState.PLAYING && !done) {
-                    setTimeout(stopVideo, 6000);
-                    done = true;
-                }
-            }
-
-            function stopVideo() {
-                player.stopVideo();
-            }
-
-            // Extract video ID from the URL
-            function extractVideoID(url) {
-                const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-                const match = url.match(regex);
-                return (match && match[1]) ? match[1] : null;
-            }
-
-            // Handle form submission
-            function showYoutubePreview(inputId, formId, playerId) {
-                $(inputId).on('change', function (e) {
-                    e.preventDefault(); // Prevent form submission
-
-                    let preview = $(formId + ' #preview-container');
-                    let player = $(playerId);
-                    let errorSpan = $(formId + ' span.lessonVideoURL');
-                    let inputUrl = $(inputId);
-
-                    errorSpan.text('');
-                    inputUrl.removeClass('is-invalid');
-
-                    if (player.attr('src') !== undefined) {
-                        player.remove();
-                        preview.html('<div id="' + playerId.replace(/^#/, '') + '"></div>')
-                    }
-
-                    // Get the YouTube URL from the input
-                    const url = inputUrl.val();
-
-                    // Extract the video ID
-                    const videoID = extractVideoID(url);
-                    $(formId + ' #videoId').val(videoID);
-
-                    if (videoID) {
-                        onYouTubeIframeAPIReady(videoID, playerId.replace(/^#/, ''));
-                    } else {
-                        errorSpan.text('Invalid youtube URL');
-                        inputUrl.addClass('is-invalid');
-                    }
-                });
-            }
-
-            showYoutubePreview('#lessonVideoURL', '#formAddLessonModal', '#create-player');
+            // // This code loads the IFrame Player API code asynchronously.
+            // const tag = document.createElement('script');
+            //
+            // tag.src = "https://www.youtube.com/iframe_api";
+            // const firstScriptTag = document.getElementsByTagName('script')[0];
+            // firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            //
+            // let player;
+            //
+            // // Load the YouTube Iframe API and create a player
+            // function onYouTubeIframeAPIReady(videoId, playerId) {
+            //     player = new YT.Player(playerId, {
+            //         height: '250',
+            //         width: '100%',
+            //         videoId: videoId,
+            //         // playerVars: {
+            //         //     'playsinline': 1
+            //         // },
+            //         events: {
+            //             'onReady': onPlayerReady,
+            //             'onStateChange': onPlayerStateChange
+            //         }
+            //     });
+            // }
+            //
+            // // When the player is ready, get the video duration and show video
+            // function onPlayerReady() {
+            //     const duration = player.getDuration(); // Get the duration in seconds
+            //     // event.target.playVideo();
+            //     $('.totalDuration').val(duration);
+            // }
+            //
+            // let done = false;
+            //
+            // function onPlayerStateChange(event) {
+            //     if (event.data === YT.PlayerState.PLAYING && !done) {
+            //         setTimeout(stopVideo, 6000);
+            //         done = true;
+            //     }
+            // }
+            //
+            // function stopVideo() {
+            //     player.stopVideo();
+            // }
+            //
+            // // Extract video ID from the URL
+            // function extractVideoID(url) {
+            //     const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+            //     const match = url.match(regex);
+            //     return (match && match[1]) ? match[1] : null;
+            // }
+            //
+            // // Handle form submission
+            // function showYoutubePreview(inputId, formId, playerId) {
+            //     $(inputId).on('change', function (e) {
+            //         e.preventDefault(); // Prevent form submission
+            //
+            //         let preview = $(formId + ' #preview-container');
+            //         let player = $(playerId);
+            //         let errorSpan = $(formId + ' span.lessonVideoURL');
+            //         let inputUrl = $(inputId);
+            //
+            //         errorSpan.text('');
+            //         inputUrl.removeClass('is-invalid');
+            //
+            //         if (player.attr('src') !== undefined) {
+            //             player.remove();
+            //             preview.html('<div id="' + playerId.replace(/^#/, '') + '"></div>')
+            //         }
+            //
+            //         // Get the YouTube URL from the input
+            //         const url = inputUrl.val();
+            //
+            //         // Extract the video ID
+            //         const videoID = extractVideoID(url);
+            //         $(formId + ' #videoId').val(videoID);
+            //
+            //         if (videoID) {
+            //             onYouTubeIframeAPIReady(videoID, playerId.replace(/^#/, ''));
+            //         } else {
+            //             errorSpan.text('Invalid youtube URL');
+            //             inputUrl.addClass('is-invalid');
+            //         }
+            //     });
+            // }
+            //
+            // showYoutubePreview('#lessonVideoURL', '#formAddLessonModal', '#create-player');
 
             // create new lesson data
-            $('#formAddLessonModal').on('submit', function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: "{{ route('training-videos.lessons-store', $data->id) }}",
-                    method: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#addLessonModal').modal('hide');
-                        Swal.fire({
-                            title: 'Training lesson successfully created!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        console.log(response);
-                        $.each(response.errors, function (key, val) {
-                            $('#formAddLessonModal span.' + key).text(val[0]);
-                            $("#formAddLessonModal #" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
+            {{--$('#formAddLessonModal').on('submit', function (e) {--}}
+            {{--    e.preventDefault();--}}
+            {{--    $.ajax({--}}
+            {{--        url: "{{ route('training-videos.lessons-store', $data->id) }}",--}}
+            {{--        method: $(this).attr('method'),--}}
+            {{--        data: new FormData(this),--}}
+            {{--        contentType: false,--}}
+            {{--        processData: false,--}}
+            {{--        success: function () {--}}
+            {{--            $('#addLessonModal').modal('hide');--}}
+            {{--            Swal.fire({--}}
+            {{--                title: 'Training lesson successfully created!',--}}
+            {{--                icon: 'success',--}}
+            {{--                showCancelButton: false,--}}
+            {{--                confirmButtonColor: "#1ac2a1",--}}
+            {{--                confirmButtonText:--}}
+            {{--                    'Ok!'--}}
+            {{--            }).then((result) => {--}}
+            {{--                if (result.isConfirmed) {--}}
+            {{--                    location.reload();--}}
+            {{--                }--}}
+            {{--            });--}}
+            {{--        },--}}
+            {{--        error: function (jqXHR, textStatus, errorThrown) {--}}
+            {{--            const response = JSON.parse(jqXHR.responseText);--}}
+            {{--            console.log(response);--}}
+            {{--            $.each(response.errors, function (key, val) {--}}
+            {{--                $('#formAddLessonModal span.' + key).text(val[0]);--}}
+            {{--                $("#formAddLessonModal #" + key).addClass('is-invalid');--}}
+            {{--            });--}}
+            {{--            Swal.fire({--}}
+            {{--                icon: "error",--}}
+            {{--                title: "Something went wrong when updating data!",--}}
+            {{--                text: errorThrown,--}}
+            {{--            });--}}
+            {{--        }--}}
+            {{--    });--}}
+            {{--});--}}
 
             // show edit form modal when edit lesson button clicked
             body.on('click', '.editLesson', function (e) {
@@ -499,7 +499,7 @@
                 });
             });
 
-            showYoutubePreview('#edit-lessonVideoURL', '#formEditLessonModal', '#edit-player');
+
 
             // update lesson data when form submitted
             $('#formEditLessonModal').on('submit', function (e) {

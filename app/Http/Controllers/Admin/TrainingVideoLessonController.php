@@ -40,7 +40,8 @@ class TrainingVideoLessonController extends Controller
         $data = $request->validated();
         $loggedUser = $this->getLoggedUser();
         $lesson = $this->trainingVideoLessonService->store($data, $trainingVideo, $loggedUser);
-        return response()->json($lesson);
+        $message = 'Lesson: '.$lesson->lessonTitle.' successfully added!';
+        return ApiResponse::success($lesson, $message);
     }
 
     public function show(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
