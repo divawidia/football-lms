@@ -8,71 +8,10 @@
 {{--            src="https://app.midtrans.com/snap/snap.js"--}}
 {{--            data-client-key="{{ config('services.midtrans.clientKey') }}"></script>--}}
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
-    <script>
+    <script type="module">
+        import { ajaxProcessing } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
         $(document).ready(function () {
             const body = $('body');
-
-            function paymentSuccess(invoiceId){
-                $.ajax({
-                    url: '{{ route('invoices.set-paid', ':id') }}'.replace(':id', invoiceId),
-                    method: 'PATCH',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function() {
-                        Swal.fire({
-                            title: 'Invoice successfully paid!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    // error: function(jqXHR, textStatus, errorThrown) {
-                    //     Swal.fire({
-                    //         icon: "error",
-                    //         title: "Something went wrong when processing payment!",
-                    //         text: errorThrown,
-                    //     });
-                    // }
-                });
-            }
-
-            function paymentExpired(invoiceId){
-                $.ajax({
-                    url: '{{ route('invoices.set-uncollectible', ':id') }}'.replace(':id', invoiceId),
-                    method: 'PATCH',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function() {
-                        Swal.fire({
-                            title: 'Something wrong when processing Invoice payment!',
-                            icon: 'error',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when processing payment!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            }
 
             body.on('click', '.payInvoice', function (e){
                 e.preventDefault();
@@ -80,10 +19,17 @@
                 const invoiceId = $(this).attr('id');
 
                 snap.pay(snapToken, {
-                    onSuccess: function(result){
-                        paymentSuccess(invoiceId);
+                    onSuccess: function(){
+                        ajaxProcessing(
+                            invoiceId,
+                            '{{ route('invoices.set-paid', ':id') }}',
+                            'PATCH',
+                            '{{ csrf_token() }}',
+                            null,
+                            "Something went wrong when processing payment!"
+                        )
                     },
-                    onPending: function(result){
+                    onPending: function(){
                         Swal.fire({
                             title: 'Invoice payment still pending!',
                             icon: 'info',
@@ -97,8 +43,15 @@
                             }
                         });
                     },
-                    onError: function(result){
-                        paymentExpired(invoiceId)
+                    onError: function(){
+                        ajaxProcessing(
+                            invoiceId,
+                            '{{ route('invoices.set-uncollectible', ':id') }}',
+                            'PATCH',
+                            '{{ csrf_token() }}',
+                            null,
+                            "Something went wrong when processing payment!"
+                        )
                     }
                 });
             });
