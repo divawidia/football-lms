@@ -3,10 +3,11 @@
 namespace App\Notifications\Invoices;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvoiceOpenAdmin extends Notification
+class InvoiceOpenAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $adminName;

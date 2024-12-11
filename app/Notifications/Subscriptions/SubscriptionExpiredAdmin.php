@@ -3,10 +3,11 @@
 namespace App\Notifications\Subscriptions;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionExpiredAdmin extends Notification
+class SubscriptionExpiredAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $productName;

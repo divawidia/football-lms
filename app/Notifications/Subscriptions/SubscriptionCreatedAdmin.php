@@ -3,10 +3,11 @@
 namespace App\Notifications\Subscriptions;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionCreatedAdmin extends Notification
+class SubscriptionCreatedAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $invoice;
