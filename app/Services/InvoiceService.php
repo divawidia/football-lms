@@ -130,7 +130,11 @@ class InvoiceService extends Service
 
             })
             ->editColumn('email', function ($item) {
-                return $item->receiverUser->email;
+                if ($item->receiverUser) {
+                    return $item->receiverUser->email;
+                } else {
+                    return 'Deleted Player';
+                }
             })
             ->editColumn('ammount', function ($item) {
                 return $this->priceFormat($item->ammountDue);
