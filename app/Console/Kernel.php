@@ -9,6 +9,7 @@ use App\Console\Commands\Invoices\SetPastDueInvoiceStatus;
 use App\Console\Commands\Matches\CompletedMatchStatus;
 use App\Console\Commands\Matches\MatchReminderNotification;
 use App\Console\Commands\Matches\StartMatchStatus;
+use App\Console\Commands\Subscriptions\SetRenewSubscription;
 use App\Console\Commands\Subscriptions\SubscriptionDueSoonNotification;
 use App\Console\Commands\Trainings\CompletedTrainingStatus;
 use App\Console\Commands\Trainings\StartTrainingStatus;
@@ -31,6 +32,7 @@ class Kernel extends ConsoleKernel
         StartTrainingStatus::class,
         SubscriptionDueSoonNotification::class,
         TrainingReminderNotification::class,
+        SetRenewSubscription::class,
     ];
 
     /**
@@ -51,6 +53,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:start-match-data')->everyMinute();
         $schedule->command('update:completed-training-status')->everyMinute();
         $schedule->command('update:completed-match-status')->everyMinute();
+        $schedule->command('update:subscription-renew')->everyMinute();
         $schedule->command('model:prune', ['--model' => MonitoredScheduledTaskLogItem::class])->daily();
     }
 

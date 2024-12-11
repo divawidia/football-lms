@@ -347,6 +347,12 @@ class SubscriptionService extends Service
         return $subscription->update(['status' => 'Unsubscribed']);
     }
 
+    public function renewSubscription(Subscription $subscription)
+    {
+        $subscription->update(['status' => 'Pending Payment']);
+        $this->createNewInvoice($subscription, null, academyData()->id);
+    }
+
     public function createNewInvoice(Subscription $subscription, $creatorUserId, $academyId)
     {
         $data['creatorUserId'] = $creatorUserId;
