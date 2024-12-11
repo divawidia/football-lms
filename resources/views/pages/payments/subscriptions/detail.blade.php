@@ -47,23 +47,20 @@
                         Edit subscription tax
                     </button>
                     @if($data['subscription']->status == 'Scheduled')
-                        <form action="{{ route('subscriptions.set-unsubscribed', $data['subscription']->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons text-danger">check_circle</span>
-                                Mark as Unsubscribed
-                            </button>
-                        </form>
+                        <button type="button" class="dropdown-item unsubscribe">
+                            <span class="material-icons text-danger">check_circle</span>
+                            Mark as Unsubscribed
+                        </button>
                     @elseif($data['subscription']->status == 'Unsubscribed')
-                        <form action="{{  route('subscriptions.set-scheduled', $data['subscription']->id) }}" method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <span class="material-icons text-success">check_circle</span>
-                                Mark as Scheduled
-                            </button>
-                        </form>
+                        <button type="button" class="dropdown-item continueSubs">
+                            <span class="material-icons text-success">check_circle</span>
+                            Continue Subscription
+                        </button>
+                    @elseif($data['subscription']->status == 'Past Due Payment')
+                        <button type="button" class="dropdown-item renewSubs">
+                            <span class="material-icons text-warning">check_circle</span>
+                            Renew Subscription
+                        </button>
                     @endif
                     <button type="button" class="dropdown-item deleteSubscription" id="{{ $data['subscription']->id }}">
                         <span class="material-icons text-danger">delete</span>
@@ -151,8 +148,8 @@
                                 errorText="Something went wrong when deleting player's subscription {{ $data['subscription']->product->productName }}!"/>
 @endsection
 @push('addon-script')
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
-    <script>
+    <script type="module">
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
         $(document).ready(function () {
             $('#invoicesTable').DataTable({
                 processing: true,
@@ -180,6 +177,39 @@
                     },
                 ]
             });
+
+            // unsubscribed subscription
+            processWithConfirmation(
+                '.unsubscribed',
+                "{{ route('training-videos.unpublish', $data->hash) }}",
+                "{{ route('training-videos.show', $data->hash) }}",
+                'PATCH',
+                "Are you sure to unpublish this training course?",
+                "Something went wrong when unpublishing training course!",
+                "{{ csrf_token() }}"
+            );
+
+            // continue subscription
+            processWithConfirmation(
+                '.continueSubs',
+                "{{ route('training-videos.unpublish', $data->hash) }}",
+                "{{ route('training-videos.show', $data->hash) }}",
+                'PATCH',
+                "Are you sure to unpublish this training course?",
+                "Something went wrong when unpublishing training course!",
+                "{{ csrf_token() }}"
+            );
+
+            // renew subscription
+            processWithConfirmation(
+                '.renewSubs',
+                "{{ route('training-videos.unpublish', $data->hash) }}",
+                "{{ route('training-videos.show', $data->hash) }}",
+                'PATCH',
+                "Are you sure to unpublish this training course?",
+                "Something went wrong when unpublishing training course!",
+                "{{ csrf_token() }}"
+            );
         });
     </script>
 @endpush
