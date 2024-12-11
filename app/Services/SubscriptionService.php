@@ -335,7 +335,7 @@ class SubscriptionService extends Service
 
     public function scheduled(Subscription $subscription, $creatorUserId = null, $academyId = null)
     {
-        $subscription->update(['status' => 'Scheduled']);
+        $subscription->update(['status' => 'Scheduled', 'isReminderNotified' => '0']);
         //create new invoice when where the subscription is set to scheduled is after the next due date
         if ($this->getNowDate() > $subscription->nextDueDate) {
             $this->createNewInvoice($subscription, $creatorUserId, $academyId);

@@ -424,7 +424,7 @@ class InvoiceService extends Service
 
         // check if the invoice are subscription invoice
         if ($subscription != null){
-            $subscription->update(['status' => 'Scheduled']);
+            $subscription->update(['status' => 'Scheduled', 'isReminderNotified' => '0']);
             $user->notify(new SubscriptionSchedulledPlayer($subscription, $playerName));
             Notification::send($this->userRepository->getAllAdminUsers(), new SubscriptionSchedulledAdmin($subscription, $playerName));
         }
