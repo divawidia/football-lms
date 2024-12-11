@@ -180,34 +180,34 @@
 
             // unsubscribed subscription
             processWithConfirmation(
-                '.unsubscribed',
-                "{{ route('training-videos.unpublish', $data->hash) }}",
-                "{{ route('training-videos.show', $data->hash) }}",
+                '.unsubscribe',
+                "{{ route('subscriptions.set-unsubscribed', $data['subscription']->hash) }}",
+                "{{ route('subscriptions.show', $data['subscription']->hash) }}",
                 'PATCH',
-                "Are you sure to unpublish this training course?",
-                "Something went wrong when unpublishing training course!",
+                "Are you sure to mark this subscription as unsubscribed?",
+                "Something went wrong when marking as unsubscribed!",
                 "{{ csrf_token() }}"
             );
 
             // continue subscription
             processWithConfirmation(
                 '.continueSubs',
-                "{{ route('training-videos.unpublish', $data->hash) }}",
-                "{{ route('training-videos.show', $data->hash) }}",
+                "{{ route('subscriptions.set-scheduled', $data['subscription']->hash) }}",
+                "{{ route('subscriptions.show', $data['subscription']->hash) }}",
                 'PATCH',
-                "Are you sure to unpublish this training course?",
-                "Something went wrong when unpublishing training course!",
+                "Are you sure to continue this subscription?",
+                "Something went wrong when continue this subscription!",
                 "{{ csrf_token() }}"
             );
 
             // renew subscription
             processWithConfirmation(
                 '.renewSubs',
-                "{{ route('training-videos.unpublish', $data->hash) }}",
-                "{{ route('training-videos.show', $data->hash) }}",
+                "{{ route('subscriptions.renew-subscription', $data['subscription']->hash) }}",
+                "{{ route('subscriptions.show', $data['subscription']->hash) }}",
                 'PATCH',
-                "Are you sure to unpublish this training course?",
-                "Something went wrong when unpublishing training course!",
+                "Are you sure to renew this subscription?",
+                "Something went wrong when renewing this subscription!",
                 "{{ csrf_token() }}"
             );
         });

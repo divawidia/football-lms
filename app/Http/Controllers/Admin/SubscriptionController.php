@@ -74,7 +74,7 @@ class SubscriptionController extends Controller
     }
 
     public function renewSubscription(Subscription $subscription){
-        $this->subscriptionService->unsubscribed($subscription);
+        $this->subscriptionService->renewSubscription($subscription);
 
         $text = $subscription->product->productName.' subscription of '.$this->getUserFullName($subscription->user).' successfully renewed';
         return ApiResponse::success(message: $text);

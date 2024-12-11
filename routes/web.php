@@ -342,7 +342,7 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::get('invoices', [SubscriptionController::class, 'invoices'])->name('subscriptions.invoices');
                     Route::patch('set-scheduled', [SubscriptionController::class, 'setScheduled'])->name('subscriptions.set-scheduled');
                     Route::patch('set-unsubscribed', [SubscriptionController::class, 'setUnsubscribed'])->name('subscriptions.set-unsubscribed');
-                    Route::patch('renew-subscription', [SubscriptionController::class, 'renewSubscription'])->name('subscriptions.renew-unsubscribed');
+                    Route::patch('renew-subscription', [SubscriptionController::class, 'renewSubscription'])->name('subscriptions.renew-subscription');
                 });
 
             });

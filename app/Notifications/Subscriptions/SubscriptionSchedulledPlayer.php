@@ -41,7 +41,7 @@ class SubscriptionSchedulledPlayer extends Notification implements ShouldQueue
             ->greeting('Hello, ' . $this->playerName)
             ->line("We are pleased to inform you that your subscription invoice for {$this->subscription->product->productName} has been successfully paid.")
             ->line('Your subscription is now active and ready to use.')
-            ->action('View Subscription', route('billing-and-payments'))
+            ->action('View Subscription', route('billing-and-payments.index'))
             ->line('Thank you for choosing our Football Academy!');
     }
 
@@ -54,7 +54,7 @@ class SubscriptionSchedulledPlayer extends Notification implements ShouldQueue
     {
         return [
             'data' => 'Your subscription for '.$this->subscription->product->productName.' has been scheduled.',
-            'redirectRoute' => route('billing-and-payments')
+            'redirectRoute' => route('billing-and-payments.index')
         ];
     }
 }
