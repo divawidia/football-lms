@@ -85,9 +85,15 @@ class DatatablesService extends Service
         } else {
             $text = '<p class="mb-0"><strong class="js-lists-values-lead">' . $title . '</strong></p>';
         }
+
+        if ($image != null) {
+            $img = '<img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($image) . '" alt="profile-pic"/>';
+        } else {
+            $img = '<img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url('/images/undefined-user.png') . '" alt="profile-pic"/>';
+        }
         return '<div class="media flex-nowrap align-items-center" style="white-space: nowrap;">
                     <div class="avatar avatar-sm mr-8pt">
-                        <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($image) . '" alt="profile-pic"/>
+                        '.$img.'
                     </div>
                     <div class="media-body">
                         <div class="d-flex align-items-center">
