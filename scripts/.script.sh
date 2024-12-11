@@ -41,6 +41,8 @@ php artisan optimize:clear
 # syncing task schedule with the database to monitor scheduler
 php artisan schedule-monitor:sync
 
+php artisan queue:restart
+
 # Exit maintenance mode
 php artisan up
 
