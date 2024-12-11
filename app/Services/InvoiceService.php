@@ -509,7 +509,7 @@ class InvoiceService extends Service
         $user = $this->userRepository->find($invoice->receiverUserId);
 
         if ($subscription != null){
-            $subscription->update(['status' => 'Unsubscribed']);
+            $subscription->update(['status' => 'Past Due Payment']);
             $user->notify(new SubscriptionUnsubscribePlayer($subscription, $playerName));
             Notification::send($this->userRepository->getAllAdminUsers(), new SubscriptionUnsubscribeAdmin($subscription, $playerName));
         }
