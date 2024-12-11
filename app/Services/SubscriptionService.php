@@ -28,6 +28,7 @@ class SubscriptionService extends Service
     private InvoiceService $invoiceService;
     private UserRepository $userRepository;
     private ProductRepository $productRepository;
+    private DatatablesService $datatablesService;
 
     public function __construct(
         SubscriptionRepository $subscriptionRepository,
@@ -35,7 +36,8 @@ class SubscriptionService extends Service
         TaxRepository          $taxRepository,
         InvoiceService         $invoiceService,
         UserRepository         $userRepository,
-        ProductRepository      $productRepository)
+        ProductRepository      $productRepository,
+        DatatablesService $datatablesService)
     {
         $this->invoiceRepository = $invoiceRepository;
         $this->taxRepository = $taxRepository;
@@ -43,6 +45,7 @@ class SubscriptionService extends Service
         $this->subscriptionRepository = $subscriptionRepository;
         $this->userRepository = $userRepository;
         $this->productRepository = $productRepository;
+        $this->datatablesService = $datatablesService;
     }
 
     public function index()
@@ -91,27 +94,25 @@ class SubscriptionService extends Service
                         </div>';
             })
             ->editColumn('name', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->user->roles[0]['name'] . '</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                if ($item->user) {
+                    return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->user->roles[0]['name'], route('player-managements.show', $item->user->player->hash));
+                } else {
+                    return 'Deleted Player';
+                }
             })
             ->editColumn('email', function ($item) {
-                return $item->user->email;
+                if ($item->user) {
+                    return $item->user->email;
+                } else {
+                    return 'Deleted Player';
+                }
             })
             ->editColumn('product', function ($item) {
-                return $item->product->productName;
+                if ($item->product) {
+                    return $item->product->productName;
+                } else {
+                    return 'Deleted Product';
+                }
             })
             ->editColumn('amountDue', function ($item) {
                 return $this->priceFormat($item->ammountDue);
@@ -148,7 +149,11 @@ class SubscriptionService extends Service
         $data = $user->subscriptions;
         return Datatables::of($data)
             ->editColumn('product', function ($item) {
-                return $item->product->productName;
+                if ($item->product) {
+                    return $item->product->productName;
+                } else {
+                    return 'Deleted Product';
+                }
             })
             ->editColumn('amountDue', function ($item) {
                 return $this->priceFormat($item->ammountDue);
@@ -184,32 +189,21 @@ class SubscriptionService extends Service
     {
         return Datatables::of($subscription->invoices)
             ->addColumn('action', function ($item) {
-                return
-                    '<a class="btn btn-sm btn-outline-secondary" href="' . route('invoices.show', $item->hash) . '" data-toggle="tooltip" data-placement="bottom" title="Show subscription detail">
-                        <span class="material-icons">
-                            visibility
-                        </span>
-                    </a>';
+                return $this->datatablesService->buttonTooltips(route('invoices.show', $item->hash), "Show subscription detail", "visibility");
             })
             ->editColumn('name', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->receiverUser->foto) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->receiverUser->firstName . ' ' . $item->receiverUser->lastName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->receiverUser->roles[0]['name'] . '</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                if ($item->receiverUser) {
+                    return $this->datatablesService->name($item->receiverUser->foto, $this->getUserFullName($item->receiverUser), $item->receiverUser->roles[0]['name'], route('player-managements.show', $item->receiverUser->player->hash));
+                } else {
+                    return 'Deleted Player';
+                }
             })
             ->editColumn('email', function ($item) {
-                return $item->receiverUser->email;
+                if ($item->receiverUser) {
+                    return $item->receiverUser->email;
+                } else {
+                    return 'Deleted Player';
+                }
             })
             ->editColumn('ammount', function ($item) {
                 return $this->priceFormat($item->ammountDue);
@@ -224,17 +218,7 @@ class SubscriptionService extends Service
                 return $this->convertToDatetime($item->updatedAt);
             })
             ->editColumn('status', function ($item) {
-                $badge = '';
-                if ($item->status == 'Open') {
-                    $badge = '<span class="badge badge-pill badge-info">' . $item->status . '</span>';
-                } elseif ($item->status == 'Paid') {
-                    $badge = '<span class="badge badge-pill badge-success">' . $item->status . '</span>';
-                } elseif ($item->status == 'Past Due') {
-                    $badge = '<span class="badge badge-pill badge-warning">' . $item->status . '</span>';
-                } elseif ($item->status == 'Uncollectible') {
-                    $badge = '<span class="badge badge-pill badge-danger">' . $item->status . '</span>';
-                }
-                return $badge;
+                return $this->datatablesService->invoiceStatus($item->status);
             })
             ->rawColumns(['action', 'email', 'ammount', 'dueDate', 'name', 'status', 'createdAt', 'updatedAt'])
             ->addIndexColumn()
