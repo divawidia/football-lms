@@ -1,29 +1,27 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Competitions;
 
 use App\Models\Competition;
-use App\Models\EventSchedule;
 use App\Services\CompetitionService;
-use App\Services\EventScheduleService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class CompletedCompetitionStatus extends Command
+class StartCompetitionStatus extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'update:complete-competition-status';
+    protected $signature = 'update:start-competition-status';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Completed/Ended competition status records where the end date has passed';
+    protected $description = 'Ended competition status records where the end date has passed';
     private CompetitionService $competitionService;
 
     public function __construct(CompetitionService $competitionService)
@@ -40,12 +38,10 @@ class CompletedCompetitionStatus extends Command
         $now = Carbon::now();
 
         // Update records where end_date is less than the current date
-        $competitions = Competition::whereDate('endDate', '<=', $now)->where('status', '=', 'Ongoing')->get();
+        $competitions = Competition::whereDate('startDate', '<=', $now)->where('status', '=', 'Scheduled')->get();
         foreach ($competitions as $competition){
-            $this->competitionService->setStatus($competition, 'Completed');
-            $this->info('Competition '.$competition->name.' status data successfully updated to completed.');
+            $this->competitionService->setStatus($competition, 'Ongoing');
+            $this->info('Competition '.$competition->name.' status data successfully updated to ongoing.');
         }
-
-
     }
 }

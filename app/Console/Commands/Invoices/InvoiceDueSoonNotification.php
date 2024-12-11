@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Invoices;
 
 use App\Models\Invoice;
 use App\Notifications\Invoices\InvoiceDueSoon;
-use App\Services\InvoiceService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

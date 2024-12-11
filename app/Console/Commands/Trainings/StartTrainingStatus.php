@@ -1,21 +1,10 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Trainings;
 
-use App\Models\Invoice;
-use App\Models\Subscription;
-use App\Notifications\Invoices\InvoiceDueSoon;
-use App\Notifications\Subscriptions\SubscriptionDueDateReminderAdmin;
-use App\Notifications\Subscriptions\SubscriptionDueDateReminderPlayer;
-use App\Notifications\TrainingSchedules\TrainingScheduleReminder;
-use App\Notifications\TrainingSchedules\TrainingScheduleUpdatedForCoachAdmin;
 use App\Repository\EventScheduleRepository;
-use App\Repository\UserRepository;
 use App\Services\EventScheduleService;
-use App\Services\InvoiceService;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Notification;
 
 class StartTrainingStatus extends Command
 {

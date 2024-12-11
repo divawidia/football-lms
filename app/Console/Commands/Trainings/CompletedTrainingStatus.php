@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Trainings;
 
-use App\Models\EventSchedule;
 use App\Repository\EventScheduleRepository;
 use App\Services\EventScheduleService;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class CompletedTrainingStatus extends Command
