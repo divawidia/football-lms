@@ -420,12 +420,14 @@ class InvoiceService extends Service
             'paymentMethod' => $paymentDetails->payment_type,
         ]);
 
+        // check if the invoice are subscription invoice
         if ($subscription != null){
             $subscription->update(['status' => 'Scheduled']);
             $user->notify(new SubscriptionSchedulledPlayer($subscription, $playerName));
             Notification::send($this->userRepository->getAllAdminUsers(), new SubscriptionSchedulledAdmin($subscription, $playerName));
         }
 
+        //send paid invoice notification
         $user->notify(new InvoicePaidPlayer($invoice, $playerName));
         Notification::send($this->userRepository->getAllAdminUsers(), new InvoicePaidAdmin($invoice, $playerName));
         return $invoice;

@@ -132,22 +132,22 @@ class InvoiceController extends Controller
     public function setPaid(Invoice $invoice){
         try {
             $this->invoiceService->paid($invoice);
-            return response()->json(['message' => 'Invoice status successfully mark to paid!']);
+            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status successfully mark as paid!');
 
         } catch (Exception $e) {
             Log::error('Error marking invoice as paid: ' . $e->getMessage());
-            return response()->json(['error' => 'An error occurred while marking the invoice as paid.'], 500);
+            return ApiResponse::error(message: 'An error occurred while marking the invoice as paid.', status: $e->getCode());
         }
     }
 
     public function setUncollectible(Invoice $invoice){
         try {
             $this->invoiceService->uncollectible($invoice);
-            return response()->json(['message' => 'Invoice status successfully mark to uncollectible!']);
+            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status have been mark as uncollectible!');
 
         } catch (Exception $e) {
             Log::error('Error marking invoice as uncollectible: ' . $e->getMessage());
-            return response()->json(['error' => 'An error occurred while marking the invoice as uncollectible.'], 500);
+            return ApiResponse::error(message: 'An error occurred while marking the invoice as uncollectible.', status: $e->getCode());
         }
     }
 
@@ -155,22 +155,22 @@ class InvoiceController extends Controller
         $loggedUser = auth()->user()->getAuthIdentifier();
         try {
             $this->invoiceService->open($invoice, $loggedUser);
-            return response()->json(['message' => 'Invoice status successfully mark to open!']);
+            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status successfully mark as open to pay!');
 
         } catch (Exception $e) {
             Log::error('Error marking invoice as open: ' . $e->getMessage());
-            return response()->json(['error' => 'An error occurred while marking the invoice as open.'], 500);
+            return ApiResponse::error(message: 'An error occurred while marking the open to pay.', status: $e->getCode());
         }
     }
 
     public function setPastDue(Invoice $invoice){
         try {
             $this->invoiceService->pastDue($invoice);
-            return response()->json(['message' => 'Invoice status successfully mark to past due!']);
+            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status successfully mark as past due!');
 
         } catch (Exception $e) {
             Log::error('Error marking invoice as open: ' . $e->getMessage());
-            return response()->json(['error' => 'An error occurred while marking the invoice as past due.'], 500);
+            return ApiResponse::error(message: 'An error occurred while marking the past due.', status: $e->getCode());
         }
     }
 
