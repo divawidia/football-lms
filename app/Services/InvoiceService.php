@@ -122,7 +122,12 @@ class InvoiceService extends Service
                         </div>';
             })
             ->editColumn('name', function ($item) {
-                 return $this->datatablesService->name($item->receiverUser->foto, $this->getUserFullName($item->receiverUser), $item->receiverUser->roles[0]['name'], route('player-managements.show', $item->receiverUser->player->hash));
+                if ($item->receiverUser) {
+                    return $this->datatablesService->name($item->receiverUser->foto, $this->getUserFullName($item->receiverUser), $item->receiverUser->roles[0]['name'], route('player-managements.show', $item->receiverUser->player->hash));
+                } else {
+                    return 'Deleted Player';
+                }
+
             })
             ->editColumn('email', function ($item) {
                 return $item->receiverUser->email;
