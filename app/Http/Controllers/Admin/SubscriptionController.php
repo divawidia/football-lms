@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubscriptionRequest;
 use App\Http\Requests\UpdateSubscriptionTaxRequest;
@@ -61,21 +62,26 @@ class SubscriptionController extends Controller
     public function setScheduled(Subscription $subscription){
         $this->subscriptionService->scheduled($subscription, $this->getLoggedUserId(), $this->getAcademyId());
 
-        $text = $subscription->product->productName.' subscription of '.$subscription->user->firstName.' '.$subscription->user->lastName.' status successfully mark as scheduled';
-        Alert::success($text);
-        return redirect()->route('subscriptions.show', $subscription->id);
+        $text = $subscription->product->productName.' subscription of '.$this->getUserFullName($subscription->user).' status successfully continued';
+        return ApiResponse::success(message: $text);
     }
 
     public function setUnsubscribed(Subscription $subscription){
         $this->subscriptionService->unsubscribed($subscription);
 
-        $text = $subscription->product->productName.' subscription of '.$subscription->user->firstName.' '.$subscription->user->lastName.' status successfully mark as unsubscribed';
-        Alert::success($text);
-        return redirect()->route('subscriptions.show', $subscription->id);
+        $text = $subscription->product->productName.' subscription of '.$this->getUserFullName($subscription->user).' status successfully mark as unsubscribed';
+        return ApiResponse::success(message: $text);
+    }
+
+    public function renewSubscription(Subscription $subscription){
+        $this->subscriptionService->unsubscribed($subscription);
+
+        $text = $subscription->product->productName.' subscription of '.$this->getUserFullName($subscription->user).' successfully renewed';
+        return ApiResponse::success(message: $text);
     }
 
     public function createNewInvoice(Subscription $subscription){
-        $this->subscriptionService->createNewInvoice($subscription, $this->getLoggedUserId(), $this->getAcademyId());
+        $this->subscriptionService->renewSubscription($subscription);
 
         $text = $subscription->product->productName.' invoice subscription of '.$subscription->user->firstName.' '.$subscription->user->lastName.' successfully renewed';
         Alert::success($text);
