@@ -120,10 +120,9 @@
 @endsection
 
 @push('addon-script')
-    <script>
+    <script type="module">
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
         $(document).ready(function () {
-            const body = $('body');
-
             $('#lessonsTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -148,48 +147,16 @@
                 ]
             });
 
-            body.on('click', '.deletePlayer', function () {
-                Swal.fire({
-                    title: "Are you sure to remove this player?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('training-videos.remove-player', ['trainingVideo'=>$training->id, 'player'=>$data->id]) }}",
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (res) {
-                                Swal.fire({
-                                    title: 'Player successfully removed from training!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "{{ route('training-videos.show', $training->id) }}";
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when removing player!",
-                                    text: errorThrown,
-                                });
-                            }
-                        });
-                    }
-                });
-            });
+            // remove player
+            processWithConfirmation(
+                '.deletePlayer',
+                "{{ route('training-videos.remove-player', ['trainingVideo'=>$training->hash, 'player' => $data->hash]) }}",
+                "{{ route('training-videos.show', $training->hash) }}",
+                'DELETE',
+                "Are you sure to remove this player from training course?",
+                "Something went wrong when removing the player from training course!",
+                "{{ csrf_token() }}"
+            );
         });
     </script>
 @endpush
