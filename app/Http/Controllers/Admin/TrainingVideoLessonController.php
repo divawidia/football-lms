@@ -75,11 +75,7 @@ class TrainingVideoLessonController extends Controller
 
     public function edit(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson): JsonResponse
     {
-        return response()->json([
-            'status' => '200',
-            'data' => $lesson,
-            'message' => 'Success'
-        ]);
+        return ApiResponse::success($lesson);
     }
 
     public function update(TrainingVideoLessonRequest $request, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
@@ -108,7 +104,7 @@ class TrainingVideoLessonController extends Controller
     {
         $text = 'Congrats! You have been completed this '.$trainingVideo->trainingTitle.' training';
         Alert::success($text);
-        return redirect()->route('training-videos.show', $trainingVideo->id);
+        return redirect()->route('training-videos.show', $trainingVideo->hash);
     }
 
     public function publish(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
@@ -116,8 +112,7 @@ class TrainingVideoLessonController extends Controller
         $this->trainingVideoLessonService->setStatus($lesson, '1');
 
         $text = 'Lesson '.$lesson->lessonTitle.' status successfully published!';
-        Alert::success($text);
-        return redirect()->route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$lesson->id]);
+        return ApiResponse::success(message: $text);
     }
 
     public function unpublish(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
@@ -125,8 +120,7 @@ class TrainingVideoLessonController extends Controller
         $this->trainingVideoLessonService->setStatus($lesson, '0');
 
         $text = 'Lesson '.$lesson->lessonTitle.' status successfully unpublished!';
-        Alert::success($text);
-        return redirect()->route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->id,'lesson'=>$lesson->id]);
+        return ApiResponse::success(message: $text);
     }
 
     public function destroy(TrainingVideo $trainingVideo, TrainingVideoLesson $lesson): JsonResponse
