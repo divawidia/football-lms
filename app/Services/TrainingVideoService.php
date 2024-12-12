@@ -155,7 +155,11 @@ class TrainingVideoService extends Service
     public function playerCompletionProgress(Player $player, TrainingVideo $trainingVideo)
     {
         $totalLesson = $trainingVideo->lessons()->where('status', '1')->count();
-        $totalPlayerComplete = $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->where('completionStatus', '1')->count();
+        $totalPlayerComplete = $player->lessons()
+            ->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)
+            ->where('training_video_lessons.status', '1')
+            ->where('completionStatus', '1')
+            ->count();
         $progress = $totalPlayerComplete/$totalLesson*100;
         return round($progress, 2);
     }

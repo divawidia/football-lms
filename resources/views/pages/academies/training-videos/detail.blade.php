@@ -215,7 +215,7 @@
         @elseif(isPlayer())
             <div class="border-left page-section pl-32pt">
                 @php($i = 1)
-                @foreach($data->lessons as $lesson)
+                @foreach($data->lessons()->where('training_video_lessons.status', '1')->get() as $lesson)
                     <div class="d-flex align-items-center page-num-container">
                         <div class="page-num">{{ $i }}</div>
                         <h4>{{ $lesson->lessonTitle }}</h4>
