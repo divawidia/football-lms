@@ -58,27 +58,6 @@
                             Publish Lesson
                         </button>
                     @endif
-                    @if($data->status == "1")
-                        <form action="{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->trainingVideoId, 'lesson'=>$data->id]) }}"
-                              method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-white mx-2">
-                                <span class="material-icons mr-2">block</span>
-                                Unpublish Lesson
-                            </button>
-                        </form>
-                    @else
-                        <form action="{{ route('training-videos.lessons-publish', ['trainingVideo'=>$data->trainingVideoId, 'lesson'=>$data->id]) }}"
-                              method="POST">
-                            @method("PATCH")
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-white mx-2">
-                                <span class="material-icons mr-2">check_circle</span>
-                                Publish Lesson
-                            </button>
-                        </form>
-                    @endif
                     <button type="button" class="btn btn-sm btn-white deleteLesson" id="{{ $data->id }}">
                         <span class="material-icons mr-2">delete</span>
                         Delete Lesson
@@ -194,12 +173,23 @@
 
             // unpublish training course
             processWithConfirmation(
-                '.unpublishTraining',
-                "{{ route('training-videos.unpublish', $data->hash) }}",
-                "{{ route('training-videos.show', $data->hash) }}",
+                '.unpublish-lesson',
+                "{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson'=>$data->hash]) }}",
+                null,
                 'PATCH',
-                "Are you sure to unpublish this training course?",
-                "Something went wrong when unpublishing training course!",
+                "Are you sure to unpublish this lesson?",
+                "Something went wrong when unpublishing lesson!",
+                "{{ csrf_token() }}"
+            );
+
+            // publish training course
+            processWithConfirmation(
+                '.publish-lesson',
+                "{{ route('training-videos.lessons-publish', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson'=>$data->hash]) }}",
+                null,
+                'PATCH',
+                "Are you sure to publish this lesson?",
+                "Something went wrong when publishing lesson!",
                 "{{ csrf_token() }}"
             );
         });
