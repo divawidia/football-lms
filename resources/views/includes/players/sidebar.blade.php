@@ -93,7 +93,10 @@
                             <span class="sidebar-menu-text">Training Course</span>
                         </a>
                     </li>
-                    <div class="sidebar-heading">Payments</div>
+                </ul>
+
+                <div class="sidebar-heading">Payments</div>
+                <ul class="sidebar-menu">
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button" href="{{ route('billing-and-payments.index') }}">
                             <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">receipt</span>
