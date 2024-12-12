@@ -149,9 +149,9 @@
             </div>
 
             <div class="row mb-3">
-                @include('components.stats-card', ['title' => 'Total Assigned Players','data' => $data->players()->count(), 'dataThisMonth' => null])
-                @include('components.stats-card', ['title' => 'Players Completed','data' => $data->players()->where('status', 'Completed')->count(), 'dataThisMonth' => null])
-                @include('components.stats-card', ['title' => 'Players on progress','data' => $data->players()->where('status', 'On Progress')->count(), 'dataThisMonth' => null])
+                @include('components.stats-card', ['title' => 'Total Assigned Players','data' => $totalPLayers, 'dataThisMonth' => null])
+                @include('components.stats-card', ['title' => 'Players Completed','data' => $totalCompleted, 'dataThisMonth' => null])
+                @include('components.stats-card', ['title' => 'Players on progress','data' => $totalOnProgress, 'dataThisMonth' => null])
             </div>
 
             {{--    Lessons    --}}
@@ -349,6 +349,28 @@
                 'DELETE',
                 "Are you sure to remove this player from training course?",
                 "Something went wrong when removing the player from training course!",
+                "{{ csrf_token() }}"
+            );
+
+            // unpublish lesson
+            processWithConfirmation(
+                '.unpublish-lesson',
+                "{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->hash, 'lesson'=>':id']) }}",
+                null,
+                'PATCH',
+                "Are you sure to unpublish this lesson?",
+                "Something went wrong when unpublishing lesson!",
+                "{{ csrf_token() }}"
+            );
+
+            // publish lesson
+            processWithConfirmation(
+                '.publish-lesson',
+                "{{ route('training-videos.lessons-publish', ['trainingVideo'=>$data->hash, 'lesson'=>':id']) }}",
+                null,
+                'PATCH',
+                "Are you sure to publish this lesson?",
+                "Something went wrong when publishing lesson!",
                 "{{ csrf_token() }}"
             );
         });

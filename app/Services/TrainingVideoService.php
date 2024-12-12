@@ -127,6 +127,21 @@ class TrainingVideoService extends Service
             ->make();
     }
 
+    public function playerCompletionOverview(TrainingVideo $trainingVideo)
+    {
+        $playersCount = $trainingVideo->players()->count();
+        $playerCompleted = [];
+        $playerUncompleted = [];
+        foreach ($trainingVideo->players as $player){
+            if ($this->playerCompletionProgress($player, $trainingVideo) == 100){
+                $playerCompleted[] = $player;
+            } else {
+                $playerUncompleted[] = $player;
+            }
+        }
+        return compact('playersCount', 'playerCompleted', 'playerUncompleted');
+    }
+
     public function playerShow(TrainingVideo $trainingVideo, Player $player)
     {
         $playerCompletionProgress = $this->playerCompletionProgress($player, $trainingVideo);

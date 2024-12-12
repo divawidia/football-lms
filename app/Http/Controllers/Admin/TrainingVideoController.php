@@ -70,13 +70,17 @@ class TrainingVideoController extends Controller
             $playerCompletionProgress = $this->trainingVideoService->playerCompletionProgress($player, $trainingVideo);
             $uncompletePlayerTrainingLesson = $this->trainingVideoService->uncompletePlayerTrainingLesson($player, $trainingVideo);
         }
+        $playerCompletionOverview = $this->trainingVideoService->playerCompletionOverview($trainingVideo);
 
         return view('pages.academies.training-videos.detail',[
             'player' => $player,
             'data' => $trainingVideo,
             'uncompletePlayerTrainingLesson' => $uncompletePlayerTrainingLesson,
             'playerCompletionProgress' => $playerCompletionProgress,
-            'totalDuration' => $this->trainingVideoService->getTotalDuration($trainingVideo)
+            'totalDuration' => $this->trainingVideoService->getTotalDuration($trainingVideo),
+            'totalPLayers' => $playerCompletionOverview['playersCount'],
+            'totalCompleted' => count($playerCompletionOverview['playerCompleted']),
+            'totalOnProgress' => count($playerCompletionOverview['playerUncompleted']),
         ]);
     }
 
