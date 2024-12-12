@@ -45,21 +45,13 @@ class TrainingVideoLessonService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideo) {
                 if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('training-videos.lessons-unpublish', ['trainingVideo'=>$trainingVideo->hash,'lesson'=>$item->hash]) . '" method="POST">
-                                        ' . method_field("PATCH") . '
-                                        ' . csrf_field() . '
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary mr-1" data-toggle="tooltip" data-placement="bottom" title="Unpublish lesson">
-                                            <span class="material-icons">block</span>
-                                        </button>
-                                    </form>';
+                    $statusButton = '<button type="submit" class="btn btn-sm btn-outline-secondary mr-1 unpublish-lesson" id="'.$item->id.'" data-toggle="tooltip" data-placement="bottom" title="Unpublish lesson">
+                                        <span class="material-icons text-danger">block</span>
+                                    </button>';
                 } else {
-                    $statusButton = '<form action="' . route('training-videos.lessons-publish', ['trainingVideo'=>$trainingVideo->hash,'lesson'=>$item->hash]) . '" method="POST">
-                                        ' . method_field("PATCH") . '
-                                        ' . csrf_field() . '
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary mr-1" data-toggle="tooltip" data-placement="bottom" title="Publish lesson">
-                                            <span class="material-icons">check_circle</span>
-                                        </button>
-                                    </form>';
+                    $statusButton = '<button type="submit" class="btn btn-sm btn-outline-secondary mr-1 publish-lesson" id="'.$item->id.'" data-toggle="tooltip" data-placement="bottom" title="Publish lesson">
+                                        <span class="material-icons text-success">check_circle</span>
+                                    </button>';
                 }
                 return '<div class="btn-toolbar" role="toolbar">
                             <button class="btn btn-sm btn-outline-secondary mr-1 editLesson" id="'.$item->id.'" type="button" data-toggle="tooltip" data-placement="bottom" title="Edit lesson">
@@ -70,7 +62,7 @@ class TrainingVideoLessonService extends Service
                              </a>
                              '.$statusButton.'
                             <button type="button" class="btn btn-sm btn-outline-secondary deleteLesson" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Edit lesson">
-                                <span class="material-icons">delete</span>
+                                <span class="material-icons text-danger">delete</span>
                             </button>
                         </div>';
             })
