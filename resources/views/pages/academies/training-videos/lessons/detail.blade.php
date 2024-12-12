@@ -8,7 +8,7 @@
 
 
 @section('modal')
-    @include('pages.academies.training-videos.lessons.form-modal.edit')
+    <x-modal.edit-training-course-lesson-modal :trainingVideo="$data->trainingVideo"/>
 @endsection
 
 @section('content')
@@ -16,7 +16,7 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('training-videos.show', $data->trainingVideoId) }}" class="nav-link text-70"><i
+                    <a href="{{ route('training-videos.show', $data->trainingVideo->hash) }}" class="nav-link text-70"><i
                                 class="material-icons icon--left">keyboard_backspace</i> Back
                         to {{ $data->trainingVideo->trainingTitle }}</a>
                 </li>
@@ -48,6 +48,17 @@
                         Edit Lesson
                     </button>
                     @if($data->status == "1")
+                        <button type="button" class="btn btn-sm btn-white mx-2 unpublish-lesson">
+                            <span class="material-icons mr-2 text-danger">block</span>
+                            Unpublish Lesson
+                        </button>
+                    @else
+                        <button type="button" class="btn btn-sm btn-white mx-2 publish-lesson">
+                            <span class="material-icons mr-2 text-success">check_circle</span>
+                            Publish Lesson
+                        </button>
+                    @endif
+                    @if($data->status == "1")
                         <form action="{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->trainingVideoId, 'lesson'=>$data->id]) }}"
                               method="POST">
                             @method("PATCH")
@@ -78,7 +89,7 @@
     <div class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">
         <div class="container page__container">
             <ul class="nav navbar-nav flex align-items-sm-center">
-                <li class="nav-item navbar-list__item">=
+                <li class="nav-item navbar-list__item">
                         <i class="material-icons text-muted icon--left">visibility</i>
                         @if($data->status == '1')
                             Status : <span class="badge badge-pill badge-success ml-1">Published</span>
@@ -106,55 +117,17 @@
         <div class="container page__container page-section">
             <div class="page-separator">
                 <div class="page-separator__text">Overview</div>
-                {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
             </div>
 
             <div class="row mb-3">
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $data->players()->count() }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title">Total Assigned Players</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $data->players()->where('completionStatus', '1')->count() }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title">Players Completed</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-4 card-group-row__col flex-column mb-2">
-                    <div class="card border-1 border-left-3 border-left-accent mb-lg-0">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="flex d-flex align-items-center">
-                                <div class="h2 mb-0 mr-3">{{ $data->players()->where('completionStatus', '0')->count() }}</div>
-                                <div class="ml-auto text-right">
-                                    <div class="card-title text-capitalize">Players on progress</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @include('components.stats-card', ['title' => 'Total Assigned Players','data' => $data->players()->count(), 'dataThisMonth' => null])
+                @include('components.stats-card', ['title' => 'Players Completed','data' => $data->players()->where('completionStatus', '1')->count(), 'dataThisMonth' => null])
+                @include('components.stats-card', ['title' => 'Players on progress','data' => $data->players()->where('completionStatus', '0')->count(), 'dataThisMonth' => null])
             </div>
 
             {{--    Assigned Player    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Assigned Player(s)</div>
-                {{--            <a href="{{ route('training-videos.assign-player', ['trainingVideo' => $data->id]) }}" class="btn btn-primary btn-sm ml-auto">--}}
-                {{--                <span class="material-icons mr-2">add</span>--}}
-                {{--                Add Player--}}
-                {{--            </a>--}}
             </div>
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-body">
@@ -179,20 +152,13 @@
         </div>
     @endif
 
-    <x-process-data-confirmation btnClass=".deleteLesson"
-                                 :processRoute="route('training-videos.lessons-destroy', ['trainingVideo'=>$data->trainingVideoId, 'lesson' => ':id'])"
-                                 :routeAfterProcess="route('training-videos.show', $data->trainingVideoId)"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to delete this lesson?"
-                                 errorText="Something went wrong when deleting lesson!"/>
 @endsection
 
 @push('addon-script')
-    <script>
+    <script type="module">
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
         $(document).ready(function () {
-            const body = $('body');
-
-            const playersTable = $('#playersTable').DataTable({
+            $('#playersTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -215,166 +181,27 @@
                 ]
             });
 
-            // This code loads the IFrame Player API code asynchronously.
-            const tag = document.createElement('script');
+            // delete training course
+            processWithConfirmation(
+                '.deleteLesson',
+                "{{ route('training-videos.lessons-destroy', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson' => ':id']) }}",
+                "{{ route('training-videos.show', $data->trainingVideo->hash) }}",
+                'DELETE',
+                "Are you sure to delete this lesson?",
+                "Something went wrong when deleting lesson!",
+                "{{ csrf_token() }}"
+            );
 
-            tag.src = "https://www.youtube.com/iframe_api";
-            const firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-            let player;
-
-            // Load the YouTube Iframe API and create a player
-            function onYouTubeIframeAPIReady(videoId, playerId) {
-                player = new YT.Player(playerId, {
-                    height: '250',
-                    width: '100%',
-                    videoId: videoId,
-                    // playerVars: {
-                    //     'playsinline': 1
-                    // },
-                    events: {
-                        'onReady': onPlayerReady,
-                        'onStateChange': onPlayerStateChange
-                    }
-                });
-            }
-
-            // When the player is ready, get the video duration and show video
-            function onPlayerReady(event) {
-                const duration = player.getDuration(); // Get the duration in seconds
-                // event.target.playVideo();
-                $('.totalDuration').val(duration);
-            }
-
-            let done = false;
-
-            function onPlayerStateChange(event) {
-                if (event.data == YT.PlayerState.PLAYING && !done) {
-                    setTimeout(stopVideo, 6000);
-                    done = true;
-                }
-            }
-
-            function stopVideo() {
-                player.stopVideo();
-            }
-
-            // Extract video ID from the URL
-            function extractVideoID(url) {
-                const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-                const match = url.match(regex);
-                return (match && match[1]) ? match[1] : null;
-            }
-
-            // Handle form submission
-            function showYoutubePreview(inputId, formId, playerId) {
-                $(inputId).on('change', function (e) {
-                    e.preventDefault(); // Prevent form submission
-
-                    let preview = $(formId + ' #preview-container');
-                    let player = $(playerId);
-                    let errorSpan = $(formId + ' span.lessonVideoURL');
-                    let inputUrl = $(inputId);
-
-                    errorSpan.text('');
-                    inputUrl.removeClass('is-invalid');
-
-                    if (player.attr('src') != undefined) {
-                        player.remove();
-                        preview.html('<div id="' + playerId.replace(/^#/, '') + '"></div>')
-                    }
-
-                    // Get the YouTube URL from the input
-                    const url = inputUrl.val();
-
-                    // Extract the video ID
-                    const videoID = extractVideoID(url);
-                    $(formId + ' #videoId').val(videoID);
-
-                    if (videoID) {
-                        onYouTubeIframeAPIReady(videoID, playerId.replace(/^#/, ''));
-                    } else {
-                        errorSpan.text('Invalid youtube URL');
-                        inputUrl.addClass('is-invalid');
-                    }
-                });
-            }
-
-            // show edit form modal when edit lesson button clicked
-            body.on('click', '.editLesson', function (e) {
-                e.preventDefault();
-                const id = $(this).attr('id');
-                $.ajax({
-                    url: "{{ route('training-videos.lessons-edit', ['trainingVideo'=>$data->trainingVideoId, 'lesson' => ':id']) }}".replace(':id', id),
-                    type: 'get',
-                    success: function (res) {
-                        $('#editLessonModal').modal('show');
-
-                        $('#formEditLessonModal #lessonFormTitle').text('Edit Lesson ' + res.data.lessonTitle);
-                        $('#formEditLessonModal #lessonId').val(res.data.id);
-                        $('#edit-lessonTitle').val(res.data.lessonTitle);
-                        $('#edit-description').text(res.data.description);
-                        $('#edit-lessonVideoURL').val(res.data.lessonVideoURL);
-                        $('#formEditLessonModal .totalDuration').val(res.data.totalDuration);
-                        $('#formEditLessonModal #videoId').val(res.data.videoId);
-                        $('#edit-player').remove();
-                        $('#formEditLessonModal #preview-container').html('<div id="edit-player"></div>')
-                        onYouTubeIframeAPIReady(res.data.videoId, 'edit-player');
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when showing form!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            showYoutubePreview('#edit-lessonVideoURL', '#formEditLessonModal', '#edit-player');
-
-            // update lesson data when form submitted
-            $('#formEditLessonModal').on('submit', function (e) {
-                e.preventDefault();
-                const id = $('#lessonId').val();
-
-                $.ajax({
-                    url: "{{ route('training-videos.lessons-update', ['trainingVideo'=>$data->trainingVideoId, 'lesson' => ':id']) }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#editLessonModal').modal('hide');
-                        Swal.fire({
-                            title: 'Training lesson successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        console.log(response)
-                        $.each(response.errors, function (key, val) {
-                            $('span.' + key).text(val[0]);
-                            $("#edit-" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
+            // unpublish training course
+            processWithConfirmation(
+                '.unpublishTraining',
+                "{{ route('training-videos.unpublish', $data->hash) }}",
+                "{{ route('training-videos.show', $data->hash) }}",
+                'PATCH',
+                "Are you sure to unpublish this training course?",
+                "Something went wrong when unpublishing training course!",
+                "{{ csrf_token() }}"
+            );
         });
     </script>
 @endpush
