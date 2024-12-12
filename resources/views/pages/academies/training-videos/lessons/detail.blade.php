@@ -171,7 +171,7 @@
                 "{{ csrf_token() }}"
             );
 
-            // unpublish training course
+            // unpublish lesson
             processWithConfirmation(
                 '.unpublish-lesson',
                 "{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson'=>$data->hash]) }}",
@@ -182,7 +182,7 @@
                 "{{ csrf_token() }}"
             );
 
-            // publish training course
+            // publish lesson
             processWithConfirmation(
                 '.publish-lesson',
                 "{{ route('training-videos.lessons-publish', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson'=>$data->hash]) }}",
