@@ -95,7 +95,7 @@ class TrainingVideoLessonService extends Service
     }
 
     public function players(TrainingVideoLesson $trainingVideoLesson){
-        $data = $trainingVideoLesson->players;
+        $data = $trainingVideoLesson->players()->get();
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideoLesson) {
                 return '<div class="btn-toolbar" role="toolbar">

@@ -91,8 +91,8 @@ class TrainingVideoController extends Controller
             'progress' => $this->trainingVideoService->playerCompletionProgress($player, $trainingVideo),
             'status' => $this->trainingVideoService->playerCompletionStatus($player, $trainingVideo),
             'training' => $player->trainingVideos()->where('trainingVideoId', $trainingVideo->id)->first(),
-            'totalCompleted' => $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->where('completionStatus', '1')->count(),
-            'totalOnProgress' => $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->where('completionStatus', '0')->count(),
+            'totalCompleted' => $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->where('training_video_lessons.status', '1')->where('completionStatus', '1')->count(),
+            'totalOnProgress' => $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->where('training_video_lessons.status', '1')->where('completionStatus', '0')->count(),
         ]);
     }
 

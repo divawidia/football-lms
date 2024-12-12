@@ -51,7 +51,7 @@ class TrainingVideoService extends Service
                                 <span class="material-icons">visibility</span>
                              </a>
                             <button type="button" class="btn btn-sm btn-outline-secondary deletePlayer" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Remove Player">
-                                <span class="material-icons">delete</span>
+                                <span class="material-icons text-danger">delete</span>
                             </button>
                         </div>';
             })
@@ -85,7 +85,10 @@ class TrainingVideoService extends Service
     }
 
     public function playerLessons(TrainingVideo $trainingVideo, Player $player){
-        $data = $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->get();
+        $data = $player->lessons()
+            ->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)
+            ->where('training_video_lessons.status', '1')
+            ->get();
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideo) {
                 return '<div class="btn-toolbar" role="toolbar">
@@ -136,7 +139,7 @@ class TrainingVideoService extends Service
     }
     public function playerCompletionProgress(Player $player, TrainingVideo $trainingVideo)
     {
-        $totalLesson = $trainingVideo->lessons()->count();
+        $totalLesson = $trainingVideo->lessons()->where('status', '1')->count();
         $totalPlayerComplete = $player->lessons()->whereRelation('trainingVideo', 'trainingVideoId', $trainingVideo->id)->where('completionStatus', '1')->count();
         $progress = $totalPlayerComplete/$totalLesson*100;
         return round($progress, 2);
