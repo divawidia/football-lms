@@ -42,6 +42,9 @@
                                        name="old_password"
                                        required
                                        placeholder="Input your current password ...">
+                                <ul class="mt-2">
+                                    <li class="text-50">Input your current password</li>
+                                </ul>
                             </div>
                             @if (session('error'))
                                 <div class="alert alert-danger">{{ session('error') }}</div>
@@ -56,12 +59,13 @@
                                        id="password"
                                        name="password"
                                        required
-                                       placeholder="Input account's last name ...">
+                                       placeholder="Input your new password ...">
                                 @error('password')
                                 <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                    <strong>{{ $message }}</strong>
+                                </span>
                                 @enderror
+                                @include('components.texts.password-rule')
                             </div>
                         </div>
                         <div class="col-lg-4">
