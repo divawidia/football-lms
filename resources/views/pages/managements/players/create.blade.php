@@ -162,6 +162,7 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                 @enderror
+                                @include('components.texts.password-rule')
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="password-confirm">Confirm Password</label>
