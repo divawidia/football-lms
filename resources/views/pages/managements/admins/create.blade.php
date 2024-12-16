@@ -102,7 +102,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="hireDate">Position</label>
+                                <label class="form-label" for="position">Position</label>
                                 <input type="text"
                                        id="position"
                                        name="position"
@@ -116,8 +116,39 @@
                                         </span>
                                 @enderror
                             </div>
+                            <div class="form-group">
+                                <label class="form-label" for="hireDate">Hire Date</label>
+                                <input type="date"
+                                       id="hireDate"
+                                       name="hireDate"
+                                       required
+                                       value="{{ old('hireDate') }}"
+                                       class="form-control @error('hireDate') is-invalid @enderror"
+                                       placeholder="Input account's hire date ...">
+                                @error('hireDate')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
                         </div>
                         <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="gender">Gender</label>
+                                <select class="form-control form-select @error('gender') is-invalid @enderror"
+                                        id="gender" name="gender" required>
+                                    <option disabled selected>Select Gender</option>
+                                    @foreach(['male' => 'Male', 'female' => 'Female', 'others' => 'Others'] AS $jenisKelamin => $jenisKelaminLabel)
+                                        <option
+                                            value="{{ $jenisKelamin }}" @selected(old('gender') == $jenisKelamin)>{{ $jenisKelaminLabel }}</option>
+                                    @endforeach
+                                </select>
+                                @error('gender')
+                                <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
                             <div class="form-group mb-4">
                                 <label class="form-label" for="email">Email address</label>
                                 <input type="email"
@@ -147,6 +178,7 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                 @enderror
+                                @include('components.texts.password-rule')
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="password-confirm">Confirm Password</label>
@@ -155,37 +187,6 @@
                                        name="password_confirmation" required id="password-confirm"
                                        placeholder="Retype inputted password ...">
                                 @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="gender">Gender</label>
-                                <select class="form-control form-select @error('gender') is-invalid @enderror"
-                                        id="gender" name="gender" required>
-                                    <option disabled selected>Select Gender</option>
-                                    @foreach(['male' => 'Male', 'female' => 'Female', 'others' => 'Others'] AS $jenisKelamin => $jenisKelaminLabel)
-                                        <option
-                                            value="{{ $jenisKelamin }}" @selected(old('gender') == $jenisKelamin)>{{ $jenisKelaminLabel }}</option>
-                                    @endforeach
-                                </select>
-                                @error('gender')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="hireDate">Hire Date</label>
-                                <input type="date"
-                                       id="hireDate"
-                                       name="hireDate"
-                                       required
-                                       value="{{ old('hireDate') }}"
-                                       class="form-control @error('hireDate') is-invalid @enderror"
-                                       placeholder="Input account's hire date ...">
-                                @error('hireDate')
                                 <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
