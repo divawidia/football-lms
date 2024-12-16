@@ -11,13 +11,17 @@
             <a href=""
                class="navbar-brand flex-column mb-2 align-items-center mr-0"
                style="min-width: 0">
-                @if(academyData()->logo)
-                    <img src="{{ Storage::url(academyData()->logo) }}" alt="" height="75">
+                @if(academyData()!= null)
+                    @if(academyData()->logo != null)
+                        <img src="{{ Storage::url(academyData()->logo) }}" alt="" height="75">
+                    @else
+                        LOGO
+                    @endif
+                    <strong class="h4">{{ academyData()->academyName }}</strong>
                 @else
                     LOGO
                 @endif
             </a>
-            <strong class="h4">{{ academyData()->academyName }}</strong>
             <p class="m-0">Reset Your Account's Password</p>
         </div>
 

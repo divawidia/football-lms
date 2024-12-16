@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Admin;
 use App\Models\Coach;
 use App\Models\Player;
+use App\Models\User;
 use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -48,8 +49,9 @@ class PermissionSeeder extends Seeder
         $role3 = Role::create(['name' => 'Super-Admin']);
         // gets all permissions via Gate::before rule; see AuthServiceProvider
 
+
         // create demo users
-        $user = \App\Models\User::factory()->has(Player::factory(), 'player')->create([
+        $user = User::factory()->has(Player::factory(), 'player')->create([
             'firstName' => $faker->firstName,
             'lastName' => $faker->lastName,
             'email' => 'player@example.com',
@@ -68,7 +70,7 @@ class PermissionSeeder extends Seeder
         ]);
         $user->assignRole($role1);
 
-        $user2 = \App\Models\User::factory()->has(Admin::factory(), 'admin')->create([
+        $user2 = User::factory()->has(Admin::factory(), 'admin')->create([
             'firstName' => $faker->firstName,
             'lastName' => $faker->lastName,
             'email' => 'admin@example.com',
@@ -87,7 +89,7 @@ class PermissionSeeder extends Seeder
         ]);
         $user2->assignRole($role2);
 
-        $user3 = \App\Models\User::factory()->has(Admin::factory(), 'admin')->create([
+        $user3 = User::factory()->has(Admin::factory(), 'admin')->create([
             'firstName' => $faker->firstName,
             'lastName' => $faker->lastName,
             'email' => 'superadmin@example.com',
@@ -106,7 +108,7 @@ class PermissionSeeder extends Seeder
         ]);
         $user3->assignRole($role3);
 
-        $user4 = \App\Models\User::factory()->has(Coach::factory(), 'coach')->create([
+        $user4 = User::factory()->has(Coach::factory(), 'coach')->create([
             'firstName' => $faker->firstName,
             'lastName' => $faker->lastName,
             'email' => 'coach@example.com',

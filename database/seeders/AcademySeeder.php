@@ -19,7 +19,7 @@ class AcademySeeder extends Seeder
             'academyName' => 'SSB Dreamfields',
             'address' => 'Jl. Antah Berantah, Jakarta Selatan',
             'zipCode' => '80361',
-            'directorName' => 'asjdasndakj',
+            'directorName' => 'John Doe',
             'status' => '1',
             'state_id' => 1677,
             'city_id' => 49219,

@@ -51,7 +51,7 @@ class PlayerRequest extends FormRequest
             'email2' => ['email', 'required'],
             'phoneNumber2' => ['string', 'required'],
             'relations' => ['string', 'required', Rule::in('Father', 'Mother', 'Brother', 'Sister', 'Others')],
-            'team' => ['nullable', 'required', Rule::exists('teams', 'id')],
+            'team' => ['nullable', Rule::exists('teams', 'id')],
         ];
     }
 }

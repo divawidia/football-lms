@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Academy;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -30,6 +31,17 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'firstName' => fake()->firstName,
             'lastName' => fake()->lastName,
+            'foto' => 'images/undefined-user.png',
+            'dob' => fake()->date,
+            'gender' => 'male',
+            'address' => fake()->address,
+            'state_id' => 1,
+            'city_id' => 1,
+            'country_id' => 1,
+            'zipCode' => fake()->postcode,
+            'phoneNumber' => fake()->phoneNumber,
+            'status' => 1,
+            'academyId' => Academy::factory(),
         ];
     }
 
