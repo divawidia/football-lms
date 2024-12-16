@@ -26,6 +26,7 @@
                         <span class="invalid-feedback password_error" role="alert">
                             <strong></strong>
                         </span>
+                        @include('components.texts.password-rule')
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="add_password-confirm">Confirm Password</label>
