@@ -145,6 +145,9 @@
                             </div>
 
                         </div>
+                        @if (session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                        @endif
 
                         <div class="page-separator">
                             <div class="page-separator__text">General Info</div>

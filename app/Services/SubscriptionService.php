@@ -289,7 +289,7 @@ class SubscriptionService extends Service
         return $invoice;
     }
 
-    public function storeSubscription($userId, $ammount, $productId, $taxId)
+    public function storeSubscription($userId, $ammount, $productId, $taxId, $quantity)
     {
         $data = [];
         $data['startDate'] = $this->getNowDate();
@@ -302,16 +302,16 @@ class SubscriptionService extends Service
 
         if ($product->subscriptionCycle == 'monthly') {
             $data['cycle'] = 'monthly';
-            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(1);
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(1*$quantity);
         } elseif ($product->subscriptionCycle == 'quarterly') {
             $data['cycle'] = 'quarterly';
-            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(3);
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(3*$quantity);
         } elseif ($product->subscriptionCycle == 'semianually') {
             $data['cycle'] = 'semianually';
-            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(6);
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(6*$quantity);
         } elseif ($product->subscriptionCycle == 'anually') {
             $data['cycle'] = 'anually';
-            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(12);
+            $data['nextDueDate'] = $this->getNowDate()->addMonthsNoOverflow(12*$quantity);
         }
 
         return $this->subscriptionRepository->create($data);

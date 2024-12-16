@@ -6,16 +6,32 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceRequest;
 use App\Models\Invoice;
+use App\Repository\ProductRepository;
+use App\Repository\TaxRepository;
+use App\Repository\UserRepository;
 use App\Services\InvoiceService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
+use function Symfony\Component\Translation\t;
 
 class InvoiceController extends Controller
 {
     private InvoiceService $invoiceService;
-    public function __construct(InvoiceService $invoiceService){
+    private ProductRepository $productRepository;
+    private TaxRepository $taxRepository;
+    private UserRepository $userRepository;
+    public function __construct(
+        InvoiceService $invoiceService,
+        ProductRepository $productRepository,
+        TaxRepository $taxRepository,
+        UserRepository $userRepository,
+    )
+    {
+        $this->productRepository = $productRepository;
+        $this->taxRepository = $taxRepository;
+        $this->userRepository = $userRepository;
         $this->invoiceService = $invoiceService;
     }
 
@@ -36,11 +52,10 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        $data = $this->invoiceService->invoiceForms();
         return view('pages.payments.invoices.create', [
-            'products' => $data['products'],
-            'taxes' => $data['taxes'],
-            'contacts' => $data['players'],
+            'contacts' => $this->userRepository->getAllByRole('player'),
+            'taxes' => $this->taxRepository->getAll(),
+            'products' => $this->productRepository->getAll(),
         ]);
     }
 
@@ -52,11 +67,16 @@ class InvoiceController extends Controller
         $data = $request->validated();
         $loggedUserId = $this->getLoggedUserId();
         $academyId = $this->getAcademyId();
-        $result = $this->invoiceService->store($data, $loggedUserId, $academyId);
 
-        $text = 'Invoice '.$result->invoiceNumber.' successfully created';
-        Alert::success($text);
-        return redirect()->route('invoices.show', $result->id);
+        if ($this->invoiceService->checkPlayerAlreadySubscribed($data)){
+            return back()->with('error', 'Subscription product have been added to player, select another product except selected subscription product.');
+        } else {
+            $result = $this->invoiceService->store($data, $loggedUserId, $academyId);
+
+            $text = 'Invoice ' . $result->invoiceNumber . ' successfully created';
+            Alert::success($text);
+            return redirect()->route('invoices.show', $result->id);
+        }
     }
 
     public function calculateProductAmount(Request $request){
