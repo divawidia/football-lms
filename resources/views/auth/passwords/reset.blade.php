@@ -64,6 +64,7 @@
                         <strong>{{ $message }}</strong>
                     </span>
                     @enderror
+                    @include('components.texts.password-rule')
                 </div>
             </div>
             <div class="form-group">
