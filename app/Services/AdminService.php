@@ -126,14 +126,7 @@ class AdminService extends Service
     public function destroy(Admin $admin)
     {
         $this->deleteImage($admin->user->foto);
-
-        $admin->user->roles()->detach();
-        $admin->user()->delete();
-        $superAdminName = $this->getUserFullName($this->loggedUser);
-
-        Notification::send($this->userRepository->getAllAdminUsers(),new AdminAccountCreatedDeleted($superAdminName, $admin, 'deleted'));
-
-        $admin->delete();
-        return $admin;
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminAccountCreatedDeleted($this->getUserFullName($this->loggedUser), $admin, 'deleted'));
+        return $this->userRepository->delete($admin);
     }
 }
