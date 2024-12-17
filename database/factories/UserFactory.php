@@ -3,7 +3,11 @@
 namespace Database\Factories;
 
 use App\Models\Academy;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\State;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -35,9 +39,9 @@ class UserFactory extends Factory
             'dob' => fake()->date,
             'gender' => 'male',
             'address' => fake()->address,
-            'state_id' => 1,
-            'city_id' => 1,
-            'country_id' => 1,
+            'state_id' => State::factory(),
+            'city_id' => City::factory(),
+            'country_id' => Country::factory(),
             'zipCode' => fake()->postcode,
             'phoneNumber' => fake()->phoneNumber,
             'status' => 1,

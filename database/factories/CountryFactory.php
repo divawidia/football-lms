@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Admin>
  */
-class AdminFactory extends Factory
+class CountryFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,9 +18,13 @@ class AdminFactory extends Factory
     public function definition(): array
     {
         return [
-            'userId' => User::factory(),
-            'position' => 'Staff',
-            'hireDate' => fake()->date,
+            'iso2' => 'US',
+            'name' => fake('en_US')->country ,
+            'status' => 1,
+            'phone_code' => 1,
+            'iso3' => fake('en_US')->countryISOAlpha3,
+            'region' => 'Americas',
+            'subregion' => 'Northern America',
         ];
     }
 }

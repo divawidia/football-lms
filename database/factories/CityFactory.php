@@ -2,13 +2,15 @@
 
 namespace Database\Factories;
 
+use App\Models\Country;
+use App\Models\State;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Admin>
  */
-class AdminFactory extends Factory
+class CityFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,9 +20,10 @@ class AdminFactory extends Factory
     public function definition(): array
     {
         return [
-            'userId' => User::factory(),
-            'position' => 'Staff',
-            'hireDate' => fake()->date,
+            'country_id' => Country::factory(),
+            'state_id' => State::factory(),
+            'name' => fake('en_US')->city,
+            'country_code' => fake('en_US')->countryCode,
         ];
     }
 }
