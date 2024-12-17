@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Notifications\AdminManagements\AdminAccountCreatedDeleted;
 use App\Notifications\AdminManagements\AdminAccountUpdated;
 use App\Repository\AdminRepository;
+use App\Repository\Interface\AdminRepositoryInterface;
 use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
@@ -14,11 +15,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AdminService extends Service
 {
-    private AdminRepository $adminRepository;
+    private AdminRepositoryInterface $adminRepository;
     private UserRepository $userRepository;
     private DatatablesService $datatablesService;
     private $loggedUser;
-    public function __construct(AdminRepository $adminRepository, UserRepository $userRepository, $loggedUser, DatatablesService $datatablesService)
+    public function __construct(AdminRepositoryInterface $adminRepository, UserRepository $userRepository, $loggedUser, DatatablesService $datatablesService)
     {
         $this->adminRepository = $adminRepository;
         $this->userRepository = $userRepository;
@@ -98,36 +99,16 @@ class AdminService extends Service
 
         $data['userId'] = $user->id;
         $admin = $this->adminRepository->create($data);
-        $superAdminName = $this->getUserFullName($this->loggedUser);
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new AdminAccountCreatedDeleted($superAdminName, $admin, 'created'));
-
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminAccountCreatedDeleted($this->getUserFullName($this->loggedUser), $admin, 'created'));
         return $admin;
     }
 
     public function update(array $data, Admin $admin): Admin
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $admin->user->foto);
-        $admin->update([
-            'position'=> $data['position'],
-            'hireDate'=> $data['hireDate'],
-        ]);
-        $admin->user()->update([
-            'firstName' => $data['firstName'],
-            'lastName'=> $data['lastName'],
-            'email'=> $data['email'],
-            'foto'=> $data['foto'],
-            'dob'=> $data['dob'],
-            'gender'=> $data['gender'],
-            'address'=> $data['address'],
-            'state_id'=> $data['state_id'],
-            'city_id'=> $data['city_id'],
-            'country_id'=> $data['country_id'],
-            'zipCode'=> $data['zipCode'],
-            'phoneNumber'=> $data['phoneNumber'],
-        ]);
-        $superAdminName = $this->getUserFullName($this->loggedUser);
-        $admin->user->notify(new AdminAccountUpdated($superAdminName, $admin, 'updated'));
+        $this->adminRepository->update($data, $admin);
+        $admin->user->notify(new AdminAccountUpdated($this->getUserFullName($this->loggedUser), $admin, 'updated'));
         return $admin;
     }
 

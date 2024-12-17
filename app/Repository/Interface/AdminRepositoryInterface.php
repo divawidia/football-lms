@@ -13,4 +13,6 @@ interface AdminRepositoryInterface
     public function find($id);
 
     public function create(array $data);
+
+    public function update(array $data, Admin $admin);
 }

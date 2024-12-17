@@ -28,4 +28,10 @@ class AdminRepository implements AdminRepositoryInterface
     {
         return $this->admin->create($data);
     }
+
+    public function update(array $data, Admin $admin): int
+    {
+        $admin->update($data);
+        return $admin->user->update($data);
+    }
 }
