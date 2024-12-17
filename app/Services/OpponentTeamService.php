@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Team;
-use App\Notifications\OpponentTeamsManagements\OpponentTeamUpdated;
 use App\Notifications\OpponentTeamsManagements\OpponentTeamCreatedDeleted;
+use App\Notifications\OpponentTeamsManagements\OpponentTeamUpdated;
 use App\Repository\EventScheduleRepository;
 use App\Repository\TeamMatchRepository;
 use App\Repository\TeamRepository;
@@ -12,7 +13,6 @@ use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class OpponentTeamService extends Service
@@ -21,14 +21,14 @@ class OpponentTeamService extends Service
     private UserRepository $userRepository;
     private EventScheduleRepository $eventScheduleRepository;
     private TeamMatchRepository $teamMatchRepository;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
 
     public function __construct(
-        TeamRepository $teamRepository,
-        UserRepository $userRepository,
+        TeamRepository          $teamRepository,
+        UserRepository          $userRepository,
         EventScheduleRepository $eventScheduleRepository,
-        TeamMatchRepository $teamMatchRepository,
-        DatatablesService $datatablesService)
+        TeamMatchRepository     $teamMatchRepository,
+        DatatablesHelper        $datatablesService)
     {
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;

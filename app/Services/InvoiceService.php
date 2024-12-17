@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Invoice;
 use App\Models\User;
 use App\Notifications\Invoices\InvoiceArchivedAdmin;
@@ -20,8 +21,6 @@ use App\Notifications\Subscriptions\SubscriptionPastDueAdmin;
 use App\Notifications\Subscriptions\SubscriptionPastDuePlayer;
 use App\Notifications\Subscriptions\SubscriptionSchedulledAdmin;
 use App\Notifications\Subscriptions\SubscriptionSchedulledPlayer;
-use App\Notifications\Subscriptions\SubscriptionUnsubscribeAdmin;
-use App\Notifications\Subscriptions\SubscriptionUnsubscribePlayer;
 use App\Repository\InvoiceRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
@@ -30,7 +29,6 @@ use App\Repository\UserRepository;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Transaction;
@@ -44,15 +42,15 @@ class InvoiceService extends Service
     private InvoiceRepository $invoiceRepository;
     private SubscriptionRepository $subscriptionRepository;
     private Invoice $invoice;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
     public function __construct(
-        ProductRepository $productRepository,
-        TaxRepository $taxRepository,
-        UserRepository $userRepository,
-        Invoice $invoice,
-        InvoiceRepository $invoiceRepository,
+        ProductRepository      $productRepository,
+        TaxRepository          $taxRepository,
+        UserRepository         $userRepository,
+        Invoice                $invoice,
+        InvoiceRepository      $invoiceRepository,
         SubscriptionRepository $subscriptionRepository,
-        DatatablesService $datatablesService)
+        DatatablesHelper       $datatablesService)
     {
         Config::$serverKey    = config('services.midtrans.serverKey');
         Config::$isProduction = config('services.midtrans.isProduction');

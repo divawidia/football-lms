@@ -2,11 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Player;
+use App\Helpers\DatatablesHelper;
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
-use App\Notifications\TrainingCourse\TrainingCourseDeleted;
-use App\Notifications\TrainingCourse\TrainingCourseStatus;
 use App\Notifications\TrainingCourseLessons\TrainingLessonCreated;
 use App\Notifications\TrainingCourseLessons\TrainingLessonDeleted;
 use App\Notifications\TrainingCourseLessons\TrainingLessonStatus;
@@ -15,11 +13,8 @@ use App\Repository\PlayerRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
 class TrainingVideoLessonService extends Service
@@ -27,8 +22,8 @@ class TrainingVideoLessonService extends Service
     private PlayerRepository $playerRepository;
     private TrainingVideoService $trainingVideoService;
     private UserRepository $userRepository;
-    private DatatablesService $datatablesService;
-    public function __construct(PlayerRepository $playerRepository, TrainingVideoService $trainingVideoService,  UserRepository $userRepository,  DatatablesService $datatablesService)
+    private DatatablesHelper $datatablesService;
+    public function __construct(PlayerRepository $playerRepository, TrainingVideoService $trainingVideoService, UserRepository $userRepository, DatatablesHelper $datatablesService)
     {
         $this->playerRepository = $playerRepository;
         $this->trainingVideoService = $trainingVideoService;

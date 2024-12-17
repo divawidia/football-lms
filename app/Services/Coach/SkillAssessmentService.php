@@ -2,6 +2,7 @@
 
 namespace App\Services\Coach;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
 use App\Models\EventSchedule;
 use App\Models\Player;
@@ -9,10 +10,8 @@ use App\Models\PlayerSkillStats;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\PlayerSkillStatsRepository;
-use App\Services\DatatablesService;
 use App\Services\Service;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class SkillAssessmentService extends Service
@@ -20,12 +19,12 @@ class SkillAssessmentService extends Service
     private PlayerRepository $playerRepository;
     private PlayerSkillStatsRepository $playerSkillStatsRepository;
     private EventScheduleRepository $eventScheduleRepository;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
     public function __construct(
-        PlayerRepository $playerRepository,
+        PlayerRepository           $playerRepository,
         PlayerSkillStatsRepository $playerSkillStatsRepository,
-        EventScheduleRepository $eventScheduleRepository,
-        DatatablesService $datatablesService)
+        EventScheduleRepository    $eventScheduleRepository,
+        DatatablesHelper           $datatablesService)
     {
         $this->playerRepository = $playerRepository;
         $this->playerSkillStatsRepository = $playerSkillStatsRepository;

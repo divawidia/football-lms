@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Player;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerRepository;
@@ -14,13 +15,13 @@ class AttendanceReportService extends Service
 {
     private PlayerRepository $playerRepository;
     private EventScheduleRepository $eventScheduleRepository;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
     private TeamRepository $teamRepository;
     public function __construct(
-        PlayerRepository $playerRepository,
+        PlayerRepository        $playerRepository,
         EventScheduleRepository $eventScheduleRepository,
-        DatatablesService $datatablesService,
-        TeamRepository $teamRepository
+        DatatablesHelper        $datatablesService,
+        TeamRepository          $teamRepository
     )
     {
         $this->playerRepository = $playerRepository;

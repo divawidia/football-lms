@@ -2,13 +2,12 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
 use App\Models\EventSchedule;
 use App\Models\MatchScore;
 use App\Models\Player;
-use App\Models\PlayerMatchStats;
 use App\Models\ScheduleNote;
-use App\Models\Team;
 use App\Notifications\MatchSchedules\MatchNote;
 use App\Notifications\MatchSchedules\MatchScheduleAttendance;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForAdmin;
@@ -33,13 +32,9 @@ use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
-use function PHPUnit\Framework\isFalse;
 
 class EventScheduleService extends Service
 {
@@ -48,14 +43,14 @@ class EventScheduleService extends Service
     private UserRepository $userRepository;
     private PlayerSkillStatsRepository $playerSkillStatsRepository;
     private PlayerPerformanceReviewRepository $playerPerformanceReviewRepository;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
     public function __construct(
-        EventScheduleRepository $eventScheduleRepository,
-        TeamRepository $teamRepository,
-        UserRepository $userRepository,
-        PlayerSkillStatsRepository $playerSkillStatsRepository,
+        EventScheduleRepository           $eventScheduleRepository,
+        TeamRepository                    $teamRepository,
+        UserRepository                    $userRepository,
+        PlayerSkillStatsRepository        $playerSkillStatsRepository,
         PlayerPerformanceReviewRepository $playerPerformanceReviewRepository,
-        DatatablesService $datatablesService)
+        DatatablesHelper                  $datatablesService)
     {
         $this->eventScheduleRepository = $eventScheduleRepository;
         $this->teamRepository = $teamRepository;

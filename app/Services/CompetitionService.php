@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Competition;
 use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
 use App\Notifications\CompetitionManagements\CompetitionStatus;
@@ -24,7 +25,7 @@ class CompetitionService extends Service
     private UserRepository $userRepository;
     private GroupDivisionService $groupDivisionService;
     private EventScheduleService $eventScheduleService;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
 
     public function __construct(
         CompetitionRepository $competitionRepository,
@@ -34,7 +35,7 @@ class CompetitionService extends Service
         UserRepository $userRepository,
         GroupDivisionService $groupDivisionService,
         EventScheduleService $eventScheduleService,
-        DatatablesService $datatablesService
+        DatatablesHelper $datatablesService
     )
     {
         $this->competitionRepository = $competitionRepository;

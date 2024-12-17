@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Notifications\Invoices\InvoiceGeneratedAdmin;
@@ -15,9 +16,7 @@ use App\Repository\ProductRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\TaxRepository;
 use App\Repository\UserRepository;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class SubscriptionService extends Service
@@ -28,7 +27,7 @@ class SubscriptionService extends Service
     private InvoiceService $invoiceService;
     private UserRepository $userRepository;
     private ProductRepository $productRepository;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
 
     public function __construct(
         SubscriptionRepository $subscriptionRepository,
@@ -37,7 +36,7 @@ class SubscriptionService extends Service
         InvoiceService         $invoiceService,
         UserRepository         $userRepository,
         ProductRepository      $productRepository,
-        DatatablesService $datatablesService)
+        DatatablesHelper       $datatablesService)
     {
         $this->invoiceRepository = $invoiceRepository;
         $this->taxRepository = $taxRepository;

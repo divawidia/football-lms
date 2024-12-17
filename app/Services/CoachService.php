@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
 use App\Models\Team;
 use App\Notifications\CoachManagements\CoachAccountCreatedDeleted;
@@ -14,7 +15,6 @@ use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class CoachService extends Service
@@ -23,9 +23,9 @@ class CoachService extends Service
     private TeamRepository $teamRepository;
     private UserRepository $userRepository;
     private CoachMatchStatsRepository $coachMatchStatsRepository;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
 
-    public function __construct(CoachRepository $coachRepository, TeamRepository $teamRepository, UserRepository $userRepository, CoachMatchStatsRepository $coachMatchStatsRepository, DatatablesService $datatablesService)
+    public function __construct(CoachRepository $coachRepository, TeamRepository $teamRepository, UserRepository $userRepository, CoachMatchStatsRepository $coachMatchStatsRepository, DatatablesHelper $datatablesService)
     {
         $this->coachRepository = $coachRepository;
         $this->teamRepository = $teamRepository;

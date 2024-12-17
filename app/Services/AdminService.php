@@ -2,30 +2,28 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Admin;
 use App\Notifications\AdminManagements\AdminAccountCreatedDeleted;
 use App\Notifications\AdminManagements\AdminAccountUpdated;
-use App\Repository\AdminRepository;
 use App\Repository\Interface\AdminRepositoryInterface;
 use App\Repository\Interface\UserRepositoryInterface;
-use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class AdminService extends Service
 {
     private AdminRepositoryInterface $adminRepository;
     private UserRepositoryInterface $userRepository;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesHelper;
     private $loggedUser;
-    public function __construct(AdminRepositoryInterface $adminRepository, UserRepositoryInterface $userRepository, $loggedUser, DatatablesService $datatablesService)
+    public function __construct(AdminRepositoryInterface $adminRepository, UserRepositoryInterface $userRepository, $loggedUser, DatatablesHelper $datatablesHelper)
     {
         $this->adminRepository = $adminRepository;
         $this->userRepository = $userRepository;
         $this->loggedUser = $loggedUser;
-        $this->datatablesService = $datatablesService;
+        $this->datatablesHelper = $datatablesHelper;
     }
     public function index(): JsonResponse
     {
@@ -77,10 +75,10 @@ class AdminService extends Service
                 }
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position, route('admin-managements.show', $item->hash));
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position, route('admin-managements.show', $item->hash));
             })
             ->editColumn('status', function ($item){
-                return $this->datatablesService->activeNonactiveStatus($item->user->status);
+                return $this->datatablesHelper->activeNonactiveStatus($item->user->status);
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);

@@ -2,19 +2,19 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
 use App\Models\Player;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class LeaderboardService extends Service
 {
     private PlayerRepository $playerRepository;
     private TeamRepository $teamRepository;
-    private DatatablesService $datatablesService;
-    public function __construct(PlayerRepository $playerRepository, TeamRepository $teamRepository, DatatablesService $datatablesService){
+    private DatatablesHelper $datatablesService;
+    public function __construct(PlayerRepository $playerRepository, TeamRepository $teamRepository, DatatablesHelper $datatablesService){
         $this->playerRepository = $playerRepository;
         $this->teamRepository = $teamRepository;
         $this->datatablesService = $datatablesService;

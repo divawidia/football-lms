@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
 use App\Models\Player;
 use App\Models\Team;
@@ -19,7 +20,6 @@ use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class TeamService extends Service
@@ -28,18 +28,18 @@ class TeamService extends Service
     private UserRepository $userRepository;
     private EventScheduleRepository $eventScheduleRepository;
     private TeamMatchRepository $teamMatchRepository;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
     private PlayerRepository $playerRepository;
     private CoachRepository $coachRepository;
 
     public function __construct(
-        TeamRepository $teamRepository,
-        UserRepository $userRepository,
+        TeamRepository          $teamRepository,
+        UserRepository          $userRepository,
         EventScheduleRepository $eventScheduleRepository,
-        TeamMatchRepository $teamMatchRepository,
-        PlayerRepository $playerRepository,
-        CoachRepository $coachRepository,
-        DatatablesService $datatablesService)
+        TeamMatchRepository     $teamMatchRepository,
+        PlayerRepository        $playerRepository,
+        CoachRepository         $coachRepository,
+        DatatablesHelper        $datatablesService)
     {
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;

@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Competition;
 use App\Models\GroupDivision;
 use App\Models\Team;
-use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
 use App\Notifications\CompetitionManagements\GroupDivisions\GroupDivisionCreatedDeleted;
 use App\Notifications\CompetitionManagements\GroupDivisions\GroupDivisionUpdated;
 use App\Notifications\CompetitionManagements\TeamJoinedRemovedCompetition;
@@ -14,10 +14,8 @@ use App\Repository\GroupDivisionRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class GroupDivisionService extends Service
@@ -27,7 +25,7 @@ class GroupDivisionService extends Service
     private TeamRepository $teamRepository;
     private PlayerRepository $playerRepository;
     private CoachRepository $coachRepository;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
 
     public function __construct(
         GroupDivisionRepository $groupDivisionRepository,
@@ -35,7 +33,7 @@ class GroupDivisionService extends Service
         TeamRepository $teamRepository,
         PlayerRepository $playerRepository,
         CoachRepository $coachRepository,
-        DatatablesService $datatablesService
+        DatatablesHelper $datatablesService
     )
     {
         $this->groupDivisionRepository = $groupDivisionRepository;

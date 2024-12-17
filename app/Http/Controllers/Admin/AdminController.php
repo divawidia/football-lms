@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Helpers\ApiResponse;
+use App\Helpers\DatatablesHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
 use App\Http\Requests\ChangePasswordRequest;
@@ -11,14 +12,14 @@ use App\Models\Admin;
 use App\Repository\AdminRepository;
 use App\Repository\UserRepository;
 use App\Services\AdminService;
-use App\Services\DatatablesService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
+
 class AdminController extends Controller
 {
     private AdminService $adminService;
-    public function __construct(AdminRepository $adminRepository, UserRepository $userRepository, DatatablesService $datatablesService)
+    public function __construct(AdminRepository $adminRepository, UserRepository $userRepository, DatatablesHelper $datatablesService)
     {
         $this->middleware(function ($request, $next) use ($adminRepository, $userRepository, $datatablesService){
             $this->adminService = new AdminService($adminRepository, $userRepository, $this->getLoggedUser(), $datatablesService);

@@ -1,17 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace App\Helpers;
 
-use App\Models\Admin;
-use App\Models\CoachCertification;
-use App\Models\CoachSpecialization;
-use App\Models\User;
-use Illuminate\Http\JsonResponse;
+use App\Services\Service;
 use Illuminate\Support\Facades\Storage;
-use Nnjeim\World\World;
-use Yajra\DataTables\Facades\DataTables;
 
-class DatatablesService extends Service
+class DatatablesHelper extends Service
 {
     public function activeNonactiveStatus($status)
     {

@@ -2,17 +2,17 @@
 
 namespace App\Services\Player;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Invoice;
 use App\Models\User;
-use App\Services\DatatablesService;
 use App\Services\Service;
 use Yajra\DataTables\Facades\DataTables;
 
 class BillingPaymentsService extends Service
 {
     private User $user;
-    private DatatablesService $datatablesService;
-    public function __construct(User $user, DatatablesService $datatablesService)
+    private DatatablesHelper $datatablesService;
+    public function __construct(User $user, DatatablesHelper $datatablesService)
     {
         $this->user = $user;
         $this->datatablesService = $datatablesService;

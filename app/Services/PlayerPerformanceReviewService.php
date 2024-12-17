@@ -2,25 +2,24 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
 use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\PlayerPerformanceReview;
-use App\Models\PlayerSkillStats;
 use App\Repository\EventScheduleRepository;
 use App\Repository\PlayerPerformanceReviewRepository;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class PlayerPerformanceReviewService extends Service
 {
     private PlayerPerformanceReviewRepository $performanceReviewRepository;
     private EventScheduleRepository $eventScheduleRepository;
-    private DatatablesService $datatablesService;
+    private DatatablesHelper $datatablesService;
     public function __construct(
         PlayerPerformanceReviewRepository $performanceReviewRepository,
         EventScheduleRepository $eventScheduleRepository,
-        DatatablesService $datatablesService
+        DatatablesHelper $datatablesService
     )
     {
         $this->performanceReviewRepository = $performanceReviewRepository;
