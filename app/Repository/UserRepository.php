@@ -4,8 +4,9 @@ namespace App\Repository;
 
 use App\Models\Team;
 use App\Models\User;
+use App\Repository\Interface\UserRepositoryInterface;
 
-class UserRepository
+class UserRepository implements UserRepositoryInterface
 {
     protected User $user;
     public function __construct(User $user)
