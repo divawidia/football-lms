@@ -132,4 +132,14 @@ class Service
     {
         return Number::percentage($number);
     }
+
+    public function statusMessage($status = ['1', '0']): string
+    {
+        if ($status == '1') {
+            $message = 'activated';
+        } else {
+            $message = 'deactivated';
+        }
+        return $message;
+    }
 }

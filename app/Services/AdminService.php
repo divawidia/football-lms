@@ -7,6 +7,7 @@ use App\Notifications\AdminManagements\AdminAccountCreatedDeleted;
 use App\Notifications\AdminManagements\AdminAccountUpdated;
 use App\Repository\AdminRepository;
 use App\Repository\Interface\AdminRepositoryInterface;
+use App\Repository\Interface\UserRepositoryInterface;
 use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
@@ -16,10 +17,10 @@ use Yajra\DataTables\Facades\DataTables;
 class AdminService extends Service
 {
     private AdminRepositoryInterface $adminRepository;
-    private UserRepository $userRepository;
+    private UserRepositoryInterface $userRepository;
     private DatatablesService $datatablesService;
     private $loggedUser;
-    public function __construct(AdminRepositoryInterface $adminRepository, UserRepository $userRepository, $loggedUser, DatatablesService $datatablesService)
+    public function __construct(AdminRepositoryInterface $adminRepository, UserRepositoryInterface $userRepository, $loggedUser, DatatablesService $datatablesService)
     {
         $this->adminRepository = $adminRepository;
         $this->userRepository = $userRepository;
@@ -114,17 +115,8 @@ class AdminService extends Service
 
     public function setStatus(Admin $admin, $status)
     {
-        $admin->user()->update(['status' => $status]);
-        $superAdminName = $this->getUserFullName($this->loggedUser);
-
-        if ($status == '1') {
-            $message = 'activated';
-        } elseif ($status == '0') {
-            $message = 'deactivated';
-        }
-
-        $admin->user->notify(new AdminAccountUpdated($superAdminName, $admin, $message));
-        return $admin;
+        $admin->user->notify(new AdminAccountUpdated($this->getUserFullName($this->loggedUser), $admin, $this->statusMessage($status)));
+        return $this->userRepository->updateUserStatus($admin, $status);
     }
 
     public function changePassword($data, Admin $admin)
