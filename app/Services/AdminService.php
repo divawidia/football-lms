@@ -121,12 +121,8 @@ class AdminService extends Service
 
     public function changePassword($data, Admin $admin)
     {
-        $admin->user()->update([
-            'password' => bcrypt($data['password'])
-        ]);
-        $superAdminName = $this->getUserFullName($this->loggedUser);
-        $admin->user->notify(new AdminAccountUpdated($superAdminName, $admin, 'updated the password'));
-        return $admin;
+        $admin->user->notify(new AdminAccountUpdated($this->getUserFullName($this->loggedUser), $admin, 'updated the password'));
+        return $this->userRepository->changePassword($data, $admin);
     }
 
     public function destroy(Admin $admin)
