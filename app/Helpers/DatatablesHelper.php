@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DatatablesHelper extends Service
 {
-    public function activeNonactiveStatus($status)
+    public function activeNonactiveStatus($status): string
     {
         $badge = '';
         if ($status == '1') {
@@ -42,7 +42,7 @@ class DatatablesHelper extends Service
         return $status;
     }
 
-    public function invoiceStatus($status)
+    public function invoiceStatus($status): string
     {
         if ($status == 'Past Due') {
             $status = '<span class="badge badge-pill badge-warning">'.$status .'</span>';
@@ -56,7 +56,7 @@ class DatatablesHelper extends Service
         return $status;
     }
 
-    public function startEndDate($data)
+    public function startEndDate($data): string
     {
         $date = $this->convertToDate($data->date);
         $startTime = $this->convertToTime($data->startTime);
@@ -64,13 +64,13 @@ class DatatablesHelper extends Service
         return $date.' ('.$startTime.' - '.$endTime.')';
     }
 
-    public function competitionStartEndDate($data)
+    public function competitionStartEndDate($data): string
     {
         $startDate = $this->convertToDate($data->startDate);
         $endDate = $this->convertToDate($data->endDate);
         return $startDate.' - '.$endDate;
     }
-    public function name($image, $title, $subtitle, $showRoute = null)
+    public function name($image, $title, $subtitle, $showRoute = null): string
     {
         if ($showRoute != null) {
             $text = '<a href="'.$showRoute.'">
@@ -99,12 +99,25 @@ class DatatablesHelper extends Service
                     </div>
                 </div>';
     }
-    public function buttonTooltips($route, string $tooltipsTitle, $icon)
+    public function buttonTooltips($route, string $tooltipsTitle, $icon): string
     {
         return '<a class="btn btn-sm btn-outline-secondary" href="' . $route. '" data-toggle="tooltip" data-placement="bottom" title="'.$tooltipsTitle.'">
                         <span class="material-icons">
                             '.$icon.'
                         </span>
                   </a>';
+    }
+
+    public function usersTeams($data): string
+    {
+        $teams = '';
+        if(count($data->teams) === 0){
+            $teams = 'No Team';
+        }else{
+            foreach ($data->teams as $team){
+                $teams .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
+            }
+        }
+        return $teams;
     }
 }
