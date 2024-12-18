@@ -12,6 +12,7 @@ use App\Notifications\PlayerManagements\PlayerAccountCreatedDeleted;
 use App\Notifications\PlayerManagements\PlayerAccountUpdated;
 use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Repository\EventScheduleRepository;
+use App\Repository\Interface\PlayerRepositoryInterface;
 use App\Repository\PlayerPositionRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
@@ -26,14 +27,14 @@ use function PHPUnit\Framework\isEmpty;
 class PlayerService extends Service
 {
     private EventScheduleService $eventScheduleService;
-    private PlayerRepository $playerRepository;
+    private PlayerRepositoryInterface $playerRepository;
     private TeamRepository $teamRepository;
     private EventScheduleRepository $eventScheduleRepository;
     private PlayerPositionRepository $playerPositionRepository;
     private UserRepository $userRepository;
     public function __construct(
         EventScheduleService $eventScheduleService,
-        PlayerRepository $playerRepository,
+        PlayerRepositoryInterface $playerRepository,
         EventScheduleRepository $eventScheduleRepository,
         TeamRepository $teamRepository,
         PlayerPositionRepository $playerPositionRepository,
