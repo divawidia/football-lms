@@ -3,6 +3,9 @@
 namespace Database\Factories;
 
 
+use App\Models\City;
+use App\Models\Country;
+use App\Models\State;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,9 +25,9 @@ class AcademyFactory extends Factory
             'phoneNumber' => fake()->phoneNumber,
             'academyName' => fake()->name,
             'address' => fake()->address,
-            'state_id' => 1,
-            'city_id' => 1,
-            'country_id' => 1,
+            'state_id' => State::factory(),
+            'city_id' => City::factory(),
+            'country_id' => Country::factory(),
             'zipCode' => fake()->postcode,
             'directorName' => fake()->name,
             'status' => 1,

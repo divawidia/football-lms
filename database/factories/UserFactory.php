@@ -3,14 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Academy;
-use App\Models\City;
-use App\Models\Country;
-use App\Models\State;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-
+use App\Models\City;
+use App\Models\Country;
+use App\Models\State;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
