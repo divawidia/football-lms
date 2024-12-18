@@ -96,33 +96,10 @@ class PlayerService extends Service
                 return $this->datatablesHelper->usersTeams($item);
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                             style="white-space: nowrap;">
-                            <div class="avatar avatar-sm mr-8pt">
-                                <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                            </div>
-                            <div class="media-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex d-flex flex-column">
-                                        <a href="'.route('player-managements.show', $item->hash).'">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">'. $item->user->firstName .' '. $item->user->lastName .'</strong></p>
-                                        </a>
-                                        <small class="js-lists-values-email text-50">' . $item->position->name . '</small>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>';
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
             ->editColumn('status', function ($item){
-                $badge = '';
-                if ($item->user->status == '1') {
-                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
-                }elseif ($item->user->status == '0'){
-                    $badge = '<span class="badge badge-pill badge-danger">Non-Active</span>';
-                }
-                return $badge;
+                return $this->datatablesHelper->activeNonactiveStatus($item->user->status);
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
@@ -136,6 +113,7 @@ class PlayerService extends Service
         $query = $this->playerRepository->getAll();
         return $this->makePlayerDatatables($query);
     }
+
     // retrieve player data based on coach managed teams
     public function coachPlayerIndex($coach): JsonResponse
     {
@@ -167,24 +145,10 @@ class PlayerService extends Service
                         </div>';
             })
             ->editColumn('name', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">' . $item->division . ' - '.$item->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesHelper->name($item->logo, $item->teamName, $item->division, route('team-managements.show', $item->hash));
             })
             ->editColumn('date', function ($item){
-                return date('M d, Y', strtotime($item->pivot->created_at));
+                return $this->convertToDate($item->pivot->created_at);
             })
             ->rawColumns(['action', 'name','date'])
             ->make();
