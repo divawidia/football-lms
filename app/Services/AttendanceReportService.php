@@ -112,7 +112,7 @@ class AttendanceReportService extends Service
     {
         if ($teams) {
             $teams = $this->teamRepository->whereId($teams);
-            $query = $this->playerRepository->getPLayersByTeams($teams);
+            $query = $this->playerRepository->getAll($teams);
         } else {
             $query = $this->playerRepository->getAll();
         }
@@ -123,11 +123,11 @@ class AttendanceReportService extends Service
     {
         if ($teams) {
             $teams = $this->teamRepository->whereId($teams);
-            $query = $this->playerRepository->getPLayersByTeams($teams);
+            $query = $this->playerRepository->getAll($teams);
         } else {
             $teams = $coach->teams;
             // query player data that included in teams that managed by logged in coach
-            $query = $this->playerRepository->getPLayersByTeams($teams);
+            $query = $this->playerRepository->getAll($teams);
         }
         $filter = $this->dateFilter($startDate, $endDate);
         return $this->makeAttendanceDatatables($query, $filter['startDate'], $filter['endDate'], $eventType);

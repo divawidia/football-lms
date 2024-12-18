@@ -98,13 +98,13 @@ class LeaderboardService extends Service
     public function coachPLayerLeaderboard(Coach $coach)
     {
         $teams = $coach->teams()->get();
-        $query = $this->playerRepository->getPLayersByTeams($teams);
+        $query = $this->playerRepository->getAll($teams);
         return $this->playerLeaderboardDatatables($query);
     }
     public function playersTeammateLeaderboard(Player $player)
     {
         $teams = $player->teams;
-        $query = $this->playerRepository->getPLayersByTeams($teams);
+        $query = $this->playerRepository->getAll($teams);
         return $this->playerLeaderboardDatatables($query);
     }
 
