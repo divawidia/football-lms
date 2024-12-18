@@ -93,15 +93,7 @@ class PlayerService extends Service
                 return $actionBtn;
             })
             ->editColumn('teams.name', function ($item) {
-                $playerTeam = '';
-                if(count($item->teams) === 0){
-                    $playerTeam = 'No Team';
-                }else{
-                    foreach ($item->teams as $team){
-                        $playerTeam .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
-                    }
-                }
-                return $playerTeam;
+                return $this->datatablesHelper->usersTeams($item);
             })
             ->editColumn('name', function ($item) {
                 return '
