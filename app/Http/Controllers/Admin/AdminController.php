@@ -10,6 +10,8 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use App\Models\Admin;
 use App\Repository\AdminRepository;
+use App\Repository\Interface\AdminRepositoryInterface;
+use App\Repository\Interface\UserRepositoryInterface;
 use App\Repository\UserRepository;
 use App\Services\AdminService;
 use Exception;
@@ -19,7 +21,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 class AdminController extends Controller
 {
     private AdminService $adminService;
-    public function __construct(AdminRepository $adminRepository, UserRepository $userRepository, DatatablesHelper $datatablesService)
+    public function __construct(AdminRepositoryInterface $adminRepository, UserRepositoryInterface $userRepository, DatatablesHelper $datatablesService)
     {
         $this->middleware(function ($request, $next) use ($adminRepository, $userRepository, $datatablesService){
             $this->adminService = new AdminService($adminRepository, $userRepository, $this->getLoggedUser(), $datatablesService);
