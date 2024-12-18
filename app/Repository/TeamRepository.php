@@ -9,9 +9,10 @@ use App\Models\Competition;
 use App\Models\GroupDivision;
 use App\Models\Player;
 use App\Models\Team;
+use App\Repository\Interface\TeamRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 
-class TeamRepository
+class TeamRepository implements TeamRepositoryInterface
 {
     protected Team $team;
     public function __construct(Team $team)
