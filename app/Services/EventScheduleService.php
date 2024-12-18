@@ -469,7 +469,7 @@ class EventScheduleService extends Service
     public function createTraining(Coach $coach = null)
     {
         if ($coach){
-            $teams = $this->teamRepository->getCoachManagedTeams($coach);
+            $teams = $coach->teams;
         } else {
             $teams = $this->teamRepository->getByTeamside('Academy Team');
         }
