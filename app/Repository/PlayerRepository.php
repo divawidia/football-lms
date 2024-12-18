@@ -9,10 +9,11 @@ use App\Models\EventSchedule;
 use App\Models\Player;
 use App\Models\Team;
 use App\Models\TrainingVideo;
+use App\Repository\Interface\PlayerRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
-class PlayerRepository
+class PlayerRepository implements PlayerRepositoryInterface
 {
     protected Player $player;
     public function __construct(Player $player)
