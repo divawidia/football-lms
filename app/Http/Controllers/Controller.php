@@ -62,6 +62,11 @@ class Controller extends BaseController
         return $user->firstName . ' ' . $user->lastName;
     }
 
+    public function getLoggedUserFullName(): string
+    {
+        return $this->getUserFullName($this->getLoggedUser());
+    }
+
     public function successAlertAddUser(array $data, string $context)
     {
         $text = $data['firstName'].' '.$data['lastName'].' successfully '.$context.'!';
