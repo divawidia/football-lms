@@ -30,7 +30,10 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        return view('pages.managements.players.index');
+        return view('pages.managements.players.index', [
+            'teams' => $this->playerService->getAcademyTeams(),
+            'positions' => $this->playerService->getPlayerPosition()
+        ]);
     }
     public function adminIndex()
     {
