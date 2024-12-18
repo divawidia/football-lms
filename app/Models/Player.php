@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -80,7 +81,11 @@ class Player extends Model
     public function scopeWithTeams($query, $teams)
     {
         // Extract all team IDs from the $teams array
-        $teamIds = collect($teams)->pluck('id')->all();
+        if ($teams instanceof Collection) {
+            $teamIds = collect($teams)->pluck('id')->all();
+        } else {
+            $teamIds[] = $teams;
+        }
 
         return $query->whereHas('teams', function ($q) use ($teamIds) {
             $q->whereIn('teamId', $teamIds);

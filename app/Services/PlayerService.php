@@ -109,19 +109,21 @@ class PlayerService extends Service
             ->addIndexColumn()
             ->make();
     }
-    public function index(): JsonResponse
+    public function index($position, $skill, $team, $status): JsonResponse
     {
-        $query = $this->playerRepository->getAll();
+        $query = $this->playerRepository->getAll($team, $position, $skill, $status);
         return $this->makePlayerDatatables($query);
     }
 
     // retrieve player data based on coach managed teams
-    public function coachPlayerIndex($coach): JsonResponse
+    public function coachPlayerIndex($coach, $position, $skill, $status, $teams = null): JsonResponse
     {
-        $teams = $coach->teams;
+        if ($teams == null) {
+            $teams = $coach->teams;
+        }
 
         // query player data that included in teams that managed by logged in coach
-        $query = $this->playerRepository->getPLayersByTeams($teams);
+        $query = $this->playerRepository->getAll($teams, $position, $skill, $status);
         return $this->makePlayerDatatables($query);
     }
 

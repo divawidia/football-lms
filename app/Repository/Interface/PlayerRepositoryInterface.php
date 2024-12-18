@@ -11,7 +11,7 @@ use App\Models\User;
 interface PlayerRepositoryInterface
 {
 
-    public function getAll();
+    public function getAll($teams = null, $position = null, $skill = null, $status = null);
 
     /**
      * Get players by teams
@@ -19,7 +19,7 @@ interface PlayerRepositoryInterface
      * @param mixed $teams
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getPLayersByTeams($teams);
+    public function getPLayersByTeams($teams, $position = null, $skill = null, $team = null, $status = null);
 
     /**
      * Get players by array of player IDs

@@ -10,7 +10,6 @@ use App\Http\Requests\UpdatePlayerRequest;
 use App\Models\Player;
 use App\Models\Team;
 use App\Services\PlayerService;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -30,18 +29,34 @@ class PlayerController extends Controller
      */
     public function index()
     {
+        if (isAllAdmin()) {
+            $teams = $this->playerService->getAcademyTeams();
+        } elseif ($this->isCoach()) {
+            $teams = $this->getLoggedCoachUser()->teams;
+        }
+
         return view('pages.managements.players.index', [
-            'teams' => $this->playerService->getAcademyTeams(),
+            'teams' => $teams,
             'positions' => $this->playerService->getPlayerPosition()
         ]);
     }
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
-        return $this->playerService->index();
+        $position = $request->input('position');
+        $skill = $request->input('skill');
+        $team = $request->input('team');
+        $status = $request->input('status');
+
+        return $this->playerService->index($position, $skill, $team, $status);
     }
-    public function coachIndex()
+    public function coachIndex(Request $request)
     {
-        return $this->playerService->coachPlayerIndex($this->getLoggedCoachUser());
+        $position = $request->input('position');
+        $skill = $request->input('skill');
+        $team = $request->input('team');
+        $status = $request->input('status');
+
+        return $this->playerService->coachPlayerIndex($this->getLoggedCoachUser(), $position, $skill, $status, $team);
     }
 
     public function playerTeams(Player $player)

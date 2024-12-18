@@ -21,14 +21,40 @@ class PlayerRepository implements PlayerRepositoryInterface
         $this->player = $player;
     }
 
-    public function getAll()
+    public function getAll($teams = null, $position = null, $skill = null, $status = null)
     {
-        return $this->player->with('user', 'teams')->get();
+        $query = $this->player->with('user', 'teams', 'position', 'playerSkillStats');
+        if ($teams) {
+            $query->withTeams($teams);
+        }
+        if ($position) {
+            $query->where('positionId', $position);
+        }
+        if ($skill) {
+            $query->where('skill', $skill);
+        }
+        if ($status != null) {
+            $query->whereRelation('user','status', $status);
+        }
+        return $query->get();
     }
 
-    public function getPLayersByTeams($teams)
+    public function getPLayersByTeams($teams, $position = null, $skill = null, $team = null, $status = null)
     {
-        return $this->player->with('user', 'teams', 'position', 'playerSkillStats')->withTeams($teams)->get();
+        $query = $this->player->with('user', 'teams', 'position', 'playerSkillStats')->withTeams($teams);
+        if ($position) {
+            $query->where('positionId', $position);
+        }
+        if ($skill) {
+            $query->where('skill', $skill);
+        }
+        if ($team) {
+            $query->whereRelation('teams', 'teamId', $team);
+        }
+        if ($status != null) {
+            $query->whereRelation('user','status', $status);
+        }
+        return $query->get();
     }
 
     public function getInArray($playerIds)
