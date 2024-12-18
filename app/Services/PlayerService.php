@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Admin;
 use App\Models\Player;
 use App\Models\PlayerParrent;
@@ -32,13 +33,15 @@ class PlayerService extends Service
     private EventScheduleRepository $eventScheduleRepository;
     private PlayerPositionRepository $playerPositionRepository;
     private UserRepository $userRepository;
+    private DatatablesHelper $datatablesHelper;
     public function __construct(
         EventScheduleService $eventScheduleService,
         PlayerRepositoryInterface $playerRepository,
         EventScheduleRepository $eventScheduleRepository,
         TeamRepository $teamRepository,
         PlayerPositionRepository $playerPositionRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        DatatablesHelper $datatablesHelper
     )
     {
         $this->eventScheduleService = $eventScheduleService;
@@ -47,6 +50,7 @@ class PlayerService extends Service
         $this->teamRepository = $teamRepository;
         $this->playerPositionRepository = $playerPositionRepository;
         $this->userRepository = $userRepository;
+        $this->datatablesHelper = $datatablesHelper;
     }
 
     public function makePlayerDatatables($data)
@@ -84,12 +88,7 @@ class PlayerService extends Service
                           </div>
                         </div>';
                 } elseif (isCoach()){
-                    $actionBtn = '
-                      <a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->hash) . '" data-toggle="tooltips" data-placement="bottom" title="View Player">
-                        <span class="material-icons">
-                            visibility
-                        </span>
-                      </a>';
+                    $actionBtn = $this->datatablesHelper->buttonTooltips(route('player-managements.show', $item->hash), "View Player", "visibility");
                 }
                 return $actionBtn;
             })
