@@ -14,6 +14,7 @@ use App\Notifications\PlayerManagements\PlayerAccountUpdated;
 use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Repository\EventScheduleRepository;
 use App\Repository\Interface\PlayerRepositoryInterface;
+use App\Repository\Interface\TeamRepositoryInterface;
 use App\Repository\PlayerPositionRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
@@ -29,7 +30,7 @@ class PlayerService extends Service
 {
     private EventScheduleService $eventScheduleService;
     private PlayerRepositoryInterface $playerRepository;
-    private TeamRepository $teamRepository;
+    private TeamRepositoryInterface $teamRepository;
     private EventScheduleRepository $eventScheduleRepository;
     private PlayerPositionRepository $playerPositionRepository;
     private UserRepository $userRepository;
@@ -38,7 +39,7 @@ class PlayerService extends Service
         EventScheduleService $eventScheduleService,
         PlayerRepositoryInterface $playerRepository,
         EventScheduleRepository $eventScheduleRepository,
-        TeamRepository $teamRepository,
+        TeamRepositoryInterface $teamRepository,
         PlayerPositionRepository $playerPositionRepository,
         UserRepository $userRepository,
         DatatablesHelper $datatablesHelper
@@ -122,6 +123,11 @@ class PlayerService extends Service
         // query player data that included in teams that managed by logged in coach
         $query = $this->playerRepository->getPLayersByTeams($teams);
         return $this->makePlayerDatatables($query);
+    }
+
+    public function getAllAcademyTeams()
+    {
+        return $this->teamRepository->getByTeamside('Academy Teams');
     }
 
     public function playerTeams(Player $player): JsonResponse
