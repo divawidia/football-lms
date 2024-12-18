@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AcademyRequest;
 use App\Models\Academy;
+use App\Models\Admin;
 use App\Notifications\AcademyProfileUpdated;
 use App\Repository\Interface\UserRepositoryInterface;
 use App\Repository\UserRepository;
@@ -14,18 +15,16 @@ use RealRashid\SweetAlert\Facades\Alert;
 class AcademyController extends Controller
 {
     private AcademyService $academyService;
-    private UserRepositoryInterface $userRepository;
-    public function __construct(AcademyService $academyService, UserRepositoryInterface $userRepository)
+    public function __construct(AcademyService $academyService)
     {
         $this->academyService = $academyService;
-        $this->userRepository = $userRepository;
+        $this->academy = Academy::first();
     }
 
     public function edit()
     {
-        $data = Academy::first();
         return view('pages.academy-profile.edit', [
-            'data' => $data,
+            'data' => $this->academy,
             'countries' => $this->academyService->getCountryData()
         ]);
     }
@@ -33,24 +32,10 @@ class AcademyController extends Controller
     public function update(AcademyRequest $request)
     {
         $data = $request->validated();
-        $academy = Academy::first();
 
-        $this->academyService->update($data, $academy);
-
-        $this->sendNotification();
+        $this->academyService->update($data, $this->academy, $this->getLoggedUserFullName());
 
         Alert::success('Academy successfully updated!');
         return redirect()->route('admin.dashboard');
-    }
-
-    /**
-     * Send notifications to all admin users about the academy profile update.
-     */
-    private function sendNotification(): void
-    {
-        $adminName = $this->getLoggedUserFullName();
-        $admins = $this->userRepository->getAllAdminUsers();
-
-        Notification::send($admins, new AcademyProfileUpdated($adminName));
     }
 }
