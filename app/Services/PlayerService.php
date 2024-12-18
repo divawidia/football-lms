@@ -130,11 +130,6 @@ class PlayerService extends Service
         return $this->teamRepository->getByTeamside('Academy Teams');
     }
 
-    public function getAllPlayerPositions()
-    {
-        return $this->playerPositionRepository->getAll();
-    }
-
     public function playerTeams(Player $player): JsonResponse
     {
         return Datatables::of($player->teams)
