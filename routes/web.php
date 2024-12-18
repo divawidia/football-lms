@@ -67,10 +67,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('', [UserController::class, 'resetPassword'])->name('reset-password.edit');
         Route::put('', [UserController::class, 'updatePassword'])->name('reset-password.update');
     });
-    Route::prefix('edit-academy')->group(function () {
-        Route::get('', [AcademyController::class, 'edit'])->name('edit-academy.edit');
-        Route::put('', [AcademyController::class, 'update'])->name('edit-academy.update');
-    });
+
     Route::patch('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::get('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
@@ -99,6 +96,11 @@ Route::group(['middleware' => ['auth']], function () {
 
             Route::prefix('admin-dashboard')->group(function () {
                 Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
+            });
+
+            Route::prefix('edit-academy')->group(function () {
+                Route::get('', [AcademyController::class, 'edit'])->name('edit-academy.edit');
+                Route::put('', [AcademyController::class, 'update'])->name('edit-academy.update');
             });
 
             Route::prefix('admin-managements')->group(function () {

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Player>
  */
-class PlayerFactory extends Factory
+class PlayerPositionFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,13 +19,8 @@ class PlayerFactory extends Factory
     public function definition(): array
     {
         return [
-            'userId' => User::factory(),
-            'positionId' => PlayerPosition::factory(),
-            'skill' => 'Beginner',
-            'strongFoot' => 'left',
-            'height' => fake()->numberBetween(150,170),
-            'weight' => fake()->numberBetween(40,70),
-            'joinDate' => fake()->date,
+            'name' => 'Centre Forward (CF)',
+            'category' => 'Forward',
         ];
     }
 }

@@ -11,7 +11,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
-class AdminControllerTest extends TestCase
+class AdminManagementTest extends TestCase
 {
     /**
      * A basic feature test example.
@@ -52,9 +52,7 @@ class AdminControllerTest extends TestCase
 
         $this->actingAs($this->superAdminUser);
 
-        $userData = User::factory()->make(
-
-        )->toArray();
+        $userData = User::factory()->make()->toArray();
         $adminData = Admin::factory()->make()->toArray();
         $data = array_merge($userData, $adminData);
         $data['password'] = 'Password123!';
