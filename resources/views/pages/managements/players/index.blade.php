@@ -36,6 +36,49 @@
                 Add New Player
             </a>
         @endif
+
+            <div class="card card-form d-flex flex-column flex-sm-row">
+                <div class="card-form__body card-body-form-group flex">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group mb-0 mb-lg-4">
+                                <label class="form-label mb-0" for="startDateFilter">Filter by Position</label>
+                                <input id="startDateFilter"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="Start Date"
+                                       onfocus="(this.type='date')"
+                                       onblur="(this.type='text')"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label class="form-label mb-0" for="endDateFilter">Filter by Skills</label>
+                                <input id="endDateFilter"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="End Date"
+                                       onfocus="(this.type='date')"
+                                       onblur="(this.type='text')"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label class="form-label mb-0" for="team">Filter by team</label>
+                                <select class="form-control form-select" id="team" data-toggle="select">
+                                    <option selected disabled>Select team</option>
+                                    @foreach($teams as $team)
+                                        <option value="{{ $team->id }}" data-avatar-src="{{ Storage::url($team->logo) }}">{{ $team->teamName }}</option>
+                                    @endforeach
+                                    <option value="{{ null }}">All teams</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn bg-alt border-left border-top border-top-sm-0 rounded-0" type="button" id="filterBtn"><i class="material-icons text-primary icon-20pt">refresh</i></button>
+            </div>
+
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
