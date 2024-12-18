@@ -41,36 +41,48 @@
                 <div class="card-form__body card-body-form-group flex">
                     <div class="row">
                         <div class="col-lg-3">
-                            <div class="form-group mb-0 mb-lg-4">
-                                <label class="form-label mb-0" for="startDateFilter">Filter by Position</label>
-                                <input id="startDateFilter"
-                                       type="text"
-                                       class="form-control"
-                                       placeholder="Start Date"
-                                       onfocus="(this.type='date')"
-                                       onblur="(this.type='text')"/>
+                            <div class="form-group mb-0 mb-lg-3">
+                                <label class="form-label mb-0" for="position">Filter by Position</label>
+                                <select class="form-control form-select" id="position" data-toggle="select">
+                                    <option selected disabled>Select player's position</option>
+                                    @foreach($positions as $position)
+                                        <option value="{{ $position->id }}">{{ $position->name }}</option>
+                                    @endforeach
+                                    <option value="{{ null }}">All teams</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <div class="form-group">
-                                <label class="form-label mb-0" for="endDateFilter">Filter by Skills</label>
-                                <input id="endDateFilter"
-                                       type="text"
-                                       class="form-control"
-                                       placeholder="End Date"
-                                       onfocus="(this.type='date')"
-                                       onblur="(this.type='text')"/>
+                                <label class="form-label mb-0" for="skill">Filter by Skills</label>
+                                <select class="form-control form-select" id="skill" data-toggle="select">
+                                    <option selected disabled>Select player's skill level</option>
+                                    @foreach(['Beginner', 'Intermediate', 'Advance'] as $skills)
+                                        <option value="{{ $skills }}">{{ $skills }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <div class="form-group">
                                 <label class="form-label mb-0" for="team">Filter by team</label>
                                 <select class="form-control form-select" id="team" data-toggle="select">
-                                    <option selected disabled>Select team</option>
+                                    <option selected disabled>Select player's team</option>
                                     @foreach($teams as $team)
                                         <option value="{{ $team->id }}" data-avatar-src="{{ Storage::url($team->logo) }}">{{ $team->teamName }}</option>
                                     @endforeach
                                     <option value="{{ null }}">All teams</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label class="form-label mb-0" for="status">Filter by status</label>
+                                <select class="form-control form-select" id="status" data-toggle="select">
+                                    <option selected disabled>Select player's status</option>
+                                    @foreach(['Active' => '1', 'Non-active' => '0', 'All Status' => null] as $statusLabel => $statusVal)
+                                        <option value="{{ $statusVal }}">{{ $statusLabel }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -104,56 +116,85 @@
         </div>
     </div>
 
-    @if(isAllAdmin())
-        <x-process-data-confirmation btnClass=".setDeactivate"
-                                     :processRoute="route('deactivate-player', ':id')"
-                                     :routeAfterProcess="route('player-managements.index')"
-                                     method="PATCH"
-                                     confirmationText="Are you sure to deactivate this player account's status?"
-                                     errorText="Something went wrong when deactivating this player account!"/>
-
-        <x-process-data-confirmation btnClass=".setActivate"
-                                     :processRoute="route('activate-player', ':id')"
-                                     :routeAfterProcess="route('player-managements.index')"
-                                     method="PATCH"
-                                     confirmationText="Are you sure to activate this player account's status?"
-                                     errorText="Something went wrong when activating this player account!"/>
-
-        <x-process-data-confirmation btnClass=".delete-user"
-                                     :processRoute="route('player-managements.destroy', ['player' => ':id'])"
-                                     :routeAfterProcess="route('player-managements.index')"
-                                     method="DELETE"
-                                     confirmationText="Are you sure to delete this player account?"
-                                     errorText="Something went wrong when deleting this player account!"/>
-    @endif
 @endsection
 @push('addon-script')
-    <script>
+    <script type="module">
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
         $(document).ready(function () {
-            const body = $('body');
             const playerIndexUrl = @if(isAllAdmin()) '{!! url()->route('admin.player-managements.index') !!}' @elseif(isCoach()) '{!! url()->route('coach.player-managements.index') !!}' @endif
 
-            const datatable = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: playerIndexUrl
-                },
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'name', name: 'name'},
-                    {data: 'teams.name', name: 'teams.name'},
-                    {data: 'user.email', name: 'user.email'},
-                    {data: 'user.phoneNumber', name: 'user.phoneNumber'},
-                    {data: 'age', name: 'age'},
-                    {data: 'user.gender', name: 'user.gender'},
-                    {data: 'status', name: 'status'},
-                    {
-                        data: 'action', name: 'action', orderable: false, searchable: false, width: '15%'
+            function playersTable(position = null, skill = null, team = null, status = null) {
+                $('#table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    ajax: {
+                        url: playerIndexUrl,
+                        type: "GET",
+                        data: {
+                            position: position,
+                            skill: skill,
+                            team: team,
+                            status: status
+                        }
                     },
-                ]
+                    columns: [
+                        {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                        {data: 'name', name: 'name'},
+                        {data: 'teams.name', name: 'teams.name'},
+                        {data: 'user.email', name: 'user.email'},
+                        {data: 'user.phoneNumber', name: 'user.phoneNumber'},
+                        {data: 'age', name: 'age'},
+                        {data: 'user.gender', name: 'user.gender'},
+                        {data: 'status', name: 'status'},
+                        {
+                            data: 'action', name: 'action', orderable: false, searchable: false, width: '15%'
+                        },
+                    ]
+                });
+            }
+
+            $('#filterBtn').on('click', function () {
+                const position = $('#position').val();
+                const skill = $('#skill').val();
+                const team = $('#team').val();
+                const status = $('#status').val();
+                playersTable(position, skill, team, status);
             });
+
+            playersTable();
+
+            @if(isAllAdmin())
+            processWithConfirmation(
+                '.setDeactivate',
+                "{{ route('deactivate-player', ':id') }}",
+                "{{ route('player-managements.index') }}",
+                'PATCH',
+                "Are you sure to deactivate this player account's status?",
+                "Something went wrong when deactivating this player account!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.setActivate',
+                "{{ route('activate-player', ':id') }}",
+                "{{ route('player-managements.index') }}",
+                'PATCH',
+                "Are you sure to activate this player account's status?",
+                "Something went wrong when activating this player account!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.delete-user',
+                "{{ route('player-managements.destroy', ['player' => ':id']) }}",
+                "{{ route('player-managements.index') }}",
+                'DELETE',
+                "Are you sure to delete this player account?",
+                "Something went wrong when deleting this player account!",
+                "{{ csrf_token() }}"
+            );
+            @endif
         });
     </script>
 @endpush
