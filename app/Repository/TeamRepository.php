@@ -76,10 +76,6 @@ class TeamRepository
         }
     }
 
-    public function getCoachManagedTeams(Coach $coach){
-        return $coach->teams;
-    }
-
     public function getJoinedCompetition(Competition $competition)
     {
         $teams = [];
