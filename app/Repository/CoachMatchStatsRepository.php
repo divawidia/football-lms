@@ -3,10 +3,7 @@
 namespace App\Repository;
 
 use App\Models\Coach;
-use App\Models\CoachCertification;
 use App\Models\CoachMatchStat;
-use App\Models\CoachSpecialization;
-use App\Models\Team;
 use Carbon\Carbon;
 
 class CoachMatchStatsRepository
@@ -119,53 +116,5 @@ class CoachMatchStatsRepository
             ->where('resultStatus', 'Draw')
             ->whereBetween('created_at',[Carbon::now()->startOfMonth(),Carbon::now()])
             ->count();
-    }
-
-
-    public function find($id)
-    {
-        return $this->coach->findOrFail($id);
-    }
-
-    public function create(array $data)
-    {
-        $coach = $this->coach->create($data);
-        if (array_key_exists('team',$data)){
-            $coach->teams()->attach($data['team']);
-        }
-        return $coach;
-    }
-
-    public function update(Coach $coach, array $data)
-    {
-        $coach->update($data);
-        $coach->user->update($data);
-        return $coach;
-    }
-
-    public function activate(Coach $coach)
-    {
-        return $coach->user()->update(['status' => '1']);
-    }
-
-    public function deactivate(Coach $coach)
-    {
-        return $coach->user()->update(['status' => '0']);
-    }
-
-    public function changePassword(array $data, Coach $coach)
-    {
-        return $coach->user()->update([
-                'password' => bcrypt($data['password'])
-            ]);
-    }
-
-
-    public function delete(Coach $coach)
-    {
-        $coach->delete();
-        $coach->user->roles()->detach();
-        $coach->user()->delete();
-        return $coach;
     }
 }
