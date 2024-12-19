@@ -88,9 +88,11 @@ class UserRepository implements UserRepositoryInterface
         ]);
     }
 
-    public function update(array $data)
+    public function update($userModel, array $data)
     {
-        return $this->user->update($data);
+        $userModel->update($data);
+        $userModel->user->update($data);
+        return $userModel;
     }
 
     public function delete($userModel)

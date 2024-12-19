@@ -27,7 +27,7 @@ interface UserRepositoryInterface
 
     public function changePassword($data, $userModel);
 
-    public function update(array $data);
+    public function update($userModel, array $data);
 
     public function delete($userModel);
 }
