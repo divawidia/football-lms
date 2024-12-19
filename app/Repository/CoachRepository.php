@@ -25,10 +25,7 @@ class CoachRepository
     {
         return $this->coach->with('user', 'teams')->get();
     }
-    public function getInArray($coachIds)
-    {
-        return $this->coach->whereIn('id', $coachIds)->get();
-    }
+
     public function getCoachNotJoinSpecificTeam(Team $team)
     {
         return $this->coach->with('user')
@@ -37,6 +34,7 @@ class CoachRepository
             })
             ->get();
     }
+
     public function getAllCoachSpecialization()
     {
         return $this->coachSpecialization->all();
@@ -46,49 +44,12 @@ class CoachRepository
         return $this->coachCertification->all();
     }
 
-    public function find($id)
-    {
-        return $this->coach->findOrFail($id);
-    }
-
     public function create(array $data)
     {
         $coach = $this->coach->create($data);
         if (array_key_exists('team',$data)){
             $coach->teams()->attach($data['team']);
         }
-        return $coach;
-    }
-
-    public function update(Coach $coach, array $data)
-    {
-        $coach->update($data);
-        $coach->user->update($data);
-        return $coach;
-    }
-
-    public function activate(Coach $coach)
-    {
-        return $coach->user()->update(['status' => '1']);
-    }
-
-    public function deactivate(Coach $coach)
-    {
-        return $coach->user()->update(['status' => '0']);
-    }
-
-    public function changePassword(array $data, Coach $coach)
-    {
-        return $coach->user()->update([
-                'password' => bcrypt($data['password'])
-            ]);
-    }
-
-    public function delete(Coach $coach)
-    {
-        $coach->delete();
-        $coach->user->roles()->detach();
-        $coach->user()->delete();
         return $coach;
     }
 }
