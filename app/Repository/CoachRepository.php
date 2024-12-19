@@ -6,9 +6,10 @@ use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
 use App\Models\Team;
+use App\Repository\Interface\CoachRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 
-class CoachRepository
+class CoachRepository implements CoachRepositoryInterface
 {
     protected Coach $coach;
     protected CoachSpecialization $coachSpecialization;
