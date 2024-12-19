@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Repository\AdminRepository;
+use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
 use App\Repository\Interface\AdminRepositoryInterface;
+use App\Repository\Interface\CoachMatchStatsRepositoryInterface;
 use App\Repository\Interface\CoachRepositoryInterface;
 use App\Repository\Interface\PlayerRepositoryInterface;
 use App\Repository\Interface\TeamRepositoryInterface;
@@ -26,6 +28,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(PlayerRepositoryInterface::class, PlayerRepository::class);
         $this->app->bind(TeamRepositoryInterface::class, TeamRepository::class);
         $this->app->bind(CoachRepositoryInterface::class, CoachRepository::class);
+        $this->app->bind(CoachMatchStatsRepositoryInterface::class, CoachMatchStatsRepository::class);
     }
 
     /**

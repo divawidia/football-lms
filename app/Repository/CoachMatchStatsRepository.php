@@ -4,9 +4,10 @@ namespace App\Repository;
 
 use App\Models\Coach;
 use App\Models\CoachMatchStat;
+use App\Repository\Interface\CoachMatchStatsRepositoryInterface;
 use Carbon\Carbon;
 
-class CoachMatchStatsRepository
+class CoachMatchStatsRepository implements CoachMatchStatsRepositoryInterface
 {
     protected Coach $coach;
     protected CoachMatchStat $coachMatchStat;
