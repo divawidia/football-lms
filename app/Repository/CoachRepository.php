@@ -22,9 +22,22 @@ class CoachRepository implements CoachRepositoryInterface
         $this->coachCertification = $coachCertification;
     }
 
-    public function getAll()
+    public function getAll($certification = null, $specializations = null, $team = null, $status = null)
     {
-        return $this->coach->with('user', 'teams')->get();
+        $query = $this->coach->with('user', 'teams');
+        if ($team) {
+            $query->whereRelation('teams', 'teamId', $team);
+        }
+        if ($certification) {
+            $query->where('certificationLevel', $certification);
+        }
+        if ($specializations) {
+            $query->where('specialization', $specializations);
+        }
+        if ($status != null) {
+            $query->whereRelation('user','status', $status);
+        }
+        return $query->get();
     }
 
     public function getCoachNotJoinSpecificTeam(Team $team)

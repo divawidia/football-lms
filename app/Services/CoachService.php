@@ -11,12 +11,15 @@ use App\Notifications\PlayerCoachAddToTeam;
 use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
+use App\Repository\Interface\CoachMatchStatsRepositoryInterface;
 use App\Repository\Interface\CoachRepositoryInterface;
 use App\Repository\Interface\TeamRepositoryInterface;
 use App\Repository\Interface\UserRepositoryInterface;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -25,21 +28,21 @@ class CoachService extends Service
     private CoachRepositoryInterface $coachRepository;
     private TeamRepositoryInterface $teamRepository;
     private UserRepositoryInterface $userRepository;
-    private CoachMatchStatsRepository $coachMatchStatsRepository;
-    private DatatablesHelper $datatablesService;
+    private CoachMatchStatsRepositoryInterface $coachMatchStatsRepository;
+    private DatatablesHelper $datatablesHelper;
 
-    public function __construct(CoachRepositoryInterface $coachRepository, TeamRepositoryInterface $teamRepository, UserRepositoryInterface $userRepository, CoachMatchStatsRepository $coachMatchStatsRepository, DatatablesHelper $datatablesService)
+    public function __construct(CoachRepositoryInterface $coachRepository, TeamRepositoryInterface $teamRepository, UserRepositoryInterface $userRepository, CoachMatchStatsRepositoryInterface $coachMatchStatsRepository, DatatablesHelper $datatablesHelper)
     {
         $this->coachRepository = $coachRepository;
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
         $this->coachMatchStatsRepository = $coachMatchStatsRepository;
-        $this->datatablesService = $datatablesService;
+        $this->datatablesHelper = $datatablesHelper;
     }
 
-    public function index(): JsonResponse
+    public function index($certification, $specializations, $team, $status): JsonResponse
     {
-        $query = $this->coachRepository->getAll();
+        $query = $this->coachRepository->getAll($certification, $specializations, $team, $status);
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if ($item->user->status == '1') {
@@ -72,21 +75,13 @@ class CoachService extends Service
                             </div>';
             })
             ->editColumn('teams', function ($item) {
-                $playerTeam = '';
-                if(count($item->teams) === 0){
-                    $playerTeam = 'No Team';
-                }else{
-                    foreach ($item->teams as $team){
-                        $playerTeam .= '<span class="badge badge-pill badge-danger">'.$team->teamName.'</span>';
-                    }
-                }
-                return $playerTeam;
+                return $this->datatablesHelper->usersTeams($item);
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name. ' - '.$item->certification->name, route('coach-managements.show', $item->hash));
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name. ' - '.$item->certification->name, route('coach-managements.show', $item->hash));
             })
             ->editColumn('status', function ($item){
-                return $this->datatablesService->activeNonactiveStatus($item->user->status);
+                return $this->datatablesHelper->activeNonactiveStatus($item->user->status);
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
@@ -116,7 +111,7 @@ class CoachService extends Service
                         </div>';
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->logo, $item->teamName, $item->division, route('team-managements.show', $item->hash));
+                return $this->datatablesHelper->name($item->logo, $item->teamName, $item->division, route('team-managements.show', $item->hash));
             })
             ->editColumn('date', function ($item){
                 return $this->convertToDate($item->pivot->created_at);
@@ -140,13 +135,17 @@ class CoachService extends Service
         return $coach;
     }
 
-    public function create()
+    public function getCoachCert()
     {
-        $certifications = $this->coachRepository->getAllCoachCertification();
-        $specializations = $this->coachRepository->getAllCoachSpecialization();
-        $teams = $this->teamRepository->getByTeamside('Academy Team');
-
-        return compact('certifications', 'specializations', 'teams');
+        return $this->coachRepository->getAllCoachCertification();
+    }
+    public function getCoachSpecializations()
+    {
+        return $this->coachRepository->getAllCoachSpecialization();
+    }
+    public function getTeams()
+    {
+        return $this->teamRepository->getByTeamside('Academy Team');
     }
 
     public  function store(array $data, $academyId, $loggedUser){
@@ -160,8 +159,13 @@ class CoachService extends Service
         $data['userId'] = $user->id;
         $coach = $this->coachRepository->create($data);
 
-        $superAdminName = $this->getUserFullName($loggedUser);
-        Notification::send($this->userRepository->getAllAdminUsers(),new CoachAccountCreatedDeleted($superAdminName, $coach, 'created'));
+        try {
+            $superAdminName = $this->getUserFullName($loggedUser);
+            Notification::send($this->userRepository->getAllAdminUsers(),new CoachAccountCreatedDeleted($superAdminName, $coach, 'created'));
+        } catch (Exception $exception) {
+            Log::error($exception->getMessage());
+        }
+
         return $coach;
     }
     public function show(Coach $coach)

@@ -14,6 +14,7 @@ use App\Services\CoachService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use function Symfony\Component\String\s;
 
 class CoachController extends Controller
 {
@@ -29,9 +30,18 @@ class CoachController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            return $this->coachService->index();
+            $certification = request()->input('certification');
+            $specializations = request()->input('specializations');
+            $team = request()->input('team');
+            $status = request()->input('status');
+
+            return $this->coachService->index($certification, $specializations, $team, $status);
         }
-        return view('pages.managements.coaches.index');
+        return view('pages.managements.coaches.index', [
+            'certifications' => $this->coachService->getCoachCert(),
+            'specializations' => $this->coachService->getCoachSpecializations(),
+            'teams' => $this->coachService->getTeams(),
+        ]);
     }
 
     public function coachTeams(Coach $coach): JsonResponse
@@ -59,12 +69,11 @@ class CoachController extends Controller
      */
     public function create()
     {
-        $data = $this->coachService->create();
         return view('pages.managements.coaches.create', [
             'countries' => $this->coachService->getCountryData(),
-            'certifications' => $data['certifications'],
-            'specializations' => $data['specializations'],
-            'teams' => $data['teams'],
+            'certifications' => $this->coachService->getCoachCert(),
+            'specializations' => $this->coachService->getCoachSpecializations(),
+            'teams' => $this->coachService->getTeams(),
         ]);
     }
 

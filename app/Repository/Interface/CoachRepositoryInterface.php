@@ -12,7 +12,7 @@ interface CoachRepositoryInterface
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAll();
+    public function getAll($certification = null, $specializations = null, $team = null, $status = null);
 
     /**
      * Get coaches not currently assigned to a specific team.
