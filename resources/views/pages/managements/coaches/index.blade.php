@@ -35,6 +35,59 @@
             </a>
         @endif
         <div class="card">
+            <div class="card card-form d-flex flex-column flex-sm-row">
+                <div class="card-form__body card-body-form-group flex">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group mb-0 mb-lg-3">
+                                <label class="form-label mb-0" for="position">Filter by Specialization</label>
+                                <select class="form-control form-select" id="position" data-toggle="select">
+                                    <option selected disabled>Select player's position</option>
+                                    @foreach($positions as $position)
+                                        <option value="{{ $position->id }}">{{ $position->name }}</option>
+                                    @endforeach
+                                    <option value="{{ null }}">All teams</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label class="form-label mb-0" for="skill">Filter by Certification</label>
+                                <select class="form-control form-select" id="skill" data-toggle="select">
+                                    <option selected disabled>Select player's skill level</option>
+                                    @foreach(['Beginner', 'Intermediate', 'Advance'] as $skills)
+                                        <option value="{{ $skills }}">{{ $skills }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label class="form-label mb-0" for="team">Filter by team</label>
+                                <select class="form-control form-select" id="team" data-toggle="select">
+                                    <option selected disabled>Select player's team</option>
+                                    @foreach($teams as $team)
+                                        <option value="{{ $team->id }}" data-avatar-src="{{ Storage::url($team->logo) }}">{{ $team->teamName }}</option>
+                                    @endforeach
+                                    <option value="{{ null }}">All teams</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label class="form-label mb-0" for="status">Filter by status</label>
+                                <select class="form-control form-select" id="status" data-toggle="select">
+                                    <option selected disabled>Select player's status</option>
+                                    @foreach(['Active' => '1', 'Non-active' => '0', 'All Status' => null] as $statusLabel => $statusVal)
+                                        <option value="{{ $statusVal }}">{{ $statusLabel }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn bg-alt border-left border-top border-top-sm-0 rounded-0" type="button" id="filterBtn"><i class="material-icons text-primary icon-20pt">refresh</i></button>
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="table">
