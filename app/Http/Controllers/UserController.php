@@ -27,7 +27,6 @@ class UserController extends Controller
 
     public function checkRoleRedirect()
     {
-        $route = '';
         if ($this->isAllAdmin()){
             $route = 'admin.dashboard';
         } elseif ($this->isCoach()){
@@ -40,13 +39,9 @@ class UserController extends Controller
 
     public function update(UserRequest $request)
     {
-        $user = $this->getLoggedUser();
-        $data = $request->validated();
-        $this->userService->update($data, $user);
+        $this->userService->update($request->validated(), $this->getLoggedUser());
 
-        $text = $this->getUserFullName($user)."'s account successfully updated!";
-        Alert::success($text);
-
+        Alert::success($this->getLoggedUserFullName()."'s accounts successfully updated!");
         return redirect()->route($this->checkRoleRedirect());
     }
 
@@ -58,13 +53,14 @@ class UserController extends Controller
     public function updatePassword(ResetPasswordRequest $request)
     {
         $user = $this->getLoggedUser();
-        $data = $request->validated();
-        if (!Hash::check($request->old_password, Auth::user()->password)) {
+
+        if (!Hash::check($request->old_password, $user->password)) {
             return back()->with('error', 'Current password is incorrect.');
         }
-        $this->userService->changePassword($data, $user);
-        $text = $this->getUserFullName($user)."'s accounts password successfully updated!";
-        Alert::success($text);
+
+        $this->userService->changePassword($request->validated(), $user);
+
+        Alert::success($this->getLoggedUserFullName()."'s accounts password successfully updated!");
         return redirect()->route($this->checkRoleRedirect());
     }
 }
