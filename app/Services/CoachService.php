@@ -11,6 +11,9 @@ use App\Notifications\PlayerCoachAddToTeam;
 use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
+use App\Repository\Interface\CoachRepositoryInterface;
+use App\Repository\Interface\TeamRepositoryInterface;
+use App\Repository\Interface\UserRepositoryInterface;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
@@ -19,13 +22,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CoachService extends Service
 {
-    private CoachRepository $coachRepository;
-    private TeamRepository $teamRepository;
-    private UserRepository $userRepository;
+    private CoachRepositoryInterface $coachRepository;
+    private TeamRepositoryInterface $teamRepository;
+    private UserRepositoryInterface $userRepository;
     private CoachMatchStatsRepository $coachMatchStatsRepository;
     private DatatablesHelper $datatablesService;
 
-    public function __construct(CoachRepository $coachRepository, TeamRepository $teamRepository, UserRepository $userRepository, CoachMatchStatsRepository $coachMatchStatsRepository, DatatablesHelper $datatablesService)
+    public function __construct(CoachRepositoryInterface $coachRepository, TeamRepositoryInterface $teamRepository, UserRepositoryInterface $userRepository, CoachMatchStatsRepository $coachMatchStatsRepository, DatatablesHelper $datatablesService)
     {
         $this->coachRepository = $coachRepository;
         $this->teamRepository = $teamRepository;
