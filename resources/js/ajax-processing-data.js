@@ -1,5 +1,12 @@
 const body = $('body');
 
+export function showModal(buttonId, modalId) {
+    $(buttonId).on('click', function (e) {
+        e.preventDefault();
+        $(modalId).modal('show');
+    });
+}
+
 export function ajaxProcessing(id, processRoute, method, csrfToken, routeAfterProcess = null, errorText){
     Swal.fire({
         title: 'Processing...',
