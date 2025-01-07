@@ -92,45 +92,52 @@ class CompetitionService extends Service
                               </div>
                             </div>';
             })
-            ->editColumn('divisions', function ($item) {
-                $divisions = '';
-                if (count($item->groups) == 0){
-                    $divisions = 'No division added in this competition';
-                }else{
-                    foreach ($item->groups as $group) {
-                        $divisions .= '<span class="badge badge-pill badge-danger">'.$group->groupName.'</span>';
-                    }
-                }
-                return $divisions;
-            })
-            ->editColumn('teams', function ($item) {
-                $teams = '';
-                foreach ($item->groups as $group){
-                    if (count($group->teams) > 0) {
-                        $team = $group->teams->where('teamSide', 'Academy Team')->first();
-                        $teams .= '<span class="badge badge-pill badge-danger">' . $team->teamName . '</span>';
-                    }
-                }
-                return $teams;
-            })
+//            ->editColumn('divisions', function ($item) {
+//                $divisions = '';
+//                if (count($item->groups) == 0){
+//                    $divisions = 'No division added in this competition';
+//                }else{
+//                    foreach ($item->groups as $group) {
+//                        $divisions .= '<span class="badge badge-pill badge-danger">'.$group->groupName.'</span>';
+//                    }
+//                }
+//                return $divisions;
+//            })
+//            ->editColumn('teams', function ($item) {
+//                $teams = '';
+//                foreach ($item->groups as $group){
+//                    if (count($group->teams) > 0) {
+//                        $team = $group->teams->where('teamSide', 'Academy Team')->first();
+//                        $teams .= '<span class="badge badge-pill badge-danger">' . $team->teamName . '</span>';
+//                    }
+//                }
+//                return $teams;
+//            })
             ->editColumn('name', function ($item) {
                 return $this->datatablesService->name($item->logo, $item->name, $item->type, route('competition-managements.show', $item->hash));
             })
             ->editColumn('date', function ($item) {
                 return $this->datatablesService->competitionStartEndDate($item);
             })
-            ->editColumn('contact', function ($item) {
-                if ($item->contactName != null && $item->contactPhone != null){
-                    $contact = $item->contactName. ' ~ '.$item->contactPhone;
+            ->editColumn('isInternal', function ($item) {
+                if ($item->isInternal == 1){
+                    return '<span class="badge badge-pill badge-primary">Internal</span>';
                 }else{
-                    $contact = 'No cantact added';
+                    return '<span class="badge badge-pill badge-warning">External</span>';
                 }
-                return $contact;
             })
+//            ->editColumn('contact', function ($item) {
+//                if ($item->contactName != null && $item->contactPhone != null){
+//                    $contact = $item->contactName. ' ~ '.$item->contactPhone;
+//                }else{
+//                    $contact = 'No cantact added';
+//                }
+//                return $contact;
+//            })
             ->editColumn('status', function ($item) {
                 return $this->datatablesService->eventStatus($item->status);
             })
-            ->rawColumns(['action', 'name', 'teams', 'divisions', 'date', 'contact', 'status'])
+            ->rawColumns(['action', 'name', 'isInternal', 'date', 'status'])
             ->make();
     }
 
@@ -209,6 +216,7 @@ class CompetitionService extends Service
     }
     public  function store(array $competitionData, $loggedUser)
     {
+        $competitionData['userId'] = $loggedUser->id;
         $competitionData['logo'] = $this->storeImage($competitionData, 'logo', 'assets/competition-logo', 'images/undefined-user.png');
         $competition = $this->competitionRepository->create($competitionData);
 
@@ -223,7 +231,7 @@ class CompetitionService extends Service
 
     public  function storeMatch(array $competitionData, Competition $competition, $loggedUser)
     {
-        $competitionData['matchType'] = 'Competition';
+//        $competitionData['matchType'] = 'Competition';
         $competitionData['competitionId'] = $competition->id;
         $this->eventScheduleService->storeMatch($competitionData, $loggedUser->id);
         return $competition;
