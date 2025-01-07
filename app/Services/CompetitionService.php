@@ -215,8 +215,8 @@ class CompetitionService extends Service
         $admins = $this->userRepository->getAllAdminUsers();
         Notification::send($admins, new CompetitionCreatedDeleted($loggedUser, $competition, 'created'));
 
-        $competitionData['competitionId'] = $competition->id;
-        $this->groupDivisionService->store($competitionData, $competition, $loggedUser);
+//        $competitionData['competitionId'] = $competition->id;
+//        $this->groupDivisionService->store($competitionData, $competition, $loggedUser);
 
         return $competition;
     }
