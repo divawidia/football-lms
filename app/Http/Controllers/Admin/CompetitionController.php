@@ -52,11 +52,11 @@ class CompetitionController extends Controller
     {
         $data = $request->validated();
 
-        $this->competitionService->store($data, $this->getLoggedUser());
+        $competition = $this->competitionService->store($data, $this->getLoggedUser());
 
-        $text = 'Competition '.$data['name'].' successfully added!';
+        $text = 'Competition '.$competition->name.' successfully added!';
         Alert::success($text);
-        return redirect()->route('competition-managements.index');
+        return redirect()->route('competition-managements.show', $competition->hash);
     }
 
     public function storeMatch(CompetitionMatchRequest $request, Competition $competition)
