@@ -13,7 +13,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
-                            <x-forms.image-input name="logo" label="Competition Logo" :modal="true"/>
+                            <x-forms.image-input name="logo" label="Team Logo" :modal="true"/>
                         </div>
                         <div class="col-lg-6">
                             <x-forms.basic-input type="text" name="teamName" label="Team Name" placeholder="Input team's name ..." :modal="true"/>
