@@ -110,6 +110,11 @@ class TeamService extends Service
         return $this->indexDatatables($query);
     }
 
+    public function allTeams($exceptTeamId = null)
+    {
+        return $this->teamRepository->getByTeamside('Academy Team', $exceptTeamId);
+    }
+
     public function coachTeamsIndex($coach)
     {
         return $this->indexDatatables($coach->teams);
