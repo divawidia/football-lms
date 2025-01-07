@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\Modal\Teams;
+namespace App\View\Components\modal\Teams;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class CreateOpponentTeam extends Component
+class CreateAcademyTeam extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class CreateOpponentTeam extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.teams.create-opponent-team');
+        return view('components.modal.teams.create-academy-team');
     }
 }
