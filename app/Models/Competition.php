@@ -18,9 +18,7 @@ class Competition extends Model
         'startDate',
         'endDate',
         'location',
-        'contactName',
-        'contactPhone',
-        'description',
+        'isInternal',
         'status',
     ];
 

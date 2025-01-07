@@ -26,25 +26,12 @@ class PermissionSeeder extends Seeder
 
         $faker = Factory::create('id_ID');
 
-        // create permissions
-        Permission::create(['name' => 'edit players']);
-        Permission::create(['name' => 'view players']);
-        Permission::create(['name' => 'delete players']);
-        Permission::create(['name' => 'create players']);
-
         // create roles and assign existing permissions
         $role1 = Role::create(['name' => 'player']);
-        $role1->givePermissionTo('edit players');
-        $role1->givePermissionTo('view players');
 
         $role2 = Role::create(['name' => 'admin']);
-        $role2->givePermissionTo('create players');
-        $role2->givePermissionTo('edit players');
-        $role2->givePermissionTo('view players');
-        $role2->givePermissionTo('delete players');
 
         $role4 = Role::create(['name' => 'coach']);
-        $role4->givePermissionTo('view players');
 
         $role3 = Role::create(['name' => 'Super-Admin']);
         // gets all permissions via Gate::before rule; see AuthServiceProvider

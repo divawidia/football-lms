@@ -60,12 +60,12 @@ class TeamService extends Service
                     if ($item->status == '1') {
                         $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
                                                 <span class="material-icons text-danger">check_circle</span>
-                                                Deactivate Admin
+                                                Deactivate Team
                                         </button>';
                     } else {
                         $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->id.'">
                                                 <span class="material-icons text-success">check_circle</span>
-                                                Activate Admin
+                                                Activate Team
                                         </button>';
                     }
                     $actionButton =  '
