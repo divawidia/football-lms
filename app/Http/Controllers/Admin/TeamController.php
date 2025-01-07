@@ -92,6 +92,13 @@ class TeamController extends Controller
         return $this->teamService->teamMatchHistories($team);
     }
 
+    public function allTeams(Request $request)
+    {
+        $exceptTeamId = $request->input('exceptTeamId');
+        $data = $this->teamService->allTeams($exceptTeamId);
+        return ApiResponse::success($data);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
