@@ -8,10 +8,10 @@
 
 @section('modal')
     <!-- Modal Create Opponent Team -->
-    <x-modal.teams.create-opponent-team/>
+{{--    <x-modal.teams.create-opponent-team/>--}}
 
     <!-- Modal Create Team -->
-    <x-modal.teams.create-academy-team/>
+{{--    <x-modal.teams.create-academy-team/>--}}
 @endsection
 
 @section('content')
