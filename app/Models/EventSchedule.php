@@ -52,6 +52,11 @@ class EventSchedule extends Model
             )->withTimestamps();
     }
 
+    public function externalTeams()
+    {
+        return $this->hasOne(ExternalTeamMatch::class, 'eventId');
+    }
+
     public function matches()
     {
         return $this->hasMany(TeamMatch::class, 'eventId');
