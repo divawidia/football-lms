@@ -512,7 +512,13 @@ class EventScheduleService extends Service
         $schedule =  $this->eventScheduleRepository->create($data);
 
         $schedule->teams()->attach($data['teamId']);
-        $schedule->teams()->attach($data['opponentTeamId']);
+        if ($data['matchType'] == 'Internal Match'){
+            $schedule->teams()->attach($data['opponentTeamId']);
+        } else {
+            $schedule->externalMatch()->create([
+                'teamName' => $data['externalTeamName'],
+            ]);
+        }
 
         $loggedUser = $this->userRepository->find($userId);
         $creatorUserName = $this->getUserFullName($loggedUser);
