@@ -1,7 +1,7 @@
-<div class="modal fade" id="addInternalTeamMatchModal" tabindex="-1" aria-labelledby="addInternalTeamMatchModalLabel" aria-hidden="true">
+<div class="modal fade" id="addInternalMatchModal" tabindex="-1" aria-labelledby="addInternalTeamMatchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form action="" method="post" id="formAddInternalTeamMatch">
+            <form action="" method="post" id="formAddInternalMatch">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Add Team's Match</h5>
@@ -35,24 +35,20 @@
     </div>
 </div>
 
-<x-modal-form-update-processing formId="#formAddOurTeamMatch"
-                                updateDataId=""
-                                :routeUpdate="route('competition-managements.store-match', $competition->id)"
-                                modalId="#addOurTeamMatchModal"/>
 @push('addon-script')
     <script type="module">
         import { processModalForm } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
         $(document).ready(function (){
-            const formId = '#formAddInternalTeamMatch';
+            const formId = '#formAddInternalMatch';
 
-            $('#addInternalTeamMatch').on('click', function(e) {
+            $('#addInternalMatchBtn').on('click', function(e) {
                 e.preventDefault();
 
                 $.ajax({
                     url: "{{ route('team-managements.all-teams') }}",
                     type: 'GET',
                     success: function(res) {
-                        $('#addInternalTeamMatchModal').modal('show');
+                        $('#addInternalMatchModal').modal('show');
 
                         $(formId+' #teamId').html('<option disabled selected>Select home team in this match</option>');
                         $.each(res.data, function (key, value) {
@@ -81,7 +77,7 @@
                     },
                     success: function (result) {
                         $(formId+' #opponentTeamId').html('<option disabled selected>Select away team in this match</option>');
-                        $.each(result.data.opponentTeams, function (key, value) {
+                        $.each(result.data, function (key, value) {
                             $(formId+' #opponentTeamId').append('<option value=' + value.id + ' data-avatar-src={{ Storage::url('') }}'+value.logo+'>' + value.teamName + '</option>');
                         });
                     }
@@ -90,7 +86,7 @@
 
             processModalForm(
                 '#formAddInternalTeamMatch',
-                "{{ route('opponentTeam-managements.apiStore') }}",
+                "{{ route('competition-managements.store-match', $competition->hash) }}",
                 null,
                 '#addInternalTeamMatchModal'
             );
