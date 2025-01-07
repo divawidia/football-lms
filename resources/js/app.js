@@ -26,20 +26,18 @@ import './youtube'
   ///////////////////////////////////
 
     // function to display image preview
-    function imagePreview(inputId, previewId) {
-        let preview = document.getElementById(previewId);
-        let input = document.getElementById(inputId);
+    function imagePreview(input, preview) {
         $(input).on('change', function (e) {
             e.preventDefault();
-            preview.style.display = 'block';
-            const [file] = input.files
+            $(preview).css('display', 'block'); // Show the preview
+            const [file] = this.files; // Access the selected file from the input
             if (file) {
-                preview.src = URL.createObjectURL(file)
+                $(preview).attr('src', URL.createObjectURL(file)); // Set the preview image source
             }
         });
     }
 
-    imagePreview('previewPhoto', 'preview');
+    imagePreview('#createCompetitionForm #logo', '#createCompetitionForm #preview');
 
     imagePreview('foto', 'preview');
 

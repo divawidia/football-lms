@@ -63,12 +63,12 @@ class PlayerService extends Service
                     if ($item->user->status == '1'){
                         $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->hash.'">
                                                 <span class="material-icons text-danger">check_circle</span>
-                                                Deactivate Admin
+                                                Deactivate Player
                                         </button>';
                     }elseif ($item->user->status == '0') {
                         $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->hash.'">
                                                 <span class="material-icons text-success">check_circle</span>
-                                                Activate Admin
+                                                Activate Player
                                         </button>';
                     }
                     $actionBtn = '

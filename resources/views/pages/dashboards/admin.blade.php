@@ -17,34 +17,56 @@
     </div>
 
     <div class="container  page-section">
-        {{--    Overview    --}}
-        <div class="page-separator">
-            <div class="page-separator__text">Overview</div>
-            {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
-        </div>
-        <div class="row">
-            <x-stats-with-icon-card  title="Total Players" :datas="$dataOverview['totalPlayers']" :dataThisMonth="$dataOverview['thisMonthTotalPlayers']" icon="fa fa-user"/>
-            <x-stats-with-icon-card  title="Total Coaches" :datas="$dataOverview['totalCoaches']" :dataThisMonth="$dataOverview['thisMonthTotalPlayers']" icon="fa fa-user-tie"/>
-            <x-stats-with-icon-card  title="Total Teams" :datas="$dataOverview['totalTeams']" :dataThisMonth="$dataOverview['thisMonthTotalTeams']" icon="fa fa-users"/>
-            <x-stats-with-icon-card  title="Total Admins" :datas="$dataOverview['totalAdmins']" :dataThisMonth="$dataOverview['thisMonthTotalAdmins']" icon="fa fa-user"/>
-            <x-stats-with-icon-card  title="Competitions Joined" :datas="$dataOverview['totalCompetitions']" :dataThisMonth="$dataOverview['thisMonthTotalCompetitions']" icon="fa fa-trophy"/>
-            <x-stats-with-icon-card  title="Match Schedule" :datas="$dataOverview['totalUpcomingMatches']" icon="fa fa-calendar-day"/>
-            <x-stats-with-icon-card  title="Training Schedules" :datas="$dataOverview['totalUpcomingTrainings']" icon="fa fa-calendar-day"/>
-            <x-stats-with-icon-card  title="Total Revenue" :datas="'Rp. '.$dataOverview['totalRevenues']" :dataThisMonth="$dataOverview['thisMonthTotalRevenues']" icon="fa fa-money-bill"/>
-            <x-stats-with-icon-card  title="Revenue Growth" :datas="$dataOverview['revenueGrowth']" icon="bx bx-line-chart" subtitle="From last month"/>
-        </div>
 
-        <div class="row card-group-row">
-            <div class="col-md-7">
-                <x-academy-revenue-chart :revenueGrowth="$dataOverview['revenueGrowth']"/>
+        <nav class="navbar navbar-light rounded">
+            <div class="container">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#overview-tab">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#profile-tab">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#teams-tab">Teams Managed</a>
+                    </li>
+                </ul>
             </div>
-            <div class="col-md-5 d-flex">
-                <div class="card">
-                    <div class="card-body d-flex flex-row align-items-center flex-0">
-                        <div class="card-title h5">Team Age Groups</div>
+        </nav>
+        
+
+        {{--    Overview    --}}
+        <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="overview-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Overview</div>
+                    {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
+                </div>
+                <div class="row">
+                    <x-stats-with-icon-card  title="Total Players" :datas="$dataOverview['totalPlayers']" :dataThisMonth="$dataOverview['thisMonthTotalPlayers']" icon="fa fa-user"/>
+                    <x-stats-with-icon-card  title="Total Coaches" :datas="$dataOverview['totalCoaches']" :dataThisMonth="$dataOverview['thisMonthTotalPlayers']" icon="fa fa-user-tie"/>
+                    <x-stats-with-icon-card  title="Total Teams" :datas="$dataOverview['totalTeams']" :dataThisMonth="$dataOverview['thisMonthTotalTeams']" icon="fa fa-users"/>
+                    <x-stats-with-icon-card  title="Total Admins" :datas="$dataOverview['totalAdmins']" :dataThisMonth="$dataOverview['thisMonthTotalAdmins']" icon="fa fa-user"/>
+                    <x-stats-with-icon-card  title="Competitions Joined" :datas="$dataOverview['totalCompetitions']" :dataThisMonth="$dataOverview['thisMonthTotalCompetitions']" icon="fa fa-trophy"/>
+                    <x-stats-with-icon-card  title="Match Schedule" :datas="$dataOverview['totalUpcomingMatches']" icon="fa fa-calendar-day"/>
+                    <x-stats-with-icon-card  title="Training Schedules" :datas="$dataOverview['totalUpcomingTrainings']" icon="fa fa-calendar-day"/>
+                    <x-stats-with-icon-card  title="Total Revenue" :datas="'Rp. '.$dataOverview['totalRevenues']" :dataThisMonth="$dataOverview['thisMonthTotalRevenues']" icon="fa fa-money-bill"/>
+                    <x-stats-with-icon-card  title="Revenue Growth" :datas="$dataOverview['revenueGrowth']" icon="bx bx-line-chart" subtitle="From last month"/>
+                </div>
+
+                <div class="row card-group-row">
+                    <div class="col-md-7">
+                        <x-academy-revenue-chart :revenueGrowth="$dataOverview['revenueGrowth']"/>
                     </div>
-                    <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
-                        <canvas id="teamAgeChart"></canvas>
+                    <div class="col-md-5 d-flex">
+                        <div class="card">
+                            <div class="card-body d-flex flex-row align-items-center flex-0">
+                                <div class="card-title h5">Team Age Groups</div>
+                            </div>
+                            <div class="card-body text-muted flex d-flex flex-column align-items-center justify-content-center">
+                                <canvas id="teamAgeChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

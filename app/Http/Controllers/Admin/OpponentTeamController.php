@@ -59,7 +59,7 @@ class OpponentTeamController extends Controller
         $loggedUser = $this->getLoggedUser();
         $team = $this->opponentTeamService->store($data, $loggedUser);
 
-        return response()->json($team, 201);
+        return ApiResponse::success($team, 'Team '.$team->teamName.' successfully added!');
     }
 
     /**
