@@ -63,7 +63,7 @@
                             <x-forms.select name="isInternal" label="Is Internal Competition?">
                                 <option disabled selected>Select yes or no</option>
                                 @foreach(['Yes' => 1, 'No' => 0] AS $label => $value)
-                                    <option value="{{ $value }}" @selected(old('isInternal') == $value)>{{ $label }}</option>
+                                    <option value="{{ $value }}" @selected(old('isInternal') == $label)>{{ $label }}</option>
                                 @endforeach
                             </x-forms.select>
 {{--                            <x-forms.basic-input type="text" name="contactPhone" label="Contact Phone" placeholder="Input competition's contact phone ..."/>--}}
