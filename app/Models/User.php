@@ -97,4 +97,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Subscription::class, 'userId');
     }
+
+    public function competitions()
+    {
+        $this->hasMany(Competition::class, 'userId');
+    }
 }
