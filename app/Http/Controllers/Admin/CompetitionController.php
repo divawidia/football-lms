@@ -63,11 +63,8 @@ class CompetitionController extends Controller
     {
         $data = $request->validated();
         $result = $this->competitionService->storeMatch($data, $competition, $this->getLoggedUser());
-        return response()->json([
-            'status' => 200,
-            'data' => $result,
-            'message' => 'Successfully stored competition '.$competition->name.' teams match data!'
-        ]);
+        $message = 'team match successfully created!';
+        return ApiResponse::success($result, $message);
     }
 
     /**
