@@ -9,8 +9,8 @@
          alt="img"
          width="54"
          height="54"
-         id="preview"
-         class="mr-16pt rounded-circle img-object-fit-cover"/>
+         class="mr-16pt rounded-circle img-object-fit-cover"
+        id="preview"/>
     <div class="media-body">
         <x-forms.basic-input type="file" :name="$name" acceptFileType="image/jpg, image/jpeg, image/png" :required="$required" :modal="$modal" label="Choose Image"/>
     </div>
