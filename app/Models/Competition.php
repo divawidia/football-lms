@@ -20,6 +20,7 @@ class Competition extends Model
         'location',
         'isInternal',
         'status',
+        'userId'
     ];
 
     public function groups(){
@@ -28,5 +29,10 @@ class Competition extends Model
 
     public function matches(){
         return $this->hasMany(EventSchedule::class, 'competitionId');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId');
     }
 }
