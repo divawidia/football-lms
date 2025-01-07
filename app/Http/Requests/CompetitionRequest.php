@@ -25,17 +25,18 @@ class CompetitionRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'type' => ['required', Rule::in('League', 'Tournament')],
+            'type' => ['required', Rule::in('League', 'Knockout', 'Friendly')],
             'logo' => ['nullable', 'image', 'max:1024'],
             'startDate' => ['required', 'date'],
             'endDate' => ['required', 'date', 'after:startDate'],
             'location' => ['required', 'string'],
-            'contactName' => ['nullable', 'string'],
-            'contactPhone' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
-            'groupName' => ['required', 'string'],
-            'teams' => ['required', Rule::exists('teams', 'id')],
-            'opponentTeams' => ['required', Rule::exists('teams', 'id')],
+            'isInternal' => ['required', Rule::in(1,0)],
+//            'contactName' => ['nullable', 'string'],
+//            'contactPhone' => ['nullable', 'string'],
+//            'description' => ['nullable', 'string'],
+//            'groupName' => ['required', 'string'],
+//            'teams' => ['required', Rule::exists('teams', 'id')],
+//            'opponentTeams' => ['required', Rule::exists('teams', 'id')],
         ];
     }
 }
