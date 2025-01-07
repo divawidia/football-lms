@@ -162,7 +162,8 @@ Route::group(['middleware' => ['auth']], function () {
             Route::prefix('team-managements')->group(function () {
                 Route::get('admin-teams', [TeamController::class, 'adminTeamsData'])->name('team-managements.admin-teams');
 
-                Route::prefix('our-teams')->group(function () {
+                Route::prefix('academy-teams')->group(function () {
+                    Route::get('', [TeamController::class, 'allTeams'])->name('team-managements.all-teams');
                     Route::get('create', [TeamController::class, 'create'])->name('team-managements.create');
                     Route::post('store', [TeamController::class, 'store'])->name('team-managements.store');
                     Route::post('api/store', [TeamController::class, 'apiStore'])->name('team-managements.apiStore');
