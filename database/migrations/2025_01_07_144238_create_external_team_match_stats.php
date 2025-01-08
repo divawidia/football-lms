@@ -11,27 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('external_team_match', function (Blueprint $table) {
+        Schema::create('external_team_matches', function (Blueprint $table) {
             $table->id();
             $table->foreignId('eventId')->constrained('event_schedules')->cascadeOnDelete();
             $table->string('teamName');
-            $table->integer('teamScore')->nullable();
-            $table->integer('teamOwnGoal')->nullable();
-            $table->integer('teamPossesion')->nullable();
-            $table->integer('teamShotOnTarget')->nullable();
-            $table->integer('teamShots')->nullable();
-            $table->integer('teamTouches')->nullable();
-            $table->integer('teamTackles')->nullable();
-            $table->integer('teamClearances')->nullable();
-            $table->integer('teamCorners')->nullable();
-            $table->integer('teamOffsides')->nullable();
-            $table->integer('teamYellowCards')->nullable();
-            $table->integer('teamRedCards')->nullable();
-            $table->integer('teamFoulsConceded')->nullable();
+            $table->integer('teamScore')->nullable()->default(0);
+            $table->integer('teamOwnGoal')->nullable()->default(0);
+            $table->integer('teamPossesion')->nullable()->default(0);
+            $table->integer('teamShotOnTarget')->nullable()->default(0);
+            $table->integer('teamShots')->nullable()->default(0);
+            $table->integer('teamTouches')->nullable()->default(0);
+            $table->integer('teamTackles')->nullable()->default(0);
+            $table->integer('teamClearances')->nullable()->default(0);
+            $table->integer('teamCorners')->nullable()->default(0);
+            $table->integer('teamOffsides')->nullable()->default(0);
+            $table->integer('teamYellowCards')->nullable()->default(0);
+            $table->integer('teamRedCards')->nullable()->default(0);
+            $table->integer('teamFoulsConceded')->nullable()->default(0);
             $table->enum('resultStatus', ['Draw','Win','Lose'])->nullable();
-            $table->integer('teamPasses')->nullable();
-            $table->integer('goalConceded')->nullable();
-            $table->integer('cleanSheets')->nullable();
+            $table->integer('teamPasses')->nullable()->default(0);
+            $table->integer('goalConceded')->nullable()->default(0);
+            $table->integer('cleanSheets')->nullable()->default(0);
             $table->timestamps();
         });
     }
@@ -41,6 +41,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('external_team_match');
+        Schema::dropIfExists('external_team_matches');
     }
 };
