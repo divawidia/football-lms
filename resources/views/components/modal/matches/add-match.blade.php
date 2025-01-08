@@ -8,9 +8,13 @@
                     <x-buttons.basic-button :modalCloseIcon="true" :modalDismiss="true"/>
                 </div>
                 <div class="modal-body">
-                    <x-forms.select name="teamId" label="Home Team" :modal="true"></x-forms.select>
+                    <x-forms.select name="teamId" label="Team" :modal="true"></x-forms.select>
 
-                    <x-forms.select name="opponentTeamId" label="Away Team" :modal="true"></x-forms.select>
+                    @if ($competition->is_team_competition)
+                        <x-forms.select name="opponentTeamId" label="Away Team" :modal="true"></x-forms.select>
+                    @else
+                        <x-forms.basic-input type="text" name="externalTeamName" label="Opossing Team" :modal="true"/>
+                    @endif
 
                     <x-forms.basic-input type="date" name="date" label="Match Date" :modal="true"/>
 
@@ -65,6 +69,7 @@
                 });
             });
 
+            @if($competition->) @endif
             $(formId+' #teamId').on('change', function () {
                 const id = this.value;
 
