@@ -231,7 +231,12 @@ class CompetitionService extends Service
 
     public  function storeMatch(array $competitionData, Competition $competition, $loggedUser)
     {
-//        $competitionData['matchType'] = 'Competition';
+        if ($competition->isInternal == 1) {
+            $competitionData['matchType'] = 'Internal Match';
+        } else {
+            $competitionData['matchType'] = 'External Match';
+        }
+
         $competitionData['competitionId'] = $competition->id;
         $this->eventScheduleService->storeMatch($competitionData, $loggedUser->id);
         return $competition;
