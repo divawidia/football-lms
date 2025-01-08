@@ -10,7 +10,7 @@ use App\Models\Player;
 use App\Models\ScheduleNote;
 use App\Notifications\MatchSchedules\MatchNote;
 use App\Notifications\MatchSchedules\MatchScheduleAttendance;
-use App\Notifications\MatchSchedules\MatchScheduleCreatedForAdmin;
+use App\Notifications\MatchSchedules\MatchSchedule;
 use App\Notifications\MatchSchedules\MatchScheduleCreatedForPlayerCoach;
 use App\Notifications\MatchSchedules\MatchScheduleDeletedForAdmin;
 use App\Notifications\MatchSchedules\MatchScheduleDeletedForPlayersCoaches;
@@ -515,45 +515,52 @@ class EventScheduleService extends Service
         if ($data['matchType'] == 'Internal Match'){
             $schedule->teams()->attach($data['opponentTeamId']);
         } else {
-            $schedule->externalMatch()->create([
+            $schedule->externalTeam()->create([
                 'teamName' => $data['externalTeamName'],
             ]);
         }
 
-        $loggedUser = $this->userRepository->find($userId);
-        $creatorUserName = $this->getUserFullName($loggedUser);
-
-        if ($data['isOpponentTeamMatch'] == '0' and $data['matchType'] != 'Internal Match'){
+//        if ($data['isOpponentTeamMatch'] == '0' and $data['matchType'] != 'Internal Match'){
+        if ($data['matchType'] != 'Internal Match'){
             $team = $this->teamRepository->find($data['teamId']);
 
-            $teamsPlayersCoaches = $this->userRepository->allTeamsParticipant($team, admins: false);
-
-            Notification::send($this->userRepository->getAllAdminUsers(), new MatchScheduleCreatedForAdmin($schedule, $creatorUserName));
-            Notification::send($teamsPlayersCoaches, new MatchScheduleCreatedForPlayerCoach($schedule));
+            $usersParticipant = $this->userRepository->allTeamsParticipant($team);
+            try {
+                Notification::send($usersParticipant, new MatchSchedule($schedule, 'create'));
+            } catch (Exception $e) {
+                Log::error($e->getMessage());
+            }
 
             $schedule->players()->attach($team->players, ['teamId' => $team->id]);
             $schedule->playerMatchStats()->attach($team->players, ['teamId' => $team->id]);
             $schedule->coaches()->attach($team->coaches, ['teamId' => $team->id]);
             $schedule->coachMatchStats()->attach($team->coaches, ['teamId' => $team->id]);
 
-        } elseif ($data['isOpponentTeamMatch'] == '0' and $data['matchType'] == 'Internal Match') {
+//        } elseif ($data['isOpponentTeamMatch'] == '0' and $data['matchType'] == 'Internal Match') {
+        } else {
             $homeTeam = $this->teamRepository->find($data['teamId']);
             $awayTeam = $this->teamRepository->find($data['opponentTeamId']);
 
             $awayTeamsPlayersCoaches = $this->userRepository->allTeamsParticipant($awayTeam, admins: false);
             $homeTeamsPlayersCoaches = $this->userRepository->allTeamsParticipant($homeTeam, admins: false);
 
-            Notification::send($this->userRepository->getAllAdminUsers(), new MatchScheduleCreatedForAdmin($schedule, $creatorUserName));
-            Notification::send($awayTeamsPlayersCoaches, new MatchScheduleCreatedForPlayerCoach($schedule));
-            Notification::send($homeTeamsPlayersCoaches, new MatchScheduleCreatedForPlayerCoach($schedule));
+            try {
+                Notification::send($this->userRepository->getAllAdminUsers(), new MatchSchedule($schedule, 'create'));
+                Notification::send($awayTeamsPlayersCoaches, new MatchSchedule($schedule, 'create'));
+                Notification::send($homeTeamsPlayersCoaches, new MatchSchedule($schedule, 'create'));
+            } catch (Exception $e) {
+                Log::error($e->getMessage());
+            }
 
             $schedule->players()->attach($awayTeam->players, ['teamId' => $awayTeam->id]);
             $schedule->players()->attach($homeTeam->players, ['teamId' => $homeTeam->id]);
+
             $schedule->playerMatchStats()->attach($awayTeam->players, ['teamId' => $awayTeam->id]);
             $schedule->playerMatchStats()->attach($homeTeam->players, ['teamId' => $homeTeam->id]);
 
             $schedule->coaches()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
             $schedule->coaches()->attach($homeTeam->coaches, ['teamId' => $homeTeam->id]);
+
             $schedule->coachMatchStats()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
             $schedule->coachMatchStats()->attach($homeTeam->coaches, ['teamId' => $homeTeam->id]);
         }
@@ -625,7 +632,7 @@ class EventScheduleService extends Service
             if ($schedule->eventType == 'Training') {
                 Notification::send($teamParticipants, new TrainingScheduleUpdatedForPlayer($schedule, $team, $statusMessage));
             } elseif ($schedule->eventType == 'Match' && $schedule->isOpponentTeamMatch == '0') {
-                Notification::send($teamParticipants, new MatchScheduleUpdatedForPlayerCoach($schedule, $statusMessage));
+                Notification::send($teamParticipants, new  MatchScheduleUpdatedForPlayerCoach($schedule, $statusMessage));
             }
 
         }
