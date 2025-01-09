@@ -23,7 +23,6 @@ class CompetitionService extends Service
     private PlayerRepository $playerRepository;
     private CoachRepository $coachRepository;
     private UserRepository $userRepository;
-    private GroupDivisionService $groupDivisionService;
     private EventScheduleService $eventScheduleService;
     private DatatablesHelper $datatablesService;
 
@@ -33,7 +32,6 @@ class CompetitionService extends Service
         PlayerRepository $playerRepository,
         CoachRepository $coachRepository,
         UserRepository $userRepository,
-        GroupDivisionService $groupDivisionService,
         EventScheduleService $eventScheduleService,
         DatatablesHelper $datatablesService
     )
@@ -43,7 +41,6 @@ class CompetitionService extends Service
         $this->playerRepository = $playerRepository;
         $this->coachRepository = $coachRepository;
         $this->userRepository = $userRepository;
-        $this->groupDivisionService = $groupDivisionService;
         $this->eventScheduleService = $eventScheduleService;
         $this->datatablesService = $datatablesService;
     }
