@@ -108,6 +108,19 @@ class DatatablesHelper extends Service
                   </a>';
     }
 
+    public function buttonDropdownItem($additionClass = '', $id = '', $iconColor = '', $icon = '', $btnText = ''): string
+    {
+        return '<button type="button" class="dropdown-item '.$additionClass.'" id="' . $id . '">
+                    <span class="material-icons text-'.$iconColor.'">'.$icon.'</span>'.$btnText.'
+                </button>';
+    }
+    public function linkDropdownItem($additionClass = '', $route = null, $id = '', $iconColor = '', $icon = '', $btnText = ''): string
+    {
+        return '<a class="dropdown-item '.$additionClass.'" href="' . $route . '" id="'.$id.'">
+                    <span class="material-icons text-'.$iconColor.'">'.$icon.'</span>'.$btnText.'
+                </a>';
+    }
+
     public function usersTeams($data): string
     {
         $teams = '';
