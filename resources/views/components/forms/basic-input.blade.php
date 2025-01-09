@@ -16,7 +16,7 @@
            placeholder="{{ $placeholder }}"
             @if($type == 'file') accept="{{ $acceptFileType }}" @endif
            @if($type == 'number') min="{{ $min }}" max="{{ $max }}" @endif
-           @if($modal) value="{{ old($name, $value) }}" @endif>
+           @if(!$modal) value="{{ old($name, $value) }}" @endif>
 
     @if($type == 'file')
         <label class="custom-file-label" for="{{ $name }}">{{ $label }}</label>
