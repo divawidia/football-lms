@@ -416,6 +416,17 @@ class EventScheduleService extends Service
 
         return compact('allSkills', 'playerPerformanceReviews');
     }
+
+    public function getMatchDetail(EventSchedule $schedule)
+    {
+        if ($schedule->matchType == 'External Match') {
+            $opposingTeam = $schedule->externalTeam->teamName;
+            return compact('schedule', 'opposingTeam');
+        } else {
+            return compact('schedule');
+        }
+    }
+
     public function eventAttendance(EventSchedule $schedule, $team = null) {
 
         if ($schedule->players[0]->pivot->teamId != null) {
@@ -511,60 +522,35 @@ class EventScheduleService extends Service
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule =  $this->eventScheduleRepository->create($data);
 
-        $schedule->teams()->attach($data['teamId']);
+        $schedule->teams()->attach($data['homeTeamId']);
+
+        $team = $this->teamRepository->find($data['homeTeamId']);
+        $teamParticipant = $this->userRepository->allTeamsParticipant($team);
+
+        $schedule->players()->attach($team->players, ['teamId' => $team->id]);
+        $schedule->playerMatchStats()->attach($team->players, ['teamId' => $team->id]);
+        $schedule->coaches()->attach($team->coaches, ['teamId' => $team->id]);
+        $schedule->coachMatchStats()->attach($team->coaches, ['teamId' => $team->id]);
+
+        Notification::send($teamParticipant, new MatchSchedule($schedule, 'create'));
+
         if ($data['matchType'] == 'Internal Match'){
-            $schedule->teams()->attach($data['opponentTeamId']);
+            $schedule->teams()->attach($data['awayTeamId']);
+
+            $awayTeam = $this->teamRepository->find($data['awayTeamId']);
+            $awayTeamsPlayersCoaches = $this->userRepository->allTeamsParticipant($awayTeam, admins: false);
+
+            $schedule->players()->attach($awayTeam->players, ['teamId' => $awayTeam->id]);
+            $schedule->playerMatchStats()->attach($awayTeam->players, ['teamId' => $awayTeam->id]);
+            $schedule->coaches()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
+            $schedule->coachMatchStats()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
+
+            Notification::send($awayTeamsPlayersCoaches, new MatchSchedule($schedule, 'create'));
         } else {
             $schedule->externalTeam()->create([
                 'teamName' => $data['externalTeamName'],
             ]);
         }
-
-//        if ($data['isOpponentTeamMatch'] == '0' and $data['matchType'] != 'Internal Match'){
-        if ($data['matchType'] != 'Internal Match'){
-            $team = $this->teamRepository->find($data['teamId']);
-
-            $usersParticipant = $this->userRepository->allTeamsParticipant($team);
-            try {
-                Notification::send($usersParticipant, new MatchSchedule($schedule, 'create'));
-            } catch (Exception $e) {
-                Log::error($e->getMessage());
-            }
-
-            $schedule->players()->attach($team->players, ['teamId' => $team->id]);
-            $schedule->playerMatchStats()->attach($team->players, ['teamId' => $team->id]);
-            $schedule->coaches()->attach($team->coaches, ['teamId' => $team->id]);
-            $schedule->coachMatchStats()->attach($team->coaches, ['teamId' => $team->id]);
-
-//        } elseif ($data['isOpponentTeamMatch'] == '0' and $data['matchType'] == 'Internal Match') {
-        } else {
-            $homeTeam = $this->teamRepository->find($data['teamId']);
-            $awayTeam = $this->teamRepository->find($data['opponentTeamId']);
-
-            $awayTeamsPlayersCoaches = $this->userRepository->allTeamsParticipant($awayTeam, admins: false);
-            $homeTeamsPlayersCoaches = $this->userRepository->allTeamsParticipant($homeTeam, admins: false);
-
-            try {
-                Notification::send($this->userRepository->getAllAdminUsers(), new MatchSchedule($schedule, 'create'));
-                Notification::send($awayTeamsPlayersCoaches, new MatchSchedule($schedule, 'create'));
-                Notification::send($homeTeamsPlayersCoaches, new MatchSchedule($schedule, 'create'));
-            } catch (Exception $e) {
-                Log::error($e->getMessage());
-            }
-
-            $schedule->players()->attach($awayTeam->players, ['teamId' => $awayTeam->id]);
-            $schedule->players()->attach($homeTeam->players, ['teamId' => $homeTeam->id]);
-
-            $schedule->playerMatchStats()->attach($awayTeam->players, ['teamId' => $awayTeam->id]);
-            $schedule->playerMatchStats()->attach($homeTeam->players, ['teamId' => $homeTeam->id]);
-
-            $schedule->coaches()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
-            $schedule->coaches()->attach($homeTeam->coaches, ['teamId' => $homeTeam->id]);
-
-            $schedule->coachMatchStats()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
-            $schedule->coachMatchStats()->attach($homeTeam->coaches, ['teamId' => $homeTeam->id]);
-        }
-
         return $schedule;
     }
 
@@ -590,24 +576,44 @@ class EventScheduleService extends Service
         }
         return $schedule;
     }
-    public function updateMatch(array $data, EventSchedule $schedule, $loggedUser){
+    public function updateMatch(array $data, EventSchedule $schedule)
+    {
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule->update($data);
 
-        $team = $schedule->teams()->first();
+        $homeTeam = $this->teamRepository->find($data['homeTeamId']);
+        $schedule->players()->syncWithPivotValues($homeTeam->players, ['teamId' => $homeTeam->id]);
+        $schedule->playerMatchStats()->syncWithPivotValues($homeTeam->players, ['teamId' => $homeTeam->id]);
+        $schedule->coaches()->syncWithPivotValues($homeTeam->coaches, ['teamId' => $homeTeam->id]);
+        $schedule->coachMatchStats()->syncWithPivotValues($homeTeam->coaches, ['teamId' => $homeTeam->id]);
 
-        $creatorUserName = $this->getUserFullName($loggedUser);
+        $homeTeamParticipant = $this->userRepository->allTeamsParticipant($homeTeam);
+        Notification::send($homeTeamParticipant, new MatchSchedule($schedule, 'update'));
 
-        Notification::send($this->userRepository->getAllAdminUsers(), new MatchScheduleUpdatedForAdmin($schedule, $creatorUserName, 'Has Been Updated'));
+        if ($schedule->matchType == 'Internal Match') {
+            $schedule->teams()->sync([
+                $data['homeTeamId'],
+                $data['awayTeamId']
+            ]);
 
-        $teamsPlayersCoaches = $this->userRepository->allTeamsParticipant($team, admins: false);
-        Notification::send($teamsPlayersCoaches, new MatchScheduleUpdatedForPlayerCoach($schedule, 'Has Been Updated'));
+            $awayTeam = $this->teamRepository->find($data['awayTeamId']);
 
-//        $team = Team::with('players', 'coaches')->where('id', $data['teamId'])->where('teamSide', 'Academy Team')->first();
-//        $schedule->teams()->sync([$data['teamId'], $data['opponentTeamId']]);
-//        $schedule->players()->sync($team->players);
-//        $schedule->coaches()->sync($team->coaches);
+            $schedule->players()->attach($awayTeam->players, ['teamId' => $awayTeam->id]);
+            $schedule->playerMatchStats()->attach($awayTeam->players, ['teamId' => $awayTeam->id]);
+            $schedule->coaches()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
+            $schedule->coachMatchStats()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
+
+            $awayTeamParticipant = $this->userRepository->allTeamsParticipant($awayTeam, admins: false);
+            Notification::send($awayTeamParticipant, new MatchSchedule($schedule, 'update'));
+        } else {
+            $schedule->teams()->sync([
+                $data['homeTeamId'],
+            ]);
+            $schedule->externalTeam()->update([
+                'teamName' => $data['externalTeamName'],
+            ]);
+        }
         return $schedule;
     }
 
