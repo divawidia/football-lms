@@ -138,6 +138,7 @@ class CompetitionService extends Service
                 return $this->datatablesService->eventStatus($item->status);
             })
             ->rawColumns(['action', 'name', 'isInternal', 'date', 'status'])
+            ->addIndexColumn()
             ->make();
     }
 
@@ -167,6 +168,10 @@ class CompetitionService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if (isAllAdmin()){
+                    $edit = '';
+                    if ($item->status == 'Scheduled'){
+                        $edit = $this->datatablesService->buttonDropdownItem('edit-match-btn', $item->id, icon: 'edit', btnText: 'Edit Match');
+                    }
                     $actionBtn ='
                         <div class="dropdown">
                           <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -175,11 +180,9 @@ class CompetitionService extends Service
                             </span>
                           </button>
                           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('match-schedules.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Match</a>
-                            <a class="dropdown-item" href="' . route('match-schedules.show', $item->hash) . '"><span class="material-icons">visibility</span> View Match</a>
-                            <button type="button" class="dropdown-item delete-match" id="' . $item->id . '">
-                                <span class="material-icons text-danger">delete</span> Delete Match
-                            </button>
+                            '.$edit.'
+                            '.$this->datatablesService->linkDropdownItem(route: route('match-schedules.show', $item->hash), icon: 'visibility', btnText: 'View Match').'
+                            '.$this->datatablesService->buttonDropdownItem('delete-match', $item->id, iconColor: 'danger', icon: 'delete', btnText: 'Delete Match').'
                           </div>
                         </div>';
                 } else {
@@ -187,14 +190,24 @@ class CompetitionService extends Service
                 }
                 return $actionBtn;
             })
-            ->editColumn('team', function ($item) {
-                return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup, route('team-managements.show', $item->teams[0]->hash));
+            ->editColumn('homeTeam', function ($item) {
+                return $this->datatablesService->name($item->homeTeam->logo, $item->homeTeam->teamName, $item->homeTeam->ageGroup, route('team-managements.show', $item->homeTeam->hash));
             })
-            ->editColumn('opponentTeam', function ($item) {
-                return $this->datatablesService->name($item->teams[1]->logo, $item->teams[1]->teamName, $item->teams[1]->ageGroup, route('team-managements.show', $item->teams[1]->hash));
+            ->editColumn('awayTeam', function ($item) use ($competition) {
+                if ($competition->isInternal == 1) {
+                    return $this->datatablesService->name($item->awayTeam->logo, $item->awayTeam->teamName, $item->awayTeam->ageGroup, route('team-managements.show', $item->awayTeam->hash));
+                } else {
+                    return $item->externalTeam->teamName;
+                }
             })
-            ->editColumn('score', function ($item){
-                return '<p class="mb-0"><strong class="js-lists-values-lead">' .$item->teams[0]->pivot->teamScore . ' - ' . $item->teams[1]->pivot->teamScore.'</strong></p>';
+            ->editColumn('score', function ($item) use ($competition) {
+                $homeTeam = $item->teams()->where('teamId', $item->homeTeamId)->first();
+                if ($competition->isInternal == 1) {
+                    $awayTeam = $item->teams()->where('teamId', $item->awayTeamId)->first();
+                    return '<p class="mb-0"><strong class="js-lists-values-lead">' .$homeTeam->pivot->teamScore . ' - ' . $awayTeam->pivot->teamScore.'</strong></p>';
+                } else {
+                    return '<p class="mb-0"><strong class="js-lists-values-lead">' .$homeTeam->pivot->teamScore . ' - ' . $item->externalTeam->teamScore.'</strong></p>';
+                }
             })
             ->editColumn('date', function ($item) {
                 return $this->datatablesService->startEndDate($item);
@@ -202,7 +215,8 @@ class CompetitionService extends Service
             ->editColumn('status', function ($item) {
                 return $this->datatablesService->eventStatus($item->status);
             })
-            ->rawColumns(['action','team', 'score', 'status','opponentTeam','date'])
+            ->rawColumns(['action','homeTeam', 'awayTeam', 'score', 'status','date'])
+            ->addIndexColumn()
             ->make();
     }
 
