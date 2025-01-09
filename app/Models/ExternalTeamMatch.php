@@ -10,7 +10,7 @@ class ExternalTeamMatch extends Model
 {
     use HasFactory;
 
-    protected $table = 'external_team_match';
+    protected $table = 'external_team_matches';
 
     protected $fillable = [
         'teamName',
