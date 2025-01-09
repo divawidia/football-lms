@@ -14,10 +14,11 @@ class Select extends Component
     public $required;
     public $multiple;
     public $modal;
+    public $select2;
     /**
      * Create a new component instance.
      */
-    public function __construct($label, $name, $id=null,$required = true, $multiple = false, $modal = false)
+    public function __construct($label, $name, $id=null,$required = true, $multiple = false, $modal = false, $select2 = true)
     {
         $this->label = $label;
         $this->name = $name;
@@ -25,6 +26,7 @@ class Select extends Component
         $this->required = $required;
         $this->multiple = $multiple;
         $this->modal = $modal;
+        $this->select2 = $select2;
     }
 
     /**
