@@ -237,6 +237,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::post('store', [EventScheduleController::class, 'storeMatch'])->name('match-schedules.store');
 
                 Route::prefix('{schedule}')->group(function () {
+                    Route::get('match-detail', [EventScheduleController::class, 'getMatchDetail'])->name('match-schedules.match-detail');
                     Route::get('edit', [EventScheduleController::class, 'editMatch'])->name('match-schedules.edit');
                     Route::put('update', [EventScheduleController::class, 'updateMatch'])->name('match-schedules.update');
                     Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('match-schedules.destroy');
