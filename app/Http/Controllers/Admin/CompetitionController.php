@@ -10,7 +10,6 @@ use App\Http\Requests\UpdateCompetitionRequest;
 use App\Models\Competition;
 use App\Services\CompetitionService;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
