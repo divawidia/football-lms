@@ -83,7 +83,7 @@ export function processWithConfirmation(btnClass, processRoute, routeAfterProces
 export function processModalForm(formId, route, updateDataId = null, modalId){
     $(formId).on('submit', function(e) {
         e.preventDefault();
-        const id = $(updateDataId).val();
+        const id = $(formId +" "+ updateDataId).val();
 
         Swal.fire({
             title: 'Processing...',
