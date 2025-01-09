@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateCompetitionRequest;
 use App\Models\Competition;
 use App\Services\CompetitionService;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -63,7 +64,7 @@ class CompetitionController extends Controller
     {
         $data = $request->validated();
         $result = $this->competitionService->storeMatch($data, $competition, $this->getLoggedUser());
-        $message = 'team match successfully created!';
+        $message = 'Team match successfully created!';
         return ApiResponse::success($result, $message);
     }
 
