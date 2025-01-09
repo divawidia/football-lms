@@ -24,7 +24,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <x-table :headers="['Name', 'Internal/External Competition?', 'Competition Date', 'Location', 'Status', 'Action']"/>
+                    <x-table :headers="['#','Name', 'Internal/External', 'Competition Date', 'Location', 'Status', 'Action']" tableId="table"/>
                 </div>
             </div>
         </div>
@@ -42,6 +42,7 @@
                         url: '{!! url()->current() !!}',
                     },
                     columns: [
+                        {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                         { data: 'name', name: 'name' },
                         { data: 'isInternal', name: 'isInternal' },
                         { data: 'date', name: 'date'},
@@ -63,7 +64,7 @@
                     'DELETE',
                     "Are you sure to delete this competition?",
                     "Something went wrong when deleting the competition!",
-                    {{ csrf_token() }}
+                    "{{ csrf_token() }}",
                 );
 
                 processWithConfirmation(
@@ -73,7 +74,7 @@
                     'PATCH',
                     "Are you sure to cancel this competition?",
                     "Something went wrong when cancelling the competition!",
-                    {{ csrf_token() }}
+                    "{{ csrf_token() }}",
                 );
             });
         </script>
