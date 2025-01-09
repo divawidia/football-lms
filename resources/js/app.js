@@ -15,31 +15,27 @@ import './player'
 import './youtube'
 
 (function() {
-  'use strict';
+    'use strict';
 
-  $('[data-toggle="tab"]').on('hide.bs.tab', function (e) {
+    $('[data-toggle="tab"]').on('hide.bs.tab', function (e) {
     $(e.target).removeClass('active')
-  })
-
-  ///////////////////////////////////
-  // Custom JavaScript can go here //
-  ///////////////////////////////////
+    })
 
     // function to display image preview
     function imagePreview(input, preview) {
         $(input).on('change', function (e) {
             e.preventDefault();
-            $(preview).css('display', 'block'); // Show the preview
-            const [file] = this.files; // Access the selected file from the input
+            $(preview).css('display', 'block');
+            const [file] = this.files;
             if (file) {
-                $(preview).attr('src', URL.createObjectURL(file)); // Set the preview image source
+                $(preview).attr('src', URL.createObjectURL(file));
             }
         });
     }
 
     imagePreview('#createCompetitionForm #logo', '#createCompetitionForm #preview');
 
-    imagePreview('foto', 'preview');
+    imagePreview('#foto', '#preview');
 
     imagePreview('logo', 'preview');
     imagePreview('add_logo', 'opponentTeamPreview');
