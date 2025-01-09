@@ -5,7 +5,7 @@
     <small class="text-muted">(Optional)</small>
 @endif
 <div class="media align-items-center mb-2">
-    <img src="{{ Storage::url('images/undefined-user.png') }}"
+    <img src="{{ Storage::url($value ?? 'images/undefined-user.png') }}"
          alt="img"
          width="54"
          height="54"
