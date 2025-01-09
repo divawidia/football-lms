@@ -9,11 +9,11 @@
                         @if($dataThisMonth > 0)
                             {{ $dataThisMonth }}
                             <i class="material-icons text-success icon-16pt">keyboard_arrow_up</i>
-                            From Last Month
+                            This Month
                         @elseif($dataThisMonth < 0)
                             {{ $dataThisMonth }}
                             <i class="material-icons text-danger icon-16pt">keyboard_arrow_up</i>
-                            From Last Month
+                            This Month
                         @endif
                 </p>
             </div>
