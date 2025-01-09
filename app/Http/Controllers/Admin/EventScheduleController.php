@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttendanceStatusRequest;
+use App\Http\Requests\CompetitionMatchRequest;
 use App\Http\Requests\MatchScheduleRequest;
 use App\Http\Requests\MatchScoreRequest;
 use App\Http\Requests\MatchStatsRequest;
@@ -261,6 +262,12 @@ class EventScheduleController extends Controller
         ]);
     }
 
+    public function getMatchDetail(EventSchedule $schedule)
+    {
+        $data = $this->eventScheduleService->getMatchDetail($schedule);
+        return ApiResponse::success($data);
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -300,15 +307,15 @@ class EventScheduleController extends Controller
         return redirect()->route('training-schedules.index');
     }
 
-    public function updateMatch(UpdateMatchScheduleRequest $request, EventSchedule $schedule)
+    public function updateMatch(CompetitionMatchRequest $request, EventSchedule $schedule)
     {
         $data = $request->validated();
-        $loggedUser = $this->getLoggedUser();
-        $this->eventScheduleService->updateMatch($data, $schedule, $loggedUser);
+        $this->eventScheduleService->updateMatch($data, $schedule);
 
-        $text = 'Match Schedule successfully updated!';
-        Alert::success($text);
-        return redirect()->route('match-schedules.index');
+        $text = 'Match session successfully updated!';
+//        Alert::success($text);
+//        return redirect()->route('match-schedules.index');
+        return ApiResponse::success(message: $text);
     }
 
     public function status(EventSchedule $schedule, $status)
