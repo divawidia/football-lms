@@ -8,45 +8,47 @@
 
 @section('modal')
     <!-- Modal edit group modal -->
-    <div class="modal fade" id="editGroupModal" tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="#" method="post" id="formEditGroupModal">
-                    @method('PUT')
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Edit Group Division</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" id="groupId">
-                        <div class="form-group ">
-                            <label class="form-label" for="add_groupName">Group Division Name</label>
-                            <small class="text-danger">*</small>
-                            <input type="text"
-                                   id="add_groupName"
-                                   name="groupName"
-                                   value="{{ old('groupName') }}"
-                                   class="form-control"
-                                   placeholder="Input group's name ...">
-                            <span class="invalid-feedback groupName_error" role="alert">
-                                <strong></strong>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+{{--    <div class="modal fade" id="editGroupModal" tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">--}}
+{{--        <div class="modal-dialog modal-dialog-centered">--}}
+{{--            <div class="modal-content">--}}
+{{--                <form action="#" method="post" id="formEditGroupModal">--}}
+{{--                    @method('PUT')--}}
+{{--                    @csrf--}}
+{{--                    <div class="modal-header">--}}
+{{--                        <h5 class="modal-title" id="exampleModalLabel">Edit Group Division</h5>--}}
+{{--                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">--}}
+{{--                            <span aria-hidden="true">&times;</span>--}}
+{{--                        </button>--}}
+{{--                    </div>--}}
+{{--                    <div class="modal-body">--}}
+{{--                        <input type="hidden" id="groupId">--}}
+{{--                        <div class="form-group ">--}}
+{{--                            <label class="form-label" for="add_groupName">Group Division Name</label>--}}
+{{--                            <small class="text-danger">*</small>--}}
+{{--                            <input type="text"--}}
+{{--                                   id="add_groupName"--}}
+{{--                                   name="groupName"--}}
+{{--                                   value="{{ old('groupName') }}"--}}
+{{--                                   class="form-control"--}}
+{{--                                   placeholder="Input group's name ...">--}}
+{{--                            <span class="invalid-feedback groupName_error" role="alert">--}}
+{{--                                <strong></strong>--}}
+{{--                            </span>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="modal-footer">--}}
+{{--                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>--}}
+{{--                        <button type="submit" class="btn btn-primary">Submit</button>--}}
+{{--                    </div>--}}
+{{--                </form>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </div>--}}
 
-    <x-add-our-team-match-in-competition-modal :competition="$competition"/>
-    <x-add-opponent-team-match-in-competition-modal :competition="$competition"/>
+{{--    <x-add-our-team-match-in-competition-modal :competition="$competition"/>--}}
+{{--    <x-add-opponent-team-match-in-competition-modal :competition="$competition"/>--}}
+    <x-modal.matches.add-match :competition="$competition"/>
+    <x-modal.matches.edit-match :competition="$competition"/>
 @endsection
 
 @section('content')
@@ -78,7 +80,7 @@
                  alt="instructor">
             <div class="flex ml-md-4 mb-3 mb-md-0">
                 <h2 class="text-white mb-0">{{ $competition->name  }}</h2>
-                <p class="lead text-white-50">{{ $competition->type }}</p>
+                <p class="lead text-white-50">{{ $competition->type }} ~ @if($competition->isInternal == 1)Internal @else External @endif Competition</p>
             </div>
             @if(isAllAdmin())
             <div class="dropdown">
@@ -115,11 +117,11 @@
                     <a class="nav-link" data-toggle="tab" href="#matches-tab">Matches</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#groups-tab">Group Divisions</a>
+                    <a class="nav-link" data-toggle="tab" href="#standing-tab">Standing</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#tables-tab">Group Tables</a>
-                </li>
+{{--                <li class="nav-item">--}}
+{{--                    <a class="nav-link" data-toggle="tab" href="#tables-tab">Group Tables</a>--}}
+{{--                </li>--}}
             </ul>
         </div>
     </nav>
@@ -134,11 +136,10 @@
                 </div>
                 <div class="row">
                     @include('components.stats-card', ['title' => 'Total Teams', 'data'=>$overviewStats['totalTeams'], 'dataThisMonth'=>null])
-                    @include('components.stats-card', ['title' => 'Total Groups', 'data'=>$overviewStats['totalGroups'], 'dataThisMonth'=>null])
                     @include('components.stats-card', ['title' => 'Total Match', 'data'=>$overviewStats['totalMatch'], 'dataThisMonth'=>null])
-                    @include('components.stats-card', ['title' => "Total Our Team's Wins", 'data'=>$overviewStats['ourTeamsWins'], 'dataThisMonth'=>null])
-                    @include('components.stats-card', ['title' => "Total Our Team's Draws", 'data'=>$overviewStats['ourTeamsDraws'], 'dataThisMonth'=>null])
-                    @include('components.stats-card', ['title' => "Total Our Team's Losses", 'data'=>$overviewStats['ourTeamsLosses'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => "Total Wins", 'data'=>$overviewStats['ourTeamsWins'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => "Total Draws", 'data'=>$overviewStats['ourTeamsDraws'], 'dataThisMonth'=>null])
+                    @include('components.stats-card', ['title' => "Total Losses", 'data'=>$overviewStats['ourTeamsLosses'], 'dataThisMonth'=>null])
                 </div>
 
                 <div class="page-separator">
@@ -174,23 +175,27 @@
                                     <div class="p-2"><p class="card-title mb-4pt">Location :</p></div>
                                     <div class="ml-auto p-2 text-muted">{{ $competition->location }}</div>
                                 </div>
-                                <div class="d-flex align-items-center">
-                                    <div class="p-2"><p class="card-title mb-4pt">Description :</p></div>
-                                    <div class="ml-auto p-2 text-muted">@php echo $competition->description @endphp</div>
-                                </div>
+{{--                                <div class="d-flex align-items-center">--}}
+{{--                                    <div class="p-2"><p class="card-title mb-4pt">Description :</p></div>--}}
+{{--                                    <div class="ml-auto p-2 text-muted">@php echo $competition->description @endphp</div>--}}
+{{--                                </div>--}}
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="card">
                             <div class="card-body">
+{{--                                <div class="d-flex align-items-center">--}}
+{{--                                    <div class="p-2"><p class="card-title mb-4pt">Contact Name :</p></div>--}}
+{{--                                    <div class="ml-auto p-2 text-muted">{{ $competition->contactName }}</div>--}}
+{{--                                </div>--}}
+{{--                                <div class="d-flex align-items-center">--}}
+{{--                                    <div class="p-2"><p class="card-title mb-4pt">Contact Phone :</p></div>--}}
+{{--                                    <div class="ml-auto p-2 text-muted">{{ $competition->contactPhone }}</div>--}}
+{{--                                </div>--}}
                                 <div class="d-flex align-items-center">
-                                    <div class="p-2"><p class="card-title mb-4pt">Contact Name :</p></div>
-                                    <div class="ml-auto p-2 text-muted">{{ $competition->contactName }}</div>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <div class="p-2"><p class="card-title mb-4pt">Contact Phone :</p></div>
-                                    <div class="ml-auto p-2 text-muted">{{ $competition->contactPhone }}</div>
+                                    <div class="p-2"><p class="card-title mb-4pt">Created By :</p></div>
+                                    <div class="ml-auto p-2 text-muted">@if($competition->userId){{ getUserFullName($competition->user) }}@else N/A @endif</div>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <div class="p-2"><p class="card-title mb-4pt">Created At :</p></div>
@@ -211,33 +216,35 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Match</div>
                     @if(isAllAdmin())
-                        <a href="#" id="addOpponentTeamMatch" class="btn btn-primary ml-auto btn-sm">
-                            <span class="material-icons mr-2">add</span>Add Opponent Team Match
-                        </a>
-                        <a href="#" id="addOurTeamMatch" class="btn btn-primary ml-2 btn-sm">
-                            <span class="material-icons mr-2">add</span>Add Our Team Match
-                        </a>
+                        <x-buttons.link-button size="sm" margin="ml-auto" href="#" icon="add" text="Add Match" id="add-match-btn"/>
                     @endif
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover" id="competitionMatchTable">
-                                <thead>
-                                <tr>
-                                    <th>Team</th>
-                                    <th>Opponent</th>
-                                    <th>Score</th>
-                                    <th>Match Date</th>
-                                    <th>Location</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+                        @if($competition->isInternal == 1)
+                            <x-table :headers="['#','Home Team', 'Away Team', 'Score', 'Match Date','Venue', 'Status', 'Action']" tableId="competitionMatchTable"/>
+                        @else
+                            <x-table :headers="['#','Team', 'Opposing Team', 'Score', 'Match Date','Venue', 'Status', 'Action']" tableId="competitionMatchTable"/>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            {{-- Standing --}}
+            <div class="tab-pane fade" id="standing-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Competition Standing</div>
+                    @if(isAllAdmin())
+                        <x-buttons.link-button size="sm" margin="ml-auto" href="#" icon="add" text="Add Match" id="add-match-btn"/>
+                    @endif
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        @if($competition->isInternal == 1)
+                            <x-table :headers="['#','Home Team', 'Away Team', 'Score', 'Match Date','Venue', 'Status', 'Action']" tableId="competitionMatchTable"/>
+                        @else
+                            <x-table :headers="['#','Team', 'Opposing Team', 'Score', 'Match Date','Venue', 'Status', 'Action']" tableId="competitionMatchTable"/>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -381,13 +388,13 @@
                 processing: true,
                 serverSide: true,
                 ordering: true,
-                pageLength: 5,
                 ajax: {
                     url: '{!! route('competition-managements.matches', $competition->hash) !!}',
                 },
                 columns: [
-                    { data: 'team', name: 'team' },
-                    { data: 'opponentTeam', name: 'opponentTeam' },
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    { data: 'homeTeam', name: 'homeTeam' },
+                    { data: 'awayTeam', name: 'awayTeam' },
                     { data: 'score', name: 'score'},
                     { data: 'date', name: 'date'},
                     { data: 'place', name: 'place'},
@@ -401,107 +408,107 @@
                 ],
             });
 
-            @foreach($competition->groups as $group)
-                $('#groupTable{{$group->id}}').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ordering: true,
-                    ajax: {
-                        url: '{!! route('division-managements.index', ['competition'=>$competition->hash,'group'=>$group->id]) !!}',
-                    },
-                    columns: [
-                        { data: 'teams', name: 'teams' },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false,
-                        },
-                    ]
-                });
+{{--            @foreach($competition->groups as $group)--}}
+{{--                $('#groupTable{{$group->id}}').DataTable({--}}
+{{--                    processing: true,--}}
+{{--                    serverSide: true,--}}
+{{--                    ordering: true,--}}
+{{--                    ajax: {--}}
+{{--                        url: '{!! route('division-managements.index', ['competition'=>$competition->hash,'group'=>$group->id]) !!}',--}}
+{{--                    },--}}
+{{--                    columns: [--}}
+{{--                        { data: 'teams', name: 'teams' },--}}
+{{--                        {--}}
+{{--                            data: 'action',--}}
+{{--                            name: 'action',--}}
+{{--                            orderable: false,--}}
+{{--                            searchable: false,--}}
+{{--                        },--}}
+{{--                    ]--}}
+{{--                });--}}
 
-            $('#classTable{{$group->id}}').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! route('division-managements.index', ['competition'=>$competition->hash,'group'=>$group->id]) !!}',
-                },
-                columns: [
-                    { data: 'teams', name: 'teams' },
-                    { data: 'pivot.matchPlayed', name: 'pivot.matchPlayed' },
-                    { data: 'pivot.won', name: 'pivot.won' },
-                    { data: 'pivot.drawn', name: 'pivot.drawn' },
-                    { data: 'pivot.lost', name: 'pivot.lost' },
-                    { data: 'pivot.goalsFor', name: 'pivot.goalsFor' },
-                    { data: 'pivot.goalsAgaints', name: 'pivot.goalsAgaints' },
-                    { data: 'pivot.goalsDifference', name: 'pivot.goalsDifference' },
-                    { data: 'pivot.redCards', name: 'pivot.redCards' },
-                    { data: 'pivot.yellowCards', name: 'pivot.yellowCards' },
-                    { data: 'pivot.points', name: 'pivot.points' },
-                ]
-            });
-            @endforeach
+{{--            $('#classTable{{$group->id}}').DataTable({--}}
+{{--                processing: true,--}}
+{{--                serverSide: true,--}}
+{{--                ordering: true,--}}
+{{--                ajax: {--}}
+{{--                    url: '{!! route('division-managements.index', ['competition'=>$competition->hash,'group'=>$group->id]) !!}',--}}
+{{--                },--}}
+{{--                columns: [--}}
+{{--                    { data: 'teams', name: 'teams' },--}}
+{{--                    { data: 'pivot.matchPlayed', name: 'pivot.matchPlayed' },--}}
+{{--                    { data: 'pivot.won', name: 'pivot.won' },--}}
+{{--                    { data: 'pivot.drawn', name: 'pivot.drawn' },--}}
+{{--                    { data: 'pivot.lost', name: 'pivot.lost' },--}}
+{{--                    { data: 'pivot.goalsFor', name: 'pivot.goalsFor' },--}}
+{{--                    { data: 'pivot.goalsAgaints', name: 'pivot.goalsAgaints' },--}}
+{{--                    { data: 'pivot.goalsDifference', name: 'pivot.goalsDifference' },--}}
+{{--                    { data: 'pivot.redCards', name: 'pivot.redCards' },--}}
+{{--                    { data: 'pivot.yellowCards', name: 'pivot.yellowCards' },--}}
+{{--                    { data: 'pivot.points', name: 'pivot.points' },--}}
+{{--                ]--}}
+{{--            });--}}
+{{--            @endforeach--}}
 
-            // show modal edit group data
-            $('body').on('click', '.edit-group', function(e) {
-                const id = $(this).attr('id');
-                e.preventDefault();
+{{--            // show modal edit group data--}}
+{{--            $('body').on('click', '.edit-group', function(e) {--}}
+{{--                const id = $(this).attr('id');--}}
+{{--                e.preventDefault();--}}
 
-                $.ajax({
-                    method: 'GET',
-                    url: "{{ route('division-managements.edit', ['competition' => $competition->hash, 'group' => ':id']) }}".replace(':id', id),
-                    success: function(res) {
-                        $("#editGroupModal").modal('show');
-                        $('#groupId').val(id);
-                        $('#add_groupName').val(res.groupName);
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        Swal.fire({
-                            icon: 'error',
-                            html: response,
-                            allowOutsideClick: true,
-                        });
-                    }
-                });
-            });
+{{--                $.ajax({--}}
+{{--                    method: 'GET',--}}
+{{--                    url: "{{ route('division-managements.edit', ['competition' => $competition->hash, 'group' => ':id']) }}".replace(':id', id),--}}
+{{--                    success: function(res) {--}}
+{{--                        $("#editGroupModal").modal('show');--}}
+{{--                        $('#groupId').val(id);--}}
+{{--                        $('#add_groupName').val(res.groupName);--}}
+{{--                    },--}}
+{{--                    error: function(xhr) {--}}
+{{--                        const response = JSON.parse(xhr.responseText);--}}
+{{--                        Swal.fire({--}}
+{{--                            icon: 'error',--}}
+{{--                            html: response,--}}
+{{--                            allowOutsideClick: true,--}}
+{{--                        });--}}
+{{--                    }--}}
+{{--                });--}}
+{{--            });--}}
 
-            // insert data opponent team
-            $('#formEditGroupModal').on('submit', function(e) {
-                e.preventDefault();
-                let id = $('#groupId').val();
+{{--            // insert data opponent team--}}
+{{--            $('#formEditGroupModal').on('submit', function(e) {--}}
+{{--                e.preventDefault();--}}
+{{--                let id = $('#groupId').val();--}}
 
-                $.ajax({
-                    method: $(this).attr('method'),
-                    url: "{{ route('division-managements.update', ['competition' => $competition->hash, 'group' => ':id']) }}".replace(':id', id),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        $('#editGroupModal').modal('hide');
-                        Swal.fire({
-                            title: 'Group Division successfully added!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        const response = JSON.parse(xhr.responseText);
-                        $.each(response.errors, function(key, val) {
-                            $('span.' + key + '_error').text(val[0]);
-                            $("input#add_" + key).addClass('is-invalid');
-                        });
-                    }
-                });
-            });
+{{--                $.ajax({--}}
+{{--                    method: $(this).attr('method'),--}}
+{{--                    url: "{{ route('division-managements.update', ['competition' => $competition->hash, 'group' => ':id']) }}".replace(':id', id),--}}
+{{--                    data: new FormData(this),--}}
+{{--                    contentType: false,--}}
+{{--                    processData: false,--}}
+{{--                    success: function(res) {--}}
+{{--                        $('#editGroupModal').modal('hide');--}}
+{{--                        Swal.fire({--}}
+{{--                            title: 'Group Division successfully added!',--}}
+{{--                            icon: 'success',--}}
+{{--                            showCancelButton: false,--}}
+{{--                            confirmButtonColor: "#1ac2a1",--}}
+{{--                            confirmButtonText:--}}
+{{--                                'Ok!'--}}
+{{--                        }).then((result) => {--}}
+{{--                            if (result.isConfirmed) {--}}
+{{--                                location.reload();--}}
+{{--                            }--}}
+{{--                        });--}}
+{{--                    },--}}
+{{--                    error: function(xhr) {--}}
+{{--                        const response = JSON.parse(xhr.responseText);--}}
+{{--                        $.each(response.errors, function(key, val) {--}}
+{{--                            $('span.' + key + '_error').text(val[0]);--}}
+{{--                            $("input#add_" + key).addClass('is-invalid');--}}
+{{--                        });--}}
+{{--                    }--}}
+{{--                });--}}
+{{--            });--}}
         });
     </script>
 @endpush
