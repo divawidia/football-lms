@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\EventScheduleController;
 use App\Http\Controllers\Admin\FinancialReportController;
 use App\Http\Controllers\Admin\GroupDivisionController;
 use App\Http\Controllers\Admin\InvoiceController;
+use App\Http\Controllers\Admin\LeagueStandingController;
 use App\Http\Controllers\Admin\OpponentTeamController;
 use App\Http\Controllers\Admin\PlayerParentController;
 use App\Http\Controllers\Admin\ProductCategoryController;
@@ -206,6 +207,16 @@ Route::group(['middleware' => ['auth']], function () {
                     Route::patch('ongoing', [CompetitionController::class, 'ongoing'])->name('ongoing-competition');
                     Route::patch('completed', [CompetitionController::class, 'completed'])->name('completed-competition');
                     Route::patch('cancelled', [CompetitionController::class, 'cancelled'])->name('cancelled-competition');
+
+                    Route::prefix('league-standings')->group(function () {
+                        Route::get('', [LeagueStandingController::class, 'index'])->name('competition-managements.league-standings.index');
+                        Route::post('store', [LeagueStandingController::class, 'store'])->name('competition-managements.league-standings.store');
+                        Route::prefix('{leagueStanding}')->group(function () {
+                            Route::get('', [LeagueStandingController::class, 'show'])->name('competition-managements.league-standings.show');
+                            Route::put('update', [LeagueStandingController::class, 'update'])->name('competition-managements.league-standings.update');
+                            Route::delete('destroy', [LeagueStandingController::class, 'destroy'])->name('competition-managements.league-standings.destroy');
+                        });
+                    });
 
                     Route::prefix('group-division')->group(function () {
                         Route::get('get-all', [GroupDivisionController::class, 'getAll'])->name('division-managements.get-all');
