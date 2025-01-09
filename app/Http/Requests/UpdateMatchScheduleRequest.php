@@ -25,8 +25,8 @@ class UpdateMatchScheduleRequest extends FormRequest
         return [
             'place' => ['required', 'string'],
             'date' => ['required', 'date'],
-            'startTime' => ['required', 'date_format:H:i'],
-            'endTime' => ['required', 'date_format:H:i', 'after:startTime'],
+            'startTime' => ['required'],
+            'endTime' => ['required', 'after:startTime'],
         ];
     }
 }
