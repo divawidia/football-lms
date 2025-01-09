@@ -8,9 +8,10 @@
         @endif
     @endif
     <select class="form-control form-select @if(!$modal) @error($name) is-invalid @enderror @endif"
-            id="{{ $id }}" name="{{ $name }}"
+            id="{{ $id }}"
+            name="{{ $name }}"
             @if($required) required @endif
-            data-toggle="select"
+            @if($select2) data-toggle="select" @endif
             @if($multiple) multiple @endif>
         {{ $slot }}
     </select>
