@@ -12,15 +12,17 @@ class ImageInput extends Component
     public $required;
     public $name;
     public $modal;
+    public $value;
     /**
      * Create a new component instance.
      */
-    public function __construct($name, $label = null, $required = false, $modal = false)
+    public function __construct($name, $label = null, $required = false, $modal = false, $value = null)
     {
         $this->name = $name;
         $this->label = $label;
         $this->required = $required;
         $this->modal = $modal;
+        $this->value = $value;
     }
 
     /**
