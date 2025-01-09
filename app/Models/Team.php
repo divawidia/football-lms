@@ -55,6 +55,19 @@ class Team extends Model
         return $this->hasMany(TeamMatch::class, 'teamId');
     }
 
+    public function homeMatch()
+    {
+        return $this->hasMany(EventSchedule::class, 'homeTeamId');
+    }
+    public function awayMatch()
+    {
+        return $this->hasMany(EventSchedule::class, 'awayTeamId');
+    }
+    public function winnerMatch()
+    {
+        return $this->hasMany(EventSchedule::class, 'winnerTeamId');
+    }
+
     public function players()
     {
         return $this->belongsToMany(Player::class, 'player_teams', 'teamId', 'playerId')->withTimestamps();
