@@ -33,31 +33,7 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
-                            <label class="form-label">Profile photo</label>
-                            <small class="text-black-100">(Optional)</small>
-                            <div class="media align-items-center mb-2">
-                                <img src="{{ Storage::url('images/undefined-user.png') }}"
-                                     alt="people"
-                                     width="54"
-                                     height="54"
-                                     id="preview"
-                                     class="mr-16pt rounded-circle img-object-fit-cover"/>
-                                <div class="media-body">
-                                    <div class="custom-file">
-                                        <input type="file"
-                                               class="custom-file-input @error('foto') is-invalid @enderror"
-                                               name="foto"
-                                               id="foto"
-                                               accept="image/jpg, image/jpeg, image/png">
-                                        <label class="custom-file-label" for="foto">Choose file</label>
-                                    </div>
-                                </div>
-                                @error('foto')
-                                <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
+                            <x-forms.image-input name="foto" label="Profile photo"/>
                             <div class="form-group">
                                 <label class="form-label" for="firstName">First name</label>
                                 <small class="text-danger">*</small>
