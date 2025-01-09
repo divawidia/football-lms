@@ -26,6 +26,10 @@ class EventSchedule extends Model
         'status',
         'isOpponentTeamMatch',
         'isReminderNotified',
+        'homeTeamId',
+        'awayTeamId',
+        'winnerTeamId',
+        'isExternalTeamWinner'
     ];
 
     public function teams()
@@ -52,7 +56,20 @@ class EventSchedule extends Model
             )->withTimestamps();
     }
 
-    public function externalTeams()
+    public function homeTeam()
+    {
+        return $this->belongsTo(Team::class, 'homeTeamId');
+    }
+    public function awayTeam()
+    {
+        return $this->belongsTo(Team::class, 'awayTeamId');
+    }
+    public function winnerTeam()
+    {
+        return $this->belongsTo(Team::class, 'winnerTeamId');
+    }
+
+    public function externalTeam()
     {
         return $this->hasOne(ExternalTeamMatch::class, 'eventId');
     }
