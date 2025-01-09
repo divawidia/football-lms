@@ -23,6 +23,10 @@ class Competition extends Model
         'userId'
     ];
 
+    public function standings()
+    {
+        return $this->hasMany(LeagueStanding::class, 'competitionId');
+    }
     public function groups(){
         return $this->hasMany(GroupDivision::class, 'competitionId');
     }
