@@ -49,6 +49,8 @@
 {{--    <x-add-opponent-team-match-in-competition-modal :competition="$competition"/>--}}
     <x-modal.matches.add-match :competition="$competition"/>
     <x-modal.matches.edit-match :competition="$competition"/>
+    <x-modal.competitions.add-team-into-standing :competition="$competition"/>
+    <x-modal.competitions.edit-team-standing :competition="$competition"/>
 @endsection
 
 @section('content')
@@ -116,9 +118,12 @@
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#matches-tab">Matches</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#standing-tab">Standing</a>
-                </li>
+                @if($competition->type == 'league')
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#standing-tab">Standing</a>
+                    </li>
+                @endif
+
 {{--                <li class="nav-item">--}}
 {{--                    <a class="nav-link" data-toggle="tab" href="#tables-tab">Group Tables</a>--}}
 {{--                </li>--}}
@@ -231,159 +236,177 @@
             </div>
 
             {{-- Standing --}}
-            <div class="tab-pane fade" id="standing-tab" role="tabpanel">
-                <div class="page-separator">
-                    <div class="page-separator__text">Competition Standing</div>
-                    @if(isAllAdmin())
-                        <x-buttons.link-button size="sm" margin="ml-auto" href="#" icon="add" text="Add Match" id="add-match-btn"/>
-                    @endif
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        @if($competition->isInternal == 1)
-                            <x-table :headers="['#','Home Team', 'Away Team', 'Score', 'Match Date','Venue', 'Status', 'Action']" tableId="competitionMatchTable"/>
-                        @else
-                            <x-table :headers="['#','Team', 'Opposing Team', 'Score', 'Match Date','Venue', 'Status', 'Action']" tableId="competitionMatchTable"/>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            {{-- Group Divisions --}}
-            <div class="tab-pane fade" id="groups-tab" role="tabpanel">
-                <div class="page-separator">
-                    <div class="page-separator__text">Group Divisions</div>
-                    @if(isAllAdmin())
-                        <a href="{{ route('division-managements.create', $competition->hash) }}" class="btn btn-primary ml-auto btn-sm">
-                            <span class="material-icons mr-2">add</span>Add New
-                        </a>
-                    @endif
-                </div>
-                <div class="row">
-                    @foreach($competition->groups as $group)
-                        <div class="@if(count($competition->groups) <= 1) col-12 @else col-lg-6 @endif">
-                            <div class="page-separator">
-                                <div class="page-separator__text">{{ $group->groupName }}</div>
-                                @if(isAllAdmin())
-                                    <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">
-                                        <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">
-                                            <span class="material-icons">edit</span>
-                                        </a>
-                                        <a href="{{ route('division-managements.addTeam', ['competition' => $competition->hash, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">
-                                            <span class="material-icons">add</span>
-                                        </a>
-                                        <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">
-                                            <span class="material-icons">delete</span>
-                                        </button>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover w-100" id="groupTable{{$group->id}}">
-                                            <thead>
-                                            <tr>
-                                                <th>Team Name</th>
-                                                <th>Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- Group Tables --}}
-            <div class="tab-pane fade" id="tables-tab" role="tabpanel">
-                <div class="page-separator">
-                    <div class="page-separator__text">Group Tables</div>
-                </div>
-                @foreach($competition->groups as $group)
+            @if($competition->type == 'league')
+                <div class="tab-pane fade" id="standing-tab" role="tabpanel">
                     <div class="page-separator">
-                        <div class="page-separator__text">{{ $group->groupName }}</div>
+                        <div class="page-separator__text">League Standing</div>
+                        @if(isAllAdmin())
+                            <x-buttons.link-button size="sm" margin="ml-auto" href="#" icon="add" text="Add Team" id="add-team-btn"/>
+                        @endif
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover w-100" id="classTable{{$group->id}}">
-                                    <thead>
-                                    <tr>
-                                        <th>Team</th>
-                                        <th>Match Played</th>
-                                        <th>won</th>
-                                        <th>drawn</th>
-                                        <th>lost</th>
-                                        <th>goals For</th>
-                                        <th>goals Againts</th>
-                                        <th>goals Difference</th>
-                                        <th>red Cards</th>
-                                        <th>yellow Cards</th>
-                                        <th>points</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
+                            @if ($competition->status == 'Scheduled' or $competition->status == 'Ongoing')
+                                <x-table :headers="['Pos.', 'Team', 'Match Played', 'Won', 'Draw','Lost', 'Goals For', 'Goals Against', 'Goals Difference', 'Points',  'Action']" tableId="leagueStandingTable"/>
+                            @else
+                                <x-table :headers="['Pos.', 'Team', 'Match Played', 'Won', 'Draw','Lost', 'Goals For', 'Goals Against', 'Goals Difference', 'Points']" tableId="leagueStandingTable"/>
+                            @endif
                         </div>
                     </div>
+                </div>
+            @endif
 
-                    <x-process-data-confirmation btnClass=".delete-group{{ $group->id }}-team"
-                                                 :processRoute="route('division-managements.removeTeam', ['competition' => $competition->hash, 'group' => $group->id,'team' => ':id'])"
-                                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"
-                                                 method="PUT"
-                                                 confirmationText="Are you sure to delete this team from group division {{ $group->groupName }}?"
-                                                 errorText="Something went wrong when deleting this team from the group division {{ $group->groupName }}!"/>
-                @endforeach
-            </div>
+
+            {{-- Group Divisions --}}
+{{--            <div class="tab-pane fade" id="groups-tab" role="tabpanel">--}}
+{{--                <div class="page-separator">--}}
+{{--                    <div class="page-separator__text">Group Divisions</div>--}}
+{{--                    @if(isAllAdmin())--}}
+{{--                        <a href="{{ route('division-managements.create', $competition->hash) }}" class="btn btn-primary ml-auto btn-sm">--}}
+{{--                            <span class="material-icons mr-2">add</span>Add New--}}
+{{--                        </a>--}}
+{{--                    @endif--}}
+{{--                </div>--}}
+{{--                <div class="row">--}}
+{{--                    @foreach($competition->groups as $group)--}}
+{{--                        <div class="@if(count($competition->groups) <= 1) col-12 @else col-lg-6 @endif">--}}
+{{--                            <div class="page-separator">--}}
+{{--                                <div class="page-separator__text">{{ $group->groupName }}</div>--}}
+{{--                                @if(isAllAdmin())--}}
+{{--                                    <div class="btn-toolbar ml-auto" role="toolbar" aria-label="Toolbar with button groups">--}}
+{{--                                        <a class="btn btn-sm btn-white edit-group" id="{{ $group->id }}" href="#" data-toggle="tooltip" data-placement="bottom" title="Edit Group">--}}
+{{--                                            <span class="material-icons">edit</span>--}}
+{{--                                        </a>--}}
+{{--                                        <a href="{{ route('division-managements.addTeam', ['competition' => $competition->hash, 'group' => $group->id]) }}" class="btn btn-sm btn-white ml-1" data-toggle="tooltip" data-placement="bottom" title="Add Team">--}}
+{{--                                            <span class="material-icons">add</span>--}}
+{{--                                        </a>--}}
+{{--                                        <button type="button" class="btn btn-sm btn-white ml-1 delete-group" id="{{ $group->id }}" data-toggle="tooltip" data-placement="bottom" title="Delete Group">--}}
+{{--                                            <span class="material-icons">delete</span>--}}
+{{--                                        </button>--}}
+{{--                                    </div>--}}
+{{--                                @endif--}}
+{{--                            </div>--}}
+{{--                            <div class="card">--}}
+{{--                                <div class="card-body">--}}
+{{--                                    <div class="table-responsive">--}}
+{{--                                        <table class="table table-hover w-100" id="groupTable{{$group->id}}">--}}
+{{--                                            <thead>--}}
+{{--                                            <tr>--}}
+{{--                                                <th>Team Name</th>--}}
+{{--                                                <th>Action</th>--}}
+{{--                                            </tr>--}}
+{{--                                            </thead>--}}
+{{--                                            <tbody>--}}
+{{--                                            </tbody>--}}
+{{--                                        </table>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    @endforeach--}}
+{{--                </div>--}}
+{{--            </div>--}}
+
+{{--            --}}{{-- Group Tables --}}
+{{--            <div class="tab-pane fade" id="tables-tab" role="tabpanel">--}}
+{{--                <div class="page-separator">--}}
+{{--                    <div class="page-separator__text">Group Tables</div>--}}
+{{--                </div>--}}
+{{--                @foreach($competition->groups as $group)--}}
+{{--                    <div class="page-separator">--}}
+{{--                        <div class="page-separator__text">{{ $group->groupName }}</div>--}}
+{{--                    </div>--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="card-body">--}}
+{{--                            <div class="table-responsive">--}}
+{{--                                <table class="table table-hover w-100" id="classTable{{$group->id}}">--}}
+{{--                                    <thead>--}}
+{{--                                    <tr>--}}
+{{--                                        <th>Team</th>--}}
+{{--                                        <th>Match Played</th>--}}
+{{--                                        <th>won</th>--}}
+{{--                                        <th>drawn</th>--}}
+{{--                                        <th>lost</th>--}}
+{{--                                        <th>goals For</th>--}}
+{{--                                        <th>goals Againts</th>--}}
+{{--                                        <th>goals Difference</th>--}}
+{{--                                        <th>red Cards</th>--}}
+{{--                                        <th>yellow Cards</th>--}}
+{{--                                        <th>points</th>--}}
+{{--                                    </tr>--}}
+{{--                                    </thead>--}}
+{{--                                    <tbody>--}}
+{{--                                    </tbody>--}}
+{{--                                </table>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+
+{{--                    <x-process-data-confirmation btnClass=".delete-group{{ $group->id }}-team"--}}
+{{--                                                 :processRoute="route('division-managements.removeTeam', ['competition' => $competition->hash, 'group' => $group->id,'team' => ':id'])"--}}
+{{--                                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"--}}
+{{--                                                 method="PUT"--}}
+{{--                                                 confirmationText="Are you sure to delete this team from group division {{ $group->groupName }}?"--}}
+{{--                                                 errorText="Something went wrong when deleting this team from the group division {{ $group->groupName }}!"/>--}}
+{{--                @endforeach--}}
+{{--            </div>--}}
         </div>
     </div>
 
-    <x-process-data-confirmation btnClass=".delete-competition"
-                                 :processRoute="route('competition-managements.destroy', ['competition' => ':id'])"
-                                 :routeAfterProcess="route('competition-managements.index')"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to delete competition {{ $competition->name }}?"
-                                 errorText="Something went wrong when deleting the competition {{ $competition->name }}!"/>
-
-    <x-process-data-confirmation btnClass=".cancelBtn"
-                                 :processRoute="route('cancelled-competition', ['competition' => ':id'])"
-                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"
-                                 method="PATCH"
-                                 confirmationText="Are you sure to cancel competition {{ $competition->name }}?"
-                                 errorText="Something went wrong when marking the competition {{ $competition->name }} as cancelled!"/>
-
-    <x-process-data-confirmation btnClass=".delete-match"
-                                 :processRoute="route('match-schedules.destroy', ['schedule' => ':id'])"
-                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to delete this match from competition {{ $competition->name }}?"
-                                 errorText="Something went wrong when deleting this match from competition {{ $competition->name }}!"/>
-
-    <x-process-data-confirmation btnClass=".delete-group"
-                                 :processRoute="route('division-managements.destroy', ['competition' => $competition->hash, 'group' => ':id'])"
-                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to delete this group division?"
-                                 errorText="Something went wrong when deleting the group division!"/>
-
-    <x-process-data-confirmation btnClass=".delete-competition"
-                                 :processRoute="route('competition-managements.destroy', ['competition' => $competition->hash])"
-                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to delete this competition {{ $competition->name }}?"
-                                 errorText="Something went wrong when deleting the competition {{ $competition->name }}!"/>
+{{--    <x-process-data-confirmation btnClass=".delete-group"--}}
+{{--                                 :processRoute="route('division-managements.destroy', ['competition' => $competition->hash, 'group' => ':id'])"--}}
+{{--                                 :routeAfterProcess="route('competition-managements.show', $competition->hash)"--}}
+{{--                                 method="DELETE"--}}
+{{--                                 confirmationText="Are you sure to delete this group division?"--}}
+{{--                                 errorText="Something went wrong when deleting the group division!"/>--}}
 
 @endsection
 @push('addon-script')
-    <script>
+    <script type="module">
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+
         $(document).ready(function() {
+
+            processWithConfirmation(
+                '.delete-competition',
+                "{{ route('competition-managements.destroy', ['competition' => $competition->hash]) }}",
+                "{{ route('competition-managements.index') }}",
+                'DELETE',
+                "Are you sure to delete competition {{ $competition->name }}?",
+                "Something went wrong when deleting the competition {{ $competition->name }}!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.cancelBtn',
+                "{{ route('cancelled-competition', ['competition' => $competition->hash]) }}",
+                "{{ route('competition-managements.show', $competition->hash) }}",
+                'PATCH',
+                "Are you sure to cancel competition {{ $competition->name }}?",
+                "Something went wrong when marking the competition {{ $competition->name }} as cancelled!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.delete-match',
+                "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}",
+                "{{ route('competition-managements.show', $competition->hash) }}",
+                'DELETE',
+                "Are you sure to delete this match from competition {{ $competition->name }}?",
+                "Something went wrong when deleting this match from competition {{ $competition->name }}!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.delete-team',
+                "{{ route('competition-managements.league-standings.destroy', ['competition' => $competition->hash, 'leagueStanding'=>':id']) }}",
+                "{{ route('competition-managements.show', $competition->hash) }}",
+                'DELETE',
+                "Are you sure to delete this team standing from competition {{ $competition->name }}?",
+                "Something went wrong when deleting this team standing from competition {{ $competition->name }}!",
+                "{{ csrf_token() }}"
+            );
+
             $('#competitionMatchTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -405,6 +428,35 @@
                         orderable: false,
                         searchable: false,
                     },
+                ],
+            });
+
+            $('#leagueStandingTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                ajax: {
+                    url: '{!! route('competition-managements.league-standings.index', $competition->hash) !!}',
+                },
+                columns: [
+                    { data: 'standingPositions', name: 'standingPositions' },
+                    { data: 'team', name: 'team' },
+                    { data: 'matchPlayed', name: 'matchPlayed'},
+                    { data: 'won', name: 'won'},
+                    { data: 'drawn', name: 'drawn'},
+                    { data: 'lost', name: 'lost'},
+                    { data: 'goalsFor', name: 'goalsFor' },
+                    { data: 'goalsAgainst', name: 'goalsAgainst' },
+                    { data: 'goalsDifference', name: 'goalsDifference'},
+                    { data: 'points', name: 'points'},
+                    @if($competition->status == 'Scheduled' or $competition->status == 'Ongoing')
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    @endif
                 ],
             });
 
