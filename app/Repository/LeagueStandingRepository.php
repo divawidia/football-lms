@@ -7,53 +7,43 @@ use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
 use App\Models\Competition;
 use App\Models\EventSchedule;
+use App\Models\LeagueStanding;
 use App\Models\Team;
+use App\Repository\Interface\LeagueStandingRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 
-class CompetitionRepository
+class LeagueStandingRepository implements LeagueStandingRepositoryInterface
 {
-    protected Competition $competition;
-    public function __construct(Competition $competition)
+    protected LeagueStanding $leagueStanding;
+    public function __construct(LeagueStanding $leagueStanding)
     {
-        $this->competition = $competition;
+        $this->leagueStanding = $leagueStanding;
     }
 
-    public function getAll($teams = null, $status = null)
+    public function getAll(Competition $competition = null)
     {
-        $query = $this->competition->with('groups.teams');
-        if ($teams){
-            $teamIds = collect($teams)->pluck('id')->all();
-            $query->whereHas('groups.teams', function($q) use ($teamIds){
-                $q->whereIn('teamId', $teamIds);
-            });
-        }
-        if ($status){
-            $query->where('status', $status);
+        $query = $this->leagueStanding->with('team');
+        if ($competition){
+            $query->where('competitionId', $competition->id);
         }
         return $query->get();
     }
 
-    public function find($id)
+    public function create(array $data, Competition $competition)
     {
-        return $this->competition->findOrFail($id);
+        return $competition->standings()->create([
+            'teamId' => $data['teams'],
+        ]);
     }
 
-    public function create(array $data)
+    public function update(LeagueStanding $standing, array $data)
     {
-        return $this->competition->create($data);
+        return $standing->update($data);
     }
 
-    public function update($id, array $data)
+    public function delete(LeagueStanding $standing)
     {
-        $post = $this->find($id);
-        $post->update($data);
-        return $post;
-    }
-
-    public function delete($id)
-    {
-        $post = $this->find($id);
-        $post->delete();
-        return $post;
+        $standing->delete();
+        return $standing;
     }
 }
