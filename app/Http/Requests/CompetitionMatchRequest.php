@@ -26,10 +26,10 @@ class CompetitionMatchRequest extends FormRequest
             'place' => ['required', 'string'],
             'date' => ['required', 'date'],
             'startTime' => ['required', 'date_format:H:i'],
-            'endTime' => ['required', 'date_format:H:i', 'after:startTime'],
-            'isOpponentTeamMatch' => [Rule::in('1', '0')],
-            'teamId' => ['required', Rule::exists('teams', 'id')],
-            'opponentTeamId' => ['required', Rule::exists('teams', 'id')],
+            'endTime' => ['required', 'after:startTime', 'date_format:H:i'],
+            'externalTeamName' => ['nullable', 'string'],
+            'homeTeamId' => ['required', Rule::exists('teams', 'id')],
+            'awayTeamId' => ['nullable', Rule::exists('teams', 'id')],
         ];
     }
 }
