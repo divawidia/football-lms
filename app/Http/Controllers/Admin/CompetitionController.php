@@ -105,7 +105,7 @@ class CompetitionController extends Controller
 
         $text = 'Competition '.$competition->name.' successfully updated!';
         Alert::success($text);
-        return redirect()->route('competition-managements.index');
+        return redirect()->route('competition-managements.show', $competition->hash);
     }
 
     public function status(Competition $competition, $status)
