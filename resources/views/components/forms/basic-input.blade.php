@@ -1,5 +1,5 @@
 <div class="@if($type == 'file') custom-file @else form-group @endif">
-    @if($type != 'file')
+    @if($type != 'file' && $label)
         <label class="form-label" for="{{ $name }}">{{ $label }}</label>
         @if($required)
             <small class="text-danger">*</small>
