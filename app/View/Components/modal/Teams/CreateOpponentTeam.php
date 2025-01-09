@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\Modal\Teams;
+namespace App\View\Components\modal\Teams;
 
 use Closure;
 use Illuminate\Contracts\View\View;
