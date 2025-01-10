@@ -18,7 +18,7 @@ import './youtube'
     'use strict';
 
     $('[data-toggle="tab"]').on('hide.bs.tab', function (e) {
-    $(e.target).removeClass('active')
+        $(e.target).removeClass('active')
     })
 
     // function to display image preview
