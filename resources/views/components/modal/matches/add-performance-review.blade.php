@@ -1,43 +1,17 @@
-<div class="modal fade" id="createPerformanceReviewModal" tabindex="-1" aria-labelledby="createPerformanceReviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form method="post" id="formCreatePerformanceReviewModal">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title" id="playerName">Add performance review to player</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="eventId" name="eventId"/>
-                    <input type="hidden" id="playerId"/>
-                    <div class="form-group">
-                        <label class="form-label" for="performanceReview">Performance Review</label>
-                        <small class="text-danger">*</small>
-                        <textarea class="form-control" id="performanceReview" name="performanceReview" placeholder="Input player's performance review here ..." required rows="10"></textarea>
-                        <span class="invalid-feedback note_error" role="alert">
-                                <strong></strong>
-                            </span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<x-modal.form id="createPerformanceReviewModal" formId="formCreatePerformanceReviewModal" title="Add performance review to player">
+    <x-forms.basic-input type="hidden" name="playerId" :modal="true"/>
 
-<x-modal-form-update-processing formId="#formCreatePerformanceReviewModal"
-                                updateDataId="#formCreatePerformanceReviewModal #playerId"
-                                :routeUpdate="$routeCreate"
-                                modalId="#createPerformanceReviewModal"/>
+    <x-forms.textarea name="performanceReview" label="Performance Review" placeholder="Input player's performance review here ..." :modal="true"/>
+</x-modal.form>
+
 @push('addon-script')
-    <script>
+    <script type="module">
+        import { processModalForm } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}";
+        import { clearModalFormValidation } from "{{ Vite::asset('resources/js/modal.js') }}";
+
         $(document).ready(function (){
             const modalId = '#createPerformanceReviewModal';
+            const formId = '#formCreateNoteModal';
 
             $('body').on('click', '.addPerformanceReview',function(e) {
                 e.preventDefault();
@@ -45,9 +19,16 @@
                 const eventId = $(this).attr('data-eventId');
 
                 $(modalId).modal('show');
-                $(modalId+' #eventId').val(eventId);
-                $(modalId+' #playerId').val(playerId);
+                clearModalFormValidation(formId)
+                $(formId+' #eventId').val(eventId);
+                $(formId+' #playerId').val(playerId);
             });
+            processModalForm(
+                formId,
+                "{{ route('coach.performance-reviews.store', ['player'=> ':id']) }}",
+                "#playerId",
+                modalId
+            );
         });
     </script>
 @endpush
