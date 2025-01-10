@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class PlayerPerformanceReviewEvent extends Component
+class PlayerSkillEvent extends Component
 {
     public $tableId;
     public EventSchedule $eventSchedule;
@@ -28,6 +28,6 @@ class PlayerPerformanceReviewEvent extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.tables.player-performance-review-event-table');
+        return view('components.tables.player-skill-event');
     }
 }
