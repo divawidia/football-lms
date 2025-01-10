@@ -14,12 +14,12 @@
                 <div class="modal-body">
                     <!-- TEAM A -->
                     <div class="page-separator">
-                        <img src="{{ Storage::url($eventSchedule->teams[0]->logo) }}"
+                        <img src="{{ Storage::url($eventSchedule->homeTeam->logo) }}"
                              width="50"
                              height="50"
                              class="rounded-circle img-object-fit-cover mr-3"
                              alt="team-logo">
-                        <div class="page-separator__text">{{ $eventSchedule->teams[0]->teamName }} Match
+                        <div class="page-separator__text">{{ $eventSchedule->homeTeam->teamName }} Match
                             Stats
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                                            name="teamATeamScore"
                                            min="0"
                                            max="100"
-                                           value="{{ old('teamATeamScore', $eventSchedule->teams[0]->pivot->teamScore) }}"
+                                           value="{{ old('teamATeamScore', $eventSchedule->homeTeam->pivot->teamScore) }}"
                                            placeholder="Input team Team Score">
                                     <span class="invalid-feedback teamATeamScore_error" role="alert">
                                             <strong></strong>
@@ -49,7 +49,7 @@
                                            id="teamAOwnGoal"
                                            name="teamAOwnGoal"
                                            min="0"
-                                           value="{{ old('teamAOwnGoal', $eventSchedule->teams[0]->pivot->teamOwnGoal) }}"
+                                           value="{{ old('teamAOwnGoal', $eventSchedule->homeTeam->pivot->teamOwnGoal) }}"
                                            placeholder="Input team own goal">
                                     <span class="invalid-feedback teamAOwnGoal_error" role="alert">
                                             <strong></strong>
@@ -66,7 +66,7 @@
                                        min="0"
                                        max="100"
                                        required
-                                       value="{{ old('teamAPossession', $eventSchedule->teams[0]->pivot->teamPossesion) }}"
+                                       value="{{ old('teamAPossession', $eventSchedule->homeTeam->pivot->teamPossesion) }}"
                                        placeholder="Input team possession">
                                 <span class="invalid-feedback teamAPossession_error" role="alert">
                                         <strong></strong>
@@ -81,7 +81,7 @@
                                        name="teamAShotOnTarget"
                                        min="0"
                                        required
-                                       value="{{ old('teamAShotOnTarget', $eventSchedule->teams[0]->pivot->teamShotOnTarget) }}"
+                                       value="{{ old('teamAShotOnTarget', $eventSchedule->homeTeam->pivot->teamShotOnTarget) }}"
                                        placeholder="Input team Shot on Target">
                                 <span class="invalid-feedback teamAShotOnTarget_error" role="alert">
                                         <strong></strong>
@@ -97,7 +97,7 @@
                                            name="teamAShots"
                                            min="0"
                                            required
-                                           value="{{ old('teamAShots', $eventSchedule->teams[0]->pivot->teamShots) }}"
+                                           value="{{ old('teamAShots', $eventSchedule->homeTeam->pivot->teamShots) }}"
                                            placeholder="Input team Shot">
                                     <span class="invalid-feedback teamAShots_error" role="alert">
                                                 <strong></strong>
@@ -116,7 +116,7 @@
                                            name="teamAShots"
                                            min="0"
                                            required
-                                           value="{{ old('teamAShots', $eventSchedule->teams[0]->pivot->teamShots) }}"
+                                           value="{{ old('teamAShots', $eventSchedule->homeTeam->pivot->teamShots) }}"
                                            placeholder="Input team Shot">
                                     <span class="invalid-feedback teamAShots_error" role="alert">
                                                 <strong></strong>
@@ -132,7 +132,7 @@
                                        name="teamATouches"
                                        min="0"
                                         required
-                                       value="{{ old('teamATouches', $eventSchedule->teams[0]->pivot->teamTouches) }}"
+                                       value="{{ old('teamATouches', $eventSchedule->homeTeam->pivot->teamTouches) }}"
                                        placeholder="Input team Touches">
                                 <span class="invalid-feedback teamATouches_error" role="alert">
                                         <strong></strong>
@@ -147,7 +147,7 @@
                                        name="teamAPasses"
                                        min="0"
 
-                                       value="{{ old('teamAPasses', $eventSchedule->teams[0]->pivot->teamPasses) }}"
+                                       value="{{ old('teamAPasses', $eventSchedule->homeTeam->pivot->teamPasses) }}"
                                        placeholder="Input team Passes">
                                 <span class="invalid-feedback teamAPasses_error" role="alert">
                                         <strong></strong>
@@ -162,7 +162,7 @@
                                        name="teamATackles"
                                        min="0"
 
-                                       value="{{ old('teamATackles', $eventSchedule->teams[0]->pivot->teamTackles) }}"
+                                       value="{{ old('teamATackles', $eventSchedule->homeTeam->pivot->teamTackles) }}"
                                        placeholder="Input team Tackles">
                                 <span class="invalid-feedback teamATackles_error" role="alert">
                                         <strong></strong>
@@ -179,7 +179,7 @@
                                        name="teamAClearances"
                                        min="0"
 
-                                       value="{{ old('teamAClearances', $eventSchedule->teams[0]->pivot->teamClearances) }}"
+                                       value="{{ old('teamAClearances', $eventSchedule->homeTeam->pivot->teamClearances) }}"
                                        placeholder="Input team Clearances">
                                 <span class="invalid-feedback teamAClearances_error" role="alert">
                                         <strong></strong>
@@ -194,7 +194,7 @@
                                        name="teamACorners"
                                        min="0"
 
-                                       value="{{ old('teamACorners', $eventSchedule->teams[0]->pivot->teamCorners) }}"
+                                       value="{{ old('teamACorners', $eventSchedule->homeTeam->pivot->teamCorners) }}"
                                        placeholder="Input team Corners">
                                 <span class="invalid-feedback teamACorners_error" role="alert">
                                         <strong></strong>
@@ -209,7 +209,7 @@
                                        name="teamAOffsides"
                                        min="0"
 
-                                       value="{{ old('teamAOffsides', $eventSchedule->teams[0]->pivot->teamOffsides) }}"
+                                       value="{{ old('teamAOffsides', $eventSchedule->homeTeam->pivot->teamOffsides) }}"
                                        placeholder="Input team Offsides">
                                 <span class="invalid-feedback teamAOffsides_error" role="alert">
                                         <strong></strong>
@@ -226,7 +226,7 @@
                                        name="teamAYellowCards"
                                        min="0"
 
-                                       value="{{ old('teamAYellowCards', $eventSchedule->teams[0]->pivot->teamYellowCards) }}"
+                                       value="{{ old('teamAYellowCards', $eventSchedule->homeTeam->pivot->teamYellowCards) }}"
                                        placeholder="Input team Yellow Cards">
                                 <span class="invalid-feedback teamAYellowCards_error" role="alert">
                                         <strong></strong>
@@ -241,7 +241,7 @@
                                        name="teamARedCards"
                                        min="0"
 
-                                       value="{{ old('teamARedCards', $eventSchedule->teams[0]->pivot->teamRedCards) }}"
+                                       value="{{ old('teamARedCards', $eventSchedule->homeTeam->pivot->teamRedCards) }}"
                                        placeholder="Input team Red Cards">
                                 <span class="invalid-feedback teamARedCards_error" role="alert">
                                         <strong></strong>
@@ -256,7 +256,7 @@
                                        name="teamAFoulsConceded"
                                        min="0"
 
-                                       value="{{ old('teamAFoulsConceded', $eventSchedule->teams[0]->pivot->teamFoulsConceded) }}"
+                                       value="{{ old('teamAFoulsConceded', $eventSchedule->homeTeam->pivot->teamFoulsConceded) }}"
                                        placeholder="Input team Fouls Conceded">
                                 <span class="invalid-feedback teamAFoulsConceded_error" role="alert">
                                         <strong></strong>
@@ -265,12 +265,12 @@
                         </div>
                     </div>
                     <div class="page-separator">
-                        <img src="{{ Storage::url($eventSchedule->teams[1]->logo) }}"
+                        <img src="{{ Storage::url($eventSchedule->awayTeam->logo) }}"
                              width="50"
                              height="50"
                              class="rounded-circle img-object-fit-cover mr-3"
                              alt="team-logo">
-                        <div class="page-separator__text">{{ $eventSchedule->teams[1]->teamName }} Match
+                        <div class="page-separator__text">{{ $eventSchedule->awayTeam->teamName }} Match
                             Stats
                         </div>
                     </div>
@@ -286,7 +286,7 @@
                                         name="teamBTeamScore"
                                         min="0"
                                         max="100"
-                                        value="{{ old('teamBTeamScore', $eventSchedule->teams[1]->pivot->teamScore) }}"
+                                        value="{{ old('teamBTeamScore', $eventSchedule->awayTeam->pivot->teamScore) }}"
                                         placeholder="Input team Team Score">
                                     <span class="invalid-feedback teamBTeamScore_error" role="alert">
                                             <strong></strong>
@@ -300,7 +300,7 @@
                                         id="teamBOwnGoal"
                                         name="teamBOwnGoal"
                                         min="0"
-                                        value="{{ old('teamBOwnGoal', $eventSchedule->teams[1]->pivot->teamOwnGoal) }}"
+                                        value="{{ old('teamBOwnGoal', $eventSchedule->awayTeam->pivot->teamOwnGoal) }}"
                                         placeholder="Input team own goal">
                                     <span class="invalid-feedback teamBOwnGoal_error" role="alert">
                                             <strong></strong>
@@ -316,7 +316,7 @@
                                        name="teamBPossession"
                                        min="0"
                                        max="100"
-                                       value="{{ old('teamBPossession', $eventSchedule->teams[1]->pivot->teamPossesion) }}"
+                                       value="{{ old('teamBPossession', $eventSchedule->awayTeam->pivot->teamPossesion) }}"
                                        placeholder="Input team possession">
                                 <span class="invalid-feedback teamBPossession_error" role="alert">
                                         <strong></strong>
@@ -330,7 +330,7 @@
                                        id="teamBShotOnTarget"
                                        name="teamBShotOnTarget"
                                        min="0"
-                                       value="{{ old('teamBShotOnTarget', $eventSchedule->teams[1]->pivot->teamShotOnTarget) }}"
+                                       value="{{ old('teamBShotOnTarget', $eventSchedule->awayTeam->pivot->teamShotOnTarget) }}"
                                        placeholder="Input team Shot on Target">
                                 <span class="invalid-feedback teamBShotOnTarget_error" role="alert">
                                         <strong></strong>
@@ -347,7 +347,7 @@
                                        name="teamBShots"
                                        min="0"
 
-                                       value="{{ old('teamBShots', $eventSchedule->teams[1]->pivot->teamShots) }}"
+                                       value="{{ old('teamBShots', $eventSchedule->awayTeam->pivot->teamShots) }}"
                                        placeholder="Input team Shot">
                                 <span class="invalid-feedback teamBShots_error" role="alert">
                                         <strong></strong>
@@ -362,7 +362,7 @@
                                        name="teamBTouches"
                                        min="0"
 
-                                       value="{{ old('teamBTouches', $eventSchedule->teams[1]->pivot->teamTouches) }}"
+                                       value="{{ old('teamBTouches', $eventSchedule->awayTeam->pivot->teamTouches) }}"
                                        placeholder="Input team Touches">
                                 <span class="invalid-feedback teamBTouches_error" role="alert">
                                         <strong></strong>
@@ -376,7 +376,7 @@
                                        id="teamBPasses"
                                        name="teamBPasses"
                                        min="0"
-                                       value="{{ old('teamBPasses', $eventSchedule->teams[1]->pivot->teamPasses) }}"
+                                       value="{{ old('teamBPasses', $eventSchedule->awayTeam->pivot->teamPasses) }}"
                                        placeholder="Input team Passes">
                                 <span class="invalid-feedback teamBPasses_error" role="alert">
                                         <strong></strong>
@@ -391,7 +391,7 @@
                                        name="teamBTackles"
                                        min="0"
 
-                                       value="{{ old('teamBTackles', $eventSchedule->teams[1]->pivot->teamTackles) }}"
+                                       value="{{ old('teamBTackles', $eventSchedule->awayTeam->pivot->teamTackles) }}"
                                        placeholder="Input team Tackles">
                                 <span class="invalid-feedback teamBTackles_error" role="alert">
                                         <strong></strong>
@@ -408,7 +408,7 @@
                                        name="teamBClearances"
                                        min="0"
 
-                                       value="{{ old('teamBClearances', $eventSchedule->teams[1]->pivot->teamClearances) }}"
+                                       value="{{ old('teamBClearances', $eventSchedule->awayTeam->pivot->teamClearances) }}"
                                        placeholder="Input team Clearances">
                                 <span class="invalid-feedback teamBClearances_error" role="alert">
                                         <strong></strong>
@@ -423,7 +423,7 @@
                                        name="teamBCorners"
                                        min="0"
 
-                                       value="{{ old('teamBCorners', $eventSchedule->teams[1]->pivot->teamCorners) }}"
+                                       value="{{ old('teamBCorners', $eventSchedule->awayTeam->pivot->teamCorners) }}"
                                        placeholder="Input team Corners">
                                 <span class="invalid-feedback teamBCorners_error" role="alert">
                                         <strong></strong>
@@ -438,7 +438,7 @@
                                        name="teamBOffsides"
                                        min="0"
 
-                                       value="{{ old('teamBOffsides', $eventSchedule->teams[1]->pivot->teamOffsides) }}"
+                                       value="{{ old('teamBOffsides', $eventSchedule->awayTeam->pivot->teamOffsides) }}"
                                        placeholder="Input team Offsides">
                                 <span class="invalid-feedback teamBOffsides_error" role="alert">
                                         <strong></strong>
@@ -455,7 +455,7 @@
                                        name="teamBYellowCards"
                                        min="0"
 
-                                       value="{{ old('teamBYellowCards', $eventSchedule->teams[1]->pivot->teamYellowCards) }}"
+                                       value="{{ old('teamBYellowCards', $eventSchedule->awayTeam->pivot->teamYellowCards) }}"
                                        placeholder="Input team Yellow Cards">
                                 <span class="invalid-feedback teamBYellowCards_error" role="alert">
                                         <strong></strong>
@@ -470,7 +470,7 @@
                                        name="teamBRedCards"
                                        min="0"
 
-                                       value="{{ old('teamBRedCards', $eventSchedule->teams[1]->pivot->teamRedCards) }}"
+                                       value="{{ old('teamBRedCards', $eventSchedule->awayTeam->pivot->teamRedCards) }}"
                                        placeholder="Input team Red Cards">
                                 <span class="invalid-feedback teamBRedCards_error" role="alert">
                                         <strong></strong>
@@ -484,7 +484,7 @@
                                        id="teamBFoulsConceded"
                                        name="teamBFoulsConceded"
                                        min="0"
-                                       value="{{ old('teamBFoulsConceded', $eventSchedule->teams[1]->pivot->teamFoulsConceded) }}"
+                                       value="{{ old('teamBFoulsConceded', $eventSchedule->awayTeam->pivot->teamFoulsConceded) }}"
                                        placeholder="Input team Fouls Conceded">
                                 <span class="invalid-feedback teamBFoulsConceded_error" role="alert">
                                         <strong></strong>

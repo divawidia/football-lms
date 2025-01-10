@@ -1,24 +1,25 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Tables;
 
+use App\Models\EventSchedule;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class PlayerSkillEventTables extends Component
+class PlayerPerformanceReviewEvent extends Component
 {
     public $tableId;
-    public $route;
+    public EventSchedule $eventSchedule;
     public $teamId;
 
     /**
      * Create a new component instance.
      */
-    public function __construct($tableId, $route, $teamId = null)
+    public function __construct($tableId, EventSchedule $eventSchedule, $teamId = null)
     {
         $this->tableId = $tableId;
-        $this->route = $route;
+        $this->eventSchedule = $eventSchedule;
         $this->teamId = $teamId;
     }
 
@@ -27,6 +28,6 @@ class PlayerSkillEventTables extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.tables.player-skill-event-tables');
+        return view('components.tables.player-performance-review-event-table');
     }
 }
