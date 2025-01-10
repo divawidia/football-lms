@@ -1,13 +1,13 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\modal\Matches;
 
 use App\Models\EventSchedule;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class AddTeamOwnGoalModal extends Component
+class AddTeamOwnGoal extends Component
 {
     public EventSchedule $eventSchedule;
     /**
@@ -23,6 +23,6 @@ class AddTeamOwnGoalModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.add-team-own-goal-modal');
+        return view('components.modal.matches.add-team-own-goal');
     }
 }
