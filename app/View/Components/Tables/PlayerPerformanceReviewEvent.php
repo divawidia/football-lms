@@ -1,7 +1,8 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Tables;
 
+use App\Models\EventSchedule;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
@@ -9,16 +10,16 @@ use Illuminate\View\Component;
 class PlayerPerformanceReviewEventTable extends Component
 {
     public $tableId;
-    public $route;
+    public EventSchedule $eventSchedule;
     public $teamId;
 
     /**
      * Create a new component instance.
      */
-    public function __construct($tableId, $route, $teamId = null)
+    public function __construct($tableId, EventSchedule $eventSchedule, $teamId = null)
     {
         $this->tableId = $tableId;
-        $this->route = $route;
+        $this->eventSchedule = $eventSchedule;
         $this->teamId = $teamId;
     }
 

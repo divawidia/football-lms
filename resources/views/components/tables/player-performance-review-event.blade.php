@@ -1,21 +1,6 @@
 <div class="card">
     <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover w-100" id="{{ $tableId }}">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>performance review</th>
-                    <th>date created</th>
-                    <th>last updated</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+        <x-table :headers="['#','Name', 'performance review', 'date created', 'last updated', 'Action']" tableId="{{ $tableId }}"/>
     </div>
 </div>
 
@@ -27,7 +12,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{{ $route }}',
+                    url: '{{ route('match-schedules.player-performance-review', ['schedule' => $eventSchedule->hash]) }}',
                     @if($teamId)
                     data: {
                         teamId: {{ $teamId }},
@@ -45,8 +30,7 @@
                         data: 'action',
                         name: 'action',
                         orderable: false,
-                        searchable: false,
-                        width: '15%'
+                        searchable: false
                     },
                 ],
             });

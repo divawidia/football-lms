@@ -1,24 +1,25 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Cards;
 
+use App\Models\EventSchedule;
 use App\Models\ScheduleNote;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class EventNoteCard extends Component
+class EventNote extends Component
 {
     public ScheduleNote $note;
-    public $deleteRoute;
+    public EventSchedule $schedule;
 
     /**
      * Create a new component instance.
      */
-    public function __construct(ScheduleNote $note, $deleteRoute)
+    public function __construct(ScheduleNote $note, EventSchedule $schedule)
     {
         $this->note = $note;
-        $this->deleteRoute = $deleteRoute;
+        $this->schedule = $schedule;
     }
 
     /**
@@ -26,6 +27,6 @@ class EventNoteCard extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.cards.event-note-card');
+        return view('components.cards.event-note');
     }
 }

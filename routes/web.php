@@ -249,10 +249,12 @@ Route::group(['middleware' => ['auth']], function () {
 
                 Route::prefix('{schedule}')->group(function () {
                     Route::get('match-detail', [EventScheduleController::class, 'getMatchDetail'])->name('match-schedules.match-detail');
+                    Route::get('match-stats', [EventScheduleController::class, 'getTeamMatchStats'])->name('match-schedules.match-stats');
                     Route::get('edit', [EventScheduleController::class, 'editMatch'])->name('match-schedules.edit');
                     Route::put('update', [EventScheduleController::class, 'updateMatch'])->name('match-schedules.update');
                     Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('match-schedules.destroy');
-                    Route::patch('cancel', [EventScheduleController::class, 'cancelled'])->name('cancel-match');
+                    Route::patch('cancel', [EventScheduleController::class, 'cancelled'])->name('match-schedules.cancel');
+                    Route::patch('scheduled', [EventScheduleController::class, 'scheduled'])->name('match-schedules.scheduled');
                 });
             });
 
@@ -518,7 +520,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::prefix('match-schedules')->group(function () {
             Route::prefix('{schedule}')->group(function () {
 //                Route::get('', [EventScheduleController::class, 'showMatch'])->name('match-schedules.show');
-                Route::get('players', [EventScheduleController::class, 'getEventPLayers'])->name('get-event-player');
+                Route::get('players', [EventScheduleController::class, 'getEventPLayers'])->name('match-schedules.players');
 
                 Route::get('player-skills', [SkillAssessmentController::class, 'indexAllPlayerInEvent'])->name('match-schedules.player-skills');
                 Route::get('player-performance-review', [PlayerPerformanceReviewController::class, 'indexAllPlayerInEvent'])->name('match-schedules.player-performance-review');
@@ -541,6 +543,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::delete('own-goal/{scorer}/destroy', [EventScheduleController::class, 'destroyOwnGoal'])->name('match-schedules.destroy-own-goal');
 
                 Route::put('update-match-stats', [EventScheduleController::class, 'updateMatchStats'])->name('match-schedules.update-match-stats');
+                Route::put('update-external-team-score', [EventScheduleController::class, 'updateExternalTeamScore'])->name('match-schedules.update-external-team-score');
 
                 Route::prefix('player-match-stats')->group(function () {
                     Route::get('{player}', [EventScheduleController::class, 'getPlayerStats'])->name('match-schedules.show-player-match-stats');
