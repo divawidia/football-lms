@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\Cards;
+namespace App\View\Components;
 
 use App\Models\EventSchedule;
 use App\Models\ScheduleNote;
@@ -8,7 +8,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class EventNote extends Component
+class EventNoteCard extends Component
 {
     public ScheduleNote $note;
     public EventSchedule $schedule;
