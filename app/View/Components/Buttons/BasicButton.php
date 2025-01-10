@@ -17,10 +17,13 @@ class BasicButton extends Component
     public $size;
     public $margin;
     public $icon;
+    public $additionalClass;
+    public $dropdownItem;
+    public $iconColor;
     /**
      * Create a new component instance.
      */
-    public function __construct($type = 'button', $modalCloseIcon = false, $color = 'primary', $modalDismiss = false, $text = '', $id = null, $size = '', $margin = '', $icon = '')
+    public function __construct($type = 'button', $modalCloseIcon = false, $color = 'primary', $modalDismiss = false, $text = '', $id = null, $size = '', $margin = '', $icon = '', $additionalClass = '', $dropdownItem = false, $iconColor = '')
     {
         $this->type = $type;
         $this->modalCloseIcon = $modalCloseIcon;
@@ -31,6 +34,9 @@ class BasicButton extends Component
         $this->size = $size;
         $this->margin = $margin;
         $this->icon = $icon;
+        $this->additionalClass = $additionalClass;
+        $this->dropdownItem = $dropdownItem;
+        $this->iconColor = $iconColor;
     }
 
     /**
