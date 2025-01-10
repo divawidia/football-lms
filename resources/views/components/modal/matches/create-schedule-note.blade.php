@@ -1,48 +1,33 @@
-<div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <form action="{{ $routeCreate }}" method="post" id="formCreateNoteModal">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title" id="coachName">Create note for this {{ $eventName }} Session</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="teamId" name="teamId">
-                    <div class="form-group">
-                        <label class="form-label" for="note">Note</label>
-                        <small class="text-danger">*</small>
-                        <textarea class="form-control createNoteEditor" id="note" name="note" rows="10" required></textarea>
-                        <span class="invalid-feedback note_error" role="alert">
-                            <strong></strong>
-                        </span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<x-modal.form id="createNoteModal" formId="formCreateNoteModal" title="Create Session Note">
+    <x-forms.basic-input type="hidden" name="teamId" :modal="true"/>
 
-<x-modal-form-update-processing formId="#formCreateNoteModal"
-                                updateDataId=""
-                                :routeUpdate="$routeCreate"
-                                modalId="#createNoteModal"/>
+    <x-forms.textarea name="note" label="Session Note" placeholder="Input the session note ..." :modal="true"/>
+</x-modal.form>
 
 @push('addon-script')
-    <script>
+    <script type="module">
+        import { processModalForm } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}";
+        import { clearModalFormValidation } from "{{ Vite::asset('resources/js/modal.js') }}";
+
         $(document).ready(function (){
-            $('.addNewNote').on('click', function(e) {
+            const formId = '#formCreateNoteModal';
+            const modalId = '#createNoteModal';
+
+            $('.add-new-note-btn').on('click', function(e) {
                 e.preventDefault();
-                const team = $(this).attr('data-team')
-                $('#createNoteModal').modal('show');
-                $('#formCreateNoteModal #teamId').val(team)
+                const team = $(this).attr('id')
+
+                $(modalId).modal('show');
+                clearModalFormValidation(formId)
+                $(formId+' #teamId').val(team)
             });
+
+            processModalForm(
+                formId,
+                "{{ route('match-schedules.create-note', $schedule->hash) }}",
+                "",
+                modalId
+            );
         });
     </script>
 @endpush
