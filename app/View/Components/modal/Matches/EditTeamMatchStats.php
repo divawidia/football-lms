@@ -1,13 +1,13 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\modal\Matches;
 
 use App\Models\EventSchedule;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class EditTeamMatchStatsModal extends Component
+class EditTeamMatchStats extends Component
 {
     public EventSchedule $eventSchedule;
     /**
@@ -23,6 +23,6 @@ class EditTeamMatchStatsModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.edit-team-match-stats-modal');
+        return view('components.modal.matches.edit-team-match-stats');
     }
 }
