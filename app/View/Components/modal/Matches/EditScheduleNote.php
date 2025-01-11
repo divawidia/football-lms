@@ -1,24 +1,21 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\modal\Matches;
 
+use App\Models\EventSchedule;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class EditScheduleNoteModal extends Component
+class EditScheduleNote extends Component
 {
-    public $routeEdit;
-    public $routeUpdate;
-    public $eventName;
+    public EventSchedule $eventSchedule;
     /**
      * Create a new component instance.
      */
-    public function __construct($routeEdit, $routeUpdate, $eventName)
+    public function __construct(EventSchedule $eventSchedule)
     {
-        $this->routeEdit = $routeEdit;
-        $this->routeUpdate = $routeUpdate;
-        $this->eventName = $eventName;
+        $this->eventSchedule = $eventSchedule;
     }
 
     /**
@@ -26,6 +23,6 @@ class EditScheduleNoteModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.edit-schedule-note-modal');
+        return view('components.modal.matches.edit-schedule-note');
     }
 }
