@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\modal\Matches;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -20,6 +20,6 @@ class EditPerformanceReviewModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.edit-performance-review-modal');
+        return view('components.modal.matches.edit-performance-review');
     }
 }
