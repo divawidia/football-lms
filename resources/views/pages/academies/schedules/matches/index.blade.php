@@ -18,14 +18,14 @@
     </div>
 
     <div class="container page__container page-section">
-        @if(isAllAdmin())
-            <a href="{{  route('match-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">
-                <span class="material-icons mr-2">
-                    add
-                </span>
-                Add New
-            </a>
-        @endif
+{{--        @if(isAllAdmin())--}}
+{{--            <a href="{{  route('match-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">--}}
+{{--                <span class="material-icons mr-2">--}}
+{{--                    add--}}
+{{--                </span>--}}
+{{--                Add New--}}
+{{--            </a>--}}
+{{--        @endif--}}
         <x-match-tables :route="$tableRoute" tableId="tables"/>
 
         <div class="card">
@@ -37,20 +37,43 @@
             </div>
         </div>
     </div>
-
-    {{--    delete match confirmation   --}}
-    <x-process-data-confirmation btnClass=".delete"
-                                 :processRoute="route('match-schedules.destroy', ['schedule' => ':id'])"
-                                 :routeAfterProcess="route('match-schedules.index')"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to delete this match session?"
-                                 errorText="Something went wrong when deleting the match session!"/>
-
-    {{--   cancel match  --}}
-    <x-process-data-confirmation btnClass=".cancelMatchBtn"
-                                 :processRoute="route('cancel-match', ['schedule' => ':id'])"
-                                 :routeAfterProcess="route('match-schedules.index')"
-                                 method="PATCH"
-                                 confirmationText="Are you sure to cancel this match session?"
-                                 errorText="Something went wrong when cancelling match session!"/>
 @endsection
+
+@push('addon-script')
+    <script type="module">
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+
+        $(document).ready(function () {
+            processWithConfirmation(
+                '.delete',
+                "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}",
+                "{{ route('match-schedules.index') }}",
+                'DELETE',
+                "Are you sure to delete this match?",
+                "Something went wrong when deleting this match!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.cancelBtn',
+                "{{ route('match-schedules.cancel', ['schedule' =>':id']) }}",
+                "{{ route('match-schedules.index') }}",
+                'PATCH',
+                "Are you sure to cancel this match?",
+                "Something went wrong when cancelling this match!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.scheduled-btn',
+                "{{ route('match-schedules.scheduled', ['schedule' =>':id']) }}",
+                "{{ route('match-schedules.index') }}",
+                'PATCH',
+                "Are you sure to set this match to scheduled?",
+                "Something went wrong when set this match to scheduled!",
+                "{{ csrf_token() }}"
+            );
+        });
+    </script>
+@endpush
+
