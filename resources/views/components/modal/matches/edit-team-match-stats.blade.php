@@ -1,524 +1,92 @@
-<div class="modal fade" id="teamMatchStatsModal" tabindex="-1" aria-labelledby="teamMatchStatsModal"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <form action="" method="post" id="formTeamMatchStats">
-                @method('PUT')
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title" id="coachName">Update team stats of this match</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- TEAM A -->
-                    <div class="page-separator">
-                        <img src="{{ Storage::url($eventSchedule->homeTeam->logo) }}"
-                             width="50"
-                             height="50"
-                             class="rounded-circle img-object-fit-cover mr-3"
-                             alt="team-logo">
-                        <div class="page-separator__text">{{ $eventSchedule->homeTeam->teamName }} Match
-                            Stats
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 col-md-3">
-                            @if($eventSchedule->isOpponentTeamMatch == 1)
-                                <div class="form-group">
-                                    <label class="form-label" for="teamATeamScore">Team Score</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamATeamScore"
-                                           name="teamATeamScore"
-                                           min="0"
-                                           max="100"
-                                           value="{{ old('teamATeamScore', $eventSchedule->homeTeam->pivot->teamScore) }}"
-                                           placeholder="Input team Team Score">
-                                    <span class="invalid-feedback teamATeamScore_error" role="alert">
-                                            <strong></strong>
-                                        </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="teamAOwnGoal">Own Goal</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamAOwnGoal"
-                                           name="teamAOwnGoal"
-                                           min="0"
-                                           value="{{ old('teamAOwnGoal', $eventSchedule->homeTeam->pivot->teamOwnGoal) }}"
-                                           placeholder="Input team own goal">
-                                    <span class="invalid-feedback teamAOwnGoal_error" role="alert">
-                                            <strong></strong>
-                                        </span>
-                                </div>
-                            @endif
-                            <div class="form-group">
-                                <label class="form-label" for="teamAPossession">Possession</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamAPossession"
-                                       name="teamAPossession"
-                                       min="0"
-                                       max="100"
-                                       required
-                                       value="{{ old('teamAPossession', $eventSchedule->homeTeam->pivot->teamPossesion) }}"
-                                       placeholder="Input team possession">
-                                <span class="invalid-feedback teamAPossession_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamAShotOnTarget">Shot on Target</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamAShotOnTarget"
-                                       name="teamAShotOnTarget"
-                                       min="0"
-                                       required
-                                       value="{{ old('teamAShotOnTarget', $eventSchedule->homeTeam->pivot->teamShotOnTarget) }}"
-                                       placeholder="Input team Shot on Target">
-                                <span class="invalid-feedback teamAShotOnTarget_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            @if($eventSchedule->isOpponentTeamMatch == 0)
-                                <div class="form-group">
-                                    <label class="form-label" for="teamAShots">Shots</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamAShots"
-                                           name="teamAShots"
-                                           min="0"
-                                           required
-                                           value="{{ old('teamAShots', $eventSchedule->homeTeam->pivot->teamShots) }}"
-                                           placeholder="Input team Shot">
-                                    <span class="invalid-feedback teamAShots_error" role="alert">
-                                                <strong></strong>
-                                            </span>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="col-6 col-md-3">
-                            @if($eventSchedule->isOpponentTeamMatch == 1)
-                                <div class="form-group">
-                                    <label class="form-label" for="teamAShots">Shots</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                           class="form-control"
-                                           id="teamAShots"
-                                           name="teamAShots"
-                                           min="0"
-                                           required
-                                           value="{{ old('teamAShots', $eventSchedule->homeTeam->pivot->teamShots) }}"
-                                           placeholder="Input team Shot">
-                                    <span class="invalid-feedback teamAShots_error" role="alert">
-                                                <strong></strong>
-                                            </span>
-                                </div>
-                            @endif
-                            <div class="form-group">
-                                <label class="form-label" for="teamATouches">Touches</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamATouches"
-                                       name="teamATouches"
-                                       min="0"
-                                        required
-                                       value="{{ old('teamATouches', $eventSchedule->homeTeam->pivot->teamTouches) }}"
-                                       placeholder="Input team Touches">
-                                <span class="invalid-feedback teamATouches_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamAPasses">Passes</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamAPasses"
-                                       name="teamAPasses"
-                                       min="0"
+<x-modal.form id="teamMatchStatsModal" formId="formTeamMatchStats" :editForm="true">
+    <x-forms.basic-input type="hidden" name="teamId" :modal="true" :required="false"/>
+    <x-forms.basic-input type="hidden" name="teamSide" :modal="true"/>
+    <div class="row">
+        <div class="col-6">
+            <x-forms.basic-input type="number" min="0" max="100" name="teamPossesion" label="Possession" placeholder="Input team's possession" :modal="true" :required="false"/>
 
-                                       value="{{ old('teamAPasses', $eventSchedule->homeTeam->pivot->teamPasses) }}"
-                                       placeholder="Input team Passes">
-                                <span class="invalid-feedback teamAPasses_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamATackles">Tackles</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamATackles"
-                                       name="teamATackles"
-                                       min="0"
+            <x-forms.basic-input type="number" min="0" name="teamShotOnTarget" label="Show on Target" placeholder="Input team's shot on target" :modal="true" :required="false"/>
 
-                                       value="{{ old('teamATackles', $eventSchedule->homeTeam->pivot->teamTackles) }}"
-                                       placeholder="Input team Tackles">
-                                <span class="invalid-feedback teamATackles_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="form-group">
-                                <label class="form-label" for="teamAClearances">Clearances</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamAClearances"
-                                       name="teamAClearances"
-                                       min="0"
+            <x-forms.basic-input type="number" min="0" name="teamShots" label="Shots" placeholder="Input team's shots" :modal="true" :required="false"/>
 
-                                       value="{{ old('teamAClearances', $eventSchedule->homeTeam->pivot->teamClearances) }}"
-                                       placeholder="Input team Clearances">
-                                <span class="invalid-feedback teamAClearances_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamACorners">Corners</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamACorners"
-                                       name="teamACorners"
-                                       min="0"
+            <x-forms.basic-input type="number" min="0" name="teamTouches" label="Touches" placeholder="Input team's touches" :modal="true" :required="false"/>
 
-                                       value="{{ old('teamACorners', $eventSchedule->homeTeam->pivot->teamCorners) }}"
-                                       placeholder="Input team Corners">
-                                <span class="invalid-feedback teamACorners_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamAOffsides">Offsides</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamAOffsides"
-                                       name="teamAOffsides"
-                                       min="0"
+            <x-forms.basic-input type="number" min="0" name="teamPasses" label="Passes" placeholder="Input team's passes" :modal="true" :required="false"/>
 
-                                       value="{{ old('teamAOffsides', $eventSchedule->homeTeam->pivot->teamOffsides) }}"
-                                       placeholder="Input team Offsides">
-                                <span class="invalid-feedback teamAOffsides_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="form-group">
-                                <label class="form-label" for="teamAYellowCards">Yellow Cards</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamAYellowCards"
-                                       name="teamAYellowCards"
-                                       min="0"
+            <x-forms.basic-input type="number" min="0" name="teamTackles" label="Tackles" placeholder="Input team's tackles" :modal="true" :required="false"/>
+        </div>
+        <div class="col-6">
+            <x-forms.basic-input type="number" min="0" name="teamClearances" label="Clearances" placeholder="Input team's clearances" :modal="true" :required="false"/>
 
-                                       value="{{ old('teamAYellowCards', $eventSchedule->homeTeam->pivot->teamYellowCards) }}"
-                                       placeholder="Input team Yellow Cards">
-                                <span class="invalid-feedback teamAYellowCards_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamARedCards">Red Cards</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamARedCards"
-                                       name="teamARedCards"
-                                       min="0"
+            <x-forms.basic-input type="number" min="0" name="teamCorners" label="Corners" placeholder="Input team's corners" :modal="true" :required="false"/>
 
-                                       value="{{ old('teamARedCards', $eventSchedule->homeTeam->pivot->teamRedCards) }}"
-                                       placeholder="Input team Red Cards">
-                                <span class="invalid-feedback teamARedCards_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamAFoulsConceded">Fouls Conceded</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamAFoulsConceded"
-                                       name="teamAFoulsConceded"
-                                       min="0"
+            <x-forms.basic-input type="number" min="0" name="teamOffsides" label="Offsides" placeholder="Input team's offsides" :modal="true" :required="false"/>
 
-                                       value="{{ old('teamAFoulsConceded', $eventSchedule->homeTeam->pivot->teamFoulsConceded) }}"
-                                       placeholder="Input team Fouls Conceded">
-                                <span class="invalid-feedback teamAFoulsConceded_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="page-separator">
-                        <img src="{{ Storage::url($eventSchedule->awayTeam->logo) }}"
-                             width="50"
-                             height="50"
-                             class="rounded-circle img-object-fit-cover mr-3"
-                             alt="team-logo">
-                        <div class="page-separator__text">{{ $eventSchedule->awayTeam->teamName }} Match
-                            Stats
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 col-md-3">
-                            @if ($eventSchedule->matchType != 'Internal Match')
-                                <div class="form-group">
-                                    <label class="form-label" for="teamBTeamScore">Team Score</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                        class="form-control"
-                                        id="teamBTeamScore"
-                                        name="teamBTeamScore"
-                                        min="0"
-                                        max="100"
-                                        value="{{ old('teamBTeamScore', $eventSchedule->awayTeam->pivot->teamScore) }}"
-                                        placeholder="Input team Team Score">
-                                    <span class="invalid-feedback teamBTeamScore_error" role="alert">
-                                            <strong></strong>
-                                        </span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="teamBOwnGoal">Own Goal</label>
-                                    <small class="text-danger">*</small>
-                                    <input type="number"
-                                        class="form-control"
-                                        id="teamBOwnGoal"
-                                        name="teamBOwnGoal"
-                                        min="0"
-                                        value="{{ old('teamBOwnGoal', $eventSchedule->awayTeam->pivot->teamOwnGoal) }}"
-                                        placeholder="Input team own goal">
-                                    <span class="invalid-feedback teamBOwnGoal_error" role="alert">
-                                            <strong></strong>
-                                        </span>
-                                </div>
-                            @endif
-                            <div class="form-group">
-                                <label class="form-label" for="teamBPossession">Possession</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBPossession"
-                                       name="teamBPossession"
-                                       min="0"
-                                       max="100"
-                                       value="{{ old('teamBPossession', $eventSchedule->awayTeam->pivot->teamPossesion) }}"
-                                       placeholder="Input team possession">
-                                <span class="invalid-feedback teamBPossession_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamBShotOnTarget">Shot on Target</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBShotOnTarget"
-                                       name="teamBShotOnTarget"
-                                       min="0"
-                                       value="{{ old('teamBShotOnTarget', $eventSchedule->awayTeam->pivot->teamShotOnTarget) }}"
-                                       placeholder="Input team Shot on Target">
-                                <span class="invalid-feedback teamBShotOnTarget_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="form-group">
-                                <label class="form-label" for="teamBShots">Shots</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBShots"
-                                       name="teamBShots"
-                                       min="0"
+            <x-forms.basic-input type="number" min="0" name="teamYellowCards" label="Yellow Cards" placeholder="Input team's yellow cards" :modal="true" :required="false"/>
 
-                                       value="{{ old('teamBShots', $eventSchedule->awayTeam->pivot->teamShots) }}"
-                                       placeholder="Input team Shot">
-                                <span class="invalid-feedback teamBShots_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamBTouches">Touches</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBTouches"
-                                       name="teamBTouches"
-                                       min="0"
+            <x-forms.basic-input type="number" min="0" name="teamRedCards" label="Red Cards" placeholder="Input team's red cards" :modal="true" :required="false"/>
 
-                                       value="{{ old('teamBTouches', $eventSchedule->awayTeam->pivot->teamTouches) }}"
-                                       placeholder="Input team Touches">
-                                <span class="invalid-feedback teamBTouches_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamBPasses">Passes</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBPasses"
-                                       name="teamBPasses"
-                                       min="0"
-                                       value="{{ old('teamBPasses', $eventSchedule->awayTeam->pivot->teamPasses) }}"
-                                       placeholder="Input team Passes">
-                                <span class="invalid-feedback teamBPasses_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamBTackles">Tackles</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBTackles"
-                                       name="teamBTackles"
-                                       min="0"
-
-                                       value="{{ old('teamBTackles', $eventSchedule->awayTeam->pivot->teamTackles) }}"
-                                       placeholder="Input team Tackles">
-                                <span class="invalid-feedback teamBTackles_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="form-group">
-                                <label class="form-label" for="teamBClearances">Clearances</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBClearances"
-                                       name="teamBClearances"
-                                       min="0"
-
-                                       value="{{ old('teamBClearances', $eventSchedule->awayTeam->pivot->teamClearances) }}"
-                                       placeholder="Input team Clearances">
-                                <span class="invalid-feedback teamBClearances_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamBCorners">Corners</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBCorners"
-                                       name="teamBCorners"
-                                       min="0"
-
-                                       value="{{ old('teamBCorners', $eventSchedule->awayTeam->pivot->teamCorners) }}"
-                                       placeholder="Input team Corners">
-                                <span class="invalid-feedback teamBCorners_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamBOffsides">Offsides</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBOffsides"
-                                       name="teamBOffsides"
-                                       min="0"
-
-                                       value="{{ old('teamBOffsides', $eventSchedule->awayTeam->pivot->teamOffsides) }}"
-                                       placeholder="Input team Offsides">
-                                <span class="invalid-feedback teamBOffsides_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="form-group">
-                                <label class="form-label" for="teamBYellowCards">Yellow Cards</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBYellowCards"
-                                       name="teamBYellowCards"
-                                       min="0"
-
-                                       value="{{ old('teamBYellowCards', $eventSchedule->awayTeam->pivot->teamYellowCards) }}"
-                                       placeholder="Input team Yellow Cards">
-                                <span class="invalid-feedback teamBYellowCards_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamBRedCards">Red Cards</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBRedCards"
-                                       name="teamBRedCards"
-                                       min="0"
-
-                                       value="{{ old('teamBRedCards', $eventSchedule->awayTeam->pivot->teamRedCards) }}"
-                                       placeholder="Input team Red Cards">
-                                <span class="invalid-feedback teamBRedCards_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="teamBFoulsConceded">Fouls Conceded</label>
-                                <small class="text-danger">*</small>
-                                <input type="number"
-                                       class="form-control"
-                                       id="teamBFoulsConceded"
-                                       name="teamBFoulsConceded"
-                                       min="0"
-                                       value="{{ old('teamBFoulsConceded', $eventSchedule->awayTeam->pivot->teamFoulsConceded) }}"
-                                       placeholder="Input team Fouls Conceded">
-                                <span class="invalid-feedback teamBFoulsConceded_error" role="alert">
-                                        <strong></strong>
-                                    </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
+            <x-forms.basic-input type="number" min="0" name="teamFoulsConceded" label="Fouls Conceded" placeholder="Input team's fouls conceded" :modal="true" :required="false"/>
         </div>
     </div>
-</div>
-{{-- update team match stats data --}}
-<x-modal-form-update-processing formId="#formTeamMatchStats"
-                                updateDataId=""
-                                :routeUpdate="route('match-schedules.update-match-stats', $eventSchedule->id)"
-                                modalId="#teamMatchStatsModal"/>
+</x-modal.form>
 
 @push('addon-script')
-    <script>
+    <script type="module">
+        import { processModalForm } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+        import { clearModalFormValidation } from "{{ Vite::asset('resources/js/modal.js') }}";
+
         $(document).ready(function (){
             const formId = '#formTeamMatchStats';
+            const modalId = '#teamMatchStatsModal';
+            const btnClass = '.update-team-match-stats-btn';
+            let team
 
-            // show create team scorer modal
-            $('#updateMatchStats').on('click', function (e) {
+            $(btnClass).on('click', function(e) {
                 e.preventDefault();
-                $('#teamMatchStatsModal').modal('show');
-                $(formId+' .invalid-feedback').empty();
-                $(formId+' input').removeClass('is-invalid');
+                $(modalId).modal('show');
+                team = $(this).attr('id');
+                clearModalFormValidation(formId)
+
+                $.ajax({
+                    url: "{{ route('match-schedules.match-stats', ['schedule' => $eventSchedule->hash]) }}",
+                    type: 'GET',
+                    data: {
+                        team: team,
+                    },
+                    dataType: 'JSON',
+                    success: function (result) {
+                        $(formId+' #teamSide').val(team)
+                        $(formId+' .modal-title').text('Update '+result.data.teamName+' Match Stats')
+
+                        if (team === 'externalTeam') {
+                            $.each(result.data, function (key, value) {
+                                $(formId + ' #' + key).val(value)
+                            });
+                        } else {
+                            $(formId+' #teamId').val(result.data.id)
+                            $.each(result.data.pivot, function (key, value) {
+                                $(formId+' #'+key).val(value)
+                            });
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        const response = JSON.parse(jqXHR.responseText);
+                        Swal.fire({
+                            icon: "error",
+                            title: errorThrown,
+                            text: response.message,
+                        });
+                    }
+                });
             });
+
+            processModalForm(
+                formId,
+                "{{ route('match-schedules.update-match-stats', $eventSchedule->hash) }}",
+                null,
+                modalId
+            );
         });
     </script>
 @endpush
