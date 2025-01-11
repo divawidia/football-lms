@@ -1,22 +1,21 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\modal\Matches;
 
+use App\Models\EventSchedule;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class EditPlayerAttendanceModal extends Component
+class EditPlayerAttendance extends Component
 {
-    public $routeGet;
-    public $routeUpdate;
+    public EventSchedule $schedule;
     /**
      * Create a new component instance.
      */
-    public function __construct($routeGet, $routeUpdate)
+    public function __construct($schedule)
     {
-        $this->routeGet = $routeGet;
-        $this->routeUpdate = $routeUpdate;
+        $this->schedule = $schedule;
     }
 
     /**
@@ -24,6 +23,6 @@ class EditPlayerAttendanceModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.edit-player-attendance-modal');
+        return view('components.modal.matches.edit-player-attendance');
     }
 }
