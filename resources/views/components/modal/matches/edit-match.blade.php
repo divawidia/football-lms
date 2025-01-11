@@ -1,50 +1,33 @@
-<div class="modal fade" id="editMatchModal" tabindex="-1" aria-labelledby="editTeamMatchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form action="" method="post" id="formEditMatch">
-                @method('PUT')
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Team's Match</h5>
-                    <x-buttons.basic-button :modalCloseIcon="true" :modalDismiss="true"/>
-                </div>
-                <div class="modal-body">
-                    <x-forms.basic-input type="hidden" name="matchId" :modal="true"/>
 
-                    @if ($competition->isInternal == 1)
-                        <x-forms.select name="homeTeamId" label="Home Team" :modal="true" :select2="false"></x-forms.select>
-                        <x-forms.select name="awayTeamId" label="Away Team" :modal="true" :select2="false"></x-forms.select>
-                    @else
-                        <x-forms.select name="homeTeamId" label="Team" :modal="true" :select2="false"></x-forms.select>
-                        <x-forms.basic-input type="text" name="externalTeamName" label="Opossing Team" placeholder="Input the opposing team (external team) of this match ..." :modal="true"/>
-                    @endif
+<x-modal.form id="editMatchModal" formId="formEditMatch" title="Edit Team Match Session" :editForm="true">
+    <x-forms.basic-input type="hidden" name="matchId" :modal="true"/>
 
-                    <x-forms.basic-input type="date" name="date" label="Match Date" :modal="true"/>
+    @if ($competition->isInternal == 1)
+        <x-forms.select name="homeTeamId" label="Home Team" :modal="true" :select2="false"></x-forms.select>
+        <x-forms.select name="awayTeamId" label="Away Team" :modal="true" :select2="false"></x-forms.select>
+    @else
+        <x-forms.select name="homeTeamId" label="Team" :modal="true" :select2="false"></x-forms.select>
+        <x-forms.basic-input type="text" name="externalTeamName" label="Opossing Team" placeholder="Input the opposing team (external team) of this match ..." :modal="true"/>
+    @endif
 
-                    <div class="row">
-                        <div class="col-6">
-                            <x-forms.basic-input type="time" name="startTime" label="Match Start Time" placeholder="Input match start time ..." :modal="true"/>
-                        </div>
-                        <div class="col-6">
-                            <x-forms.basic-input type="time" name="endTime" label="Match End Time" placeholder="Input match end time ..." :modal="true"/>
-                        </div>
-                    </div>
+    <x-forms.basic-input type="date" name="date" label="Match Date" :modal="true"/>
 
-                    <x-forms.basic-input type="text" name="place" label="Match Venue" placeholder="Input match venue ..." :modal="true"/>
-
-                </div>
-                <div class="modal-footer">
-                    <x-buttons.basic-button type="button" color="secondary" :modalDismiss="true" text="Cancel"/>
-                    <x-buttons.basic-button type="submit" text="Submit"/>
-                </div>
-            </form>
+    <div class="row">
+        <div class="col-6">
+            <x-forms.basic-input type="time" name="startTime" label="Match Start Time" placeholder="Input match start time ..." :modal="true"/>
+        </div>
+        <div class="col-6">
+            <x-forms.basic-input type="time" name="endTime" label="Match End Time" placeholder="Input match end time ..." :modal="true"/>
         </div>
     </div>
-</div>
+
+    <x-forms.basic-input type="text" name="place" label="Match Venue" placeholder="Input match venue ..." :modal="true"/>
+</x-modal.form>
 
 @push('addon-script')
     <script type="module">
-        import { processModalForm } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+        import { processModalForm } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}";
+        import { clearModalFormValidation } from "{{ Vite::asset('resources/js/modal.js') }}";
 
         $(document).ready(function (){
             const formId = '#formEditMatch';
@@ -91,7 +74,7 @@
                 e.preventDefault();
                 const matchId = $(this).attr('id');
                 $(modalId).modal('show');
-
+                clearModalFormValidation(formId)
                 getHomeTeams()
 
                 $.ajax({
