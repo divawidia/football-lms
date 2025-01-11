@@ -26,5 +26,3 @@
         </div>
     @endforeach
 </div>
-
-{{--{!! $players->links('pagination::bootstrap-5') !!}--}}
