@@ -499,7 +499,8 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('edit', [EventScheduleController::class, 'editTraining'])->name('training-schedules.edit');
                 Route::put('update', [EventScheduleController::class, 'updateTraining'])->name('training-schedules.update');
                 Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('training-schedules.destroy');
-                Route::patch('cancel', [EventScheduleController::class, 'cancelled'])->name('cancel-training');
+                Route::patch('cancel', [EventScheduleController::class, 'cancelled'])->name('training-schedules.cancel');
+                Route::patch('scheduled', [EventScheduleController::class, 'scheduled'])->name('training-schedules.scheduled');
 
                 Route::get('player-skills', [SkillAssessmentController::class, 'indexAllPlayerInEvent'])->name('training-schedules.player-skills');
                 Route::get('player-performance-review', [PlayerPerformanceReviewController::class, 'indexAllPlayerInEvent'])->name('training-schedules.player-performance-review');
