@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttendanceStatusRequest;
 use App\Http\Requests\CompetitionMatchRequest;
+use App\Http\Requests\ExternalTeamScoreRequest;
 use App\Http\Requests\MatchScheduleRequest;
 use App\Http\Requests\MatchScoreRequest;
 use App\Http\Requests\MatchStatsRequest;
@@ -22,6 +23,7 @@ use App\Models\ScheduleNote;
 use App\Models\Team;
 use App\Services\CompetitionService;
 use App\Services\EventScheduleService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -199,34 +201,27 @@ class EventScheduleController extends Controller
     {
         $data = $this->eventScheduleService->show($schedule);
 
-        if ($schedule->players[0]->pivot->teamId != null) {
-            $homePlayers = $schedule->players()->where('teamId', $schedule->teams[0]->id)->get();
-        } else {
-            $homePlayers = $schedule->players;
-        }
+        $homeTeam = $this->eventScheduleService->homeTeamMatch($schedule);
+        $homePlayers = $this->eventScheduleService->homeTeamPlayers($schedule);
+        $homeCoaches = $this->eventScheduleService->homeTeamCoaches($schedule);
+        $homeTeamMatchScorers = $this->eventScheduleService->homeTeamMatchScorers($schedule);
+        $homeTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->homeTeam);
+        $homeTeamNotes = $this->eventScheduleService->homeTeamNotes($schedule);
 
-        if ($schedule->coaches[0]->pivot->teamId != null) {
-            $homeCoaches = $schedule->coaches()->where('teamId', $schedule->teams[0]->id)->get();
-        } else {
-            $homeCoaches = $schedule->coaches;
-        }
-
+        $awayTeam = $this->eventScheduleService->awayTeamMatch($schedule);
         $awayPlayers = null;
         $awayCoaches = null;
-        $homeTeamMatchScorers = $this->eventScheduleService->getmatchScorers($schedule, $schedule->teams[0]);
         $awayTeamMatchScorers = null;
-        $homeTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->teams[0]);
         $awayTeamAttendance = null;
-        $homeTeamNotes = $schedule->notes()->where('teamId', $schedule->teams[0]->id)->get();
         $awayTeamNotes = null;
         $userTeams = null;
 
         if ($schedule->matchType == 'Internal Match'){
-            $awayPlayers = $schedule->players()->where('teamId', $schedule->teams[1]->id)->get();
-            $awayCoaches = $schedule->coaches()->where('teamId', $schedule->teams[1]->id)->get();
-            $awayTeamMatchScorers = $this->eventScheduleService->getmatchScorers($schedule, $schedule->teams[1]);
-            $awayTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->teams[1]);
-            $awayTeamNotes = $schedule->notes()->where('teamId', $schedule->teams[1]->id)->get();
+            $awayPlayers = $this->eventScheduleService->awayTeamPlayers($schedule);
+            $awayCoaches = $this->eventScheduleService->awayTeamCoaches($schedule);
+            $awayTeamMatchScorers = $this->eventScheduleService->awayTeamMatchScorers($schedule);
+            $awayTeamAttendance = $this->eventScheduleService->eventAttendance($schedule, $schedule->awayTeam);
+            $awayTeamNotes = $this->eventScheduleService->awayTeamNotes($schedule);
 
             if ($this->isCoach()) {
                 $coach = $this->getLoggedCoachUser();
@@ -248,15 +243,17 @@ class EventScheduleController extends Controller
         return view('pages.academies.schedules.matches.detail', [
             'data' => $data,
             'schedule' => $schedule,
+            'homeTeam' => $homeTeam,
             'homePlayers' => $homePlayers,
-            'awayPlayers' => $awayPlayers,
             'homeCoaches' => $homeCoaches,
-            'awayCoaches' => $awayCoaches,
             'homeTeamMatchScorers' => $homeTeamMatchScorers,
-            'awayTeamMatchScorers' => $awayTeamMatchScorers,
             'homeTeamAttendance' => $homeTeamAttendance,
-            'awayTeamAttendance' => $awayTeamAttendance,
             'homeTeamNotes' => $homeTeamNotes,
+            'awayTeam' => $awayTeam,
+            'awayCoaches' => $awayCoaches,
+            'awayPlayers' => $awayPlayers,
+            'awayTeamMatchScorers' => $awayTeamMatchScorers,
+            'awayTeamAttendance' => $awayTeamAttendance,
             'awayTeamNotes' => $awayTeamNotes,
             'userTeams' => $userTeams,
         ]);
@@ -265,6 +262,13 @@ class EventScheduleController extends Controller
     public function getMatchDetail(EventSchedule $schedule)
     {
         $data = $this->eventScheduleService->getMatchDetail($schedule);
+        return ApiResponse::success($data);
+    }
+
+    public function getTeamMatchStats(Request $request, EventSchedule $schedule)
+    {
+        $team = $request->input('team');
+        $data = $this->eventScheduleService->getTeamMatchStats($schedule, $team);
         return ApiResponse::success($data);
     }
 
@@ -322,17 +326,21 @@ class EventScheduleController extends Controller
     {
         try {
             $this->eventScheduleService->setStatus($schedule, $status);
-            return response()->json(['message' =>  $schedule->eventType.' session status successfully mark to '.$status.'!']);
+            return ApiResponse::success(message: $schedule->eventType.' session status successfully mark to '.$status.'!');
 
         } catch (Exception $e) {
             Log::error('Error marking '.$schedule->eventType.' session as '.$status.': ' . $e->getMessage());
-            return response()->json(['error' => 'An error occurred while marking the competition '.$schedule->eventType.' session as '.$status.'.'], 500);
+            return ApiResponse::error('An error occurred while marking the competition '.$schedule->eventType.' session as '.$status.'.');
         }
     }
 
     public function scheduled(EventSchedule $schedule)
     {
-        return $this->status($schedule, 'Scheduled');
+        if ($schedule->startDatetime < Carbon::now()) {
+            return ApiResponse::error("You cannot set the match session to scheduled because the match date has passed, please change the match start date to a future date.");
+        } else {
+            return $this->status($schedule, 'Scheduled');
+        }
     }
 
     public function ongoing(EventSchedule $schedule)
@@ -501,24 +509,9 @@ class EventScheduleController extends Controller
         $team = $request->input('team');
         $exceptPlayerId = $request->input('exceptPlayerId');
 
-        if ($team == 'homeTeam') {
-            $teamData = $schedule->teams[0];
+        $data = $this->eventScheduleService->getEventPLayers($schedule, $team, $exceptPlayerId);
 
-        } else {
-            $teamData = $schedule->teams[1];
-        }
-        $players = $schedule->players()
-            ->with('user', 'position')
-            ->whereRelation('teams', 'teamId', $teamData->id)
-            ->where('players.id', '!=', $exceptPlayerId)
-            ->get();
-
-        $responseData = [
-            'players' => $players,
-            'team' => $teamData
-        ];
-
-        return ApiResponse::success($responseData, message:  "Successfully retrieved player data");
+        return ApiResponse::success($data, message:  "Successfully retrieved player data");
     }
 
     public function storeMatchScorer(MatchScoreRequest $request, EventSchedule $schedule){
@@ -542,7 +535,7 @@ class EventScheduleController extends Controller
 
     public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer){
         try {
-            if ($scorer->teamId == $schedule->teams[1]->id) {
+            if ($scorer->teamId == $schedule->awayTeamId) {
                 $this->eventScheduleService->destroyMatchScorer($schedule, $scorer, true);
             } else {
                 $this->eventScheduleService->destroyMatchScorer($schedule, $scorer);
@@ -558,20 +551,18 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function updateMatchStats(MatchStatsRequest $request, EventSchedule $schedule)
+    public function updateMatchStats(MatchStatsRequest $request, EventSchedule $schedule): JsonResponse
     {
         $data = $request->validated();
+        $this->eventScheduleService->updateMatchStats($data, $schedule);
+        return ApiResponse::success(message:  "Team match stats successfully updated.");
+    }
 
-        try {
-            $this->eventScheduleService->updateMatchStats($data, $schedule);
-            $message = "Match stats successfully updated.";
-            return ApiResponse::success(message:  $message);
-
-        } catch (Exception $e){
-            $message = "Error while updating match stats:" . $e->getMessage();
-            Log::error($message);
-            return ApiResponse::error($message, null, $e->getCode());
-        }
+    public function updateExternalTeamScore(ExternalTeamScoreRequest $request, EventSchedule $schedule): JsonResponse
+    {
+        $data = $request->validated();
+        $this->eventScheduleService->updateExternalTeamScore($data, $schedule);
+        return ApiResponse::success(message:  "Team ".$schedule->externalTeam->teamName." score successfully updated.");
     }
 
     public function storeOwnGoal(MatchScoreRequest $request, EventSchedule $schedule){
@@ -594,7 +585,7 @@ class EventScheduleController extends Controller
 
     public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer){
         try {
-            if ($scorer->teamId == $schedule->teams[1]->id) {
+            if ($scorer->teamId == $schedule->awayTeamId) {
                 $this->eventScheduleService->destroyOwnGoal($schedule, $scorer, true);
             } else {
                 $this->eventScheduleService->destroyOwnGoal($schedule, $scorer);
