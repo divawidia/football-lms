@@ -31,6 +31,7 @@ class ExternalTeamMatch extends Model
         'resultStatus',
         'teamPasses',
         'goalConceded',
+        'goalScored',
         'cleanSheets',
     ];
 
