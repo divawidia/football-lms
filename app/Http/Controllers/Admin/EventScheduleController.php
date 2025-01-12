@@ -156,10 +156,7 @@ class EventScheduleController extends Controller
         $data = $request->validated();
         $userId = $this->getLoggedUserId();
         $this->eventScheduleService->storeTraining($data, $userId);
-
-        $text = 'Training schedule successfully added!';
-        Alert::success($text);
-        return redirect()->route('training-schedules.index');
+        return ApiResponse::success(message: 'Training schedule successfully added!');
     }
 
     public function storeMatch(MatchScheduleRequest $request)
