@@ -52,6 +52,7 @@ class EventSchedule extends Model
                 'resultStatus',
                 'teamPasses',
                 'goalConceded',
+                'goalScored',
                 'cleanSheets',
             )->withTimestamps();
     }
@@ -100,6 +101,7 @@ class EventSchedule extends Model
                 'resultStatus',
                 'teamPasses',
                 'goalConceded',
+                'goalScored',
                 'cleanSheets',
             )->withTimestamps();
     }
