@@ -30,7 +30,7 @@ class EventScheduleRepository
     public function getEvent($status, $eventType = null, $take = null, $startDate = null, $endDate = null, $teams = null)
     {
         $query = $this->eventSchedule->with('teams', 'competition', 'players')
-            ->where('status', $status)
+            ->whereIn('status', $status)
             ->where('isOpponentTeamMatch', '0');
         if ($eventType) {
             $query->where('eventType', $eventType);
@@ -197,19 +197,32 @@ class EventScheduleRepository
             ->get();
     }
 
-    public function playerAttendanceCount($status, $id, $team = null) : int {
-        $query = $this->find($id)->players()->where('attendanceStatus', $status);
-        if ($team) {
-            $query->where('teamId', $team->id);
+    public function getRelationData(EventSchedule $schedule, $relation,  $with = null, $attendanceStatus = null, $teamId = null, $playerId = null, $exceptPlayerId= null, $retrieveType = 'single')
+    {
+        $query = $schedule->$relation();
+        if ($with != null) {
+            $query->with($with);
         }
-        return $query->count();
-    }
-    public function coachesAttendanceCount($status, $id, $team = null) : int {
-        $query = $this->find($id)->coaches()->where('attendanceStatus', $status);
-        if ($team) {
-            $query->where('teamId', $team->id);
+        if ($attendanceStatus != null) {
+            $query->where('attendanceStatus', $attendanceStatus);
         }
-        return $query->count();
+        if ($teamId != null) {
+            $query->where('teamId', $teamId);
+        }
+        if ($playerId != null) {
+            $query->where('playerId', $playerId);
+        }
+        if ($exceptPlayerId != null) {
+            $query->where('players.id', '!=', $exceptPlayerId);
+        }
+
+        if ($retrieveType == 'single') {
+            return $query->first();
+        } elseif ($retrieveType == 'multiple') {
+            return $query->get();
+        } else {
+            return $query->count();
+        }
     }
 
     public function playerAttendance(Player $player, $status, $startDate, $endDate, $eventType = null) {
@@ -238,6 +251,10 @@ class EventScheduleRepository
     {
         return $this->eventSchedule->create($data);
     }
+    public function createRelation(EventSchedule $schedule, array $data, $relation)
+    {
+        return $schedule->$relation()->create($data);
+    }
 
     public function update($id, array $data)
     {
@@ -249,6 +266,29 @@ class EventScheduleRepository
     public function updateStatus(EventSchedule $schedule, $status)
     {
         return $schedule->update(['status' => $status]);
+    }
+
+    public function updateTeamMatchStats(EventSchedule $schedule, array $data)
+    {
+        return $schedule->teams()->updateExistingPivot($data['teamId'], [
+            "teamPossesion" => $data['teamPossesion'],
+            "teamShotOnTarget" => $data['teamShotOnTarget'],
+            "teamShots" => $data['teamShots'],
+            "teamTouches" => $data['teamTouches'],
+            "teamTackles" => $data['teamTackles'],
+            "teamClearances" => $data['teamClearances'],
+            "teamCorners" => $data['teamCorners'],
+            "teamOffsides" => $data['teamOffsides'],
+            "teamYellowCards" => $data['teamYellowCards'],
+            "teamRedCards" => $data['teamRedCards'],
+            "teamFoulsConceded" => $data['teamFoulsConceded'],
+            "teamPasses" => $data['teamPasses'],
+        ]);
+    }
+
+    public function updateExternalTeamMatchStats(EventSchedule $schedule, array $data)
+    {
+        return $schedule->externalTeam->update($data);
     }
 
     public function delete($id)
