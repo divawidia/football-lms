@@ -2,28 +2,28 @@
 
 namespace App\Notifications\TrainingSchedules;
 
+use App\Models\EventSchedule;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingScheduleUpdatedForCoachAdmin extends Notification implements ShouldQueue
+class TrainingScheduleCreatedForCoachAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $trainingSchedule;
+    protected EventSchedule $trainingSchedule;
+    protected string $status;
     protected $team;
     protected $adminName;
-    protected $status;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($trainingSchedule, $team, $adminName, $status)
+    public function __construct($trainingSchedule, $team, $adminName)
     {
         $this->trainingSchedule = $trainingSchedule;
         $this->team = $team;
         $this->adminName = $adminName;
-        $this->status = $status;
     }
 
     /**
@@ -43,9 +43,9 @@ class TrainingScheduleUpdatedForCoachAdmin extends Notification implements Shoul
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Training Session {$this->trainingSchedule->eventName} {$this->status}")
+            ->subject("New Training Session Scheduled")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("The training session {$this->trainingSchedule->eventName} for your team {$this->team->teamName} on ".convertToDatetime($this->trainingSchedule->startDatetime)." {$this->status} by {$this->adminName}.")
+            ->line("A new training session {$this->trainingSchedule->eventName} has been scheduled on ".convertToDatetime($this->trainingSchedule->startDatetime)." by admin ".$this->adminName.". Please log in to view the details.")
             ->line("Training Topic: {$this->trainingSchedule->eventName}")
             ->line("Team: {$this->team->teamName}")
             ->line("Location: {$this->trainingSchedule->place}")
@@ -53,7 +53,6 @@ class TrainingScheduleUpdatedForCoachAdmin extends Notification implements Shoul
             ->line("Start Time: ".convertToTime($this->trainingSchedule->startTime))
             ->line("End Time: ".convertToTime($this->trainingSchedule->endTime))
             ->action('View training session detail', route('training-schedules.show', $this->trainingSchedule->id))
-            ->line("Please log in to view the details!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
 
@@ -65,7 +64,7 @@ class TrainingScheduleUpdatedForCoachAdmin extends Notification implements Shoul
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'The training session '.$this->trainingSchedule->eventName.' for your team '.$this->team->teamName.' on '.convertToDatetime($this->trainingSchedule->startDatetime).' '.$this->status.' by '.$this->adminName.'. Please check the schedule for details!',
+            'data' =>'A new training session '.$this->trainingSchedule->eventName.' for team '.$this->team->teamName.' has been scheduled on '.convertToDatetime($this->trainingSchedule->startDatetime).' by '.$this->adminName.'. Please check the details and prepare accordingly!',
             'redirectRoute' => route('training-schedules.show', $this->trainingSchedule->id)
         ];
     }
