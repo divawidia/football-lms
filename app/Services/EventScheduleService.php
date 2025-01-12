@@ -20,7 +20,7 @@ use App\Notifications\MatchSchedules\MatchScheduleUpdatedForPlayerCoach;
 use App\Notifications\MatchSchedules\MatchStatsPlayer;
 use App\Notifications\TrainingSchedules\TrainingNote;
 use App\Notifications\TrainingSchedules\TrainingScheduleAttendance;
-use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForCoachAdmin;
+use App\Notifications\TrainingSchedules\TrainingSchedule;
 use App\Notifications\TrainingSchedules\TrainingScheduleCreatedForPlayer;
 use App\Notifications\TrainingSchedules\TrainingScheduleDeletedForCoachAdmin;
 use App\Notifications\TrainingSchedules\TrainingScheduleDeletedForPlayers;
@@ -577,14 +577,9 @@ class EventScheduleService extends Service
 
         $team = $this->teamRepository->find($data['teamId']);
 
-        $loggedUser = $this->userRepository->find($userId);
-        $creatorUserName = $this->getUserFullName($loggedUser);
+        $teamsParticipant = $this->userRepository->allTeamsParticipant($team);
 
-        $teamsCoachesAdmins = $this->userRepository->allTeamsParticipant($team, players: false);
-        $teamsPlayers = $this->userRepository->allTeamsParticipant($team, admins: false, coaches: false);
-
-        Notification::send($teamsCoachesAdmins, new TrainingScheduleCreatedForCoachAdmin($schedule, $team, $creatorUserName));
-        Notification::send($teamsPlayers, new TrainingScheduleCreatedForPlayer($schedule, $team));
+        Notification::send($teamsParticipant, new TrainingSchedule($schedule, $team, 'create'));
 
         $schedule->teams()->attach($data['teamId']);
         $schedule->players()->attach($team->players);
