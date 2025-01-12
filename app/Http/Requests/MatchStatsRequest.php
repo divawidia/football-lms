@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class MatchStatsRequest extends FormRequest
 {
@@ -22,34 +23,20 @@ class MatchStatsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'teamATeamScore' => ['nullable', 'numeric', 'min:0'],
-            'teamAOwnGoal' => ['nullable', 'numeric', 'min:0'],
-            'teamAPossession' => ['required', 'numeric', 'min:0'],
-            'teamAShotOnTarget' => ['required', 'numeric', 'min:0'],
-            'teamAShots' => ['required', 'numeric', 'min:0'],
-            'teamATouches' => ['required', 'numeric', 'min:0'],
-            'teamATackles' => ['required', 'numeric', 'min:0'],
-            'teamAClearances' => ['required', 'numeric', 'min:0'],
-            'teamACorners' => ['required', 'numeric', 'min:0'],
-            'teamAOffsides' => ['required', 'numeric', 'min:0'],
-            'teamAYellowCards' => ['required', 'numeric', 'min:0'],
-            'teamARedCards' => ['required', 'numeric', 'min:0'],
-            'teamAFoulsConceded' => ['required', 'numeric', 'min:0'],
-            'teamAPasses' => ['required', 'numeric', 'min:0'],
-            'teamBTeamScore' => ['nullable', 'numeric', 'min:0'],
-            'teamBOwnGoal' => ['nullable', 'numeric', 'min:0'],
-            'teamBPossession' => ['required', 'numeric', 'min:0'],
-            'teamBShotOnTarget' => ['required', 'numeric', 'min:0'],
-            'teamBShots' => ['required', 'numeric', 'min:0'],
-            'teamBTouches' => ['required', 'numeric', 'min:0'],
-            'teamBTackles' => ['required', 'numeric', 'min:0'],
-            'teamBClearances' => ['required', 'numeric', 'min:0'],
-            'teamBCorners' => ['required', 'numeric', 'min:0'],
-            'teamBOffsides' => ['required', 'numeric', 'min:0'],
-            'teamBYellowCards' => ['required', 'numeric', 'min:0'],
-            'teamBRedCards' => ['required', 'numeric', 'min:0'],
-            'teamBFoulsConceded' => ['required', 'numeric', 'min:0'],
-            'teamBPasses' => ['required', 'numeric', 'min:0'],
+            'teamSide' => ['nullable', Rule::in('homeTeam', 'awayTeam', 'externalTeam')],
+            'teamId' => ['nullable', Rule::exists('teams', 'id')],
+            'teamPossesion' => ['required', 'numeric', 'min:0', 'max:100'],
+            'teamShotOnTarget' => ['required', 'numeric', 'min:0'],
+            'teamShots' => ['required', 'numeric', 'min:0'],
+            'teamTouches' => ['required', 'numeric', 'min:0'],
+            'teamTackles' => ['required', 'numeric', 'min:0'],
+            'teamClearances' => ['required', 'numeric', 'min:0'],
+            'teamCorners' => ['required', 'numeric', 'min:0'],
+            'teamOffsides' => ['required', 'numeric', 'min:0'],
+            'teamYellowCards' => ['required', 'numeric', 'min:0'],
+            'teamRedCards' => ['required', 'numeric', 'min:0'],
+            'teamFoulsConceded' => ['required', 'numeric', 'min:0'],
+            'teamPasses' => ['required', 'numeric', 'min:0'],
         ];
     }
 }
