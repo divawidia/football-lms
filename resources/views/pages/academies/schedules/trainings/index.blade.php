@@ -6,6 +6,10 @@
     @yield('title')
 @endsection
 
+@section('modal')
+    <x-modal.trainings.add-training/>
+@endsection
+
 @section('content')
     <div class="pt-32pt">
         <div class="container">
@@ -21,12 +25,13 @@
 
     <div class="container page-section">
         @if(isAllAdmin() || isCoach())
-            <a href="{{  route('training-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">
-                    <span class="material-icons mr-2">
-                        add
-                    </span>
-                Add New
-            </a>
+            <x-buttons.basic-button icon="add" text="Add New" additionalClass="add-training-btn" margin="mb-3"/>
+{{--            <a href="{{  route('training-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">--}}
+{{--                    <span class="material-icons mr-2">--}}
+{{--                        add--}}
+{{--                    </span>--}}
+{{--                Add New--}}
+{{--            </a>--}}
         @endif
         <x-training-tables :route="$tableRoute" tableId="tables"/>
 
@@ -39,20 +44,42 @@
             </div>
         </div>
     </div>
-
-    <x-process-data-confirmation btnClass=".delete"
-                                 :processRoute="route('training-schedules.destroy', ['schedule' => ':id'])"
-                                 :routeAfterProcess="route('training-schedules.index')"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to delete this training session?"
-                                 successText="Successfully deleted training session!"
-                                 errorText="Something went wrong when deleting training session!"/>
-
-    <x-process-data-confirmation btnClass=".cancelTrainingBtn"
-                                 :processRoute="route('cancel-training', ['schedule' => ':id'])"
-                                 :routeAfterProcess="route('training-schedules.index')"
-                                 method="PATCH"
-                                 confirmationText="Are you sure to cancel competition?"
-                                 successText="Training session successfully mark as cancelled!"
-                                 errorText="Something went wrong when marking training session as cancelled!"/>
 @endsection
+
+@push('addon-script')
+    <script type="module">
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+
+        $(document).ready(function () {
+            processWithConfirmation(
+                '.delete',
+                "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}",
+                "{{ route('training-schedules.index') }}",
+                'DELETE',
+                "Are you sure to delete this training?",
+                "Something went wrong when deleting this training!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.cancelTrainingBtn',
+                "{{ route('training-schedules.cancel', ['schedule' =>':id']) }}",
+                "{{ route('training-schedules.index') }}",
+                'PATCH',
+                "Are you sure to cancel this training?",
+                "Something went wrong when cancelling this training!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.scheduled-btn',
+                "{{ route('training-schedules.scheduled', ['schedule' =>':id']) }}",
+                "{{ route('training-schedules.index') }}",
+                'PATCH',
+                "Are you sure to set this training to scheduled?",
+                "Something went wrong when set this training to scheduled!",
+                "{{ csrf_token() }}"
+            );
+        });
+    </script>
+@endpush
