@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ScheduleNoteRequest extends FormRequest
 {
@@ -23,7 +24,7 @@ class ScheduleNoteRequest extends FormRequest
     {
         return [
             'note' => ['required', 'string'],
-            'teamId' => ['nullable'],
+            'teamId' => ['nullable', Rule::exists('teams', 'id')],
         ];
     }
 }
