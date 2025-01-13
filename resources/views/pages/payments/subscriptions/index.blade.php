@@ -24,12 +24,6 @@
     </div>
 
     <div class="container page-section">
-        <a href="{{ route('subscriptions.create') }}" class="btn btn-primary my-3 ">
-            <span class="material-icons mr-2">
-                add
-            </span>
-            Add New
-        </a>
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
