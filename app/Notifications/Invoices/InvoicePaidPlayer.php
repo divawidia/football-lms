@@ -28,8 +28,10 @@ class InvoicePaidPlayer extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-//        return ['mail', 'database'];
-        return ['database'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     /**
@@ -38,13 +40,13 @@ class InvoicePaidPlayer extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Invoice Payment Confirmation')
-            ->greeting("Hello {$this->playerName},")
-            ->line("Thank you for your payment! We have received payment for your invoice #{$this->invoice->invoiceNumber}.")
+            ->subject('Invoice Successfully Paid')
+            ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName},")
+            ->line("Your payment has been successfully processed. Thank you for your payment! We have received payment for your invoice #{$this->invoice->invoiceNumber}.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
             ->line("Amount Paid: ".priceFormat($this->invoice->ammountDue))
             ->line("Payment Date: " . now()->toFormattedDateString())
-            ->line('Your payment has been successfully processed. You can view the payment details and download a receipt from your account.')
+            ->line("You can view the payment details and download a receipt from your account.")
             ->action('View Payment Details', route('billing-and-payments.show', $this->invoice->id))
             ->line('If you have any questions, feel free to reach out to our support team.')
             ->line('Thank you!');
@@ -59,7 +61,7 @@ class InvoicePaidPlayer extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Thank you! Your payment for Invoice #'.$this->invoice->invoiceNumber.' has been successfully processed.',
+            'data' =>'Thank you! Your payment for Invoice #'.$this->invoice->invoiceNumber.' has been successfully paid/processed.',
             'redirectRoute' => route('billing-and-payments.show', ['invoice' => $this->invoice->id])
         ];
     }
