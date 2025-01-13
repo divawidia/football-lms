@@ -37,7 +37,6 @@ class CompletedMatchStatus extends Command
     {
         // Update records where end_date is less than the current date
         $matches = $this->eventScheduleRepository->getEndingEvent('Match');
-
         foreach ($matches as $match){
             $this->eventScheduleService->endMatch($match);
         }
