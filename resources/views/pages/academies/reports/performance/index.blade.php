@@ -89,6 +89,9 @@
                 <div class="page-separator__text">Latest Match</div>
             </div>
             <div class="row">
+                @if(count($latestMatches) == 0)
+                    <x-warning-alert text="There are currently no completed matches yet"/>
+                @endif
                 @foreach($latestMatches as $latestMatch)
                     <div class="col-sm-6 flex-column">
                         <x-match-card :match="$latestMatch" :latestMatch="true"/>
@@ -101,156 +104,6 @@
         <div class="page-separator">
             <div class="page-separator__text">Match History</div>
         </div>
-
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="matchHistoryTable">
-                        <thead>
-                        <tr>
-                            <th>Teams</th>
-                            <th>Opponent Teams</th>
-                            <th>Score</th>
-                            <th>Match Date</th>
-                            <th>Location</th>
-                            <th>Competition</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="page-separator">
-            <div class="page-separator__text">Competition Leaderboard</div>
-            <div class="form-group ml-auto w-25 mb-0">
-                <select class="form-control form-select" id="competitionFilter" data-toggle="select">
-                    <option selected disabled>Filter by Competition
-                    </option>
-                    @foreach($allCompetitions as $competition)
-                        <option value="{{ $competition->id }}" data-avatar-src="{{ Storage::url($competition->logo) }}">
-                            {{ $competition->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-
-        @foreach($activeCompetitions as $competition)
-            <div class="page-separator">
-                <div class="page-separator__text">{{ $competition->name }}</div>
-            </div>
-            @foreach($competition->groups as $group)
-                <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-                    <div class="card-header">
-                        <h5 class="mb-0">{{ $group->groupName }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0" id="classTable{{ $group->id }}">
-                                <thead>
-                                <tr>
-                                    <th>Team</th>
-                                    <th>Match Played</th>
-                                    <th>won</th>
-                                    <th>drawn</th>
-                                    <th>lost</th>
-                                    <th>goals For</th>
-                                    <th>goals Againts</th>
-                                    <th>goals Difference</th>
-                                    <th>red Cards</th>
-                                    <th>yellow Cards</th>
-                                    <th>points</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        @endforeach
+        <x-match-tables :route="$matchHistoryRoutes" tableId="matchHistoryTable"/>
     </div>
 @endsection
-
-@push('addon-script')
-    <script>
-        $(document).ready(function () {
-            const matchHistory = $('#matchHistoryTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! $matchHistoryRoutes !!}',
-                },
-                columns: [
-                    {data: 'team', name: 'team'},
-                    {data: 'opponentTeam', name: 'opponentTeam'},
-                    {data: 'score', name: 'score'},
-                    {data: 'date', name: 'date'},
-                    {data: 'place', name: 'place'},
-                    {data: 'competition', name: 'competition'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
-                ]
-            });
-
-            @foreach($activeCompetitions as $competition)
-                @foreach($competition->groups as $group)
-                    const classTable{{$group->id}} = $('#classTable{{$group->id}}').DataTable({
-                        processing: true,
-                        serverSide: true,
-                        ordering: true,
-                        ajax: {
-                            url: '{!! route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) !!}',
-                        },
-                        columns: [
-                            {data: 'teams', name: 'teams'},
-                            {data: 'pivot.matchPlayed', name: 'pivot.matchPlayed'},
-                            {data: 'pivot.won', name: 'pivot.won'},
-                            {data: 'pivot.drawn', name: 'pivot.drawn'},
-                            {data: 'pivot.lost', name: 'pivot.lost'},
-                            {data: 'pivot.goalsFor', name: 'pivot.goalsFor'},
-                            {data: 'pivot.goalsAgaints', name: 'pivot.goalsAgaints'},
-                            {data: 'pivot.goalsDifference', name: 'pivot.goalsDifference'},
-                            {data: 'pivot.redCards', name: 'pivot.redCards'},
-                            {data: 'pivot.yellowCards', name: 'pivot.yellowCards'},
-                            {data: 'pivot.points', name: 'pivot.points'},
-                        ],
-                        order: [[10, 'desc']]
-                    });
-                @endforeach
-            @endforeach
-
-            {{--$('#competitionFilter').on('change', function (e){--}}
-            {{--    e.preventDefault();--}}
-            {{--    const competitionId = $(this).val();--}}
-
-            {{--    $.ajax({--}}
-            {{--        url: "{{ route('division-managements.index', ['competition'=>$competition->id,'group'=>$group->id]) }}",--}}
-            {{--        data: {--}}
-            {{--            fields: 'states',--}}
-            {{--            "filters[country_id]": idCountry,--}}
-            {{--        },--}}
-            {{--        type: 'GET',--}}
-            {{--        dataType: 'json',--}}
-            {{--        success: function (result) {--}}
-            {{--            $('#state_id').html('<option disabled selected>Select State</option>');--}}
-            {{--            $.each(result.data, function (key, value) {--}}
-            {{--                $('#state_id').append('<option value="' + value.id + '">' + value.name + '</option>');--}}
-            {{--            });--}}
-            {{--        }--}}
-            {{--    });--}}
-            {{--});--}}
-        });
-    </script>
-@endpush
