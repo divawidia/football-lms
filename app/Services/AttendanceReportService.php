@@ -139,7 +139,7 @@ class AttendanceReportService extends Service
             $teams = $this->teamRepository->whereId($teams);
         }
         $filter = $this->dateFilter($startDate, $endDate);
-        $data = $this->eventScheduleRepository->getEvent('Completed', $eventType, null, $filter['startDate'], $filter['endDate'], $teams);
+        $data = $this->eventScheduleRepository->getEvent(['Completed'], $eventType, null, $filter['startDate'], $filter['endDate'], $teams);
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 if ($item->eventType == 'Training') {
@@ -150,33 +150,35 @@ class AttendanceReportService extends Service
                 return $btn;
             })
             ->addColumn('team', function ($item) {
-                return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup, route('team-managements.show', $item->teams[0]->hash));
+                return $item->eventType == 'Training' ? $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup, route('team-managements.show', $item->teams[0]->hash))
+                    : $this->datatablesService->name($item->homeTeam->logo, $item->homeTeam->teamName, $item->homeTeam->ageGroup, route('team-managements.show', $item->homeTeam->hash));
             })
             ->editColumn('eventName', function ($item) {
-                if ($item->eventType == 'Training') {
-                    $data = $item->eventName;
-                } else {
-                    $data = $item->teams[0]->teamName.' Vs. '.$item->teams[1]->teamName;
-                }
+                $data = match (true) {
+                    $item->eventType === 'Training' => $item->eventName,
+                    $item->matchType === 'Internal Match' => $item->homeTeam->teamName . ' Vs. ' . $item->awayTeam->teamName,
+                    default => $item->homeTeam->teamName . ' Vs. ' . $item->externalTeam->teamName,
+                };
+
                 return $data;
             })
             ->addColumn('totalPlayers', function ($item) {
                 return count($item->players);
             })
             ->addColumn('playerAttended', function ($item) {
-                return $this->eventScheduleRepository->playerAttendanceCount('Attended', $item->id);
+                return $this->eventScheduleRepository->getRelationData($item, 'players', attendanceStatus: 'Attended', retrieveType: 'count');
             })
             ->addColumn('playerIllness', function ($item) {
-                return $this->eventScheduleRepository->playerAttendanceCount('Illness', $item->id);
+                return $this->eventScheduleRepository->getRelationData($item, 'players', attendanceStatus: 'Illness', retrieveType: 'count');
             })
             ->addColumn('playerInjured', function ($item) {
-                return $this->eventScheduleRepository->playerAttendanceCount('Injured', $item->id);
+                return $this->eventScheduleRepository->getRelationData($item, 'players', attendanceStatus: 'Injured', retrieveType: 'count');
             })
             ->addColumn('playerOther', function ($item) {
-                return $this->eventScheduleRepository->playerAttendanceCount('Other', $item->id);
+                return $this->eventScheduleRepository->getRelationData($item, 'players', attendanceStatus: 'Other', retrieveType: 'count');
             })
             ->addColumn('playerRequiredAction', function ($item) {
-                return $this->eventScheduleRepository->playerAttendanceCount('Required Action', $item->id);
+                return $this->eventScheduleRepository->getRelationData($item, 'players', attendanceStatus: 'Required Action', retrieveType: 'count');
             })
             ->editColumn('status', function ($item) {
                 return $this->datatablesService->eventStatus($item->status);
@@ -321,7 +323,7 @@ class AttendanceReportService extends Service
 
     public function dataTablesTraining(Player $player): JsonResponse
     {
-        $data = $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Completed');
+        $data = $this->eventScheduleRepository->getEventByModel($player, 'Training', ['Completed']);
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return $this->datatablesService->buttonTooltips(route('training-schedules.show', $item->hash), 'View training session', 'visibility');
@@ -354,16 +356,20 @@ class AttendanceReportService extends Service
     }
     public function dataTablesMatch(Player $player): JsonResponse
     {
-        $data = $this->eventScheduleRepository->getEventByModel($player, 'Match', 'Completed');
+        $data = $this->eventScheduleRepository->getEventByModel($player, 'Match', ['Completed']);
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
             })
             ->editColumn('team', function ($item) {
-                return $this->datatablesService->name($item->teams[0]->logo, $item->teams[0]->teamName, $item->teams[0]->ageGroup);
+                return $this->datatablesService->name($item->homeTeam->logo, $item->homeTeam->teamName, $item->homeTeam->ageGroup, route('team-managements.show', $item->homeTeam->hash));
             })
             ->editColumn('opponentTeam', function ($item) {
-                return $this->datatablesService->name($item->teams[1]->logo, $item->teams[1]->teamName, $item->teams[1]->ageGroup);
+                if ($item->matchType == 'Internal Match') {
+                    return $this->datatablesService->name($item->awayTeam->logo, $item->awayTeam->teamName, $item->awayTeam->ageGroup, route('team-managements.show', $item->awayTeam->hash));
+                } else {
+                    return $item->externalTeam->teamName;
+                }
             })
             ->editColumn('competition', function ($item) {
                 if ($item->competition){
