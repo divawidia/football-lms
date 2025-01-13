@@ -80,7 +80,7 @@ class EventScheduleRepository
     {
         $query = $model->schedules()->with('teams', 'competition')
             ->where('eventType', $eventType)
-            ->where('status', $status);
+            ->whereIn('status', $status);
         if ($take){
             $query->take($take);
         }
