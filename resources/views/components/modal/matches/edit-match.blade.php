@@ -76,6 +76,7 @@
                 $(modalId).modal('show');
                 clearModalFormValidation(formId)
                 getHomeTeams()
+                getAwayTeams()
 
                 $.ajax({
                     url: "{{ route('match-schedules.match-detail', ':id') }}".replace(':id', matchId),
@@ -84,9 +85,9 @@
                         $(formId+' #matchId').val(res.data.schedule.id)
 
                         $(formId+' #homeTeamId').val(res.data.schedule.homeTeamId)
-
+                        // getAwayTeams(res.data.schedule.homeTeamId)
                         @if($competition->isInternal == 1)
-                            getAwayTeams(res.data.schedule.homeTeamId)
+
                             $(formId+' #awayTeamId').val(res.data.schedule.awayTeamId);
                         @else
                             $(formId+' #externalTeamName').val(res.data.opposingTeam);
