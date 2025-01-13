@@ -8,27 +8,21 @@
 
 @section('modal')
     @if(isAllAdmin() || isCoach())
-        <x-edit-player-attendance-modal
-                :routeGet="route('training-schedules.player', ['schedule' => $schedule->hash, 'player' => ':id'])"
-                :routeUpdate="route('training-schedules.update-player', ['schedule' => $schedule->hash, 'player' => ':id'])"/>
+        <x-modal.matches.edit-player-attendance :schedule="$schedule"/>
 
-        <x-edit-coach-attendance-modal
-                :routeGet="route('training-schedules.coach', ['schedule' => $schedule->hash, 'coach' => ':id'])"
-                :routeUpdate="route('training-schedules.update-coach', ['schedule' => $schedule->hash, 'coach' => ':id'])"/>
+        <x-modal.matches.edit-coach-attendance :schedule="$schedule"/>
 
-        <x-create-schedule-note-modal :routeCreate="route('training-schedules.create-note', $schedule->hash)"
-                                      :eventName="$schedule->eventName"/>
+        <x-modal.matches.create-schedule-note :schedule="$schedule"/>
+        <x-modal.matches.edit-schedule-note :eventSchedule="$schedule"/>
 
-        <x-edit-schedule-note-modal
-                :routeEdit="route('training-schedules.edit-note', ['schedule' => $schedule->hash, 'note' => ':id'])"
-                :routeUpdate="route('training-schedules.update-note', ['schedule' => $schedule->hash, 'note' => ':id'])"
-                :eventName="$schedule->eventName"/>
 
         <x-skill-assessments-modal/>
         <x-edit-skill-assessments-modal/>
 
-        <x-add-performance-review-modal :routeCreate="route('coach.performance-reviews.store', ['player'=> ':id'])"/>
-        <x-edit-performance-review-modal/>
+        <x-modal.matches.add-performance-review/>
+        <x-modal.matches.edit-performance-review/>
+
+        <x-modal.trainings.edit-training/>
     @endif
 @endsection
 
@@ -45,34 +39,26 @@
             </ul>
         </div>
     </nav>
+
     <div class="page-section bg-primary">
         <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex">
                 <h2 class="text-white mb-0">{{ $schedule->eventName  }}</h2>
-                <p class="lead text-white-50 d-flex align-items-center">{{ $schedule->eventType }}
-                    ~ {{ $schedule->teams[0]->teamName }}</p>
+                <p class="lead text-white-50 d-flex align-items-center">
+                    {{ $schedule->eventType }} ~ {{ $schedule->teams[0]->teamName }}
+                </p>
             </div>
             @if(isAllAdmin() || isCoach())
-                <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                        Action<span class="material-icons ml-3">keyboard_arrow_down</span>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item"
-                           href="{{ route('training-schedules.edit', $schedule->hash) }}">
-                            <span class="material-icons">edit</span> Edit Training Schedule
-                        </a>
-                        @if($schedule->status != 'Cancelled' && $schedule->status != 'Completed')
-                            <button type="submit" class="dropdown-item cancelBtn" id="{{ $schedule->hash }}">
-                                <span class="material-icons text-danger">block</span>Cancel Training
-                            </button>
-                        @endif
-                        <button type="button" class="dropdown-item delete" id="{{$schedule->hash}}">
-                            <span class="material-icons text-danger">delete</span> Delete Training
-                        </button>
-                    </div>
-                </div>
+                <x-buttons.dropdown>
+                    @if($schedule->status == 'Scheduled')
+                        <x-buttons.basic-button icon="edit" text="Edit Training" additionalClass="edit-training-btn" :dropdownItem="true" :id="$schedule->hash" color=""/>
+                        <x-buttons.basic-button icon="block" text="Cancel Training" additionalClass="cancelBtn" :dropdownItem="true" :id="$schedule->hash" color="" iconColor="danger"/>
+                    @elseif($schedule->status == 'Cancelled')
+                        <x-buttons.basic-button icon="edit" text="Edit Training" additionalClass="edit-training-btn" :dropdownItem="true" :id="$schedule->hash" color=""/>
+                        <x-buttons.basic-button icon="check_circle" text="Set Training to Scheduled" additionalClass="scheduled-btn" :dropdownItem="true" :id="$schedule->hash" color="" iconColor="warning"/>
+                    @endif
+                    <x-buttons.basic-button icon="delete" text="Delete Training" additionalClass="delete" :dropdownItem="true" :id="$schedule->hash" color="" iconColor="danger"/>
+                </x-buttons.dropdown>
             @endif
         </div>
     </div>
@@ -94,12 +80,12 @@
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                    {{ date('D, M d Y', strtotime($schedule->date)) }}
+                    {{ convertToDate($schedule->date) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                    {{ date('h:i A', strtotime($schedule->startTime)) }}
-                    - {{ date('h:i A', strtotime($schedule->endTime)) }}
+                    {{ convertToDate($schedule->startTime) }}
+                    - {{ convertToDate($schedule->endTime) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
@@ -113,8 +99,8 @@
                                  class="rounded-circle">
                         </span>
                             <div class="media-body">
-                                <a class="card-title m-0" href="">Created
-                                    by {{$schedule->user->firstName}} {{$schedule->user->lastName}}</a>
+                                <a class="card-title m-0" href="">
+                                    Created by {{ $schedule->user->firstName}} {{$schedule->user->lastName}}</a>
                                 <p class="text-50 lh-1 mb-0">Admin</p>
                             </div>
                         </div>
@@ -124,24 +110,12 @@
         </div>
     </div>
 
-    <nav class="navbar navbar-light border-bottom border-top py-3">
-        <div class="container">
-            <ul class="nav nav-pills text-capitalize">
-                <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#overview-tab">Overview & Attendance</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#notes-tab">Training Note</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#skills-tab">player skills evaluation</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#performance-tab">player performance review</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <x-tabs.navbar>
+        <x-tabs.item title="Overview" link="overview" :active="true"/>
+        <x-tabs.item title="Session Notes" link="notes"/>
+        <x-tabs.item title="skills evaluation" link="skills"/>
+        <x-tabs.item title="performance review" link="performance"/>
+    </x-tabs.navbar>
 
     {{--    Attendance Overview    --}}
     <div class="container page__container page-section">
@@ -182,18 +156,15 @@
             <div class="tab-pane fade" id="notes-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Training Note</div>
-                    @if(isAllAdmin() || isCoach())
-                        <a href="" data-team="{{$schedule->teams[0]->id}}"
-                           class="btn btn-primary btn-sm ml-auto addNewNote"><span
-                                class="material-icons mr-2">add</span> Add new note</a>
+                    @if(isAllAdmin() || isCoach() and $schedule->status == 'Ongoing' || $schedule->status == 'Completed')
+                        <x-buttons.basic-button icon="add" text="add new note" size="sm" margin="ml-auto" :id="$schedule->teams[0]->id" additionalClass="add-new-note-btn"/>
                     @endif
                 </div>
                 @if(count($schedule->notes)==0)
                     <x-warning-alert text="Training session note haven't created yet by coach"/>
                 @endif
                 @foreach($schedule->notes as $note)
-                    <x-event-note-card :note="$note"
-                                       :deleteRoute="route('training-schedules.destroy-note', ['schedule' => $schedule->hash, 'note'=>':id'])"/>
+                    <x-event-note-card :note="$note" :schedule="$schedule"/>
                 @endforeach
             </div>
 
@@ -203,9 +174,7 @@
                     <div class="page-separator__text">player skills evaluation</div>
                 </div>
                 @if(isAllAdmin() || isCoach())
-                    <x-player-skill-event-tables
-                            :route="route('training-schedules.player-skills', ['schedule' => $schedule->hash])"
-                            tableId="playerSkillsTable"/>
+                    <x-tables.player-skill-event :eventSchedule="$schedule" tableId="playerSkillsTable"/>
                 @elseif(isPlayer())
                     <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
                 @endif
@@ -217,13 +186,10 @@
                     <div class="page-separator__text">player performance review</div>
                 </div>
                 @if(isAllAdmin() || isCoach())
-                    <x-player-performance-review-event-table
-                            :route="route('training-schedules.player-performance-review', ['schedule' => $schedule->hash])"
-                            tableId="playerPerformanceReviewTable"/>
+                    <x-tables.player-performance-review-event :eventSchedule="$schedule" tableId="playerPerformanceReviewTable"/>
                 @elseif(isPlayer())
                     @if(count($data['playerPerformanceReviews'])==0)
-                        <x-warning-alert
-                                text="You haven't get any performance review from your coach for this match session"/>
+                        <x-warning-alert text="You haven't get any performance review from your coach for this training session"/>
                     @else
                         @foreach($data['playerPerformanceReviews'] as $review)
                             <x-player-event-performance-review :review="$review"/>
@@ -234,18 +200,42 @@
         </div>
     </div>
 
-    <x-process-data-confirmation btnClass=".delete"
-                                 :processRoute="route('training-schedules.destroy', ['schedule' => ':id'])"
-                                 :routeAfterProcess="route('training-schedules.index')"
-                                 method="DELETE"
-                                 confirmationText="Are you sure to delete this training session {{ $schedule->eventName }}?"
-                                 errorText="Something went wrong when deleting training session {{ $schedule->eventName }}!"/>
-
-    <x-process-data-confirmation btnClass=".cancelBtn"
-                                 :processRoute="route('cancel-training', ['schedule' => ':id'])"
-                                 :routeAfterProcess="route('training-schedules.show', $schedule->hash)"
-                                 method="PATCH"
-                                 confirmationText="Are you sure to cancel competition {{ $schedule->eventName }}?"
-                                 errorText="Something went wrong when marking training session {{ $schedule->eventName }} as cancelled!"/>
-
 @endsection
+
+@push('addon-script')
+    <script type="module">
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+
+        $(document).ready(function () {
+            processWithConfirmation(
+                '.delete',
+                "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}",
+                "{{ route('training-schedules.index') }}",
+                'DELETE',
+                "Are you sure to delete this training?",
+                "Something went wrong when deleting this training!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.cancelBtn',
+                "{{ route('training-schedules.cancel', ['schedule' => $schedule->hash]) }}",
+                "{{ route('training-schedules.show', ['schedule' => $schedule->hash]) }}",
+                'PATCH',
+                "Are you sure to cancel this training?",
+                "Something went wrong when cancelling this training!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.scheduled-btn',
+                "{{ route('training-schedules.scheduled', ['schedule' => $schedule->hash]) }}",
+                "{{ route('training-schedules.show', ['schedule' => $schedule->hash]) }}",
+                'PATCH',
+                "Are you sure to set this training to scheduled?",
+                "Something went wrong when set this training to scheduled!",
+                "{{ csrf_token() }}"
+            );
+        });
+    </script>
+@endpush
