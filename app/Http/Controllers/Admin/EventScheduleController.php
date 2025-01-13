@@ -274,16 +274,11 @@ class EventScheduleController extends Controller
      */
     public function editTraining(EventSchedule $schedule)
     {
-        if (isAllAdmin()){
-            $teams = $this->eventScheduleService->createTraining();
-        } elseif (isCoach()){
-            $coach = $this->getLoggedCoachUser();
-            $teams = $this->eventScheduleService->createTraining($coach);
-        }
-        return view('pages.academies.schedules.trainings.edit', [
-            'teams' => $teams,
-            'data' => $schedule
-        ]);
+        $data = [
+            'schedule' => $schedule,
+            'teamId' => $schedule->teams[0]->id
+        ];
+        return ApiResponse::success($data);
     }
 
     public function editMatch(EventSchedule $schedule)
@@ -302,21 +297,14 @@ class EventScheduleController extends Controller
         $data = $request->validated();
         $loggedUser = $this->getLoggedUser();
         $this->eventScheduleService->updateTraining($data, $schedule, $loggedUser);
-
-        $text = 'Schedule successfully updated!';
-        Alert::success($text);
-        return redirect()->route('training-schedules.index');
+        return ApiResponse::success(message: 'Training session successfully updated!');
     }
 
     public function updateMatch(CompetitionMatchRequest $request, EventSchedule $schedule)
     {
         $data = $request->validated();
         $this->eventScheduleService->updateMatch($data, $schedule);
-
-        $text = 'Match session successfully updated!';
-//        Alert::success($text);
-//        return redirect()->route('match-schedules.index');
-        return ApiResponse::success(message: $text);
+        return ApiResponse::success(message: 'Match session successfully updated!');
     }
 
     public function status(EventSchedule $schedule, $status)
@@ -336,21 +324,21 @@ class EventScheduleController extends Controller
         if ($schedule->startDatetime < Carbon::now()) {
             return ApiResponse::error("You cannot set the match session to scheduled because the match date has passed, please change the match start date to a future date.");
         } else {
-            return $this->status($schedule, 'Scheduled');
+            return $this->status($schedule, 'scheduled');
         }
     }
 
     public function ongoing(EventSchedule $schedule)
     {
-        return $this->status($schedule, 'Ongoing');
+        return $this->status($schedule, 'ongoing');
     }
     public function completed(EventSchedule $schedule)
     {
-        return $this->status($schedule, 'Completed');
+        return $this->status($schedule, 'completed');
     }
     public function cancelled(EventSchedule $schedule)
     {
-        return $this->status($schedule, 'Cancelled');
+        return $this->status($schedule, 'cancelled');
     }
 
     public function endMatch(EventSchedule $schedule)
