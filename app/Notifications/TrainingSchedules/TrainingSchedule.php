@@ -41,38 +41,39 @@ class TrainingSchedule extends Notification implements ShouldQueue
 
     private function messageText()
     {
+        $subjectText = '';
         $openingLine = "Training session {$this->team->teamName} scheduled at ".convertToDatetime($this->trainingSchedule->startDatetime);
         $closingLine = "Please check the training schedule for more information!";
 
         if ($this->status == 'create') {
-            $subject = "New Training Session Scheduled";
+            $subjectText = "New Training Session Scheduled";
             $openingLine = "A new ".$openingLine;
         } elseif ($this->status == 'delete') {
-            $subject = "Training Session Deleted";
+            $subjectText = "Training Session Deleted";
             $openingLine = $openingLine." has been deleted.";
         } elseif ($this->status == 'update') {
-            $subject = "Training Session Updated";
+            $subjectText = "Training Session Updated";
             $openingLine = $openingLine." has been updated.";
         } elseif ($this->status == 'reminder') {
-            $subject = "Training Session Reminder";
+            $subjectText = "Training Session Reminder";
             $openingLine = $openingLine." start tomorrow.";
             $closingLine = "Please arrive on time and be prepared for your tomorrow training!";
         } elseif ($this->status == 'ongoing') {
-            $subject = "Training Session is Ongoing";
+            $subjectText = "Training Session is Ongoing";
             $openingLine = $openingLine." is now ongoing.";
-        } elseif ($this->status == 'complete') {
-            $subject = "Training Session Have Been Completed";
+        } elseif ($this->status == 'completed') {
+            $subjectText = "Training Session Have Been Completed";
             $openingLine = $openingLine." have been completed.";
-        } elseif ($this->status == 'cancel') {
-            $subject = "Training Session Have Been Cancelled";
+        } elseif ($this->status == 'cancelled') {
+            $subjectText = "Training Session Have Been Cancelled";
             $openingLine = $openingLine." have been cancelled.";
         } elseif ($this->status == 'scheduled') {
-            $subject = "Training Session Have Been Set to Scheduled";
+            $subjectText = "Training Session Have Been Set to Scheduled";
             $openingLine = $openingLine." have been set to scheduled.";
         }
-        $systemNotifText = $openingLine.". ".$closingLine;
+        $systemNotifText = $openingLine." ".$closingLine;
 
-        return compact('subject', 'openingLine', 'closingLine', 'systemNotifText');
+        return compact('subjectText', 'openingLine', 'closingLine', 'systemNotifText');
     }
 
     private function rediredtRoute()
@@ -90,7 +91,7 @@ class TrainingSchedule extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject($this->messageText()['subject'])
+            ->subject($this->messageText()['subjectText'])
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line($this->messageText()['openingLine'])
             ->line("Training Topic: {$this->trainingSchedule->eventName}")
