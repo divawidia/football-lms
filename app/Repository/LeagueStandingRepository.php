@@ -20,11 +20,14 @@ class LeagueStandingRepository implements LeagueStandingRepositoryInterface
         $this->leagueStanding = $leagueStanding;
     }
 
-    public function getAll(Competition $competition = null)
+    public function getAll(Competition $competition = null, Team $team = null)
     {
         $query = $this->leagueStanding->with('team');
         if ($competition){
             $query->where('competitionId', $competition->id);
+        }
+        if ($team) {
+            $query->where('teamId', $team->id);
         }
         return $query->get();
     }
