@@ -276,29 +276,35 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-4 d-flex flex-column flex-md-row align-items-center">
-                            <img src="{{ Storage::url($match->teams[0]->logo) }}"
+                            <img src="{{ Storage::url($match->homeTeam->logo) }}"
                                  width="50"
                                  height="50"
                                  class="rounded-circle img-object-fit-cover"
                                  alt="team-logo">
                             <div class="ml-md-3 text-center text-md-left">
-                                <h5 class="mb-0">{{$match->teams[0]->teamName}}</h5>
-                                <p class="text-50 lh-1 mb-0">{{$match->teams[0]->ageGroup}}</p>
+                                <h5 class="mb-0">{{$match->homeTeam->teamName}}</h5>
+                                <p class="text-50 lh-1 mb-0">{{$match->homeTeam->ageGroup}}</p>
                             </div>
                         </div>
                         <div class="col-4 text-center">
                             <h2 class="mb-0">Vs.</h2>
                         </div>
                         <div class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
-                            <div class="mr-md-3 text-center text-md-right">
-                                    <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
-                                    <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
-                            </div>
-                            <img src="{{ Storage::url($match->teams[1]->logo) }}"
-                                 width="50"
-                                 height="50"
-                                 class="rounded-circle img-object-fit-cover"
-                                 alt="team-logo">
+                            @if($match->matchType == 'Internal Match')
+                                <div class="mr-md-3 text-center text-md-right">
+                                        <h5 class="mb-0">{{ $match->awayTeam->teamName }}</h5>
+                                        <p class="text-50 lh-1 mb-0">{{$match->awayTeam->ageGroup}}</p>
+                                </div>
+                                <img src="{{ Storage::url($match->awayTeam->logo) }}"
+                                     width="50"
+                                     height="50"
+                                     class="rounded-circle img-object-fit-cover"
+                                     alt="team-logo">
+                            @else
+                                <div class="mr-md-3 text-center text-md-right">
+                                    <h5 class="mb-0">{{ $match->externalTeam->teamName }}</h5>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
