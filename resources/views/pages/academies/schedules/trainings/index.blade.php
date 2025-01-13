@@ -8,6 +8,7 @@
 
 @section('modal')
     <x-modal.trainings.add-training/>
+    <x-modal.trainings.edit-training/>
 @endsection
 
 @section('content')
@@ -62,7 +63,7 @@
             );
 
             processWithConfirmation(
-                '.cancelTrainingBtn',
+                '.cancelBtn',
                 "{{ route('training-schedules.cancel', ['schedule' =>':id']) }}",
                 "{{ route('training-schedules.index') }}",
                 'PATCH',
