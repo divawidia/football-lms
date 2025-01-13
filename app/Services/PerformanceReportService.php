@@ -9,18 +9,23 @@ use App\Repository\CoachMatchStatsRepository;
 use App\Repository\EventScheduleRepository;
 use App\Repository\TeamMatchRepository;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
-use Yajra\DataTables\Facades\DataTables;
 
 class PerformanceReportService extends Service
 {
     private CoachMatchStatsRepository $coachMatchStatsRepository;
     private EventScheduleRepository $eventScheduleRepository;
     private TeamMatchRepository $teamMatchRepository;
-    public function __construct(CoachMatchStatsRepository $coachMatchStatsRepository, EventScheduleRepository $eventScheduleRepository, TeamMatchRepository $teamMatchRepository){
+    private EventScheduleService $eventScheduleService;
+    public function __construct(
+        CoachMatchStatsRepository $coachMatchStatsRepository,
+        EventScheduleRepository $eventScheduleRepository,
+        TeamMatchRepository $teamMatchRepository,
+        EventScheduleService $eventScheduleService
+    ){
         $this->coachMatchStatsRepository = $coachMatchStatsRepository;
         $this->eventScheduleRepository = $eventScheduleRepository;
         $this->teamMatchRepository = $teamMatchRepository;
+        $this->eventScheduleService = $eventScheduleService;
     }
     public function overviewStats(){
         $stats = [
@@ -217,115 +222,19 @@ class PerformanceReportService extends Service
         );
     }
     public function latestMatch(){
-        return $this->eventScheduleRepository->getEvent('Completed','Match', 2);
+        return $this->eventScheduleRepository->getEvent(['Completed'],'Match', 2);
     }
 
     public function coachLatestMatch(Coach $coach){
-        return $this->eventScheduleRepository->getEventByModel($coach, 'Match', 'Completed', 2);
+        return $this->eventScheduleRepository->getEventByModel($coach, 'Match', ['Completed', 'Ongoing'], 2);
     }
 
-
-    public function matchHistoryDatatables($data)
-    {
-        return Datatables::of($data)
-            ->addColumn('action', function ($item) {
-                if (isAllAdmin()){
-                    $actionBtn ='
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('match-schedules.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Match</a>
-                            <a class="dropdown-item" href="' . route('match-schedules.show', $item->hash) . '"><span class="material-icons">visibility</span> View Match</a>
-                            <button type="button" class="dropdown-item delete" id="' . $item->id . '">
-                                <span class="material-icons">delete</span> Delete Match
-                            </button>
-                          </div>
-                        </div>';
-                } elseif (isCoach() || isPlayer()){
-                    $actionBtn = '<a class="btn btn-sm btn-outline-secondary" href="' . route('match-schedules.show', $item->hash) . '" data-toggle="tooltips" data-placement="bottom" title="View Match Detail">
-                                        <span class="material-icons">visibility</span>
-                                  </a>';
-                }
-                return $actionBtn;
-            })
-            ->editColumn('team', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[0]->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[0]->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->teams[0]->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-            })
-            ->editColumn('opponentTeam', function ($item) {
-                return '
-                        <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->teams[1]->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->teams[1]->teamName . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->teams[1]->ageGroup.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-            })
-            ->editColumn('score', function ($item){
-                return '<p class="mb-0"><strong class="js-lists-values-lead">' .$item->teams[0]->pivot->teamScore . ' - ' . $item->teams[1]->pivot->teamScore.'</strong></p>';
-            })
-            ->editColumn('competition', function ($item) {
-                if ($item->competition){
-                    $competition = '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->competition->logo) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->competition->name . '</strong></p>
-                                            <small class="js-lists-values-email text-50">'.$item->competition->type.'</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-                }else{
-                    $competition = 'No Competition';
-                }
-                return $competition;
-            })
-            ->editColumn('date', function ($item) {
-                $date = $this->convertToDate($item->date);
-                $startTime = $this->convertToTime($item->startTime);
-                $endTime = $this->convertToTime($item->endTime);
-                return $date.' ('.$startTime.' - '.$endTime.')';
-            })
-            ->rawColumns(['action','team', 'score', 'competition','opponentTeam','date'])
-            ->make();
-    }
     public function matchHistory(){
-        $data = $this->eventScheduleRepository->getEvent('Completed', 'Match');
-        return $this->matchHistoryDatatables($data);
+        $data = $this->eventScheduleRepository->getEvent(['Completed'], 'Match');
+        return $this->eventScheduleService->makeDataTablesMatch($data);
     }
     public function modelMatchHistory($model){
-        $data = $this->eventScheduleRepository->getEventByModel($model, 'Match', 'Completed');
-        return $this->matchHistoryDatatables($data);
+        $data = $this->eventScheduleRepository->getEventByModel($model, 'Match', ['Completed', 'Ongoing']);
+        return $this->eventScheduleService->makeDataTablesMatch($data);
     }
 }
