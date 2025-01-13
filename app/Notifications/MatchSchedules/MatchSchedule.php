@@ -38,6 +38,7 @@ class MatchSchedule extends Notification implements ShouldQueue
 
     private function messageText()
     {
+        $subject = '';
         $openingLine = "Match session {$this->matchTeams()} scheduled at ".convertToDatetime($this->matchSchedule->startDatetime);
         $closingLine = "Please check the match schedule for more information!";
 
@@ -57,17 +58,17 @@ class MatchSchedule extends Notification implements ShouldQueue
         } elseif ($this->status == 'ongoing') {
             $subject = "Match Session is Ongoing";
             $openingLine = $openingLine." is now ongoing.";
-        } elseif ($this->status == 'complete') {
+        } elseif ($this->status == 'completed') {
             $subject = "Match Session Have Been Completed";
             $openingLine = $openingLine." have been completed.";
-        } elseif ($this->status == 'cancel') {
+        } elseif ($this->status == 'cancelled') {
             $subject = "Match Session Have Been Cancelled";
             $openingLine = $openingLine." have been cancelled.";
         } elseif ($this->status == 'scheduled') {
             $subject = "Match Session Have Been Set to Scheduled";
             $openingLine = $openingLine." have been set to scheduled.";
         }
-        $systemNotifText = $openingLine.". ".$closingLine;
+        $systemNotifText = $openingLine." ".$closingLine;
 
         return compact('subject', 'openingLine', 'closingLine', 'systemNotifText');
     }
@@ -84,9 +85,9 @@ class MatchSchedule extends Notification implements ShouldQueue
     private function matchTeams()
     {
         if ($this->matchSchedule->matchType == 'Internal Match') {
-            return $this->matchSchedule->teams[0]->teamName. " Vs. ". $this->matchSchedule->teams[1]->teamName;
+            return $this->matchSchedule->homeTeam->teamName. " Vs. ". $this->matchSchedule->awayTeam->teamName;
         } else {
-            return $this->matchSchedule->teams[0]->teamName. " Vs. ". $this->matchSchedule->externalTeam->teamName;
+            return $this->matchSchedule->homeTeam->teamName. " Vs. ". $this->matchSchedule->externalTeam->teamName;
         }
     }
 
