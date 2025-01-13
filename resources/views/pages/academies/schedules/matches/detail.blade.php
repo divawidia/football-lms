@@ -133,20 +133,21 @@
         <x-tabs.item title="Match Stats" link="matchStats"/>
 
         @if ($schedule->matchType == 'Internal Match')
-            <x-tabs.item title="{{ $homeTeam->teamName }} Player Stats" link="playerStats"/>
-            <x-tabs.item title="{{ $awayTeam->teamName }} Player Stats" link="team{{ $awayTeam->id }}PlayerStats"/>
+            @if(in_array($homeTeam->id, $userTeams))
+                <x-tabs.item title="{{ $homeTeam->teamName }} Player Stats" link="playerStats"/>
+                <x-tabs.item title="{{ $homeTeam->teamName }} Attendance" link="attendance"/>
+                <x-tabs.item title="{{ $homeTeam->teamName }} Session Notes" link="notes"/>
+                <x-tabs.item title="{{ $homeTeam->teamName }} skills evaluation" link="skills"/>
+                <x-tabs.item title="{{ $homeTeam->teamName }} performance review" link="performance"/>
+            @endif
 
-            <x-tabs.item title="{{ $homeTeam->teamName }} Attendance" link="attendance"/>
-            <x-tabs.item title="{{ $awayTeam->teamName }} Attendance" link="team{{ $awayTeam->id }}Attendance"/>
-
-            <x-tabs.item title="{{ $homeTeam->teamName }} Session Notes" link="notes"/>
-            <x-tabs.item title="{{ $awayTeam->teamName }} Session Notes" link="team{{ $awayTeam->id }}Notes"/>
-
-            <x-tabs.item title="{{ $homeTeam->teamName }} skills evaluation" link="skills"/>
-            <x-tabs.item title="{{ $awayTeam->teamName }} skills evaluation" link="team{{ $awayTeam->id }}Skills"/>
-
-            <x-tabs.item title="{{ $homeTeam->teamName }} performance review" link="performance"/>
-            <x-tabs.item title="{{ $awayTeam->teamName }} performance review" link="team{{ $awayTeam->id }}Performance"/>
+            @if(in_array($awayTeam->id, $userTeams))
+                <x-tabs.item title="{{ $awayTeam->teamName }} Player Stats" link="team{{ $awayTeam->id }}PlayerStats"/>
+                <x-tabs.item title="{{ $awayTeam->teamName }} Attendance" link="team{{ $awayTeam->id }}Attendance"/>
+                <x-tabs.item title="{{ $awayTeam->teamName }} Session Notes" link="team{{ $awayTeam->id }}Notes"/>
+                <x-tabs.item title="{{ $awayTeam->teamName }} skills evaluation" link="team{{ $awayTeam->id }}Skills"/>
+                <x-tabs.item title="{{ $awayTeam->teamName }} performance review" link="team{{ $awayTeam->id }}Performance"/>
+                @endif
         @else
             <x-tabs.item title="Player Stats" link="playerStats"/>
             <x-tabs.item title="Attendance" link="attendance"/>
