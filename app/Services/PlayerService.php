@@ -235,13 +235,9 @@ class PlayerService extends Service
             $statsData[$result.'ThisMonth'] = $this->playerRepository->matchResults($player, $result, Carbon::now()->startOfMonth(),Carbon::now());
         }
 
-        $scheduledMatches = $this->eventScheduleRepository->getEventByModel($player, 'Match', 'Scheduled', 2);
-        $ongoingMatches = $this->eventScheduleRepository->getEventByModel($player, 'Match', 'Ongoing', 2);
-        $upcomingMatches = $scheduledMatches->merge($ongoingMatches);
+        $upcomingMatches = $this->eventScheduleRepository->getEventByModel($player, 'Match', ['Scheduled', 'Ongoing'], 2);
 
-        $scheduledTrainings = $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Scheduled',2);
-        $ongoingTrainings = $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Ongoing',2);
-        $upcomingTrainings = $scheduledTrainings->merge($ongoingTrainings);
+        $upcomingTrainings = $this->eventScheduleRepository->getEventByModel($player, 'Training', ['Scheduled', 'Ongoing'],2);
 
         $playerAge = $this->getAge($player->user->dob);
         $playerDob = $this->convertToDate($player->user->dob);
@@ -423,31 +419,23 @@ class PlayerService extends Service
 
     public function playerUpcomingMatches(Player $player)
     {
-        $scheduled = $this->eventScheduleRepository->getEventByModel($player, 'Match', 'Scheduled');
-        $ongoing = $this->eventScheduleRepository->getEventByModel($player, 'Match', 'Ongoing');
-        $data = $scheduled->merge($ongoing);
+        $data = $this->eventScheduleRepository->getEventByModel($player, 'Match', ['Scheduled', 'Ongoing']);
         return $this->eventScheduleService->makeDataTablesMatch($data);
     }
     public function playerUpcomingTraining(Player $player)
     {
-        $scheduled = $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Scheduled');
-        $ongoing = $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Ongoing');
-        $data = $scheduled->merge($ongoing);
+        $data = $this->eventScheduleRepository->getEventByModel($player, 'Training', ['Scheduled', 'Ongoing']);
         return $this->eventScheduleService->makeDataTablesTraining($data);
     }
 
     public function playerMatchCalendar(Player $player)
     {
-        $scheduled = $this->eventScheduleRepository->getEventByModel($player, 'Match', 'Scheduled');
-        $ongoing = $this->eventScheduleRepository->getEventByModel($player, 'Match', 'Ongoing');
-        $data = $scheduled->merge($ongoing);
+        $data = $this->eventScheduleRepository->getEventByModel($player, 'Match', ['Scheduled', 'Ongoing']);
         return $this->eventScheduleService->makeMatchCalendar($data);
     }
     public function playerTrainingCalendar(Player $player)
     {
-        $scheduled = $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Scheduled');
-        $ongoing = $this->eventScheduleRepository->getEventByModel($player, 'Training', 'Ongoing');
-        $data = $scheduled->merge($ongoing);
+        $data = $this->eventScheduleRepository->getEventByModel($player, 'Training', ['Scheduled', 'Ongoing']);
         return $this->eventScheduleService->makeTrainingCalendar($data);
     }
 
