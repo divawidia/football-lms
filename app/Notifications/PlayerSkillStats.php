@@ -12,7 +12,7 @@ class PlayerSkillStats extends Notification
 {
     use Queueable;
     protected Coach $coach;
-    protected $event;
+    protected EventSchedule $event;
     protected string $action; // Either 'created', 'updated' or 'deleted'
 
     /**
@@ -39,6 +39,15 @@ class PlayerSkillStats extends Notification
         return ['database'];
     }
 
+    private function matchTeams()
+    {
+        if ($this->event->matchType == 'Internal Match') {
+            return $this->event->homeTeam->teamName. " Vs. ". $this->event->awayTeam->teamName;
+        } else {
+            return $this->event->homeTeam->teamName. " Vs. ". $this->event->externalTeam->teamName;
+        }
+    }
+
     /**
      * Get the array representation of the notification.
      *
@@ -50,7 +59,7 @@ class PlayerSkillStats extends Notification
             if ($this->event->eventType == 'Training') {
                 $message = 'Your skills have been '.$this->action.' by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.' in the '.$this->event->teams[0]->teamName.' training session '.$this->event->eventName.'.';
             } elseif ($this->event->eventType == 'Match') {
-                $message = 'Your skills have been '.$this->action.' by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.' in the match '.$this->event->teams[0]->teamName.' Vs. '.$this->event->teams[1]->teamName.' session.';
+                $message = 'Your skills have been '.$this->action.' by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.' in the match '.$this->matchTeams().' session.';
             }
         } else {
             $message = 'Your skills have been '.$this->action.' by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.'.';
