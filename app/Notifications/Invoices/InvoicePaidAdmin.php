@@ -28,8 +28,10 @@ class InvoicePaidAdmin extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-//        return ['mail', 'database'];
-        return ['database'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     /**
@@ -38,8 +40,8 @@ class InvoicePaidAdmin extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Player {$this->playerName} Invoice #{$this->invoice->invoiceNumber} Payment Confirmation")
-            ->greeting("Dear {$notifiable->name},")
+            ->subject("Invoice #{$this->invoice->invoiceNumber} Successfully Paid")
+            ->greeting("Dear {$notifiable->firstName} {$notifiable->lastName},")
             ->line("A payment has been successfully processed for the following player.")
             ->line("Player Name: {$this->playerName}")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
