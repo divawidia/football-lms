@@ -9,7 +9,7 @@ use App\Models\User;
 
 interface LeagueStandingRepositoryInterface
 {
-    public function getAll(Competition $competition = null);
+    public function getAll(Competition $competition = null, Team $team = null);
     public function create(array $data, Competition $competition);
     public function update(LeagueStanding $standing, array $data);
 
