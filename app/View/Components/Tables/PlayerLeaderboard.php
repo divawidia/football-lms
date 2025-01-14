@@ -7,16 +7,16 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class TeamLeaderboard extends Component
+class PlayerLeaderboard extends Component
 {
-    public $teamsLeaderboardRoute;
+    public $playersLeaderboardRoute;
 
     /**
      * Create a new component instance.
      */
-    public function __construct($teamsLeaderboardRoute)
+    public function __construct($playersLeaderboardRoute)
     {
-        $this->teamsLeaderboardRoute = $teamsLeaderboardRoute;
+        $this->playersLeaderboardRoute = $playersLeaderboardRoute;
     }
 
     /**
@@ -24,6 +24,6 @@ class TeamLeaderboard extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.tables.team-leaderboard');
+        return view('components.tables.player-leaderboard');
     }
 }
