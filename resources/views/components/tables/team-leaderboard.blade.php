@@ -1,38 +1,53 @@
 <div class="card">
     <div class="card-body">
-        <x-table :headers="['Name', 'skill stats status', 'date created', 'last updated', 'Action']" tableId="{{ $tableId }}"/>
+        <x-table :headers="[
+                'Pos.',
+                'Teams',
+                'Match Played',
+                'Won',
+                'Drawn',
+                'Lost',
+                'Goals',
+                'Goals Conceded',
+                'Clean Sheets',
+                'Own Goal',
+                'Action'
+            ]"
+            tableId="teamsLeaderboardTable"
+        />
     </div>
 </div>
 
 @push('addon-script')
     <script>
         $(document).ready(function (){
-            $('#{{ $tableId }}').DataTable({
+            $('#teamsLeaderboardTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{{ route('match-schedules.player-skills', ['schedule' => $eventSchedule->hash]) }}',
-                    @if($teamId)
-                        data: {
-                            teamId: {{ $teamId }},
-                        }
-                    @endif
-
+                    url: '{!! $teamsLeaderboardRoute !!}',
                 },
-                pageLength: 5,
                 columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'name', name: 'name' },
-                    { data: 'stats_status', name: 'stats_status' },
-                    { data: 'stats_created', name: 'stats_created' },
-                    { data: 'stats_updated', name: 'stats_updated' },
+                    { data: 'match', name: 'match' },
+                    { data: 'won', name: 'won'},
+                    { data: 'drawn', name: 'drawn'},
+                    { data: 'lost', name: 'lost'},
+                    { data: 'goals', name: 'goals'},
+                    { data: 'goalsConceded', name: 'goalsConceded'},
+                    { data: 'cleanSheets', name: 'cleanSheets'},
+                    { data: 'ownGoals', name: 'ownGoals'},
                     {
                         data: 'action',
                         name: 'action',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        width: '15%'
                     },
                 ],
+                order: [[3, 'desc']]
             });
         });
     </script>
