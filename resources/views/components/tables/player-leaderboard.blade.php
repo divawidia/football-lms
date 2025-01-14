@@ -2,18 +2,21 @@
     <div class="card-body">
         <x-table :headers="[
                 'Pos.',
-                'Teams',
-                'Match Played',
-                'Won',
-                'Drawn',
-                'Lost',
+                'Name',
+                'Team',
+                'Apps',
                 'Goals',
-                'Goals Conceded',
-                'Clean Sheets',
-                'Own Goal',
+                'Assists',
+                'Own Goals',
+                'Shots',
+                'Passes',
+                'Fouls Conceded',
+                'Yellow Cards',
+                'Red Cards',
+                'Saves',
                 'Action'
             ]"
-            tableId="teamsLeaderboardTable"
+                 tableId="playersLeaderboardTable"
         />
     </div>
 </div>
@@ -21,24 +24,27 @@
 @push('addon-script')
     <script>
         $(document).ready(function (){
-            $('#teamsLeaderboardTable').DataTable({
+            $('#playersLeaderboardTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! $teamsLeaderboardRoute !!}',
+                    url: '{!! $playersLeaderboardRoute !!}',
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'name', name: 'name' },
-                    { data: 'match', name: 'match' },
-                    { data: 'won', name: 'won'},
-                    { data: 'drawn', name: 'drawn'},
-                    { data: 'lost', name: 'lost'},
+                    { data: 'teams', name: 'teams' },
+                    { data: 'apps', name: 'apps'},
                     { data: 'goals', name: 'goals'},
-                    { data: 'goalsConceded', name: 'goalsConceded'},
-                    { data: 'cleanSheets', name: 'cleanSheets'},
+                    { data: 'assists', name: 'assists'},
                     { data: 'ownGoals', name: 'ownGoals'},
+                    { data: 'shots', name: 'shots'},
+                    { data: 'passes', name: 'passes'},
+                    { data: 'fouls', name: 'fouls'},
+                    { data: 'yellowCards', name: 'yellowCards'},
+                    { data: 'redCards', name: 'redCards'},
+                    { data: 'saves', name: 'saves'},
                     {
                         data: 'action',
                         name: 'action',
@@ -47,7 +53,7 @@
                         width: '15%'
                     },
                 ],
-                order: [[3, 'desc']]
+                order: [[4, 'desc']]
             });
         });
     </script>
