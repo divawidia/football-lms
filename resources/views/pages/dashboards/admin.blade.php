@@ -17,26 +17,16 @@
     </div>
 
     <div class="container  page-section">
+        <x-tabs.navbar>
+            <x-tabs.item title="Overview" link="overview" :active="true"/>
+            <x-tabs.item title="Upcoming Matches" link="matches"/>
+            <x-tabs.item title="Upcoming Trainings" link="trainings"/>
+            <x-tabs.item title="Team Leaderboard" link="teams"/>
+            <x-tabs.item title="Player Leaderboard" link="players"/>
+        </x-tabs.navbar>
 
-        <nav class="navbar navbar-light rounded">
-            <div class="container">
-                <ul class="nav nav-pills">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#overview-tab">Overview</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#profile-tab">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#teams-tab">Teams Managed</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        
-
-        {{--    Overview    --}}
         <div class="tab-content mt-3">
+            {{--    Overview    --}}
             <div class="tab-pane fade show active" id="overview-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Overview</div>
@@ -70,191 +60,49 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="page-separator">
-            <div class="page-separator__text">Upcoming Matches</div>
-            <a href="{{ route('match-schedules.index') }}" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
-                View More
-                <span class="material-icons ml-2 icon-16pt">chevron_right</span>
-            </a>
-        </div>
-        @if(count($upcomingMatches) == 0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">There are no team matches scheduled at this time</small>
-                    </div>
+            {{--    Upcoming Matches    --}}
+            <div class="tab-pane fade show" id="matches-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Upcoming Matches</div>
+                    <x-buttons.link-button size="sm" color="white border" margin="ml-auto" :href="route('match-schedules.index')" icon="chevron_right" text="View More"/>
                 </div>
+                @if(count($upcomingMatches) == 0)
+                    <x-warning-alert text="There are no team matches scheduled at this time"/>
+                @endif
+                @foreach($upcomingMatches as $match)
+                    <x-cards.match-card :match="$match" :latestMatch="false"/>
+                @endforeach
             </div>
-        @endif
-        @foreach($upcomingMatches as $match)
-        <a class="card" href="{{ route('match-schedules.show', $match->id) }}">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-4 d-flex flex-column flex-md-row align-items-center">
-                        <img src="{{ Storage::url($match->teams[0]->logo) }}"
-                             width="50"
-                             height="50"
-                             class="rounded-circle img-object-fit-cover"
-                             alt="team-logo">
-                        <div class="ml-md-3 text-center text-md-left">
-                            <h5 class="mb-0">{{$match->teams[0]->teamName}}</h5>
-                            <p class="text-50 lh-1 mb-0">{{$match->teams[0]->ageGroup}}</p>
-                        </div>
-                    </div>
-                    <div class="col-4 text-center">
-                        <h2 class="mb-0">Vs.</h2>
-                    </div>
-                    <div
-                        class="col-4 d-flex flex-column-reverse flex-md-row align-items-center justify-content-end">
-                        <div class="mr-md-3 text-center text-md-right">
-                            <h5 class="mb-0">{{ $match->teams[1]->teamName }}</h5>
-                            <p class="text-50 lh-1 mb-0">{{$match->teams[1]->ageGroup}}</p>
-                        </div>
-                        <img src="{{ Storage::url($match->teams[1]->logo) }}"
-                             width="50"
-                             height="50"
-                             class="rounded-circle img-object-fit-cover"
-                             alt="team-logo">
-                    </div>
-                </div>
 
-                <div class="row justify-content-center mt-3">
-                    <div class="mr-2">
-                        <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                        {{ date('D, M d Y', strtotime($match->startDatetime)) }}
-                    </div>
-                    <div class="mr-2">
-                        <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                        {{ date('h:i A', strtotime($match->startDatetime)) }}
-                        - {{ date('h:i A', strtotime($match->endDatetime)) }}
-                    </div>
-                    <div>
-                        <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                        {{ $match->place }}
-                    </div>
+            {{--    Upcoming Trainings    --}}
+            <div class="tab-pane fade show" id="trainings-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Upcoming Trainings</div>
+                    <x-buttons.link-button size="sm" color="white border" margin="ml-auto" :href="route('training-schedules.index')" icon="chevron_right" text="View More"/>
                 </div>
+                @if(count($upcomingTrainings) == 0)
+                    <x-warning-alert text="There are no team trainings scheduled at this time"/>
+                @endif
+                @foreach($upcomingTrainings as $training)
+                    <x-cards.training-card :training="$training"/>
+                @endforeach
             </div>
-        </a>
-        @endforeach
 
-        <div class="page-separator">
-            <div class="page-separator__text">Upcoming Training</div>
-            <a href="{{ route('training-schedules.index') }}" class="btn btn-outline-secondary bg-white btn-sm ml-auto">
-                View More
-                <span class="material-icons ml-2 icon-16pt">chevron_right</span>
-            </a>
-        </div>
-        @if(count($upcomingTrainings) == 0)
-            <div class="alert alert-light border-left-accent" role="alert">
-                <div class="d-flex flex-wrap align-items-center">
-                    <i class="material-icons mr-8pt">error_outline</i>
-                    <div class="media-body"
-                         style="min-width: 180px">
-                        <small class="text-black-100">There are no trainings scheduled at this time</small>
-                    </div>
+            {{--    Team Leaderboard    --}}
+            <div class="tab-pane fade show" id="teams-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Team Leaderboard</div>
                 </div>
+                <x-tables.team-leaderboard :teamsLeaderboardRoute="route('leaderboards.teams')"/>
             </div>
-        @endif
-        <div class="row">
-            @foreach($upcomingTrainings as $training)
-            <div class="col-lg-6">
-                <a class="card" href="{{ route('training-schedules.show', $training->id) }}">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-6 d-flex flex-column flex-md-row align-items-center">
-                                <img src="{{ Storage::url($training->teams[0]->logo) }}"
-                                     width="50"
-                                     height="50"
-                                     class="rounded-circle img-object-fit-cover"
-                                     alt="team-logo">
-                                <div class="ml-md-3 text-center text-md-left">
-                                    <h5 class="mb-0">{{$training->teams[0]->teamName}}</h5>
-                                    <p class="text-50 lh-1 mb-0">{{$training->teams[0]->ageGroup}}</p>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex flex-column">
-                                <div class="mr-2">
-                                    <i class="material-icons text-danger icon--left icon-16pt">event</i>
-                                    {{ date('D, M d Y', strtotime($training->startDatetime)) }}
-                                </div>
-                                <div class="mr-2">
-                                    <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                                    {{ date('h:i A', strtotime($training->startDatetime)) }}
-                                    - {{ date('h:i A', strtotime($training->endDatetime)) }}
-                                </div>
-                                <div>
-                                    <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                                    {{ $training->place }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            @endforeach
-        </div>
 
-        <div class="page-separator">
-            <div class="page-separator__text">Team Leaderboard</div>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="teamsLeaderboardTable">
-                        <thead>
-                        <tr>
-                            <th>Pos.</th>
-                            <th>Teams</th>
-                            <th>Match Played</th>
-                            <th>Won</th>
-                            <th>Drawn</th>
-                            <th>Lost</th>
-                            <th>Goals</th>
-                            <th>Goals Conceded</th>
-                            <th>Clean Sheets</th>
-                            <th>Own Goal</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+            {{--    Player Leaderboard    --}}
+            <div class="tab-pane fade show" id="players-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Player Leaderboard</div>
                 </div>
-            </div>
-        </div>
-        <div class="page-separator">
-            <div class="page-separator__text">Player Leaderboard</div>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="playersLeaderboardTable">
-                        <thead>
-                        <tr>
-                            <th>Pos.</th>
-                            <th>Name</th>
-                            <th>Team</th>
-                            <th>Apps</th>
-                            <th>Goals</th>
-                            <th>Assists</th>
-                            <th>Own Goals</th>
-                            <th>Shots</th>
-                            <th>Passes</th>
-                            <th>Fouls Conceded</th>
-                            <th>Yellow Cards</th>
-                            <th>Red Cards</th>
-                            <th>Saves</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                <x-tables.player-leaderboard :playersLeaderboardRoute="route('leaderboards.players')"/>
             </div>
         </div>
     </div>
@@ -263,86 +111,8 @@
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            $('#teamsLeaderboardTable').DataTable({
-                pageLength: 5,
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! route('leaderboards.teams') !!}',
-                },
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'name', name: 'name'},
-                    {data: 'match', name: 'match'},
-                    {data: 'won', name: 'won'},
-                    {data: 'drawn', name: 'drawn'},
-                    {data: 'lost', name: 'lost'},
-                    {data: 'goals', name: 'goals'},
-                    {data: 'goalsConceded', name: 'goalsConceded'},
-                    {data: 'cleanSheets', name: 'cleanSheets'},
-                    {data: 'ownGoals', name: 'ownGoals'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
-                ],
-                order: [[3, 'desc']]
-            });
-
-            $('#playersLeaderboardTable').DataTable({
-                pageLength: 5,
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! route('leaderboards.players') !!}',
-                },
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'name', name: 'name'},
-                    {data: 'teams', name: 'teams'},
-                    {data: 'apps', name: 'apps'},
-                    {data: 'goals', name: 'goals'},
-                    {data: 'assists', name: 'assists'},
-                    {data: 'ownGoals', name: 'ownGoals'},
-                    {data: 'shots', name: 'shots'},
-                    {data: 'passes', name: 'passes'},
-                    {data: 'fouls', name: 'fouls'},
-                    {data: 'yellowCards', name: 'yellowCards'},
-                    {data: 'redCards', name: 'redCards'},
-                    {data: 'saves', name: 'saves'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
-                ],
-                order: [[4, 'desc']]
-            });
-
             const teamAgeChart = document.getElementById('teamAgeChart');
 
-            {{--new Chart(revenueChart, {--}}
-            {{--    type: 'line',--}}
-            {{--    data: {--}}
-            {{--        labels: @json($revenueChart['label']),--}}
-            {{--        datasets: [{--}}
-            {{--            label: 'Revenue',--}}
-            {{--            data: @json($revenueChart['data']),--}}
-            {{--            borderColor: '#20F4CB',--}}
-            {{--            tension: 0.4,--}}
-            {{--        }]--}}
-            {{--    },--}}
-            {{--    options: {--}}
-            {{--        responsive: true,--}}
-            {{--    },--}}
-            {{--});--}}
             new Chart(teamAgeChart, {
                 type: 'doughnut',
                 data: {
