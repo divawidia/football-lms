@@ -3,8 +3,7 @@
 
     // PRELOADER
     window.addEventListener('load', function () {
-        $('.preloader').fadeOut()
-        domFactory.handler.upgradeAll()
-    })
-
-})()
+        $('.preloader').fadeOut();
+        domFactory.handler.upgradeAll();
+    });
+})();

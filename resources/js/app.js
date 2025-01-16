@@ -1,7 +1,7 @@
+import './bootstrap'
 import './perfect-scrollbar'
+import './preloader'
 import './sidebar'
-import './image'
-import './player'
 import './youtube'
 import './select2'
 
