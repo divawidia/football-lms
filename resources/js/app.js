@@ -3,6 +3,7 @@ import './sidebar'
 import './image'
 import './player'
 import './youtube'
+import './select2'
 
 (function() {
     'use strict';
