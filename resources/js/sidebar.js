@@ -2,7 +2,7 @@
     'use strict';
 
     // Connect button(s) to drawer(s)
-    var sidebarToggle = document.querySelectorAll('[data-toggle="sidebar"]')
+    let sidebarToggle = document.querySelectorAll('[data-toggle="sidebar"]');
     sidebarToggle = Array.prototype.slice.call(sidebarToggle)
 
     sidebarToggle.forEach(function (toggle) {

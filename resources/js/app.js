@@ -1,7 +1,5 @@
-import './bootstrap.js';
 import './perfect-scrollbar'
 import './sidebar'
-import './read-more'
 import './image'
 import './player'
 import './youtube'
