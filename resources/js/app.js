@@ -1,16 +1,8 @@
 import './bootstrap.js';
-import './vendor/ckeditor.js'
-// import './main'
 import './perfect-scrollbar'
 import './sidebar'
-// import './sidebar-menu-collapse'
-import './dropdown-tooltip'
-// import './popover'
-import './overlay'
-import './mdk-carousel-control'
 import './read-more'
 import './image'
-import './accordion'
 import './player'
 import './youtube'
 
@@ -21,7 +13,6 @@ import './youtube'
         $(e.target).removeClass('active')
     })
 
-    // function to display image preview
     function imagePreview(input, preview) {
         $(input).on('change', function (e) {
             e.preventDefault();
