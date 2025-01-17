@@ -3,16 +3,16 @@
 namespace App\Repository;
 
 use App\Models\Coach;
-use App\Models\CoachMatchStat;
+use App\Models\CoachMatchStats;
 use App\Repository\Interface\CoachMatchStatsRepositoryInterface;
 use Carbon\Carbon;
 
 class CoachMatchStatsRepository implements CoachMatchStatsRepositoryInterface
 {
     protected Coach $coach;
-    protected CoachMatchStat $coachMatchStat;
+    protected CoachMatchStats $coachMatchStat;
 
-    public function __construct(Coach $coach, CoachMatchStat $coachMatchStat)
+    public function __construct(Coach $coach, CoachMatchStats $coachMatchStat)
     {
         $this->coach = $coach;
         $this->coachMatchStat = $coachMatchStat;

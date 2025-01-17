@@ -26,7 +26,7 @@ class Team extends Model
     }
     public function schedules()
     {
-        return $this->belongsToMany(Match::class, 'team_schedule', 'teamId', 'eventId')
+        return $this->belongsToMany(MatchModel::class, 'team_schedule', 'teamId', 'eventId')
             ->withPivot(
                 'teamScore',
                 'teamOwnGoal',
@@ -48,7 +48,7 @@ class Team extends Model
 
     public function coachMatchStats()
     {
-        return $this->hasMany(CoachMatchStat::class, 'teamId');
+        return $this->hasMany(CoachMatchStats::class, 'teamId');
     }
 
     public function matches(){
@@ -57,15 +57,15 @@ class Team extends Model
 
     public function homeMatch()
     {
-        return $this->hasMany(Match::class, 'homeTeamId');
+        return $this->hasMany(MatchModel::class, 'homeTeamId');
     }
     public function awayMatch()
     {
-        return $this->hasMany(Match::class, 'awayTeamId');
+        return $this->hasMany(MatchModel::class, 'awayTeamId');
     }
     public function winnerMatch()
     {
-        return $this->hasMany(Match::class, 'winnerTeamId');
+        return $this->hasMany(MatchModel::class, 'winnerTeamId');
     }
 
     public function players()

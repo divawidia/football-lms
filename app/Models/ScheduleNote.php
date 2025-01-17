@@ -19,7 +19,7 @@ class ScheduleNote extends Model
 
     public function schedule(): BelongsTo
     {
-        return $this->belongsTo(Match::class, 'scheduleId');
+        return $this->belongsTo(MatchModel::class, 'scheduleId');
     }
     public function team()
     {

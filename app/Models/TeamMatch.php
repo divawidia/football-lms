@@ -37,6 +37,6 @@ class TeamMatch extends Model
     }
     public function match()
     {
-        return $this->belongsTo(Match::class, 'eventId');
+        return $this->belongsTo(MatchModel::class, 'eventId');
     }
 }

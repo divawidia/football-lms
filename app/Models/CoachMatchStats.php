@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CoachMatchStat extends Model
+class CoachMatchStats extends Model
 {
     use HasFactory;
     protected $table ='coach_match_stats';
@@ -45,6 +45,6 @@ class CoachMatchStat extends Model
 
     public function match()
     {
-        $this->belongsTo(Match::class, 'eventId', 'id');
+        $this->belongsTo(MatchModel::class, 'matchId', 'id');
     }
 }

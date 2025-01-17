@@ -40,6 +40,6 @@ class PlayerSkillStats extends Model
     }
     public function event()
     {
-        return $this->belongsTo(Match::class, 'eventId', 'id');
+        return $this->belongsTo(MatchModel::class, 'eventId', 'id');
     }
 }

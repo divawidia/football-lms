@@ -4,7 +4,7 @@ namespace App\Services\Coach;
 
 use App\Models\Admin;
 use App\Models\Coach;
-use App\Models\CoachMatchStat;
+use App\Models\CoachMatchStats;
 use App\Models\Competition;
 use App\Models\Match;
 use App\Models\Invoice;
