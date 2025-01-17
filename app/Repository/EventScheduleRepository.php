@@ -2,24 +2,20 @@
 
 namespace App\Repository;
 
-use App\Models\Coach;
-use App\Models\CoachCertification;
-use App\Models\CoachSpecialization;
-use App\Models\Match;
+use App\Models\MatchModel;
 use App\Models\Player;
 use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 class EventScheduleRepository
 {
-    protected Match $eventSchedule;
-    public function __construct(Match $eventSchedule)
+    protected MatchModel $match;
+    public function __construct(MatchModel $match)
     {
-        $this->eventSchedule = $eventSchedule;
+        $this->eventSchedule = $match;
     }
 
     public function getAll()
@@ -197,9 +193,9 @@ class EventScheduleRepository
             ->get();
     }
 
-    public function getRelationData(Match $schedule, $relation, $with = null, $attendanceStatus = null, $teamId = null, $playerId = null, $exceptPlayerId= null, $retrieveType = 'single')
+    public function getRelationData(MatchModel $match, $relation, $with = null, $attendanceStatus = null, $teamId = null, $playerId = null, $exceptPlayerId= null, $retrieveType = 'single')
     {
-        $query = $schedule->$relation();
+        $query = $match->$relation();
         if ($with != null) {
             $query->with($with);
         }
@@ -251,9 +247,9 @@ class EventScheduleRepository
     {
         return $this->eventSchedule->create($data);
     }
-    public function createRelation(Match $schedule, array $data, $relation)
+    public function createRelation(MatchModel $match, array $data, $relation)
     {
-        return $schedule->$relation()->create($data);
+        return $match->$relation()->create($data);
     }
 
     public function update($id, array $data)
@@ -263,14 +259,14 @@ class EventScheduleRepository
         return $post;
     }
 
-    public function updateStatus(Match $schedule, $status)
+    public function updateStatus(MatchModel $match, $status)
     {
-        return $schedule->update(['status' => $status]);
+        return $match->update(['status' => $status]);
     }
 
-    public function updateTeamMatchStats(Match $schedule, array $data)
+    public function updateTeamMatchStats(MatchModel $match, array $data)
     {
-        return $schedule->teams()->updateExistingPivot($data['teamId'], [
+        return $match->teams()->updateExistingPivot($data['teamId'], [
             "teamPossesion" => $data['teamPossesion'],
             "teamShotOnTarget" => $data['teamShotOnTarget'],
             "teamShots" => $data['teamShots'],
@@ -286,9 +282,9 @@ class EventScheduleRepository
         ]);
     }
 
-    public function updateExternalTeamMatchStats(Match $schedule, array $data)
+    public function updateExternalTeamMatchStats(MatchModel $match, array $data)
     {
-        return $schedule->externalTeam->update($data);
+        return $match->externalTeam->update($data);
     }
 
     public function delete($id)
