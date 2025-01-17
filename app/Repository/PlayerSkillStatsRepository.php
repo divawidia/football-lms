@@ -2,9 +2,8 @@
 
 namespace App\Repository;
 
-use App\Models\Match;
+use App\Models\MatchModel;
 use App\Models\Player;
-use App\Models\PlayerPerformanceReview;
 use App\Models\PlayerSkillStats;
 
 class PlayerSkillStatsRepository
@@ -20,11 +19,11 @@ class PlayerSkillStatsRepository
         return $this->playerSkillStats->all();
     }
 
-    public function getByPlayer(Player $player, Match $schedule = null)
+    public function getByPlayer(Player $player, MatchModel $match = null)
     {
         $query = $player->playerSkillStats();
-        if ($schedule){
-            $query->where('eventId', $schedule->id);
+        if ($match){
+            $query->where('eventId', $match->id);
         }
         return $query->get();
     }
