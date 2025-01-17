@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Coach;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\TeamMatch;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\EventScheduleRepository;
@@ -86,13 +86,13 @@ class PerformanceReportService extends Service
                 $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
             })->count();
 
-        $totalMatchPlayed = EventSchedule::whereHas('teams', function($q) {
+        $totalMatchPlayed = Match::whereHas('teams', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
             ->where('status', 'Completed')
             ->where('eventType', 'Match')
             ->count();
-        $thisMonthTotalMatchPlayed = EventSchedule::whereHas('teams', function($q) {
+        $thisMonthTotalMatchPlayed = Match::whereHas('teams', function($q) {
                 $q->where('teamSide', 'Academy Team');
             })
             ->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()])

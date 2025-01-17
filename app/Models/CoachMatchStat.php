@@ -45,6 +45,6 @@ class CoachMatchStat extends Model
 
     public function match()
     {
-        $this->belongsTo(EventSchedule::class, 'eventId', 'id');
+        $this->belongsTo(Match::class, 'eventId', 'id');
     }
 }

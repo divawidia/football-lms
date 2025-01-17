@@ -37,6 +37,6 @@ class ExternalTeamMatch extends Model
 
     public function match()
     {
-        return $this->hasOne(EventSchedule::class, 'eventId');
+        return $this->hasOne(Match::class, 'eventId');
     }
 }

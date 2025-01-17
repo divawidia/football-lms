@@ -2,7 +2,7 @@
 
 namespace App\View\Components\Tables;
 
-use App\Models\EventSchedule;
+use App\Models\Match;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;

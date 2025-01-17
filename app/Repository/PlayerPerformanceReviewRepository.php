@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\Player;
 use App\Models\PlayerPerformanceReview;
 
@@ -19,7 +19,7 @@ class PlayerPerformanceReviewRepository
         return $this->playerPerformanceReview->all();
     }
 
-    public function getByPlayer(Player $player, EventSchedule $schedule = null)
+    public function getByPlayer(Player $player, Match $schedule = null)
     {
         $query = $player->playerPerformanceReview();
         if ($schedule){

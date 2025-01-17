@@ -2,18 +2,18 @@
 
 namespace App\View\Components\Cards;
 
-use App\Models\EventSchedule;
+use App\Models\Match;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class TrainingCard extends Component
 {
-    public EventSchedule $training;
+    public Match $training;
     /**
      * Create a new component instance.
      */
-    public function __construct(EventSchedule $training)
+    public function __construct(Match $training)
     {
         $this->training = $training;
     }

@@ -6,7 +6,7 @@ use App\Models\Admin;
 use App\Models\Coach;
 use App\Models\CoachMatchStat;
 use App\Models\Competition;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\Invoice;
 use App\Models\Player;
 use App\Models\Team;
@@ -85,7 +85,7 @@ class DashboardService extends CoachService
     public function latestMatch()
     {
         $teams = $this->managedTeams($this->coach);
-        return EventSchedule::with('teams', 'competition')
+        return Match::with('teams', 'competition')
             ->whereHas('teams', function($q) use ($teams){
                 $q->where('teamId', $teams[0]->id);
 
@@ -106,7 +106,7 @@ class DashboardService extends CoachService
     public function upcomingMatch()
     {
         $teams = $this->managedTeams($this->coach);
-        return EventSchedule::with('teams', 'competition')
+        return Match::with('teams', 'competition')
             ->whereHas('teams', function($q) use($teams) {
                 $q->where('teamId', $teams[0]->id);
 
@@ -127,7 +127,7 @@ class DashboardService extends CoachService
     public function upcomingTraining()
     {
         $teams = $this->managedTeams($this->coach);
-        return EventSchedule::with('teams', 'competition')
+        return Match::with('teams', 'competition')
             ->whereHas('teams', function($q) use ($teams) {
                 $q->where('teamId', $teams[0]->id);
 

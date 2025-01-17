@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class Coach extends Model
@@ -32,7 +31,7 @@ class Coach extends Model
     }
     public function schedules()
     {
-        return $this->belongsToMany(EventSchedule::class, 'coach_attendance', 'coachId', 'scheduleId')
+        return $this->belongsToMany(MatchModel::class, 'coach_attendance', 'coachId', 'matchId')
             ->withPivot(
                 'attendanceStatus',
                 'note'
@@ -40,7 +39,7 @@ class Coach extends Model
     }
     public function coachMatchStats()
     {
-        return $this->belongsToMany(EventSchedule::class, 'coach_match_stats', 'coachId', 'eventId')
+        return $this->belongsToMany(MatchModel::class, 'coach_match_stats', 'coachId', 'matchId')
             ->withPivot(
                 'teamId',
                 'teamScore',

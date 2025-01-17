@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Admin;
 use App\Models\Coach;
 use App\Models\Competition;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\Invoice;
 use App\Models\Player;
 use App\Models\Team;
@@ -33,8 +33,8 @@ class DashboardService extends Service
         $totalTeams = Team::where('teamSide','Academy Team')->count();
         $totalAdmins = Admin::count();
         $totalCompetitions = Competition::count();
-        $totalUpcomingMatches = EventSchedule::where('eventType', 'Match')->where('status', '1')->count();
-        $totalUpcomingTrainings = EventSchedule::where('eventType', 'Training')->where('status', '1')->count();
+        $totalUpcomingMatches = Match::where('eventType', 'Match')->where('status', '1')->count();
+        $totalUpcomingTrainings = Match::where('eventType', 'Training')->where('status', '1')->count();
         $totalRevenues = $this->invoiceRepository->calculateInvoiceByStatus('Paid', sumAmount: true);
         $totalRevenues = $this->formatReadableNumber($totalRevenues);
 
@@ -86,7 +86,7 @@ class DashboardService extends Service
     }
 
     public function upcomingMatches(){
-        return EventSchedule::with('teams')
+        return Match::with('teams')
             ->where('status', '1')
             ->where('eventType', 'Match')
             ->orderBy('date')
@@ -96,7 +96,7 @@ class DashboardService extends Service
     }
 
     public function upcomingTrainings(){
-        return EventSchedule::with('teams')
+        return Match::with('teams')
             ->where('status', '1')
             ->where('eventType', 'Training')
             ->orderBy('date')

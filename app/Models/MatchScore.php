@@ -29,7 +29,7 @@ class MatchScore extends Model
     }
     public function event()
     {
-        return $this->belongsTo(EventSchedule::class, 'eventId', 'id');
+        return $this->belongsTo(MatchModel::class, 'eventId', 'id');
     }
     public function team()
     {

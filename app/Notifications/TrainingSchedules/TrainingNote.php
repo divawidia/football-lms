@@ -3,7 +3,7 @@
 namespace App\Notifications\TrainingSchedules;
 
 use App\Models\Coach;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +14,7 @@ class TrainingNote extends Notification implements ShouldQueue
 {
     use Queueable;
     protected User $user;
-    protected EventSchedule $trainingSession;
+    protected Match $trainingSession;
     protected string $action; // Either 'created', 'updated' or 'deleted'
 
     public function __construct($user, $trainingSession, $action)

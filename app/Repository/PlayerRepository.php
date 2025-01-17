@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\Player;
 use App\Models\Team;
 use App\Models\TrainingVideo;

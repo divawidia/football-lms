@@ -49,7 +49,7 @@ class Player extends Model
     }
     public function schedules(): BelongsToMany
     {
-        return $this->belongsToMany(EventSchedule::class, 'player_attendance', 'playerId', 'scheduleId')
+        return $this->belongsToMany(Match::class, 'player_attendance', 'playerId', 'scheduleId')
             ->withPivot(
                 'attendanceStatus',
                 'note'

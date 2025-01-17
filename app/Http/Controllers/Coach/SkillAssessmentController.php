@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Coach;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SkillAssessmentRequest;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
 use App\Services\Coach\SkillAssessmentService;
@@ -29,7 +29,7 @@ class SkillAssessmentController extends Controller
         return view('pages.academies.skill-assessments.index');
     }
 
-    public function indexAllPlayerInEvent(Request $request, EventSchedule $schedule)
+    public function indexAllPlayerInEvent(Request $request, Match $schedule)
     {
         $teamId = $request->input('teamId');
         return $this->skillAssessmentService->indexAllPlayerInEvent($schedule, $teamId);

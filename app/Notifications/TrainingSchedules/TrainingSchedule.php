@@ -2,7 +2,7 @@
 
 namespace App\Notifications\TrainingSchedules;
 
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\Team;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,14 +12,14 @@ use Illuminate\Notifications\Notification;
 class TrainingSchedule extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected EventSchedule $trainingSchedule;
+    protected Match $trainingSchedule;
     protected Team $team;
     protected string $status;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(EventSchedule $trainingSchedule, Team $team, $status)
+    public function __construct(Match $trainingSchedule, Team $team, $status)
     {
         $this->trainingSchedule = $trainingSchedule;
         $this->team = $team;

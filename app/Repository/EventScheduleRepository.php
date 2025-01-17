@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\Player;
 use App\Models\Team;
 use Carbon\Carbon;
@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\DB;
 
 class EventScheduleRepository
 {
-    protected EventSchedule $eventSchedule;
-    public function __construct(EventSchedule $eventSchedule)
+    protected Match $eventSchedule;
+    public function __construct(Match $eventSchedule)
     {
         $this->eventSchedule = $eventSchedule;
     }
@@ -197,7 +197,7 @@ class EventScheduleRepository
             ->get();
     }
 
-    public function getRelationData(EventSchedule $schedule, $relation,  $with = null, $attendanceStatus = null, $teamId = null, $playerId = null, $exceptPlayerId= null, $retrieveType = 'single')
+    public function getRelationData(Match $schedule, $relation, $with = null, $attendanceStatus = null, $teamId = null, $playerId = null, $exceptPlayerId= null, $retrieveType = 'single')
     {
         $query = $schedule->$relation();
         if ($with != null) {
@@ -251,7 +251,7 @@ class EventScheduleRepository
     {
         return $this->eventSchedule->create($data);
     }
-    public function createRelation(EventSchedule $schedule, array $data, $relation)
+    public function createRelation(Match $schedule, array $data, $relation)
     {
         return $schedule->$relation()->create($data);
     }
@@ -263,12 +263,12 @@ class EventScheduleRepository
         return $post;
     }
 
-    public function updateStatus(EventSchedule $schedule, $status)
+    public function updateStatus(Match $schedule, $status)
     {
         return $schedule->update(['status' => $status]);
     }
 
-    public function updateTeamMatchStats(EventSchedule $schedule, array $data)
+    public function updateTeamMatchStats(Match $schedule, array $data)
     {
         return $schedule->teams()->updateExistingPivot($data['teamId'], [
             "teamPossesion" => $data['teamPossesion'],
@@ -286,7 +286,7 @@ class EventScheduleRepository
         ]);
     }
 
-    public function updateExternalTeamMatchStats(EventSchedule $schedule, array $data)
+    public function updateExternalTeamMatchStats(Match $schedule, array $data)
     {
         return $schedule->externalTeam->update($data);
     }

@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Coach;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -12,7 +12,7 @@ class PlayerPerformanceReview extends Notification
 {
     use Queueable;
     protected Coach $coach;
-    protected EventSchedule $event;
+    protected Match $event;
     protected string $action; // Either 'created', 'updated' or 'deleted'
 
     /**

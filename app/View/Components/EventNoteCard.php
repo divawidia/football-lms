@@ -2,7 +2,7 @@
 
 namespace App\View\Components;
 
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\ScheduleNote;
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -11,12 +11,12 @@ use Illuminate\View\Component;
 class EventNoteCard extends Component
 {
     public ScheduleNote $note;
-    public EventSchedule $schedule;
+    public Match $schedule;
 
     /**
      * Create a new component instance.
      */
-    public function __construct(ScheduleNote $note, EventSchedule $schedule)
+    public function __construct(ScheduleNote $note, Match $schedule)
     {
         $this->note = $note;
         $this->schedule = $schedule;

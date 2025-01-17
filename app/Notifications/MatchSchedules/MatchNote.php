@@ -3,7 +3,7 @@
 namespace App\Notifications\MatchSchedules;
 
 use App\Models\Coach;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notification;
 class MatchNote extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected EventSchedule $matchSession;
+    protected Match $matchSession;
     protected string $action; // Either 'created', 'updated' or 'deleted'
 
     public function __construct($user, $matchSession, $action)

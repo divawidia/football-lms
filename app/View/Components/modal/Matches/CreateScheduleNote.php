@@ -2,14 +2,14 @@
 
 namespace App\View\Components\modal\Matches;
 
-use App\Models\EventSchedule;
+use App\Models\Match;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class CreateScheduleNote extends Component
 {
-    public EventSchedule $schedule;
+    public Match $schedule;
     /**
      * Create a new component instance.
      */

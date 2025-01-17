@@ -32,7 +32,7 @@ class Competition extends Model
     }
 
     public function matches(){
-        return $this->hasMany(EventSchedule::class, 'competitionId');
+        return $this->hasMany(Match::class, 'competitionId');
     }
 
     public function user()

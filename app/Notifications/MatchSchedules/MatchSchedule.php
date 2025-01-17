@@ -2,7 +2,7 @@
 
 namespace App\Notifications\MatchSchedules;
 
-use App\Models\EventSchedule;
+use App\Models\Match;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notification;
 class MatchSchedule extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected EventSchedule $matchSchedule;
+    protected Match $matchSchedule;
     protected string $status;
 
     /**

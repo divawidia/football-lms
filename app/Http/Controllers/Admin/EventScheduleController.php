@@ -16,7 +16,7 @@ use App\Http\Requests\TrainingScheduleRequest;
 use App\Http\Requests\UpdateMatchScheduleRequest;
 use App\Models\Coach;
 use App\Models\Competition;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\MatchScore;
 use App\Models\Player;
 use App\Models\ScheduleNote;
@@ -173,7 +173,7 @@ class EventScheduleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function showTraining(EventSchedule $schedule)
+    public function showTraining(Match $schedule)
     {
         $data = $this->eventScheduleService->show($schedule);
         $players = $schedule->players;
@@ -194,7 +194,7 @@ class EventScheduleController extends Controller
         ]);
     }
 
-    public function showMatch(EventSchedule $schedule)
+    public function showMatch(Match $schedule)
     {
         $data = $this->eventScheduleService->show($schedule);
 
@@ -256,13 +256,13 @@ class EventScheduleController extends Controller
         ]);
     }
 
-    public function getMatchDetail(EventSchedule $schedule)
+    public function getMatchDetail(Match $schedule)
     {
         $data = $this->eventScheduleService->getMatchDetail($schedule);
         return ApiResponse::success($data);
     }
 
-    public function getTeamMatchStats(Request $request, EventSchedule $schedule)
+    public function getTeamMatchStats(Request $request, Match $schedule)
     {
         $team = $request->input('team');
         $data = $this->eventScheduleService->getTeamMatchStats($schedule, $team);
@@ -272,7 +272,7 @@ class EventScheduleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function editTraining(EventSchedule $schedule)
+    public function editTraining(Match $schedule)
     {
         $data = [
             'schedule' => $schedule,
@@ -281,7 +281,7 @@ class EventScheduleController extends Controller
         return ApiResponse::success($data);
     }
 
-    public function editMatch(EventSchedule $schedule)
+    public function editMatch(Match $schedule)
     {
         return view('pages.academies.schedules.matches.edit', [
             'competitions' => $this->competitionService->getActiveCompetition(),
@@ -292,7 +292,7 @@ class EventScheduleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function updateTraining(TrainingScheduleRequest $request, EventSchedule $schedule)
+    public function updateTraining(TrainingScheduleRequest $request, Match $schedule)
     {
         $data = $request->validated();
         $loggedUser = $this->getLoggedUser();
@@ -300,14 +300,14 @@ class EventScheduleController extends Controller
         return ApiResponse::success(message: 'Training session successfully updated!');
     }
 
-    public function updateMatch(CompetitionMatchRequest $request, EventSchedule $schedule)
+    public function updateMatch(CompetitionMatchRequest $request, Match $schedule)
     {
         $data = $request->validated();
         $this->eventScheduleService->updateMatch($data, $schedule);
         return ApiResponse::success(message: 'Match session successfully updated!');
     }
 
-    public function status(EventSchedule $schedule, $status)
+    public function status(Match $schedule, $status)
     {
         try {
             $this->eventScheduleService->setStatus($schedule, $status);
@@ -319,7 +319,7 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function scheduled(EventSchedule $schedule)
+    public function scheduled(Match $schedule)
     {
         if ($schedule->startDatetime < Carbon::now()) {
             return ApiResponse::error("You cannot set the match session to scheduled because the match date has passed, please change the match start date to a future date.");
@@ -328,20 +328,20 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function ongoing(EventSchedule $schedule)
+    public function ongoing(Match $schedule)
     {
         return $this->status($schedule, 'ongoing');
     }
-    public function completed(EventSchedule $schedule)
+    public function completed(Match $schedule)
     {
         return $this->status($schedule, 'completed');
     }
-    public function cancelled(EventSchedule $schedule)
+    public function cancelled(Match $schedule)
     {
         return $this->status($schedule, 'cancelled');
     }
 
-    public function endMatch(EventSchedule $schedule)
+    public function endMatch(Match $schedule)
     {
         $this->eventScheduleService->endMatch($schedule);
 
@@ -350,7 +350,7 @@ class EventScheduleController extends Controller
         return redirect()->route('match-schedules.show', $schedule->id);
     }
 
-    public function getPlayerAttendance(EventSchedule $schedule, Player $player){
+    public function getPlayerAttendance(Match $schedule, Player $player){
         try {
             $data = $this->eventScheduleService->getPlayerAttendance($schedule, $player);
             $data = [
@@ -366,7 +366,7 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function getCoachAttendance(EventSchedule $schedule, Coach $coach){
+    public function getCoachAttendance(Match $schedule, Coach $coach){
         try {
             $data = $this->eventScheduleService->getCoachAttendance($schedule, $coach);
             $data = [
@@ -382,7 +382,7 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function updatePlayerAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Player $player): JsonResponse
+    public function updatePlayerAttendance(AttendanceStatusRequest $request, Match $schedule, Player $player): JsonResponse
     {
         $data = $request->validated();
         try {
@@ -397,7 +397,7 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function updateCoachAttendance(AttendanceStatusRequest $request, EventSchedule $schedule, Coach $coach)
+    public function updateCoachAttendance(AttendanceStatusRequest $request, Match $schedule, Coach $coach)
     {
         $data = $request->validated();
         try {
@@ -411,7 +411,7 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function createNote(ScheduleNoteRequest $request, EventSchedule $schedule){
+    public function createNote(ScheduleNoteRequest $request, Match $schedule){
         $data = $request->validated();
         $loggedUser = $this->getLoggedUser();
         try {
@@ -426,7 +426,7 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function editNote(EventSchedule $schedule, ScheduleNote $note)
+    public function editNote(Match $schedule, ScheduleNote $note)
     {
         try {
             $message = "Note data successfully retrieved.";
@@ -439,7 +439,7 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function updateNote(ScheduleNoteRequest $request, EventSchedule $schedule, ScheduleNote $note){
+    public function updateNote(ScheduleNoteRequest $request, Match $schedule, ScheduleNote $note){
         $data = $request->validated();
         try {
             $this->eventScheduleService->updateNote($data, $schedule, $note, $this->getLoggedUser());
@@ -452,7 +452,7 @@ class EventScheduleController extends Controller
             return ApiResponse::error($message, null, $e->getCode());
         }
     }
-    public function destroyNote(EventSchedule $schedule, ScheduleNote $note)
+    public function destroyNote(Match $schedule, ScheduleNote $note)
     {
         try {
             $this->eventScheduleService->destroyNote($schedule, $note, $this->getLoggedUser());
@@ -489,7 +489,7 @@ class EventScheduleController extends Controller
         return ApiResponse::success($data, message:  "Successfully retrieved friendly match team data");
     }
 
-    public function getEventPLayers(Request $request, EventSchedule $schedule)
+    public function getEventPLayers(Request $request, Match $schedule)
     {
         $team = $request->input('team');
         $exceptPlayerId = $request->input('exceptPlayerId');
@@ -499,7 +499,7 @@ class EventScheduleController extends Controller
         return ApiResponse::success($data, message:  "Successfully retrieved player data");
     }
 
-    public function storeMatchScorer(MatchScoreRequest $request, EventSchedule $schedule){
+    public function storeMatchScorer(MatchScoreRequest $request, Match $schedule){
         $data = $request->validated();
         try {
             if ($data['dataTeam'] == 'awayTeam') {
@@ -518,7 +518,7 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer){
+    public function destroyMatchScorer(Match $schedule, MatchScore $scorer){
         try {
             if ($scorer->teamId == $schedule->awayTeamId) {
                 $this->eventScheduleService->destroyMatchScorer($schedule, $scorer, true);
@@ -536,21 +536,21 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function updateMatchStats(MatchStatsRequest $request, EventSchedule $schedule): JsonResponse
+    public function updateMatchStats(MatchStatsRequest $request, Match $schedule): JsonResponse
     {
         $data = $request->validated();
         $this->eventScheduleService->updateMatchStats($data, $schedule);
         return ApiResponse::success(message:  "Team match stats successfully updated.");
     }
 
-    public function updateExternalTeamScore(ExternalTeamScoreRequest $request, EventSchedule $schedule): JsonResponse
+    public function updateExternalTeamScore(ExternalTeamScoreRequest $request, Match $schedule): JsonResponse
     {
         $data = $request->validated();
         $this->eventScheduleService->updateExternalTeamScore($data, $schedule);
         return ApiResponse::success(message:  "Team ".$schedule->externalTeam->teamName." score successfully updated.");
     }
 
-    public function storeOwnGoal(MatchScoreRequest $request, EventSchedule $schedule){
+    public function storeOwnGoal(MatchScoreRequest $request, Match $schedule){
         $data = $request->validated();
         try {
             if ($data['dataTeam'] == 'awayTeam') {
@@ -568,7 +568,7 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer){
+    public function destroyOwnGoal(Match $schedule, MatchScore $scorer){
         try {
             if ($scorer->teamId == $schedule->awayTeamId) {
                 $this->eventScheduleService->destroyOwnGoal($schedule, $scorer, true);
@@ -585,18 +585,18 @@ class EventScheduleController extends Controller
         }
     }
 
-    public function indexPlayerMatchStats(Request $request, EventSchedule $schedule)
+    public function indexPlayerMatchStats(Request $request, Match $schedule)
     {
         $teamId = $request->input('teamId');
         return $this->eventScheduleService->dataTablesPlayerStats($schedule, $teamId);
     }
 
-    public function getPlayerStats(EventSchedule $schedule, Player $player){
+    public function getPlayerStats(Match $schedule, Player $player){
         $player = $this->eventScheduleService->getPlayerStats($schedule, $player);
         return ApiResponse::success($player, message:  "Successfully retrieved player stats");
     }
 
-    public function updatePlayerStats(PlayerMatchStatsRequest $request, EventSchedule $schedule, Player $player)
+    public function updatePlayerStats(PlayerMatchStatsRequest $request, Match $schedule, Player $player)
     {
         $data = $request->validated();
         try {
@@ -614,7 +614,7 @@ class EventScheduleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(EventSchedule $schedule)
+    public function destroy(Match $schedule)
     {
         try {
             if ($schedule->eventType == 'Training') {

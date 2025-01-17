@@ -4,7 +4,7 @@ namespace App\Services\Coach;
 
 use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
 use App\Repository\EventScheduleRepository;
@@ -93,7 +93,7 @@ class SkillAssessmentService extends Service
             ->make();
     }
 
-    public function indexAllPlayerInEvent(EventSchedule $schedule, $teamId = null)
+    public function indexAllPlayerInEvent(Match $schedule, $teamId = null)
     {
         if ($teamId) {
             $data = $schedule->players()->where('teamId', $teamId)->get();

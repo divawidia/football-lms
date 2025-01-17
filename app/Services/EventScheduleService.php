@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
-use App\Models\EventSchedule;
+use App\Models\Match;
 use App\Models\MatchScore;
 use App\Models\Player;
 use App\Models\ScheduleNote;
@@ -279,7 +279,7 @@ class EventScheduleService extends Service
         return $this->makeDataTablesMatch($data);
     }
 
-    public function dataTablesPlayerStats(EventSchedule $schedule, $teamId = null){
+    public function dataTablesPlayerStats(Match $schedule, $teamId = null){
         $data = $this->eventScheduleRepository->getRelationData($schedule, 'playerMatchStats', teamId: $teamId, retrieveType: 'multiple');
 
         return Datatables::of($data)
@@ -316,7 +316,7 @@ class EventScheduleService extends Service
             ->make();
     }
 
-    public function dataTablesPlayerSkills(EventSchedule $schedule){
+    public function dataTablesPlayerSkills(Match $schedule){
         $data = $schedule->players;
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($schedule){
@@ -415,7 +415,7 @@ class EventScheduleService extends Service
             ->make();
     }
 
-    public function show(EventSchedule $schedule, Player $player = null){
+    public function show(Match $schedule, Player $player = null){
         $allSkills = null;
         $playerPerformanceReviews = null;
         if ($player){
@@ -426,7 +426,7 @@ class EventScheduleService extends Service
         return compact('allSkills', 'playerPerformanceReviews');
     }
 
-    public function getTeamMatchStats(EventSchedule $schedule, $teamSide = 'homeTeam')
+    public function getTeamMatchStats(Match $schedule, $teamSide = 'homeTeam')
     {
         if ($schedule->matchType == 'Internal Match') {
             if ($teamSide == 'homeTeam') {
@@ -444,31 +444,31 @@ class EventScheduleService extends Service
         return $team;
     }
 
-    public function homeTeamMatch(EventSchedule $schedule)
+    public function homeTeamMatch(Match $schedule)
     {
         return $this->eventScheduleRepository->getRelationData($schedule, 'teams', teamId: $schedule->homeTeamId);
     }
-    public function awayTeamMatch(EventSchedule $schedule)
+    public function awayTeamMatch(Match $schedule)
     {
         return $this->eventScheduleRepository->getRelationData($schedule, 'teams', teamId: $schedule->awayTeamId);
     }
-    public function homeTeamPlayers(EventSchedule $schedule, $exceptPlayerId = null)
+    public function homeTeamPlayers(Match $schedule, $exceptPlayerId = null)
     {
         return $this->eventScheduleRepository->getRelationData($schedule, 'players', with: ['user', 'position'], teamId: $schedule->homeTeamId, exceptPlayerId: $exceptPlayerId, retrieveType: 'multiple');
     }
-    public function awayTeamPlayers(EventSchedule $schedule, $exceptPlayerId = null)
+    public function awayTeamPlayers(Match $schedule, $exceptPlayerId = null)
     {
         return $this->eventScheduleRepository->getRelationData($schedule, 'players', with: ['user', 'position'], teamId: $schedule->awayTeamId, exceptPlayerId: $exceptPlayerId, retrieveType: 'multiple');
     }
-    public function homeTeamCoaches(EventSchedule $schedule)
+    public function homeTeamCoaches(Match $schedule)
     {
         return $this->eventScheduleRepository->getRelationData($schedule, 'coaches', with: 'user', teamId: $schedule->homeTeamId, retrieveType: 'multiple');
     }
-    public function awayTeamCoaches(EventSchedule $schedule)
+    public function awayTeamCoaches(Match $schedule)
     {
         return $this->eventScheduleRepository->getRelationData($schedule, 'coaches', with: 'user', teamId: $schedule->awayTeamId, retrieveType: 'multiple');
     }
-    public function homeTeamMatchScorers(EventSchedule $schedule)
+    public function homeTeamMatchScorers(Match $schedule)
     {
 //        $data = [];
 //        if($schedule->matchScores()->first()) {
@@ -480,20 +480,20 @@ class EventScheduleService extends Service
 //        }
         return $this->eventScheduleRepository->getRelationData($schedule, 'matchScores', teamId: $schedule->homeTeamId, retrieveType: 'multiple');
     }
-    public function awayTeamMatchScorers(EventSchedule $schedule)
+    public function awayTeamMatchScorers(Match $schedule)
     {
         return $this->eventScheduleRepository->getRelationData($schedule, 'matchScores', teamId: $schedule->awayTeamId, retrieveType: 'multiple');
     }
-    public function homeTeamNotes(EventSchedule $schedule)
+    public function homeTeamNotes(Match $schedule)
     {
         return $this->eventScheduleRepository->getRelationData($schedule, 'notes', teamId: $schedule->homeTeamId, retrieveType: 'multiple');
     }
-    public function awayTeamNotes(EventSchedule $schedule)
+    public function awayTeamNotes(Match $schedule)
     {
         return $this->eventScheduleRepository->getRelationData($schedule, 'notes', teamId: $schedule->awayTeamId, retrieveType: 'multiple');
     }
 
-    public function getEventPLayers(EventSchedule $schedule, $team, $exceptPlayerId)
+    public function getEventPLayers(Match $schedule, $team, $exceptPlayerId)
     {
         $isHomeTeam = $team === 'homeTeam';
         return [
@@ -504,7 +504,7 @@ class EventScheduleService extends Service
         ];
     }
 
-    public function getMatchDetail(EventSchedule $schedule)
+    public function getMatchDetail(Match $schedule)
     {
         if ($schedule->matchType == 'External Match') {
             $opposingTeam = $schedule->externalTeam->teamName;
@@ -514,7 +514,7 @@ class EventScheduleService extends Service
         }
     }
 
-    public function eventAttendance(EventSchedule $schedule, Team $team = null, $homeTeam = true) {
+    public function eventAttendance(Match $schedule, Team $team = null, $homeTeam = true) {
         if ($homeTeam) {
             $players = $this->homeTeamPlayers($schedule);
             $coaches = $this->homeTeamCoaches($schedule);
@@ -622,7 +622,7 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function updateTraining(array $data, EventSchedule $schedule){
+    public function updateTraining(array $data, Match $schedule){
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $schedule->update($data);
@@ -639,7 +639,7 @@ class EventScheduleService extends Service
         }
         return $schedule;
     }
-    public function updateMatch(array $data, EventSchedule $schedule)
+    public function updateMatch(array $data, Match $schedule)
     {
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
@@ -680,7 +680,7 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function setStatus(EventSchedule $schedule, $status): EventSchedule
+    public function setStatus(Match $schedule, $status): Match
     {
         $this->eventScheduleRepository->updateStatus($schedule, $status);
 
@@ -705,7 +705,7 @@ class EventScheduleService extends Service
     }
 
 
-    public function endMatch(EventSchedule $schedule)
+    public function endMatch(Match $schedule)
     {
         $homeTeam = $this->homeTeamMatch($schedule);
         $homeTeamScore = $homeTeam->pivot->teamScore;
@@ -851,16 +851,16 @@ class EventScheduleService extends Service
     }
 
 
-    public function getPlayerAttendance(EventSchedule $schedule, Player $player)
+    public function getPlayerAttendance(Match $schedule, Player $player)
     {
         return $schedule->players()->find($player->id);
     }
-    public function getCoachAttendance(EventSchedule $schedule, Coach $coach)
+    public function getCoachAttendance(Match $schedule, Coach $coach)
     {
         return $schedule->coaches()->find($coach->id);
     }
 
-    public function updatePlayerAttendanceStatus($data, EventSchedule $schedule, Player $player){
+    public function updatePlayerAttendanceStatus($data, Match $schedule, Player $player){
         $schedule->players()->updateExistingPivot($player->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
         if ($schedule->eventType == 'Training') {
             $player->user->notify(new TrainingScheduleAttendance($schedule, $data['attendanceStatus']));
@@ -869,7 +869,7 @@ class EventScheduleService extends Service
         }
         return $schedule;
     }
-    public function updateCoachAttendanceStatus($data, EventSchedule $schedule, Coach $coach){
+    public function updateCoachAttendanceStatus($data, Match $schedule, Coach $coach){
         $schedule->coaches()->updateExistingPivot($coach->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
         if ($schedule->eventType == 'Training') {
             $coach->user->notify(new TrainingScheduleAttendance($schedule, $data['attendanceStatus']));
@@ -879,7 +879,7 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function createNote($data, EventSchedule $schedule, $loggedUser){
+    public function createNote($data, Match $schedule, $loggedUser){
         $note = $this->eventScheduleRepository->createRelation($schedule, $data, 'notes');
 
         $teamParticipants = $this->userRepository->allTeamsParticipant($schedule->teams[0]);
@@ -890,7 +890,7 @@ class EventScheduleService extends Service
         }
         return $note;
     }
-    public function updateNote($data, EventSchedule $schedule, ScheduleNote $note, $loggedUser){
+    public function updateNote($data, Match $schedule, ScheduleNote $note, $loggedUser){
         $note->update($data);
         $teamParticipants = $this->userRepository->allTeamsParticipant($schedule->teams[0]);
         if ($schedule->eventType == 'Training') {
@@ -900,7 +900,7 @@ class EventScheduleService extends Service
         }
         return $note;
     }
-    public function destroyNote(EventSchedule $schedule, ScheduleNote $note, $loggedUser)
+    public function destroyNote(Match $schedule, ScheduleNote $note, $loggedUser)
     {
         $note->delete();
         $teamParticipants = $this->userRepository->allTeamsParticipant($schedule->teams[0]);
@@ -912,7 +912,7 @@ class EventScheduleService extends Service
         return $note;
     }
 
-    public function storeMatchScorer($data, EventSchedule $schedule, $awayTeam = false)
+    public function storeMatchScorer($data, Match $schedule, $awayTeam = false)
     {
         $data['isOwnGoal'] = '0';
         $scorer = $this->eventScheduleRepository->createRelation($schedule, $data, 'matchScores');
@@ -963,7 +963,7 @@ class EventScheduleService extends Service
 
         return $scorer;
     }
-    public function destroyMatchScorer(EventSchedule $schedule, MatchScore $scorer, $awayTeam = false)
+    public function destroyMatchScorer(Match $schedule, MatchScore $scorer, $awayTeam = false)
     {
         $player = $this->eventScheduleRepository->getRelationData($schedule, 'playerMatchStats', teamId: $scorer->teamId, playerId: $scorer->playerId);
         $assistPlayer = $this->eventScheduleRepository->getRelationData($schedule, 'playerMatchStats', teamId: $scorer->teamId, playerId: $scorer->assistPlayerId);
@@ -1010,7 +1010,7 @@ class EventScheduleService extends Service
         return $scorer->delete();
     }
 
-    public function storeOwnGoal($data, EventSchedule $schedule, $awayTeam = false)
+    public function storeOwnGoal($data, Match $schedule, $awayTeam = false)
     {
         $data['isOwnGoal'] = '1';
         $scorer = $this->eventScheduleRepository->createRelation($schedule, $data, 'matchScores');
@@ -1058,7 +1058,7 @@ class EventScheduleService extends Service
         return $scorer;
     }
 
-    public function destroyOwnGoal(EventSchedule $schedule, MatchScore $scorer, $awayTeam = false)
+    public function destroyOwnGoal(Match $schedule, MatchScore $scorer, $awayTeam = false)
     {
         $player = $this->eventScheduleRepository->getRelationData($schedule, 'playerMatchStats', teamId: $scorer->teamId, playerId: $scorer->playerId);
         $playerOwnGoal = $player->pivot->ownGoal - 1;
@@ -1103,7 +1103,7 @@ class EventScheduleService extends Service
         return $scorer->delete();
     }
 
-    public function updateMatchStats(array $data, EventSchedule $schedule)
+    public function updateMatchStats(array $data, Match $schedule)
     {
         if ($schedule->matchType === 'Internal Match' || $data['teamSide'] === 'homeTeam') {
             $this->eventScheduleRepository->updateTeamMatchStats($schedule, $data);
@@ -1113,7 +1113,7 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function updateExternalTeamScore(array $data, EventSchedule $schedule)
+    public function updateExternalTeamScore(array $data, Match $schedule)
     {
         $homeTeam = $this->homeTeamMatch($schedule);
 
@@ -1127,14 +1127,14 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function getPlayerStats(EventSchedule $schedule, Player $player)
+    public function getPlayerStats(Match $schedule, Player $player)
     {
         $data = $schedule->playerMatchStats()->find($player->id);
         $playerData = $data->user;
         $statsData = $data->pivot;
         return compact('playerData', 'statsData');
     }
-    public function updatePlayerStats(array $data, EventSchedule $schedule, Player $player)
+    public function updatePlayerStats(array $data, Match $schedule, Player $player)
     {
 //        $schedule->playerMatchStats()->updateExistingPivot($player->id, [
 //            'minutesPlayed' => $data['minutesPlayed'],
@@ -1152,7 +1152,7 @@ class EventScheduleService extends Service
         return $schedule;
     }
 
-    public function destroy(EventSchedule $schedule)
+    public function destroy(Match $schedule)
     {
         try {
             if ($schedule->eventType == 'Training') {

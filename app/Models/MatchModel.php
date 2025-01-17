@@ -6,15 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
-class EventSchedule extends Model
+class MatchModel extends Model
 {
     use HasFactory, HashableId;
 
     protected $fillable = [
         'userId',
-        'eventType',
         'matchType',
-        'eventName',
         'competitionId',
         'date',
         'startTime',
@@ -22,9 +20,7 @@ class EventSchedule extends Model
         'startDatetime',
         'endDatetime',
         'place',
-        'note',
         'status',
-        'isOpponentTeamMatch',
         'isReminderNotified',
         'homeTeamId',
         'awayTeamId',
