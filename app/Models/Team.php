@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
@@ -20,13 +23,13 @@ class Team extends Model
         'academyId',
     ];
 
-    public function academy()
+    public function academy(): BelongsTo
     {
         return $this->belongsTo(Academy::class, 'academyId');
     }
-    public function schedules()
+    public function matches(): BelongsToMany
     {
-        return $this->belongsToMany(MatchModel::class, 'team_schedule', 'teamId', 'eventId')
+        return $this->belongsToMany(MatchModel::class, 'team_schedule', 'teamId', 'matchId')
             ->withPivot(
                 'teamScore',
                 'teamOwnGoal',
@@ -46,53 +49,30 @@ class Team extends Model
             )->withTimestamps();
     }
 
-    public function coachMatchStats()
+    public function coachMatchStats(): HasMany
     {
         return $this->hasMany(CoachMatchStats::class, 'teamId');
     }
 
-    public function matches(){
-        return $this->hasMany(TeamMatch::class, 'teamId');
-    }
-
-    public function homeMatch()
+    public function homeMatches(): HasMany
     {
         return $this->hasMany(MatchModel::class, 'homeTeamId');
     }
-    public function awayMatch()
+    public function awayMatches(): HasMany
     {
         return $this->hasMany(MatchModel::class, 'awayTeamId');
     }
-    public function winnerMatch()
+    public function winnerMatches(): HasMany
     {
         return $this->hasMany(MatchModel::class, 'winnerTeamId');
     }
 
-    public function players()
+    public function players(): BelongsToMany
     {
         return $this->belongsToMany(Player::class, 'player_teams', 'teamId', 'playerId')->withTimestamps();
     }
-    public function coaches()
+    public function coaches(): BelongsToMany
     {
         return $this->belongsToMany(Coach::class, 'coach_team', 'teamId', 'coachId')->withTimestamps();
-    }
-
-    public function divisions()
-    {
-        return $this->belongsToMany(GroupDivision::class, 'competition_team', 'teamId', 'divisionId')
-            ->withPivot(
-                'matchPlayed',
-                'won',
-                'drawn',
-                'lost',
-                'goalsFor',
-                'goalsAgaints',
-                'goalsDifference',
-                'points',
-                'redCards',
-                'yellowCards',
-                'competitionResult'
-            )
-            ->withTimestamps();
     }
 }
