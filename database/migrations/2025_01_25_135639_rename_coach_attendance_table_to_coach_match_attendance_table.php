@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::rename('coach_attendance', 'coach_match_attendance');
+
         Schema::table('coach_match_attendance', function (Blueprint $table) {
-            //
+            $table->dropForeign('coach_attendance_scheduleid_foreign');
+            $table->renameColumn('scheduleId', 'matchId');
+            $table->foreign('matchId')->references('id')->on('matches')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 
@@ -21,8 +25,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('coach_match_attendance', function (Blueprint $table) {
-            //
+        Schema::rename('coach_match_attendance', 'coach_attendance');
+
+        Schema::table('coach_attendance', function (Blueprint $table) {
+            $table->dropForeign('coach_attendance_matchid_foreign');
+            $table->renameColumn('matchId', 'scheduleId');
+            $table->foreign('scheduleId')->references('id')->on('matches')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 };
