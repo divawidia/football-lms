@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class Competition extends Model
@@ -23,19 +24,17 @@ class Competition extends Model
         'userId'
     ];
 
-    public function standings()
+    public function standings(): HasMany
     {
         return $this->hasMany(LeagueStanding::class, 'competitionId');
     }
-    public function groups(){
-        return $this->hasMany(GroupDivision::class, 'competitionId');
-    }
 
-    public function matches(){
+    public function matches(): HasMany
+    {
         return $this->hasMany(MatchModel::class, 'competitionId');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'userId');
     }
