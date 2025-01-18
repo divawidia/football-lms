@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ExternalTeamMatch extends Model
@@ -13,8 +14,8 @@ class ExternalTeamMatch extends Model
     protected $table = 'external_team_matches';
 
     protected $fillable = [
+        'matchId',
         'teamName',
-        'eventId',
         'teamScore',
         'teamOwnGoal',
         'teamPossesion',
@@ -35,8 +36,8 @@ class ExternalTeamMatch extends Model
         'cleanSheets',
     ];
 
-    public function match()
+    public function match(): HasOne
     {
-        return $this->hasOne(MatchModel::class, 'eventId');
+        return $this->hasOne(MatchModel::class, 'matchId');
     }
 }
