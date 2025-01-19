@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class LeagueStanding extends Model
@@ -24,11 +25,11 @@ class LeagueStanding extends Model
         'standingPositions'
     ];
 
-    public function team()
+    public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'teamId');
     }
-    public function competition()
+    public function competition(): BelongsTo
     {
         return $this->belongsTo(Competition::class, 'competitionId');
     }
