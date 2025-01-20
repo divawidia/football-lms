@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamp('endDatetime');
             $table->boolean('isReminderNotified');
             $table->foreignId('teamId')->constrained('teams')->cascadeOnUpdate();
+            $table->foreignId('userId')->nullable()->constrained('users')->cascadeOnUpdate()->nullOnDelete();
             $table->timestamps();
         });
     }
