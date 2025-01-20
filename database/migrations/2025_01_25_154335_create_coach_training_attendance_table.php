@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('trainingId')->constrained('trainings')->cascadeOnDelete();
             $table->foreignId('coachId')->nullable()->constrained('coaches')->nullOnDelete();
+            $table->foreignId('teamId')->nullable()->constrained('teams')->nullOnDelete();
             $table->enum('attendanceStatus', ['Required Action', 'Attended', 'Illness', 'Injured', 'Other'])->default('Required Action');
             $table->text('note')->nullable();
             $table->timestamps();
