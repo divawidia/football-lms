@@ -2,19 +2,19 @@
 
 namespace App\View\Components\Cards;
 
-use App\Models\Match;
+use App\Models\MatchModel;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class MatchCard extends Component
 {
-    public Match $match;
+    public MatchModel $match;
     public $latestMatch;
     /**
      * Create a new component instance.
      */
-    public function __construct(Match $match, $latestMatch)
+    public function __construct(MatchModel $match, $latestMatch)
     {
         $this->match = $match;
         $this->latestMatch = $latestMatch;
