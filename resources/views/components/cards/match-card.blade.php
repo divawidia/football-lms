@@ -1,11 +1,3 @@
-@php
-    $homeTeam = $match->teams()->where('teamId', $match->homeTeamId)->first();
-    if ($match->matchType == 'Internal Match') {
-        $awayTeam = $match->teams()->where('teamId', $match->awayTeamId)->first();
-    } else {
-        $awayTeam = $match->externalTeam;
-    }
-@endphp
 <a class="card" href="{{ route('match-schedules.show', $match->hash) }}">
     <div class="card-body">
         <div class="row">
@@ -23,12 +15,12 @@
             <div class="col-4 text-center">
                 <h2 class="mb-0">
                     @if($latestMatch == true)
-                        {{ $homeTeam->pivot->teamScore }}
+                        {{ $match->homeTeam->pivot->teamScore }}
                         -
                         @if($match->matchType == 'Internal Match')
-                            {{ $awayTeam->pivot->teamScore }}
+                            {{ $match->awayTeam->pivot->teamScore }}
                         @else
-                            {{ $awayTeam->teamScore }}
+                            {{ $match->externalTeam->teamScore }}
                         @endif
                     @else
                         Vs.
