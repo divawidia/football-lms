@@ -4,8 +4,7 @@ namespace App\Services;
 
 use App\Helpers\DatatablesHelper;
 use App\Models\Admin;
-use App\Notifications\AdminManagements\AdminAccountCreatedDeleted;
-use App\Notifications\AdminManagements\AdminAccountUpdated;
+use App\Notifications\AdminManagement;
 use App\Repository\Interface\AdminRepositoryInterface;
 use App\Repository\Interface\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -17,61 +16,41 @@ class AdminService extends Service
     private AdminRepositoryInterface $adminRepository;
     private UserRepositoryInterface $userRepository;
     private DatatablesHelper $datatablesHelper;
-    private $loggedUser;
-    public function __construct(AdminRepositoryInterface $adminRepository, UserRepositoryInterface $userRepository, $loggedUser, DatatablesHelper $datatablesHelper)
+    public function __construct(
+        AdminRepositoryInterface $adminRepository,
+        UserRepositoryInterface $userRepository,
+        DatatablesHelper $datatablesHelper
+    )
     {
         $this->adminRepository = $adminRepository;
         $this->userRepository = $userRepository;
-        $this->loggedUser = $loggedUser;
         $this->datatablesHelper = $datatablesHelper;
     }
     public function index(): JsonResponse
     {
-        $query = $this->adminRepository->getAll();
+        $query = $this->adminRepository->getAll(withRelation: ['user:id,firstName,lastName,status,foto,dob,email,phoneNumber,gender']);
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
                 if (isSuperAdmin()){
-                    $deleteUserBtn = '';
-                    $changePassBtn = '';
-                    $statusButton = '';
-                    $editAccBtn = '';
+                    $dropdownItem = '';
                     if (getLoggedUser()->id != $item->user->id) {
-                        $editAccBtn = '<a class="dropdown-item" href="' . route('admin-managements.edit', $item->hash) . '"><span class="material-icons mr-2">edit</span> Edit Admin</a>';
-                        $deleteUserBtn = '
-                            <button type="submit" class="dropdown-item deleteAdmin" id="'.$item->hash.'">
-                                <span class="material-icons mr-2 text-danger">delete</span> Delete Admin
-                            </button>';
-                        $changePassBtn = '<a class="dropdown-item changePassword" id="'.$item->hash.'"><span class="material-icons mr-2">lock</span> Change Admin Password</a>';
+                        $dropdownItem .=  $this->datatablesHelper->linkDropdownItem(route: route('admin-managements.edit', $item->hash), icon: 'edit', btnText: 'Edit Admin Profile');
+                        $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('deleteAdmin', $item->hash, 'danger', icon: 'delete', btnText: 'Delete Admin Profile');
+                        $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('changePassword', $item->hash, icon: 'lock', btnText: 'Change Admin Account Password');
                     }
 
                     if ($item->user->status == '1' && getLoggedUser()->id != $item->user->id){
-                        $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->hash.'">
-                                                <span class="material-icons text-danger">check_circle</span>
-                                                Deactivate Admin
-                                        </button>';
-                    }elseif($item->user->status == '0' && getLoggedUser()->id != $item->user->id) {
-                        $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->hash.'">
-                                                <span class="material-icons text-success">check_circle</span>
-                                                Activate Admin
-                                        </button>';
+                        $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('setDeactivate', $item->hash, 'danger', icon: 'check_circle', btnText: 'Deactivate Admin Account');
                     }
-                    return '
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('admin-managements.show', $item->hash) . '"><span class="material-icons mr-2">visibility</span> View Admin</a>
-                            '.$editAccBtn.'
-                            '. $statusButton .'
-                            '.$changePassBtn.'
-                            '.$deleteUserBtn.'
-                          </div>
-                        </div>';
-                } elseif (isAdmin()){
-                    return '<a class="btn btn-sm btn-outline-secondary" href="' . route('admin-managements.show', $item->hash) . '"><span class="material-icons">visibility</span></a>';
+                    elseif($item->user->status == '0' && getLoggedUser()->id != $item->user->id) {
+                        $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('setActivate', $item->hash, 'success', icon: 'check_circle', btnText: 'Activate Admin Account');
+                    }
+                    return $this->datatablesHelper->dropdown(function () use ($dropdownItem, $item) {
+                        return $this->datatablesHelper->linkDropdownItem(route: route('admin-managements.show', $item->hash), icon: 'visibility', btnText: 'View Admin Profile') .$dropdownItem;
+                    });
+                }
+                else {
+                    return $this->datatablesHelper->buttonTooltips(route('admin-managements.show', $item->hash), 'View Admin Profile', 'visibility');
                 }
             })
             ->editColumn('name', function ($item) {
@@ -83,11 +62,21 @@ class AdminService extends Service
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
             })
-            ->rawColumns(['action', 'name','status', 'age'])
+            ->rawColumns(['action', 'name','status'])
+            ->addIndexColumn()
             ->make();
     }
 
-    public  function store(array $data, $academyId)
+    public function countAllAdmin()
+    {
+        return $this->adminRepository->getAll(retrievalMethod: 'count');
+    }
+    public function countNewAdminThisMonth()
+    {
+        return $this->adminRepository->getAll(thisMonth: true, retrievalMethod: 'count');
+    }
+
+    public  function store(array $data, $academyId, Admin $loggedAdmin)
     {
         $data['foto'] = $this->storeImage($data, 'foto', 'assets/user-profile', 'images/undefined-user.png');
         $data['password'] = bcrypt($data['password']);
@@ -99,34 +88,35 @@ class AdminService extends Service
         $data['userId'] = $user->id;
         $admin = $this->adminRepository->create($data);
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new AdminAccountCreatedDeleted($this->getUserFullName($this->loggedUser), $admin, 'created'));
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminManagement($loggedAdmin, 'created', $admin));
         return $admin;
     }
 
-    public function update(array $data, Admin $admin): Admin
+    public function update(array $data, Admin $admin, Admin $loggedAdmin): Admin
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $admin->user->foto);
         $this->adminRepository->update($data, $admin);
-        $admin->user->notify(new AdminAccountUpdated($this->getUserFullName($this->loggedUser), $admin, 'updated'));
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminManagement($loggedAdmin, 'updated', $admin));
         return $admin;
     }
 
-    public function setStatus(Admin $admin, $status)
+    public function setStatus(Admin $admin, $status, Admin $loggedAdmin)
     {
-        $admin->user->notify(new AdminAccountUpdated($this->getUserFullName($this->loggedUser), $admin, $this->statusMessage($status)));
+        ($status == '1') ?  $statusNotification = 'actived' : $statusNotification = 'deactivated';
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminManagement($loggedAdmin, $statusNotification, $admin));
         return $this->userRepository->updateUserStatus($admin, $status);
     }
 
-    public function changePassword($data, Admin $admin)
+    public function changePassword($data, Admin $admin, Admin $loggedAdmin)
     {
-        $admin->user->notify(new AdminAccountUpdated($this->getUserFullName($this->loggedUser), $admin, 'updated the password'));
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminManagement($loggedAdmin, 'password', $admin));
         return $this->userRepository->changePassword($data, $admin);
     }
 
-    public function destroy(Admin $admin)
+    public function destroy(Admin $admin, Admin $loggedAdmin)
     {
         $this->deleteImage($admin->user->foto);
-        Notification::send($this->userRepository->getAllAdminUsers(),new AdminAccountCreatedDeleted($this->getUserFullName($this->loggedUser), $admin, 'deleted'));
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminManagement($loggedAdmin, 'deleted', $admin));
         return $this->userRepository->delete($admin);
     }
 }
