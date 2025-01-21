@@ -13,21 +13,18 @@ class LeaderboardService extends Service
 {
     private PlayerRepository $playerRepository;
     private TeamRepository $teamRepository;
-    private DatatablesHelper $datatablesService;
-    public function __construct(PlayerRepository $playerRepository, TeamRepository $teamRepository, DatatablesHelper $datatablesService){
+    private DatatablesHelper $datatablesHelper;
+    public function __construct(PlayerRepository $playerRepository, TeamRepository $teamRepository, DatatablesHelper $datatablesHelper){
         $this->playerRepository = $playerRepository;
         $this->teamRepository = $teamRepository;
-        $this->datatablesService = $datatablesService;
+        $this->datatablesHelper = $datatablesHelper;
     }
 
     public function playerLeaderboardDatatables($data)
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.show', $item->hash) . '" data-toggle="tooltip" data-placement="bottom" title="View player">
-                            <span class="material-icons">visibility</span>
-                        </a>';
-                return $btn;
+                return $this->datatablesHelper->buttonTooltips(route('player-managements.show', $item->hash), 'View player profile', 'visibility');
             })
             ->editColumn('teams', function ($item) {
                 $playerTeam = '';
@@ -41,7 +38,7 @@ class LeaderboardService extends Service
                 return $playerTeam;
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
             ->addColumn('apps', function ($item){
                 return $item->playerMatchStats()->where('minutesPlayed', '>', '0')->count();
@@ -73,21 +70,7 @@ class LeaderboardService extends Service
             ->addColumn('saves', function ($item){
                 return $item->playerMatchStats()->sum('saves');
             })
-            ->rawColumns([
-                'action',
-                'teams',
-                'name',
-                'apps',
-                'goals',
-                'assists',
-                'ownGoals',
-                'shots',
-                'passes',
-                'fouls',
-                'yellowCards',
-                'redCards',
-                'saves',
-            ])
+            ->rawColumns(['action', 'teams', 'name',])
             ->addIndexColumn()
             ->make();
     }
@@ -112,20 +95,13 @@ class LeaderboardService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                    $btn ='<a class="btn btn-sm btn-outline-secondary" href="' . route('team-managements.show', $item->hash) . '" data-toggle="tooltip" data-placement="bottom" title="View team">
-                            <span class="material-icons">visibility</span>
-                        </a>';
-
-                return $btn;
+                return $this->datatablesHelper->buttonTooltips(route('team-managements.show', $item->hash), 'View team profile', 'visibility');
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('team-managements.show', $item->hash));
+                return $this->datatablesHelper->name($item->logo, $item->teamName, $item->ageGroup, route('team-managements.show', $item->hash));
             })
             ->addColumn('match', function ($item){
-                return $item->schedules()
-                    ->where('status', '0')
-                    ->where('eventType', 'Match')
-                    ->count();
+                return $item->matches()->where('status', 'Completed')->count();
             })
             ->addColumn('won', function ($item){
                 return $item->matches()->where('resultStatus', 'Win')->count();
@@ -148,18 +124,7 @@ class LeaderboardService extends Service
             ->addColumn('ownGoals', function ($item){
                 return $item->matches()->sum('teamOwnGoal');
             })
-            ->rawColumns([
-                'action',
-                'name',
-                'match',
-                'won',
-                'drawn',
-                'lost',
-                'goals',
-                'goalsConceded',
-                'cleanSheets',
-                'ownGoals',
-            ])
+            ->rawColumns(['action', 'name',])
             ->addIndexColumn()
             ->make();
     }
