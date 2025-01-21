@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlayerMatchStats extends Model
 {
@@ -11,7 +12,7 @@ class PlayerMatchStats extends Model
 
     protected $fillable = [
         'playerId',
-        'eventId',
+        'matchId',
         'teamId',
         'minutesPlayed',
         'goals',
@@ -25,16 +26,16 @@ class PlayerMatchStats extends Model
         'saves',
     ];
 
-    public function player()
+    public function player(): BelongsTo
     {
         return $this->belongsTo(Player::class, 'playerId', 'id');
     }
-    public function event()
+    public function match(): BelongsTo
     {
-        return $this->belongsTo(MatchModel::class, 'eventId', 'id');
+        return $this->belongsTo(MatchModel::class, 'matchId', 'id');
     }
 
-    public function team()
+    public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'teamId', 'id');
     }
