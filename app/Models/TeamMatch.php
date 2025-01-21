@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TeamMatch extends Model
 {
@@ -13,7 +13,7 @@ class TeamMatch extends Model
     protected $table = 'team_schedule';
     protected $fillable = [
         'teamId',
-        'eventId',
+        'matchId',
         'teamScore',
         'teamOwnGoal',
         'teamPossesion',
@@ -31,12 +31,12 @@ class TeamMatch extends Model
         'teamPasses',
     ];
 
-    public function team()
+    public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'teamId');
     }
-    public function match()
+    public function match(): BelongsTo
     {
-        return $this->belongsTo(MatchModel::class, 'eventId');
+        return $this->belongsTo(MatchModel::class, 'matchId');
     }
 }
