@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
-use App\Models\Match;
+use App\Models\MatchModel;
 use App\Models\Player;
 use App\Models\PlayerPerformanceReview;
 use App\Repository\EventScheduleRepository;
@@ -68,7 +68,7 @@ class PlayerPerformanceReviewService extends Service
     }
 
 
-    public function indexAllPlayerInEvent(Match $schedule, $teamId = null)
+    public function indexAllPlayerInEvent(MatchModel $schedule, $teamId = null)
     {
         if ($teamId) {
             $data = $schedule->players()->where('teamId', $teamId)->get();
