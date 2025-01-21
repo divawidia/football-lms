@@ -3,16 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Helpers\ApiResponse;
-use App\Helpers\DatatablesHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use App\Models\Admin;
-use App\Repository\AdminRepository;
-use App\Repository\Interface\AdminRepositoryInterface;
-use App\Repository\Interface\UserRepositoryInterface;
-use App\Repository\UserRepository;
 use App\Services\AdminService;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -21,10 +16,12 @@ use RealRashid\SweetAlert\Facades\Alert;
 class AdminController extends Controller
 {
     private AdminService $adminService;
-    public function __construct(AdminRepositoryInterface $adminRepository, UserRepositoryInterface $userRepository, DatatablesHelper $datatablesService)
+    private Admin $loggedAdmin;
+    public function __construct(AdminService $adminService)
     {
-        $this->middleware(function ($request, $next) use ($adminRepository, $userRepository, $datatablesService){
-            $this->adminService = new AdminService($adminRepository, $userRepository, $this->getLoggedUser(), $datatablesService);
+        $this->adminService = $adminService;
+        $this->middleware(function ($request, $next){
+            $this->loggedAdmin = $this->getLoggedAdminUser();
             return $next($request);
         });
     }
@@ -53,7 +50,7 @@ class AdminController extends Controller
     public function store(AdminRequest $request)
     {
         $data = $request->validated();
-        $admin = $this->adminService->store($data, $this->getAcademyId());
+        $admin = $this->adminService->store($data, $this->getAcademyId(), $this->loggedAdmin);
 
         $text = "Admin ".$this->getUserFullName($admin->user)."'s account successfully added!";
         Alert::success($text);
@@ -75,7 +72,7 @@ class AdminController extends Controller
     public function changePassword(ChangePasswordRequest $request, Admin $admin)
     {
         $data = $request->validated();
-        $result = $this->adminService->changePassword($data, $admin);
+        $result = $this->adminService->changePassword($data, $admin, $this->loggedAdmin);
 
         $message = "Admin ".$this->getUserFullName($admin->user)."'s account password successfully updated!";
         return ApiResponse::success($result, $message);
@@ -99,7 +96,7 @@ class AdminController extends Controller
     public function update(UpdateAdminRequest $request, Admin $admin)
     {
         $data = $request->validated();
-        $updatedData = $this->adminService->update($data, $admin);
+        $updatedData = $this->adminService->update($data, $admin, $this->loggedAdmin);
 
         $text = "Admin ".$this->getUserFullName($updatedData->user)."'s account successfully updated!";
         Alert::success($text);
@@ -109,7 +106,7 @@ class AdminController extends Controller
     public function deactivate(Admin $admin)
     {
         try {
-            $data = $this->adminService->setStatus($admin, '0');
+            $data = $this->adminService->setStatus($admin, '0', $this->loggedAdmin);
             $message = "Admin ".$this->getUserFullName($admin->user)."'s account status successfully set to deactivated.";
             return ApiResponse::success($data, $message);
 
@@ -122,7 +119,7 @@ class AdminController extends Controller
 
     public function activate(Admin $admin){
         try {
-            $data = $this->adminService->setStatus($admin, '1');
+            $data = $this->adminService->setStatus($admin, '1', $this->loggedAdmin);
             $message = "Admin ".$this->getUserFullName($admin->user)."'s account status successfully set to activated.";
             return ApiResponse::success($data, $message);
 
@@ -139,7 +136,7 @@ class AdminController extends Controller
     public function destroy(Admin $admin)
     {
         try {
-            $data = $this->adminService->destroy($admin);
+            $data = $this->adminService->destroy($admin, $this->loggedAdmin);
             $message = "Admin ".$this->getUserFullName($admin->user)."'s account successfully deleted.";
             return ApiResponse::success($data, $message);
 
