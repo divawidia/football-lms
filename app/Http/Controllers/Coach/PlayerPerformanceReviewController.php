@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Coach;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerPerformanceReviewRequest;
-use App\Http\Requests\SkillAssessmentRequest;
-use App\Models\Match;
+use App\Models\MatchModel;
 use App\Models\Player;
 use App\Models\PlayerPerformanceReview;
 use App\Models\PlayerSkillStats;
@@ -39,7 +38,7 @@ class PlayerPerformanceReviewController extends Controller
         return $this->performanceReviewService->index($player);
     }
 
-    public function indexAllPlayerInEvent(Request $request, Match $schedule)
+    public function indexAllPlayerInEvent(Request $request, MatchModel $schedule)
     {
         $teamId  =$request->input('teamId');
         return $this->performanceReviewService->indexAllPlayerInEvent($schedule, $teamId);
