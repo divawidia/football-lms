@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Services\Service;
+use Closure;
 use Illuminate\Support\Facades\Storage;
 
 class DatatablesHelper extends Service
@@ -106,6 +107,23 @@ class DatatablesHelper extends Service
                             '.$icon.'
                         </span>
                   </a>';
+    }
+
+    public function dropdown($content): string
+    {
+        if ($content instanceof Closure) {
+            $content = $content();
+        }
+        return '<div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="material-icons">
+                            more_vert
+                        </span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        '.$content.'
+                    </div>
+                </div>';
     }
 
     public function buttonDropdownItem($additionClass = '', $id = '', $iconColor = '', $icon = '', $btnText = ''): string
