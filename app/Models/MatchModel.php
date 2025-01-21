@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class MatchModel extends Model
@@ -28,7 +32,7 @@ class MatchModel extends Model
         'isExternalTeamWinner'
     ];
 
-    public function teams()
+    public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'team_schedule', 'eventId', 'teamId')
             ->withPivot(
@@ -53,30 +57,25 @@ class MatchModel extends Model
             )->withTimestamps();
     }
 
-    public function homeTeam()
+    public function homeTeam(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'homeTeamId');
     }
-    public function awayTeam()
+    public function awayTeam(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'awayTeamId');
     }
-    public function winnerTeam()
+    public function winnerTeam(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'winnerTeamId');
     }
 
-    public function externalTeam()
+    public function externalTeam(): HasOne
     {
         return $this->hasOne(ExternalTeamMatch::class, 'eventId');
     }
 
-    public function matches()
-    {
-        return $this->hasMany(TeamMatch::class, 'eventId');
-    }
-
-    public function coachMatchStats()
+    public function coachMatchStats(): BelongsToMany
     {
         return $this->belongsToMany(Coach::class, 'coach_match_stats', 'eventId', 'coachId')
             ->withPivot(
@@ -102,19 +101,19 @@ class MatchModel extends Model
             )->withTimestamps();
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'userId');
     }
 
-    public function competition()
+    public function competition(): BelongsTo
     {
         return $this->belongsTo(Competition::class, 'competitionId');
     }
 
-    public function coaches()
+    public function coaches(): BelongsToMany
     {
-        return $this->belongsToMany(Coach::class, 'coach_attendance', 'scheduleId', 'coachId')
+        return $this->belongsToMany(Coach::class, 'coach_match_attendance', 'matchId', 'coachId')
             ->withPivot(
                 'attendanceStatus',
                 'note',
@@ -122,14 +121,14 @@ class MatchModel extends Model
             )->withTimestamps();
     }
 
-    public function matchScores()
+    public function matchScores(): HasMany
     {
-        return $this->hasMany(MatchScore::class, 'eventId');
+        return $this->hasMany(MatchScore::class, 'matchId');
     }
 
-    public function players()
+    public function players(): BelongsToMany
     {
-        return $this->belongsToMany(Player::class, 'player_attendance', 'scheduleId', 'playerId')
+        return $this->belongsToMany(Player::class, 'player_match_attendance', 'matchId', 'playerId')
             ->withPivot(
                 'attendanceStatus',
                 'note',
@@ -137,14 +136,14 @@ class MatchModel extends Model
             )->withTimestamps();
     }
 
-    public function playerSkillStats()
+    public function playerSkillStats(): HasMany
     {
-        return $this->hasMany(PlayerSkillStats::class, 'eventId');
+        return $this->hasMany(PlayerSkillStats::class, 'matchId');
     }
 
-    public function playerMatchStats()
+    public function playerMatchStats(): BelongsToMany
     {
-        return $this->belongsToMany(Player::class, 'player_match_stats', 'eventId', 'playerId')
+        return $this->belongsToMany(Player::class, 'player_match_stats', 'matchId', 'playerId')
             ->withPivot(
                 'minutesPlayed',
                 'goals',
@@ -160,13 +159,13 @@ class MatchModel extends Model
             )->withTimestamps();
     }
 
-    public function playerPerformanceReview()
+    public function playerPerformanceReview(): HasMany
     {
-        return $this->hasMany(PlayerPerformanceReview::class, 'eventId');
+        return $this->hasMany(PlayerPerformanceReview::class, 'matchId');
     }
 
-    public function notes()
+    public function notes(): HasMany
     {
-        return $this->hasMany(ScheduleNote::class, 'scheduleId');
+        return $this->hasMany(MatchNote::class, 'matchId');
     }
 }
