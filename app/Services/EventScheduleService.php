@@ -7,9 +7,9 @@ use App\Models\Coach;
 use App\Models\MatchModel;
 use App\Models\MatchScore;
 use App\Models\Player;
-use App\Models\ScheduleNote;
+use App\Models\MatchNote;
 use App\Models\Team;
-use App\Notifications\MatchSchedules\MatchNote;
+use App\Notifications\MatchSchedules\MatchNote as MatchNoteNotification;
 use App\Notifications\MatchSchedules\MatchScheduleAttendance;
 use App\Notifications\MatchSchedules\MatchSchedule;
 use App\Notifications\MatchSchedules\MatchStatsPlayer;
@@ -885,28 +885,28 @@ class EventScheduleService extends Service
         if ($schedule->eventType == 'Training') {
             Notification::send($teamParticipants, new TrainingNote($loggedUser, $schedule, 'created'));
         } elseif ($schedule->eventType == 'Match') {
-            Notification::send($teamParticipants, new MatchNote($loggedUser, $schedule, 'created'));
+            Notification::send($teamParticipants, new MatchNoteNotification($loggedUser, $schedule, 'created'));
         }
         return $note;
     }
-    public function updateNote($data, MatchModel $schedule, ScheduleNote $note, $loggedUser){
+    public function updateNote($data, MatchModel $schedule, MatchNote $note, $loggedUser){
         $note->update($data);
         $teamParticipants = $this->userRepository->allTeamsParticipant($schedule->teams[0]);
         if ($schedule->eventType == 'Training') {
             Notification::send($teamParticipants, new TrainingNote($loggedUser, $schedule, 'updated'));
         } elseif ($schedule->eventType == 'Match') {
-            Notification::send($teamParticipants, new MatchNote($loggedUser, $schedule, 'updated'));
+            Notification::send($teamParticipants, new MatchNoteNotification($loggedUser, $schedule, 'updated'));
         }
         return $note;
     }
-    public function destroyNote(MatchModel $schedule, ScheduleNote $note, $loggedUser)
+    public function destroyNote(MatchModel $schedule, MatchNote $note, $loggedUser)
     {
         $note->delete();
         $teamParticipants = $this->userRepository->allTeamsParticipant($schedule->teams[0]);
         if ($schedule->eventType == 'Training') {
             Notification::send($teamParticipants, new TrainingNote($loggedUser, $schedule, 'deleted'));
         } elseif ($schedule->eventType == 'Match') {
-            Notification::send($teamParticipants, new MatchNote($loggedUser, $schedule, 'deleted'));
+            Notification::send($teamParticipants, new MatchNoteNotification($loggedUser, $schedule, 'deleted'));
         }
         return $note;
     }
