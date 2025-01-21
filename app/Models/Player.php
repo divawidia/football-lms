@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class Player extends Model
@@ -23,54 +24,66 @@ class Player extends Model
         'userId'
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'userId');
     }
-    public function position()
+    public function position(): BelongsTo
     {
         return $this->belongsTo(PlayerPosition::class, 'positionId');
     }
-    public function parrents()
+    public function parents(): HasMany
     {
         return $this->hasMany(PlayerParrent::class, 'playerId');
     }
-    public function playerMatchStats()
+    public function playerMatchStats(): HasMany
     {
         return $this->hasMany(PlayerMatchStats::class, 'playerId');
     }
-    public function playerSkillStats()
+    public function playerSkillStats(): HasMany
     {
         return $this->hasMany(PlayerSkillStats::class, 'playerId');
     }
-    public function playerPerformanceReview()
+    public function playerPerformanceReview(): HasMany
     {
         return $this->hasMany(PlayerPerformanceReview::class, 'playerId');
     }
-    public function schedules(): BelongsToMany
+    public function matches(): BelongsToMany
     {
-        return $this->belongsToMany(MatchModel::class, 'player_attendance', 'playerId', 'scheduleId')
+        return $this->belongsToMany(MatchModel::class, 'player_match_attendance', 'playerId', 'matchId')
             ->withPivot(
                 'attendanceStatus',
-                'note'
+                'note',
+                'teamId'
             )->withTimestamps();
     }
-    public function teams()
+
+    public function trainings(): BelongsToMany
+    {
+        return $this->belongsToMany(Training::class, 'player_training_attendance', 'playerId', 'trainingId')
+            ->withPivot(
+                'attendanceStatus',
+                'note',
+                'teamId'
+            )->withTimestamps();
+    }
+
+    public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'player_teams', 'playerId', 'teamId')->withTimestamps();
     }
-    public function invoice()
+    public function invoice(): HasMany
     {
         return $this->hasMany(Invoice::class, 'playerId', 'id');
     }
-    public function trainingVideos()
+    public function trainingVideos(): BelongsToMany
     {
         return $this->belongsToMany(TrainingVideo::class, 'training_video_players', 'playerId', 'trainingVideoId')
             ->withPivot('progress', 'status', 'completed_at')
             ->withTimestamps();
     }
 
-    public function lessons()
+    public function lessons(): BelongsToMany
     {
         return $this->belongsToMany(TrainingVideoLesson::class, 'player_lesson', 'playerId', 'lessonId')
             ->withPivot('completionStatus', 'completed_at')
