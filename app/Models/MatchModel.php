@@ -14,6 +14,7 @@ class MatchModel extends Model
 {
     use HasFactory, HashableId;
 
+    protected $table = 'matches';
     protected $fillable = [
         'userId',
         'matchType',
@@ -34,7 +35,7 @@ class MatchModel extends Model
 
     public function teams(): BelongsToMany
     {
-        return $this->belongsToMany(Team::class, 'team_schedule', 'eventId', 'teamId')
+        return $this->belongsToMany(Team::class, 'team_match', 'matchId', 'teamId')
             ->withPivot(
                 'teamScore',
                 'teamOwnGoal',
@@ -72,12 +73,12 @@ class MatchModel extends Model
 
     public function externalTeam(): HasOne
     {
-        return $this->hasOne(ExternalTeamMatch::class, 'eventId');
+        return $this->hasOne(ExternalTeamMatch::class, 'matchId');
     }
 
     public function coachMatchStats(): BelongsToMany
     {
-        return $this->belongsToMany(Coach::class, 'coach_match_stats', 'eventId', 'coachId')
+        return $this->belongsToMany(Coach::class, 'coach_match_stats', 'matchId', 'coachId')
             ->withPivot(
                 'teamId',
                 'teamScore',
