@@ -3,7 +3,7 @@
     Admins Management
 @endsection
 @section('page-title')
-    Admins Management
+    @yield('title')
 @endsection
 
 @section('modal')
@@ -13,11 +13,11 @@
 @section('content')
     <div class="pt-32pt">
         <div class="container">
-            <h2 class="mb-0">Admins Management</h2>
+            <h2 class="mb-0">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active">
-                    Admins Management
+                    @yield('title')
                 </li>
             </ol>
         </div>
@@ -25,61 +25,19 @@
 
     <div class="container page-section">
         @if(isSuperAdmin())
-            <a href="{{ route('admin-managements.create') }}" class="btn btn-primary mb-3">
-            <span class="material-icons mr-2">
-                add
-            </span>
-                Add New Admin
-            </a>
+            <x-buttons.link-button color="primary" margin="mb-3" :href="route('admin-managements.create')" icon="add" text="Add New Admin"/>
         @endif
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="table">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Age</th>
-                            <th>Gender</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                <x-table :headers="['#','Name', 'Email', 'Phone Number', 'Age','Gender','Status', 'Action']"/>
             </div>
         </div>
     </div>
-
-    @if(isSuperAdmin())
-        <x-process-data-confirmation btnClass=".setDeactivate"
-                                     :processRoute="route('deactivate-admin', ':id')"
-                                     :routeAfterProcess="route('admin-managements.index')"
-                                     method="PATCH"
-                                     confirmationText="Are you sure to deactivate this admin account's status?"
-                                     errorText="Something went wrong when deactivating this admin account!"/>
-
-        <x-process-data-confirmation btnClass=".setActivate"
-                                     :processRoute="route('activate-admin', ':id')"
-                                     :routeAfterProcess="route('admin-managements.index')"
-                                     method="PATCH"
-                                     confirmationText="Are you sure to activate this admin account's status?"
-                                     errorText="Something went wrong when activating this admin account!"/>
-
-        <x-process-data-confirmation btnClass=".deleteAdmin"
-                                     :processRoute="route('admin-managements.destroy', ['admin' => ':id'])"
-                                     :routeAfterProcess="route('admin-managements.index')"
-                                     method="DELETE"
-                                     confirmationText="Are you sure to delete this admin account?"
-                                     errorText="Something went wrong when deleting this admin account!"/>
-    @endif
 @endsection
 @push('addon-script')
-    <script>
+    <script type="module">
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+
         $(document).ready(function () {
             $('#table').DataTable({
                 processing: true,
@@ -89,6 +47,7 @@
                     url: '{!! url()->current() !!}',
                 },
                 columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'name', name: 'name'},
                     {data: 'user.email', name: 'user.email'},
                     {data: 'user.phoneNumber', name: 'user.phoneNumber'},
@@ -99,11 +58,40 @@
                         data: 'action',
                         name: 'action',
                         orderable: false,
-                        searchable: false,
-                        width: '15%'
+                        searchable: false
                     },
                 ]
             });
+
+            processWithConfirmation(
+                '.setDeactivate',
+                "{{ route('admin-managements.deactivate', ':id') }}",
+                "{{ route('admin-managements.index') }}",
+                'PATCH',
+                "Are you sure to deactivate this admin account's status?",
+                "Something went wrong when deactivating this admin account!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.setActivate',
+                "{{ route('admin-managements.activate', ':id') }}",
+                "{{ route('admin-managements.index') }}",
+                'PATCH',
+                "Are you sure to activate this admin account's status?",
+                "Something went wrong when activating this admin account!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.deleteAdmin',
+                "{{ route('admin-managements.destroy', ['admin' => ':id']) }}",
+                "{{ route('admin-managements.index') }}",
+                'DELETE',
+                "Are you sure to delete this admin account?",
+                "Something went wrong when deleting this admin account!",
+                "{{ csrf_token() }}"
+            );
         });
     </script>
 @endpush
