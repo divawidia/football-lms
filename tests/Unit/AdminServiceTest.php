@@ -4,8 +4,7 @@
 use App\Helpers\DatatablesHelper;
 use App\Models\Admin;
 use App\Models\User;
-use App\Notifications\AdminManagements\AdminAccountCreatedDeleted;
-use App\Notifications\AdminManagements\AdminAccountUpdated;
+use App\Notifications\AdminManagement;
 use App\Repository\Interface\AdminRepositoryInterface;
 use App\Repository\Interface\UserRepositoryInterface;
 use App\Services\AdminService;
@@ -97,7 +96,7 @@ class AdminServiceTest extends TestCase
         $this->assertInstanceOf(Admin::class, $result);
         $this->assertEquals($mockUser->id, $result->userId);
 
-        Notification::assertSentTo($this->loggedUser, AdminAccountCreatedDeleted::class);
+        Notification::assertSentTo($this->loggedUser, AdminManagement::class);
     }
 
     /** @test */
@@ -209,7 +208,7 @@ class AdminServiceTest extends TestCase
         // Assertions
         $this->assertTrue($result);
 
-        Notification::assertSentTo($this->loggedUser, AdminAccountCreatedDeleted::class);
+        Notification::assertSentTo($this->loggedUser, AdminManagement::class);
     }
 
     protected function tearDown(): void
