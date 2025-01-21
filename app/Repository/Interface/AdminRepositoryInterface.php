@@ -8,7 +8,7 @@ use App\Models\User;
 interface AdminRepositoryInterface
 {
 
-    public function getAll();
+    public function getAll($withRelation = ['user'], $thisMonth = false, $retrievalMethod = 'all', $columns = ['*']);
 
     public function find($id);
 
