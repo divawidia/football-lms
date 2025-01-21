@@ -16,27 +16,30 @@
         </div>
     </div>
 
-    <div class="container  page-section">
-        <x-tabs.navbar>
-            <x-tabs.item title="Overview" link="overview" :active="true"/>
-            <x-tabs.item title="Upcoming Matches" link="matches"/>
-            <x-tabs.item title="Upcoming Trainings" link="trainings"/>
-            <x-tabs.item title="Team Leaderboard" link="teams"/>
-            <x-tabs.item title="Player Leaderboard" link="players"/>
-        </x-tabs.navbar>
+    <div class="container page-section">
+        <div class="card">
+            <div class="card-body">
+                <ul class="nav nav-pills text-capitalize">
+                    <x-tabs.item title="Overview" link="overview" :active="true"/>
+                    <x-tabs.item title="Upcoming Matches" link="matches"/>
+                    <x-tabs.item title="Upcoming Trainings" link="trainings"/>
+                    <x-tabs.item title="Team Leaderboard" link="teams"/>
+                    <x-tabs.item title="Player Leaderboard" link="players"/>
+                </ul>
+            </div>
+        </div>
 
         <div class="tab-content mt-3">
             {{--    Overview    --}}
             <div class="tab-pane fade show active" id="overview-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Overview</div>
-                    {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
                 </div>
                 <div class="row">
                     <x-stats-with-icon-card  title="Total Players" :datas="$dataOverview['totalPlayers']" :dataThisMonth="$dataOverview['thisMonthTotalPlayers']" icon="fa fa-user"/>
                     <x-stats-with-icon-card  title="Total Coaches" :datas="$dataOverview['totalCoaches']" :dataThisMonth="$dataOverview['thisMonthTotalPlayers']" icon="fa fa-user-tie"/>
                     <x-stats-with-icon-card  title="Total Teams" :datas="$dataOverview['totalTeams']" :dataThisMonth="$dataOverview['thisMonthTotalTeams']" icon="fa fa-users"/>
-                    <x-stats-with-icon-card  title="Total Admins" :datas="$dataOverview['totalAdmins']" :dataThisMonth="$dataOverview['thisMonthTotalAdmins']" icon="fa fa-user"/>
+                    <x-stats-with-icon-card  title="Total Admins" :datas="$totalAdmins" :dataThisMonth="$totalAdminsThisMonth" icon="fa fa-user"/>
                     <x-stats-with-icon-card  title="Competitions Joined" :datas="$dataOverview['totalCompetitions']" :dataThisMonth="$dataOverview['thisMonthTotalCompetitions']" icon="fa fa-trophy"/>
                     <x-stats-with-icon-card  title="Match Schedule" :datas="$dataOverview['totalUpcomingMatches']" icon="fa fa-calendar-day"/>
                     <x-stats-with-icon-card  title="Training Schedules" :datas="$dataOverview['totalUpcomingTrainings']" icon="fa fa-calendar-day"/>
