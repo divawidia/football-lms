@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class PlayerSkillStats extends Model
@@ -30,16 +30,16 @@ class PlayerSkillStats extends Model
         'defensivePlay'
     ];
 
-    public function player()
+    public function player(): BelongsTo
     {
         return $this->belongsTo(Player::class, 'playerId', 'id');
     }
-    public function coach()
+    public function coach(): BelongsTo
     {
         return $this->belongsTo(Coach::class, 'coachId', 'id');
     }
-    public function event()
+    public function match(): BelongsTo
     {
-        return $this->belongsTo(MatchModel::class, 'eventId', 'id');
+        return $this->belongsTo(MatchModel::class, 'matchId', 'id');
     }
 }
