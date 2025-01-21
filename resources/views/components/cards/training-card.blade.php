@@ -2,14 +2,14 @@
     <div class="card-body">
         <div class="row">
             <div class="col-6 d-flex flex-column flex-md-row align-items-center">
-                <img src="{{ Storage::url($training->teams[0]->logo) }}"
+                <img src="{{ Storage::url($training->team->logo) }}"
                      width="50"
                      height="50"
                      class="rounded-circle img-object-fit-cover"
                      alt="team-logo">
                 <div class="ml-md-3 text-center text-md-left">
-                    <h5 class="mb-0">{{$training->teams[0]->teamName}}</h5>
-                    <p class="text-50 lh-1 mb-0">{{$training->teams[0]->ageGroup}}</p>
+                    <h5 class="mb-0">{{$training->team->teamName}}</h5>
+                    <p class="text-50 lh-1 mb-0">{{$training->team->ageGroup}}</p>
                 </div>
             </div>
             <div class="col-6 d-flex flex-column">

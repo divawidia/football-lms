@@ -2,18 +2,18 @@
 
 namespace App\View\Components\Cards;
 
-use App\Models\Match;
+use App\Models\Training;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class TrainingCard extends Component
 {
-    public Match $training;
+    public Training $training;
     /**
      * Create a new component instance.
      */
-    public function __construct(Match $training)
+    public function __construct(Training $training)
     {
         $this->training = $training;
     }
