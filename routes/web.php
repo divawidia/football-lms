@@ -8,7 +8,6 @@ use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventScheduleController;
 use App\Http\Controllers\Admin\FinancialReportController;
-use App\Http\Controllers\Admin\GroupDivisionController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\LeagueStandingController;
 use App\Http\Controllers\Admin\OpponentTeamController;
@@ -30,9 +29,7 @@ use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\PerformanceReportController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\UserController;
-use App\Mail\JustTesting;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,7 +51,7 @@ Route::middleware('prevent.back.history')->group(function (){
     Auth::routes();
 });
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth', 'web']], function () {
 //    Route::get('/send-mail', function () {
 //        Mail::to('wiartha2001@gmail.com')->send(new JustTesting());
 //        return 'A message has been sent to Mailtrap!';
@@ -72,74 +69,106 @@ Route::group(['middleware' => ['auth']], function () {
     Route::patch('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::get('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
-    Route::group(['middleware' => ['role:Super-Admin,web']], function () {
-//        Route::prefix('admin')->group(function () {
-            Route::prefix('admin-managements')->group(function () {
-                Route::post('', [AdminController::class, 'store'])->name('admin-managements.store');
-                Route::get('create', [AdminController::class, 'create'])->name('admin-managements.create');
-
-                Route::prefix('{admin}')->group(function () {
-                    Route::get('', [AdminController::class, 'show'])->name('admin-managements.show');
-                    Route::patch('deactivate', [AdminController::class, 'deactivate'])->name('deactivate-admin');
-                    Route::patch('activate', [AdminController::class, 'activate'])->name('activate-admin');
-                    Route::patch('change-password', [AdminController::class, 'changePassword'])->name('admin-managements.change-password');
-                    Route::get('edit', [AdminController::class, 'edit'])->name('admin-managements.edit');
-                    Route::put('', [AdminController::class, 'update'])->name('admin-managements.update');
-                    Route::delete('', [AdminController::class, 'destroy'])->name('admin-managements.destroy');
-                });
-            });
-//        });
+    Route::prefix('admin-dashboard')->middleware('role:Super-Admin|admin')->group(function () {
+        Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
     });
 
-    Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
+    Route::prefix('edit-academy')->middleware('role:Super-Admin|admin')->group(function () {
+        Route::get('', [AcademyController::class, 'edit'])->name('edit-academy.edit');
+        Route::put('', [AcademyController::class, 'update'])->name('edit-academy.update');
+    });
 
-//        Route::prefix('admin')->group(function () {
+    Route::prefix('admin-management')->name('admin-managements.')->group(function () {
+        Route::middleware('role:Super-Admin')->group(function () {
+            Route::get('create', [AdminController::class, 'create'])->name('create');
+            Route::post('', [AdminController::class, 'store'])->name('store');
 
-            Route::prefix('admin-dashboard')->group(function () {
-                Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
+            Route::prefix('{admin}')->group(function () {
+                Route::patch('deactivate', [AdminController::class, 'deactivate'])->name('deactivate');
+                Route::patch('activate', [AdminController::class, 'activate'])->name('activate');
+                Route::patch('change-password', [AdminController::class, 'changePassword'])->name('change-password');
+                Route::get('edit', [AdminController::class, 'edit'])->name('edit');
+                Route::put('', [AdminController::class, 'update'])->name('update');
+                Route::delete('', [AdminController::class, 'destroy'])->name('destroy');
+            });
+        });
+
+        Route::middleware('role:Super-Admin|admin')->group(function () {
+            Route::get('', [AdminController::class, 'index'])->name('index');
+            Route::get('{admin}', [AdminController::class, 'show'])->name('show');
+        });
+    });
+
+    Route::prefix('player-management')->name('player-managements.')->group(function () {
+        Route::middleware('role:Super-Admin|admin')->group(function () {
+            Route::get('admins-players', [PlayerController::class, 'adminIndex'])->name('admin-index');
+            Route::get('create', [PlayerController::class, 'create'])->name('create');
+            Route::post('', [PlayerController::class, 'store'])->name('store');
+
+        });
+
+        Route::get('', [PlayerController::class, 'index'])->middleware('role:Super-Admin|admin|coach')->name('index');
+        Route::get('coaches-players', [PlayerController::class, 'coachIndex'])->middleware('role:coach')->name('coach-index');
+
+        Route::prefix('{player}')->group(function () {
+            Route::middleware('role:Super-Admin|admin')->group(function () {
+                Route::get('edit', [PlayerController::class, 'edit'])->name('edit');
+                Route::put('', [PlayerController::class, 'update'])->name('update');
+                Route::delete('', [PlayerController::class, 'destroy'])->name('destroy');
+
+                Route::patch('deactivate', [PlayerController::class, 'deactivate'])->name('deactivate');
+                Route::patch('activate', [PlayerController::class, 'activate'])->name('activate');
+
+                Route::get('change-password', [PlayerController::class, 'changePasswordPage'])->name('change-password-page');
+                Route::patch('change-password', [PlayerController::class, 'changePassword'])->name('change-password');
+
+                Route::put('update-teams', [PlayerController::class, 'updateTeams'])->name('update-teams');
+                Route::delete('remove-team/{team}', [PlayerController::class, 'removeTeam'])->name('remove-team');
             });
 
-            Route::prefix('edit-academy')->group(function () {
-                Route::get('', [AcademyController::class, 'edit'])->name('edit-academy.edit');
-                Route::put('', [AcademyController::class, 'update'])->name('edit-academy.update');
+            Route::middleware('role:Super-Admin|admin|coach')->group(function () {
+                Route::get('', [PlayerController::class, 'show'])->name('show');
+                Route::get('skill-stats', [PlayerController::class, 'skillStatsDetail'])->name('skill-stats');
+                Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('player-teams');
+
+                Route::get('upcoming-matches', [PlayerController::class, 'upcomingMatches'])->name('upcoming-matches');
+                Route::get('upcoming-trainings', [PlayerController::class, 'upcomingTrainings'])->name('upcoming-trainings');
+
             });
 
-            Route::prefix('admin-managements')->group(function () {
-                Route::get('', [AdminController::class, 'index'])->name('admin-managements.index');
-                Route::prefix('{admin}')->group(function () {
-                    Route::get('', [AdminController::class, 'show'])->name('admin-managements.show');
+            Route::get('skill-stats-history', [PlayerController::class, 'skillStatsHistory'])->middleware('role:Super-Admin|admin|coach|player')->name('skill-stats-history');
+
+            Route::prefix('performance-reviews')->name('performance-reviews.')->group(function () {
+                Route::get('table', [PlayerPerformanceReviewController::class, 'indexPlayer'])->middleware('role:Super-Admin|admin|coach|player')->name('index');
+                Route::get('match-training', [PlayerPerformanceReviewController::class, 'indexPlayer'])->middleware('role:Super-Admin|admin|coach')->name('match-training');
+                Route::get('', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->middleware('role:Super-Admin|admin|coach')->name('index-page');
+                Route::post('store', [PlayerPerformanceReviewController::class, 'store'])->middleware('role:coach')->name('store');
+
+                Route::prefix('{review}')->middleware('role:coach')->group(function () {
+                    Route::get('', [PlayerPerformanceReviewController::class, 'edit'])->name('edit');
+                    Route::put('update', [PlayerPerformanceReviewController::class, 'update'])->name('update');
+                    Route::delete('destroy', [PlayerPerformanceReviewController::class, 'destroy'])->name('destroy');
                 });
             });
 
-            Route::prefix('player-managements')->group(function () {
-                Route::get('admins-players', [PlayerController::class, 'adminIndex'])->name('admin.player-managements.index');
-                Route::get('create', [PlayerController::class, 'create'])->name('player-managements.create');
-                Route::post('', [PlayerController::class, 'store'])->name('player-managements.store');
+            Route::prefix('parents')->name('player-parents.')->group(function () {
+                Route::get('', [PlayerParentController::class, 'index'])->middleware('role:Super-Admin|admin|coach|player')->name('index');
 
-                Route::prefix('{player}')->group(function () {
-                    Route::get('edit', [PlayerController::class, 'edit'])->name('player-managements.edit');
-                    Route::put('', [PlayerController::class, 'update'])->name('player-managements.update');
-                    Route::delete('', [PlayerController::class, 'destroy'])->name('player-managements.destroy');
-
-                    Route::patch('deactivate', [PlayerController::class, 'deactivate'])->name('deactivate-player');
-                    Route::patch('activate', [PlayerController::class, 'activate'])->name('activate-player');
-                    Route::get('change-password', [PlayerController::class, 'changePasswordPage'])->name('player-managements.change-password-page');
-                    Route::patch('change-password', [PlayerController::class, 'changePassword'])->name('player-managements.change-password');
-                    Route::put('update-teams', [PlayerController::class, 'updateTeams'])->name('player-managements.updateTeams');
-                    Route::delete('remove-team/{team}', [PlayerController::class, 'removeTeam'])->name('player-managements.removeTeam');
-
-                    Route::prefix('parents')->group(function () {
-//                        Route::get('', [PlayerParentController::class, 'index'])->name('player-parents.index');
-                        Route::get('create', [PlayerParentController::class, 'create'])->name('player-parents.create');
-                        Route::post('store', [PlayerParentController::class, 'store'])->name('player-parents.store');
-                        Route::prefix('{parent}')->group(function () {
-                            Route::delete('destroy', [PlayerParentController::class, 'destroy'])->name('player-parents.destroy');
-                            Route::get('edit', [PlayerParentController::class, 'edit'])->name('player-parents.edit');
-                            Route::put('update', [PlayerParentController::class, 'update'])->name('player-parents.update');
-                        });
+                Route::middleware('role:Super-Admin|admin')->group(function () {
+                    Route::get('create', [PlayerParentController::class, 'create'])->name('create');
+                    Route::post('store', [PlayerParentController::class, 'store'])->name('store');
+                    Route::prefix('{parent}')->group(function () {
+                        Route::delete('destroy', [PlayerParentController::class, 'destroy'])->name('destroy');
+                        Route::get('edit', [PlayerParentController::class, 'edit'])->name('edit');
+                        Route::put('update', [PlayerParentController::class, 'update'])->name('update');
                     });
                 });
             });
+        });
+    });
+
+
+    Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
 
             Route::prefix('coach-managements')->group(function () {
                 Route::get('', [CoachController::class, 'index'])->name('coach-managements.index');
@@ -215,21 +244,6 @@ Route::group(['middleware' => ['auth']], function () {
                             Route::get('', [LeagueStandingController::class, 'show'])->name('competition-managements.league-standings.show');
                             Route::put('update', [LeagueStandingController::class, 'update'])->name('competition-managements.league-standings.update');
                             Route::delete('destroy', [LeagueStandingController::class, 'destroy'])->name('competition-managements.league-standings.destroy');
-                        });
-                    });
-
-                    Route::prefix('group-division')->group(function () {
-                        Route::get('get-all', [GroupDivisionController::class, 'getAll'])->name('division-managements.get-all');
-                        Route::get('create', [GroupDivisionController::class, 'create'])->name('division-managements.create');
-                        Route::post('store', [GroupDivisionController::class, 'store'])->name('division-managements.store');
-                        Route::prefix('{group}')->group(function () {
-                            Route::get('get-teams', [GroupDivisionController::class, 'getTeams'])->name('division-managements.get-teams');
-                            Route::get('edit', [GroupDivisionController::class, 'edit'])->name('division-managements.edit');
-                            Route::put('update', [GroupDivisionController::class, 'update'])->name('division-managements.update');
-                            Route::delete('destroy', [GroupDivisionController::class, 'destroy'])->name('division-managements.destroy');
-                            Route::get('add-team', [GroupDivisionController::class, 'addTeam'])->name('division-managements.addTeam');
-                            Route::post('store-team', [GroupDivisionController::class, 'storeTeam'])->name('division-managements.storeTeam');
-                            Route::put('remove-team/{team}', [GroupDivisionController::class, 'removeTeam'])->name('division-managements.removeTeam');
                         });
                     });
                 });
@@ -369,22 +383,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:coach,web']], function () {
             Route::get('coach-dashboard', [CoachDashboardController::class, 'index'])->name('coach.dashboard');
 
-            Route::prefix('player-managements')->group(function () {
-                Route::get('coaches-players', [PlayerController::class, 'coachIndex'])->name('coach.player-managements.index');
-
-                Route::prefix('{player}')->group(function () {
-                    Route::prefix('performance-reviews')->group(function () {
-                        Route::post('store', [PlayerPerformanceReviewController::class, 'store'])->name('coach.performance-reviews.store');
-                    });
-
-                });
-
-                Route::prefix('performance-reviews/{review}')->group(function () {
-                    Route::get('', [PlayerPerformanceReviewController::class, 'edit'])->name('coach.performance-reviews.edit');
-                    Route::put('update', [PlayerPerformanceReviewController::class, 'update'])->name('coach.performance-reviews.update');
-                    Route::delete('destroy', [PlayerPerformanceReviewController::class, 'destroy'])->name('coach.performance-reviews.destroy');
-                });
-            });
 
             Route::prefix('team-managements')->group(function () {
                 Route::get('coach-teams', [TeamController::class, 'coachTeamsData'])->name('coach.team-managements.coach-teams');
@@ -472,23 +470,6 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['role:coach|admin|Super-Admin,web']], function () {
-        Route::prefix('player-managements')->group(function () {
-            Route::get('', [PlayerController::class, 'index'])->name('player-managements.index');
-
-            Route::prefix('{player}')->group(function () {
-                Route::get('', [PlayerController::class, 'show'])->name('player-managements.show');
-                Route::get('skill-stats', [PlayerController::class, 'skillStatsDetail'])->name('player-managements.skill-stats');
-                Route::get('player-teams', [PlayerController::class, 'playerTeams'])->name('player-managements.playerTeams');
-
-                Route::get('upcoming-matches', [PlayerController::class, 'upcomingMatches'])->name('player-managements.upcoming-matches');
-                Route::get('upcoming-trainings', [PlayerController::class, 'upcomingTrainings'])->name('player-managements.upcoming-trainings');
-
-                Route::prefix('performance-reviews')->group(function () {
-                    Route::get('match-training', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('coach.player-managements.performance-reviews');
-                    Route::get('', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player-managements.performance-reviews-page');
-                });
-            });
-        });
 
         Route::prefix('training-schedules')->group(function () {
             Route::get('create', [EventScheduleController::class, 'createTraining'])->name('training-schedules.create');
@@ -606,13 +587,6 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['role:player|coach|admin|Super-Admin,web']], function () {
-        Route::prefix('player-managements')->group(function () {
-            Route::prefix('{player}')->group(function () {
-                Route::get('parents', [PlayerParentController::class, 'index'])->name('player-parents.index');
-                Route::get('skill-stats-history', [PlayerController::class, 'skillStatsHistory'])->name('player-managements.skill-stats-history');
-                Route::get('performance-reviews-table', [PlayerPerformanceReviewController::class, 'indexPlayer'])->name('player-managements.performance-reviews');
-            });
-        });
 
         Route::prefix('training-schedules')->group(function () {
             Route::get('', [EventScheduleController::class, 'indexTraining'])->name('training-schedules.index');
@@ -661,12 +635,6 @@ Route::group(['middleware' => ['auth']], function () {
             Route::prefix('{competition}')->group(function () {
                 Route::get('', [CompetitionController::class, 'show'])->name('competition-managements.show');
                 Route::get('matches', [CompetitionController::class, 'competitionMatches'])->name('competition-managements.matches');
-
-                Route::prefix('group-division')->group(function () {
-                    Route::prefix('{group}')->group(function () {
-                        Route::get('', [GroupDivisionController::class, 'index'])->name('division-managements.index');
-                    });
-                });
             });
         });
 
