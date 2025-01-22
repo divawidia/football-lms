@@ -99,11 +99,11 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <div class="dropdown-header"><strong>Account</strong></div>
-                <a class="dropdown-item" href="{{ route('edit-account.edit') }}">Edit Account</a>
-                <a class="dropdown-item" href="{{ route('reset-password.edit') }}">Reset Password</a>
+                <a class="dropdown-item" href="{{ route('edit-account.edit') }}"><i class="fa-solid fa-user-gear text-muted mr-3"></i>Edit Account</a>
+                <a class="dropdown-item" href="{{ route('reset-password.edit') }}"><i class="fa-solid fa-key text-muted mr-3"></i>Reset Password</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button class="dropdown-item" type="submit">Logout</button>
+                    <button class="dropdown-item" type="submit"><i class="fa-solid fa-right-from-bracket text-muted mr-3"></i>Logout</button>
                 </form>
             </div>
         </div>
