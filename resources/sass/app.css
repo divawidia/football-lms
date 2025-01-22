@@ -209,6 +209,23 @@
   height: 350px;
 }
 
+.nav-tabs-container {
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.nav {
+  flex-wrap: nowrap;
+}
+.nav.nav-pills {
+  white-space: nowrap;
+  display: inline-flex;
+}
+.nav .nav-item {
+  flex-shrink: 0; /* Prevent tabs from shrinking */
+}
+
 @media (min-width: 1200px) {
   .layout-app .container-fluid, .layout-app .container-lg, .layout-app .container-md, .layout-app .container-sm, .layout-app .container-xl {
     padding-left: 2rem;
@@ -1352,6 +1369,11 @@ select.form-control:focus::-ms-value {
 
 .ck-editor__editable_inline {
   min-height: 200px;
+}
+
+.ps__thumb-x, .ps__thumb-y {
+  background-color: #E52534; /* Blue color for the scrollbar thumb */
+  border-radius: 6px; /* Rounded edges for the thumb */
 }
 
 :root {
