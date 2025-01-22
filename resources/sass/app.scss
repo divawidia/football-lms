@@ -29,6 +29,7 @@
 @import 'components/topbar';
 @import 'components/form';
 @import 'components/notification';
+@import 'components/tabs';
 @import 'structures/layout';
 @import 'vendor/background';
 @import 'vendor/badge';
@@ -41,6 +42,7 @@
 @import 'vendor/padding';
 @import 'vendor/page';
 @import 'vendor/ckeditor';
+@import 'vendor/perfect-scrolbar';
 @import 'preloader';
 
 .ui .page__container {
