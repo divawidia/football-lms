@@ -1,0 +1,17 @@
+.nav-tabs-container {
+    max-width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.nav {
+    flex-wrap: nowrap;
+    &.nav-pills {
+        white-space: nowrap;
+        display: inline-flex;
+    }
+    .nav-item {
+        flex-shrink: 0; /* Prevent tabs from shrinking */
+    }
+}
+
