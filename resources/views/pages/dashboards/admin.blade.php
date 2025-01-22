@@ -18,7 +18,7 @@
 
     <div class="container page-section">
         <div class="card">
-            <div class="card-body">
+            <div class="nav-tabs-container">
                 <ul class="nav nav-pills text-capitalize">
                     <x-tabs.item title="Overview" link="overview" :active="true"/>
                     <x-tabs.item title="Upcoming Matches" link="matches"/>
