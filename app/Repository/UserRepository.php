@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Models\Team;
 use App\Models\User;
 use App\Repository\Interface\UserRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -14,9 +15,16 @@ class UserRepository implements UserRepositoryInterface
         $this->user = $user;
     }
 
-    public function getAll()
+    public function getAll(string|int $withoutUserid = null, string|array $role = null, string|array $column = ['*']): Collection
     {
-        return $this->user->all();
+        $query = $this->user;
+        if ($withoutUserid) {
+            $query->where('id', '!=', $withoutUserid);
+        }
+        if ($role) {
+            $query->role($role);
+        }
+        return $query->get($column);
     }
 
     public function getInArray($relation,$ids)
@@ -26,18 +34,9 @@ class UserRepository implements UserRepositoryInterface
         })->get();
     }
 
-    public function getAllUserWithoutLoggedUserData($authUserId){
-        return $this->user->where('id', '!=', $authUserId)->get();
-    }
-
-    public function getAllByRole($role)
+    public function getAllAdminUsers(): Collection
     {
-        return $this->user->role($role)->get();
-    }
-
-    public function getAllAdminUsers()
-    {
-        return $this->getAllByRole(['admin', 'Super-Admin']);
+        return $this->getAll(role: ['admin', 'Super-Admin']);
     }
 
     public function allTeamsParticipant(Team $team, $admins = true, $coaches = true, $players = true)
@@ -59,7 +58,6 @@ class UserRepository implements UserRepositoryInterface
             $coaches = $this->getInArray('coach', $coachesIds);
             $allUsers = $allUsers->merge($coaches);
         }
-
 
         return $allUsers;
     }
