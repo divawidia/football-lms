@@ -4,21 +4,23 @@ namespace App\View\Components\Buttons;
 
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Routing\Route;
 use Illuminate\View\Component;
 
 class LinkButton extends Component
 {
-    public $color;
-    public $text;
-    public $id;
-    public $size;
-    public $margin;
-    public $icon;
-    public $href;
+    public string $color;
+    public string $text;
+    public mixed $id;
+    public string $size;
+    public string $margin;
+    public string $icon;
+    public Route|string $href;
+    public bool $dropdownItem;
     /**
      * Create a new component instance.
      */
-    public function __construct($color = 'primary', $text = '', $id = null, $size = '', $margin = '', $icon = '', $href = '')
+    public function __construct($color = 'primary', $text = '', $id = null, $size = '', $margin = '', $icon = '', $href = '', $dropdownItem = false)
     {
         $this->color = $color;
         $this->text = $text;
@@ -27,6 +29,7 @@ class LinkButton extends Component
         $this->margin = $margin;
         $this->icon = $icon;
         $this->href = $href;
+        $this->dropdownItem = $dropdownItem;
     }
 
     /**
