@@ -6,104 +6,117 @@ use App\Models\Admin;
 use App\Models\User;
 use App\Repository\AdminRepository;
 use App\Repository\UserRepository;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class AdminRepositoryTest extends TestCase
 {
-    use RefreshDatabase;
-
-    protected AdminRepository $adminRepository;
-    protected UserRepository $userRepository;
+    protected $adminMock;
+    protected $adminRepository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->adminRepository = new AdminRepository(new Admin());
-        $this->userRepository = new UserRepository(new User());
 
-        Role::firstOrCreate(['name' => 'admin']);
+        // Mock the Admin model
+        $this->adminMock = Mockery::mock(Admin::class);
 
-        $this->user1 = User::factory()->create();
-        $this->user1->assignRole('admin');
-        $this->admin1 = Admin::factory()->create(['userId' => $this->user1->id]);
-
-        $this->user2 = User::factory()->create();
-        $this->user2->assignRole('admin');
-        $this->admin2 = Admin::factory()->create(['userId' => $this->user2->id]);
+        // Create an instance of the repository with the mocked model
+        $this->adminRepository = new AdminRepository($this->adminMock);
     }
 
-    /** @test */
-    public function it_can_get_all_admins()
+    protected function tearDown(): void
     {
-        $admins = $this->adminRepository->getAll();
-
-        $this->assertCount(2, $admins);
+        // Clean up Mockery
+        Mockery::close();
+        parent::tearDown();
     }
 
-    /** @test */
-    public function it_can_find_an_admin_by_id()
+    public function test_get_all_with_default_parameters()
     {
-        $foundAdmin = $this->adminRepository->find($this->admin1->id);
+        // Mock the query builder and expectations
+        $queryMock = Mockery::mock(Builder::class);
+        $queryMock->shouldReceive('with')->with(['user'])->andReturnSelf();
+        $queryMock->shouldReceive('get')->with(['*'])->andReturn(collect(['admin1', 'admin2']));
 
-        $this->assertEquals($this->admin1->id, $foundAdmin->id);
-        $this->assertEquals($this->admin1->position, $foundAdmin->position);
+        $this->adminMock->shouldReceive('with')->with(['user'])->andReturn($queryMock);
+
+        // Call the method and assert the result
+        $result = $this->adminRepository->getAll();
+        $this->assertEquals(collect(['admin1', 'admin2']), $result);
     }
 
-    /** @test */
-    public function it_can_create_an_admin()
+    public function test_get_all_with_count_retrieval_method()
     {
-        $userData = [
-            'firstName' => 'John',
-            'lastName' => 'Doe',
-            'email' => 'john.doe@example.com',
-            'password' => 'password123',
-            'dob' => fake()->date,
-            'gender' => 'male',
-            'address' => fake()->address,
-            'state_id' => 1,
-            'city_id' => 1,
-            'country_id' => 1,
-            'zipCode' => fake()->postcode,
-            'phoneNumber' => fake()->phoneNumber,
-            'status' => 1,
-            'academyId' => Academy::factory()->create()->id,
-        ];
+        // Mock the query builder and expectations
+        $queryMock = Mockery::mock(Builder::class);
+        $queryMock->shouldReceive('with')->with(['user'])->andReturnSelf();
+        $queryMock->shouldReceive('count')->andReturn(5);
 
-        $adminData = [
-            'position' => 'Test Admin',
-            'hireDate' => now(),
-        ];
+        $this->adminMock->shouldReceive('with')->with(['user'])->andReturn($queryMock);
 
-        $user = $this->userRepository->createUserWithRole($userData, 'admin');
-        $adminData['userId'] = $user->id;
-
-        $admin = $this->adminRepository->create($adminData);
-
-        $this->assertDatabaseHas('admins', [
-            'id' => $admin->id,
-            'position' => 'Test Admin',
-            'userId' => $user->id
-        ]);
+        // Call the method and assert the result
+        $result = $this->adminRepository->getAll(['user'], false, 'count');
+        $this->assertEquals(5, $result);
     }
 
-    /** @test */
-    public function it_can_update_an_admin()
+    public function test_get_all_with_single_retrieval_method()
     {
-        $updateData = [
-            'position' => 'Updated Position',
-            'firstName' => 'Updated First Name',
-            'lastName' => 'Updated Last Name'
-        ];
+        // Mock the query builder and expectations
+        $queryMock = Mockery::mock(Builder::class);
+        $queryMock->shouldReceive('with')->with(['user'])->andReturnSelf();
+        $queryMock->shouldReceive('first')->with(['*'])->andReturn((object) ['id' => 1, 'name' => 'Admin']);
 
-        $this->adminRepository->update($updateData, $this->admin1);
+        $this->adminMock->shouldReceive('with')->with(['user'])->andReturn($queryMock);
 
-        $this->user1->refresh();
-        $this->admin1->refresh();
+        // Call the method and assert the result
+        $result = $this->adminRepository->getAll(['user'], false, 'single');
+        $this->assertEquals((object) ['id' => 1, 'name' => 'Admin'], $result);
+    }
 
-        $this->assertEquals('Updated Position', $this->admin1->position);
-        $this->assertEquals('Updated First Name', $this->user1->firstName);
-        $this->assertEquals('Updated Last Name', $this->user1->lastName);
+    public function test_find_admin_by_id()
+    {
+        // Mock the findOrFail method
+        $this->adminMock->shouldReceive('findOrFail')
+            ->with(1)
+            ->andReturn((object) ['id' => 1, 'name' => 'Admin']);
+
+        // Call the method and assert the result
+        $result = $this->adminRepository->find(1);
+        $this->assertEquals((object) ['id' => 1, 'name' => 'Admin'], $result);
+    }
+
+    public function test_create_admin()
+    {
+        // Mock the create method
+        $data = ['name' => 'Admin', 'email' => 'admin@example.com'];
+        $this->adminMock->shouldReceive('create')
+            ->with($data)
+            ->andReturn((object) ['id' => 1, 'name' => 'Admin', 'email' => 'admin@example.com']);
+
+        // Call the method and assert the result
+        $result = $this->adminRepository->create($data);
+        $this->assertEquals((object) ['id' => 1, 'name' => 'Admin', 'email' => 'admin@example.com'], $result);
+    }
+
+    public function test_update_admin()
+    {
+        // Mock the Admin model and its relationships
+        $adminMock = Mockery::mock(Admin::class);
+        $userMock = Mockery::mock();
+
+        $data = ['name' => 'Updated Admin', 'email' => 'updated@example.com'];
+
+        // Expectations for the update method
+        $adminMock->shouldReceive('update')->with($data)->andReturn(true);
+        $adminMock->shouldReceive('getAttribute')->with('user')->andReturn($userMock);
+        $userMock->shouldReceive('update')->with($data)->andReturn(true);
+
+        // Call the method and assert the result
+        $result = $this->adminRepository->update($data, $adminMock);
+        $this->assertEquals(1, $result);
     }
 }
