@@ -14,7 +14,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
-use function Symfony\Component\Translation\t;
 
 class InvoiceController extends Controller
 {
@@ -53,7 +52,7 @@ class InvoiceController extends Controller
     public function create()
     {
         return view('pages.payments.invoices.create', [
-            'contacts' => $this->userRepository->getAllByRole('player'),
+            'contacts' => $this->userRepository->getAll(role: 'player'),
             'taxes' => $this->taxRepository->getAll(),
             'products' => $this->productRepository->getAll(),
         ]);
