@@ -238,7 +238,7 @@ class SubscriptionService extends Service
 
     public function create()
     {
-        $players = $this->userRepository->getAllByRole('player');
+        $players = $this->userRepository->getAll(role: 'player');
         $taxes = $this->taxRepository->getAll();
 //        $products = $this->productRepository->getByPriceOption('subscription');
         return compact('players', 'taxes');
