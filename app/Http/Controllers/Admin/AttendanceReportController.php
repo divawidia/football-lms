@@ -91,8 +91,8 @@ class AttendanceReportController extends Controller
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
         $team = $request->input('team');
-        $eventType = $request->input('eventType');
-        return $this->attendanceReportService->attendanceDatatables($team, $startDate, $endDate, $eventType);
+
+        return $this->attendanceReportService->matchAttendanceDatatables($team, $startDate, $endDate);
     }
 
     public function coachIndex(Request $request){
@@ -100,8 +100,8 @@ class AttendanceReportController extends Controller
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
         $team = $request->input('team');
-        $eventType = $request->input('eventType');
-        return $this->attendanceReportService->coachAttendanceDatatables($coach, $team, $startDate, $endDate, $eventType);
+
+        return $this->attendanceReportService->matchAttendanceDatatables($team ?? $coach->teams, $startDate, $endDate);
     }
 
     public function show(Player $player){
@@ -113,19 +113,19 @@ class AttendanceReportController extends Controller
     }
 
     public function matchDatatable(Player $player){
-            return $this->attendanceReportService->dataTablesMatch($player);
+            return $this->attendanceReportService->playerMatch($player);
     }
 
     public function trainingTable(Player $player){
-            return $this->attendanceReportService->dataTablesTraining($player);
+            return $this->attendanceReportService->playerTrainings($player);
     }
 
     public function playerMatchHistories(){
         $player = $this->getLoggedPLayerUser();
-        return $this->attendanceReportService->dataTablesMatch($player);
+        return $this->attendanceReportService->playerMatch($player);
     }
     public function playerTrainingHistories(){
         $player = $this->getLoggedPLayerUser();
-        return $this->attendanceReportService->dataTablesTraining($player);
+        return $this->attendanceReportService->playerTrainings($player);
     }
 }

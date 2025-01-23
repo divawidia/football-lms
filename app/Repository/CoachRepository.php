@@ -7,7 +7,9 @@ use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
 use App\Models\Team;
 use App\Repository\Interface\CoachRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class CoachRepository implements CoachRepositoryInterface
 {
@@ -22,22 +24,22 @@ class CoachRepository implements CoachRepositoryInterface
         $this->coachCertification = $coachCertification;
     }
 
-    public function getAll($certification = null, $specializations = null, $team = null, $status = null)
+    public function getAll($relations = [], $certification = null, $specializations = null, $team = null, $status = null, $columns = ['*']): Collection
     {
-        $query = $this->coach->with('user', 'teams');
+        $query = $this->coach->with($relations);
         if ($team) {
             $query->whereRelation('teams', 'teamId', $team);
         }
         if ($certification) {
-            $query->where('certificationLevel', $certification);
+            $query->where('certificationId', $certification);
         }
         if ($specializations) {
-            $query->where('specialization', $specializations);
+            $query->where('specializationId', $specializations);
         }
         if ($status != null) {
             $query->whereRelation('user','status', $status);
         }
-        return $query->get();
+        return $query->get($columns);
     }
 
     public function getCoachNotJoinSpecificTeam(Team $team)
@@ -56,6 +58,27 @@ class CoachRepository implements CoachRepositoryInterface
     public function getAllCoachCertification()
     {
         return $this->coachCertification->all();
+    }
+
+    public function matchStats(Coach $coach, $startDate = null, $endDate = null, $result = null, $retrievalMethod = 'count', $column = null)
+    {
+        $query = $coach->coachMatchStats();
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('coach_match_stats.created_at', [$startDate, $endDate]);
+        }
+
+        if (!$result) {
+            $query->where('coach_match_stats.resultStatus', $result);
+        }
+
+        if ($retrievalMethod == 'count') {
+            return $query->count();
+        } elseif ($retrievalMethod == 'sum') {
+            return $query->sum($column);
+        } else {
+            return $query->get($column);
+        }
     }
 
     public function create(array $data)

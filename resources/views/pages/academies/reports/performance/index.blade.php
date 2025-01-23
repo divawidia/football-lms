@@ -28,32 +28,32 @@
 
         <div class="row mb-3">
             @if(isAllAdmin() || isCoach())
-                @include('components.stats-card', ['title' => 'Match Played','data' => $overviewStats['totalMatchPlayed'], 'dataThisMonth' => $overviewStats['thisMonthTotalMatchPlayed']])
-                @include('components.stats-card', ['title' => 'Goals','data' => $overviewStats['totalGoals'], 'dataThisMonth' => $overviewStats['thisMonthTotalGoals']])
-                @include('components.stats-card', ['title' => 'Goals Conceded','data' => $overviewStats['totalGoalsConceded'], 'dataThisMonth' => $overviewStats['thisMonthTotalGoalsConceded']])
-                @include('components.stats-card', ['title' => 'Goals Difference','data' => $overviewStats['goalsDifference'], 'dataThisMonth' => $overviewStats['thisMonthGoalsDifference']])
-                @include('components.stats-card', ['title' => 'Clean Sheets','data' => $overviewStats['totalCleanSheets'], 'dataThisMonth' => $overviewStats['thisMonthTotalCleanSheets']])
-                @include('components.stats-card', ['title' => 'Own Goals','data' => $overviewStats['totalOwnGoals'], 'dataThisMonth' => $overviewStats['thisMonthTotalOwnGoals']])
-                @include('components.stats-card', ['title' => 'Wins','data' => $overviewStats['totalWins'], 'dataThisMonth' => $overviewStats['thisMonthTotalWins']])
-                @include('components.stats-card', ['title' => 'Losses','data' => $overviewStats['totalLosses'], 'dataThisMonth' => $overviewStats['thisMonthTotalLosses']])
-                @include('components.stats-card', ['title' => 'Draws','data' => $overviewStats['totalDraws'], 'dataThisMonth' => $overviewStats['thisMonthTotalDraws']])
+                @include('components.cards.stats-card', ['title' => 'Match Played','data' => $overviewStats['totalMatchPlayed'], 'dataThisMonth' => $overviewStats['thisMonthTotalMatchPlayed']])
+                @include('components.cards.stats-card', ['title' => 'Goals','data' => $overviewStats['totalGoals'], 'dataThisMonth' => $overviewStats['thisMonthTotalGoals']])
+                @include('components.cards.stats-card', ['title' => 'Goals Conceded','data' => $overviewStats['totalGoalsConceded'], 'dataThisMonth' => $overviewStats['thisMonthTotalGoalsConceded']])
+                @include('components.cards.stats-card', ['title' => 'Goals Difference','data' => $overviewStats['goalsDifference'], 'dataThisMonth' => $overviewStats['thisMonthGoalsDifference']])
+                @include('components.cards.stats-card', ['title' => 'Clean Sheets','data' => $overviewStats['totalCleanSheets'], 'dataThisMonth' => $overviewStats['thisMonthTotalCleanSheets']])
+                @include('components.cards.stats-card', ['title' => 'Own Goals','data' => $overviewStats['totalOwnGoals'], 'dataThisMonth' => $overviewStats['thisMonthTotalOwnGoals']])
+                @include('components.cards.stats-card', ['title' => 'Wins','data' => $overviewStats['totalWins'], 'dataThisMonth' => $overviewStats['thisMonthTotalWins']])
+                @include('components.cards.stats-card', ['title' => 'Losses','data' => $overviewStats['totalLosses'], 'dataThisMonth' => $overviewStats['thisMonthTotalLosses']])
+                @include('components.cards.stats-card', ['title' => 'Draws','data' => $overviewStats['totalDraws'], 'dataThisMonth' => $overviewStats['thisMonthTotalDraws']])
 
             @elseif(isPlayer())
-                @include('components.stats-card', ['title' => 'Match Played','data' => $overviewStats['matchPlayed'], 'dataThisMonth' => $overviewStats['thisMonthMatchPlayed']])
-                @include('components.stats-card', ['title' => 'Minutes Played','data' => $overviewStats['statsData']['minutesPlayed'], 'dataThisMonth' => $overviewStats['statsData']['minutesPlayedThisMonth']])
-                @include('components.stats-card', ['title' => 'Fouls','data' => $overviewStats['statsData']['fouls'], 'dataThisMonth' => $overviewStats['statsData']['foulsThisMonth']])
-                @include('components.stats-card', ['title' => 'Saves','data' => $overviewStats['statsData']['saves'], 'dataThisMonth' => $overviewStats['statsData']['savesThisMonth']])
-                @include('components.stats-card', ['title' => 'Goals','data' => $overviewStats['statsData']['goals'], 'dataThisMonth' => $overviewStats['statsData']['goalsThisMonth']])
-                @include('components.stats-card', ['title' => 'Assists','data' => $overviewStats['statsData']['assists'], 'dataThisMonth' => $overviewStats['statsData']['assistsThisMonth']])
-                @include('components.stats-card', ['title' => 'Own Goals','data' => $overviewStats['statsData']['ownGoal'], 'dataThisMonth' => $overviewStats['statsData']['ownGoalThisMonth']])
-                @include('components.stats-card', ['title' => 'Shots','data' => $overviewStats['statsData']['shots'], 'dataThisMonth' => $overviewStats['statsData']['shotsThisMonth']])
-                @include('components.stats-card', ['title' => 'Passes','data' => $overviewStats['statsData']['passes'], 'dataThisMonth' => $overviewStats['statsData']['passesThisMonth']])
-                @include('components.stats-card', ['title' => 'Fouls','data' => $overviewStats['statsData']['fouls'], 'dataThisMonth' => $overviewStats['statsData']['foulsThisMonth']])
-                @include('components.stats-card', ['title' => 'Yellow Cards','data' => $overviewStats['statsData']['yellowCards'], 'dataThisMonth' => $overviewStats['statsData']['yellowCardsThisMonth']])
-                @include('components.stats-card', ['title' => 'Red Cards','data' => $overviewStats['statsData']['redCards'], 'dataThisMonth' => $overviewStats['statsData']['redCardsThisMonth']])
-                @include('components.stats-card', ['title' => 'Wins','data' => $overviewStats['statsData']['Win'], 'dataThisMonth' => $overviewStats['statsData']['WinThisMonth']])
-                @include('components.stats-card', ['title' => 'Losses','data' => $overviewStats['statsData']['Lose'], 'dataThisMonth' => $overviewStats['statsData']['LoseThisMonth']])
-                @include('components.stats-card', ['title' => 'Draws','data' => $overviewStats['statsData']['Draw'], 'dataThisMonth' => $overviewStats['statsData']['DrawThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Match Played','data' => $overviewStats['matchPlayed'], 'dataThisMonth' => $overviewStats['thisMonthMatchPlayed']])
+                @include('components.cards.stats-card', ['title' => 'Minutes Played','data' => $overviewStats['statsData']['minutesPlayed'], 'dataThisMonth' => $overviewStats['statsData']['minutesPlayedThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Fouls','data' => $overviewStats['statsData']['fouls'], 'dataThisMonth' => $overviewStats['statsData']['foulsThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Saves','data' => $overviewStats['statsData']['saves'], 'dataThisMonth' => $overviewStats['statsData']['savesThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Goals','data' => $overviewStats['statsData']['goals'], 'dataThisMonth' => $overviewStats['statsData']['goalsThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Assists','data' => $overviewStats['statsData']['assists'], 'dataThisMonth' => $overviewStats['statsData']['assistsThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Own Goals','data' => $overviewStats['statsData']['ownGoal'], 'dataThisMonth' => $overviewStats['statsData']['ownGoalThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Shots','data' => $overviewStats['statsData']['shots'], 'dataThisMonth' => $overviewStats['statsData']['shotsThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Passes','data' => $overviewStats['statsData']['passes'], 'dataThisMonth' => $overviewStats['statsData']['passesThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Fouls','data' => $overviewStats['statsData']['fouls'], 'dataThisMonth' => $overviewStats['statsData']['foulsThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Yellow Cards','data' => $overviewStats['statsData']['yellowCards'], 'dataThisMonth' => $overviewStats['statsData']['yellowCardsThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Red Cards','data' => $overviewStats['statsData']['redCards'], 'dataThisMonth' => $overviewStats['statsData']['redCardsThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Wins','data' => $overviewStats['statsData']['Win'], 'dataThisMonth' => $overviewStats['statsData']['WinThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Losses','data' => $overviewStats['statsData']['Lose'], 'dataThisMonth' => $overviewStats['statsData']['LoseThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Draws','data' => $overviewStats['statsData']['Draw'], 'dataThisMonth' => $overviewStats['statsData']['DrawThisMonth']])
             @endif
 
         </div>
@@ -80,7 +80,7 @@
                         <div class="page-separator__text">Latest Match</div>
                     </div>
                     @foreach($latestMatches as $latestMatch)
-                            <x-match-card :match="$latestMatch" :latestMatch="true"/>
+                        <x-match-card :match="$latestMatch" :latestMatch="true"/>
                     @endforeach
                 </div>
             </div>

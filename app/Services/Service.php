@@ -41,10 +41,6 @@ class Service
         }
     }
 
-    public function getAcademyTeams(){
-        return Team::where('teamSide', 'Academy Team')->get();
-    }
-
     public function getUserFullName(User $user): string
     {
         return $user->firstName . ' ' . $user->lastName;

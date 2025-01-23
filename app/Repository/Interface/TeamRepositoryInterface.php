@@ -4,24 +4,13 @@ namespace App\Repository\Interface;
 
 use App\Models\Coach;
 use App\Models\Competition;
-use App\Models\GroupDivision;
 use App\Models\Player;
 
 interface TeamRepositoryInterface
 {
-    public function getAll();
+    public function getAll($withRelation = [], $exceptTeamId = null, $exceptCoach = null, $exceptPLayer = null, $columns = ['*']);
 
     public function getByTeamside($teamSide, $exceptTeamId = null);
-
-    public function getInArray(array $ids);
-
-    public function getTeamsHaventJoinedByCoach(Coach $coach);
-
-    public function getTeamsHaventJoinedByPLayer(Player $player);
-
-    public function getTeamsHaventJoinedCompetition(Competition $competition, $teamSide);
-
-    public function getTeamsJoinedGroupDivision(GroupDivision $groupDivision, $teamSide, $exceptTeamId = null);
 
     public function getJoinedCompetition(Competition $competition);
 

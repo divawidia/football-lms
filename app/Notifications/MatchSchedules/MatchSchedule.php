@@ -2,7 +2,7 @@
 
 namespace App\Notifications\MatchSchedules;
 
-use App\Models\Match;
+use App\Models\MatchModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notification;
 class MatchSchedule extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected Match $matchSchedule;
+    protected MatchModel $matchSchedule;
     protected string $status;
 
     /**
@@ -45,26 +45,33 @@ class MatchSchedule extends Notification implements ShouldQueue
         if ($this->status == 'create') {
             $subject = "New Match Session Scheduled";
             $openingLine = "A new ".$openingLine;
-        } elseif ($this->status == 'delete') {
+        }
+        elseif ($this->status == 'delete') {
             $subject = "Match Session Deleted";
             $openingLine = $openingLine." has been deleted.";
-        } elseif ($this->status == 'update') {
+        }
+        elseif ($this->status == 'update') {
             $subject = "Match Session Updated";
             $openingLine = $openingLine." has been updated.";
-        } elseif ($this->status == 'reminder') {
+        }
+        elseif ($this->status == 'reminder') {
             $subject = "Match Session Reminder";
             $openingLine = $openingLine." start tomorrow.";
             $closingLine = "Please arrive on time and be prepared for your tomorrow match!";
-        } elseif ($this->status == 'ongoing') {
+        }
+        elseif ($this->status == 'ongoing') {
             $subject = "Match Session is Ongoing";
             $openingLine = $openingLine." is now ongoing.";
-        } elseif ($this->status == 'completed') {
+        }
+        elseif ($this->status == 'completed') {
             $subject = "Match Session Have Been Completed";
             $openingLine = $openingLine." have been completed.";
-        } elseif ($this->status == 'cancelled') {
+        }
+        elseif ($this->status == 'cancelled') {
             $subject = "Match Session Have Been Cancelled";
             $openingLine = $openingLine." have been cancelled.";
-        } elseif ($this->status == 'scheduled') {
+        }
+        elseif ($this->status == 'scheduled') {
             $subject = "Match Session Have Been Set to Scheduled";
             $openingLine = $openingLine." have been set to scheduled.";
         }
@@ -119,6 +126,7 @@ class MatchSchedule extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
+            'title' => $this->messageText()['subject'],
             'data' => $this->messageText()['systemNotifText'],
             'redirectRoute' => $this->rediredtRoute()
         ];

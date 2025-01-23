@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Trainings;
 
-use App\Repository\EventScheduleRepository;
-use App\Services\EventScheduleService;
+use App\Repository\MatchRepository;
+use App\Services\MatchService;
 use Illuminate\Console\Command;
 
 class CompletedTrainingStatus extends Command
@@ -21,10 +21,10 @@ class CompletedTrainingStatus extends Command
      * @var string
      */
     protected $description = 'Completed training status records where the end date has passed';
-    private EventScheduleService $eventScheduleService;
-    private EventScheduleRepository $eventScheduleRepository;
+    private MatchService $eventScheduleService;
+    private MatchRepository $eventScheduleRepository;
 
-    public function __construct(EventScheduleService $eventScheduleService, EventScheduleRepository $eventScheduleRepository)
+    public function __construct(MatchService $eventScheduleService, MatchRepository $eventScheduleRepository)
     {
         parent::__construct();
         $this->eventScheduleService = $eventScheduleService;

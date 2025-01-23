@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Matches;
 
-use App\Repository\EventScheduleRepository;
-use App\Services\EventScheduleService;
+use App\Repository\MatchRepository;
+use App\Services\MatchService;
 use Illuminate\Console\Command;
 
 class StartMatchStatus extends Command
@@ -22,10 +22,10 @@ class StartMatchStatus extends Command
      */
     protected $description = 'Set match schedule status records to ongoing where the start date has passed';
 
-    private EventScheduleService $eventScheduleService;
-    private EventScheduleRepository $eventScheduleRepository;
-    public function __construct(EventScheduleService $eventScheduleService,
-                                EventScheduleRepository $eventScheduleRepository)
+    private MatchService $eventScheduleService;
+    private MatchRepository $eventScheduleRepository;
+    public function __construct(MatchService    $eventScheduleService,
+                                MatchRepository $eventScheduleRepository)
     {
         parent::__construct();
         $this->eventScheduleService = $eventScheduleService;
@@ -37,7 +37,7 @@ class StartMatchStatus extends Command
      */
     public function handle()
     {
-        $matches = $this->eventScheduleRepository->getScheduledEvent('Match');
+        $matches = $this->eventScheduleRepository->getAll(relations: [], status: ['Scheduled'], beforeStartDate: true);
         foreach ($matches as $data) {
             $this->eventScheduleService->setStatus($data, 'Ongoing');
         }

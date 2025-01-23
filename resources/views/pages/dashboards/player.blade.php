@@ -23,19 +23,19 @@
         </div>
 
         <div class="row card-group-row mb-4">
-            @include('components.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['thisMonthMatchPlayed']])
-            @include('components.stats-card', ['title' => 'Minutes Played','data' => $overview['statsData']['minutesPlayed'], 'dataThisMonth' => $overview['statsData']['minutesPlayedThisMonth']])
-            @include('components.stats-card', ['title' => 'Fouls','data' => $overview['statsData']['fouls'], 'dataThisMonth' => $overview['statsData']['foulsThisMonth']])
+            @include('components.cards.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['thisMonthMatchPlayed']])
+            @include('components.cards.stats-card', ['title' => 'Minutes Played','data' => $overview['statsData']['minutesPlayed'], 'dataThisMonth' => $overview['statsData']['minutesPlayedThisMonth']])
+            @include('components.cards.stats-card', ['title' => 'Fouls','data' => $overview['statsData']['fouls'], 'dataThisMonth' => $overview['statsData']['foulsThisMonth']])
             @if($data->position == 'Goalkeeper (GK)')
-                @include('components.stats-card', ['title' => 'Saves','data' => $overview['statsData']['saves'], 'dataThisMonth' => $overview['statsData']['savesThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Saves','data' => $overview['statsData']['saves'], 'dataThisMonth' => $overview['statsData']['savesThisMonth']])
             @else
-                @include('components.stats-card', ['title' => 'Goals','data' => $overview['statsData']['goals'], 'dataThisMonth' => $overview['statsData']['goalsThisMonth']])
+                @include('components.cards.stats-card', ['title' => 'Goals','data' => $overview['statsData']['goals'], 'dataThisMonth' => $overview['statsData']['goalsThisMonth']])
             @endif
-            @include('components.stats-card', ['title' => 'Assists','data' => $overview['statsData']['assists'], 'dataThisMonth' => $overview['statsData']['assistsThisMonth']])
-            @include('components.stats-card', ['title' => 'Own Goals','data' => $overview['statsData']['ownGoal'], 'dataThisMonth' => $overview['statsData']['ownGoalThisMonth']])
-            @include('components.stats-card', ['title' => 'Wins','data' => $overview['statsData']['Win'], 'dataThisMonth' => $overview['statsData']['WinThisMonth']])
-            @include('components.stats-card', ['title' => 'Losses','data' => $overview['statsData']['Lose'], 'dataThisMonth' => $overview['statsData']['LoseThisMonth']])
-            @include('components.stats-card', ['title' => 'Draws','data' => $overview['statsData']['Draw'], 'dataThisMonth' => $overview['statsData']['DrawThisMonth']])
+            @include('components.cards.stats-card', ['title' => 'Assists','data' => $overview['statsData']['assists'], 'dataThisMonth' => $overview['statsData']['assistsThisMonth']])
+            @include('components.cards.stats-card', ['title' => 'Own Goals','data' => $overview['statsData']['ownGoal'], 'dataThisMonth' => $overview['statsData']['ownGoalThisMonth']])
+            @include('components.cards.stats-card', ['title' => 'Wins','data' => $overview['statsData']['Win'], 'dataThisMonth' => $overview['statsData']['WinThisMonth']])
+            @include('components.cards.stats-card', ['title' => 'Losses','data' => $overview['statsData']['Lose'], 'dataThisMonth' => $overview['statsData']['LoseThisMonth']])
+            @include('components.cards.stats-card', ['title' => 'Draws','data' => $overview['statsData']['Draw'], 'dataThisMonth' => $overview['statsData']['DrawThisMonth']])
         </div>
 
         <div class="row">
@@ -61,33 +61,33 @@
                 </div>
 
                 @foreach($teams as $team)
-                        <a class="card" href="{{ route('team-managements.show', ['team'=>$team->hash]) }}">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6 d-flex flex-column flex-md-row align-items-center">
-                                        <img src="{{ Storage::url($team->logo) }}"
-                                             width="50"
-                                             height="50"
-                                             class="rounded-circle img-object-fit-cover"
-                                             alt="team-logo">
-                                        <div class="ml-md-3 text-center text-md-left">
-                                            <h5 class="mb-0">{{$team->teamName}}</h5>
-                                            <p class="text-50 lh-1 mb-0">{{$team->ageGroup}}</p>
-                                        </div>
+                    <a class="card" href="{{ route('team-managements.show', ['team'=>$team->hash]) }}">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6 d-flex flex-column flex-md-row align-items-center">
+                                    <img src="{{ Storage::url($team->logo) }}"
+                                         width="50"
+                                         height="50"
+                                         class="rounded-circle img-object-fit-cover"
+                                         alt="team-logo">
+                                    <div class="ml-md-3 text-center text-md-left">
+                                        <h5 class="mb-0">{{$team->teamName}}</h5>
+                                        <p class="text-50 lh-1 mb-0">{{$team->ageGroup}}</p>
                                     </div>
-                                    <div class="col-6 d-flex flex-column justify-content-center align-items-end">
-                                        <div>
-                                            <i class='fa fa-users icon-16pt text-danger mr-2'></i>
-                                            {{ $team->players()->count() }} Players
-                                        </div>
-                                        <div>
-                                            <i class="fa fa-user-tie icon-16pt text-danger mr-2"></i>
-                                            {{ $team->coaches()->count() }} Coaches
-                                        </div>
+                                </div>
+                                <div class="col-6 d-flex flex-column justify-content-center align-items-end">
+                                    <div>
+                                        <i class='fa fa-users icon-16pt text-danger mr-2'></i>
+                                        {{ $team->players()->count() }} Players
+                                    </div>
+                                    <div>
+                                        <i class="fa fa-user-tie icon-16pt text-danger mr-2"></i>
+                                        {{ $team->coaches()->count() }} Coaches
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        </div>
+                    </a>
                 @endforeach
             </div>
         </div>
@@ -238,8 +238,8 @@
             <div class="page-separator__text">player performance review</div>
         </div>
         <x-player-performance-review-table
-            :route="route('player-managements.performance-reviews', ['player' => $data->id])"
-            tableId="performanceReviewTable"/>
+                :route="route('player-managements.performance-reviews', ['player' => $data->id])"
+                tableId="performanceReviewTable"/>
 
         {{--Parents/Guardians Section--}}
         <div class="page-separator">

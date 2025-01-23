@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Trainings;
 
-use App\Repository\EventScheduleRepository;
-use App\Services\EventScheduleService;
+use App\Repository\MatchRepository;
+use App\Services\MatchService;
 use Illuminate\Console\Command;
 
 class StartTrainingStatus extends Command
@@ -22,10 +22,10 @@ class StartTrainingStatus extends Command
      */
     protected $description = 'Set training status records to ongoing where the start date has passed';
 
-    private EventScheduleService $eventScheduleService;
-    private EventScheduleRepository $eventScheduleRepository;
-    public function __construct(EventScheduleService $eventScheduleService,
-                                EventScheduleRepository $eventScheduleRepository)
+    private MatchService $eventScheduleService;
+    private MatchRepository $eventScheduleRepository;
+    public function __construct(MatchService    $eventScheduleService,
+                                MatchRepository $eventScheduleRepository)
     {
         parent::__construct();
         $this->eventScheduleService = $eventScheduleService;

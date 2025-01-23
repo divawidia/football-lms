@@ -23,17 +23,17 @@ class CompetitionService extends Service
     private PlayerRepository $playerRepository;
     private CoachRepository $coachRepository;
     private UserRepository $userRepository;
-    private EventScheduleService $eventScheduleService;
+    private MatchService $eventScheduleService;
     private DatatablesHelper $datatablesService;
 
     public function __construct(
         CompetitionRepository $competitionRepository,
-        TeamRepository $teamRepository,
-        PlayerRepository $playerRepository,
-        CoachRepository $coachRepository,
-        UserRepository $userRepository,
-        EventScheduleService $eventScheduleService,
-        DatatablesHelper $datatablesService
+        TeamRepository        $teamRepository,
+        PlayerRepository      $playerRepository,
+        CoachRepository       $coachRepository,
+        UserRepository        $userRepository,
+        MatchService          $eventScheduleService,
+        DatatablesHelper      $datatablesService
     )
     {
         $this->competitionRepository = $competitionRepository;

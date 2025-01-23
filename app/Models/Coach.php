@@ -14,8 +14,8 @@ class Coach extends Model
     use HasFactory, HashableId;
 
     protected $fillable = [
-        'certificationLevel',
-        'specialization',
+        'certificationId',
+        'specializationId',
         'height',
         'weight',
         'joinDate',
@@ -62,6 +62,7 @@ class Coach extends Model
                 'resultStatus',
                 'teamPasses',
                 'goalConceded',
+                'goalScored',
                 'cleanSheets',
             )->withTimestamps();
     }
@@ -77,11 +78,11 @@ class Coach extends Model
 
     public function certification(): BelongsTo
     {
-        return $this->belongsTo(CoachCertification::class, 'certificationLevel');
+        return $this->belongsTo(CoachCertification::class, 'certificationId');
     }
     public function specialization(): BelongsTo
     {
-        return $this->belongsTo(CoachSpecialization::class, 'specialization');
+        return $this->belongsTo(CoachSpecialization::class, 'specializationId');
     }
 
 }

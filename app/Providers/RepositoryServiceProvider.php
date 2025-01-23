@@ -11,10 +11,12 @@ use App\Repository\Interface\CoachRepositoryInterface;
 use App\Repository\Interface\LeagueStandingRepositoryInterface;
 use App\Repository\Interface\PlayerRepositoryInterface;
 use App\Repository\Interface\TeamRepositoryInterface;
+use App\Repository\Interface\TrainingRepositoryInterface;
 use App\Repository\Interface\UserRepositoryInterface;
 use App\Repository\LeagueStandingRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
+use App\Repository\TrainingRepository;
 use App\Repository\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,6 +34,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CoachRepositoryInterface::class, CoachRepository::class);
         $this->app->bind(CoachMatchStatsRepositoryInterface::class, CoachMatchStatsRepository::class);
         $this->app->bind(LeagueStandingRepositoryInterface::class, LeagueStandingRepository::class);
+        $this->app->bind(TrainingRepositoryInterface::class, TrainingRepository::class);
     }
 
     /**

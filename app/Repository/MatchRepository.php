@@ -7,29 +7,23 @@ use App\Models\Player;
 use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
-class EventScheduleRepository
+class MatchRepository
 {
     protected MatchModel $match;
     public function __construct(MatchModel $match)
     {
-        $this->eventSchedule = $match;
+        $this->match = $match;
     }
 
-    public function getAll()
+    public function getAll($relations = ['teams', 'competition', 'players'], $teams = null, $status = null, $take = null, $startDate = null, $endDate = null, $beforeStartDate = false, $beforeEndDate = false, $reminderNotified = null, $orderBy = 'date', $orderDirection = 'desc', $columns = ['*']): Collection|array
     {
-        return $this->eventSchedule->all();
-    }
-
-    public function getEvent($status, $eventType = null, $take = null, $startDate = null, $endDate = null, $teams = null)
-    {
-        $query = $this->eventSchedule->with('teams', 'competition', 'players')
-            ->whereIn('status', $status)
-            ->where('isOpponentTeamMatch', '0');
-        if ($eventType) {
-            $query->where('eventType', $eventType);
+        $query = $this->match->with($relations);
+        if ($status != null) {
+            $query->whereIn('status', $status);
         }
         if ($teams != null) {
             $teamIds = collect($teams)->pluck('id')->all();
@@ -40,47 +34,44 @@ class EventScheduleRepository
         if ($startDate != null && $endDate != null){
             $query->whereBetween('date', [$startDate, $endDate]);
         }
+        if ($beforeStartDate) {
+            $query->where('startDatetime', '<=', Carbon::now());
+        }
+        if ($beforeEndDate) {
+            $query->where('endDatetime', '<=', Carbon::now());
+        }
+        if ($reminderNotified != null) {
+            $query->where('isReminderNotified', $reminderNotified);
+        }
         if ($take){
             $query->take($take);
         }
-        return $query->orderBy('date', 'desc')->get();
+        return $query->orderBy($orderBy, $orderDirection)->get($columns);
     }
 
-    public function getUpcomingEvent($eventType, $hour)
+    public function getByRelation($relation, $withRelation = [], $status = null, $startDate = null, $endDate = null, $take = null, $orderBy = 'date', $orderDirection = 'asc', $column = ['*'])
     {
-        return $this->eventSchedule->with('teams', 'competition')
-            ->where('eventType', $eventType)
-            ->where('status', 'Scheduled')
-            ->where('isReminderNotified', '=','0')
-            ->whereBetween('startDateTime', [Carbon::now(), Carbon::now()->addHours($hour)])
-            ->orderBy('startDateTime')->get();
-    }
-    public function getScheduledEvent($eventType)
-    {
-        return $this->eventSchedule->with('teams', 'competition')
-            ->where('eventType', $eventType)
-            ->where('status', 'Scheduled')
-            ->where('startDatetime', '<=', Carbon::now())
-            ->get();
-    }
-    public function getEndingEvent($eventType)
-    {
-        return $this->eventSchedule->with('teams', 'competition')
-            ->where('eventType', $eventType)
-            ->where('status', 'Ongoing')
-            ->where('endDatetime', '<=', Carbon::now())
-            ->get();
+        $query = $relation->matches()->with($withRelation);
+        if ($status != null) {
+            $query->whereIn('status', $status);
+        }
+        if ($startDate != null && $endDate != null){
+            $query->whereBetween('date', [$startDate, $endDate]);
+        }
+        if ($take){
+            $query->take($take);
+        }
+        return $query->orderBy($orderBy, $orderDirection)->get($column);
     }
 
-    public function getEventByModel($model, $eventType, $status, $take = null, $sortDateDirection = 'asc')
+    public function getEventByModel($model, $status = [], $take = null, $orderBy = 'date', $orderDirection = 'asc', $column = ['*'])
     {
-        $query = $model->schedules()->with('teams', 'competition')
-            ->where('eventType', $eventType)
+        $query = $model->matches()->with('teams', 'competition')
             ->whereIn('status', $status);
         if ($take){
             $query->take($take);
         }
-        return $query->orderBy('date', $sortDateDirection)->get();
+        return $query->orderBy($orderBy, $orderDirection)->get($column);
     }
 
     public function playerLatestEvent(Player $player, $eventType, $take = 2)
@@ -95,15 +86,13 @@ class EventScheduleRepository
 
     public function getTeamsMatchPlayed(Team $team = null, $teamSide = 'Academy Team', $startDate = null, $endDate = null)
     {
-        $query = $this->eventSchedule->whereHas('teams', function($q) use ($team, $teamSide) {
+        $query = $this->match->whereHas('teams', function($q) use ($team, $teamSide) {
                 $q->where('teamSide', $teamSide);
                 if ($team != null){
                     $q->where('teamId', $team->id);
                 }
             })
-            ->where('status', 'Completed')
-            ->where('isOpponentTeamMatch', '0')
-            ->where('eventType', 'Match');
+            ->where('status', 'Completed');
 
         if ($startDate != null && $endDate != null){
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -129,7 +118,7 @@ class EventScheduleRepository
 
     public function getAttendanceTrend($startDate, $endDate,  $teams = null, $eventType = null)
     {
-        $query = $this->eventSchedule->from('event_schedules AS es')
+        $query = $this->match->from('event_schedules AS es')
             ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
             ->join('players as p', 'pa.playerId', '=', 'p.id');
 
@@ -165,7 +154,7 @@ class EventScheduleRepository
 
     public function countAttendanceByStatus($startDate, $endDate, $teams = null, $eventType = null)
     {
-        $query = $this->eventSchedule->from('event_schedules AS es')
+        $query = $this->match->from('event_schedules AS es')
             ->join('player_attendance as pa', 'es.id', '=', 'pa.scheduleId')
             ->join('players as p', 'pa.playerId', '=', 'p.id');
 
@@ -221,10 +210,9 @@ class EventScheduleRepository
         }
     }
 
-    public function playerAttendance(Player $player, $status, $startDate, $endDate, $eventType = null) {
-        $query = $player->schedules()
-            ->where('isOpponentTeamMatch', '0')
-            ->where('status', 'Completed');
+    public function playerAttendance(Player $player, $status = null, $startDate = null, $endDate = null): int
+    {
+        $query = $player->matches()->where('status', 'Completed');
 
         if ($startDate != null && $endDate != null){
             $query->whereBetween('date', [$startDate, $endDate]);
@@ -232,20 +220,17 @@ class EventScheduleRepository
         if ($status) {
             $query->where('attendanceStatus', $status);
         }
-        if ($eventType) {
-            $query->where('eventType', $eventType);
-        }
         return $query->count();
     }
 
     public function find($id)
     {
-        return $this->eventSchedule->findOrFail($id);
+        return $this->match->findOrFail($id);
     }
 
     public function create(array $data)
     {
-        return $this->eventSchedule->create($data);
+        return $this->match->create($data);
     }
     public function createRelation(MatchModel $match, array $data, $relation)
     {

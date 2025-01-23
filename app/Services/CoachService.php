@@ -7,16 +7,11 @@ use App\Models\Coach;
 use App\Models\Team;
 use App\Notifications\CoachManagements\CoachAccountCreatedDeleted;
 use App\Notifications\CoachManagements\CoachAccountUpdated;
-use App\Notifications\PlayerCoachAddToTeam;
-use App\Notifications\PlayerCoachRemoveToTeam;
-use App\Repository\CoachMatchStatsRepository;
-use App\Repository\CoachRepository;
+use App\Notifications\AddOrRemoveFromTeam;
 use App\Repository\Interface\CoachMatchStatsRepositoryInterface;
 use App\Repository\Interface\CoachRepositoryInterface;
 use App\Repository\Interface\TeamRepositoryInterface;
 use App\Repository\Interface\UserRepositoryInterface;
-use App\Repository\TeamRepository;
-use App\Repository\UserRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -31,7 +26,13 @@ class CoachService extends Service
     private CoachMatchStatsRepositoryInterface $coachMatchStatsRepository;
     private DatatablesHelper $datatablesHelper;
 
-    public function __construct(CoachRepositoryInterface $coachRepository, TeamRepositoryInterface $teamRepository, UserRepositoryInterface $userRepository, CoachMatchStatsRepositoryInterface $coachMatchStatsRepository, DatatablesHelper $datatablesHelper)
+    public function __construct(
+        CoachRepositoryInterface $coachRepository,
+        TeamRepositoryInterface $teamRepository,
+        UserRepositoryInterface $userRepository,
+        CoachMatchStatsRepositoryInterface $coachMatchStatsRepository,
+        DatatablesHelper $datatablesHelper
+    )
     {
         $this->coachRepository = $coachRepository;
         $this->teamRepository = $teamRepository;
@@ -40,45 +41,19 @@ class CoachService extends Service
         $this->datatablesHelper = $datatablesHelper;
     }
 
-    public function index($certification, $specializations, $team, $status): JsonResponse
+    public function index($certification, $specializations, $team, $status)
     {
-        $query = $this->coachRepository->getAll($certification, $specializations, $team, $status);
+        $query = $this->coachRepository->getAll(['user', 'teams', 'specialization', 'certification'], $certification, $specializations, $team, $status);
+
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                if ($item->user->status == '1') {
-                    $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
-                                                <span class="material-icons text-danger">check_circle</span>
-                                                Deactivate Coach
-                                        </button>';
-                } else {
-                    $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->id.'">
-                                                <span class="material-icons text-success">check_circle</span>
-                                                Activate Coach
-                                        </button>';
-                }
-                return '
-                            <div class="dropdown">
-                              <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="material-icons">
-                                    more_vert
-                                </span>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('coach-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Coach Profile</a>
-                                <a class="dropdown-item" href="' . route('coach-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Coach</a>
-                                ' . $statusButton . '
-                                <a class="dropdown-item changePassword" id="'.$item->id.'"><span class="material-icons">lock</span> Change Coach Password</a>
-                                <button type="button" class="dropdown-item delete-user" id="' . $item->id . '">
-                                    <span class="material-icons text-danger">delete</span> Delete Coach
-                                </button>
-                              </div>
-                            </div>';
+                return $this->indexActionButton($item);
             })
-            ->editColumn('teams', function ($item) {
+            ->addColumn('teams', function ($item) {
                 return $this->datatablesHelper->usersTeams($item);
             })
-            ->editColumn('name', function ($item) {
-                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name. ' - '.$item->certification->name, route('coach-managements.show', $item->hash));
+            ->addColumn('name', function ($item) {
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), "{$item->specialization->name} - {$item->certification->name}", route('coach-managements.show', $item->hash));
             })
             ->editColumn('status', function ($item){
                 return $this->datatablesHelper->activeNonactiveStatus($item->user->status);
@@ -86,29 +61,31 @@ class CoachService extends Service
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
             })
-            ->rawColumns(['action', 'name','status', 'age', 'teams'])
+            ->rawColumns(['action', 'name','status', 'teams'])
+            ->addIndexColumn()
             ->make();
+    }
+
+    public function indexActionButton(Coach $coach)
+    {
+        $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('coach-managements.show', $coach->hash), icon: 'visibility', btnText: 'View coach Profile');
+        $dropdownItem .= $this->datatablesHelper->linkDropdownItem(route: route('coach-managements.edit', $coach->hash), icon: 'edit', btnText: 'edit coach Profile');
+        $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('changePassword', $coach->hash, icon: 'lock', btnText: 'Change coach Account Password');
+        ($coach->user->status == '1')
+            ? $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('setDeactivate', $coach->hash, 'danger', icon: 'check_circle', btnText: 'Deactivate coach Account')
+            : $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('setActivate', $coach->hash, 'success', icon: 'check_circle', btnText: 'Activate coach Account');
+        $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete-user', $coach->hash, 'danger', icon: 'delete', btnText: 'delete coach Account');
+
+        return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+            return $dropdownItem;
+        });
     }
 
     public function coachTeams(Coach $coach): JsonResponse
     {
         return Datatables::of($coach->teams)
             ->addColumn('action', function ($item) {
-                return '
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="'.route('team-managements.edit', $item->hash).'"><span class="material-icons">edit</span> Edit Team</a>
-                            <a class="dropdown-item" href="'.route('team-managements.show', $item->hash).'"><span class="material-icons">visibility</span> View Team</a>
-                            <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
-                                <span class="material-icons text-danger">delete</span> Remove coach from Team
-                            </button>
-                          </div>
-                        </div>';
+                return $this->coachTeamsActionButton($item);
             })
             ->editColumn('name', function ($item) {
                 return $this->datatablesHelper->name($item->logo, $item->teamName, $item->division, route('team-managements.show', $item->hash));
@@ -116,22 +93,32 @@ class CoachService extends Service
             ->editColumn('date', function ($item){
                 return $this->convertToDate($item->pivot->created_at);
             })
-            ->rawColumns(['action', 'name','date'])
+            ->rawColumns(['action', 'name'])
             ->make();
     }
 
+    public function coachTeamsActionButton(Team $team)
+    {
+        $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('team-managements.show', $team->hash), icon: 'visibility', btnText: 'View team Profile');
+        $dropdownItem .= $this->datatablesHelper->linkDropdownItem(route: route('team-managements.edit', $team->hash), icon: 'edit', btnText: 'edit team Profile');
+        $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete-team', $team->hash, 'danger', icon: 'delete', btnText: 'delete team');
+        return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+            return $dropdownItem;
+        });
+    }
+
+
     public function removeTeam(Coach $coach, Team $team)
     {
-        $coach->teams()->detach($team->id);
-        $coach->user->notify(new PlayerCoachRemoveToTeam($team));
-        return $coach;
+        $coach->user->notify(new AddOrRemoveFromTeam($team, 'removed'));
+        return $coach->teams()->detach($team->id);
     }
 
     public function updateTeams($teamData, Coach $coach)
     {
         $coach->teams()->attach($teamData);
         $team =$this->teamRepository->find($teamData)->first();
-        $coach->user->notify(new PlayerCoachAddToTeam($team));
+        $coach->user->notify(new AddOrRemoveFromTeam($team, 'added'));
         return $coach;
     }
 
@@ -142,10 +129,6 @@ class CoachService extends Service
     public function getCoachSpecializations()
     {
         return $this->coachRepository->getAllCoachSpecialization();
-    }
-    public function getTeams()
-    {
-        return $this->teamRepository->getByTeamside('Academy Team');
     }
 
     public  function store(array $data, $academyId, $loggedUser){
@@ -168,76 +151,65 @@ class CoachService extends Service
 
         return $coach;
     }
-    public function show(Coach $coach)
+
+    public function getTeamsHaventJoinedByCoach(Coach $coach)
     {
-        $fullName = $this->getUserFullName($coach->user);
-        $age = $this->getAge($coach->user->dob);
-        $teams = $this->teamRepository->getTeamsHaventJoinedByCoach($coach);
-
-        $totalMatchPlayed = $this->coachMatchStatsRepository->totalMatchPlayed($coach);
-        $thisMonthTotalMatchPlayed = $this->coachMatchStatsRepository->thisMonthTotalMatchPlayed($coach);
-
-        $totalGoals =  $this->coachMatchStatsRepository->totalGoals($coach);
-        $thisMonthTotalGoals = $this->coachMatchStatsRepository->thisMonthTotalGoals($coach);
-
-        $totalGoalsConceded = $this->coachMatchStatsRepository->totalGoalsConceded($coach);
-        $thisMonthTotalGoalsConceded = $this->coachMatchStatsRepository->thisMonthTotalGoalsConceded($coach);
-
-        $totalCleanSheets = $this->coachMatchStatsRepository->totalCleanSheets($coach);
-        $thisMonthTotalCleanSheets = $this->coachMatchStatsRepository->thisMonthTotalCleanSheets($coach);
-
-        $totalOwnGoals = $this->coachMatchStatsRepository->totalOwnGoals($coach);
-        $thisMonthTotalOwnGoals = $this->coachMatchStatsRepository->thisMonthTotalOwnGoals($coach);
-
-        $totalWins = $this->coachMatchStatsRepository->totalWins($coach);
-        $thisMonthTotalWins = $this->coachMatchStatsRepository->thisMonthTotalWins($coach);
-
-        $totalLosses = $this->coachMatchStatsRepository->totalLosses($coach);
-        $thisMonthTotalLosses = $this->coachMatchStatsRepository->thisMonthTotalLosses($coach);
-
-        $totalDraws = $this->coachMatchStatsRepository->totalDraws($coach);
-        $thisMonthTotalDraws = $this->coachMatchStatsRepository->thisMonthTotalDraws($coach);
-
-        $goalsDifference = $totalGoals - $totalGoalsConceded;
-        $thisMonthGoalsDifference = $thisMonthTotalGoals - $thisMonthTotalGoalsConceded;
-
-        return compact(
-            'fullName',
-            'age',
-            'teams',
-            'totalMatchPlayed',
-            'totalGoals',
-            'totalGoalsConceded',
-            'goalsDifference',
-            'totalCleanSheets',
-            'totalOwnGoals',
-            'totalWins',
-            'totalLosses',
-            'totalDraws',
-            'thisMonthTotalMatchPlayed',
-            'thisMonthTotalGoals',
-            'thisMonthTotalGoalsConceded',
-            'thisMonthGoalsDifference',
-            'thisMonthTotalCleanSheets',
-            'thisMonthTotalOwnGoals',
-            'thisMonthTotalWins',
-            'thisMonthTotalLosses',
-            'thisMonthTotalDraws',
-        );
+        return $this->teamRepository->getAll(exceptCoach: $coach);
     }
 
-    public function edit(){
-        $certifications = $this->coachRepository->getAllCoachCertification();
-        $specializations = $this->coachRepository->getAllCoachSpecialization();
-        return compact('certifications', 'specializations');
+    public function totalMatchPlayed(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, matchPlayed: true);
     }
 
-    public function update(array $data, Coach $coach)
+    public function totalGoals(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'goalScored');
+    }
+
+    public function goalConceded(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'goalConceded');
+    }
+
+    public function winRate(Coach $coach, $startDate = null, $endDate = null)
+    {
+        $winRate = ($this->wins($coach, $startDate, $endDate) / $this->totalMatchPlayed($coach, $startDate, $endDate)) * 100;
+        return round($winRate, 2);
+    }
+
+    public function cleanSheets(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'cleanSheets');
+    }
+
+    public function wins(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, 'Win');
+    }
+
+    public function lose(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, 'Lose');
+    }
+
+    public function draw(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, 'Draw');
+    }
+
+    public function goalsDifference(Coach $coach, $startDate = null, $endDate = null)
+    {
+        $goalScored = $this->totalGoals($coach, $startDate, $endDate);
+        $goalConceded = $this->goalConceded($coach, $startDate, $endDate);
+        return $goalScored - $goalConceded;
+    }
+
+    public function update(array $data, Coach $coach): bool
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'user-profile', $coach->user->foto);
-        $this->coachRepository->update($coach, $data);
         $coach->user->notify(new CoachAccountUpdated($coach, 'updated'));
-        return $coach;
+        return $coach->update($data);
     }
 
     public function setStatus(Coach $coach, $status)

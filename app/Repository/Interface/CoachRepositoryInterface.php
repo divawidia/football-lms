@@ -2,39 +2,43 @@
 
 namespace App\Repository\Interface;
 
+use App\Models\Coach;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 interface CoachRepositoryInterface
 {
     /**
      * Retrieve all coaches with related users and teams.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
-    public function getAll($certification = null, $specializations = null, $team = null, $status = null);
+    public function getAll($relations = [], $certification = null, $specializations = null, $team = null, $status = null, $columns = ['*']): Collection;
 
     /**
      * Get coaches not currently assigned to a specific team.
      *
      * @param Team $team
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getCoachNotJoinSpecificTeam(Team $team);
 
     /**
      * Retrieve all coach specializations.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getAllCoachSpecialization();
 
     /**
      * Retrieve all coach certifications.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getAllCoachCertification();
+
+    public function matchStats(Coach $coach, $startDate = null, $endDate = null, $result = null, $retrievalMethod = 'count', $column = null);
 
     /**
      * Create a new coach record.

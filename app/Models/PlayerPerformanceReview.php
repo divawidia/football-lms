@@ -16,6 +16,7 @@ class PlayerPerformanceReview extends Model
         'playerId',
         'coachId',
         'matchId',
+        'trainingId',
         'performanceReview',
     ];
 
@@ -30,5 +31,9 @@ class PlayerPerformanceReview extends Model
     public function match(): BelongsTo
     {
         return $this->belongsTo(MatchModel::class, 'matchId', 'id');
+    }
+    public function training(): BelongsTo
+    {
+        return $this->belongsTo(Training::class, 'trainingId', 'id');
     }
 }

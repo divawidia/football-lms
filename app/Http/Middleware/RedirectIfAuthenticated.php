@@ -21,19 +21,15 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                $user = Auth::user();
 
                 // Redirect based on roles
-                if ($user->hasRole('admin')) {
+                if (isAllAdmin()) {
                     return redirect()->route('admin.dashboard');  // Admin dashboard
-                } elseif ($user->hasRole('coach')) {
+                } elseif (isCoach()) {
                     return redirect()->route('coach.dashboard');  // coach dashboard
-                } elseif ($user->hasRole('player')) {
+                } elseif (isPlayer()) {
                     return redirect()->route('player.dashboard'); // player dashboard
                 }
-
-                // Default redirect if no role matched
-                return redirect()->route('login');
             }
         }
 

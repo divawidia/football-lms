@@ -37,19 +37,9 @@ interface PlayerRepositoryInterface
      */
     public function getPlayerNotAssignedTrainingCourse(TrainingVideo $trainingVideo);
 
-    /**
-     * Get player with attendance statistics
-     *
-     * @param string $startDate
-     * @param string $endDate
-     * @param mixed $teams
-     * @param string|null $eventType
-     * @param bool $mostAttended
-     * @param bool $mostDidntAttend
-     * @return Player|null
-     */
-    public function getAttendedPLayer($startDate, $endDate, $teams = null, $eventType = null, $mostAttended = true, $mostDidntAttend = false);
+    public function getMostAttended($startDate = null, $endDate = null, $teams = null, $relation = 'trainings');
 
+    public function getMostDidntAttended($startDate = null, $endDate = null, $teams = null, $relation = 'trainings');
     /**
      * Find a player by ID
      *
@@ -99,7 +89,7 @@ interface PlayerRepositoryInterface
      * @param string|null $endDate
      * @return int
      */
-    public function matchResults(Player $player, $result, $startDate = null, $endDate = null);
+    public function matchResults(Player $player, $result = null, $startDate = null, $endDate = null);
 
     /**
      * Create a new player

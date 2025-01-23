@@ -16,7 +16,8 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('training-videos.show', $data->trainingVideo->hash) }}" class="nav-link text-70"><i
+                    <a href="{{ route('training-videos.show', $data->trainingVideo->hash) }}"
+                       class="nav-link text-70"><i
                                 class="material-icons icon--left">keyboard_backspace</i> Back
                         to {{ $data->trainingVideo->trainingTitle }}</a>
                 </li>
@@ -42,39 +43,39 @@
 
             <p class="hero__lead measure-hero-lead text-white-50 mb-24pt">{!! $data->description !!}</p>
 
-                <div class="btn-toolbar" role="toolbar">
-                    <button type="button" class="btn btn-sm btn-white editLesson" id="{{ $data->id }}">
-                        <span class="material-icons mr-2">edit</span>
-                        Edit Lesson
+            <div class="btn-toolbar" role="toolbar">
+                <button type="button" class="btn btn-sm btn-white editLesson" id="{{ $data->id }}">
+                    <span class="material-icons mr-2">edit</span>
+                    Edit Lesson
+                </button>
+                @if($data->status == "1")
+                    <button type="button" class="btn btn-sm btn-white mx-2 unpublish-lesson">
+                        <span class="material-icons mr-2 text-danger">block</span>
+                        Unpublish Lesson
                     </button>
-                    @if($data->status == "1")
-                        <button type="button" class="btn btn-sm btn-white mx-2 unpublish-lesson">
-                            <span class="material-icons mr-2 text-danger">block</span>
-                            Unpublish Lesson
-                        </button>
-                    @else
-                        <button type="button" class="btn btn-sm btn-white mx-2 publish-lesson">
-                            <span class="material-icons mr-2 text-success">check_circle</span>
-                            Publish Lesson
-                        </button>
-                    @endif
-                    <button type="button" class="btn btn-sm btn-white deleteLesson" id="{{ $data->id }}">
-                        <span class="material-icons mr-2">delete</span>
-                        Delete Lesson
+                @else
+                    <button type="button" class="btn btn-sm btn-white mx-2 publish-lesson">
+                        <span class="material-icons mr-2 text-success">check_circle</span>
+                        Publish Lesson
                     </button>
-                </div>
+                @endif
+                <button type="button" class="btn btn-sm btn-white deleteLesson" id="{{ $data->id }}">
+                    <span class="material-icons mr-2">delete</span>
+                    Delete Lesson
+                </button>
+            </div>
         </div>
     </div>
     <div class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">
         <div class="container page__container">
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
-                        <i class="material-icons text-muted icon--left">visibility</i>
-                        @if($data->status == '1')
-                            Status : <span class="badge badge-pill badge-success ml-1">Published</span>
-                        @else
-                            Status : <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
-                        @endif
+                    <i class="material-icons text-muted icon--left">visibility</i>
+                    @if($data->status == '1')
+                        Status : <span class="badge badge-pill badge-success ml-1">Published</span>
+                    @else
+                        Status : <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
+                    @endif
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">schedule</i>
@@ -99,9 +100,9 @@
             </div>
 
             <div class="row mb-3">
-                @include('components.stats-card', ['title' => 'Total Assigned Players','data' => $data->players()->count(), 'dataThisMonth' => null])
-                @include('components.stats-card', ['title' => 'Players Completed','data' => $data->players()->where('completionStatus', '1')->count(), 'dataThisMonth' => null])
-                @include('components.stats-card', ['title' => 'Players on progress','data' => $data->players()->where('completionStatus', '0')->count(), 'dataThisMonth' => null])
+                @include('components.cards.stats-card', ['title' => 'Total Assigned Players','data' => $data->players()->count(), 'dataThisMonth' => null])
+                @include('components.cards.stats-card', ['title' => 'Players Completed','data' => $data->players()->where('completionStatus', '1')->count(), 'dataThisMonth' => null])
+                @include('components.cards.stats-card', ['title' => 'Players on progress','data' => $data->players()->where('completionStatus', '0')->count(), 'dataThisMonth' => null])
             </div>
 
             {{--    Assigned Player    --}}
@@ -135,7 +136,8 @@
 
 @push('addon-script')
     <script type="module">
-        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+        import {processWithConfirmation} from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+
         $(document).ready(function () {
             $('#playersTable').DataTable({
                 processing: true,

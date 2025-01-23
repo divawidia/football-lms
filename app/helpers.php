@@ -7,31 +7,32 @@ use Illuminate\Support\Facades\Auth;
 function getLoggedUser(){
     return Auth::user();
 }
-function academyData(){
+function academyData(): Academy
+{
     return Academy::first();
 }
-function isSuperAdmin()
+function isSuperAdmin(): bool
 {
     return getLoggedUser()->hasRole('Super-Admin');
 }
-function isAdmin()
+function isAdmin(): bool
 {
     return getLoggedUser()->hasRole('admin');
 }
-function isAllAdmin()
+function isAllAdmin(): bool
 {
     return getLoggedUser()->hasRole('admin|Super-Admin');
 }
-function isCoach()
+function isCoach(): bool
 {
     return getLoggedUser()->hasRole('coach');
 }
-function isPlayer()
+function isPlayer(): bool
 {
     return getLoggedUser()->hasRole('player');
 }
 
-function checkRoleDashboardRoute()
+function checkRoleDashboardRoute(): string
 {
     $route = '';
     if (isAllAdmin()){
@@ -44,26 +45,38 @@ function checkRoleDashboardRoute()
     return $route;
 }
 
-function secondToMinute($seconds){
+function secondToMinute($seconds): string
+{
     $minutes = floor($seconds / 60);  // Get the number of whole minutes
     $remaining_seconds = $seconds % 60;  // Get the remaining seconds
 
     return $minutes . "m " . $remaining_seconds . "s";
 }
 
-function priceFormat($price){
+function priceFormat($price): string
+{
     return 'Rp. ' . number_format($price);
 }
 
-function convertToDate($timestamp){
+function convertToDate($timestamp): string
+{
     return date('M d, Y', strtotime($timestamp));
 }
 
-function convertToTime($timestamp){
+function convertToTime($timestamp): string
+{
     return date('h:i A', strtotime($timestamp));
 }
-function convertToDatetime($timestamp){
+function convertToDatetime($timestamp): string
+{
     return date('M d, Y ~ h:i A', strtotime($timestamp));
+}
+
+function getAge($date): int
+{
+    $dob = new DateTime($date);
+    $today = new DateTime('today');
+    return $dob->diff($today)->y;
 }
 
 function getUserFullName(User $user): string

@@ -13,7 +13,7 @@ use App\Models\Team;
 use App\Models\TeamMatch;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\CoachRepository;
-use App\Repository\EventScheduleRepository;
+use App\Repository\MatchRepository;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Number;
 use Carbon\Carbon;
@@ -23,8 +23,8 @@ class DashboardService extends CoachService
 {
     private Coach $coach;
     private CoachMatchStatsRepository $coachMatchStatsRepository;
-    private EventScheduleRepository $eventScheduleRepository;
-    public function __construct(Coach $coach, CoachMatchStatsRepository $coachMatchStatsRepository, EventScheduleRepository $eventScheduleRepository){
+    private MatchRepository $eventScheduleRepository;
+    public function __construct(Coach $coach, CoachMatchStatsRepository $coachMatchStatsRepository, MatchRepository $eventScheduleRepository){
         $this->coach = $coach;
         $this->coachMatchStatsRepository = $coachMatchStatsRepository;
         $this->eventScheduleRepository = $eventScheduleRepository;

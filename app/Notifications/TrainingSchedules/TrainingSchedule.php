@@ -2,8 +2,8 @@
 
 namespace App\Notifications\TrainingSchedules;
 
-use App\Models\Match;
 use App\Models\Team;
+use App\Models\Training;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -12,16 +12,16 @@ use Illuminate\Notifications\Notification;
 class TrainingSchedule extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected Match $trainingSchedule;
+    protected Training $training;
     protected Team $team;
     protected string $status;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Match $trainingSchedule, Team $team, $status)
+    public function __construct(Training $training, Team $team, $status)
     {
-        $this->trainingSchedule = $trainingSchedule;
+        $this->training = $training;
         $this->team = $team;
         $this->status = $status;
     }
@@ -42,7 +42,7 @@ class TrainingSchedule extends Notification implements ShouldQueue
     private function messageText()
     {
         $subjectText = '';
-        $openingLine = "Training session {$this->team->teamName} scheduled at ".convertToDatetime($this->trainingSchedule->startDatetime);
+        $openingLine = "Training session {$this->team->teamName} scheduled at ".convertToDatetime($this->training->startDatetime);
         $closingLine = "Please check the training schedule for more information!";
 
         if ($this->status == 'create') {
@@ -81,7 +81,7 @@ class TrainingSchedule extends Notification implements ShouldQueue
         if ($this->status == 'delete') {
             return route('training-schedules.index');
         } else {
-            return route('training-schedules.show', $this->trainingSchedule->hash);
+            return route('training-schedules.show', $this->training->hash);
         }
     }
 
@@ -94,13 +94,13 @@ class TrainingSchedule extends Notification implements ShouldQueue
             ->subject($this->messageText()['subjectText'])
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line($this->messageText()['openingLine'])
-            ->line("Training Topic: {$this->trainingSchedule->eventName}")
+            ->line("Training Topic: {$this->training->eventName}")
             ->line("Team: {$this->team->teamName}")
-            ->line("Location: {$this->trainingSchedule->place}")
-            ->line("Date: ".convertToDate($this->trainingSchedule->date))
-            ->line("Start Time: ".convertToTime($this->trainingSchedule->startTime))
-            ->line("End Time: ".convertToTime($this->trainingSchedule->endTime))
-            ->action('View training session detail', route('training-schedules.show', $this->trainingSchedule->hash))
+            ->line("Location: {$this->training->place}")
+            ->line("Date: ".convertToDate($this->training->date))
+            ->line("Start Time: ".convertToTime($this->training->startTime))
+            ->line("End Time: ".convertToTime($this->training->endTime))
+            ->action('View training session detail', route('training-schedules.show', $this->training->hash))
             ->line($this->messageText()['closingLine'])
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }

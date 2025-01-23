@@ -5,31 +5,23 @@ namespace App\Repository;
 use App\Models\MatchModel;
 use App\Models\Player;
 use App\Models\PlayerPerformanceReview;
+use App\Models\Training;
 
 class PlayerPerformanceReviewRepository
 {
-    protected PlayerPerformanceReview $playerPerformanceReview;
-    public function __construct(PlayerPerformanceReview $playerPerformanceReview)
-    {
-        $this->playerPerformanceReview = $playerPerformanceReview;
-    }
-
-    public function getAll()
-    {
-        return $this->playerPerformanceReview->all();
-    }
-
-    public function getByPlayer(Player $player, MatchModel $match = null)
+    public function getByPlayer(Player $player, MatchModel $match = null, Training $training = null, $retrievalMethod = 'all')
     {
         $query = $player->playerPerformanceReview();
         if ($match){
-            $query->where('eventId', $match->id);
+            $query->where('matchId', $match->id);
         }
-        return $query->get();
-    }
-
-    public function create(array $data)
-    {
-        return $this->playerPerformanceReview->create($data);
+        if ($training){
+            $query->where('trainingId', $training->id);
+        }
+        if ($retrievalMethod == 'all'){
+            return $query->get();
+        } else {
+            return $query->first();
+        }
     }
 }

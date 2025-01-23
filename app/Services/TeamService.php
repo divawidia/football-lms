@@ -7,17 +7,18 @@ use App\Models\Coach;
 use App\Models\Player;
 use App\Models\Team;
 use App\Notifications\OpponentTeamsManagements\OpponentTeamUpdated;
-use App\Notifications\PlayerCoachAddToTeam;
+use App\Notifications\AddOrRemoveFromTeam;
 use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Notifications\TeamsManagements\TeamCreatedDeleted;
 use App\Notifications\TeamsManagements\TeamUpdated;
 use App\Repository\CoachRepository;
-use App\Repository\EventScheduleRepository;
+use App\Repository\MatchRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamMatchRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
 use Yajra\DataTables\Facades\DataTables;
@@ -26,20 +27,20 @@ class TeamService extends Service
 {
     private TeamRepository $teamRepository;
     private UserRepository $userRepository;
-    private EventScheduleRepository $eventScheduleRepository;
+    private MatchRepository $eventScheduleRepository;
     private TeamMatchRepository $teamMatchRepository;
     private DatatablesHelper $datatablesService;
     private PlayerRepository $playerRepository;
     private CoachRepository $coachRepository;
 
     public function __construct(
-        TeamRepository          $teamRepository,
-        UserRepository          $userRepository,
-        EventScheduleRepository $eventScheduleRepository,
-        TeamMatchRepository     $teamMatchRepository,
-        PlayerRepository        $playerRepository,
-        CoachRepository         $coachRepository,
-        DatatablesHelper        $datatablesService)
+        TeamRepository      $teamRepository,
+        UserRepository      $userRepository,
+        MatchRepository     $eventScheduleRepository,
+        TeamMatchRepository $teamMatchRepository,
+        PlayerRepository    $playerRepository,
+        CoachRepository     $coachRepository,
+        DatatablesHelper    $datatablesService)
     {
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
@@ -110,9 +111,9 @@ class TeamService extends Service
         return $this->indexDatatables($query);
     }
 
-    public function allTeams($exceptTeamId = null)
+    public function allTeams($exceptTeamId = null): Collection|array
     {
-        return $this->teamRepository->getByTeamside('Academy Team', $exceptTeamId);
+        return $this->teamRepository->getAll(exceptTeamId:  $exceptTeamId);
     }
 
     public function coachTeamsIndex($coach)
@@ -521,7 +522,7 @@ class TeamService extends Service
     {
         $team->players()->attach($teamData['players']);
         $players = $this->userRepository->getInArray('player', $teamData['players']);
-        Notification::send($players, new PlayerCoachAddToTeam($team));
+        Notification::send($players, new AddOrRemoveFromTeam($team));
         return $team;
     }
 
@@ -529,7 +530,7 @@ class TeamService extends Service
     {
         $team->coaches()->attach($teamData['coaches']);
         $coaches = $this->userRepository->getInArray('coach', $teamData['coaches']);
-        Notification::send($coaches, new PlayerCoachAddToTeam($team));
+        Notification::send($coaches, new AddOrRemoveFromTeam($team));
         return $team;
     }
 

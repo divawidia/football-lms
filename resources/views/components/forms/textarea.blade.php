@@ -5,14 +5,7 @@
     @else
         <small class="text-muted">(Optional)</small>
     @endif
-    <textarea class="form-control h-100 @if(!$modal) @error($name) is-invalid @enderror @endif"
-              id="{{ $name }}"
-              name="{{ $name }}"
-              rows="5"
-              placeholder="{{ $placeholder }}"
-              @if($required) required @endif>
-        @if($modal) {{ old($name, $value) }} @endif
-    </textarea>
+    <textarea class="form-control h-100 @if(!$modal) @error($name) is-invalid @enderror @endif" id="{{ $name }}" name="{{ $name }}" rows="{{ $row }}" placeholder="{{ $placeholder }}" @if($required) required @endif>@if(!$modal){{ old($name, $value) }}@endif</textarea>
     @if($modal)
         <span class="invalid-feedback {{ $name }}_error" role="alert"><strong></strong></span>
     @else

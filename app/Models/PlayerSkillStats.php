@@ -15,7 +15,8 @@ class PlayerSkillStats extends Model
     protected $fillable = [
         'playerId',
         'coachId',
-        'eventId',
+        'trainingId',
+        'matchId',
         'controlling',
         'recieving',
         'dribbling',
@@ -41,5 +42,9 @@ class PlayerSkillStats extends Model
     public function match(): BelongsTo
     {
         return $this->belongsTo(MatchModel::class, 'matchId', 'id');
+    }
+    public function training(): BelongsTo
+    {
+        return $this->belongsTo(Training::class, 'trainingId', 'id');
     }
 }

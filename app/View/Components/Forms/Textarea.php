@@ -14,10 +14,11 @@ class Textarea extends Component
     public $placeholder;
     public $modal;
     public $value;
+    public $row;
     /**
      * Create a new component instance.
      */
-    public function __construct($name, $required = true, $label = null, $placeholder = null, $modal = false, $value = null)
+    public function __construct($name, $required = true, $label = null, $placeholder = null, $modal = false, $value = null, $row = 5)
     {
         $this->name = $name;
         $this->required = $required;
@@ -25,6 +26,7 @@ class Textarea extends Component
         $this->placeholder = $placeholder;
         $this->modal = $modal;
         $this->value = $value;
+        $this->row = $row;
     }
     /**
      * Get the view / contents that represent the component.

@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Matches;
 
-use App\Repository\EventScheduleRepository;
-use App\Services\EventScheduleService;
+use App\Repository\MatchRepository;
+use App\Services\MatchService;
 use Illuminate\Console\Command;
 
 class CompletedMatchStatus extends Command
@@ -21,10 +21,10 @@ class CompletedMatchStatus extends Command
      * @var string
      */
     protected $description = 'Completed match status records where the end date has passed';
-    private EventScheduleService $eventScheduleService;
-    private EventScheduleRepository $eventScheduleRepository;
+    private MatchService $eventScheduleService;
+    private MatchRepository $eventScheduleRepository;
 
-    public function __construct(EventScheduleService $eventScheduleService, EventScheduleRepository $eventScheduleRepository)
+    public function __construct(MatchService $eventScheduleService, MatchRepository $eventScheduleRepository)
     {
         parent::__construct();
         $this->eventScheduleService = $eventScheduleService;
@@ -36,7 +36,7 @@ class CompletedMatchStatus extends Command
     public function handle()
     {
         // Update records where end_date is less than the current date
-        $matches = $this->eventScheduleRepository->getEndingEvent('Match');
+        $matches = $this->eventScheduleRepository->getAll(relations: [], status: ['Ongoing'], beforeEndDate: true);
         foreach ($matches as $match){
             $this->eventScheduleService->endMatch($match);
         }

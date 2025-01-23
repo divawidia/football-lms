@@ -6,13 +6,8 @@ use App\Models\Coach;
 
 interface CoachMatchStatsRepositoryInterface
 {
-    /**
-     * Retrieve the match statistics for a specific coach.
-     *
-     * @param Coach $coach
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function coachMatchStats(Coach $coach);
+
+    public function getAll(Coach $coach, $startDate = null, $endDate = null, $result = null, $matchPlayed = false, $retrievalMethod = 'count', $column = null);
 
     /**
      * Get the total number of matches played by a coach.

@@ -10,7 +10,10 @@ use App\Http\Requests\UpdatePlayerRequest;
 use App\Models\Player;
 use App\Models\Team;
 use App\Services\PlayerService;
+use App\Services\TeamService;
 use Exception;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -18,10 +21,11 @@ use RealRashid\SweetAlert\Facades\Alert;
 class PlayerController extends Controller
 {
     private PlayerService $playerService;
-
-    public function __construct(PlayerService $playerService)
+    private TeamService $teamService;
+    public function __construct(PlayerService $playerService, TeamService $teamService)
     {
         $this->playerService = $playerService;
+        $this->teamService = $teamService;
     }
 
     /**
@@ -29,18 +33,14 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        if (isAllAdmin()) {
-            $teams = $this->playerService->getAcademyTeams();
-        } elseif ($this->isCoach()) {
-            $teams = $this->getLoggedCoachUser()->teams;
-        }
+        (isAllAdmin()) ? $teams = $this->teamService->allTeams() : $teams = $this->getLoggedCoachUser()->teams;
 
         return view('pages.managements.players.index', [
             'teams' => $teams,
             'positions' => $this->playerService->getPlayerPosition()
         ]);
     }
-    public function adminIndex(Request $request)
+    public function adminIndex(Request $request): JsonResponse
     {
         $position = $request->input('position');
         $skill = $request->input('skill');
@@ -49,7 +49,7 @@ class PlayerController extends Controller
 
         return $this->playerService->index($position, $skill, $team, $status);
     }
-    public function coachIndex(Request $request)
+    public function coachIndex(Request $request): JsonResponse
     {
         $position = $request->input('position');
         $skill = $request->input('skill');
@@ -59,12 +59,12 @@ class PlayerController extends Controller
         return $this->playerService->coachPlayerIndex($this->getLoggedCoachUser(), $position, $skill, $status, $team);
     }
 
-    public function playerTeams(Player $player)
+    public function playerTeams(Player $player): JsonResponse
     {
         return $this->playerService->playerTeams($player);
     }
 
-    public function removeTeam(Player $player, Team $team)
+    public function removeTeam(Player $player, Team $team): JsonResponse
     {
         try {
             $data = $this->playerService->removeTeam($player, $team);
@@ -86,7 +86,7 @@ class PlayerController extends Controller
         return view('pages.managements.players.create', [
             'countries' => $this->playerService->getCountryData(),
             'positions' => $this->playerService->getPlayerPosition(),
-            'teams' => $this->playerService->getAcademyTeams(),
+            'teams' => $this->teamService->allTeams(),
         ]);
     }
 
@@ -109,21 +109,19 @@ class PlayerController extends Controller
      */
     public function show(Player $player)
     {
-        $overview = $this->playerService->show($player);
-        $performanceReviews = $player->playerPerformanceReview;
-        $playerSkillStats = $this->playerService->skillStatsChart($player);
-        $hasntJoinedTeams = $this->playerService->hasntJoinedTeams($player);
-//        $skillStatsHistory = $this->playerService->skillStatsHistoryChart($player);
-        $allSkills = $this->playerService->getSkillStats($player)->first();
-
         return view('pages.managements.players.detail', [
             'data' => $player,
-            'overview' => $overview,
-            'performanceReviews' => $performanceReviews,
-            'playerSkillStats' => $playerSkillStats,
-            'hasntJoinedTeams' => $hasntJoinedTeams,
-//            'skillStatsHistory' => $skillStatsHistory,
-            'allSkills' => $allSkills,
+            'playerUpcomingMatches' => $this->playerService->playerUpcomingMatches($player),
+            'playerUpcomingTrainings'=> $this->playerService->playerUpcomingTrainings($player),
+            'playerMatchPlayed' => $this->playerService->playerMatchPlayed($player),
+            'playerMatchPlayedThisMonth' => $this->playerService->playerMatchPlayedThisMonth($player),
+            'playerStats'=>$this->playerService->playerStats($player),
+            'matchResults' => $this->playerService->matchStats($player),
+            'winRate' =>$this->playerService->winRate($player),
+            'performanceReviews' => $player->playerPerformanceReview,
+            'playerSkillStats' => $this->playerService->skillStatsChart($player),
+            'hasntJoinedTeams' => $this->playerService->hasntJoinedTeams($player),
+            'allSkills' => $this->playerService->getSkillStats($player)->first(),
         ]);
     }
 
@@ -138,10 +136,8 @@ class PlayerController extends Controller
 
     public function skillStatsDetail(Player $player)
     {
-
         $skillStats =$this->playerService->skillStatsChart($player);
         $allSkills = $this->playerService->getSkillStats($player)->first();
-
 
         return view('pages.managements.players.skill-detail', [
             'data' => $player,
@@ -155,7 +151,6 @@ class PlayerController extends Controller
         $player = $this->getLoggedPLayerUser();
         $skillStats =$this->playerService->skillStatsChart($player);
         $allSkills = $this->playerService->getSkillStats($player)->first();
-
 
         return view('pages.managements.players.skill-detail', [
             'data' => $player,
@@ -173,7 +168,7 @@ class PlayerController extends Controller
             'data' => $player,
             'fullName' => $this->playerService->getUserFullName($player->user),
             'positions' => $this->playerService->getPlayerPosition(),
-            'teams' => $this->playerService->getAcademyTeams(),
+            'teams' => $this->teamService->allTeams(),
             'countries' => $this->playerService->getCountryData()
         ]);
     }
@@ -185,7 +180,7 @@ class PlayerController extends Controller
     {
         $data = $request->validated();
 
-        $player = $this->playerService->update($data, $player);
+        $player = $this->playerService->update($data, $player, $this->getLoggedUser());
 
         $text = "Player ".$this->getUserFullName($player->user)."'s account successfully updated!";
         Alert::success($text);
@@ -201,8 +196,8 @@ class PlayerController extends Controller
     }
 
     public function upcomingMatches(Player $player){
-        if (\request()->ajax()){
-            return $this->playerService->playerUpcomingMatches($player);
+        if (request()->ajax()){
+            return $this->playerService->playerUpcomingMatchesDatatables($player);
         }
 
         return view('pages.managements.players.upcoming-matches', [
@@ -225,7 +220,7 @@ class PlayerController extends Controller
     public function deactivate(Player $player)
     {
         try {
-            $data = $this->playerService->setStatus($player, '0');
+            $data = $this->playerService->setStatus($player, '0', $this->getLoggedUser());
             $message = "Player ".$this->getUserFullName($player->user)."'s account status successfully set to deactivated.";
             return ApiResponse::success($data, $message);
 
@@ -239,7 +234,7 @@ class PlayerController extends Controller
     public function activate(Player $player)
     {
         try {
-            $data = $this->playerService->setStatus($player, '1');
+            $data = $this->playerService->setStatus($player, '1', $this->getLoggedUser());
             $message = "Player ".$this->getUserFullName($player->user)."'s account status successfully set to activated.";
             return ApiResponse::success($data, $message);
 
@@ -253,7 +248,7 @@ class PlayerController extends Controller
     public function changePassword(ChangePasswordRequest $request, Player $player)
     {
         $data = $request->validated();
-        $result = $this->playerService->changePassword($data, $player);
+        $result = $this->playerService->changePassword($data, $player, $this->getLoggedUser());
         $message = "Player ".$this->getUserFullName($player->user)."'s account password successfully updated!";
         return ApiResponse::success($result, $message);
     }
@@ -263,9 +258,8 @@ class PlayerController extends Controller
      */
     public function destroy(Player $player)
     {
-        $loggedUser = $this->getLoggedUser();
         try {
-            $data = $this->playerService->destroy($player, $loggedUser);
+            $data = $this->playerService->destroy($player, $this->getLoggedUser());
             $message = "Player ".$this->getUserFullName($player->user)."'s account successfully deleted.";
             return ApiResponse::success($data, $message);
 

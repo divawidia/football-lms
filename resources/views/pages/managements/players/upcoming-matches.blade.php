@@ -8,7 +8,7 @@
 
 @section('content')
     <nav class="navbar navbar-light border-bottom border-top px-0">
-        <div class="container page__container">
+        <div class="container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
                     <a href="{{ route('player-managements.show', $data->id) }}" class="nav-link text-70">
@@ -20,7 +20,7 @@
         </div>
     </nav>
     <div class="page-section bg-primary">
-        <div class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div class="container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <img src="{{ Storage::url($data->user->foto) }}"
                  width="104"
                  height="104"
@@ -33,13 +33,13 @@
         </div>
     </div>
 
-    <div class="container page__container page-section">
+    <div class="container page-section">
         <div class="page-separator">
             <div class="page-separator__text">Upcoming Matches</div>
         </div>
         <x-match-tables :route="url()->current()" tableId="tables"/>
 
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+        <div class="card">
             <div class="card-header">
                 <h4 class="card-title">Calendar</h4>
             </div>

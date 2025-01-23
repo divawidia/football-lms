@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\AttendanceReportController;
 use App\Http\Controllers\Admin\CoachController;
 use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\EventScheduleController;
+use App\Http\Controllers\Admin\MatchController;
 use App\Http\Controllers\Admin\FinancialReportController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\LeagueStandingController;
@@ -119,7 +119,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
                 Route::patch('deactivate', [PlayerController::class, 'deactivate'])->name('deactivate');
                 Route::patch('activate', [PlayerController::class, 'activate'])->name('activate');
 
-                Route::get('change-password', [PlayerController::class, 'changePasswordPage'])->name('change-password-page');
                 Route::patch('change-password', [PlayerController::class, 'changePassword'])->name('change-password');
 
                 Route::put('update-teams', [PlayerController::class, 'updateTeams'])->name('update-teams');
@@ -167,114 +166,176 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         });
     });
 
+    Route::prefix('coach-managements')->middleware('role:Super-Admin|admin')->name('coach-managements.')->group(function () {
+        Route::get('', [CoachController::class, 'index'])->name('index');
+        Route::get('tables', [CoachController::class, 'indexTables'])->name('tables');
+        Route::get('create', [CoachController::class, 'create'])->name('create');
+        Route::post('store', [CoachController::class, 'store'])->name('store');
+        Route::prefix('{coach}')->group(function () {
+            Route::get('', [CoachController::class, 'show'])->name('show');
+            Route::get('edit', [CoachController::class, 'edit'])->name('edit');
+            Route::put('update', [CoachController::class, 'update'])->name('update');
+            Route::delete('destroy', [CoachController::class, 'destroy'])->name('destroy');
+            Route::patch('deactivate', [CoachController::class, 'deactivate'])->name('deactivate');
+            Route::patch('activate', [CoachController::class, 'activate'])->name('activate');
+            Route::patch('change-password', [CoachController::class, 'changePassword'])->name('change-password');
+            Route::get('coach-teams', [CoachController::class, 'coachTeams'])->name('coach-teams');
+            Route::put('update-teams', [CoachController::class, 'updateTeams'])->name('update-team');
+            Route::delete('remove-team/{team}', [CoachController::class, 'removeTeam'])->name('remove-team');
+        });
+    });
+
+    Route::prefix('team-managements')->name('team-managements.')->group(function () {
+        Route::get('', [TeamController::class, 'index'])->middleware('role:player|coach|admin|Super-Admin')->name('index');
+
+        Route::get('coach-teams', [TeamController::class, 'coachTeamsData'])->middleware('role:coach')->name('coach-teams');
+        Route::get('player-teams', [TeamController::class, 'playerTeamsData'])->middleware('role:player')->name('player-teams');
+
+        Route::middleware('role:Super-Admin|admin')->group(function () {
+            Route::get('admin-teams', [TeamController::class, 'adminTeamsData'])->name('admin-teams');
+            Route::get('all-teams', [TeamController::class, 'allTeams'])->name('all-teams');
+            Route::get('create', [TeamController::class, 'create'])->name('create');
+            Route::post('store', [TeamController::class, 'store'])->name('store');
+            Route::post('api-store', [TeamController::class, 'apiStore'])->name('api-store');
+        });
+
+        Route::prefix('{team}')->group(function () {
+            Route::middleware('role:player|coach|admin|Super-Admin')->group(function () {
+                Route::get('', [TeamController::class, 'show'])->name('show');
+                Route::get('players', [TeamController::class, 'teamPlayers'])->name('team-players');
+                Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('team-coaches');
+                Route::get('competitions', [TeamController::class, 'teamCompetitions'])->name('team-competitions');
+                Route::get('training-histories', [TeamController::class, 'teamTrainingHistories'])->name('training-histories');
+                Route::get('match-histories', [TeamController::class, 'teamMatchHistories'])->name('match-histories');
+            });
+
+            Route::middleware('role:Super-Admin|admin')->group(function () {
+                Route::get('edit', [TeamController::class, 'edit'])->name('edit');
+                Route::put('update', [TeamController::class, 'update'])->name('update');
+                Route::delete('destroy', [TeamController::class, 'destroy'])->name('destroy');
+                Route::patch('deactivate', [TeamController::class, 'deactivate'])->name('deactivate');
+                Route::patch('activate', [TeamController::class, 'activate'])->name('activate');
+                Route::put('update-players', [TeamController::class, 'updatePlayerTeam'])->name('update-player');
+                Route::put('update-coaches', [TeamController::class, 'updateCoachTeam'])->name('update-coach');
+                Route::put('remove-player/{player}', [TeamController::class, 'removePlayer'])->name('remove-player');
+                Route::put('remove-coach/{coach}', [TeamController::class, 'removeCoach'])->name('remove-coach');
+            });
+        });
+    });
+
+    Route::prefix('competition-managements')->name('competition-managements.')->group(function () {
+        Route::get('', [CompetitionController::class, 'index'])->middleware('role:player|coach|admin|Super-Admin')->name('index');
+
+        Route::middleware('role:Super-Admin|admin')->group(function () {
+            Route::get('create', [CompetitionController::class, 'create'])->name('create');
+            Route::post('store', [CompetitionController::class, 'store'])->name('store');
+        });
+
+        Route::prefix('{competition}')->group(function () {
+            Route::middleware('role:player|coach|admin|Super-Admin')->group(function () {
+                Route::get('', [CompetitionController::class, 'show'])->name('show');
+                Route::get('matches', [CompetitionController::class, 'competitionMatches'])->name('matches');
+            });
+
+            Route::middleware('role:Super-Admin|admin')->group(function () {
+                Route::get('edit', [CompetitionController::class, 'edit'])->name('edit');
+                Route::put('update', [CompetitionController::class, 'update'])->name('update');
+                Route::post('store-match', [CompetitionController::class, 'storeMatch'])->name('store-match');
+                Route::delete('destroy', [CompetitionController::class, 'destroy'])->name('destroy');
+                Route::patch('scheduled', [CompetitionController::class, 'scheduled'])->name('scheduled');
+                Route::patch('ongoing', [CompetitionController::class, 'ongoing'])->name('ongoing');
+                Route::patch('completed', [CompetitionController::class, 'completed'])->name('completed');
+                Route::patch('cancelled', [CompetitionController::class, 'cancelled'])->name('cancelled');
+            });
+
+            Route::prefix('league-standings')->name('league-standings.')->group(function () {
+                Route::get('', [LeagueStandingController::class, 'index'])->middleware('role:player|coach|admin|Super-Admin')->name('index');
+                Route::post('store', [LeagueStandingController::class, 'store'])->middleware('role:admin|Super-Admin')->name('store');
+
+                Route::prefix('{leagueStanding}')->middleware('role:Super-Admin|admin')->group(function () {
+                    Route::get('', [LeagueStandingController::class, 'show'])->middleware('role:player|coach|admin|Super-Admin')->name('show');
+                    Route::put('update', [LeagueStandingController::class, 'update'])->name('update');
+                    Route::delete('destroy', [LeagueStandingController::class, 'destroy'])->name('destroy');
+                });
+            });
+        });
+    });
+
+    Route::prefix('matches')->name('match-schedules.')->group(function () {
+        Route::get('', [MatchController::class, 'indexMatch'])->middleware('role:Super-Admin|admin|coach|player')->name('index');
+
+        Route::middleware('role:Super-Admin|admin')->group(function () {
+            Route::get('admins-matches', [MatchController::class, 'adminIndexMatch'])->name('index');
+            Route::get('create', [MatchController::class, 'createMatch'])->name('create');
+//        Route::get('competition-teams/{competition}', [EventScheduleController::class, 'getCompetitionTeam'])->name('get-competition-team');
+//        Route::get('friendly-match-teams', [EventScheduleController::class, 'getFriendlyMatchTeam'])->name('get-friendlymatch-team');
+//        Route::get('internal-match-teams', [EventScheduleController::class, 'getInternalMatchTeams'])->name('internal-match-teams');
+            Route::post('store', [MatchController::class, 'storeMatch'])->name('store');
+        });
+        Route::get('coaches-matches', [MatchController::class, 'coachIndexMatch'])->middleware('role:coach')->name('coach-index');
+        Route::get('players-matches', [MatchController::class, 'playerIndexMatch'])->middleware('role:player')->name('player-index');
+
+        Route::prefix('{schedule}')->group(function () {
+            Route::get('', [MatchController::class, 'showMatch'])->middleware('role:Super-Admin|admin|coach|player')->name('show');
+
+            Route::middleware('role:Super-Admin|admin')->group(function () {
+                Route::get('match-detail', [MatchController::class, 'getMatchDetail'])->name('match-detail');
+                Route::get('match-stats', [MatchController::class, 'getTeamMatchStats'])->name('match-stats');
+                Route::get('edit', [MatchController::class, 'editMatch'])->name('edit');
+                Route::put('update', [MatchController::class, 'updateMatch'])->name('update');
+                Route::delete('destroy', [MatchController::class, 'destroy'])->name('destroy');
+                Route::patch('cancel', [MatchController::class, 'cancelled'])->name('cancel');
+                Route::patch('scheduled', [MatchController::class, 'scheduled'])->name('scheduled');
+            });
+
+            Route::middleware('role:coach')->group(function () {
+                Route::get('players', [MatchController::class, 'getEventPLayers'])->name('players');
+
+                Route::get('player-skills', [SkillAssessmentController::class, 'indexAllPlayerInEvent'])->name('player-skills');
+                Route::get('player-performance-review', [PlayerPerformanceReviewController::class, 'indexAllPlayerInEvent'])->name('player-performance-review');
+
+                Route::get('edit-player-attendance/{player}', [MatchController::class, 'getPlayerAttendance'])->name('player');
+                Route::put('update-player-attendance/{player}', [MatchController::class, 'updatePlayerAttendance'])->name('update-player');
+
+                Route::get('edit-coach-attendance/{coach}', [MatchController::class, 'getCoachAttendance'])->name('coach');
+                Route::put('update-coach-attendance/{coach}', [MatchController::class, 'updateCoachAttendance'])->name('update-coach');
+
+                Route::post('match-scorer', [MatchController::class, 'storeMatchScorer'])->name('store-match-scorer');
+                Route::delete('match-scorer/{scorer}/destroy', [MatchController::class, 'destroyMatchScorer'])->name('destroy-match-scorer');
+
+                Route::post('create-note', [MatchController::class, 'createNote'])->name('create-note');
+                Route::get('edit-note/{note}', [MatchController::class, 'editNote'])->name('edit-note');
+                Route::put('update-note/{note}', [MatchController::class, 'updateNote'])->name('update-note');
+                Route::delete('delete-note/{note}', [MatchController::class, 'destroyNote'])->name('destroy-note');
+
+                Route::post('own-goal', [MatchController::class, 'storeOwnGoal'])->name('store-own-goal');
+                Route::delete('own-goal/{scorer}/destroy', [MatchController::class, 'destroyOwnGoal'])->name('destroy-own-goal');
+
+                Route::put('update-match-stats', [MatchController::class, 'updateMatchStats'])->name('update-match-stats');
+                Route::put('update-external-team-score', [MatchController::class, 'updateExternalTeamScore'])->name('update-external-team-score');
+            });
+
+            Route::prefix('player-match-stats')->name('player-match-stats.')->group(function () {
+                Route::get('', [MatchController::class, 'indexPlayerMatchStats'])->middleware('role:Super-Admin|admin|coach|player')->name('index');
+
+                Route::middleware('role:coach')->group(function () {
+                    Route::get('{player}', [MatchController::class, 'getPlayerStats'])->name('show');
+                    Route::put('{player}/update', [MatchController::class, 'updatePlayerStats'])->name('update');
+                });
+            });
+        });
+    });
 
     Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
 
-            Route::prefix('coach-managements')->group(function () {
-                Route::get('', [CoachController::class, 'index'])->name('coach-managements.index');
-                Route::get('create', [CoachController::class, 'create'])->name('coach-managements.create');
-                Route::post('store', [CoachController::class, 'store'])->name('coach-managements.store');
-                Route::prefix('{coach}')->group(function () {
-                    Route::get('', [CoachController::class, 'show'])->name('coach-managements.show');
-                    Route::get('edit', [CoachController::class, 'edit'])->name('coach-managements.edit');
-                    Route::put('update', [CoachController::class, 'update'])->name('coach-managements.update');
-                    Route::delete('destroy', [CoachController::class, 'destroy'])->name('coach-managements.destroy');
-                    Route::patch('deactivate', [CoachController::class, 'deactivate'])->name('deactivate-coach');
-                    Route::patch('activate', [CoachController::class, 'activate'])->name('activate-coach');
-                    Route::get('change-password', [CoachController::class, 'changePasswordPage'])->name('coach-managements.change-password-page');
-                    Route::patch('change-password', [CoachController::class, 'changePassword'])->name('coach-managements.change-password');
-                    Route::get('coach-teams', [CoachController::class, 'coachTeams'])->name('coach-managements.coach-teams');
-                    Route::put('update-teams', [CoachController::class, 'updateTeams'])->name('coach-managements.updateTeams');
-                    Route::delete('remove-team/{team}', [CoachController::class, 'removeTeam'])->name('coach-managements.removeTeam');
-                });
-            });
-
-            Route::prefix('team-managements')->group(function () {
-                Route::get('admin-teams', [TeamController::class, 'adminTeamsData'])->name('team-managements.admin-teams');
-
-                Route::prefix('academy-teams')->group(function () {
-                    Route::get('', [TeamController::class, 'allTeams'])->name('team-managements.all-teams');
-                    Route::get('create', [TeamController::class, 'create'])->name('team-managements.create');
-                    Route::post('store', [TeamController::class, 'store'])->name('team-managements.store');
-                    Route::post('api/store', [TeamController::class, 'apiStore'])->name('team-managements.apiStore');
-
-                    Route::prefix('{team}')->group(function () {
-                        Route::get('edit', [TeamController::class, 'edit'])->name('team-managements.edit');
-                        Route::put('update', [TeamController::class, 'update'])->name('team-managements.update');
-                        Route::delete('destroy', [TeamController::class, 'destroy'])->name('team-managements.destroy');
-                        Route::patch('deactivate', [TeamController::class, 'deactivate'])->name('deactivate-team');
-                        Route::patch('activate', [TeamController::class, 'activate'])->name('activate-team');
-                        Route::put('update-players', [TeamController::class, 'updatePlayerTeam'])->name('team-managements.updatePlayerTeam');
-                        Route::put('update-coaches', [TeamController::class, 'updateCoachTeam'])->name('team-managements.updateCoachTeam');
-                        Route::put('remove-player/{player}', [TeamController::class, 'removePlayer'])->name('team-managements.removePlayer');
-                        Route::put('remove-coach/{coach}', [TeamController::class, 'removeCoach'])->name('team-managements.removeCoach');
-                    });
-                });
-                Route::prefix('opponent-teams')->group(function () {
-                    Route::get('', [OpponentTeamController::class, 'index'])->name('opponentTeam-managements.index');
-                    Route::get('create', [OpponentTeamController::class, 'create'])->name('opponentTeam-managements.create');
-                    Route::post('store', [OpponentTeamController::class, 'store'])->name('opponentTeam-managements.store');
-                    Route::post('api/store', [OpponentTeamController::class, 'apiStore'])->name('opponentTeam-managements.apiStore');
-                    Route::prefix('{team}')->group(function () {
-                        Route::get('', [OpponentTeamController::class, 'show'])->name('opponentTeam-managements.show');
-                        Route::get('edit', [OpponentTeamController::class, 'edit'])->name('opponentTeam-managements.edit');
-                        Route::put('update', [OpponentTeamController::class, 'update'])->name('opponentTeam-managements.update');
-                        Route::delete('destroy', [OpponentTeamController::class, 'destroy'])->name('opponentTeam-managements.destroy');
-                    });
-                });
-            });
-
-            Route::prefix('competition-managements')->group(function () {
-                Route::get('create', [CompetitionController::class, 'create'])->name('competition-managements.create');
-                Route::post('store', [CompetitionController::class, 'store'])->name('competition-managements.store');
-                Route::prefix('{competition}')->group(function () {
-                    Route::get('edit', [CompetitionController::class, 'edit'])->name('competition-managements.edit');
-                    Route::put('update', [CompetitionController::class, 'update'])->name('competition-managements.update');
-                    Route::post('store-match', [CompetitionController::class, 'storeMatch'])->name('competition-managements.store-match');
-                    Route::delete('destroy', [CompetitionController::class, 'destroy'])->name('competition-managements.destroy');
-                    Route::patch('scheduled', [CompetitionController::class, 'scheduled'])->name('scheduled-competition');
-                    Route::patch('ongoing', [CompetitionController::class, 'ongoing'])->name('ongoing-competition');
-                    Route::patch('completed', [CompetitionController::class, 'completed'])->name('completed-competition');
-                    Route::patch('cancelled', [CompetitionController::class, 'cancelled'])->name('cancelled-competition');
-
-                    Route::prefix('league-standings')->group(function () {
-                        Route::get('', [LeagueStandingController::class, 'index'])->name('competition-managements.league-standings.index');
-                        Route::post('store', [LeagueStandingController::class, 'store'])->name('competition-managements.league-standings.store');
-                        Route::prefix('{leagueStanding}')->group(function () {
-                            Route::get('', [LeagueStandingController::class, 'show'])->name('competition-managements.league-standings.show');
-                            Route::put('update', [LeagueStandingController::class, 'update'])->name('competition-managements.league-standings.update');
-                            Route::delete('destroy', [LeagueStandingController::class, 'destroy'])->name('competition-managements.league-standings.destroy');
-                        });
-                    });
-                });
-            });
-
             Route::prefix('training-schedules')->group(function () {
-                Route::get('admins-trainings', [EventScheduleController::class, 'adminIndexTraining'])->name('admin.training-schedules.index');
+                Route::get('admins-trainings', [MatchController::class, 'adminIndexTraining'])->name('admin.training-schedules.index');
             });
 
-            Route::prefix('match-schedules')->group(function () {
-                Route::get('admins-matches', [EventScheduleController::class, 'adminIndexMatch'])->name('admin.match-schedules.index');
-                Route::get('create', [EventScheduleController::class, 'createMatch'])->name('match-schedules.create');
-                Route::get('competition-teams/{competition}', [EventScheduleController::class, 'getCompetitionTeam'])->name('match-schedules.get-competition-team');
-                Route::get('friendly-match-teams', [EventScheduleController::class, 'getFriendlyMatchTeam'])->name('match-schedules.get-friendlymatch-team');
-                Route::get('internal-match-teams', [EventScheduleController::class, 'getInternalMatchTeams'])->name('match-schedules.internal-match-teams');
-                Route::post('store', [EventScheduleController::class, 'storeMatch'])->name('match-schedules.store');
 
-                Route::prefix('{schedule}')->group(function () {
-                    Route::get('match-detail', [EventScheduleController::class, 'getMatchDetail'])->name('match-schedules.match-detail');
-                    Route::get('match-stats', [EventScheduleController::class, 'getTeamMatchStats'])->name('match-schedules.match-stats');
-                    Route::get('edit', [EventScheduleController::class, 'editMatch'])->name('match-schedules.edit');
-                    Route::put('update', [EventScheduleController::class, 'updateMatch'])->name('match-schedules.update');
-                    Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('match-schedules.destroy');
-                    Route::patch('cancel', [EventScheduleController::class, 'cancelled'])->name('match-schedules.cancel');
-                    Route::patch('scheduled', [EventScheduleController::class, 'scheduled'])->name('match-schedules.scheduled');
-                });
-            });
 
             Route::prefix('attendance-reports')->group(function () {
                 Route::get('admin', [AttendanceReportController::class, 'adminIndex'])->name('admin.attendance-report.index');
-
             });
 
             Route::prefix('performance-reports')->group(function () {
@@ -383,11 +444,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::group(['middleware' => ['role:coach,web']], function () {
             Route::get('coach-dashboard', [CoachDashboardController::class, 'index'])->name('coach.dashboard');
 
-
-            Route::prefix('team-managements')->group(function () {
-                Route::get('coach-teams', [TeamController::class, 'coachTeamsData'])->name('coach.team-managements.coach-teams');
-            });
-
             Route::prefix('skill-assessments')->group(function () {
                 Route::get('', [SkillAssessmentController::class, 'index'])->name('skill-assessments.index');
                 Route::prefix('{player}')->group(function () {
@@ -404,12 +460,9 @@ Route::group(['middleware' => ['auth', 'web']], function () {
             });
 
             Route::prefix('training-schedules')->group(function () {
-                Route::get('coaches-trainings', [EventScheduleController::class, 'coachIndexTraining'])->name('coach.training-schedules.index');
+                Route::get('coaches-trainings', [MatchController::class, 'coachIndexTraining'])->name('coach.training-schedules.index');
             });
 
-            Route::prefix('match-schedules')->group(function () {
-                Route::get('coaches-matches', [EventScheduleController::class, 'coachIndexMatch'])->name('coach.match-schedules.index');
-            });
 
             Route::prefix('attendance-reports')->group(function () {
                 Route::get('coach', [AttendanceReportController::class, 'coachIndex'])->name('coach.attendance-report.index');
@@ -433,17 +486,10 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
         Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player.performance-reviews');
 
-        Route::prefix('team-managements')->group(function () {
-            Route::get('player-teams', [TeamController::class, 'playerTeamsData'])->name('player.team-managements.player-teams');
-        });
-
         Route::prefix('training-schedules')->group(function () {
-            Route::get('players-trainings', [EventScheduleController::class, 'playerIndexTraining'])->name('player.training-schedules.index');
+            Route::get('players-trainings', [MatchController::class, 'playerIndexTraining'])->name('player.training-schedules.index');
         });
 
-        Route::prefix('match-schedules')->group(function () {
-            Route::get('players-matches', [EventScheduleController::class, 'playerIndexMatch'])->name('player.match-schedules.index');
-        });
 
         Route::prefix('player-attendance-reports')->group(function () {
             Route::get('', [AttendanceReportController::class, 'index'])->name('player.attendance-report.index');
@@ -472,65 +518,30 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::group(['middleware' => ['role:coach|admin|Super-Admin,web']], function () {
 
         Route::prefix('training-schedules')->group(function () {
-            Route::get('create', [EventScheduleController::class, 'createTraining'])->name('training-schedules.create');
-            Route::post('store', [EventScheduleController::class, 'storeTraining'])->name('training-schedules.store');
+            Route::get('create', [MatchController::class, 'createTraining'])->name('training-schedules.create');
+            Route::post('store', [MatchController::class, 'storeTraining'])->name('training-schedules.store');
 
             Route::prefix('{schedule}')->group(function () {
 //                Route::get('', [EventScheduleController::class, 'showTraining'])->name('training-schedules.show');
-                Route::get('edit', [EventScheduleController::class, 'editTraining'])->name('training-schedules.edit');
-                Route::put('update', [EventScheduleController::class, 'updateTraining'])->name('training-schedules.update');
-                Route::delete('destroy', [EventScheduleController::class, 'destroy'])->name('training-schedules.destroy');
-                Route::patch('cancel', [EventScheduleController::class, 'cancelled'])->name('training-schedules.cancel');
-                Route::patch('scheduled', [EventScheduleController::class, 'scheduled'])->name('training-schedules.scheduled');
+                Route::get('edit', [MatchController::class, 'editTraining'])->name('training-schedules.edit');
+                Route::put('update', [MatchController::class, 'updateTraining'])->name('training-schedules.update');
+                Route::delete('destroy', [MatchController::class, 'destroy'])->name('training-schedules.destroy');
+                Route::patch('cancel', [MatchController::class, 'cancelled'])->name('training-schedules.cancel');
+                Route::patch('scheduled', [MatchController::class, 'scheduled'])->name('training-schedules.scheduled');
 
                 Route::get('player-skills', [SkillAssessmentController::class, 'indexAllPlayerInEvent'])->name('training-schedules.player-skills');
                 Route::get('player-performance-review', [PlayerPerformanceReviewController::class, 'indexAllPlayerInEvent'])->name('training-schedules.player-performance-review');
 
-                Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('training-schedules.player');
-                Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('training-schedules.update-player');
+                Route::get('edit-player-attendance/{player}', [MatchController::class, 'getPlayerAttendance'])->name('training-schedules.player');
+                Route::put('update-player-attendance/{player}', [MatchController::class, 'updatePlayerAttendance'])->name('training-schedules.update-player');
 
-                Route::get('edit-coach-attendance/{coach}', [EventScheduleController::class, 'getCoachAttendance'])->name('training-schedules.coach');
-                Route::put('update-coach-attendance/{coach}', [EventScheduleController::class, 'updateCoachAttendance'])->name('training-schedules.update-coach');
+                Route::get('edit-coach-attendance/{coach}', [MatchController::class, 'getCoachAttendance'])->name('training-schedules.coach');
+                Route::put('update-coach-attendance/{coach}', [MatchController::class, 'updateCoachAttendance'])->name('training-schedules.update-coach');
 
-                Route::post('create-note', [EventScheduleController::class, 'createNote'])->name('training-schedules.create-note');
-                Route::get('edit-note/{note}', [EventScheduleController::class, 'editNote'])->name('training-schedules.edit-note');
-                Route::put('update-note/{note}', [EventScheduleController::class, 'updateNote'])->name('training-schedules.update-note');
-                Route::delete('delete-note/{note}', [EventScheduleController::class, 'destroyNote'])->name('training-schedules.destroy-note');
-            });
-        });
-
-        Route::prefix('match-schedules')->group(function () {
-            Route::prefix('{schedule}')->group(function () {
-//                Route::get('', [EventScheduleController::class, 'showMatch'])->name('match-schedules.show');
-                Route::get('players', [EventScheduleController::class, 'getEventPLayers'])->name('match-schedules.players');
-
-                Route::get('player-skills', [SkillAssessmentController::class, 'indexAllPlayerInEvent'])->name('match-schedules.player-skills');
-                Route::get('player-performance-review', [PlayerPerformanceReviewController::class, 'indexAllPlayerInEvent'])->name('match-schedules.player-performance-review');
-
-                Route::get('edit-player-attendance/{player}', [EventScheduleController::class, 'getPlayerAttendance'])->name('match-schedules.player');
-                Route::put('update-player-attendance/{player}', [EventScheduleController::class, 'updatePlayerAttendance'])->name('match-schedules.update-player');
-
-                Route::get('edit-coach-attendance/{coach}', [EventScheduleController::class, 'getCoachAttendance'])->name('match-schedules.coach');
-                Route::put('update-coach-attendance/{coach}', [EventScheduleController::class, 'updateCoachAttendance'])->name('match-schedules.update-coach');
-
-                Route::post('match-scorer', [EventScheduleController::class, 'storeMatchScorer'])->name('match-schedules.store-match-scorer');
-                Route::delete('match-scorer/{scorer}/destroy', [EventScheduleController::class, 'destroyMatchScorer'])->name('match-schedules.destroy-match-scorer');
-
-                Route::post('create-note', [EventScheduleController::class, 'createNote'])->name('match-schedules.create-note');
-                Route::get('edit-note/{note}', [EventScheduleController::class, 'editNote'])->name('match-schedules.edit-note');
-                Route::put('update-note/{note}', [EventScheduleController::class, 'updateNote'])->name('match-schedules.update-note');
-                Route::delete('delete-note/{note}', [EventScheduleController::class, 'destroyNote'])->name('match-schedules.destroy-note');
-
-                Route::post('own-goal', [EventScheduleController::class, 'storeOwnGoal'])->name('match-schedules.store-own-goal');
-                Route::delete('own-goal/{scorer}/destroy', [EventScheduleController::class, 'destroyOwnGoal'])->name('match-schedules.destroy-own-goal');
-
-                Route::put('update-match-stats', [EventScheduleController::class, 'updateMatchStats'])->name('match-schedules.update-match-stats');
-                Route::put('update-external-team-score', [EventScheduleController::class, 'updateExternalTeamScore'])->name('match-schedules.update-external-team-score');
-
-                Route::prefix('player-match-stats')->group(function () {
-                    Route::get('{player}', [EventScheduleController::class, 'getPlayerStats'])->name('match-schedules.show-player-match-stats');
-                    Route::put('{player}/update', [EventScheduleController::class, 'updatePlayerStats'])->name('match-schedules.update-player-match-stats');
-                });
+                Route::post('create-note', [MatchController::class, 'createNote'])->name('training-schedules.create-note');
+                Route::get('edit-note/{note}', [MatchController::class, 'editNote'])->name('training-schedules.edit-note');
+                Route::put('update-note/{note}', [MatchController::class, 'updateNote'])->name('training-schedules.update-note');
+                Route::delete('delete-note/{note}', [MatchController::class, 'destroyNote'])->name('training-schedules.destroy-note');
             });
         });
 
@@ -589,23 +600,13 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::group(['middleware' => ['role:player|coach|admin|Super-Admin,web']], function () {
 
         Route::prefix('training-schedules')->group(function () {
-            Route::get('', [EventScheduleController::class, 'indexTraining'])->name('training-schedules.index');
+            Route::get('', [MatchController::class, 'indexTraining'])->name('training-schedules.index');
 
             Route::prefix('{schedule}')->group(function () {
-                Route::get('', [EventScheduleController::class, 'showTraining'])->name('training-schedules.show');
+                Route::get('', [MatchController::class, 'showTraining'])->name('training-schedules.show');
             });
         });
 
-        Route::prefix('match-schedules')->group(function () {
-            Route::get('', [EventScheduleController::class, 'indexMatch'])->name('match-schedules.index');
-
-            Route::prefix('{schedule}')->group(function () {
-                Route::get('', [EventScheduleController::class, 'showMatch'])->name('match-schedules.show');
-                Route::prefix('player-match-stats')->group(function () {
-                    Route::get('', [EventScheduleController::class, 'indexPlayerMatchStats'])->name('match-schedules.index-player-match-stats');
-                });
-            });
-        });
 
         Route::prefix('attendance-reports')->group(function () {
             Route::get('', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
@@ -616,27 +617,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
             });
         });
 
-        Route::prefix('team-managements')->group(function () {
-            Route::get('', [TeamController::class, 'index'])->name('team-managements.index');
-
-            Route::prefix('{team}')->group(function () {
-                Route::get('', [TeamController::class, 'show'])->name('team-managements.show');
-                Route::get('players', [TeamController::class, 'teamPlayers'])->name('team-managements.teamPlayers');
-                Route::get('coaches', [TeamController::class, 'teamCoaches'])->name('team-managements.teamCoaches');
-                Route::get('competitions', [TeamController::class, 'teamCompetitions'])->name('team-managements.teamCompetitions');
-                Route::get('training-histories', [TeamController::class, 'teamTrainingHistories'])->name('team-managements.training-histories');
-                Route::get('match-histories', [TeamController::class, 'teamMatchHistories'])->name('team-managements.match-histories');
-            });
-        });
-
-        Route::prefix('competition-managements')->group(function () {
-            Route::get('', [CompetitionController::class, 'index'])->name('competition-managements.index');
-
-            Route::prefix('{competition}')->group(function () {
-                Route::get('', [CompetitionController::class, 'show'])->name('competition-managements.show');
-                Route::get('matches', [CompetitionController::class, 'competitionMatches'])->name('competition-managements.matches');
-            });
-        });
 
         Route::prefix('performance-reports')->group(function () {
             Route::get('', [PerformanceReportController::class, 'index'])->name('performance-report.index');

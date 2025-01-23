@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\modal\PlayersCoaches;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class AddTeamsToPlayerCoachModal extends Component
+class AddTeams extends Component
 {
     public $route;
     public $teams;
@@ -24,6 +24,6 @@ class AddTeamsToPlayerCoachModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.add-teams-to-player-coach-modal');
+        return view('components.modal.players-coaches.add-teams');
     }
 }

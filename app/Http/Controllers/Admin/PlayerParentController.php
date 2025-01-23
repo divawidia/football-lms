@@ -35,7 +35,6 @@ class PlayerParentController extends Controller
     {
         return view('pages.managements.players.player-parents.create', [
             'data' => $player,
-            'fullName' => $this->playerParentService->getUserFullName($player->user)
         ]);
     }
 

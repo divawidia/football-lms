@@ -27,16 +27,11 @@
 
     <div class="container page-section">
         @if(isAllAdmin())
-            <a href="{{  route('coach-managements.create') }}" class="btn btn-primary mb-3" id="add-new">
-                <span class="material-icons mr-2">
-                    add
-                </span>
-                Add New Coach
-            </a>
+            <x-buttons.link-button color="primary" margin="mb-3" :href="route('coach-managements.create')" icon="add" text="Add New coach"/>
         @endif
 
             <div class="card card-form d-flex flex-column flex-sm-row">
-                <div class="card-form__body card-body-form-group flex">
+                <div class="card-body-form-group flex">
                     <div class="row">
                         <div class="col-lg-3">
                             <div class="form-group mb-0 mb-lg-3">
@@ -50,7 +45,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
                             <div class="form-group">
                                 <label class="form-label mb-0" for="specializations">Filter by specializations</label>
                                 <select class="form-control form-select" id="specializations" data-toggle="select">
@@ -74,7 +69,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-lg-3">
                             <div class="form-group">
                                 <label class="form-label mb-0" for="status">Filter by status</label>
                                 <select class="form-control form-select" id="status" data-toggle="select">
@@ -92,24 +87,7 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="table">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Team</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Age</th>
-                            <th>Gender</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                <x-table :headers="['#','Name', 'Team', 'Email', 'Phone Number', 'Age','Gender','Status', 'Action']"/>
             </div>
         </div>
     </div>
@@ -125,7 +103,7 @@
                     serverSide: true,
                     ordering: true,
                     ajax: {
-                        url: '{!! url()->current() !!}',
+                        url: '{{ route('coach-managements.tables') }}',
                         type: "GET",
                         data: {
                             certification: certification,
@@ -135,6 +113,7 @@
                         }
                     },
                     columns: [
+                        {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                         {data: 'name', name: 'name'},
                         {data: 'teams', name: 'teams'},
                         {data: 'user.email', name: 'user.email'},
@@ -142,12 +121,7 @@
                         {data: 'age', name: 'age'},
                         {data: 'user.gender', name: 'user.gender'},
                         {data: 'status', name: 'status'},
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        },
+                        {data: 'action', name: 'action', orderable: false, searchable: false},
                     ],
                     bDestroy: true
                 });
@@ -165,7 +139,7 @@
 
             processWithConfirmation(
                 '.setDeactivate',
-                "{{ route('deactivate-coach', ':id') }}",
+                "{{ route('coach-managements.deactivate', ':id') }}",
                 "{{ route('coach-managements.index') }}",
                 'PATCH',
                 "Are you sure to deactivate this coach account's status?",
@@ -175,10 +149,10 @@
 
             processWithConfirmation(
                 '.setActivate',
-                "{{ route('deactivate-coach', ':id') }}",
+                "{{ route('coach-managements.activate', ':id') }}",
                 "{{ route('coach-managements.index') }}",
                 'PATCH',
-                "Are you sure to setActivate this coach account's status?",
+                "Are you sure to activate this coach account's status?",
                 "Something went wrong when setActivating this coach account!",
                 "{{ csrf_token() }}"
             );

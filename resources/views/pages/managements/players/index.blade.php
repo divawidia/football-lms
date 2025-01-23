@@ -35,7 +35,7 @@
                             @foreach($positions as $position)
                                 <option value="{{ $position->id }}">{{ $position->name }}</option>
                             @endforeach
-                            <option value="{{ null }}">All teams</option>
+                            <option value="{{ null }}">All position</option>
                         </x-forms.select>
                     </div>
                     <div class="col-lg-3">
@@ -62,6 +62,7 @@
                             @foreach(['Active' => '1', 'Non-active' => '0', 'All Status' => null] as $statusLabel => $statusVal)
                                 <option value="{{ $statusVal }}">{{ $statusLabel }}</option>
                             @endforeach
+                            <option value="{{ null }}">All status</option>
                         </x-forms.select>
                     </div>
                 </div>

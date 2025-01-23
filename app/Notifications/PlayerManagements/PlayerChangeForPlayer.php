@@ -6,15 +6,13 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PlayerAccountUpdated extends Notification
+class PlayerChangeForPlayer extends Notification
 {
     use Queueable;
-    protected $player;
-    protected $status;
+    protected string $status;
 
-    public function __construct($player, $status)
+    public function __construct(string $status)
     {
-        $this->player = $player;
         $this->status = $status;
     }
 
@@ -36,8 +34,21 @@ class PlayerAccountUpdated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"Your account have been {$this->status} by Admin. Please review the changes if necessary.",
+            'title' => $this->message()['title'],
+            'data' => $this->message()['data'],
             'redirectRoute' => route('edit-account.edit')
         ];
+    }
+
+    public function message()
+    {
+        $title = "Account has been {$this->status}";
+        $data = "Your account has been {$this->status} by Admin. Please review the changes if necessary!";
+
+        if ($this->status == 'password'){
+            $title = 'Account password has been updated';
+            $data = "Your account password has been updated by Admin. Please review the changes if necessary!";
+        }
+        return compact('title', 'data');
     }
 }

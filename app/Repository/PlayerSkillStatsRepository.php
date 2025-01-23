@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Models\MatchModel;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
+use App\Models\Training;
+use Illuminate\Database\Eloquent\Collection;
 
 class PlayerSkillStatsRepository
 {
@@ -14,22 +16,19 @@ class PlayerSkillStatsRepository
         $this->playerSkillStats = $playerSkillStats;
     }
 
-    public function getAll()
-    {
-        return $this->playerSkillStats->all();
-    }
-
-    public function getByPlayer(Player $player, MatchModel $match = null)
+    public function getByPlayer(Player $player, MatchModel $match = null, Training $training = null, $retrievalMethod = 'all')
     {
         $query = $player->playerSkillStats();
         if ($match){
-            $query->where('eventId', $match->id);
+            $query->where('matchId', $match->id);
         }
-        return $query->get();
-    }
-
-    public function create(array $data)
-    {
-        return $this->playerSkillStats->create($data);
+        if ($training){
+            $query->where('trainingId', $training->id);
+        }
+        if ($retrievalMethod == 'all'){
+            return $query->get();
+        } else {
+            return $query->first();
+        }
     }
 }

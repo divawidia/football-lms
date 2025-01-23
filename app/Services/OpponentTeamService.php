@@ -6,7 +6,7 @@ use App\Helpers\DatatablesHelper;
 use App\Models\Team;
 use App\Notifications\OpponentTeamsManagements\OpponentTeamCreatedDeleted;
 use App\Notifications\OpponentTeamsManagements\OpponentTeamUpdated;
-use App\Repository\EventScheduleRepository;
+use App\Repository\MatchRepository;
 use App\Repository\TeamMatchRepository;
 use App\Repository\TeamRepository;
 use App\Repository\UserRepository;
@@ -19,16 +19,16 @@ class OpponentTeamService extends Service
 {
     private TeamRepository $teamRepository;
     private UserRepository $userRepository;
-    private EventScheduleRepository $eventScheduleRepository;
+    private MatchRepository $eventScheduleRepository;
     private TeamMatchRepository $teamMatchRepository;
     private DatatablesHelper $datatablesService;
 
     public function __construct(
-        TeamRepository          $teamRepository,
-        UserRepository          $userRepository,
-        EventScheduleRepository $eventScheduleRepository,
-        TeamMatchRepository     $teamMatchRepository,
-        DatatablesHelper        $datatablesService)
+        TeamRepository      $teamRepository,
+        UserRepository      $userRepository,
+        MatchRepository     $eventScheduleRepository,
+        TeamMatchRepository $teamMatchRepository,
+        DatatablesHelper    $datatablesService)
     {
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;

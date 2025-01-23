@@ -2,23 +2,20 @@
 
 namespace App\Notifications\MatchSchedules;
 
-use App\Models\Coach;
-use App\Models\Match;
-use App\Models\User;
+use App\Models\MatchModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class MatchNote extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected Match $matchSession;
+    protected MatchModel $match;
     protected string $action; // Either 'created', 'updated' or 'deleted'
 
-    public function __construct($user, $matchSession, $action)
+    public function __construct($match, $action)
     {
-        $this->matchSession = $matchSession;
+        $this->match = $match;
         $this->action = $action;
     }
 
@@ -32,6 +29,12 @@ class MatchNote extends Notification implements ShouldQueue
         return ['database'];
     }
 
+    private function matchTeams()
+    {
+        return ($this->match->matchType == 'Internal Match') ? $this->match->homeTeam->teamName. " Vs. ". $this->match->awayTeam->teamName
+         : $this->match->homeTeam->teamName. " Vs. ". $this->match->externalTeam->teamName;
+    }
+
     /**
      * Get the array representation of the notification.
      *
@@ -40,8 +43,8 @@ class MatchNote extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' => 'A note for '.$this->matchSession->teams[0]->teamName.' Vs. '.$this->matchSession->teams[1]->teamName.' match session has been '.$this->action.'. Please check the note if needed!',
-            'redirectRoute' => route('match-schedules.show', $this->matchSession->id)
+            'data' => 'A note for '.$this->matchTeams().' match session has been '.$this->action.'. Please check the note if needed!',
+            'redirectRoute' => route('match-schedules.show', $this->match->hash)
         ];
     }
 }

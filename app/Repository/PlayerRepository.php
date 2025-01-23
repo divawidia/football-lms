@@ -2,15 +2,10 @@
 
 namespace App\Repository;
 
-use App\Models\Coach;
-use App\Models\CoachCertification;
-use App\Models\CoachSpecialization;
-use App\Models\Match;
 use App\Models\Player;
 use App\Models\Team;
 use App\Models\TrainingVideo;
 use App\Repository\Interface\PlayerRepositoryInterface;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 class PlayerRepository implements PlayerRepositoryInterface
@@ -60,41 +55,50 @@ class PlayerRepository implements PlayerRepositoryInterface
                 $query->where('trainingVideoId', $trainingVideo->id);
             })->get();
     }
-
-    public function getAttendedPLayer($startDate, $endDate, $teams = null, $eventType = null, $mostAttended = true, $mostDidntAttend = false)
+    public function getMostAttended($startDate = null, $endDate = null, $teams = null, $relation = 'trainings')
     {
         $query = $this->player->with('user', 'position');
 
         if ($teams) {
             $query->withTeams($teams);
         }
-        if ($eventType != null) {
-            $query->whereRelation('schedules', 'eventType', $eventType);
-        }
-        if ($mostAttended) {
-            $query->withCount([
-                'schedules as attended_count' => function ($q) use ($startDate, $endDate){
-                    $q->whereBetween('date', [$startDate, $endDate])
-                        ->where('status', 'Completed')
-                        ->where('attendanceStatus', 'Attended');
-                },
-                'schedules as schedules_count' => function ($q) use ($startDate, $endDate){
-                    $q->whereBetween('date', [$startDate, $endDate])->where('status', 'Completed');
+        $query->withCount([
+            $relation.' as attended_count' => function ($q) use ($startDate, $endDate){
+                if ($startDate != null && $endDate != null) {
+                    $q->whereBetween('date', [$startDate, $endDate]);
                 }
-            ])->orderByDesc('attended_count');
-        } elseif ($mostDidntAttend) {
-            $query->withCount([
-                'schedules as didnt_attended_count' => function ($q) use ($startDate, $endDate){
-                    $q->whereBetween('date', [$startDate, $endDate])
-                        ->where('status', 'Completed')
-                        ->where('attendanceStatus', '!=','Attended');
-                },
-                'schedules as schedules_count' => function ($q) use ($startDate, $endDate){
-                    $q->whereBetween('date', [$startDate, $endDate])->where('status', 'Completed');
+                $q->where('status', 'Completed')->where('attendanceStatus', 'Attended');
+            },
+            $relation.' as schedules_count' => function ($q) use ($startDate, $endDate){
+                if ($startDate != null && $endDate != null) {
+                    $q->whereBetween('date', [$startDate, $endDate]);
                 }
-            ])->orderByDesc('didnt_attended_count');
-        }
+                $q->where('status', 'Completed');
+            }
+        ])->orderByDesc('attended_count');
+        return $query->first();
+    }
+    public function getMostDidntAttended($startDate = null, $endDate = null, $teams = null, $relation = 'trainings')
+    {
+        $query = $this->player->with('user', 'position');
 
+        if ($teams) {
+            $query->withTeams($teams);
+        }
+        $query->withCount([
+            $relation.' as didnt_attended_count' => function ($q) use ($startDate, $endDate){
+                if ($startDate != null && $endDate != null) {
+                    $q->whereBetween('date', [$startDate, $endDate]);
+                }
+                $q->where('status', 'Completed')->where('attendanceStatus', '!=','Attended');
+            },
+            $relation.' as schedules_count' => function ($q) use ($startDate, $endDate){
+                if ($startDate != null && $endDate != null) {
+                    $q->whereBetween('date', [$startDate, $endDate]);
+                }
+                $q->where('status', 'Completed');
+            }
+        ])->orderByDesc('didnt_attended_count');
         return $query->first();
     }
 
@@ -135,15 +139,17 @@ class PlayerRepository implements PlayerRepositoryInterface
         return $query->count();
     }
 
-    public function matchResults(Player $player, $result, $startDate = null, $endDate = null)
+    public function matchResults(Player $player, $result = null, $startDate = null, $endDate = null)
     {
-        $query = $player->schedules()
-            ->where('eventType', 'Match')
-            ->whereHas('teams', function ($q) use ($result){
+        $query = $player->matches();
+        if ($result) {
+            $query->whereHas('teams', function ($q) use ($result){
                 $q->where('resultStatus', $result);
             });
+        }
+
         if ($startDate && $endDate) {
-            $query->whereBetween('event_schedules.date', [$startDate, $endDate]);
+            $query->whereBetween('matches.date', [$startDate, $endDate]);
         }
         return $query->count();
     }

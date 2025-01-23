@@ -7,8 +7,10 @@
 @endsection
 
 @section('modal')
-    <x-modal.add-players-to-team :route="route('team-managements.updatePlayerTeam', ['team' => $team->hash])" :players="$players"/>
-    <x-modal.add-coaches-to-team :route="route('team-managements.updateCoachTeam', ['team' => $team->hash])" :coaches="$coaches"/>
+    <x-modal.add-players-to-team :route="route('team-managements.updatePlayerTeam', ['team' => $team->hash])"
+                                 :players="$players"/>
+    <x-modal.add-coaches-to-team :route="route('team-managements.updateCoachTeam', ['team' => $team->hash])"
+                                 :coaches="$coaches"/>
 @endsection
 
 @section('content')
@@ -46,11 +48,13 @@
 
             @if(isAllAdmin())
                 <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
                         Action<span class="material-icons ml-3">keyboard_arrow_down</span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('team-managements.edit', $team->hash) }}"><span class="material-icons">edit</span> Edit Team Profile</a>
+                        <a class="dropdown-item" href="{{ route('team-managements.edit', $team->hash) }}"><span
+                                class="material-icons">edit</span> Edit Team Profile</a>
                         @if($team->status == '1')
                             <button type="submit" class="dropdown-item setDeactivate" id="{{$team->id}}">
                                 <span class="material-icons text-danger">check_circle</span>
@@ -113,15 +117,15 @@
                     <div class="page-separator__text">Overview</div>
                 </div>
                 <div class="row card-group-row">
-                    @include('components.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['matchPlayedThisMonth']])
-                    @include('components.stats-card', ['title' => 'Goals','data' => $overview['teamScore'], 'dataThisMonth' => $overview['teamScoreThisMonth']])
-                    @include('components.stats-card', ['title' => 'Goals Conceded','data' => $overview['goalsConceded'], 'dataThisMonth' => $overview['goalsConcededThisMonth']])
-                    @include('components.stats-card', ['title' => 'Goals difference','data' => $overview['goalsDifference'], 'dataThisMonth' => $overview['goalDifferenceThisMonth']])
-                    @include('components.stats-card', ['title' => 'clean sheets','data' => $overview['cleanSheets'], 'dataThisMonth' => $overview['cleanSheetsThisMonth']])
-                    @include('components.stats-card', ['title' => 'own goals','data' => $overview['teamOwnGoal'], 'dataThisMonth' => $overview['teamOwnGoalThisMonth']])
-                    @include('components.stats-card', ['title' => 'Wins','data' => $overview['Win'], 'dataThisMonth' => $overview['WinThisMonth']])
-                    @include('components.stats-card', ['title' => 'losses','data' => $overview['Lose'], 'dataThisMonth' => $overview['LoseThisMonth']])
-                    @include('components.stats-card', ['title' => 'draws','data' => $overview['Draw'], 'dataThisMonth' => $overview['DrawThisMonth']])
+                    @include('components.cards.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['matchPlayedThisMonth']])
+                    @include('components.cards.stats-card', ['title' => 'Goals','data' => $overview['teamScore'], 'dataThisMonth' => $overview['teamScoreThisMonth']])
+                    @include('components.cards.stats-card', ['title' => 'Goals Conceded','data' => $overview['goalsConceded'], 'dataThisMonth' => $overview['goalsConcededThisMonth']])
+                    @include('components.cards.stats-card', ['title' => 'Goals difference','data' => $overview['goalsDifference'], 'dataThisMonth' => $overview['goalDifferenceThisMonth']])
+                    @include('components.cards.stats-card', ['title' => 'clean sheets','data' => $overview['cleanSheets'], 'dataThisMonth' => $overview['cleanSheetsThisMonth']])
+                    @include('components.cards.stats-card', ['title' => 'own goals','data' => $overview['teamOwnGoal'], 'dataThisMonth' => $overview['teamOwnGoalThisMonth']])
+                    @include('components.cards.stats-card', ['title' => 'Wins','data' => $overview['Win'], 'dataThisMonth' => $overview['WinThisMonth']])
+                    @include('components.cards.stats-card', ['title' => 'losses','data' => $overview['Lose'], 'dataThisMonth' => $overview['LoseThisMonth']])
+                    @include('components.cards.stats-card', ['title' => 'draws','data' => $overview['Draw'], 'dataThisMonth' => $overview['DrawThisMonth']])
                 </div>
                 <div class="page-separator">
                     <div class="page-separator__text">Team Profile</div>

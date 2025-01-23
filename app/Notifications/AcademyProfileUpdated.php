@@ -36,7 +36,8 @@ class AcademyProfileUpdated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"{$this->name} has updated the academy profile. Please review the changes if necessary.",
+            'title' => 'Academy Profile Updated',
+            'data' =>"Admin : {$this->name} has updated the academy profile. Please review the changes if necessary.",
             'redirectRoute' => route('edit-academy.edit')
         ];
     }

@@ -3,10 +3,7 @@
 namespace App\Repository;
 
 use App\Models\Coach;
-use App\Models\CoachCertification;
-use App\Models\CoachSpecialization;
 use App\Models\Competition;
-use App\Models\GroupDivision;
 use App\Models\Player;
 use App\Models\Team;
 use App\Repository\Interface\TeamRepositoryInterface;
@@ -20,9 +17,23 @@ class TeamRepository implements TeamRepositoryInterface
         $this->team = $team;
     }
 
-    public function getAll()
+    public function getAll($withRelation = [], $exceptTeamId = null, $exceptCoach = null, $exceptPLayer = null, $columns = ['*'])
     {
-        return $this->team->all();
+        $query = $this->team->with($withRelation);
+        if (!is_null($exceptTeamId)) {
+            $query->where('id', '!=', $exceptTeamId);
+        }
+        if ($exceptCoach) {
+            $query->whereDoesntHave('coaches', function (Builder $query) use ($exceptCoach) {
+                $query->where('coachId', $exceptCoach->id);
+            });
+        }
+        if ($exceptPLayer) {
+            $query->whereDoesntHave('players', function (Builder $query) use ($exceptPLayer) {
+                $query->where('playerId', $exceptPLayer->id);
+            });
+        }
+        return $query->get($columns);
     }
 
     public function getByTeamside($teamSide, $exceptTeamId=null)
@@ -32,49 +43,6 @@ class TeamRepository implements TeamRepositoryInterface
             $query->where('id', '!=', $exceptTeamId);
         }
         return $query->get();
-    }
-
-    public function getInArray($ids)
-    {
-        return $this->team->with('players', 'coaches')
-            ->whereIn('id', $ids)
-            ->get();
-    }
-
-    public function getTeamsHaventJoinedByCoach(Coach $coach)
-    {
-        return $this->team->where('teamSide', 'Academy Team')
-            ->whereDoesntHave('coaches', function (Builder $query) use ($coach) {
-                $query->where('coachId', $coach->id);
-            })->get();
-    }
-    public function getTeamsHaventJoinedByPLayer(Player $player)
-    {
-        return $this->team->where('teamSide', 'Academy Team')
-            ->whereDoesntHave('players', function (Builder $query) use ($player) {
-                $query->where('playerId', $player->id);
-            })->get();
-    }
-
-    public function getTeamsHaventJoinedCompetition(Competition $competition, $teamSide)
-    {
-        return $this->team->where('teamSide', $teamSide)
-            ->whereDoesntHave('divisions', function (Builder $query) use ($competition) {
-                $query->where('competitionId', $competition->id);
-            })->get();
-    }
-
-    public function getTeamsJoinedGroupDivision(GroupDivision $groupDivision, $teamSide, $exceptTeamId = null)
-    {
-        $query = $this->team->where('teamSide', $teamSide)
-            ->whereHas('divisions', function (Builder $query) use ($groupDivision) {
-                $query->where('divisionId', $groupDivision->id);
-            });
-        if ($exceptTeamId != null){
-            return $query->where('id', '!=', $exceptTeamId)->get();
-        } else {
-            return $query->get();
-        }
     }
 
     public function getJoinedCompetition(Competition $competition)

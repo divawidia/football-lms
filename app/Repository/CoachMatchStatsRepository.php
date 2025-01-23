@@ -9,18 +9,35 @@ use Carbon\Carbon;
 
 class CoachMatchStatsRepository implements CoachMatchStatsRepositoryInterface
 {
-    protected Coach $coach;
     protected CoachMatchStats $coachMatchStat;
 
-    public function __construct(Coach $coach, CoachMatchStats $coachMatchStat)
+    public function __construct(CoachMatchStats $coachMatchStat)
     {
-        $this->coach = $coach;
         $this->coachMatchStat = $coachMatchStat;
     }
-
-    public function coachMatchStats(Coach $coach)
+    public function getAll(Coach $coach, $startDate = null, $endDate = null, $result = null, $matchPlayed = false, $retrievalMethod = 'count', $column = null)
     {
-        return $this->coachMatchStat->where('coachId', $coach->id);
+        $query = $this->coachMatchStat->where('coachId', $coach->id);
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        if ($result != null) {
+            $query->where('resultStatus', $result);
+        }
+
+        if ($matchPlayed) {
+            $query->whereRelation('match', 'status', 'Completed');
+        }
+
+        if ($retrievalMethod == 'count') {
+            return $query->count();
+        } elseif ($retrievalMethod == 'sum') {
+            return $query->sum($column);
+        } else {
+            return $query->get($column);
+        }
     }
     public function totalMatchPlayed(Coach $coach)
     {

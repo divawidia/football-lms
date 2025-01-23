@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Trainings;
 
 use App\Notifications\TrainingSchedules\TrainingScheduleReminder;
-use App\Repository\EventScheduleRepository;
+use App\Repository\MatchRepository;
 use App\Repository\UserRepository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
@@ -25,9 +25,9 @@ class TrainingReminderNotification extends Command
     protected $description = 'Sent training schedule reminder notification to players, coaches';
 
     private UserRepository $userRepository;
-    private EventScheduleRepository $eventScheduleRepository;
-    public function __construct(UserRepository $userRepository,
-                                EventScheduleRepository $eventScheduleRepository)
+    private MatchRepository $eventScheduleRepository;
+    public function __construct(UserRepository  $userRepository,
+                                MatchRepository $eventScheduleRepository)
     {
         parent::__construct();
         $this->userRepository = $userRepository;

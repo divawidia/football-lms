@@ -6,24 +6,24 @@ use App\Models\Coach;
 use App\Models\MatchModel;
 use App\Models\TeamMatch;
 use App\Repository\CoachMatchStatsRepository;
-use App\Repository\EventScheduleRepository;
+use App\Repository\MatchRepository;
 use App\Repository\TeamMatchRepository;
 use Carbon\Carbon;
 
 class PerformanceReportService extends Service
 {
     private CoachMatchStatsRepository $coachMatchStatsRepository;
-    private EventScheduleRepository $eventScheduleRepository;
+    private MatchRepository $matchRepository;
     private TeamMatchRepository $teamMatchRepository;
-    private EventScheduleService $eventScheduleService;
+    private MatchService $eventScheduleService;
     public function __construct(
         CoachMatchStatsRepository $coachMatchStatsRepository,
-        EventScheduleRepository $eventScheduleRepository,
-        TeamMatchRepository $teamMatchRepository,
-        EventScheduleService $eventScheduleService
+        MatchRepository           $matchRepository,
+        TeamMatchRepository       $teamMatchRepository,
+        MatchService $eventScheduleService
     ){
         $this->coachMatchStatsRepository = $coachMatchStatsRepository;
-        $this->eventScheduleRepository = $eventScheduleRepository;
+        $this->matchRepository = $matchRepository;
         $this->teamMatchRepository = $teamMatchRepository;
         $this->eventScheduleService = $eventScheduleService;
     }
@@ -222,19 +222,19 @@ class PerformanceReportService extends Service
         );
     }
     public function latestMatch(){
-        return $this->eventScheduleRepository->getEvent(['Completed'],'Match', 2);
+        return $this->matchRepository->getAll(relations: ['teams', 'competition'], status: ['Completed'],take: 2);
     }
 
     public function coachLatestMatch(Coach $coach){
-        return $this->eventScheduleRepository->getEventByModel($coach, 'Match', ['Completed', 'Ongoing'], 2);
+        return $this->matchRepository->getByRelation($coach, ['teams', 'competition'],['Completed', 'Ongoing'], 2);
     }
 
     public function matchHistory(){
-        $data = $this->eventScheduleRepository->getEvent(['Completed'], 'Match');
+        $data = $this->matchRepository->getAll(relations: ['teams', 'competition'], status: ['Completed']);
         return $this->eventScheduleService->makeDataTablesMatch($data);
     }
     public function modelMatchHistory($model){
-        $data = $this->eventScheduleRepository->getEventByModel($model, 'Match', ['Completed', 'Ongoing']);
+        $data = $this->matchRepository->getByRelation($model, ['teams', 'competition'],['Completed', 'Ongoing']);
         return $this->eventScheduleService->makeDataTablesMatch($data);
     }
 }

@@ -71,24 +71,18 @@ class DatatablesHelper extends Service
         $endDate = $this->convertToDate($data->endDate);
         return $startDate.' - '.$endDate;
     }
-    public function name($image, $title, $subtitle, $showRoute = null): string
+    public function name($image, $title, $subtitle, $showRoute = null)
     {
-        if ($showRoute != null) {
-            $text = '<a href="'.$showRoute.'">
+        ($showRoute != null)
+            ? $text = '<a href="'.$showRoute.'">
                         <p class="mb-0"><strong class="js-lists-values-lead">' . $title . '</strong></p>
-                    </a>';
-        } else {
-            $text = '<p class="mb-0"><strong class="js-lists-values-lead">' . $title . '</strong></p>';
-        }
+                    </a>'
+            : $text = '<p class="mb-0"><strong class="js-lists-values-lead">' . $title . '</strong></p>';
+        $image = '<img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($image ?? '/images/undefined-user.png') . '" alt="profile-pic"/>';
 
-        if ($image != null) {
-            $img = '<img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($image) . '" alt="profile-pic"/>';
-        } else {
-            $img = '<img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url('/images/undefined-user.png') . '" alt="profile-pic"/>';
-        }
         return '<div class="media flex-nowrap align-items-center" style="white-space: nowrap;">
                     <div class="avatar avatar-sm mr-8pt">
-                        '.$img.'
+                        '.$image.'
                     </div>
                     <div class="media-body">
                         <div class="d-flex align-items-center">
@@ -128,13 +122,13 @@ class DatatablesHelper extends Service
 
     public function buttonDropdownItem($additionClass = '', $id = '', $iconColor = '', $icon = '', $btnText = ''): string
     {
-        return '<button type="button" class="dropdown-item '.$additionClass.'" id="' . $id . '">
+        return '<button type="button" class="dropdown-item text-capitalize '.$additionClass.'" id="' . $id . '">
                     <span class="material-icons text-'.$iconColor.'">'.$icon.'</span>'.$btnText.'
                 </button>';
     }
     public function linkDropdownItem($additionClass = '', $route = null, $id = '', $iconColor = '', $icon = '', $btnText = ''): string
     {
-        return '<a class="dropdown-item '.$additionClass.'" href="' . $route . '" id="'.$id.'">
+        return '<a class="dropdown-item text-capitalize '.$additionClass.'" href="' . $route . '" id="'.$id.'">
                     <span class="material-icons text-'.$iconColor.'">'.$icon.'</span>'.$btnText.'
                 </a>';
     }

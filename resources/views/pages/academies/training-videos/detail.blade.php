@@ -11,8 +11,10 @@
     @if(isAllAdmin()||isCoach())
         <x-modal.add-training-course-lesson-modal :routeStore="route('training-videos.lessons-store', $data->hash)"/>
         <x-modal.edit-training-course-lesson-modal :trainingVideo="$data"/>
-        <x-modal.edit-training-course-modal :routeEdit="route('training-videos.edit', $data->id)" :routeUpdate="route('training-videos.update', $data->hash)"/>
-        <x-modal.add-players-to-team :route="route('training-videos.update-player', ['trainingVideo' => $data->hash])" :players="$player"/>
+        <x-modal.edit-training-course-modal :routeEdit="route('training-videos.edit', $data->id)"
+                                            :routeUpdate="route('training-videos.update', $data->hash)"/>
+        <x-modal.add-players-to-team :route="route('training-videos.update-player', ['trainingVideo' => $data->hash])"
+                                     :players="$player"/>
     @endif
 
 @endsection
@@ -29,7 +31,7 @@
                     <ul class="nav navbar-nav">
                         <li class="nav-item">
                             <a href="{{ route('training-videos.index') }}" class="nav-link text-70"><i
-                                    class="material-icons icon--left">keyboard_backspace</i> Back to Training Course
+                                        class="material-icons icon--left">keyboard_backspace</i> Back to Training Course
                                 Lists</a>
                         </li>
                     </ul>
@@ -48,13 +50,15 @@
                             <h5 class="text-white mb-0">Course Progress : </h5>
                             <div class="flex mx-4" style="max-width: 100%">
                                 <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar bg-accent-2" role="progressbar" style="width: {{ $playerCompletionProgress }}%;"></div>
+                                    <div class="progress-bar bg-accent-2" role="progressbar"
+                                         style="width: {{ $playerCompletionProgress }}%;"></div>
                                 </div>
                             </div>
                             <h5 class="text-white mb-0">{{ $playerCompletionProgress }}%</h5>
                         </div>
                         @if($playerCompletionProgress < 100)
-                            <a href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->hash, 'lesson' => $uncompletePlayerTrainingLesson->hash]) }}" id="resumeTraining" class="btn btn-sm btn-primary mt-4">
+                            <a href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->hash, 'lesson' => $uncompletePlayerTrainingLesson->hash]) }}"
+                               id="resumeTraining" class="btn btn-sm btn-primary mt-4">
                                 <span class="material-icons mr-2">play_arrow</span>
                                 Resume Training Course
                             </a>
@@ -87,7 +91,7 @@
                 </div>
             </div>
             <div
-                class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">
+                    class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">
                 <div class="container page__container">
                     <ul class="nav navbar-nav flex align-items-sm-center">
                         @if(isAllAdmin() || isCoach())
@@ -149,16 +153,16 @@
             </div>
 
             <div class="row mb-3">
-                @include('components.stats-card', ['title' => 'Total Assigned Players','data' => $totalPLayers, 'dataThisMonth' => null])
-                @include('components.stats-card', ['title' => 'Players Completed','data' => $totalCompleted, 'dataThisMonth' => null])
-                @include('components.stats-card', ['title' => 'Players on progress','data' => $totalOnProgress, 'dataThisMonth' => null])
+                @include('components.cards.stats-card', ['title' => 'Total Assigned Players','data' => $totalPLayers, 'dataThisMonth' => null])
+                @include('components.cards.stats-card', ['title' => 'Players Completed','data' => $totalCompleted, 'dataThisMonth' => null])
+                @include('components.cards.stats-card', ['title' => 'Players on progress','data' => $totalOnProgress, 'dataThisMonth' => null])
             </div>
 
             {{--    Lessons    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Lesson(s)</div>
                 <a href="" id="addLesson" class="btn btn-primary btn-sm ml-auto"><span
-                        class="material-icons mr-2">add</span> Add lesson</a>
+                            class="material-icons mr-2">add</span> Add lesson</a>
             </div>
             <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
                 <div class="card-body">
@@ -224,7 +228,8 @@
                     <p class="text-70 mb-24pt">{{ $lesson->description }}</p>
 
                     <div class="card mb-32pt mb-lg-64pt">
-                        <a class="accordion__toggle" href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->hash, 'lesson' => $lesson->hash]) }}">
+                        <a class="accordion__toggle"
+                           href="{{ route('training-videos.show-player-lesson', ['trainingVideo' => $data->hash, 'lesson' => $lesson->hash]) }}">
                             @if($lesson->players()->where('playerId', $player->id)->first(['player_lesson.completionStatus'])->completionStatus == '1')
                                 <span class="accordion__toggle-icon material-icons text-success">check_circle</span>
                                 <strong class="card-title mx-4">Completed</strong>
@@ -245,7 +250,7 @@
 
 @push('addon-script')
     <script type="module">
-        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+        import {processWithConfirmation} from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
 
         $(document).ready(function () {
             $('#lessonsTable').DataTable({
@@ -273,7 +278,7 @@
                 ]
             });
 
-             $('#playersTable').DataTable({
+            $('#playersTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
@@ -297,18 +302,18 @@
                 ]
             });
 
-             // unpublish training course
-             processWithConfirmation(
-                 '.unpublishTraining',
-                 "{{ route('training-videos.unpublish', $data->hash) }}",
-                 "{{ route('training-videos.show', $data->hash) }}",
-                 'PATCH',
-                 "Are you sure to unpublish this training course?",
-                 "Something went wrong when unpublishing training course!",
+            // unpublish training course
+            processWithConfirmation(
+                '.unpublishTraining',
+                "{{ route('training-videos.unpublish', $data->hash) }}",
+                "{{ route('training-videos.show', $data->hash) }}",
+                'PATCH',
+                "Are you sure to unpublish this training course?",
+                "Something went wrong when unpublishing training course!",
                 "{{ csrf_token() }}"
-             );
+            );
 
-             // delete training course
+            // delete training course
             processWithConfirmation(
                 '.delete-training',
                 "{{ route('training-videos.destroy', $data->hash) }}",

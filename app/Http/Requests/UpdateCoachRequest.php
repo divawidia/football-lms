@@ -39,11 +39,10 @@ class UpdateCoachRequest extends FormRequest
             'country_id' => ['required'],
             'state_id' => ['required'],
             'city_id' => ['required'],
-            'certificationLevel' => ['required', Rule::exists('coach_certifications', 'id')],
-            'specialization' => ['required', Rule::exists('coach_specializations', 'id')],
+            'certificationId' => ['required', Rule::exists('coach_certifications', 'id')],
+            'specializationId' => ['required', Rule::exists('coach_specializations', 'id')],
             'height' => ['required', 'numeric'],
             'weight' => ['required', 'numeric'],
-            'status' => [Rule::in('1', '0'), 'nullable'],
         ];
     }
 }

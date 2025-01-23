@@ -1,16 +1,12 @@
 <x-modal.form id="editCoachAttendanceModal" formId="formEditCoachAttendanceModal" :editForm="true">
-
     <x-forms.basic-input type="hidden" name="coachId" :modal="true"/>
-
     <x-forms.select name="attendanceStatus" label="Attendance Status" :modal="true" :select2="false">
         <option value="null" disabled>Select coach's attendance status</option>
         @foreach(['Attended', 'Illness', 'Injured', 'Other'] AS $type)
             <option value="{{ $type }}">{{ $type }}</option>
         @endforeach
     </x-forms.select>
-
     <x-forms.textarea name="note" label="Attendance Note" placeholder="Input the detailed absent reason (if not attended) ..." :modal="true" :required="false"/>
-
 </x-modal.form>
 
 @push('addon-script')
