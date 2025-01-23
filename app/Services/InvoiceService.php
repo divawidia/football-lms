@@ -164,7 +164,7 @@ class InvoiceService extends Service
 
     public function invoiceForms()
     {
-        $players = $this->userRepository->getAllByRole('player');
+        $players = $this->userRepository->getAll(role: 'player');
         $taxes = $this->taxRepository->getAll();
         $products = $this->productRepository->getByPriceOption('one time payment');
         return compact('players', 'taxes', 'products');
