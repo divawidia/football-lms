@@ -34,41 +34,16 @@
                 <p class="lead text-white-50 d-flex align-items-center">{{ $data->position }}</p>
             </div>
             @if(isSuperAdmin() && getLoggedUser()->id != $data->user->id)
-                <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                        Action
-                        <span class="material-icons ml-3">
-                        keyboard_arrow_down
-                    </span>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('admin-managements.edit', $data->hash) }}">
-                            <span class="material-icons mr-2 ">edit</span>
-                            Edit admin profile
-                        </a>
-                        @if($data->user->status == '1')
-                            <button type="submit" class="dropdown-item setDeactivate" id="{{$data->hash}}">
-                                <span class="material-icons text-danger">check_circle</span>
-                                Deactivate Admin
-                            </button>
-
-                        @elseif($data->user->status == '0')
-                            <button type="submit" class="dropdown-item setActivate" id="{{$data->hash}}">
-                                <span class="material-icons text-success">check_circle</span>
-                                Activate Admin
-                            </button>
-                        @endif
-                        <a class="dropdown-item changePassword" id="{{ $data->hash }}">
-                            <span class="material-icons mr-2 ">lock</span>
-                            Change admins Account Password
-                        </a>
-                        <button type="button" class="dropdown-item deleteAdmin" id="{{$data->hash}}">
-                            <span class="material-icons mr-2 text-danger">delete</span>
-                            Delete admin
-                        </button>
-                    </div>
-                </div>
+                <x-buttons.dropdown title="Action" icon="keyboard_arrow_down" btnColor="outline-white" iconMargin="ml-3">
+                    <x-buttons.link-button :dropdownItem="true" :href="route('admin-managements.edit', $data->hash)" icon="edit" color="white" text="Edit admin profile"/>
+                    @if($data->user->status == '1')
+                        <x-buttons.basic-button icon="check_circle" color="white" text="Deactivate Admin" additionalClass="setDeactivate" :dropdownItem="true" :id="$data->hash" iconColor="danger"/>
+                    @elseif($data->user->status == '0')
+                        <x-buttons.basic-button icon="check_circle" color="white" text="Activate Admin" additionalClass="setActivate" :dropdownItem="true" :id="$data->hash" iconColor="success"/>
+                    @endif
+                    <x-buttons.basic-button icon="lock" color="white" text="Change admins Account Password" additionalClass="changePassword" :dropdownItem="true" :id="$data->hash"/>
+                    <x-buttons.basic-button icon="delete" iconColor="danger" color="white" text="Delete admin" additionalClass="deleteAdmin" :dropdownItem="true" :id="$data->hash"/>
+                </x-buttons.dropdown>
             @endif
         </div>
     </div>
@@ -161,27 +136,42 @@
             </div>
         </div>
     </div>
-
-    @if(isSuperAdmin())
-        <x-process-data-confirmation btnClass=".setDeactivate"
-                                     :processRoute="route('deactivate-admin', ':id')"
-                                     :routeAfterProcess="route('admin-managements.show', $data->id)"
-                                     method="PATCH"
-                                     confirmationText="Are you sure to deactivate this admin account's status?"
-                                     errorText="Something went wrong when deactivating this admin account!"/>
-
-        <x-process-data-confirmation btnClass=".setActivate"
-                                     :processRoute="route('activate-admin', ':id')"
-                                     :routeAfterProcess="route('admin-managements.show', $data->id)"
-                                     method="PATCH"
-                                     confirmationText="Are you sure to activate this admin account's status?"
-                                     errorText="Something went wrong when activating this admin account!"/>
-
-        <x-process-data-confirmation btnClass=".deleteAdmin"
-                                     :processRoute="route('admin-managements.destroy', ['admin' => ':id'])"
-                                     :routeAfterProcess="route('admin-managements.index')"
-                                     method="DELETE"
-                                     confirmationText="Are you sure to delete this admin account?"
-                                     errorText="Something went wrong when deleting this admin account!"/>
-    @endif
 @endsection
+
+@push('addon-script')
+    <script type="module">
+        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+
+        $(document).ready(function () {
+            processWithConfirmation(
+                '.setDeactivate',
+                "{{ route('admin-managements.deactivate', ':id') }}",
+                "{{ route('admin-managements.show', $data->id) }}",
+                'PATCH',
+                "Are you sure to deactivate this admin account's status?",
+                "Something went wrong when deactivating this admin account!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.setActivate',
+                "{{ route('admin-managements.activate', ':id') }}",
+                "{{ route('admin-managements.show', $data->id) }}",
+                'PATCH',
+                "Are you sure to activate this admin account's status?",
+                "Something went wrong when activating this admin account!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.deleteAdmin',
+                "{{ route('admin-managements.destroy', ['admin' => ':id']) }}",
+                "{{ route('admin-managements.index') }}",
+                'DELETE',
+                "Are you sure to delete this admin account?",
+                "Something went wrong when deleting this admin account!",
+                "{{ csrf_token() }}"
+            );
+        });
+    </script>
+@endpush
