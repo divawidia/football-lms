@@ -14,9 +14,6 @@
 <!-- Material Design Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-icons@1.13.12/iconfont/material-icons.min.css">
 
-<!-- Font Awesome Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
-
 <!-- Preloader -->
 <link type="text/css" href="{{ URL::asset('css/preloader.css') }}" rel="stylesheet">
 
