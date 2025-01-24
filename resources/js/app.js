@@ -1,7 +1,7 @@
 import { ajaxProcessing, processWithConfirmation, processModalForm } from './ajax-processing-data'
 import './bootstrap'
 import './image'
-import './modal'
+import { clearModalFormValidation, showModal } from './modal'
 import './perfect-scrollbar'
 import './player'
 import './preloader'
@@ -38,4 +38,7 @@ import './youtube'
     window.ajaxProcessing = ajaxProcessing;
     window.processWithConfirmation = processWithConfirmation;
     window.processModalForm = processModalForm;
+
+    window.clearModalFormValidation = clearModalFormValidation;
+    window.showModal = showModal;
 })()
