@@ -20,10 +20,7 @@
 </x-modal.form>
 
 @push('addon-script')
-    <script type="module">
-        import { processModalForm } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}"
-        import { showModal } from "{{ Vite::asset('resources/js/modal.js') }}"
-
+    <script>
         $(document).ready(function (){
             const formId = '#formAddMatch';
             const modalId = '#addMatchModal';

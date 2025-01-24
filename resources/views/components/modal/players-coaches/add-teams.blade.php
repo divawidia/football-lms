@@ -12,8 +12,7 @@
 </x-modal.form>
 
 @push('addon-script')
-    <script type="module">
-        import { processModalForm } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}";
+    <script>
 
         $(document).ready(function () {
             $('.add-team').on('click', function (e) {

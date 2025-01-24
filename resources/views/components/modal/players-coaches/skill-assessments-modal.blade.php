@@ -18,10 +18,7 @@
 
 @push('addon-script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
-    <script type="module">
-        import { processModalForm } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
-        import { clearModalFormValidation } from "{{ Vite::asset('resources/js/modal.js') }}";
-
+    <script>
         $(document).ready(function (){
             $(".skills-range-slider").ionRangeSlider({
                 grid: true,
