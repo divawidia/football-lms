@@ -17,9 +17,7 @@
 </div>
 
 @push('addon-script')
-    <script type="module">
-        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
-
+    <script>
         $(document).ready(function () {
             processWithConfirmation(
                 '.delete-note',
