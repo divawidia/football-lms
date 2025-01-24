@@ -26,7 +26,7 @@
                 $(formId+' #assistPlayerId').empty()
 
                 $.ajax({
-                    url: "{{ route('match-schedules.players', ['schedule' => $eventSchedule->hash]) }}",
+                    url: "{{ route('match-schedules.players', ['schedule' => $match->hash]) }}",
                     type: 'GET',
                     data: {
                         team: team,
@@ -59,7 +59,7 @@
                 const id = $(this).val()
 
                 $.ajax({
-                    url: "{{ route('match-schedules.players', ['schedule' => $eventSchedule->hash]) }}",
+                    url: "{{ route('match-schedules.players', ['schedule' => $match->hash]) }}",
                     type: 'GET',
                     data: {
                         team: team,
@@ -86,7 +86,7 @@
 
             processModalForm(
                 formId,
-                "{{ route('match-schedules.store-match-scorer', $eventSchedule->hash) }}",
+                "{{ route('match-schedules.store-match-scorer', $match->hash) }}",
                 null,
                 modalId
             );

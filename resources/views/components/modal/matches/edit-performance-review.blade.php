@@ -20,7 +20,7 @@
                 const eventId = $(this).attr('data-eventId');
 
                 $.ajax({
-                    url: "{!! url()->route('coach.performance-reviews.edit', ['review' => ':id']) !!}".replace(':id', reviewId),
+                    url: "{!! url()->route('player-managements.performance-reviews.edit', ['review' => ':id']) !!}".replace(':id', reviewId),
                     type: 'get',
                     success: function (res) {
                         $(modalId).modal('show');
@@ -42,7 +42,7 @@
 
             processModalForm(
                 formId,
-                "{{ route('coach.performance-reviews.update', ['review' => ':id']) }}",
+                "{{ route('player-managements.performance-reviews.update', ['review' => ':id']) }}",
                 "#reviewId",
                 modalId
             );

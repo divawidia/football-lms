@@ -6,7 +6,7 @@ use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
 use App\Models\Competition;
-use App\Models\Match;
+use App\Models\MatchModel;
 use App\Models\GroupDivision;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Builder;

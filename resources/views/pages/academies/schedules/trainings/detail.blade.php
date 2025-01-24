@@ -8,11 +8,11 @@
 
 @section('modal')
     @if(isAllAdmin() || isCoach())
-        <x-modal.matches.edit-player-attendance :schedule="$schedule"/>
+        <x-modal.matches.edit-player-attendance :match="$schedule"/>
 
-        <x-modal.matches.edit-coach-attendance :schedule="$schedule"/>
+        <x-modal.matches.edit-coach-attendance :match="$schedule"/>
 
-        <x-modal.matches.create-schedule-note :schedule="$schedule"/>
+        <x-modal.matches.create-schedule-note :match="$schedule"/>
         <x-modal.matches.edit-schedule-note :eventSchedule="$schedule"/>
 
 
@@ -172,7 +172,7 @@
                     <x-warning-alert text="Training session note haven't created yet by coach"/>
                 @endif
                 @foreach($schedule->notes as $note)
-                    <x-event-note-card :note="$note" :schedule="$schedule"/>
+                    <x-event-note-card :note="$note" :match="$schedule"/>
                 @endforeach
             </div>
 

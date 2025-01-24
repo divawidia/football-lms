@@ -86,7 +86,7 @@ class PlayerPerformanceReviewService extends Service
             ->addColumn('action', function ($item) use ($match){
                 $review = $this->performanceReviewRepository->getByPlayer($item, $match)->first();
                 if (isAllAdmin()){
-                    $button = '<a class="btn btn-sm btn-outline-secondary" href="' . route('coach.player-managements.performance-reviews', ['player'=>$item->hash]) . '" data-toggle="tooltip" data-placement="bottom" title="View All Player Performance Review">
+                    $button = '<a class="btn btn-sm btn-outline-secondary" href="' . route('player-managements.performance-reviews.index', ['player'=>$item->hash]) . '" data-toggle="tooltip" data-placement="bottom" title="View All Player Performance Review">
                                     <span class="material-icons">visibility</span>
                                </a>';
                 } elseif(isCoach()){

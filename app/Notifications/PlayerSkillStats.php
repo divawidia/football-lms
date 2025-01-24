@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Coach;
-use App\Models\Match;
+use App\Models\MatchModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

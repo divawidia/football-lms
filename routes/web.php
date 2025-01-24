@@ -142,12 +142,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
                 Route::get('match-training', [PlayerPerformanceReviewController::class, 'indexPlayer'])->middleware('role:Super-Admin|admin|coach')->name('match-training');
                 Route::get('', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->middleware('role:Super-Admin|admin|coach')->name('index-page');
                 Route::post('store', [PlayerPerformanceReviewController::class, 'store'])->middleware('role:coach')->name('store');
-
-                Route::prefix('{review}')->middleware('role:coach')->group(function () {
-                    Route::get('', [PlayerPerformanceReviewController::class, 'edit'])->name('edit');
-                    Route::put('update', [PlayerPerformanceReviewController::class, 'update'])->name('update');
-                    Route::delete('destroy', [PlayerPerformanceReviewController::class, 'destroy'])->name('destroy');
-                });
             });
 
             Route::prefix('parents')->name('player-parents.')->group(function () {
@@ -163,6 +157,12 @@ Route::group(['middleware' => ['auth', 'web']], function () {
                     });
                 });
             });
+        });
+
+        Route::prefix('performance-reviews/{review}')->name('performance-reviews.')->middleware('role:coach')->group(function () {
+            Route::get('', [PlayerPerformanceReviewController::class, 'edit'])->name('edit');
+            Route::put('update', [PlayerPerformanceReviewController::class, 'update'])->name('update');
+            Route::delete('destroy', [PlayerPerformanceReviewController::class, 'destroy'])->name('destroy');
         });
     });
 
@@ -288,7 +288,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
                 Route::patch('scheduled', [MatchController::class, 'scheduled'])->name('scheduled');
             });
 
-            Route::middleware('role:coach')->group(function () {
+            Route::middleware('role:coach|Super-Admin|admin')->group(function () {
                 Route::get('players', [MatchController::class, 'getEventPLayers'])->name('players');
 
                 Route::get('player-skills', [SkillAssessmentController::class, 'indexAllPlayerInEvent'])->name('player-skills');

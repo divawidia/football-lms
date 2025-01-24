@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Models\Coach;
 use App\Models\CoachCertification;
 use App\Models\CoachSpecialization;
-use App\Models\Match;
+use App\Models\MatchModel;
 use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\PlayerPosition;

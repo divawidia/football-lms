@@ -3,7 +3,7 @@
 namespace App\Notifications\TrainingSchedules;
 
 use App\Models\Coach;
-use App\Models\Match;
+use App\Models\MatchModel;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -22,7 +22,7 @@
             });
             processModalForm(
                 formId,
-                "{{ route('coach.performance-reviews.store', ['player'=> ':id']) }}",
+                "{{ route('player-managements.performance-reviews.store', ['player'=> ':id']) }}",
                 "#playerId",
                 modalId
             );

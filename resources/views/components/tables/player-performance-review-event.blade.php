@@ -12,7 +12,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{{ route('match-schedules.player-performance-review', ['schedule' => $eventSchedule->hash]) }}',
+                    url: '{{ route('match-schedules.player-performance-review', ['schedule' => $match->hash]) }}',
                     @if($teamId)
                     data: {
                         teamId: {{ $teamId }},

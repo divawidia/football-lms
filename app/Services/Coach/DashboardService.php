@@ -6,7 +6,7 @@ use App\Models\Admin;
 use App\Models\Coach;
 use App\Models\CoachMatchStats;
 use App\Models\Competition;
-use App\Models\Match;
+use App\Models\MatchModel;
 use App\Models\Invoice;
 use App\Models\Player;
 use App\Models\Team;

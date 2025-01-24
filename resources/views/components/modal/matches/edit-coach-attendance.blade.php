@@ -19,7 +19,7 @@
                 e.preventDefault();
                 const id = $(this).attr('id');
 
-                @if($schedule->status != 'Ongoing')
+                @if($match->status != 'Ongoing')
                     Swal.fire({
                         icon: "error",
                         title: "You cannot update coach attendance because the session has not started or has finished or been cancelled!",
@@ -27,7 +27,7 @@
                     });
                 @else
                 $.ajax({
-                    url: "{{ route('match-schedules.coach', ['schedule' => $schedule->hash, 'coach' => ':id']) }}".replace(':id', id),
+                    url: "{{ route('match-schedules.coach', ['schedule' => $match->hash, 'coach' => ':id']) }}".replace(':id', id),
                     type: 'get',
                     success: function(res) {
                         $(modalId).modal('show');
@@ -55,7 +55,7 @@
 
             processModalForm(
                 formId,
-                "{{ route('match-schedules.update-coach', ['schedule' => $schedule->hash, 'coach' => ':id']) }}",
+                "{{ route('match-schedules.update-coach', ['schedule' => $match->hash, 'coach' => ':id']) }}",
                 "#coachId",
                 modalId
             );

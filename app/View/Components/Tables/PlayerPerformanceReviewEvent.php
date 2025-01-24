@@ -2,7 +2,7 @@
 
 namespace App\View\Components\Tables;
 
-use App\Models\Match;
+use App\Models\MatchModel;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
@@ -10,16 +10,16 @@ use Illuminate\View\Component;
 class PlayerPerformanceReviewEvent extends Component
 {
     public $tableId;
-    public Match $eventSchedule;
+    public MatchModel $match;
     public $teamId;
 
     /**
      * Create a new component instance.
      */
-    public function __construct($tableId, Match $eventSchedule, $teamId = null)
+    public function __construct($tableId, MatchModel $match, $teamId = null)
     {
         $this->tableId = $tableId;
-        $this->eventSchedule = $eventSchedule;
+        $this->match = $match;
         $this->teamId = $teamId;
     }
 

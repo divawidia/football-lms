@@ -20,6 +20,6 @@ class SkillAssessmentsModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.skill-assessments-modal');
+        return view('components.modal.players-coaches.skill-assessments-modal');
     }
 }

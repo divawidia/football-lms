@@ -2,20 +2,20 @@
 
 namespace App\View\Components;
 
-use App\Models\Match;
+use App\Models\MatchModel;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class EditPlayerMatchStatsModal extends Component
 {
-    public Match $eventSchedule;
+    public MatchModel $match;
     /**
      * Create a new component instance.
      */
-    public function __construct($eventSchedule)
+    public function __construct($match)
     {
-        $this->eventSchedule = $eventSchedule;
+        $this->match = $match;
     }
 
     /**

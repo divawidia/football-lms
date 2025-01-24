@@ -2,20 +2,20 @@
 
 namespace App\View\Components\modal\Matches;
 
-use App\Models\Match;
+use App\Models\MatchModel;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class EditCoachAttendanceModal extends Component
 {
-    public Match $schedule;
+    public MatchModel $match;
     /**
      * Create a new component instance.
      */
-    public function __construct($schedule)
+    public function __construct($match)
     {
-        $this->schedule = $schedule;
+        $this->match = $match;
     }
 
     /**

@@ -12,11 +12,11 @@
 @endsection
 
 @section('modal')
-    <x-modal.matches.edit-player-attendance :schedule="$schedule"/>
+    <x-modal.matches.edit-player-attendance :match="$schedule"/>
 
-    <x-modal.matches.edit-coach-attendance :schedule="$schedule"/>
+    <x-modal.matches.edit-coach-attendance :match="$schedule"/>
 
-    <x-modal.matches.create-match-note :schedule="$schedule"/>
+    <x-modal.matches.create-match-note :match="$schedule"/>
     <x-modal.matches.edit-match-note :match="$schedule"/>
 
     <x-skill-assessments-modal/>
@@ -26,19 +26,19 @@
     <x-modal.matches.edit-performance-review/>
 
     <!-- Modal add team scorer -->
-    <x-modal.matches.add-team-scorer :eventSchedule="$schedule"/>
+    <x-modal.matches.add-team-scorer :match="$schedule"/>
 
     <!-- Modal edit external team score -->
-    <x-modal.matches.edit-external-team-score :eventSchedule="$schedule"/>
+    <x-modal.matches.edit-external-team-score :match="$schedule"/>
 
     <!-- Modal add team own goal scorer -->
-    <x-modal.matches.add-team-own-goal :eventSchedule="$schedule"/>
+    <x-modal.matches.add-team-own-goal :match="$schedule"/>
 
     <!-- Modal add team match stats -->
-    <x-modal.matches.edit-team-match-stats :eventSchedule="$schedule"/>
+    <x-modal.matches.edit-team-match-stats :match="$schedule"/>
 
     <!-- Modal update player match stats -->
-    <x-edit-player-match-stats-modal :eventSchedule="$schedule"/>
+    <x-edit-player-match-stats-modal :match="$schedule"/>
 
     <x-modal.matches.edit-match :competition="$schedule->competition"/>
 @endsection
@@ -662,7 +662,7 @@
                 @endif
 
                 @foreach($schedule->notes as $note)
-                    <x-cards.event-note :note="$note" :schedule="$schedule"/>
+                    <x-cards.event-note :note="$note" :match="$schedule"/>
                 @endforeach
 
             </div>
@@ -673,7 +673,7 @@
                     <div class="page-separator__text">player skills evaluation</div>
                 </div>
                 @if(isAllAdmin() || isCoach())
-                    <x-tables.player-skill-event :eventSchedule="$schedule" :teamId="$homeTeam->id"
+                    <x-tables.player-skill-event :match="$schedule" :teamId="$homeTeam->id"
                                                  tableId="playerSkillsTable"/>
                 @elseif(isPlayer())
                     <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
@@ -686,7 +686,7 @@
                     <div class="page-separator__text">player performance review</div>
                 </div>
                 @if(isAllAdmin() || isCoach())
-                    <x-tables.player-performance-review-event :eventSchedule="$schedule" :teamId="$homeTeam->id"
+                    <x-tables.player-performance-review-event :match="$schedule" :teamId="$homeTeam->id"
                                                               tableId="playerPerformanceReviewTable"/>
                 @elseif(isPlayer())
                     @if(count($data['playerPerformanceReviews'])==0)
@@ -759,7 +759,7 @@
                         <x-warning-alert text="Match session note haven't created yet by coach"/>
                     @endif
                     @foreach($awayTeamNotes as $note)
-                        <x-cards.event-note :note="$note" :schedule="$schedule"/>
+                        <x-cards.event-note :note="$note" :match="$schedule"/>
                     @endforeach
                 </div>
 
@@ -770,7 +770,7 @@
                         </div>
                     </div>
                     @if(isAllAdmin() || isCoach())
-                        <x-tables.player-skill-event :eventSchedule="$schedule"
+                        <x-tables.player-skill-event :match="$schedule"
                                                      tableId="team{{ $awayTeam->id }}PlayerSkillsTable"
                                                      :teamId="$awayTeam->id"/>
                     @elseif(isPlayer())
@@ -784,7 +784,7 @@
                         <div class="page-separator__text">player performance review</div>
                     </div>
                     @if(isAllAdmin() || isCoach())
-                        <x-tables.player-performance-review-event :eventSchedule="$schedule"
+                        <x-tables.player-performance-review-event :match="$schedule"
                                                                   tableId="team{{ $awayTeam->id }}PlayerPerformanceReviewTable"
                                                                   :teamId="$awayTeam->id"/>
                     @elseif(isPlayer())
@@ -861,7 +861,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! route('match-schedules.index-player-match-stats', $schedule->hash) !!}',
+                    url: '{!! route('match-schedules.player-match-stats.index', $schedule->hash) !!}',
                     type: "GET",
                     data: {
                         teamId: {{ $homeTeam->id }}
@@ -895,7 +895,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{{ route('match-schedules.index-player-match-stats', $schedule->hash) }}',
+                    url: '{{ route('match-schedules.player-match-stats.index', $schedule->hash) }}',
                     type: "GET",
                     data: {
                         teamId: {{ $awayTeam->id }}

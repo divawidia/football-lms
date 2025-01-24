@@ -123,7 +123,7 @@
 {{-- update player match stats data --}}
 <x-modal-form-update-processing formId="#formPlayerMatchStats"
                                 updateDataId="#formPlayerMatchStats #playerStatsId"
-                                :routeUpdate="route('match-schedules.update-player-match-stats', ['schedule' => $eventSchedule->id, 'player' => ':id'])"
+                                :routeUpdate="route('match-schedules.player-match-stats.update', ['schedule' => $match->id, 'player' => ':id'])"
                                 modalId="#playerMatchStatsModal"/>
 
 @push('addon-script')
@@ -141,7 +141,7 @@
                 $(formId+' input').removeClass('is-invalid');
 
                 $.ajax({
-                    url: "{{ route('match-schedules.show-player-match-stats', ['schedule' => $eventSchedule->id, 'player' => ":id"]) }}".replace(':id', id),
+                    url: "{{ route('match-schedules.player-match-stats.show', ['schedule' => $match->id, 'player' => ":id"]) }}".replace(':id', id),
                     type: 'GET',
                     success: function (res) {
                         $('#playerStatsName').text('Update Player ' + res.data.playerData.firstName + ' ' + res.data.playerData.lastName + ' Stats');
