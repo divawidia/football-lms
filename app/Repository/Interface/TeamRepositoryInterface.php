@@ -12,8 +12,6 @@ interface TeamRepositoryInterface
 
     public function getByTeamside($teamSide, $exceptTeamId = null);
 
-    public function getJoinedCompetition(Competition $competition);
-
     public function find($id);
 
     public function whereId($id);

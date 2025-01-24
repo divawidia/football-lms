@@ -18,12 +18,12 @@ class CompetitionRepository
         $this->competition = $competition;
     }
 
-    public function getAll($teams = null, $status = null)
+    public function getAll($withRelation = [], $teams = null, $status = null)
     {
-        $query = $this->competition->with('groups.teams');
+        $query = $this->competition->with($withRelation);
         if ($teams){
             $teamIds = collect($teams)->pluck('id')->all();
-            $query->whereHas('groups.teams', function($q) use ($teamIds){
+            $query->whereHas('matches.teams', function($q) use ($teamIds){
                 $q->whereIn('teamId', $teamIds);
             });
         }

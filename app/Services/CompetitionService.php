@@ -24,7 +24,7 @@ class CompetitionService extends Service
     private CoachRepository $coachRepository;
     private UserRepository $userRepository;
     private MatchService $eventScheduleService;
-    private DatatablesHelper $datatablesService;
+    private DatatablesHelper $datatablesHelper;
 
     public function __construct(
         CompetitionRepository $competitionRepository,
@@ -33,7 +33,7 @@ class CompetitionService extends Service
         CoachRepository       $coachRepository,
         UserRepository        $userRepository,
         MatchService          $eventScheduleService,
-        DatatablesHelper      $datatablesService
+        DatatablesHelper      $datatablesHelper
     )
     {
         $this->competitionRepository = $competitionRepository;
@@ -42,7 +42,7 @@ class CompetitionService extends Service
         $this->coachRepository = $coachRepository;
         $this->userRepository = $userRepository;
         $this->eventScheduleService = $eventScheduleService;
-        $this->datatablesService = $datatablesService;
+        $this->datatablesHelper = $datatablesHelper;
     }
     public function index(){
         return $this->competitionRepository->getAll();
@@ -66,55 +66,24 @@ class CompetitionService extends Service
         $query = $this->index();
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                $statusButton = '';
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('competition-managements.show', $item->hash), icon: 'visibility', btnText: 'View competition Profile');
+                $dropdownItem .= $this->datatablesHelper->linkDropdownItem(route: route('competition-managements.edit', $item->hash), icon: 'edit', btnText: 'edit competition Profile');
                 if ($item->status != 'Cancelled' && $item->status != 'Completed') {
-                    $statusButton = '<button type="submit" class="dropdown-item cancelBtn" id="'.$item->id.'">
-                                        <span class="material-icons text-danger">block</span> Cancel Competition
-                                    </button>';
+                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('cancelBtn', $item->hash, 'danger', icon: 'block', btnText: 'Cancel Competition');
+                } elseif ($item->status == 'Cancelled') {
+                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('scheduled-btn', $item->hash, 'warning', icon: 'block', btnText: 'Set Competition to scheduled');
                 }
-                return '
-                            <div class="dropdown">
-                              <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="material-icons">
-                                    more_vert
-                                </span>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('competition-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Competition</a>
-                                <a class="dropdown-item" href="' . route('competition-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Competition</a>
-                                ' . $statusButton . '
-                                <button type="button" class="dropdown-item delete" id="' . $item->id . '">
-                                    <span class="material-icons text-danger">delete</span> Delete Competition
-                                </button>
-                              </div>
-                            </div>';
+                $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete', $item->hash, 'danger', icon: 'delete', btnText: 'delete Competition');
+
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
-//            ->editColumn('divisions', function ($item) {
-//                $divisions = '';
-//                if (count($item->groups) == 0){
-//                    $divisions = 'No division added in this competition';
-//                }else{
-//                    foreach ($item->groups as $group) {
-//                        $divisions .= '<span class="badge badge-pill badge-danger">'.$group->groupName.'</span>';
-//                    }
-//                }
-//                return $divisions;
-//            })
-//            ->editColumn('teams', function ($item) {
-//                $teams = '';
-//                foreach ($item->groups as $group){
-//                    if (count($group->teams) > 0) {
-//                        $team = $group->teams->where('teamSide', 'Academy Team')->first();
-//                        $teams .= '<span class="badge badge-pill badge-danger">' . $team->teamName . '</span>';
-//                    }
-//                }
-//                return $teams;
-//            })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->logo, $item->name, $item->type, route('competition-managements.show', $item->hash));
+                return $this->datatablesHelper->name($item->logo, $item->name, $item->type, route('competition-managements.show', $item->hash));
             })
             ->editColumn('date', function ($item) {
-                return $this->datatablesService->competitionStartEndDate($item);
+                return $this->datatablesHelper->competitionStartEndDate($item);
             })
             ->editColumn('isInternal', function ($item) {
                 if ($item->isInternal == 1){
@@ -123,79 +92,37 @@ class CompetitionService extends Service
                     return '<span class="badge badge-pill badge-warning">External</span>';
                 }
             })
-//            ->editColumn('contact', function ($item) {
-//                if ($item->contactName != null && $item->contactPhone != null){
-//                    $contact = $item->contactName. ' ~ '.$item->contactPhone;
-//                }else{
-//                    $contact = 'No cantact added';
-//                }
-//                return $contact;
-//            })
             ->editColumn('status', function ($item) {
-                return $this->datatablesService->eventStatus($item->status);
+                return $this->datatablesHelper->eventStatus($item->status);
             })
             ->rawColumns(['action', 'name', 'isInternal', 'date', 'status'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function overviewStats(Competition $competition)
-    {
-        $groupDivisions = $competition->groups;
-        $totalGroups = $groupDivisions->count();
-        $totalMatch = $competition->matches()->count();
-        $totalTeams = 0;
-        $ourTeamsWins = 0;
-        $ourTeamsDraws = 0;
-        $ourTeamsLosses = 0;
-        foreach ($groupDivisions as $group){
-            $totalTeams += $group->teams()->count();
-
-            $ourTeamsWins += $group->teams()->where('teamSide', 'Academy Team')->sum('competition_team.won');
-            $ourTeamsDraws += $group->teams()->where('teamSide', 'Academy Team')->sum('competition_team.drawn');
-            $ourTeamsLosses += $group->teams()->where('teamSide', 'Academy Team')->sum('competition_team.lost');
-        }
-
-        return compact('totalTeams', 'ourTeamsWins', 'ourTeamsDraws', 'ourTeamsLosses', 'totalGroups', 'totalMatch');
-
-    }
     public function competitionMatches(Competition $competition)
     {
-        $data = $competition->matches;
+        $data = $competition->matches()->with('teams', 'externalTeam')->get();
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('match-schedules.show', $item->hash), icon: 'visibility', btnText: 'View match session');
                 if (isAllAdmin()){
-                    $edit = '';
                     if ($item->status == 'Scheduled'){
-                        $edit = $this->datatablesService->buttonDropdownItem('edit-match-btn', $item->id, icon: 'edit', btnText: 'Edit Match');
+                        $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('edit-match-btn', $item->id, icon: 'edit', btnText: 'Edit Match');
                     }
-                    $actionBtn ='
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            '.$edit.'
-                            '.$this->datatablesService->linkDropdownItem(route: route('match-schedules.show', $item->hash), icon: 'visibility', btnText: 'View Match').'
-                            '.$this->datatablesService->buttonDropdownItem('delete-match', $item->id, iconColor: 'danger', icon: 'delete', btnText: 'Delete Match').'
-                          </div>
-                        </div>';
-                } else {
-                    $actionBtn = $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
+                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete-match', $item->hash, 'danger', icon: 'delete', btnText: 'delete Match');
                 }
-                return $actionBtn;
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
             ->editColumn('homeTeam', function ($item) {
-                return $this->datatablesService->name($item->homeTeam->logo, $item->homeTeam->teamName, $item->homeTeam->ageGroup, route('team-managements.show', $item->homeTeam->hash));
+                return $this->datatablesHelper->name($item->homeTeam->logo, $item->homeTeam->teamName, $item->homeTeam->ageGroup, route('team-managements.show', $item->homeTeam->hash));
             })
             ->editColumn('awayTeam', function ($item) use ($competition) {
-                if ($competition->isInternal == 1) {
-                    return $this->datatablesService->name($item->awayTeam->logo, $item->awayTeam->teamName, $item->awayTeam->ageGroup, route('team-managements.show', $item->awayTeam->hash));
-                } else {
-                    return $item->externalTeam->teamName;
-                }
+                return ($competition->isInternal == 1)
+                    ? $this->datatablesHelper->name($item->awayTeam->logo, $item->awayTeam->teamName, $item->awayTeam->ageGroup, route('team-managements.show', $item->awayTeam->hash))
+                    : $item->externalTeam->teamName;
             })
             ->editColumn('score', function ($item) use ($competition) {
                 $homeTeam = $item->teams()->where('teamId', $item->homeTeamId)->first();
@@ -207,10 +134,10 @@ class CompetitionService extends Service
                 }
             })
             ->editColumn('date', function ($item) {
-                return $this->datatablesService->startEndDate($item);
+                return $this->datatablesHelper->startEndDate($item);
             })
             ->editColumn('status', function ($item) {
-                return $this->datatablesService->eventStatus($item->status);
+                return $this->datatablesHelper->eventStatus($item->status);
             })
             ->rawColumns(['action','homeTeam', 'awayTeam', 'score', 'status','date'])
             ->addIndexColumn()
@@ -234,19 +161,12 @@ class CompetitionService extends Service
         $admins = $this->userRepository->getAllAdminUsers();
         Notification::send($admins, new CompetitionCreatedDeleted($loggedUser, $competition, 'created'));
 
-//        $competitionData['competitionId'] = $competition->id;
-//        $this->groupDivisionService->store($competitionData, $competition, $loggedUser);
-
         return $competition;
     }
 
     public  function storeMatch(array $competitionData, Competition $competition, $loggedUser)
     {
-        if ($competition->isInternal == 1) {
-            $competitionData['matchType'] = 'Internal Match';
-        } else {
-            $competitionData['matchType'] = 'External Match';
-        }
+        ($competition->isInternal == 1) ? $competitionData['matchType'] = 'Internal Match' : $competitionData['matchType'] = 'External Match';
 
         $competitionData['competitionId'] = $competition->id;
         $this->eventScheduleService->storeMatch($competitionData, $loggedUser->id);
@@ -266,10 +186,9 @@ class CompetitionService extends Service
         return $competition;
     }
 
-    public function setStatus(Competition $competition, $status): Competition
+    public function setStatus(Competition $competition, $status)
     {
         $competition->update(['status' => $status]);
-        $teams = $this->teamRepository->getJoinedCompetition($competition);
 
         // Define status messages mapping
         $statusMessages = [
@@ -282,11 +201,7 @@ class CompetitionService extends Service
         // Check if the status exists in the defined mapping
         if (array_key_exists($status, $statusMessages)) {
             $statusMessage = $statusMessages[$status];
-
-            foreach ($teams as $team) {
-                $teamParticipants = $this->userRepository->allTeamsParticipant($team);
-                Notification::send($teamParticipants, new CompetitionStatus($competition, $team, $statusMessage));
-            }
+            Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionStatus($competition, $statusMessage));
         }
 
         return $competition;
@@ -294,11 +209,7 @@ class CompetitionService extends Service
 
     public function destroy(Competition $competition, $loggedUser): Competition
     {
-        $teams = $this->teamRepository->getJoinedCompetition($competition);
-        foreach ($teams as $team) {
-            $teamParticipants = $this->userRepository->allTeamsParticipant($team);
-            Notification::send($teamParticipants, new CompetitionCreatedDeleted($loggedUser, $competition, 'deleted'));
-        }
+        Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionCreatedDeleted($loggedUser, $competition, 'deleted'));
         $this->deleteImage($competition->logo);
         $competition->delete();
         return $competition;

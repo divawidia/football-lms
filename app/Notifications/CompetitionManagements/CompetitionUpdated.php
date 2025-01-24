@@ -3,10 +3,11 @@
 namespace App\Notifications\CompetitionManagements;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CompetitionUpdated extends Notification
+class CompetitionUpdated extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $admin;
@@ -38,6 +39,7 @@ class CompetitionUpdated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
+            'title' => "Competition {$this->status}",
             'data' =>"Competition {$this->competition->name} have been {$this->status} by Admin {$this->admin->firstName} {$this->admin->lastName}. Please review the changes if necessary.",
             'redirectRoute' => route('competition-managements.show', $this->competition->id)
         ];

@@ -3,20 +3,19 @@
 namespace App\Notifications\CompetitionManagements;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CompetitionStatus extends Notification
+class CompetitionStatus extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $competition;
-    protected $team;
     protected $status;
 
-    public function __construct($competition, $team, $status)
+    public function __construct($competition, $status)
     {
         $this->competition = $competition;
-        $this->team = $team;
         $this->status = $status;
     }
 
@@ -38,8 +37,9 @@ class CompetitionStatus extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"The competition {$this->competition->name} that your team '{$this->team->teamName}' participated in {$this->status}.",
-            'redirectRoute' => route('competition-managements.show', $this->competition->id)
+            'title' => "Competition {$this->status}",
+            'data' =>"The competition {$this->competition->name} {$this->status}.",
+            'redirectRoute' => route('competition-managements.show', $this->competition->hash)
         ];
     }
 }

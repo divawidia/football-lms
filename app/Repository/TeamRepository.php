@@ -45,18 +45,6 @@ class TeamRepository implements TeamRepositoryInterface
         return $query->get();
     }
 
-    public function getJoinedCompetition(Competition $competition)
-    {
-        $teams = [];
-        foreach ($competition->groups as $group){
-            if (count($group->teams) > 0) {
-                $team = $group->teams->where('teamSide', 'Academy Team')->first();
-                $teams[] = $team;
-            }
-        }
-        return $teams;
-    }
-
     public function find($id)
     {
         return $this->team->findOrFail($id);
