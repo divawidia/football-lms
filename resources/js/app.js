@@ -31,7 +31,7 @@ import './youtube'
 
     imagePreview('#foto', '#preview');
 
-    imagePreview('logo', 'preview');
+    imagePreview('#logo', '#preview');
     imagePreview('add_logo', 'opponentTeamPreview');
     imagePreview('add_logoTeam', 'teamPreview');
 
