@@ -16,7 +16,7 @@
 
     <x-modal.matches.edit-coach-attendance :schedule="$schedule"/>
 
-    <x-modal.matches.create-schedule-note :schedule="$schedule"/>
+    <x-modal.matches.create-match-note :schedule="$schedule"/>
     <x-modal.matches.edit-match-note :match="$schedule"/>
 
     <x-skill-assessments-modal/>
@@ -803,8 +803,7 @@
 @endsection
 
 @push('addon-script')
-    <script type="module">
-        import {processWithConfirmation} from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
+    <script>
 
         $(document).ready(function () {
             processWithConfirmation(

@@ -21,7 +21,7 @@
 
             processModalForm(
                 formId,
-                "{{ route('match-schedules.create-note', $schedule->hash) }}",
+                "{{ route('match-schedules.create-note', $match->hash) }}",
                 "",
                 modalId
             );
