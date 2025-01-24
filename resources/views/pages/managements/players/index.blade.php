@@ -79,11 +79,9 @@
 
 @endsection
 @push('addon-script')
-    <script type="module">
-        import { processWithConfirmation } from "{{ Vite::asset('resources/js/ajax-processing-data.js') }}" ;
-
+    <script>
         $(document).ready(function () {
-            const playerIndexUrl = @if(isAllAdmin()) '{!! url()->route('player-managements.admin-index') !!}' @elseif(isCoach()) '{!! url()->route('player-managements.coach-index') !!}' @endif
+            const playerIndexUrl = @if(isAllAdmin()) '{!! url()->route('player-managements.admin-index') !!}' @else '{!! url()->route('player-managements.coach-index') !!}' @endif
 
             function playersTable(position = null, skill = null, team = null, status = null) {
                 $('#table').DataTable({
