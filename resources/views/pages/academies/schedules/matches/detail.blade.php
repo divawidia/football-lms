@@ -17,7 +17,7 @@
     <x-modal.matches.edit-coach-attendance :schedule="$schedule"/>
 
     <x-modal.matches.create-schedule-note :schedule="$schedule"/>
-    <x-modal.matches.edit-schedule-note :eventSchedule="$schedule"/>
+    <x-modal.matches.edit-match-note :match="$schedule"/>
 
     <x-skill-assessments-modal/>
     <x-edit-skill-assessments-modal/>

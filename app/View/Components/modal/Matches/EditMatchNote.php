@@ -2,20 +2,20 @@
 
 namespace App\View\Components\modal\Matches;
 
-use App\Models\Match;
+use App\Models\MatchModel;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class EditScheduleNote extends Component
+class EditMatchNote extends Component
 {
-    public Match $eventSchedule;
+    public MatchModel $match;
     /**
      * Create a new component instance.
      */
-    public function __construct(Match $eventSchedule)
+    public function __construct(MatchModel $match)
     {
-        $this->eventSchedule = $eventSchedule;
+        $this->match = $match;
     }
 
     /**
@@ -23,6 +23,6 @@ class EditScheduleNote extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.matches.edit-schedule-note');
+        return view('components.modal.matches.edit-match-note');
     }
 }
