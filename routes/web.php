@@ -265,7 +265,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         Route::get('', [MatchController::class, 'indexMatch'])->middleware('role:Super-Admin|admin|coach|player')->name('index');
 
         Route::middleware('role:Super-Admin|admin')->group(function () {
-            Route::get('admins-matches', [MatchController::class, 'adminIndexMatch'])->name('index');
+            Route::get('admins-matches', [MatchController::class, 'adminIndexMatch'])->name('admin-index');
             Route::get('create', [MatchController::class, 'createMatch'])->name('create');
 //        Route::get('competition-teams/{competition}', [EventScheduleController::class, 'getCompetitionTeam'])->name('get-competition-team');
 //        Route::get('friendly-match-teams', [EventScheduleController::class, 'getFriendlyMatchTeam'])->name('get-friendlymatch-team');
