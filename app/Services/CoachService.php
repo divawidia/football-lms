@@ -174,7 +174,10 @@ class CoachService extends Service
 
     public function winRate(Coach $coach, $startDate = null, $endDate = null)
     {
-        $winRate = ($this->wins($coach, $startDate, $endDate) / $this->totalMatchPlayed($coach, $startDate, $endDate)) * 100;
+        $totalMatch = $this->totalMatchPlayed($coach, $startDate, $endDate);
+        $wins = $this->wins($coach, $startDate, $endDate);
+
+        ($totalMatch > 0) ? $winRate = ( $wins /$totalMatch) * 100 : $winRate = 0; // check if totalMatch is 0 then set win rate to 0
         return round($winRate, 2);
     }
 
