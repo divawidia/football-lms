@@ -8,7 +8,7 @@
 
     @section('content')
         <div class="pt-32pt">
-            <div class="container d-flex flex-column">
+            <div class="container">
                 <h2 class="mb-2">@yield('title')</h2>
                 <ol class="breadcrumb p-0 m-0">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
@@ -47,12 +47,7 @@
                         { data: 'date', name: 'date'},
                         { data: 'location', name: 'location'},
                         { data: 'status', name: 'status' },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        },
+                        {data: 'action', name: 'action', orderable: false, searchable: false},
                     ]
                 });
 
@@ -68,7 +63,7 @@
 
                 processWithConfirmation(
                     '.cancelBtn',
-                    "{{ route('cancelled-competition', ['competition' => ':id']) }}",
+                    "{{ route('competition-managements.cancelled', ['competition' => ':id']) }}",
                     "{{ route('competition-managements.index') }}",
                     'PATCH',
                     "Are you sure to cancel this competition?",
