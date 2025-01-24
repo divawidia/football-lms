@@ -7,7 +7,7 @@ use App\Models\Coach;
 use App\Models\Player;
 use App\Models\Team;
 use App\Notifications\OpponentTeamsManagements\OpponentTeamUpdated;
-use App\Notifications\AddOrRemoveFromTeam;
+use App\Notifications\AddOrRemoveFromTeamNotification;
 use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Notifications\TeamsManagements\TeamCreatedDeleted;
 use App\Notifications\TeamsManagements\TeamUpdated;
@@ -522,7 +522,7 @@ class TeamService extends Service
     {
         $team->players()->attach($teamData['players']);
         $players = $this->userRepository->getInArray('player', $teamData['players']);
-        Notification::send($players, new AddOrRemoveFromTeam($team));
+        Notification::send($players, new AddOrRemoveFromTeamNotification($team));
         return $team;
     }
 
@@ -530,7 +530,7 @@ class TeamService extends Service
     {
         $team->coaches()->attach($teamData['coaches']);
         $coaches = $this->userRepository->getInArray('coach', $teamData['coaches']);
-        Notification::send($coaches, new AddOrRemoveFromTeam($team));
+        Notification::send($coaches, new AddOrRemoveFromTeamNotification($team));
         return $team;
     }
 

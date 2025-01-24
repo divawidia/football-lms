@@ -5,9 +5,21 @@ namespace App\Services;
 use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
 use App\Models\Team;
-use App\Notifications\CoachManagements\CoachAccountCreatedDeleted;
-use App\Notifications\CoachManagements\CoachAccountUpdated;
-use App\Notifications\AddOrRemoveFromTeam;
+use App\Notifications\CoachManagements\Admin\AddTeamForAdminNotification;
+use App\Notifications\CoachManagements\Admin\CoachActivatedForAdminNotification;
+use App\Notifications\CoachManagements\Admin\CoachChangePasswordForAdminNotification;
+use App\Notifications\CoachManagements\Admin\CoachCreatedForAdminNotification;
+use App\Notifications\CoachManagements\Admin\CoachDeactivatedForAdminNotification;
+use App\Notifications\CoachManagements\Admin\CoachDeletedForAdminNotification;
+use App\Notifications\CoachManagements\Admin\CoachUpdatedForAdminNotification;
+use App\Notifications\CoachManagements\Admin\RemoveTeamForAdminNotification;
+use App\Notifications\CoachManagements\Coach\AddTeamForCoachNotification;
+use App\Notifications\CoachManagements\Coach\CoachActivatedForCoachNotification;
+use App\Notifications\CoachManagements\Coach\CoachChangePasswordForCoachNotification;
+use App\Notifications\CoachManagements\Coach\CoachCreatedForCoachNotification;
+use App\Notifications\CoachManagements\Coach\CoachDeactivatedForCoachNotification;
+use App\Notifications\CoachManagements\Coach\CoachUpdatedForCoachNotification;
+use App\Notifications\CoachManagements\Coach\RemoveTeamForCoachNotification;
 use App\Repository\Interface\CoachMatchStatsRepositoryInterface;
 use App\Repository\Interface\CoachRepositoryInterface;
 use App\Repository\Interface\TeamRepositoryInterface;
@@ -108,17 +120,19 @@ class CoachService extends Service
     }
 
 
-    public function removeTeam(Coach $coach, Team $team)
+    public function removeTeam(Coach $coach, Team $team, $loggedUser)
     {
-        $coach->user->notify(new AddOrRemoveFromTeam($team, 'removed'));
+        $coach->user->notify(new RemoveTeamForCoachNotification($team));
+        Notification::send($this->userRepository->getAllAdminUsers(),new RemoveTeamForAdminNotification($loggedUser, $team, $coach));
         return $coach->teams()->detach($team->id);
     }
 
-    public function updateTeams($teamData, Coach $coach)
+    public function updateTeams($teamData, Coach $coach, $loggedUser)
     {
         $coach->teams()->attach($teamData);
         $team =$this->teamRepository->find($teamData)->first();
-        $coach->user->notify(new AddOrRemoveFromTeam($team, 'added'));
+        $coach->user->notify(new AddTeamForCoachNotification($team));
+        Notification::send($this->userRepository->getAllAdminUsers(),new AddTeamForAdminNotification($loggedUser, $team, $coach));
         return $coach;
     }
 
@@ -143,8 +157,8 @@ class CoachService extends Service
         $coach = $this->coachRepository->create($data);
 
         try {
-            $superAdminName = $this->getUserFullName($loggedUser);
-            Notification::send($this->userRepository->getAllAdminUsers(),new CoachAccountCreatedDeleted($superAdminName, $coach, 'created'));
+            Notification::send($this->userRepository->getAllAdminUsers(),new CoachCreatedForAdminNotification($loggedUser, $coach));
+            $coach->user->notify(new CoachCreatedForCoachNotification());
         } catch (Exception $exception) {
             Log::error($exception->getMessage());
         }
@@ -208,41 +222,41 @@ class CoachService extends Service
         return $goalScored - $goalConceded;
     }
 
-    public function update(array $data, Coach $coach): bool
+    public function update(array $data, Coach $coach, $loggedUser): bool
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'user-profile', $coach->user->foto);
-        $coach->user->notify(new CoachAccountUpdated($coach, 'updated'));
+
+        Notification::send($this->userRepository->getAllAdminUsers(),new CoachUpdatedForAdminNotification($loggedUser, $coach));
+        $coach->user->notify(new CoachUpdatedForCoachNotification());
+
         return $coach->update($data);
     }
 
-    public function setStatus(Coach $coach, $status)
+    public function setStatus(Coach $coach, $status, $loggedUser)
     {
         $this->userRepository->updateUserStatus($coach, $status);
 
         if ($status == '1') {
-            $message = 'activated';
-        } elseif ($status == '0') {
-            $message = 'deactivated';
+            Notification::send($this->userRepository->getAllAdminUsers(),new CoachActivatedForAdminNotification($loggedUser, $coach));
+            $coach->user->notify(new CoachActivatedForCoachNotification());
+        } else {
+            Notification::send($this->userRepository->getAllAdminUsers(),new CoachDeactivatedForAdminNotification($loggedUser, $coach));
+            $coach->user->notify(new CoachDeactivatedForCoachNotification());
         }
-
-        $coach->user->notify(new CoachAccountUpdated($coach, $message));
         return $coach;
     }
 
-    public function changePassword($data, Coach $coach){
-        $this->coachRepository->changePassword($data, $coach);
-        $coach->user->notify(new CoachAccountUpdated($coach, 'updated the password'));
-        return $coach;
+    public function changePassword($data, Coach $coach, $loggedUser){
+        Notification::send($this->userRepository->getAllAdminUsers(),new CoachChangePasswordForAdminNotification($loggedUser, $coach));
+        $coach->user->notify(new CoachChangePasswordForCoachNotification());
+
+        return $this->userRepository->changePassword($data, $coach);
     }
 
     public function destroy(Coach $coach, $loggedUser)
     {
         $this->deleteImage($coach->user->foto);
-
-        $superAdminName = $this->getUserFullName($loggedUser);
-        Notification::send($this->userRepository->getAllAdminUsers(),new CoachAccountCreatedDeleted($superAdminName, $coach, 'deleted'));
-
-        $this->coachRepository->delete($coach);
-        return $coach;
+        Notification::send($this->userRepository->getAllAdminUsers(),new CoachDeletedForAdminNotification($loggedUser, $coach));
+        return $coach->delete();
     }
 }

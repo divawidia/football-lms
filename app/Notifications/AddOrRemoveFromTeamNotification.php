@@ -7,7 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class AddOrRemoveFromTeam extends Notification implements ShouldQueue
+class AddOrRemoveFromTeamNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     protected Team $team;

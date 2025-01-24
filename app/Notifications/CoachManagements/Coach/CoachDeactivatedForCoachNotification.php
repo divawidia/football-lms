@@ -1,22 +1,19 @@
 <?php
 
-namespace App\Notifications\CoachManagements;
+namespace App\Notifications\CoachManagements\Coach;
 
+use App\Models\Admin;
+use App\Models\Coach;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CoachAccountUpdated extends Notification implements ShouldQueue
+class CoachDeactivatedForCoachNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $coach;
-    protected $status;
-
-    public function __construct($coach, $status)
+    public function __construct()
     {
-        $this->coach = $coach;
-        $this->status = $status;
     }
 
     /**
@@ -28,7 +25,6 @@ class CoachAccountUpdated extends Notification implements ShouldQueue
     {
         return ['database'];
     }
-
     /**
      * Get the array representation of the notification.
      *
@@ -37,8 +33,9 @@ class CoachAccountUpdated extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"Your account have been {$this->status} by Admin. Please review the changes if necessary.",
-            'redirectRoute' => route('coach-managements.show', $this->coach->id)
+            'title' => "Your Account has been deactivated",
+            'data' => "Your account has been deactivated by admin. Please review the changes if necessary!",
+            'redirectRoute' => route('edit-account.edit'),
         ];
     }
 }

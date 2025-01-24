@@ -14,12 +14,9 @@ use App\Services\CoachService;
 use App\Services\TeamService;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\Client\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
-use function Symfony\Component\String\s;
 
 class CoachController extends Controller
 {
@@ -61,14 +58,14 @@ class CoachController extends Controller
     public function updateTeams(PlayerTeamRequest $request, Coach $coach): JsonResponse
     {
         $data = $request->validated();
-        $coach = $this->coachService->updateTeams($data, $coach);
+        $coach = $this->coachService->updateTeams($data, $coach, $this->getLoggedUser());
         $message = "Coach ".$this->getUserFullName($coach->user)." successfully added to a new team";
         return ApiResponse::success($coach, $message);
     }
 
     public function removeTeam(Coach $coach, Team $team): JsonResponse
     {
-        $result = $this->coachService->removeTeam($coach, $team);
+        $result = $this->coachService->removeTeam($coach, $team, $this->getLoggedUser());
         $message = "Coach ".$this->getUserFullName($coach->user)." successfully removed from team ".$team->teamName.".";
         return ApiResponse::success($result, $message);
     }
@@ -148,7 +145,7 @@ class CoachController extends Controller
     public function update(UpdateCoachRequest $request, Coach $coach): RedirectResponse
     {
         $data = $request->validated();
-        $this->coachService->update($data, $coach);
+        $this->coachService->update($data, $coach, $this->getLoggedUser());
         $this->successAlertAddUser($data, 'updated');
         return redirect()->route('coach-managements.show', $coach->id);
     }
@@ -156,7 +153,7 @@ class CoachController extends Controller
     public function deactivate(Coach $coach): JsonResponse
     {
         try {
-            $data = $this->coachService->setStatus($coach, '0');
+            $data = $this->coachService->setStatus($coach, '0', $this->getLoggedUser());
             $message = "Coach ".$this->getUserFullName($coach->user)."'s account status successfully set to deactivated.";
             return ApiResponse::success($data, $message);
 
@@ -170,7 +167,7 @@ class CoachController extends Controller
     public function activate(Coach $coach): JsonResponse
     {
         try {
-            $data = $this->coachService->setStatus($coach, '1');
+            $data = $this->coachService->setStatus($coach, '1', $this->getLoggedUser());
             $message = "Coach ".$this->getUserFullName($coach->user)."'s account status successfully set to activated.";
             return ApiResponse::success($data, $message);
 
@@ -184,7 +181,7 @@ class CoachController extends Controller
     public function changePassword(ChangePasswordRequest $request, Coach $coach): JsonResponse
     {
         $data = $request->validated();
-        $result = $this->coachService->changePassword($data, $coach);
+        $result = $this->coachService->changePassword($data, $coach, $this->getLoggedUser());
         $message = "Coach ".$this->getUserFullName($coach->user)."'s account password successfully updated!";
         return ApiResponse::success($result, $message);
     }
@@ -194,9 +191,8 @@ class CoachController extends Controller
      */
     public function destroy(Coach $coach): JsonResponse
     {
-        $loggedUser = $this->getLoggedUser();
         try {
-            $data = $this->coachService->destroy($coach, $loggedUser);
+            $data = $this->coachService->destroy($coach, $this->getLoggedUser());
             $message = "Coach ".$this->getUserFullName($coach->user)."'s account successfully deleted.";
             return ApiResponse::success($data, $message);
 

@@ -7,7 +7,7 @@ use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\Team;
 use App\Models\User;
-use App\Notifications\AddOrRemoveFromTeam;
+use App\Notifications\AddOrRemoveFromTeamNotification;
 use App\Notifications\PlayerManagements\PlayerChangeForAdmin;
 use App\Notifications\PlayerManagements\PlayerChangeForPlayer;
 use App\Repository\Interface\TrainingRepositoryInterface;
@@ -137,7 +137,7 @@ class PlayerService extends Service
     public function removeTeam(Player $player, Team $team)
     {
         $player->teams()->detach($team->id);
-        $player->user->notify(new AddOrRemoveFromTeam($team, 'removed'));
+        $player->user->notify(new AddOrRemoveFromTeamNotification($team, 'removed'));
         return $player;
     }
 
@@ -146,7 +146,7 @@ class PlayerService extends Service
         $player->teams()->attach($teamData);
         $team =$this->teamRepository->find($teamData);
 
-        $player->user->notify(new AddOrRemoveFromTeam($team, 'added'));
+        $player->user->notify(new AddOrRemoveFromTeamNotification($team, 'added'));
 
         return $player;
     }
