@@ -24,6 +24,7 @@ use Yajra\DataTables\Facades\DataTables;
 class PlayerService extends Service
 {
     private MatchService $matchService;
+    private TrainingService $trainingService;
     private PlayerRepositoryInterface $playerRepository;
     private TeamRepositoryInterface $teamRepository;
     private MatchRepository $matchRepository;
@@ -33,6 +34,7 @@ class PlayerService extends Service
     private DatatablesHelper $datatablesHelper;
     public function __construct(
         MatchService              $matchService,
+        TrainingService           $trainingService,
         PlayerRepositoryInterface $playerRepository,
         MatchRepository           $matchRepository,
         TrainingRepositoryInterface $trainingRepository,
@@ -43,6 +45,7 @@ class PlayerService extends Service
     )
     {
         $this->matchService = $matchService;
+        $this->trainingService = $trainingService;
         $this->playerRepository = $playerRepository;
         $this->matchRepository = $matchRepository;
         $this->trainingRepository = $trainingRepository;
@@ -384,7 +387,7 @@ class PlayerService extends Service
     public function playerUpcomingTraining(Player $player)
     {
         $data = $this->matchRepository->getEventByModel($player, 'Training', ['Scheduled', 'Ongoing']);
-        return $this->matchService->makeDataTablesTraining($data);
+        return $this->trainingService->makeDataTablesTraining($data);
     }
 
     public function playerMatchCalendar(Player $player)
@@ -395,7 +398,7 @@ class PlayerService extends Service
     public function playerTrainingCalendar(Player $player)
     {
         $data = $this->matchRepository->getEventByModel($player, 'Training', ['Scheduled', 'Ongoing']);
-        return $this->matchService->makeTrainingCalendar($data);
+        return $this->trainingService->makeTrainingCalendar($data);
     }
 
     public function playerLatestMatch(Player $player)
@@ -417,7 +420,7 @@ class PlayerService extends Service
         return $this->playerRepository->update($player, $data);
     }
 
-    public function setStatus(Player $player, $status, User $loggedUser)
+    public function setStatus(Player $player, $status, $loggedUser)
     {
         ($status == '1') ? $message = 'activated' : $message = 'deactivated';
 
@@ -427,7 +430,7 @@ class PlayerService extends Service
         return $this->userRepository->updateUserStatus($player, $status);
     }
 
-    public function changePassword($data, Player $player, User $loggedUser)
+    public function changePassword($data, Player $player, $loggedUser)
     {
         $player->user->notify(new PlayerChangeForPlayer('password'));
         Notification::send($this->userRepository->getAllAdminUsers(),new PlayerChangeForAdmin($loggedUser, $player, 'password'));
@@ -435,7 +438,7 @@ class PlayerService extends Service
         return $this->userRepository->changePassword($data, $player);
     }
 
-    public function destroy(Player $player, User $loggedUser)
+    public function destroy(Player $player, $loggedUser)
     {
         $this->deleteImage($player->user->foto);
 
