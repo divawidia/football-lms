@@ -32,7 +32,18 @@ class Coach extends Model
     {
         return $this->belongsToMany(Team::class, 'coach_team', 'coachId', 'teamId')->withTimestamps();
     }
-    public function matchAttendances(): BelongsToMany
+
+    public function trainings(): BelongsToMany
+    {
+        return $this->belongsToMany(Training::class, 'coach_training_attendance', 'coachId', 'trainingId')
+            ->withPivot(
+                'attendanceStatus',
+                'note',
+                'teamId'
+            )->withTimestamps();
+    }
+
+    public function matches(): BelongsToMany
     {
         return $this->belongsToMany(MatchModel::class, 'coach_match_attendance', 'coachId', 'matchId')
             ->withPivot(

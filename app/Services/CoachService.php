@@ -23,7 +23,9 @@ use App\Notifications\CoachManagements\Coach\RemoveTeamForCoachNotification;
 use App\Repository\Interface\CoachMatchStatsRepositoryInterface;
 use App\Repository\Interface\CoachRepositoryInterface;
 use App\Repository\Interface\TeamRepositoryInterface;
+use App\Repository\Interface\TrainingRepositoryInterface;
 use App\Repository\Interface\UserRepositoryInterface;
+use App\Repository\MatchRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -36,6 +38,8 @@ class CoachService extends Service
     private TeamRepositoryInterface $teamRepository;
     private UserRepositoryInterface $userRepository;
     private CoachMatchStatsRepositoryInterface $coachMatchStatsRepository;
+    private MatchRepository $matchRepository;
+    private TrainingRepositoryInterface $trainingRepository;
     private DatatablesHelper $datatablesHelper;
 
     public function __construct(
@@ -43,6 +47,8 @@ class CoachService extends Service
         TeamRepositoryInterface $teamRepository,
         UserRepositoryInterface $userRepository,
         CoachMatchStatsRepositoryInterface $coachMatchStatsRepository,
+        MatchRepository $matchRepository,
+        TrainingRepositoryInterface $trainingRepository,
         DatatablesHelper $datatablesHelper
     )
     {
@@ -50,6 +56,8 @@ class CoachService extends Service
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
         $this->coachMatchStatsRepository = $coachMatchStatsRepository;
+        $this->matchRepository = $matchRepository;
+        $this->trainingRepository = $trainingRepository;
         $this->datatablesHelper = $datatablesHelper;
     }
 
@@ -169,6 +177,26 @@ class CoachService extends Service
     public function getTeamsHaventJoinedByCoach(Coach $coach)
     {
         return $this->teamRepository->getAll(exceptCoach: $coach);
+    }
+
+    public function upcomingMatches(Coach $coach)
+    {
+        return $this->matchRepository->getByRelation($coach, status: ['Scheduled', 'Ongoing'], take: 4);
+    }
+
+    public function upcomingTrainings(Coach $coach)
+    {
+        return $this->trainingRepository->getByRelation($coach, status: ['Scheduled', 'Ongoing'], take: 4);
+    }
+
+    public function latestMatches(Coach $coach)
+    {
+        return $this->matchRepository->getByRelation($coach, ['homeTeam', 'awayTeam', 'externalTeam'],status: ['Completed'], take: 4, orderDirection: 'desc');
+    }
+
+    public function latestTrainings(Coach $coach)
+    {
+        return $this->trainingRepository->getByRelation($coach, status: ['Completed'], take: 4, orderDirection: 'desc');
     }
 
     public function totalMatchPlayed(Coach $coach, $startDate = null, $endDate = null)
