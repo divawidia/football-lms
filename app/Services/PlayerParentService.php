@@ -30,7 +30,7 @@ class PlayerParentService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($player) {
                 $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.player-parents.edit', ['player'=>$player->hash,'parent'=>$item->hash]), icon: 'edit', btnText: 'Edit player parent/guardian');
-                $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete-parent', $player->hash, 'danger', icon: 'delete', btnText: 'Delete Player parent/guardian');
+                $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete-parent', $item->hash, 'danger', icon: 'delete', btnText: 'Delete Player parent/guardian');
                 return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
                     return $dropdownItem;
                 });
@@ -65,10 +65,9 @@ class PlayerParentService extends Service
     public function destroy(PlayerParrent $parent, $loggedUser)
     {
         $player = $parent->player;
-        $parent->delete();
-
         Notification::send($this->userRepository->getAllAdminUsers(),new ParentDeletedForAdminNotification($loggedUser, $player));
         $player->user->notify(new ParentDeletedForPlayer());
-        return $parent;
+
+        return $parent->delete();
     }
 }
