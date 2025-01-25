@@ -29,7 +29,7 @@ class PlayerParentService extends Service
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($player) {
-                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.player-parents.edit', ['player'=>$player->hash,'parent'=>$item->hash]), icon: 'visibility', btnText: 'Edit player parent/guardian');
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.player-parents.edit', ['player'=>$player->hash,'parent'=>$item->hash]), icon: 'edit', btnText: 'Edit player parent/guardian');
                 $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete-parent', $player->hash, 'danger', icon: 'delete', btnText: 'Delete Player parent/guardian');
                 return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
                     return $dropdownItem;
