@@ -42,9 +42,9 @@ class TeamController extends Controller
         if (isAllAdmin()){
             $teamRoutes = url()->route('team-managements.admin-teams');
         } elseif (isCoach()){
-            $teamRoutes = url()->route('coach.team-managements.coach-teams');
-        } elseif (isPlayer()){
-            $teamRoutes = url()->route('player.team-managements.player-teams');
+            $teamRoutes = url()->route('team-managements.coach-teams');
+        } else {
+            $teamRoutes = url()->route('team-managements.player-teams');
         }
 
         return view('pages.managements.teams.index', [
