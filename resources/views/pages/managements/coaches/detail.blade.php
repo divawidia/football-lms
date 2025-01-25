@@ -46,7 +46,7 @@
                                             iconColor="success"/>
                 @endif
                 <x-buttons.basic-button icon="delete" iconColor="danger" color="white" text="Delete coach account"
-                                        additionalClass="deleteAdmin" :dropdownItem="true" :id="$data->hash"/>
+                                        additionalClass="delete-user" :dropdownItem="true" :id="$data->hash"/>
             </x-buttons.dropdown>
         </div>
     </div>

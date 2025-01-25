@@ -9,13 +9,13 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class CoachDeletedForAdminNotification extends Notification implements ShouldQueue
+class CoachDeletedForAdminNotification extends Notification
 {
     use Queueable;
     protected User $loggedUser;
     protected Coach $coach;
 
-    public function __construct(User $loggedUser, Coach $coach)
+    public function __construct(User $loggedUser, Coach $coach = null)
     {
         $this->loggedUser= $loggedUser;
         $this->coach = $coach;

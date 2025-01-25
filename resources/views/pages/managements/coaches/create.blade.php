@@ -91,7 +91,7 @@
                             <x-forms.select name="certificationId" label="Certification Level" :select2="true">
                                 <option disabled selected>Select coach's certification level</option>
                                 @foreach($certifications AS $certification)
-                                    <option value="{{ $certification->id }}" @selected(old('certificationLevel') == $certification->id)>{{ $certification->name }}</option>
+                                    <option value="{{ $certification->id }}" @selected(old('certificationId') == $certification->id)>{{ $certification->name }}</option>
                                 @endforeach
                             </x-forms.select>
                         </div>

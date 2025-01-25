@@ -192,8 +192,8 @@ class CoachController extends Controller
     public function destroy(Coach $coach): JsonResponse
     {
         try {
-            $data = $this->coachService->destroy($coach, $this->getLoggedUser());
             $message = "Coach ".$this->getUserFullName($coach->user)."'s account successfully deleted.";
+            $data = $this->coachService->destroy($coach, $this->getLoggedUser());
             return ApiResponse::success($data, $message);
 
         } catch (Exception $e){

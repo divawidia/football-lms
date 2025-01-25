@@ -7,7 +7,7 @@ use App\Models\User;
 
 interface UserRepositoryInterface
 {
-    public function getAll(string|int $withoutUserid = null, string|array $role = null, string|array $column = ['*']);
+    public function getAll(string|int $withoutUserid = null, $role = ['Super-Admin', 'admin', 'coach', 'player'], string|array $column = ['*']);
 
     public function getInArray($relation,$ids);
 

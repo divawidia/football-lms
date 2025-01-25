@@ -15,14 +15,11 @@ class UserRepository implements UserRepositoryInterface
         $this->user = $user;
     }
 
-    public function getAll(string|int $withoutUserid = null, string|array $role = null, string|array $column = ['*']): Collection
+    public function getAll(string|int $withoutUserid = null, $role = ['Super-Admin', 'admin', 'coach', 'player'], string|array $column = ['*']): Collection
     {
-        $query = $this->user;
+        $query = $this->user->role($role);
         if ($withoutUserid) {
             $query->where('id', '!=', $withoutUserid);
-        }
-        if ($role) {
-            $query->role($role);
         }
         return $query->get($column);
     }

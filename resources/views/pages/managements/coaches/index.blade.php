@@ -160,7 +160,7 @@
                 '.delete-user',
                 "{{ route('coach-managements.destroy', ['coach' => ':id']) }}",
                 "{{ route('coach-managements.index') }}",
-                'PATCH',
+                'DELETE',
                 "Are you sure to delete this coach account's status?",
                 "Something went wrong when deleting this coach account!",
                 "{{ csrf_token() }}"

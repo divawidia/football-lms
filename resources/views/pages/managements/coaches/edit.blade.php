@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Edit Coach {{ $fullName }} Profile
+    Edit Coach {{ getUserFullName($data->user) }} Profile
 @endsection
 @section('page-title')
     @yield('title')
@@ -15,7 +15,7 @@
             <ol class="breadcrumb p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('coach-managements.index') }}">Coach Management</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('coach-managements.show', $data->hash) }}">{{ $fullName }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('coach-managements.show', $data->hash) }}">{{ getUserFullName($data->user) }}</a></li>
                 <li class="breadcrumb-item active">Edit</li>
             </ol>
         </div>
