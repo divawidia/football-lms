@@ -64,20 +64,6 @@ class PlayerController extends Controller
         return $this->playerService->playerTeams($player);
     }
 
-    public function removeTeam(Player $player, Team $team): JsonResponse
-    {
-        try {
-            $data = $this->playerService->removeTeam($player, $team);
-            $message = "Player ".$this->getUserFullName($player->user)." successfully removed from team ".$team->teamName.".";
-            return ApiResponse::success($data, $message);
-
-        } catch (Exception $e){
-            $message = "Error while removing player ".$this->getUserFullName($player->user)." from team ".$team->teamName.": " . $e->getMessage();
-            Log::error($message);
-            return ApiResponse::error($message, null, $e->getCode());
-        }
-    }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -187,12 +173,25 @@ class PlayerController extends Controller
         return redirect()->route('player-managements.show', $player->id);
     }
 
-    public function updateTeams(PlayerTeamRequest $request, Player $player)
+    public function updateTeams(PlayerTeamRequest $request, Player $player): JsonResponse
     {
         $data = $request->validated();
-        $player = $this->playerService->updateTeams($data, $player);
+        $player = $this->playerService->updateTeams($data, $player, $this->getLoggedUser());
         $message = "Player ".$this->getUserFullName($player->user)." successfully added to a new team";
         return ApiResponse::success($player, $message);
+    }
+    public function removeTeam(Player $player, Team $team): JsonResponse
+    {
+        try {
+            $data = $this->playerService->removeTeam($player, $team, $this->getLoggedUser());
+            $message = "Player ".$this->getUserFullName($player->user)." successfully removed from team ".$team->teamName.".";
+            return ApiResponse::success($data, $message);
+
+        } catch (Exception $e){
+            $message = "Error while removing player ".$this->getUserFullName($player->user)." from team ".$team->teamName.": " . $e->getMessage();
+            Log::error($message);
+            return ApiResponse::error($message, null, $e->getCode());
+        }
     }
 
     public function upcomingMatches(Player $player){

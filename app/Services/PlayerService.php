@@ -158,8 +158,8 @@ class PlayerService extends Service
 
     public function updateTeams($teamData, Player $player, $loggedUser)
     {
-        $player->teams()->attach($teamData);
-        $team =$this->teamRepository->find($teamData);
+        $player->teams()->attach($teamData['teams']);
+        $team =$this->teamRepository->find($teamData['teams']);
         $teamCoachesAndAdmin = $this->userRepository->allTeamsParticipant($team, players: false);
 
         Notification::send($teamCoachesAndAdmin,new AddTeamForAdminNotification($loggedUser, $team, $player));

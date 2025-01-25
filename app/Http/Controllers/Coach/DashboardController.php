@@ -26,7 +26,7 @@ class DashboardController extends Controller
         $coach = $this->getLoggedCoachUser();
 
         return view('pages.dashboards.coach', [
-            'teams' => $this->coachService->getTeamsHaventJoinedByCoach($coach),
+            'teams' => $coach->teams,
             'matchPlayed' => $this->coachService->totalMatchPlayed($coach),
             'matchPlayedThisMonth' => $this->coachService->totalMatchPlayed($coach, $startDate, $endDate),
             'goals' => $this->coachService->totalGoals($coach),
