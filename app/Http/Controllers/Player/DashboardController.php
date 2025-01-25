@@ -14,21 +14,20 @@ class DashboardController extends Controller
     {
         $player = $this->getLoggedPLayerUser();
 
-        $overview = $this->playerService->show($player);
-        $performanceReviews = $player->playerPerformanceReview;
-        $teams = $player->teams;
-        $playerSkillStats = $this->playerService->skillStatsChart($player);
-        $latestMatches = $this->playerService->playerLatestMatch($player);
-        $latestTrainings = $this->playerService->playerLatestTraining($player);
-
         return view('pages.dashboards.player', [
             'data' => $player,
-            'teams'=> $teams,
-            'overview' => $overview,
-            'performanceReviews' => $performanceReviews,
-            'playerSkillStats' => $playerSkillStats,
-            'latestMatches' => $latestMatches,
-            'latestTrainings' => $latestTrainings,
+            'teams'=> $player->teams,
+            'playerUpcomingMatches' => $this->playerService->playerUpcomingMatches($player),
+            'playerUpcomingTrainings'=> $this->playerService->playerUpcomingTrainings($player),
+            'playerMatchPlayed' => $this->playerService->playerMatchPlayed($player),
+            'playerMatchPlayedThisMonth' => $this->playerService->playerMatchPlayedThisMonth($player),
+            'playerStats'=>$this->playerService->playerStats($player),
+            'matchResults' => $this->playerService->matchStats($player),
+            'winRate' =>$this->playerService->winRate($player),
+            'performanceReviews' => $player->playerPerformanceReview,
+            'playerSkillStats' => $this->playerService->skillStatsChart($player),
+            'latestMatches' => $this->playerService->latestMatches($player),
+            'latestTrainings' => $this->playerService->latestTrainings($player),
         ]);
     }
 }

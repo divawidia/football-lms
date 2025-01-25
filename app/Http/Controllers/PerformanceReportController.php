@@ -38,8 +38,8 @@ class PerformanceReportController extends Controller
         } elseif (isPlayer()){
             $player = $this->getLoggedPLayerUser();
             $playerSkillStats = $this->playerService->skillStatsChart($player);
-            $latestMatches = $this->playerService->playerLatestMatch($player);
-            $latestTrainings = $this->playerService->playerLatestTraining($player);
+            $latestMatches = $this->playerService->latestMatches($player);
+            $latestTrainings = $this->playerService->latestTrainings($player);
             $activeCompetitions = $this->competitionService->modelTeamsCompetition($player, 'Ongoing');
             $allCompetitions = $this->competitionService->modelTeamsCompetition($player);
             $overviewStats = $this->playerService->show($player);

@@ -223,7 +223,9 @@ class PlayerService extends Service
 
     public function winRate(Player $player)
     {
-        $winRate = ($this->matchStats($player)['Win'] / $this->playerRepository->matchResults($player)) * 100;
+        $totalMatch = $this->playerRepository->matchResults($player);
+        $wins = $this->matchStats($player)['Win'];
+        ($totalMatch > 0) ? $winRate = ( $wins /$totalMatch) * 100 : $winRate = 0; // check if totalMatch is 0 then set win rate to 0
         return round($winRate, 2);
     }
 
@@ -401,13 +403,14 @@ class PlayerService extends Service
         return $this->trainingService->makeTrainingCalendar($data);
     }
 
-    public function playerLatestMatch(Player $player)
+    public function latestMatches(Player $player)
     {
-        return $this->matchRepository->playerLatestEvent($player, 'Match');
+        return $this->matchRepository->getByRelation($player, ['homeTeam', 'awayTeam', 'externalTeam'],status: ['Completed'], take: 4, orderDirection: 'desc');
     }
-    public function playerLatestTraining(Player $player)
+
+    public function latestTrainings(Player $player)
     {
-        return $this->matchRepository->playerLatestEvent($player, 'Training');
+        return $this->trainingRepository->getByRelation($player, status: ['Completed'], take: 4, orderDirection: 'desc');
     }
 
     public function update(array $data, Player $player, $loggedUser)
