@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerParentRequest;
 use App\Models\Player;
 use App\Models\PlayerParrent;
-use App\Repository\UserRepository;
 use App\Services\PlayerParentService;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -17,12 +16,9 @@ class PlayerParentController extends Controller
 {
     private PlayerParentService $playerParentService;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(PlayerParentService $playerParentService)
     {
-        $this->middleware(function ($request, $next) use ($userRepository){
-            $this->playerParentService = new PlayerParentService($this->getLoggedUser(), $userRepository, );
-            return $next($request);
-        });
+        $this->playerParentService = $playerParentService;
     }
 
     public function index(Player $player)
@@ -41,7 +37,7 @@ class PlayerParentController extends Controller
     public function store(PlayerParentRequest $request, Player $player)
     {
         $data = $request->validated();
-        $this->playerParentService->store($data, $player);
+        $this->playerParentService->store($data, $player, $this->getLoggedUser());
 
         $text = "Player ".$this->getUserFullName($player->user)."'s parent/guardian successfully added!";
         Alert::success($text);
@@ -63,7 +59,7 @@ class PlayerParentController extends Controller
     public function update(PlayerParentRequest $request, Player $player, PlayerParrent $parent)
     {
         $data = $request->validated();
-        $this->playerParentService->update($data, $parent);
+        $this->playerParentService->update($data, $parent, $this->getLoggedUser());
         $text = "Player ".$this->getUserFullName($player->user)."'s parent/guardian successfully updated!";
         Alert::success($text);
         return redirect()->route('player-managements.show', $player->id);
@@ -72,7 +68,7 @@ class PlayerParentController extends Controller
     public function destroy(Player $player, PlayerParrent $parent)
     {
         try {
-            $data = $this->playerParentService->destroy($parent);
+            $data = $this->playerParentService->destroy($parent, $this->getLoggedUser());
             $message = "Player ".$this->getUserFullName($player->user)."'s parent/guardian successfully deleted.";
             return ApiResponse::success($data, $message);
 

@@ -18,12 +18,10 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PlayerParentService extends Service
 {
-    private $loggedUser;
     private UserRepository $userRepository;
     private DatatablesHelper $datatablesHelper;
-    public function __construct($loggedUser, UserRepository $userRepository, DatatablesHelper $datatablesHelper)
+    public function __construct(UserRepository $userRepository, DatatablesHelper $datatablesHelper)
     {
-        $this->loggedUser = $loggedUser;
         $this->userRepository = $userRepository;
         $this->datatablesHelper = $datatablesHelper;
     }
@@ -47,29 +45,29 @@ class PlayerParentService extends Service
         return $this->makeDatatables($query, $player);
     }
 
-    public  function store(array $data, Player $player){
+    public  function store(array $data, Player $player, $loggedUser){
         $parent = $player->parents()->create($data);
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new ParentCreatedForAdminNotification($this->loggedUser, $player));
+        Notification::send($this->userRepository->getAllAdminUsers(),new ParentCreatedForAdminNotification($loggedUser, $player));
         $player->user->notify(new ParentCreatedForPlayerNotification());
 
         return $parent;
     }
-    public function update(array $data, PlayerParrent $parent)
+    public function update(array $data, PlayerParrent $parent, $loggedUser)
     {
         $parent->update($data);
         $player = $parent->player;
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new ParentUpdatedForAdmin($this->loggedUser, $player));
+        Notification::send($this->userRepository->getAllAdminUsers(),new ParentUpdatedForAdmin($loggedUser, $player));
         $player->user->notify(new ParentUpdatedForPlayer());
         return $parent;
     }
-    public function destroy(PlayerParrent $parent)
+    public function destroy(PlayerParrent $parent, $loggedUser)
     {
         $player = $parent->player;
         $parent->delete();
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new ParentDeletedForAdminNotification($this->loggedUser, $player));
+        Notification::send($this->userRepository->getAllAdminUsers(),new ParentDeletedForAdminNotification($loggedUser, $player));
         $player->user->notify(new ParentDeletedForPlayer());
         return $parent;
     }
