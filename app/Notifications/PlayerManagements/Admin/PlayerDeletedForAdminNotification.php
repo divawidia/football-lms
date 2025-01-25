@@ -41,7 +41,7 @@ class PlayerDeletedForAdminNotification extends Notification
         return [
             'title' => "Player Account deleted",
             'data' => "Admin {$this->loggedUser->firstName} {$this->loggedUser->lastName} has deleted a player {$this->player->user->firstName} {$this->player->user->lastName}. Please review the changes if necessary!",
-            'redirectRoute' => route('player-managements.show', $this->player->hash),
+            'redirectRoute' => route('player-managements.index'),
         ];
     }
 }
