@@ -2,92 +2,75 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Player;
 use App\Models\PlayerParrent;
-use App\Models\PlayerPosition;
-use App\Models\Team;
-use App\Models\User;
-use App\Notifications\PlayerManagements\PlayerParent;
-use App\Notifications\PlayerManagements\PlayerParentAdmin;
-use App\Repository\AdminRepository;
-use App\Repository\PlayerRepository;
+use App\Notifications\PlayerParent\Admin\ParentCreatedForAdminNotification;
+use App\Notifications\PlayerParent\Admin\ParentDeletedForAdminNotification;
+use App\Notifications\PlayerParent\Admin\ParentUpdatedForAdmin;
+use App\Notifications\PlayerParent\Player\ParentCreatedForPlayerNotification;
+use App\Notifications\PlayerParent\Player\ParentDeletedForPlayer;
+use App\Notifications\PlayerParent\Player\ParentUpdatedForPlayer;
 use App\Repository\UserRepository;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
-use Nnjeim\World\World;
 use Yajra\DataTables\Facades\DataTables;
 
 class PlayerParentService extends Service
 {
     private $loggedUser;
     private UserRepository $userRepository;
-    public function __construct($loggedUser, UserRepository $userRepository)
+    private DatatablesHelper $datatablesHelper;
+    public function __construct($loggedUser, UserRepository $userRepository, DatatablesHelper $datatablesHelper)
     {
         $this->loggedUser = $loggedUser;
         $this->userRepository = $userRepository;
+        $this->datatablesHelper = $datatablesHelper;
     }
     public function makeDatatables($data, Player $player)
     {
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($player) {
-                    return '
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('player-parents.edit', ['player'=>$player->hash,'parent'=>$item->hash]) . '"><span class="material-icons">edit</span> Edit Parent/Guardian</a>
-                            <button type="button" class="dropdown-item delete-parent" id=' . $item->hash . '>
-                                <span class="material-icons text-danger">delete</span> Delete Parent/Guardian
-                            </button>
-                          </div>
-                        </div>';
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.player-parents.edit', ['player'=>$player->hash,'parent'=>$item->hash]), icon: 'visibility', btnText: 'Edit player parent/guardian');
+                $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete-parent', $player->hash, 'danger', icon: 'delete', btnText: 'Delete Player parent/guardian');
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
             ->rawColumns(['action'])
+            ->addIndexColumn()
             ->make();
     }
     public function index(Player $player): JsonResponse
     {
-        $query = PlayerParrent::where('playerId', $player->id)->get();
+        $query = $player->parents;
         return $this->makeDatatables($query, $player);
     }
 
     public  function store(array $data, Player $player){
-        $data['playerId'] = $player->id;
-        $parent = PlayerParrent::create($data);
+        $parent = $player->parents()->create($data);
 
-        $superAdminName = $this->getUserFullName($this->loggedUser);
+        Notification::send($this->userRepository->getAllAdminUsers(),new ParentCreatedForAdminNotification($this->loggedUser, $player));
+        $player->user->notify(new ParentCreatedForPlayerNotification());
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerParentAdmin($superAdminName, $player, 'created'));
-        $player->user->notify(new PlayerParent($parent, 'added'));
         return $parent;
     }
     public function update(array $data, PlayerParrent $parent)
     {
         $parent->update($data);
-
-        $superAdminName = $this->getUserFullName($this->loggedUser);
         $player = $parent->player;
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerParentAdmin($superAdminName, $player, 'updated'));
-        $player->user->notify(new PlayerParent($parent, 'updated'));
+        Notification::send($this->userRepository->getAllAdminUsers(),new ParentUpdatedForAdmin($this->loggedUser, $player));
+        $player->user->notify(new ParentUpdatedForPlayer());
         return $parent;
     }
     public function destroy(PlayerParrent $parent)
     {
-        $superAdminName = $this->getUserFullName($this->loggedUser);
         $player = $parent->player;
-
         $parent->delete();
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerParentAdmin($superAdminName, $player, 'deleted'));
-        $player->user->notify(new PlayerParent($parent, 'deleted'));
+        Notification::send($this->userRepository->getAllAdminUsers(),new ParentDeletedForAdminNotification($this->loggedUser, $player));
+        $player->user->notify(new ParentDeletedForPlayer());
         return $parent;
     }
 }

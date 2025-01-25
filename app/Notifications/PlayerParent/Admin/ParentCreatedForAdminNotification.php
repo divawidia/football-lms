@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\PlayerManagements\Admin;
+namespace App\Notifications\PlayerParent\Admin;
 
 use App\Models\Admin;
 use App\Models\Coach;
@@ -10,7 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class PlayerDeletedForAdminNotification extends Notification
+class ParentCreatedForAdminNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     protected User $loggedUser;
@@ -39,8 +39,8 @@ class PlayerDeletedForAdminNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => "Player Account deleted",
-            'data' => "Admin {$this->loggedUser->firstName} {$this->loggedUser->lastName} has deleted a player {$this->player->user->firstName} {$this->player->user->lastName}. Please review the changes if necessary!",
+            'title' => "New player parent/guardian created",
+            'data' => "Admin {$this->loggedUser->firstName} {$this->loggedUser->lastName} has created a new parent/guardian of player {$this->player->user->firstName} {$this->player->user->lastName}. Please review the changes if necessary!",
             'redirectRoute' => route('player-managements.show', $this->player->hash),
         ];
     }
