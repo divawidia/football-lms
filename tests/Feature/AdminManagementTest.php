@@ -4,15 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Admin;
 use App\Models\User;
-use App\Notifications\AdminManagement;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use App\Notifications\AdminManagements\AdminCreatedNotification;
+use App\Notifications\AdminManagements\AdminManagement;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class AdminManagementTest extends TestCase
@@ -96,7 +93,7 @@ class AdminManagementTest extends TestCase
         $this->assertDatabaseHas('admins', [
             'position' => $data['position'],
         ]);
-        Notification::assertSentTo($this->superAdminUser, AdminManagement::class);
+        Notification::assertSentTo($this->superAdminUser, AdminCreatedNotification::class);
     }
 
     /** @test */

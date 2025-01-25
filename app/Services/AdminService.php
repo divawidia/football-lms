@@ -4,7 +4,12 @@ namespace App\Services;
 
 use App\Helpers\DatatablesHelper;
 use App\Models\Admin;
-use App\Notifications\AdminManagement;
+use App\Notifications\AdminManagements\AdminActivatedNotification;
+use App\Notifications\AdminManagements\AdminChangePasswordNotification;
+use App\Notifications\AdminManagements\AdminCreatedNotification;
+use App\Notifications\AdminManagements\AdminDeactivatedNotification;
+use App\Notifications\AdminManagements\AdminDeletedNotification;
+use App\Notifications\AdminManagements\AdminUpdatedNotification;
 use App\Repository\Interface\AdminRepositoryInterface;
 use App\Repository\Interface\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -88,7 +93,7 @@ class AdminService extends Service
         $data['userId'] = $user->id;
         $admin = $this->adminRepository->create($data);
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new AdminManagement($loggedAdmin, 'created', $admin));
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminCreatedNotification($loggedAdmin, $admin));
         return $admin;
     }
 
@@ -96,27 +101,28 @@ class AdminService extends Service
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $admin->user->foto);
         $this->adminRepository->update($data, $admin);
-        Notification::send($this->userRepository->getAllAdminUsers(),new AdminManagement($loggedAdmin, 'updated', $admin));
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminUpdatedNotification($loggedAdmin, $admin));
         return $admin;
     }
 
     public function setStatus(Admin $admin, $status, Admin $loggedAdmin)
     {
-        ($status == '1') ?  $statusNotification = 'actived' : $statusNotification = 'deactivated';
-        Notification::send($this->userRepository->getAllAdminUsers(),new AdminManagement($loggedAdmin, $statusNotification, $admin));
+        ($status == '1') ? Notification::send($this->userRepository->getAllAdminUsers(),new AdminActivatedNotification($loggedAdmin, $admin))
+            : Notification::send($this->userRepository->getAllAdminUsers(),new AdminDeactivatedNotification($loggedAdmin, $admin));
+
         return $this->userRepository->updateUserStatus($admin, $status);
     }
 
     public function changePassword($data, Admin $admin, Admin $loggedAdmin)
     {
-        Notification::send($this->userRepository->getAllAdminUsers(),new AdminManagement($loggedAdmin, 'password', $admin));
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminChangePasswordNotification($loggedAdmin, $admin));
         return $this->userRepository->changePassword($data, $admin);
     }
 
     public function destroy(Admin $admin, Admin $loggedAdmin)
     {
         $this->deleteImage($admin->user->foto);
-        Notification::send($this->userRepository->getAllAdminUsers(),new AdminManagement($loggedAdmin, 'deleted', $admin));
+        Notification::send($this->userRepository->getAllAdminUsers(),new AdminDeletedNotification($loggedAdmin, $admin));
         return $this->userRepository->delete($admin);
     }
 }

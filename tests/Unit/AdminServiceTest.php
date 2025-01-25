@@ -2,14 +2,15 @@
 
 namespace Tests\Unit;
 
+use App\Helpers\DatatablesHelper;
+use App\Notifications\AdminManagements\AdminCreatedNotification;
 use App\Repository\Interface\AdminRepositoryInterface;
 use App\Repository\Interface\UserRepositoryInterface;
-use Tests\TestCase;
 use App\Services\AdminService;
-use App\Helpers\DatatablesHelper;
-use Mockery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
+use Mockery;
+use Tests\TestCase;
 
 class AdminServiceTest extends TestCase
 {
@@ -136,8 +137,7 @@ class AdminServiceTest extends TestCase
 
         // Assert that the notification was sent
         Notification::assertSentTo(
-            [$this->userRepositoryMock->getAllAdminUsers()],
-            \App\Notifications\AdminManagement::class
+            [$this->userRepositoryMock->getAllAdminUsers()], AdminCreatedNotification::class
         );
     }
 
@@ -168,7 +168,7 @@ class AdminServiceTest extends TestCase
         // Assert that the notification was sent
         Notification::assertSentTo(
             [$this->userRepositoryMock->getAllAdminUsers()],
-            \App\Notifications\AdminManagement::class
+            \App\Notifications\AdminManagements\AdminManagement::class
         );
     }
 
@@ -191,7 +191,7 @@ class AdminServiceTest extends TestCase
         // Assert that the notification was sent
         Notification::assertSentTo(
             [$this->userRepositoryMock->getAllAdminUsers()],
-            \App\Notifications\AdminManagement::class
+            \App\Notifications\AdminManagements\AdminManagement::class
         );
     }
 
@@ -214,7 +214,7 @@ class AdminServiceTest extends TestCase
         // Assert that the notification was sent
         Notification::assertSentTo(
             [$this->userRepositoryMock->getAllAdminUsers()],
-            \App\Notifications\AdminManagement::class
+            \App\Notifications\AdminManagements\AdminManagement::class
         );
     }
 }
