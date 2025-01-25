@@ -6,10 +6,21 @@ use App\Helpers\DatatablesHelper;
 use App\Models\Player;
 use App\Models\PlayerParrent;
 use App\Models\Team;
-use App\Models\User;
-use App\Notifications\AddOrRemoveFromTeamNotification;
-use App\Notifications\PlayerManagements\PlayerChangeForAdmin;
-use App\Notifications\PlayerManagements\PlayerChangeForPlayer;
+use App\Notifications\PlayerManagements\Admin\AddTeamForAdminNotification;
+use App\Notifications\PlayerManagements\Admin\PlayerChangePasswordForAdmin;
+use App\Notifications\PlayerManagements\Admin\PlayerCreatedForAdminNotification;
+use App\Notifications\PlayerManagements\Admin\PlayerActivatedForAdmin;
+use App\Notifications\PlayerManagements\Admin\PlayerDeactivatedForAdmin;
+use App\Notifications\PlayerManagements\Admin\PlayerDeletedForAdminNotification;
+use App\Notifications\PlayerManagements\Admin\PlayerUpdatedForAdmin;
+use App\Notifications\PlayerManagements\Admin\RemoveTeamForAdminNotification;
+use App\Notifications\PlayerManagements\Player\AddTeamForPlayerNotification;
+use App\Notifications\PlayerManagements\Player\PlayerActivatedForPlayer;
+use App\Notifications\PlayerManagements\Player\PlayerChangePasswordForPlayer;
+use App\Notifications\PlayerManagements\Player\PlayerCreatedForPlayerNotification;
+use App\Notifications\PlayerManagements\Player\PlayerDeactivatedForPlayer;
+use App\Notifications\PlayerManagements\Player\PlayerUpdatedForPlayer;
+use App\Notifications\PlayerManagements\Player\RemoveTeamForPlayerNotification;
 use App\Repository\Interface\TrainingRepositoryInterface;
 use App\Repository\MatchRepository;
 use App\Repository\Interface\PlayerRepositoryInterface;
@@ -134,19 +145,25 @@ class PlayerService extends Service
             ->make();
     }
 
-    public function removeTeam(Player $player, Team $team)
+    public function removeTeam(Player $player, Team $team, $loggedUser)
     {
         $player->teams()->detach($team->id);
-        $player->user->notify(new AddOrRemoveFromTeamNotification($team, 'removed'));
+        $teamCoachesAndAdmin = $this->userRepository->allTeamsParticipant($team, players: false);
+
+        Notification::send($teamCoachesAndAdmin,new RemoveTeamForAdminNotification($loggedUser, $team, $player));
+        $player->user->notify(new RemoveTeamForPlayerNotification($team));
+
         return $player;
     }
 
-    public function updateTeams($teamData, Player $player)
+    public function updateTeams($teamData, Player $player, $loggedUser)
     {
         $player->teams()->attach($teamData);
         $team =$this->teamRepository->find($teamData);
+        $teamCoachesAndAdmin = $this->userRepository->allTeamsParticipant($team, players: false);
 
-        $player->user->notify(new AddOrRemoveFromTeamNotification($team, 'added'));
+        Notification::send($teamCoachesAndAdmin,new AddTeamForAdminNotification($loggedUser, $team, $player));
+        $player->user->notify(new AddTeamForPlayerNotification($team));
 
         return $player;
     }
@@ -167,8 +184,6 @@ class PlayerService extends Service
         $data['userId'] = $user->id;
         $player = $this->playerRepository->create($data);
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerChangeForAdmin($loggedUser, $player, 'created'));
-
         PlayerParrent::create([
             'firstName' => $data['firstName2'],
             'lastName' => $data['lastName2'],
@@ -177,6 +192,10 @@ class PlayerService extends Service
             'phoneNumber' => $data['phoneNumber2'],
             'playerId' => $player->id,
         ]);
+
+        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerCreatedForAdminNotification($loggedUser, $player));
+        $player->user->notify(new PlayerCreatedForPlayerNotification());
+
         return $player;
     }
 
@@ -417,26 +436,29 @@ class PlayerService extends Service
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $player->user->foto);
 
-        $player->user->notify(new PlayerChangeForPlayer('updated'));
-        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerChangeForAdmin($loggedUser, $player, 'created'));
+        $player->user->notify(new PlayerUpdatedForPlayer());
+        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerUpdatedForAdmin($loggedUser, $player));
 
         return $this->playerRepository->update($player, $data);
     }
 
     public function setStatus(Player $player, $status, $loggedUser)
     {
-        ($status == '1') ? $message = 'activated' : $message = 'deactivated';
-
-        $player->user->notify(new PlayerChangeForPlayer($message));
-        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerChangeForAdmin($loggedUser, $player, $message));
+        if ($status == '1') {
+            $player->user->notify(new PlayerActivatedForPlayer());
+            Notification::send($this->userRepository->getAllAdminUsers(),new PlayerActivatedForAdmin($loggedUser, $player));
+        } else {
+            $player->user->notify(new PlayerDeactivatedForPlayer());
+            Notification::send($this->userRepository->getAllAdminUsers(),new PlayerDeactivatedForAdmin($loggedUser, $player));
+        }
 
         return $this->userRepository->updateUserStatus($player, $status);
     }
 
     public function changePassword($data, Player $player, $loggedUser)
     {
-        $player->user->notify(new PlayerChangeForPlayer('password'));
-        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerChangeForAdmin($loggedUser, $player, 'password'));
+        $player->user->notify(new PlayerChangePasswordForPlayer());
+        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerChangePasswordForAdmin($loggedUser, $player));
 
         return $this->userRepository->changePassword($data, $player);
     }
@@ -445,7 +467,7 @@ class PlayerService extends Service
     {
         $this->deleteImage($player->user->foto);
 
-        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerChangeForAdmin($loggedUser, $player, 'deleted'));
+        Notification::send($this->userRepository->getAllAdminUsers(),new PlayerDeletedForAdminNotification($loggedUser, $player));
 
         return $this->userRepository->delete($player);
     }

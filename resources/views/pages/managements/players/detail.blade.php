@@ -57,7 +57,7 @@
     <x-tabs.navbar>
         <x-tabs.item title="Overview" link="overview" :active="true"/>
         <x-tabs.item title="Profile" link="profile"/>
-        <x-tabs.item title="Teams Managed" link="teams"/>
+        <x-tabs.item title="Teams" link="teams"/>
         <x-tabs.item title="Skill Stats" link="skill-stats"/>
         <x-tabs.item title="Parents/Guardians" link="parents"/>
         <x-tabs.item title="Upcoming Matches" link="upcoming-match"/>
