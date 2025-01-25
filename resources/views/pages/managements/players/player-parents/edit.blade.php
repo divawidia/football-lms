@@ -24,7 +24,7 @@
     <div class="container page-section">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('player-parents.update', ['player'=>$player->hash,'parent'=>$parent->hash]) }}" method="post">
+                <form action="{{ route('player-managements.player-parents.update', ['player'=>$player->hash,'parent'=>$parent->hash]) }}" method="post">
                     @method('PUT')
                     @csrf
                     <div class="page-separator">
@@ -73,7 +73,7 @@
 
                     <div class="page-separator"></div>
                     <div class="d-flex justify-content-end">
-                        <x-buttons.link-button color="secondary" margin="mr-2" :href="route('player-managements.show', $data->hash)" icon="close" text="Cancel"/>
+                        <x-buttons.link-button color="secondary" margin="mr-2" :href="route('player-managements.show', $player->hash)" icon="close" text="Cancel"/>
                         <x-buttons.basic-button icon="add" text="Submit" color="primary" type="submit"/>
                     </div>
                 </form>
