@@ -23,10 +23,9 @@ class TeamMatchRepository
         return $this->teamMatch->all();
     }
 
-    public function getTeamsStats(Team $team = null, $teamSide = 'Academy Team', $startDate = null, $endDate = null, $stats = null, $results = null)
+    public function getTeamsStats(Team $team = null, $startDate = null, $endDate = null, $stats = null, $results = null)
     {
-        $query = $this->teamMatch->whereHas('team', function($q) use ($team, $teamSide) {
-                $q->where('teamSide', $teamSide);
+        $query = $this->teamMatch->whereHas('team', function($q) use ($team) {
                 if ($team != null){
                     $q->where('teamId', $team->id);
                 }
