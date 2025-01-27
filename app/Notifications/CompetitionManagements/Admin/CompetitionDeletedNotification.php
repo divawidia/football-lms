@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CompetitionDeletedNotification extends Notification implements ShouldQueue
+class CompetitionDeletedNotification extends Notification
 {
     use Queueable;
     protected User $loggedUser;

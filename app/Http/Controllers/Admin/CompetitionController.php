@@ -108,7 +108,7 @@ class CompetitionController extends Controller
     public function status(Competition $competition, $status)
     {
         try {
-            $this->competitionService->setStatus($competition, $status);
+            $this->competitionService->setStatus($competition, $status, $this->getLoggedUser());
             $message = "Competition ".$competition->name." status successfully set to ".$status.".";
             return ApiResponse::success(message:  $message);
 
