@@ -12,6 +12,8 @@ use App\Notifications\PlayerCoachRemoveToTeam;
 use App\Notifications\TeamsManagements\TeamCreatedDeleted;
 use App\Notifications\TeamsManagements\TeamUpdated;
 use App\Repository\CoachRepository;
+use App\Repository\Interface\PlayerRepositoryInterface;
+use App\Repository\Interface\TrainingRepositoryInterface;
 use App\Repository\MatchRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamMatchRepository;
@@ -27,87 +29,71 @@ class TeamService extends Service
 {
     private TeamRepository $teamRepository;
     private UserRepository $userRepository;
-    private MatchRepository $eventScheduleRepository;
+    private MatchRepository $matchRepository;
     private TeamMatchRepository $teamMatchRepository;
-    private DatatablesHelper $datatablesService;
-    private PlayerRepository $playerRepository;
+    private DatatablesHelper $datatablesHelper;
     private CoachRepository $coachRepository;
+    private PlayerRepositoryInterface $playerRepository;
+    private TrainingRepositoryInterface $trainingRepository;
+    private MatchService $matchService;
 
     public function __construct(
         TeamRepository      $teamRepository,
         UserRepository      $userRepository,
-        MatchRepository     $eventScheduleRepository,
+        MatchRepository     $matchRepository,
         TeamMatchRepository $teamMatchRepository,
-        PlayerRepository    $playerRepository,
         CoachRepository     $coachRepository,
-        DatatablesHelper    $datatablesService)
+        PlayerRepositoryInterface $playerRepository,
+        TrainingRepositoryInterface $trainingRepository,
+        DatatablesHelper    $datatablesHelper,
+        MatchService       $matchService
+    )
     {
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
-        $this->eventScheduleRepository = $eventScheduleRepository;
+        $this->matchRepository = $matchRepository;
         $this->teamMatchRepository = $teamMatchRepository;
         $this->playerRepository = $playerRepository;
         $this->coachRepository = $coachRepository;
-        $this->datatablesService = $datatablesService;
+        $this->trainingRepository = $trainingRepository;
+        $this->datatablesHelper = $datatablesHelper;
+        $this->matchService = $matchService;
     }
-    public function indexDatatables($teamsData)
+    public function indexDatatables($teamsData): JsonResponse
     {
         return Datatables::of($teamsData)
             ->addColumn('action', function ($item) {
-                $actionButton = '';
-                if (isCoach() || isPlayer()){
-                    $actionButton = $this->datatablesService->buttonTooltips(route('team-managements.show', $item->hash), 'View Team', 'visibility');
-                } elseif (isAllAdmin()){
-                    if ($item->status == '1') {
-                        $statusButton = '<button type="submit" class="dropdown-item setDeactivate" id="'.$item->id.'">
-                                                <span class="material-icons text-danger">check_circle</span>
-                                                Deactivate Team
-                                        </button>';
-                    } else {
-                        $statusButton = '<button type="submit" class="dropdown-item setActivate" id="'.$item->id.'">
-                                                <span class="material-icons text-success">check_circle</span>
-                                                Activate Team
-                                        </button>';
-                    }
-                    $actionButton =  '
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('team-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Team</a>
-                            <a class="dropdown-item" href="' . route('team-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Team</a>
-                            ' . $statusButton . '
-                            <button type="button" class="dropdown-item delete-team" id="' . $item->id . '">
-                                <span class="material-icons text-danger">delete</span> Delete Team
-                            </button>
-                          </div>
-                        </div>';
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('match-schedules.show', $item->hash), icon: 'visibility', btnText: 'View match session');
+                if (isAllAdmin()) {
+                    ($item->status == '1')
+                        ? $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('setDeactivate', $item->hash, 'danger', icon: 'block', btnText: 'Deactivate Team')
+                        : $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('setActivate', $item->hash, 'success', icon: 'check_circle', btnText: 'Activate team');
+                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete-team', $item->hash, iconColor: 'danger', icon: 'delete', btnText: 'Delete team');
                 }
-                return $actionButton;
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
             ->editColumn('players', function ($item) {
-                return count($item->players).' Player(s)';
+                return $item->players()->count().' Player(s)';
             })
             ->editColumn('coaches', function ($item) {
-                return count($item->coaches).' Coach(es)';
+                return $item->coaches()->count().' Coach(es)';
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->logo, $item->teamName, $item->ageGroup, route('team-managements.show', $item->hash));
+                return $this->datatablesHelper->name($item->logo, $item->teamName, $item->ageGroup, route('team-managements.show', $item->hash));
             })
             ->editColumn('status', function ($item) {
-                return $this->datatablesService->activeNonactiveStatus($item->status);
+                return $this->datatablesHelper->activeNonactiveStatus($item->status);
             })
-            ->rawColumns(['action', 'name', 'status', 'players', 'coaches'])
+            ->rawColumns(['action', 'name', 'status'])
             ->addIndexColumn()
             ->make();
     }
 
     public function index(): JsonResponse
     {
-        $query = $this->teamRepository->getByTeamside('Academy Team');
+        $query = $this->teamRepository->getAll(['players', 'coaches']);
         return $this->indexDatatables($query);
     }
 
@@ -116,263 +102,157 @@ class TeamService extends Service
         return $this->teamRepository->getAll(exceptTeamId:  $exceptTeamId);
     }
 
-    public function coachTeamsIndex($coach)
+    public function coachTeamsIndex($coach): JsonResponse
     {
         return $this->indexDatatables($coach->teams);
     }
-    public function playerTeamsIndex($player)
+    public function playerTeamsIndex($player): JsonResponse
     {
         return $this->indexDatatables($player->teams);
     }
 
-    public function teamPlayers(Team $team){
+    public function teamPlayers(Team $team): JsonResponse
+    {
         $query = $team->players;
 
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                $actionButton = '';
-                if (isCoach()){
-                    $actionButton =  $this->datatablesService->buttonTooltips(route('player-managements.show', $item->hash), 'View player', 'visibility');
-                } elseif (isAllAdmin()){
-                    $actionButton =  '
-                                <div class="dropdown">
-                                  <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="material-icons">
-                                        more_vert
-                                    </span>
-                                  </button>
-                                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="' . route('player-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Player</a>
-                                    <a class="dropdown-item" href="' . route('player-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Player</a>
-                                    <button type="button" class="dropdown-item remove-player" id="' . $item->id . '">
-                                        <span class="material-icons">delete</span> Remove Player From Team
-                                    </button>
-                                  </div>
-                                </div>';
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.show', $item->hash), icon: 'visibility', btnText: 'View player');
+                if (isAllAdmin()) {
+                    $dropdownItem .= $this->datatablesHelper->linkDropdownItem(route: route('player-managements.edit', $item->hash), icon: 'edit', btnText: 'edit player');
+                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('remove-player', $item->hash, iconColor: 'danger', icon: 'delete', btnText: 'Remove Player From Team');
                 }
-                return $actionButton;
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
             })
             ->editColumn('name', function ($item) {
-                if (isAllAdmin() || isCoach()){
-                    $playerName = $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
-                } else {
-                    $playerName = $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name);
-                }
-                return $playerName;
+                return (isAllAdmin() || isCoach())
+                    ? $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash))
+                    : $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name);
             })
             ->addColumn('minutesPlayed', function ($item) use ($team){
-                return $item->playerMatchStats()
-                    ->where('teamId', $team->id)
-                    ->sum('minutesPlayed');
+                return $this->playerRepository->playerMatchStatsSum($item, 'minutesPlayed', team: $team);
             })
             ->addColumn('apps', function ($item) use ($team){
-                return $item->playerMatchStats()
-                    ->where('teamId', $team->id)
-                    ->where('minutesPlayed', '>', '0')
-                    ->count();
+                return $this->playerRepository->countMatchPlayed($item, team: $team);
             })
             ->addColumn('goals', function ($item) use ($team){
-                return $item->playerMatchStats()->where('teamId', $team->id)->sum('goals');
+                return $this->playerRepository->playerMatchStatsSum($item, 'goals', team: $team);
             })
             ->addColumn('assists', function ($item) use ($team){
-                return $item->playerMatchStats()->where('teamId', $team->id)->sum('assists');
+                return $this->playerRepository->playerMatchStatsSum($item, 'assists', team: $team);
             })
             ->addColumn('ownGoals', function ($item) use ($team){
-                return $item->playerMatchStats()->where('teamId', $team->id)->sum('ownGoal');
+                return $this->playerRepository->playerMatchStatsSum($item, 'ownGoals', team: $team);
             })
             ->addColumn('shots', function ($item) use ($team){
-                return $item->playerMatchStats()->where('teamId', $team->id)->sum('shots');
+                return $this->playerRepository->playerMatchStatsSum($item, 'shots', team: $team);
             })
             ->addColumn('passes', function ($item) use ($team){
-                return $item->playerMatchStats()->where('teamId', $team->id)->sum('passes');
+                return $this->playerRepository->playerMatchStatsSum($item, 'passes', team: $team);
             })
             ->addColumn('fouls', function ($item) use ($team){
-                return $item->playerMatchStats()->where('teamId', $team->id)->sum('fouls');
+                return $this->playerRepository->playerMatchStatsSum($item, 'fouls', team: $team);
             })
             ->addColumn('yellowCards', function ($item) use ($team){
-                return $item->playerMatchStats()->where('teamId', $team->id)->sum('yellowCards');
+                return $this->playerRepository->playerMatchStatsSum($item, 'yellowCards', team: $team);
             })
             ->addColumn('redCards', function ($item) use ($team){
-                return $item->playerMatchStats()->where('teamId', $team->id)->sum('redCards');
+                return $this->playerRepository->playerMatchStatsSum($item, 'redCards', team: $team);
             })
             ->addColumn('saves', function ($item) use ($team){
-                return $item->playerMatchStats()->where('teamId', $team->id)->sum('saves');
+                return $this->playerRepository->playerMatchStatsSum($item, 'saves', team: $team);
             })
-            ->rawColumns([
-                'action',
-                'age',
-                'name',
-                'minutesPlayed',
-                'apps',
-                'goals',
-                'assists',
-                'ownGoals',
-                'shots',
-                'passes',
-                'fouls',
-                'yellowCards',
-                'redCards',
-                'saves',
-            ])
+            ->rawColumns(['action', 'name'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function teamCoaches(Team $team){
+    public function teamCoaches(Team $team): JsonResponse
+    {
         $query = $team->coaches;
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                $actionButton = '';
-                if (isAllAdmin()){
-                    $actionButton =  '
-                        <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('coach-managements.edit', $item->hash) . '"><span class="material-icons">edit</span> Edit Coach</a>
-                            <a class="dropdown-item" href="' . route('coach-managements.show', $item->hash) . '"><span class="material-icons">visibility</span> View Coach</a>
-                            <button type="button" class="dropdown-item remove-coach" id="' . $item->id . '">
-                                <span class="material-icons">delete</span> Remove Coach From Team
-                            </button>
-                          </div>
-                        </div>';
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('coach-managements.show', $item->hash), icon: 'visibility', btnText: 'View coach');
+                if (isAllAdmin()) {
+                    $dropdownItem .= $this->datatablesHelper->linkDropdownItem(route: route('coach-managements.edit', $item->hash), icon: 'edit', btnText: 'edit coach');
+                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('remove-coach', $item->hash, iconColor: 'danger', icon: 'delete', btnText: 'Remove coach From Team');
                 }
-                return $actionButton;
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->specializations->name. ' - '.$item->certification->name, route('coach-managements.show', $item->hash));
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->specialization->name. ' - '.$item->certification->name, route('coach-managements.show', $item->hash));
             })
             ->editColumn('joinedDate', function ($item) {
-                return $this->datatablesService->convertToDatetime($item->pivot->created_at);
+                return $this->datatablesHelper->convertToDatetime($item->pivot->created_at);
             })
             ->editColumn('gender', function ($item) {
                 return $item->user->gender;
             })
-            ->rawColumns(['action', 'name', 'age', 'gender','joinedDate'])
+            ->rawColumns(['action', 'name'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function teamCompetition(Team $team){
-        $query = $team->divisions;
-
-        return Datatables::of($query)
-            ->addColumn('action', function ($item) {
-                $actionButton = '';
-                if (isCoach() || isPlayer()){
-                    $actionButton =  $this->datatablesService->buttonTooltips(route('competition-managements.show', $item->competition->hash), 'View Competition', 'visibility');
-                } elseif (isAllAdmin()){
-                    $statusButton = '';
-                    if ($item->competition->status != 'Cancelled' && $item->competition->status != 'Completed') {
-                        $statusButton = '<button type="submit" class="dropdown-item cancelBtn" id="'.$item->id.'">
-                                            <span class="material-icons text-danger">block</span> Cancel Competition
-                                        </button>';
-                    }
-                    $actionButton =  '
-                            <div class="dropdown">
-                              <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="material-icons">
-                                    more_vert
-                                </span>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="' . route('competition-managements.edit', $item->competition->hash) . '"><span class="material-icons">edit</span> Edit Competition</a>
-                                <a class="dropdown-item" href="' . route('competition-managements.show', $item->competition->hash) . '"><span class="material-icons">visibility</span> View Competition</a>
-                                ' . $statusButton . '
-                                <button type="button" class="dropdown-item delete" id="' . $item->competitionId . '">
-                                    <span class="material-icons">delete</span> Delete Competition
-                                </button>
-                              </div>
-                            </div>';
-                }
-                return $actionButton;
-            })
-            ->editColumn('divisions', function ($item) {
-                return '<span class="badge badge-pill badge-danger">'.$item->groupName.'</span>';
-            })
-            ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->competition->logo, $item->competition->name, $item->competition->type, route('competition-managements.show', $item->competition->hash));
-            })
-            ->editColumn('date', function ($item) {
-                return $this->datatablesService->competitionStartEndDate($item->competition);
-            })
-            ->editColumn('contact', function ($item) {
-                if ($item->competition->contactName != null && $item->competition->contactPhone != null){
-                    $contact = $item->competition->contactName. ' ~ '.$item->competition->contactPhone;
-                }else{
-                    $contact = 'No cantact added';
-                }
-                return $contact;
-            })
-            ->editColumn('status', function ($item) {
-                return $this->datatablesService->eventStatus($item->competition->status);
-            })
-            ->editColumn('location', function ($item) {
-                return $item->competition->location;
-            })
-            ->rawColumns(['action', 'name', 'divisions', 'date', 'contact', 'status', 'location'])
-            ->addIndexColumn()
-            ->make();
-    }
-
-    public function teamOverviewStats(Team $team)
+    public function teamScore(Team $team, $startDate = null, $endDate = null)
     {
-        $stats = [
-            'teamScore',
-            'cleanSheets',
-            'teamOwnGoal',
-        ];
-        $results = ['Win', 'Lose', 'Draw'];
-        $startDate = Carbon::now()->startOfMonth();
-        $endDate = Carbon::now();
-
-        $statsData['matchPlayed'] = $this->eventScheduleRepository->getTeamsMatchPlayed($team);
-        $statsData['matchPlayedThisMonth'] = $this->eventScheduleRepository->getTeamsMatchPlayed($team, startDate: $startDate, endDate: $endDate);
-
-        foreach ($stats as $stat){
-            $statsData[$stat] = $this->teamMatchRepository->getTeamsStats($team, stats: $stat);
-            $statsData[$stat.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, startDate: $startDate, endDate: $endDate, stats: $stat);
-        }
-        foreach ($results as $result){
-            $statsData[$result] = $this->teamMatchRepository->getTeamsStats($team, results: $result);
-            $statsData[$result.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, startDate: $startDate, endDate: $endDate, results: $result);
-        }
-
-        $statsData['goalsConceded'] = $this->teamMatchRepository->getTeamsStats($team, teamSide:'Opponent Team', stats: 'teamScore');
-        $statsData['goalsConcededThisMonth'] = $this->teamMatchRepository->getTeamsStats($team, teamSide:'Opponent Team', startDate: $startDate, endDate: $endDate, stats: 'teamScore');
-
-        $statsData['goalsDifference'] = $statsData['teamScore'] - $statsData['goalsConceded'];
-        $statsData['goalDifferenceThisMonth'] = $statsData['teamScoreThisMonth'] - $statsData['goalsConcededThisMonth'];
-
-        return $statsData;
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'goalScored');
+    }
+    public function cleanSheets(Team $team, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'cleanSheets');
+    }
+    public function teamOwnGoal(Team $team, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamOwnGoal');
+    }
+    public function goalsConceded(Team $team, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'goalsConceded');
+    }
+    public function goalsDifference(Team $team, $startDate = null, $endDate = null)
+    {
+        return $this->teamScore($team, $startDate, $endDate) - $this->goalsConceded($team, $startDate, $endDate);
+    }
+    public function matchPlayed(Team $team, $startDate = null, $endDate = null)
+    {
+        return $this->matchRepository->getByRelation($team, status: ['Completed'],startDate: $startDate, endDate:  $endDate)->count();
+    }
+    public function wins(Team $team, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, results: 'Win');
+    }
+    public function drams(Team $team, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, results: 'Draw');
+    }
+    public function losses(Team $team, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, results: 'Lose');
     }
 
     public function teamLatestMatch(Team $team)
     {
-        return $this->eventScheduleRepository->getTeamsEvents($team, 'Match', 'Completed', true, 4);
+        return $this->matchRepository->getByRelation($team, status:['Completed'], orderDirection: 'desc');
     }
 
     public function teamUpcomingMatch(Team $team)
     {
-        $scheduled = $this->eventScheduleRepository->getTeamsEvents($team, 'Match', 'Scheduled', true, 2);
-        $ongoing = $this->eventScheduleRepository->getTeamsEvents($team, 'Match', 'Ongoing', true, 2);
-        return $scheduled->merge($ongoing);
+        return $this->matchRepository->getByRelation($team, status:['Scheduled', 'Ongoing'], take: 2);
     }
 
     public function teamUpcomingTraining(Team $team)
     {
-        $scheduled = $this->eventScheduleRepository->getTeamsEvents($team, 'Training', 'Scheduled', true, 2);
-        $ongoing = $this->eventScheduleRepository->getTeamsEvents($team, 'Training', 'Ongoing', true, 2);
-        return $scheduled->merge($ongoing);
+        return $this->trainingRepository->getByRelation($team, status:['Scheduled', 'Ongoing'], take: 2);
     }
 
     public function playersNotJoinTheTeam(Team $team)
@@ -385,85 +265,56 @@ class TeamService extends Service
     }
 
     public function teamTrainingHistories(Team $team){
-        $data = $this->eventScheduleRepository->getTeamsEvents($team, 'Training', 'Completed', true);
+        $data = $this->trainingRepository->getByRelation($team, status:['Completed'], orderDirection: 'desc');
 
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return $this->datatablesService->buttonTooltips(route('training-schedules.show', $item->hash), 'View training session', 'visibility');
+                return $this->datatablesHelper->buttonTooltips(route('training-schedules.show', $item->hash), 'View training session', 'visibility');
             })
             ->editColumn('date', function ($item) {
-                return $this->datatablesService->startEndDate($item);
+                return $this->datatablesHelper->startEndDate($item);
             })
             ->editColumn('status', function ($item) {
-                return $this->datatablesService->eventStatus($item->status);
+                return $this->datatablesHelper->eventStatus($item->status);
             })
             ->editColumn('note', function ($item) {
-                if ($item->pivot->note == null) {
-                    return 'No note added';
-                } else {
-                    return $item->pivot->note;
-                }
+                return ($item->pivot->note == null) ? 'No note added' : $item->pivot->note;
             })
             ->editColumn('last_updated', function ($item) {
-                return $this->datatablesService->convertToDatetime($item->pivot->updated_at);
+                return $this->datatablesHelper->convertToDatetime($item->pivot->updated_at);
             })
-            ->rawColumns(['action','date','status', 'last_updated', 'note'])
+            ->rawColumns(['action','status'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function teamMatchHistories(Team $team){
-        $data = $this->eventScheduleRepository->getTeamsEvents($team, 'Match', 'Completed', true);
+    public function teamMatchHistories(Team $team): JsonResponse
+    {
+        $data = $this->matchRepository->getByRelation($team, status:['Completed'], orderDirection: 'desc');
 
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                return $this->datatablesService->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
+                return $this->datatablesHelper->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
             })
             ->editColumn('opponentTeam', function ($item) use ($team){
-                if ($team->teamSide == 'Academy Team'){
-                    $data = $item->teams[1];
-                } else {
-                    $data = $item->teams[0];
-                }
-                return $this->datatablesService->name($data->logo, $data->teamName, $data->ageGroup, route('team-managements.show', $data->hash));
+                return ($item->matchType == 'Internal Match') ? $this->datatablesHelper->name($item->awayTeam->logo, $item->awayTeam->teamName, $item->awayTeam->ageGroup, route('team-managements.show', $item->awayTeam->hash)) : $item->externalTeam->teamName;
             })
             ->editColumn('competition', function ($item) {
-                if ($item->competition){
-                    $competition = $this->datatablesService->name($item->competition->logo, $item->competition->teamName, $item->competition->type, route('competition-managements.show', $item->competition->hash));
-                }else{
-                    $competition = 'No Competition';
-                }
-                return $competition;
+                return ($item->competition) ? $this->datatablesHelper->name($item->competition->logo, $item->competition->teamName, $item->competition->type, route('competition-managements.show', $item->competition->hash))
+                    : 'No Competition';
             })
             ->editColumn('date', function ($item) {
-                return $this->datatablesService->startEndDate($item);
+                return $this->datatablesHelper->startEndDate($item);
             })
             ->editColumn('status', function ($item) {
-                return $this->datatablesService->eventStatus($item->status);
+                return $this->datatablesHelper->eventStatus($item->status);
             })
             ->editColumn('teamScore', function ($item) use ($team) {
-                if ($team->teamSide == 'Academy Team'){
-                    $data = $item->teams[0];
-                } else {
-                    $data = $item->teams[1];
-                }
-                return $data->pivot->teamScore;
-            })
-            ->editColumn('opponentTeamScore', function ($item) use ($team) {
-                if ($team->teamSide == 'Academy Team'){
-                    $data = $item->teams[1];
-                } else {
-                    $data = $item->teams[0];
-                }
-                return $data->pivot->teamScore;
+                $awayTeamScore = ($item->matchType == 'Internal Match') ? $this->matchService->awayTeamMatch($item)->pivot->teamScore : $item->externalTeam->teamScore;
+                return '<p class="mb-0"><strong class="js-lists-values-lead">' .$this->matchService->homeTeamMatch($item)->pivot->teamScore . ' - ' . $awayTeamScore.'</strong></p>';
             })
             ->editColumn('note', function ($item) {
-                if ($item->pivot->note == null) {
-                    $note = 'No note added';
-                } else {
-                    $note = $item->pivot->note;
-                }
-                return $note;
+                return ($item->pivot->note == null) ? 'No note added' : $item->pivot->note;
             })
             ->editColumn('last_updated', function ($item) {
                 return $this->convertToDatetime($item->pivot->updated_at);
@@ -482,7 +333,6 @@ class TeamService extends Service
 
         $team = $this->teamRepository->create($teamData);
 
-        $superAdminName = $this->getUserFullName($loggedUser);
         Notification::send($this->userRepository->getAllAdminUsers(),new TeamCreatedDeleted($superAdminName, $team, 'created'));
 
         if (array_key_exists('players', $teamData)){
