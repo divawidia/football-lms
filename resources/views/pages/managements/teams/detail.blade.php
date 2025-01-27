@@ -47,73 +47,37 @@
             </div>
 
             @if(isAllAdmin())
-                <div class="dropdown">
-                    <button class="btn btn-outline-white" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                        Action<span class="material-icons ml-3">keyboard_arrow_down</span>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('team-managements.edit', $team->hash) }}"><span
-                                class="material-icons">edit</span> Edit Team Profile</a>
-                        @if($team->status == '1')
-                            <button type="submit" class="dropdown-item setDeactivate" id="{{$team->id}}">
-                                <span class="material-icons text-danger">check_circle</span>
-                                Deactivate Team
-                            </button>
-                        @else
-                            <button type="submit" class="dropdown-item setActivate" id="{{$team->id}}">
-                                <span class="material-icons text-success">check_circle</span>
-                                Activate Team
-                            </button>
-                        @endif
-                        <button type="button" class="dropdown-item delete-team" id="{{$team->id}}">
-                            <span class="material-icons">delete</span> Delete Team
-                        </button>
-                    </div>
-                </div>
+                <x-buttons.dropdown title="Action" icon="keyboard_arrow_down" btnColor="outline-white" iconMargin="ml-3">
+                    <x-buttons.link-button :dropdownItem="true" :href="route('team-managements.edit', $team->hash)"
+                                           icon="edit" color="white" text="Edit Team Profile"/>
+
+                    @if($team->status == '1')
+                        <x-buttons.basic-button icon="check_circle" color="white" text="Deactivate Team"
+                                                additionalClass="setDeactivate" :dropdownItem="true" :id="$team->id"
+                                                iconColor="danger"/>
+                    @else
+                        <x-buttons.basic-button icon="check_circle" color="white" text="Activate Team"
+                                                additionalClass="setActivate" :dropdownItem="true" :id="$team->id"
+                                                iconColor="success"/>
+                    @endif
+
+                    <x-buttons.basic-button icon="delete" iconColor="danger" color="white" text="Delete Team"
+                                            additionalClass="delete-team" :dropdownItem="true" :id="$team->id"/>
+                </x-buttons.dropdown>
             @endif
         </div>
     </div>
 
-{{--    <x-tabs.navbar>--}}
-{{--        <x-tabs.item title="Overview" link="overview" :active="true"/>--}}
-{{--        <x-tabs.item title="Profile" link="profile"/>--}}
-{{--        <x-tabs.item title="Teams Managed" link="teams"/>--}}
-{{--    </x-tabs.navbar>--}}
-
-    <nav class="navbar navbar-light border-bottom border-top py-3">
-        <div class="container">
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#overview-tab">Overview & Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#latestMatch-tab">Latest Match</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#players-tab">Players</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#coaches-tab">Coaches/Staffs</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#competitions-tab">Competitions</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#upcomingMatch-tab">Upcoming Matches</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#upcomingTraining-tab">Upcoming Training</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#trainingHistories-tab">Training Histories</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#matchHistories-tab">Matches Histories</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <x-tabs.navbar>
+        <x-tabs.item title="Overview" link="overview" :active="true"/>
+        <x-tabs.item title="Players" link="players"/>
+        <x-tabs.item title="Coaches/Staffs" link="coaches"/>
+        <x-tabs.item title="Latest Matches" link="latest-match"/>
+        <x-tabs.item title="Upcoming Matches" link="upcoming-matches"/>
+        <x-tabs.item title="Upcoming Trainings" link="upcoming-trainings"/>
+        <x-tabs.item title="Matches Histories" link="matches-histories"/>
+        <x-tabs.item title="Trainings Histories" link="trainings-histories"/>
+    </x-tabs.navbar>
 
     <div class="container page__container page-section">
         <div class="tab-content">
@@ -173,7 +137,7 @@
             </div>
 
             {{-- Latest Match --}}
-            <div class="tab-pane fade" id="latestMatch-tab" role="tabpanel">
+            <div class="tab-pane fade" id="latest-matches-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Latest Match</div>
                 </div>
@@ -197,32 +161,10 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover w-100" id="playersTable">
-                                <thead>
-                                <tr>
-                                    <th>Pos.</th>
-                                    <th>Name</th>
-                                    <th>Strong Foot</th>
-                                    <th>Age</th>
-                                    <th>Minutes Played</th>
-                                    <th>Apps</th>
-                                    <th>Goals</th>
-                                    <th>Assists</th>
-                                    <th>Own Goals</th>
-                                    <th>Shots</th>
-                                    <th>Passes</th>
-                                    <th>Fouls Conceded</th>
-                                    <th>Yellow Cards</th>
-                                    <th>Red Cards</th>
-                                    <th>Saves</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+                        <x-table
+                            :headers="['Pos.', 'Name', 'Strong Foot', 'Age', 'Minutes Played', 'Apps', 'Goals', 'Assists', 'Own Goals', 'Shots', 'Passes', 'Fouls Conceded', 'Yellow Cards', 'Red Cards', 'Saves', 'Action']"
+                            tableId="playersTable"
+                        />
                     </div>
                 </div>
             </div>
@@ -239,57 +181,16 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover w-100" id="coachesTable">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Age</th>
-                                    <th>Gender</th>
-                                    <th>Joined Date</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Competitions/Events --}}
-            <div class="tab-pane fade" id="competitions-tab" role="tabpanel">
-                <div class="page-separator">
-                    <div class="page-separator__text">Competitions/Events</div>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover w-q00" id="competitionsTable">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Group Division</th>
-                                    <th>Competition Date</th>
-                                    <th>Location</th>
-                                    <th>Contact</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+                        <x-table
+                            :headers="['#', 'Name', 'Age', 'Gender', 'Joined Date', 'Action']"
+                            tableId="coachesTable"
+                        />
                     </div>
                 </div>
             </div>
 
             {{-- Upcoming Matches --}}
-            <div class="tab-pane fade" id="upcomingMatch-tab" role="tabpanel">
+            <div class="tab-pane fade" id="upcoming-matches-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Upcoming Matches</div>
                 </div>
@@ -302,7 +203,7 @@
             </div>
 
             {{-- Upcoming Training --}}
-            <div class="tab-pane fade" id="upcomingTraining-tab" role="tabpanel">
+            <div class="tab-pane fade" id="upcoming-trainings-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Upcoming Training</div>
                 </div>
@@ -319,104 +220,36 @@
             </div>
 
             {{-- Training Histories --}}
-            <div class="tab-pane fade" id="trainingHistories-tab" role="tabpanel">
+            <div class="tab-pane fade" id="trainings-histories-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Training Histories</div>
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover w-100" id="trainingHistoryTable">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Training/Practice</th>
-                                    <th>training date</th>
-                                    <th>Location</th>
-                                    <th>Training Status</th>
-                                    <th>Note</th>
-                                    <th>Last Updated</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+                        <x-table
+                            :headers="['#', 'Training/Practice', 'Training Date', 'Location', 'Training Status', 'Note', 'Last Updated', 'Action']"
+                            tableId="trainingHistoryTable"
+                        />
                     </div>
                 </div>
             </div>
 
             {{-- Match Histories --}}
-            <div class="tab-pane fade" id="matchHistories-tab" role="tabpanel">
+            <div class="tab-pane fade" id="matches-histories-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Match Histories</div>
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover 1w100" id="matchHistoryTable">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Opponent Team</th>
-                                    <th>competition</th>
-                                    <th>Match Date</th>
-                                    <th>Team Score</th>
-                                    <th>Opponent Team Score</th>
-                                    <th>Location</th>
-                                    <th>Note</th>
-                                    <th>Match Status</th>
-                                    <th>Last Updated</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+                        <x-table
+                            :headers="['#', 'Home Team', 'Score','Away Team', 'Competition', 'Match Date', 'Location', 'Note', 'Match Status', 'Last Updated', 'Action']"
+                            tableId="matchHistoryTable"
+                        />
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    @if(isAllAdmin())
-        <x-process-data-confirmation btnClass=".setDeactivate"
-                                     :processRoute="route('team-managements.deactivate', ':id')"
-                                     :routeAfterProcess="route('team-managements.show', $team->hash)"
-                                     method="PATCH"
-                                     confirmationText="Are you sure to deactivate this team {{ $team->teamName }}?"
-                                     errorText="Something went wrong when deactivating this team {{ $team->teamName }}!"/>
-
-        <x-process-data-confirmation btnClass=".setActivate"
-                                     :processRoute="route('team-managements.activate', ':id')"
-                                     :routeAfterProcess="route('team-managements.show', $team->hash)"
-                                     method="PATCH"
-                                     confirmationText="Are you sure to activate this team {{ $team->teamName }}?"
-                                     errorText="Something went wrong when activating this team {{ $team->teamName }}!"/>
-
-        <x-process-data-confirmation btnClass=".delete-team"
-                                     :processRoute="route('team-managements.destroy', ['team' => ':id'])"
-                                     :routeAfterProcess="route('team-managements.index')"
-                                     method="DELETE"
-                                     confirmationText="Are you sure to delete this team {{ $team->teamName }}?"
-                                     errorText="Something went wrong when deleting this team {{ $team->teamName }}!"/>
-
-        <x-process-data-confirmation btnClass=".remove-player"
-                                     :processRoute="route('team-managements.remove-player', ['team' => $team->hash, 'player' => ':id'])"
-                                     :routeAfterProcess="route('team-managements.show', $team->hash)"
-                                     method="PUT"
-                                     confirmationText="Are you sure to to remove this player from team {{ $team->teamName }}?"
-                                     errorText="Something went wrong when removing this player from team {{ $team->teamName }}!"/>
-
-        <x-process-data-confirmation btnClass=".remove-coach"
-                                     :processRoute="route('team-managements.remove-coach', ['team' => $team->hash, 'coach' => ':id'])"
-                                     :routeAfterProcess="route('team-managements.show', $team->hash)"
-                                     method="PUT"
-                                     confirmationText="Are you sure to to remove this coach from team {{ $team->teamName }}?"
-                                     errorText="Something went wrong when removing this coach from team {{ $team->teamName }}!"/>
-    @endif
 @endsection
 @push('addon-script')
     <script>
@@ -444,12 +277,7 @@
                     {data: 'yellowCards', name: 'yellowCards'},
                     {data: 'redCards', name: 'redCards'},
                     {data: 'saves', name: 'saves'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],
                 order: [[5, 'desc']]
             });
@@ -466,39 +294,9 @@
                     {data: 'age', name: 'age'},
                     {data: 'gender', name: 'gender'},
                     {data: 'joinedDate', name: 'joinedDate'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
-
-            {{--$('#competitionsTable').DataTable({--}}
-            {{--    processing: true,--}}
-            {{--    serverSide: true,--}}
-            {{--    ordering: true,--}}
-            {{--    ajax: {--}}
-            {{--        url: '{!! url()->route('team-managements.teamCompetitions', $team->hash) !!}',--}}
-            {{--    },--}}
-            {{--    columns: [--}}
-            {{--        {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},--}}
-            {{--        {data: 'name', name: 'name'},--}}
-            {{--        {data: 'divisions', name: 'divisions'},--}}
-            {{--        {data: 'date', name: 'date'},--}}
-            {{--        {data: 'location', name: 'location'},--}}
-            {{--        {data: 'contact', name: 'contact'},--}}
-            {{--        {data: 'status', name: 'status'},--}}
-            {{--        {--}}
-            {{--            data: 'action',--}}
-            {{--            name: 'action',--}}
-            {{--            orderable: false,--}}
-            {{--            searchable: false--}}
-            {{--        },--}}
-            {{--    ],--}}
-            {{--    order: [[3, 'desc']],--}}
-            {{--});--}}
 
             $('#trainingHistoryTable').DataTable({
                 processing: true,
@@ -515,12 +313,7 @@
                     {data: 'status', name: 'status'},
                     {data: 'note', name: 'note'},
                     {data: 'last_updated', name: 'last_updated'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false,},
                 ],
                 order: [[2, 'desc']],
             });
@@ -534,24 +327,70 @@
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'opponentTeam', name: 'opponentTeam'},
+                    {data: 'homeTeam', name: 'homeTeam'},
+                    {data: 'teamScore', name: 'teamScore'},
+                    {data: 'awayTeam', name: 'awayTeam'},
                     {data: 'competition', name: 'competition'},
                     {data: 'date', name: 'date'},
-                    {data: 'teamScore', name: 'teamScore'},
-                    {data: 'opponentTeamScore', name: 'opponentTeamScore'},
                     {data: 'place', name: 'place'},
-                    {data: 'status', name: 'status'},
                     {data: 'note', name: 'note'},
+                    {data: 'status', name: 'status'},
                     {data: 'last_updated', name: 'last_updated'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],
-                order: [[2, 'desc']],
+                // order: [[2, 'desc']],
             });
+
+            processWithConfirmation(
+                ".setDeactivate",
+                "{{ route('team-managements.deactivate', ':id') }}",
+                "{{ route('team-managements.show', $team->hash) }}",
+                "PATCH",
+                "Are you sure to deactivate this team {{ $team->teamName }}?",
+                "Something went wrong when deactivating this team {{ $team->teamName }}!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                ".setActivate",
+                "{{ route('team-managements.activate', ':id') }}",
+                "{{ route('team-managements.show', $team->hash) }}",
+                "PATCH",
+                "Are you sure to activate this team {{ $team->teamName }}?",
+                "Something went wrong when activating this team {{ $team->teamName }}!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                ".delete-team",
+                "{{ route('team-managements.destroy', ['team' => ':id']) }}",
+                "{{ route('team-managements.index') }}",
+                "DELETE",
+                "Are you sure to delete this team {{ $team->teamName }}?",
+                "Something went wrong when deleting this team {{ $team->teamName }}!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                ".remove-player",
+                "{{ route('team-managements.remove-player', ['team' => $team->hash, 'player' => ':id']) }}",
+                "{{ route('team-managements.show', $team->hash) }}",
+                "PUT",
+                "Are you sure to remove this player from team {{ $team->teamName }}?",
+                "Something went wrong when removing this player from team {{ $team->teamName }}!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                ".remove-coach",
+                "{{ route('team-managements.remove-coach', ['team' => $team->hash, 'coach' => ':id']) }}",
+                "{{ route('team-managements.show', $team->hash) }}",
+                "PUT",
+                "Are you sure to remove this coach from team {{ $team->teamName }}?",
+                "Something went wrong when removing this coach from team {{ $team->teamName }}!",
+                "{{ csrf_token() }}"
+            );
+
         });
     </script>
 @endpush

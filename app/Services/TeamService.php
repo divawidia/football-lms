@@ -147,7 +147,7 @@ class TeamService extends Service
                 return $this->playerRepository->playerMatchStatsSum($item, 'assists', team: $team);
             })
             ->addColumn('ownGoals', function ($item) use ($team){
-                return $this->playerRepository->playerMatchStatsSum($item, 'ownGoals', team: $team);
+                return $this->playerRepository->playerMatchStatsSum($item, 'ownGoal', team: $team);
             })
             ->addColumn('shots', function ($item) use ($team){
                 return $this->playerRepository->playerMatchStatsSum($item, 'shots', team: $team);
@@ -298,14 +298,22 @@ class TeamService extends Service
 
     public function teamMatchHistories(Team $team): JsonResponse
     {
-        $data = $this->matchRepository->getByRelation($team, status:['Completed'], orderDirection: 'desc');
+        $data = $this->matchRepository->getByRelation($team, ['homeTeam', 'awayTeam', 'externalTeam', 'competition'], status:['Completed'], orderDirection: 'desc');
 
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return $this->datatablesHelper->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
             })
-            ->editColumn('opponentTeam', function ($item) use ($team){
-                return ($item->matchType == 'Internal Match') ? $this->datatablesHelper->name($item->awayTeam->logo, $item->awayTeam->teamName, $item->awayTeam->ageGroup, route('team-managements.show', $item->awayTeam->hash)) : $item->externalTeam->teamName;
+            ->editColumn('homeTeam', function ($item) use ($team){
+                return ($item->homeTeam) ? $this->datatablesHelper->name($item->homeTeam->logo, $item->homeTeam->teamName, $item->homeTeam->ageGroup, route('team-managements.show', $item->homeTeam->hash)) : 'No Team';
+            })
+            ->editColumn('awayTeam', function ($item) use ($team){
+                if ($item->matchType == 'Internal Match' && $item->awayTeam) {
+                    return $this->datatablesHelper->name($item->awayTeam->logo, $item->awayTeam->teamName, $item->awayTeam->ageGroup, route('team-managements.show', $item->awayTeam->hash));
+                }
+                elseif ($item->externalTeam) {
+                    return $item->externalTeam->teamName;
+                }
             })
             ->editColumn('competition', function ($item) {
                 return ($item->competition) ? $this->datatablesHelper->name($item->competition->logo, $item->competition->teamName, $item->competition->type, route('competition-managements.show', $item->competition->hash))
@@ -318,8 +326,14 @@ class TeamService extends Service
                 return $this->datatablesHelper->eventStatus($item->status);
             })
             ->editColumn('teamScore', function ($item) use ($team) {
-                $awayTeamScore = ($item->matchType == 'Internal Match') ? $this->matchService->awayTeamMatch($item)->pivot->teamScore : $item->externalTeam->teamScore;
-                return '<p class="mb-0"><strong class="js-lists-values-lead">' .$this->matchService->homeTeamMatch($item)->pivot->teamScore . ' - ' . $awayTeamScore.'</strong></p>';
+                $awayTeam = '';
+                if ($item->matchType == 'Internal Match'  && $item->awayTeam) {
+                    $awayTeam = $this->matchService->awayTeamMatch($item)->pivot->teamScore;
+                }
+                elseif ($item->externalTeam) {
+                    $awayTeam = $item->externalTeam->teamScore;
+                }
+                return '<p class="mb-0"><strong class="js-lists-values-lead">' .$this->matchService->homeTeamMatch($item)->pivot->teamScore . ' - ' . $awayTeam.'</strong></p>';
             })
             ->editColumn('note', function ($item) {
                 return ($item->pivot->note == null) ? 'No note added' : $item->pivot->note;
@@ -327,7 +341,7 @@ class TeamService extends Service
             ->editColumn('last_updated', function ($item) {
                 return $this->convertToDatetime($item->pivot->updated_at);
             })
-            ->rawColumns(['action', 'competition','opponentTeam','date','status', 'teamScore', 'opponentTeamScore', 'last_updated', 'note'])
+            ->rawColumns(['action', 'competition', 'homeTeam','awayTeam','status', 'teamScore',])
             ->addIndexColumn()
             ->make();
     }
