@@ -24,7 +24,7 @@ class UpdateCompetitionRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'type' => ['required', Rule::in('League', 'Tournament')],
+            'type' => ['required', Rule::in('league', 'Knockout', 'Friendly')],
             'logo' => ['nullable', 'image', 'max:10240'],
             'startDate' => ['required', 'date'],
             'endDate' => ['required', 'date', 'after:startDate'],
