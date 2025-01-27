@@ -39,38 +39,40 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Joined Teams</div>
                 </div>
-
+                <div class="row">
                 @foreach($teams as $team)
-                    <div class="col-lg-6">
-                        <a class="card" href="{{route('team-managements.show', $team->hash)}}">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6 d-flex flex-column flex-md-row align-items-center">
-                                        <img src="{{ Storage::url($team->logo) }}"
-                                             width="50"
-                                             height="50"
-                                             class="rounded-circle img-object-fit-cover"
-                                             alt="team-logo">
-                                        <div class="ml-md-3 text-center text-md-left">
-                                            <h5 class="mb-0">{{$team->teamName}}</h5>
-                                            <p class="text-50 lh-1 mb-0">{{$team->ageGroup}}</p>
+                        <div class="col-lg-6">
+                            <a class="card" href="{{route('team-managements.show', $team->hash)}}">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6 d-flex flex-column flex-md-row align-items-center">
+                                            <img src="{{ Storage::url($team->logo) }}"
+                                                 width="50"
+                                                 height="50"
+                                                 class="rounded-circle img-object-fit-cover"
+                                                 alt="team-logo">
+                                            <div class="ml-md-3 text-center text-md-left">
+                                                <h5 class="mb-0">{{$team->teamName}}</h5>
+                                                <p class="text-50 lh-1 mb-0">{{$team->ageGroup}}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-6 d-flex flex-column justify-content-center align-items-end">
-                                        <div>
-                                            <i class='fa fa-users icon-16pt text-danger mr-2'></i>
-                                            {{ $team->players()->count() }} Players
-                                        </div>
-                                        <div>
-                                            <i class="fa fa-user-tie icon-16pt text-danger mr-2"></i>
-                                            {{ $team->coaches()->count() }} Coaches
+                                        <div class="col-6 d-flex flex-column justify-content-center align-items-end">
+                                            <div>
+                                                <i class='fa fa-users icon-16pt text-danger mr-2'></i>
+                                                {{ $team->players()->count() }} Players
+                                            </div>
+                                            <div>
+                                                <i class="fa fa-user-tie icon-16pt text-danger mr-2"></i>
+                                                {{ $team->coaches()->count() }} Coaches
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
-                    </div>
+                            </a>
+                        </div>
+
                 @endforeach
+                </div>
 
                 <div class="page-separator">
                     <div class="page-separator__text">Overview</div>

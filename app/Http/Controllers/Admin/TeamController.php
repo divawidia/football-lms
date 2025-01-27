@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TeamRequest;
+use App\Http\Requests\UpdateCoachTeamRequest;
+use App\Http\Requests\UpdatePlayerTeamRequest;
 use App\Models\Coach;
 use App\Models\Player;
 use App\Models\Team;
@@ -15,6 +17,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -78,11 +81,6 @@ class TeamController extends Controller
         return $this->teamService->teamCoaches($team);
     }
 
-    public function teamCompetitions(Team $team): JsonResponse
-    {
-        return $this->teamService->teamCompetition($team);
-    }
-
     public function teamTrainingHistories(Team $team): JsonResponse
     {
         return $this->teamService->teamTrainingHistories($team);
@@ -117,12 +115,10 @@ class TeamController extends Controller
     public function store(TeamRequest $request)
     {
         $data = $request->validated();
-        $loggedUser = $this->getLoggedUser();
 
-        $this->teamService->store($data, $this->getAcademyId(), $loggedUser);
+        $this->teamService->store($data, $this->getAcademyId(), $this->getLoggedUser());
 
-        $text = 'Team '.$data['teamName'].' successfully added!';
-        Alert::success($text);
+        Alert::success('Team '.$data['teamName'].' successfully added!');
         return redirect()->route('team-managements.index');
     }
 
@@ -186,39 +182,35 @@ class TeamController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(TeamRequest $request, Team $team)
+    public function update(TeamRequest $request, Team $team): RedirectResponse
     {
         $data = $request->validated();
 
-        $loggedUser = $this->getLoggedUser();
-        $this->teamService->update($data, $team, $loggedUser);
+        $this->teamService->update($data, $team, $this->getLoggedUser());
 
-        $text = 'Team '.$team->teamName.' successfully updated!';
-        Alert::success($text);
+        Alert::success('Team '.$team->teamName.' successfully updated!');
         return redirect()->route('team-managements.show', $team->id);
     }
 
-    public function deactivate(Team $team)
+    public function deactivate(Team $team): JsonResponse
     {
-        $loggedUser = $this->getLoggedUser();
         try {
-            $data = $this->teamService->setStatus($team, '0', $loggedUser);
-            $message = "Team ".$team->teamName."'s status successfully set to deactivated.";
+            $message = "Team {$team->teamName}'s status successfully set to deactivated.";
+            $data = $this->teamService->setStatus($team, '0', $this->getLoggedUser());
             return ApiResponse::success($data, $message);
 
         } catch (Exception $e){
-            $message = "Error while updating team ".$team->teamName."'s status to deactivate: " . $e->getMessage();
+            $message = "Error while updating team {$team->teamName}'s status to deactivate: " . $e->getMessage();
             Log::error($message);
             return ApiResponse::error($message, null, $e->getCode());
         }
     }
 
-    public function activate(Team $team)
+    public function activate(Team $team): JsonResponse
     {
-        $loggedUser = $this->getLoggedUser();
         try {
-            $data = $this->teamService->setStatus($team, '1', $loggedUser);
             $message = "Team ".$team->teamName."'s status successfully set to activated.";
+            $data = $this->teamService->setStatus($team, '1', $this->getLoggedUser());
             return ApiResponse::success($data, $message);
 
         } catch (Exception $e){
@@ -228,30 +220,26 @@ class TeamController extends Controller
         }
     }
 
-    public function updatePlayerTeam(Request $request, Team $team)
+    public function updatePlayerTeam(UpdatePlayerTeamRequest $request, Team $team): JsonResponse
     {
-        $data = $request->validate([
-            'players' => ['required', Rule::exists('players', 'id')],
-        ]);
-        $result = $this->teamService->updatePlayerTeam($data, $team);
+        $data = $request->validated();
+        $result = $this->teamService->updatePlayerTeam($data, $team, $this->getLoggedUser());
         $text = "Team ".$team->teamName." successfully added new players!";
         return ApiResponse::success($result, $text);
     }
 
-    public function updateCoachTeam(Request $request, Team $team)
+    public function updateCoachTeam(UpdateCoachTeamRequest $request, Team $team): JsonResponse
     {
-        $data = $request->validate([
-            'coaches' => ['required', Rule::exists('coaches', 'id')]
-        ]);
-        $result = $this->teamService->updateCoachTeam($data, $team);
+        $data = $request->validated();
+        $result = $this->teamService->updateCoachTeam($data, $team, $this->getLoggedUser());
         $text = "Team ".$team->teamName." successfully added new coaches!";
         return ApiResponse::success($result, $text);
     }
 
-    public function removePlayer(Team $team, Player $player)
+    public function removePlayer(Team $team, Player $player): JsonResponse
     {
         try {
-            $this->teamService->removePlayer($team, $player);
+            $this->teamService->removePlayer($team, $player, $this->getLoggedUser());
             $message = "Player ".$this->getUserFullName($player->user)." successfully removed from team ".$team->teamName.".";
             return ApiResponse::success(message:  $message);
 
@@ -262,10 +250,10 @@ class TeamController extends Controller
         }
     }
 
-    public function removeCoach(Team $team, Coach $coach)
+    public function removeCoach(Team $team, Coach $coach): JsonResponse
     {
         try {
-            $this->teamService->removeCoach($team, $coach);
+            $this->teamService->removeCoach($team, $coach, $this->getLoggedUser());
             $message = "Coach ".$this->getUserFullName($coach->user)." successfully removed from team ".$team->teamName.".";
             return ApiResponse::success(message:  $message);
 
@@ -279,12 +267,11 @@ class TeamController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Team $team)
+    public function destroy(Team $team): JsonResponse
     {
-        $loggedUser = $this->getLoggedUser();
         try {
-            $data = $this->teamService->destroy($team, $loggedUser);
             $message = "Team ".$team->teamName."'s successfully deleted.";
+            $data = $this->teamService->destroy($team, $this->getLoggedUser());
             return ApiResponse::success($data, $message);
 
         } catch (Exception $e){

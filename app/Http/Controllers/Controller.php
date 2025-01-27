@@ -77,7 +77,7 @@ class Controller extends BaseController
 
     public function successAlertStatusUser(User $user, string $context)
     {
-        $text = $user->firstName.' '.$user->lasstName.' status successfully '.$context.'!';
+        $text = $user->firstName.' '.$user->lastName.' status successfully '.$context.'!';
         return Alert::success($text);
     }
 

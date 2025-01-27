@@ -72,7 +72,7 @@
         <x-tabs.item title="Overview" link="overview" :active="true"/>
         <x-tabs.item title="Players" link="players"/>
         <x-tabs.item title="Coaches/Staffs" link="coaches"/>
-        <x-tabs.item title="Latest Matches" link="latest-match"/>
+        <x-tabs.item title="Latest Matches" link="latest-matches"/>
         <x-tabs.item title="Upcoming Matches" link="upcoming-matches"/>
         <x-tabs.item title="Upcoming Trainings" link="upcoming-trainings"/>
         <x-tabs.item title="Matches Histories" link="matches-histories"/>

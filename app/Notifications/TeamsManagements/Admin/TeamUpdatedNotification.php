@@ -2,22 +2,23 @@
 
 namespace App\Notifications\TeamsManagements\Admin;
 
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TeamCreatedForAdminNotification extends Notification
+class TeamUpdatedNotification extends Notification
 {
     use Queueable;
-    protected $adminName;
-    protected $team;
-    protected $status;
+    protected User $loggedUser;
+    protected Team $team;
 
-    public function __construct($adminName, $team, $status)
+    public function __construct(User $loggedUser, Team $team)
     {
-        $this->adminName = $adminName;
+        $this->loggedUser = $loggedUser;
         $this->team = $team;
-        $this->status = $status;
     }
 
     /**
@@ -38,8 +39,9 @@ class TeamCreatedForAdminNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"{$this->adminName} has {$this->status} a new team {$this->team->teamName}. Please review the changes if necessary.",
-            'redirectRoute' => route('team-managements.show', $this->team->id)
+            'title' => "Team Has been updated",
+            'data' =>"Admin {$this->loggedUser->firstName} {$this->loggedUser->lastName} has updated a team {$this->team->teamName}. Please review the changes if necessary!",
+            'redirectRoute' => route('team-managements.show', $this->team->hash)
         ];
     }
 }
