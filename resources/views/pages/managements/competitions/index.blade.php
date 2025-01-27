@@ -70,6 +70,15 @@
                     "Something went wrong when cancelling the competition!",
                     "{{ csrf_token() }}",
                 );
+                processWithConfirmation(
+                    '.scheduled-btn',
+                    "{{ route('competition-managements.scheduled', ['competition' => ':id']) }}",
+                    "{{ route('competition-managements.index') }}",
+                    'PATCH',
+                    "Are you sure to set competition to scheduled?",
+                    "Something went wrong when setting the competition as scheduled!",
+                    "{{ csrf_token() }}"
+                );
             });
         </script>
     @endpush

@@ -75,7 +75,7 @@ class CompetitionService extends Service
                 if ($item->status != 'Cancelled' && $item->status != 'Completed') {
                     $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('cancelBtn', $item->hash, 'danger', icon: 'block', btnText: 'Cancel Competition');
                 } elseif ($item->status == 'Cancelled') {
-                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('scheduled-btn', $item->hash, 'warning', icon: 'block', btnText: 'Set Competition to scheduled');
+                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('scheduled-btn', $item->hash, 'warning', icon: 'check_circle', btnText: 'Set Competition to scheduled');
                 }
                 $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete', $item->hash, 'danger', icon: 'delete', btnText: 'delete Competition');
 
@@ -188,7 +188,7 @@ class CompetitionService extends Service
         return $competition->update($competitionData);
     }
 
-    public function setStatus(Competition $competition, $status, $loggedUser): bool
+    public function setStatus(Competition $competition, $status, $loggedUser = null): bool
     {
         if ($status == 'Ongoing') {
             Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionOngoingNotification($competition));
@@ -199,7 +199,6 @@ class CompetitionService extends Service
         } else {
             Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionScheduledNotification($loggedUser, $competition));
         }
-
         return $competition->update(['status' => $status]);
     }
 

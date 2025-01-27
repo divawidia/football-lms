@@ -34,11 +34,8 @@ class StartCompetitionStatus extends Command
      */
     public function handle()
     {
-        // Get the current date and time
-        $now = Carbon::now();
-
         // Update records where end_date is less than the current date
-        $competitions = Competition::whereDate('startDate', '<=', $now)->where('status', '=', 'Scheduled')->get();
+        $competitions = Competition::whereDate('startDate', '<=', Carbon::now())->where('status', '=', 'Scheduled')->get();
         foreach ($competitions as $competition){
             $this->competitionService->setStatus($competition, 'Ongoing');
             $this->info('Competition '.$competition->name.' status data successfully updated to ongoing.');
