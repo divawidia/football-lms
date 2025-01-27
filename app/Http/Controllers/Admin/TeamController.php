@@ -11,6 +11,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Services\OpponentTeamService;
 use App\Services\TeamService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -140,9 +141,30 @@ class TeamController extends Controller
      */
     public function show(Team $team)
     {
+        $startDate = Carbon::now()->startOfMonth();
+        $endDate = Carbon::now();
         return view('pages.managements.teams.detail', [
             'team' => $team,
-            'overview' => $this->teamService->teamOverviewStats($team),
+            'teamScore' => $this->teamService->teamScore($team),
+            'teamScoreThisMonth' => $this->teamService->teamScore($team, $startDate, $endDate),
+            'cleanSheets' => $this->teamService->cleanSheets($team),
+            'cleanSheetsThisMonth' => $this->teamService->cleanSheets($team, $startDate, $endDate),
+            'teamOwnGoal' => $this->teamService->teamOwnGoal($team),
+            'teamOwnGoalThisMonth' => $this->teamService->teamOwnGoal($team, $startDate, $endDate),
+            'goalsConceded' => $this->teamService->goalsConceded($team),
+            'goalsConcededThisMonth' => $this->teamService->goalsConceded($team, $startDate, $endDate),
+            'goalsDifference' => $this->teamService->goalsDifference($team),
+            'goalsDifferenceThisMonth' => $this->teamService->goalsDifference($team, $startDate, $endDate),
+            'matchPlayed' => $this->teamService->matchPlayed($team),
+            'matchPlayedThisMonth' => $this->teamService->matchPlayed($team, $startDate, $endDate),
+            'wins' => $this->teamService->wins($team),
+            'winsThisMonth' => $this->teamService->wins($team, $startDate, $endDate),
+            'draws' => $this->teamService->draws($team),
+            'drawsThisMonth' => $this->teamService->draws($team, $startDate, $endDate),
+            'losses' => $this->teamService->losses($team),
+            'lossesThisMonth' => $this->teamService->losses($team, $startDate, $endDate),
+            'winRate' => $this->teamService->winRate($team),
+            'winRateThisMonth' => $this->teamService->winRate($team, $startDate, $endDate),
             'latestMatches' => $this->teamService->teamLatestMatch($team),
             'upcomingMatches' => $this->teamService->teamUpcomingMatch($team),
             'upcomingTrainings' => $this->teamService->teamUpcomingTraining($team),

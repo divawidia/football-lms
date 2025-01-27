@@ -67,6 +67,11 @@ class Team extends Model
         return $this->hasMany(MatchModel::class, 'winnerTeamId');
     }
 
+    public function trainings()
+    {
+        return $this->hasMany(Training::class, 'teamId');
+    }
+
     public function players(): BelongsToMany
     {
         return $this->belongsToMany(Player::class, 'player_teams', 'teamId', 'playerId')->withTimestamps();

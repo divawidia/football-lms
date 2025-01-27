@@ -217,7 +217,7 @@ class TeamService extends Service
     }
     public function goalsConceded(Team $team, $startDate = null, $endDate = null)
     {
-        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'goalsConceded');
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'goalConceded');
     }
     public function goalsDifference(Team $team, $startDate = null, $endDate = null)
     {
@@ -231,13 +231,21 @@ class TeamService extends Service
     {
         return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, results: 'Win');
     }
-    public function drams(Team $team, $startDate = null, $endDate = null)
+    public function draws(Team $team, $startDate = null, $endDate = null)
     {
         return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, results: 'Draw');
     }
     public function losses(Team $team, $startDate = null, $endDate = null)
     {
         return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, results: 'Lose');
+    }
+    public function winRate(Team $team, $startDate = null, $endDate = null)
+    {
+        $totalMatch = $this->matchPlayed($team, $startDate, $endDate);
+        $wins = $this->wins($team, $startDate, $endDate);
+
+        ($totalMatch > 0) ? $winRate = ( $wins /$totalMatch) * 100 : $winRate = 0; // check if totalMatch is 0 then set win rate to 0
+        return round($winRate, 2);
     }
 
     public function teamLatestMatch(Team $team)

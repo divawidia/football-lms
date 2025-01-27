@@ -10,7 +10,7 @@ class TeamMatch extends Model
 {
     use HasFactory;
 
-    protected $table = 'team_schedule';
+    protected $table = 'team_match';
     protected $fillable = [
         'teamId',
         'matchId',
@@ -29,6 +29,9 @@ class TeamMatch extends Model
         'teamFoulsConceded',
         'resultStatus',
         'teamPasses',
+        'goalConceded',
+        'goalScored',
+        'cleanSheets',
     ];
 
     public function team(): BelongsTo

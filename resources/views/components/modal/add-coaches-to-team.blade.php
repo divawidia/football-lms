@@ -24,7 +24,7 @@
                                         <option disabled>Select coaches</option>
                                         @foreach($coaches as $coach)
                                             <option value="{{ $coach->id }}" data-avatar-src="{{ Storage::url($coach->user->foto) }}">
-                                                {{ $coach->user->firstName }} {{ $coach->user->lastName }} - {{ $coach->specializations->name }} -
+                                                {{ $coach->user->firstName }} {{ $coach->user->lastName }} - {{ $coach->specialization->name }} -
                                                 @if(count($coach->teams) == 0)
                                                     No Team
                                                 @else

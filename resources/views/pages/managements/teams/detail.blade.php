@@ -7,9 +7,9 @@
 @endsection
 
 @section('modal')
-    <x-modal.add-players-to-team :route="route('team-managements.updatePlayerTeam', ['team' => $team->hash])"
+    <x-modal.add-players-to-team :route="route('team-managements.update-player', ['team' => $team->hash])"
                                  :players="$players"/>
-    <x-modal.add-coaches-to-team :route="route('team-managements.updateCoachTeam', ['team' => $team->hash])"
+    <x-modal.add-coaches-to-team :route="route('team-managements.update-coach', ['team' => $team->hash])"
                                  :coaches="$coaches"/>
 @endsection
 
@@ -74,6 +74,13 @@
             @endif
         </div>
     </div>
+
+{{--    <x-tabs.navbar>--}}
+{{--        <x-tabs.item title="Overview" link="overview" :active="true"/>--}}
+{{--        <x-tabs.item title="Profile" link="profile"/>--}}
+{{--        <x-tabs.item title="Teams Managed" link="teams"/>--}}
+{{--    </x-tabs.navbar>--}}
+
     <nav class="navbar navbar-light border-bottom border-top py-3">
         <div class="container">
             <ul class="nav nav-pills">
@@ -117,15 +124,16 @@
                     <div class="page-separator__text">Overview</div>
                 </div>
                 <div class="row card-group-row">
-                    @include('components.cards.stats-card', ['title' => 'Match Played','data' => $overview['matchPlayed'], 'dataThisMonth' => $overview['matchPlayedThisMonth']])
-                    @include('components.cards.stats-card', ['title' => 'Goals','data' => $overview['teamScore'], 'dataThisMonth' => $overview['teamScoreThisMonth']])
-                    @include('components.cards.stats-card', ['title' => 'Goals Conceded','data' => $overview['goalsConceded'], 'dataThisMonth' => $overview['goalsConcededThisMonth']])
-                    @include('components.cards.stats-card', ['title' => 'Goals difference','data' => $overview['goalsDifference'], 'dataThisMonth' => $overview['goalDifferenceThisMonth']])
-                    @include('components.cards.stats-card', ['title' => 'clean sheets','data' => $overview['cleanSheets'], 'dataThisMonth' => $overview['cleanSheetsThisMonth']])
-                    @include('components.cards.stats-card', ['title' => 'own goals','data' => $overview['teamOwnGoal'], 'dataThisMonth' => $overview['teamOwnGoalThisMonth']])
-                    @include('components.cards.stats-card', ['title' => 'Wins','data' => $overview['Win'], 'dataThisMonth' => $overview['WinThisMonth']])
-                    @include('components.cards.stats-card', ['title' => 'losses','data' => $overview['Lose'], 'dataThisMonth' => $overview['LoseThisMonth']])
-                    @include('components.cards.stats-card', ['title' => 'draws','data' => $overview['Draw'], 'dataThisMonth' => $overview['DrawThisMonth']])
+                    @include('components.cards.stats-card', ['title' => 'Matches','data' => $matchPlayed, 'dataThisMonth' => $matchPlayedThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Wins','data' => $wins, 'dataThisMonth' => $winsThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Losses','data' => $losses, 'dataThisMonth' => $lossesThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Draws','data' => $draws, 'dataThisMonth' => $drawsThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Win Rate (%)','data' => $winRate, 'dataThisMonth' => $winRateThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Goals For','data' => $teamScore, 'dataThisMonth' => $teamScoreThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Goal Against','data' => $goalsConceded, 'dataThisMonth' => $goalsConcededThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Goal Differences','data' => $goalsDifference, 'dataThisMonth' => $goalsDifferenceThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Clean Sheets','data' => $cleanSheets, 'dataThisMonth' => $cleanSheetsThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Own Goal','data' => $teamOwnGoal, 'dataThisMonth' => $teamOwnGoalThisMonth])
                 </div>
                 <div class="page-separator">
                     <div class="page-separator__text">Team Profile</div>
@@ -173,7 +181,7 @@
                     <x-warning-alert text="There are no latest matches record on this team"/>
                 @endif
                 @foreach($latestMatches as $match)
-                    <x-match-card :match="$match" :latestMatch="true"/>
+                    <x-cards.match-card :match="$match" :latestMatch="true"/>
                 @endforeach
             </div>
 
@@ -289,7 +297,7 @@
                     <x-warning-alert text="There are no matches scheduled at this time"/>
                 @endif
                 @foreach($upcomingMatches as $match)
-                    <x-match-card :match="$match" :latestMatch="false"/>
+                    <x-cards.match-card :match="$match" :latestMatch="false"/>
                 @endforeach
             </div>
 
@@ -304,7 +312,7 @@
                 <div class="row">
                     @foreach($upcomingTrainings as $training)
                         <div class="col-lg-6">
-                            <x-training-card :training="$training"/>
+                            <x-cards.training-card :training="$training"/>
                         </div>
                     @endforeach
                 </div>
@@ -375,14 +383,14 @@
 
     @if(isAllAdmin())
         <x-process-data-confirmation btnClass=".setDeactivate"
-                                     :processRoute="route('deactivate-team', ':id')"
+                                     :processRoute="route('team-managements.deactivate', ':id')"
                                      :routeAfterProcess="route('team-managements.show', $team->hash)"
                                      method="PATCH"
                                      confirmationText="Are you sure to deactivate this team {{ $team->teamName }}?"
                                      errorText="Something went wrong when deactivating this team {{ $team->teamName }}!"/>
 
         <x-process-data-confirmation btnClass=".setActivate"
-                                     :processRoute="route('activate-team', ':id')"
+                                     :processRoute="route('team-managements.activate', ':id')"
                                      :routeAfterProcess="route('team-managements.show', $team->hash)"
                                      method="PATCH"
                                      confirmationText="Are you sure to activate this team {{ $team->teamName }}?"
@@ -396,14 +404,14 @@
                                      errorText="Something went wrong when deleting this team {{ $team->teamName }}!"/>
 
         <x-process-data-confirmation btnClass=".remove-player"
-                                     :processRoute="route('team-managements.removePlayer', ['team' => $team->hash, 'player' => ':id'])"
+                                     :processRoute="route('team-managements.remove-player', ['team' => $team->hash, 'player' => ':id'])"
                                      :routeAfterProcess="route('team-managements.show', $team->hash)"
                                      method="PUT"
                                      confirmationText="Are you sure to to remove this player from team {{ $team->teamName }}?"
                                      errorText="Something went wrong when removing this player from team {{ $team->teamName }}!"/>
 
         <x-process-data-confirmation btnClass=".remove-coach"
-                                     :processRoute="route('team-managements.removeCoach', ['team' => $team->hash, 'coach' => ':id'])"
+                                     :processRoute="route('team-managements.remove-coach', ['team' => $team->hash, 'coach' => ':id'])"
                                      :routeAfterProcess="route('team-managements.show', $team->hash)"
                                      method="PUT"
                                      confirmationText="Are you sure to to remove this coach from team {{ $team->teamName }}?"
@@ -418,7 +426,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->route('team-managements.teamPlayers', $team->hash) !!}',
+                    url: '{!! url()->route('team-managements.team-players', $team->hash) !!}',
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
@@ -450,7 +458,7 @@
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! url()->route('team-managements.teamCoaches', $team->hash) !!}',
+                    url: '{!! url()->route('team-managements.team-coaches', $team->hash) !!}',
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
@@ -467,30 +475,30 @@
                 ]
             });
 
-            $('#competitionsTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! url()->route('team-managements.teamCompetitions', $team->hash) !!}',
-                },
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'name', name: 'name'},
-                    {data: 'divisions', name: 'divisions'},
-                    {data: 'date', name: 'date'},
-                    {data: 'location', name: 'location'},
-                    {data: 'contact', name: 'contact'},
-                    {data: 'status', name: 'status'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },
-                ],
-                order: [[3, 'desc']],
-            });
+            {{--$('#competitionsTable').DataTable({--}}
+            {{--    processing: true,--}}
+            {{--    serverSide: true,--}}
+            {{--    ordering: true,--}}
+            {{--    ajax: {--}}
+            {{--        url: '{!! url()->route('team-managements.teamCompetitions', $team->hash) !!}',--}}
+            {{--    },--}}
+            {{--    columns: [--}}
+            {{--        {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},--}}
+            {{--        {data: 'name', name: 'name'},--}}
+            {{--        {data: 'divisions', name: 'divisions'},--}}
+            {{--        {data: 'date', name: 'date'},--}}
+            {{--        {data: 'location', name: 'location'},--}}
+            {{--        {data: 'contact', name: 'contact'},--}}
+            {{--        {data: 'status', name: 'status'},--}}
+            {{--        {--}}
+            {{--            data: 'action',--}}
+            {{--            name: 'action',--}}
+            {{--            orderable: false,--}}
+            {{--            searchable: false--}}
+            {{--        },--}}
+            {{--    ],--}}
+            {{--    order: [[3, 'desc']],--}}
+            {{--});--}}
 
             $('#trainingHistoryTable').DataTable({
                 processing: true,
