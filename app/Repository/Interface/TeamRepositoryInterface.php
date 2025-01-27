@@ -8,7 +8,7 @@ use App\Models\Player;
 
 interface TeamRepositoryInterface
 {
-    public function getAll($withRelation = [], $exceptTeamId = null, $exceptCoach = null, $exceptPLayer = null, $columns = ['*']);
+    public function getAll($withRelation = [], $exceptTeamId = null, $exceptCoach = null, $exceptPLayer = null, $columns = ['*'], $status = '1');
 
     public function getByTeamside($teamSide, $exceptTeamId = null);
 

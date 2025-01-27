@@ -17,7 +17,7 @@ class TeamRepository implements TeamRepositoryInterface
         $this->team = $team;
     }
 
-    public function getAll($withRelation = [], $exceptTeamId = null, $exceptCoach = null, $exceptPLayer = null, $columns = ['*'])
+    public function getAll($withRelation = [], $exceptTeamId = null, $exceptCoach = null, $exceptPLayer = null, $columns = ['*'], $status = '1')
     {
         $query = $this->team->with($withRelation);
         if (!is_null($exceptTeamId)) {
@@ -32,6 +32,9 @@ class TeamRepository implements TeamRepositoryInterface
             $query->whereDoesntHave('players', function (Builder $query) use ($exceptPLayer) {
                 $query->where('playerId', $exceptPLayer->id);
             });
+        }
+        if ($status != null) {
+            $query->where('status', $status);
         }
         return $query->get($columns);
     }
