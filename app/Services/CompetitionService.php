@@ -4,9 +4,13 @@ namespace App\Services;
 
 use App\Helpers\DatatablesHelper;
 use App\Models\Competition;
-use App\Notifications\CompetitionManagements\CompetitionCreatedDeleted;
-use App\Notifications\CompetitionManagements\CompetitionStatus;
-use App\Notifications\CompetitionManagements\CompetitionUpdated;
+use App\Notifications\CompetitionManagements\Admin\CompetitionCreatedNotification;
+use App\Notifications\CompetitionManagements\Admin\CompetitionDeletedNotification;
+use App\Notifications\CompetitionManagements\Admin\CompetitionUpdatedNotification;
+use App\Notifications\CompetitionManagements\CompetitionCancelledNotification;
+use App\Notifications\CompetitionManagements\CompetitionCompletedNotification;
+use App\Notifications\CompetitionManagements\CompetitionOngoingNotification;
+use App\Notifications\CompetitionManagements\CompetitionScheduledNotification;
 use App\Repository\CoachRepository;
 use App\Repository\CompetitionRepository;
 use App\Repository\PlayerRepository;
@@ -23,7 +27,7 @@ class CompetitionService extends Service
     private PlayerRepository $playerRepository;
     private CoachRepository $coachRepository;
     private UserRepository $userRepository;
-    private MatchService $eventScheduleService;
+    private MatchService $matchService;
     private DatatablesHelper $datatablesHelper;
 
     public function __construct(
@@ -32,7 +36,7 @@ class CompetitionService extends Service
         PlayerRepository      $playerRepository,
         CoachRepository       $coachRepository,
         UserRepository        $userRepository,
-        MatchService          $eventScheduleService,
+        MatchService $matchService,
         DatatablesHelper      $datatablesHelper
     )
     {
@@ -41,7 +45,7 @@ class CompetitionService extends Service
         $this->playerRepository = $playerRepository;
         $this->coachRepository = $coachRepository;
         $this->userRepository = $userRepository;
-        $this->eventScheduleService = $eventScheduleService;
+        $this->matchService = $matchService;
         $this->datatablesHelper = $datatablesHelper;
     }
     public function index(){
@@ -158,8 +162,7 @@ class CompetitionService extends Service
         $competitionData['logo'] = $this->storeImage($competitionData, 'logo', 'assets/competition-logo', 'images/undefined-user.png');
         $competition = $this->competitionRepository->create($competitionData);
 
-        $admins = $this->userRepository->getAllAdminUsers();
-        Notification::send($admins, new CompetitionCreatedDeleted($loggedUser, $competition, 'created'));
+        Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionCreatedNotification($loggedUser, $competition));
 
         return $competition;
     }
@@ -169,11 +172,11 @@ class CompetitionService extends Service
         ($competition->isInternal == 1) ? $competitionData['matchType'] = 'Internal Match' : $competitionData['matchType'] = 'External Match';
 
         $competitionData['competitionId'] = $competition->id;
-        $this->eventScheduleService->storeMatch($competitionData, $loggedUser->id);
+        $this->matchService->storeMatch($competitionData, $loggedUser->id);
         return $competition;
     }
 
-    public function update(array $competitionData, Competition $competition, $loggedUser): Competition
+    public function update(array $competitionData, Competition $competition, $loggedUser)
     {
         $competitionData['logo'] = $this->updateImage($competitionData, 'logo', 'competition-logo', $competition->logo);
 
@@ -181,37 +184,29 @@ class CompetitionService extends Service
             $competitionData['status'] = 'Scheduled';
         }
 
-        $competition->update($competitionData);
-        Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionUpdated($loggedUser, $competition, 'updated'));
-        return $competition;
+        Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionUpdatedNotification($loggedUser, $competition));
+        return $competition->update($competitionData);
     }
 
-    public function setStatus(Competition $competition, $status)
+    public function setStatus(Competition $competition, $status, $loggedUser): bool
     {
-        $competition->update(['status' => $status]);
-
-        // Define status messages mapping
-        $statusMessages = [
-            'Ongoing' => 'is now competing',
-            'Completed' => 'have been completed',
-            'Cancelled' => 'have been cancelled',
-            'Scheduled' => 'have been set to scheduled',
-        ];
-
-        // Check if the status exists in the defined mapping
-        if (array_key_exists($status, $statusMessages)) {
-            $statusMessage = $statusMessages[$status];
-            Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionStatus($competition, $statusMessage));
+        if ($status == 'Ongoing') {
+            Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionOngoingNotification($competition));
+        } elseif ($status == 'Completed') {
+            Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionCompletedNotification($competition));
+        } elseif ($status == 'Cancelled') {
+            Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionCancelledNotification($loggedUser, $competition));
+        } else {
+            Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionScheduledNotification($loggedUser, $competition));
         }
 
-        return $competition;
+        return $competition->update(['status' => $status]);
     }
 
-    public function destroy(Competition $competition, $loggedUser): Competition
+    public function destroy(Competition $competition, $loggedUser)
     {
-        Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionCreatedDeleted($loggedUser, $competition, 'deleted'));
+        Notification::send($this->userRepository->getAllAdminUsers(), new CompetitionDeletedNotification($loggedUser, $competition));
         $this->deleteImage($competition->logo);
-        $competition->delete();
-        return $competition;
+        return $competition->delete();
     }
 }

@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Notifications\CompetitionManagements;
+namespace App\Notifications\CompetitionManagements\Admin;
 
+use App\Models\Competition;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CompetitionCreatedDeleted extends Notification implements ShouldQueue
+class CompetitionCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $admin;
-    protected $competition;
-    protected $status;
+    protected User $loggedUser;
+    protected Competition $competition;
 
-    public function __construct($admin, $competition, $status)
+    public function __construct($loggedUser, $competition)
     {
-        $this->admin = $admin;
+        $this->loggedUser = $loggedUser;
         $this->competition = $competition;
-        $this->status = $status;
     }
 
     /**
@@ -39,8 +39,8 @@ class CompetitionCreatedDeleted extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => "Competition {$this->status}",
-            'data' =>"{$this->admin->firstName} {$this->admin->lastName} has {$this->status} a competition {$this->competition->name}. Please review the changes if necessary.",
+            'title' => "New Competition Created",
+            'data' =>"Admin {$this->loggedUser->firstName} {$this->loggedUser->lastName} has created a new competition {$this->competition->name}. Please review the changes if necessary!",
             'redirectRoute' => route('competition-managements.show', $this->competition->hash)
         ];
     }

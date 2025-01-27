@@ -2,21 +2,20 @@
 
 namespace App\Notifications\CompetitionManagements;
 
+use App\Models\Competition;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CompetitionStatus extends Notification implements ShouldQueue
+class CompetitionOngoingNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $competition;
-    protected $status;
+    protected Competition $competition;
 
-    public function __construct($competition, $status)
+    public function __construct($competition)
     {
         $this->competition = $competition;
-        $this->status = $status;
     }
 
     /**
@@ -37,8 +36,8 @@ class CompetitionStatus extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => "Competition {$this->status}",
-            'data' =>"The competition {$this->competition->name} {$this->status}.",
+            'title' => "Competition Ongoing",
+            'data' =>"The competition {$this->competition->name} is now ongoing.",
             'redirectRoute' => route('competition-managements.show', $this->competition->hash)
         ];
     }
