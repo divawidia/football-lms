@@ -68,7 +68,7 @@ interface PlayerRepositoryInterface
      * @param string|null $endDate
      * @return float
      */
-    public function playerMatchStatsSum(Player $player, $stats, $startDate = null, $endDate = null);
+    public function playerMatchStatsSum(Player $player, $stats, $startDate = null, $endDate = null, Team $team = null);
 
     /**
      * Count matches played by a player
@@ -78,7 +78,7 @@ interface PlayerRepositoryInterface
      * @param string|null $endDate
      * @return int
      */
-    public function countMatchPlayed(Player $player, $startDate = null, $endDate = null);
+    public function countMatchPlayed(Player $player, $startDate = null, $endDate = null, Team $team = null);
 
     /**
      * Count match results for a player

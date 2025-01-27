@@ -119,7 +119,7 @@ class PlayerRepository implements PlayerRepositoryInterface
         return $query->count();
     }
 
-    public function playerMatchStatsSum(Player $player, $stats, $startDate = null, $endDate = null)
+    public function playerMatchStatsSum(Player $player, $stats, $startDate = null, $endDate = null, Team $team = null)
     {
         $query = $player->playerMatchStats();
 
@@ -127,14 +127,20 @@ class PlayerRepository implements PlayerRepositoryInterface
         if ($startDate && $endDate) {
             $query->whereBetween('player_match_stats.updated_at', [$startDate, $endDate]);
         }
+        if ($team) {
+            $query->where('teamId', $team->id);
+        }
         return $query->sum($stats);
     }
 
-    public function countMatchPlayed(Player $player, $startDate = null, $endDate = null)
+    public function countMatchPlayed(Player $player, $startDate = null, $endDate = null, Team $team = null)
     {
         $query = $player->playerMatchStats()->where('minutesPlayed', '>', 0);
         if ($startDate && $endDate) {
             $query->whereBetween('player_match_stats.updated_at', [$startDate, $endDate]);
+        }
+        if ($team) {
+            $query->where('teamId', $team->id);
         }
         return $query->count();
     }
