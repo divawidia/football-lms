@@ -46,17 +46,13 @@ class MatchController extends Controller
     {
         if ($this->isAllAdmin()){
             $events = $this->matchService->matchCalendar();
-            $tableRoute = route('admin.match-schedules.index');
-
+            $tableRoute = route('match-schedules.admin-index');
         } elseif ($this->isCoach()){
-            $coach = $this->getLoggedCoachUser();
-            $events = $this->matchService->coachTeamsMatchCalendar($coach);
-            $tableRoute = route('coach.match-schedules.index');
-
+            $events = $this->matchService->coachTeamsMatchCalendar($this->getLoggedCoachUser());
+            $tableRoute = route('match-schedules.coach-index');
         } else {
-            $player = $this->getLoggedPLayerUser();
-            $events = $this->matchService->playerTeamsMatchCalendar($player);
-            $tableRoute = route('player.match-schedules.index');
+            $events = $this->matchService->playerTeamsMatchCalendar($this->getLoggedPLayerUser());
+            $tableRoute = route('match-schedules.player-index');
         }
 
         return view('pages.academies.schedules.matches.index', [
