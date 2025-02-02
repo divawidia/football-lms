@@ -159,7 +159,7 @@
                     <div class="card-body">
                         @if($competition->isInternal == 1)
                             <x-table
-                                    :headers="['#','Home Team', 'Away Team', 'Score', 'Match Date','Venue', 'Status', 'Action']"
+                                    :headers="['#','Home Team', 'Score','Away Team',  'Match Date','Venue', 'Status', 'Action']"
                                     tableId="competitionMatchTable"/>
                         @else
                             <x-table
@@ -261,8 +261,8 @@
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'homeTeam', name: 'homeTeam'},
-                    {data: 'awayTeam', name: 'awayTeam'},
                     {data: 'score', name: 'score'},
+                    {data: 'awayTeam', name: 'awayTeam'},
                     {data: 'date', name: 'date'},
                     {data: 'place', name: 'place'},
                     {data: 'status', name: 'status'},
