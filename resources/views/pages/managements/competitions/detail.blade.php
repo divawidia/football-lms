@@ -233,7 +233,7 @@
 
             processWithConfirmation(
                 '.delete-match',
-                "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}",
+                "{{ route('match-schedules.destroy', ['match' => ':id']) }}",
                 "{{ route('competition-managements.show', $competition->hash) }}",
                 'DELETE',
                 "Are you sure to delete this match from competition {{ $competition->name }}?",

@@ -17,7 +17,7 @@
                 const id = $(this).attr('id');
 
                 $.ajax({
-                    url: "{{ route('match-schedules.edit-note', ['schedule' => $match->hash, 'note' => ':id']) }}".replace(':id', id),
+                    url: "{{ route('match-schedules.edit-note', ['match' => $match->hash, 'note' => ':id']) }}".replace(':id', id),
                     type: 'get',
                     success: function(res) {
                         $(modalId).modal('show');
@@ -38,7 +38,7 @@
 
             processModalForm(
                 formId,
-                "{{ route('match-schedules.update-note', ['schedule' => $match->hash, 'note' => ':id']) }}",
+                "{{ route('match-schedules.update-note', ['match' => $match->hash, 'note' => ':id']) }}",
                 "#noteId",
                 modalId
             );

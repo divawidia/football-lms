@@ -808,7 +808,7 @@
         $(document).ready(function () {
             processWithConfirmation(
                 '.delete',
-                "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}",
+                "{{ route('match-schedules.destroy', ['match' => ':id']) }}",
                 "{{ route('match-schedules.index') }}",
                 'DELETE',
                 "Are you sure to delete this match?",
@@ -818,8 +818,8 @@
 
             processWithConfirmation(
                 '.delete-scorer',
-                "{{ route('match-schedules.destroy-match-scorer', ['schedule' => $schedule->hash, 'scorer'=>':id']) }}",
-                "{{ route('match-schedules.show', ['schedule' => $schedule->hash]) }}",
+                "{{ route('match-schedules.destroy-match-scorer', ['match' => $schedule->hash, 'scorer'=>':id']) }}",
+                "{{ route('match-schedules.show', ['match' => $schedule->hash]) }}",
                 'DELETE',
                 "Are you sure to delete this match scorer?",
                 "Something went wrong when deleting this match scorer!",
@@ -828,8 +828,8 @@
 
             processWithConfirmation(
                 '.delete-own-goal',
-                "{{ route('match-schedules.destroy-own-goal', ['schedule' => $schedule->hash, 'scorer'=>':id']) }}",
-                "{{ route('match-schedules.show', ['schedule' => $schedule->hash]) }}",
+                "{{ route('match-schedules.destroy-own-goal', ['match' => $schedule->hash, 'scorer'=>':id']) }}",
+                "{{ route('match-schedules.show', ['match' => $schedule->hash]) }}",
                 'DELETE',
                 "Are you sure to delete this match own goal?",
                 "Something went wrong when deleting this match own goal!",
@@ -838,8 +838,8 @@
 
             processWithConfirmation(
                 '.cancelBtn',
-                "{{ route('match-schedules.cancel', ['schedule' => $schedule->hash]) }}",
-                "{{ route('match-schedules.show', ['schedule' => $schedule->hash]) }}",
+                "{{ route('match-schedules.cancel', ['match' => $schedule->hash]) }}",
+                "{{ route('match-schedules.show', ['match' => $schedule->hash]) }}",
                 'PATCH',
                 "Are you sure to cancel this match?",
                 "Something went wrong when cancelling this match!",
@@ -848,8 +848,8 @@
 
             processWithConfirmation(
                 '.scheduled-btn',
-                "{{ route('match-schedules.scheduled', ['schedule' => $schedule->hash]) }}",
-                "{{ route('match-schedules.show', ['schedule' => $schedule->hash]) }}",
+                "{{ route('match-schedules.scheduled', ['match' => $schedule->hash]) }}",
+                "{{ route('match-schedules.show', ['match' => $schedule->hash]) }}",
                 'PATCH',
                 "Are you sure to set this match to scheduled?",
                 "Something went wrong when set this match to scheduled!",

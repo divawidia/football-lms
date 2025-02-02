@@ -21,8 +21,8 @@
         $(document).ready(function () {
             processWithConfirmation(
                 '.delete-note',
-                "{{ route('match-schedules.destroy-note', ['schedule' => $match->hash, 'note'=>':id']) }}",
-                "{{ route('match-schedules.show', ['schedule' => $match->hash]) }}",
+                "{{ route('match-schedules.destroy-note', ['match' => $match->hash, 'note'=>':id']) }}",
+                "{{ route('match-schedules.show', ['match' => $match->hash]) }}",
                 'DELETE',
                 "Are you sure to delete this note?",
                 "Something went wrong when deleting this note!",

@@ -27,7 +27,7 @@
                     });
                 @else
                 $.ajax({
-                    url: "{{ route('match-schedules.coach', ['schedule' => $match->hash, 'coach' => ':id']) }}".replace(':id', id),
+                    url: "{{ route('match-schedules.coach', ['match' => $match->hash, 'coach' => ':id']) }}".replace(':id', id),
                     type: 'get',
                     success: function(res) {
                         $(modalId).modal('show');
@@ -55,7 +55,7 @@
 
             processModalForm(
                 formId,
-                "{{ route('match-schedules.update-coach', ['schedule' => $match->hash, 'coach' => ':id']) }}",
+                "{{ route('match-schedules.update-coach', ['match' => $match->hash, 'coach' => ':id']) }}",
                 "#coachId",
                 modalId
             );

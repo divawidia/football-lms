@@ -7,25 +7,15 @@
 @endsection
 
 @section('content')
-    <div class="container page__container d-flex flex-column pt-32pt">
+    <div class="container">
         <h2 class="mb-0">@yield('title')</h2>
         <ol class="breadcrumb p-0 m-0">
             <li class="breadcrumb-item"><a href="{{ checkRoleDashboardRoute() }}">Home</a></li>
-            <li class="breadcrumb-item active">
-                @yield('title')
-            </li>
+            <li class="breadcrumb-item active">@yield('title')</li>
         </ol>
     </div>
 
-    <div class="container page__container page-section">
-{{--        @if(isAllAdmin())--}}
-{{--            <a href="{{  route('match-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">--}}
-{{--                <span class="material-icons mr-2">--}}
-{{--                    add--}}
-{{--                </span>--}}
-{{--                Add New--}}
-{{--            </a>--}}
-{{--        @endif--}}
+    <div class="container page-section">
         <x-match-tables :route="$tableRoute" tableId="tables"/>
 
         <div class="card">
@@ -44,7 +34,7 @@
         $(document).ready(function () {
             processWithConfirmation(
                 '.delete',
-                "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}",
+                "{{ route('match-schedules.destroy', ['match' => ':id']) }}",
                 "{{ route('match-schedules.index') }}",
                 'DELETE',
                 "Are you sure to delete this match?",
@@ -54,7 +44,7 @@
 
             processWithConfirmation(
                 '.cancelBtn',
-                "{{ route('match-schedules.cancel', ['schedule' =>':id']) }}",
+                "{{ route('match-schedules.cancel', ['match' =>':id']) }}",
                 "{{ route('match-schedules.index') }}",
                 'PATCH',
                 "Are you sure to cancel this match?",
@@ -64,7 +54,7 @@
 
             processWithConfirmation(
                 '.scheduled-btn',
-                "{{ route('match-schedules.scheduled', ['schedule' =>':id']) }}",
+                "{{ route('match-schedules.scheduled', ['match' =>':id']) }}",
                 "{{ route('match-schedules.index') }}",
                 'PATCH',
                 "Are you sure to set this match to scheduled?",

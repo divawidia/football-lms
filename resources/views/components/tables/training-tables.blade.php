@@ -31,7 +31,7 @@
 
             processWithConfirmation(
                 '.delete',
-                "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}",
+                "{{ route('training-schedules.destroy', ['match' => ':id']) }}",
                 "{{ route('training-schedules.index') }}",
                 'DELETE',
                 "Are you sure to delete this training session?",

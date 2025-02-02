@@ -32,7 +32,7 @@
             @if(isAllAdmin())
                 processWithConfirmation(
                     '.delete',
-                    "{{ route('match-schedules.destroy', ['schedule' => ':id']) }}",
+                    "{{ route('match-schedules.destroy', ['match' => ':id']) }}",
                     "{{ route('match-schedules.index') }}",
                     'DELETE',
                     "Are you sure to delete this match?",

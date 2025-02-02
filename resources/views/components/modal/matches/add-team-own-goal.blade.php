@@ -22,7 +22,7 @@
                 clearModalFormValidation(formId)
 
                 $.ajax({
-                    url: "{{ route('match-schedules.players', ['schedule' => $match->hash]) }}",
+                    url: "{{ route('match-schedules.players', ['match' => $match->hash]) }}",
                     type: 'GET',
                     data: {
                         team: team,
