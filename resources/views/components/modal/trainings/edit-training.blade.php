@@ -1,9 +1,9 @@
 <x-modal.form id="editMatchModal" formId="formEditMatch" title="Edit Team Training Session" :editForm="true">
     <x-forms.basic-input type="hidden" name="trainingId" :modal="true"/>
 
-    <x-forms.basic-input type="text" name="eventName" label="Training Session Topic" placeholder="E.g. : Physical conditioning training ..." :modal="true"/>
+    <x-forms.basic-input type="text" name="topic" label="Training Session Topic" placeholder="Input training topic, E.g. : Physical conditioning training ..." :modal="true"/>
 
-    <x-forms.basic-input type="text" name="place" label="Match Venue" placeholder="Input training venue, E.g. : Football field ..." :modal="true"/>
+    <x-forms.basic-input type="text" name="location" label="Training Venue" placeholder="Input training venue, E.g. : Football field ..." :modal="true"/>
 
     <x-forms.select name="teamId" label="Team" :modal="true" :select2="false"></x-forms.select>
 
@@ -57,15 +57,12 @@
                     url: "{{ route('training-schedules.edit', ':id') }}".replace(':id', id),
                     type: 'GET',
                     success: function(res) {
-
-
-                        $(formId+' #trainingId').val(res.data.schedule.id)
-                        $(formId+' #teamId').val(res.data.teamId);
-                        $.each(res.data.schedule, function (key, value) {
+                        $(formId+' #trainingId').val(res.data.id)
+                        $.each(res.data, function (key, value) {
                             $(formId+' #'+key).val(value);
                         });
-                        $(formId+' #startTime').val(res.data.schedule.startTime.substring(0, 5));
-                        $(formId+' #endTime').val(res.data.schedule.endTime.substring(0, 5));
+                        $(formId+' #startTime').val(res.data.startTime.substring(0, 5));
+                        $(formId+' #endTime').val(res.data.endTime.substring(0, 5));
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         Swal.fire({

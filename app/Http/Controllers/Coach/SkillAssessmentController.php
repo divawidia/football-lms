@@ -8,6 +8,7 @@ use App\Http\Requests\SkillAssessmentRequest;
 use App\Models\MatchModel;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
+use App\Models\Training;
 use App\Services\Coach\SkillAssessmentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,10 +30,15 @@ class SkillAssessmentController extends Controller
         return view('pages.academies.skill-assessments.index');
     }
 
-    public function indexAllPlayerInEvent(Request $request, MatchModel $schedule)
+    public function indexAllPlayerInEvent(Request $request, MatchModel $match)
     {
         $teamId = $request->input('teamId');
-        return $this->skillAssessmentService->indexAllPlayerInEvent($schedule, $teamId);
+        return $this->skillAssessmentService->indexAllPlayerInMatch($match, $teamId);
+    }
+
+    public function indexAllPlayerInTraining(Training $training)
+    {
+        return $this->skillAssessmentService->indexAllPlayerInTraining($training);
     }
 
     public function create(Player $player){
@@ -43,20 +49,14 @@ class SkillAssessmentController extends Controller
 
     public function edit(PlayerSkillStats $skillStats): JsonResponse
     {
-        return response()->json([
-            'status' => '200',
-            'data' => $skillStats,
-            'message' => 'Success'
-        ]);
+        return ApiResponse::success($skillStats);
     }
 
     public function store(SkillAssessmentRequest $request,Player $player)
     {
         $data = $request->validated();
         $coach = $this->getLoggedCoachUser();
-
         $this->skillAssessmentService->store($data, $player, $coach);
-
         $message = "Player ".$this->getUserFullName($player->user)."'s skills successfully updated.";
         return ApiResponse::success(message:  $message);
     }
@@ -64,18 +64,15 @@ class SkillAssessmentController extends Controller
     public function update(SkillAssessmentRequest $request, PlayerSkillStats $skillStats)
     {
         $data = $request->validated();
-        $coachId = $this->getLoggedCoachUser();
-
-        $this->skillAssessmentService->update($data, $skillStats,$coachId);
-
-        $message = "Player ".$this->getUserFullName($$skillStats->player->user)."'s skills successfully updated.";
+        $this->skillAssessmentService->update($data, $skillStats,$this->getLoggedCoachUser());
+        $message = "Player ".$this->getUserFullName($skillStats->player->user)."'s skills successfully updated.";
         return ApiResponse::success(message:  $message);
     }
 
     public function destroy(PlayerSkillStats $skillStats)
     {
-        $this->skillAssessmentService->destroy($skillStats);
-        $message = "Player ".$this->getUserFullName($$skillStats->player->user)."'s skills successfully deleted.";
+        $this->skillAssessmentService->destroy($skillStats, $this->getLoggedCoachUser());
+        $message = "Player ".$this->getUserFullName($skillStats->player->user)."'s skills successfully deleted.";
         return ApiResponse::success(message:  $message);
     }
 }

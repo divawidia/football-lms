@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\modal\PlayersCoaches;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class EditSkillAssessmentsModal extends Component
+class EditPerformanceReviewModal extends Component
 {
     /**
      * Create a new component instance.
@@ -20,6 +20,6 @@ class EditSkillAssessmentsModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.edit-skill-assessments-modal');
+        return view('components.modal.players-coaches.edit-performance-review');
     }
 }

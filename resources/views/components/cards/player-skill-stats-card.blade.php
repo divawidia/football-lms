@@ -4,8 +4,11 @@
     <div class="card">
         <div class="card-Header d-flex align-items-center p-3">
             <h4 class="card-title">SKILLS</h4>
-            <div class="card-subtitle text-50 ml-auto">Last updated
-                at {{ date('D, M d Y h:i A', strtotime($allSkills->updated_at)) }}</div>
+            <div class="card-subtitle text-50 ml-auto">
+                @if($allSkills->updated_at)
+                    Last updated at {{ convertToDatetime($allSkills->updated_at) }}
+                @endif
+            </div>
         </div>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">

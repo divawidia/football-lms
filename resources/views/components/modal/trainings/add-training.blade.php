@@ -1,8 +1,8 @@
 <x-modal.form id="addMatchModal" formId="formAddMatch" title="Create New Team Training Session">
 
-    <x-forms.basic-input type="text" name="eventName" label="Training Session Topic" placeholder="E.g. : Physical conditioning training ..." :modal="true"/>
+    <x-forms.basic-input type="text" name="topic" label="Training Session Topic" placeholder="Input training topic, E.g. : Physical conditioning training ..." :modal="true"/>
 
-    <x-forms.basic-input type="text" name="place" label="Match Venue" placeholder="Input training venue, E.g. : Football field ..." :modal="true"/>
+    <x-forms.basic-input type="text" name="location" label="Training Location" placeholder="Input training location, E.g. : Football field ..." :modal="true"/>
 
     <x-forms.select name="teamId" label="Team" :modal="true" :select2="false"></x-forms.select>
 

@@ -177,6 +177,14 @@ class TrainingRepository implements TrainingRepositoryInterface
 
     public function create(array $data)
     {
-        return $this->training->create($data);
+        $training = $this->training->create($data);
+        $training->players()->attach($training->team->players);
+        $training->coaches()->attach($training->team->coaches);
+        return $training;
+    }
+
+    public function find($id)
+    {
+        return $this->training->findOrFail($id);
     }
 }

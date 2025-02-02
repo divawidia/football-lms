@@ -7,6 +7,13 @@ use App\Models\Coach;
 use App\Models\MatchModel;
 use App\Models\Player;
 use App\Models\PlayerSkillStats;
+use App\Models\Training;
+use App\Notifications\SkillAssessment\PlayerAssessedInMatchNotification;
+use App\Notifications\SkillAssessment\PlayerAssessedInTrainingNotification;
+use App\Notifications\SkillAssessment\PlayerAssessedNotification;
+use App\Notifications\SkillAssessment\SkillStatsDeletedNotification;
+use App\Notifications\SkillAssessment\SkillStatsUpdatedNotification;
+use App\Repository\Interface\TrainingRepositoryInterface;
 use App\Repository\MatchRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\PlayerSkillStatsRepository;
@@ -18,18 +25,21 @@ class SkillAssessmentService extends Service
 {
     private PlayerRepository $playerRepository;
     private PlayerSkillStatsRepository $playerSkillStatsRepository;
-    private MatchRepository $eventScheduleRepository;
-    private DatatablesHelper $datatablesService;
+    private MatchRepository $matchRepository;
+    private TrainingRepositoryInterface $trainingRepository;
+    private DatatablesHelper $datatablesHelper;
     public function __construct(
         PlayerRepository           $playerRepository,
         PlayerSkillStatsRepository $playerSkillStatsRepository,
-        MatchRepository            $eventScheduleRepository,
-        DatatablesHelper           $datatablesService)
+        MatchRepository            $matchRepository,
+        TrainingRepositoryInterface $trainingRepository,
+        DatatablesHelper           $datatablesHelper)
     {
         $this->playerRepository = $playerRepository;
         $this->playerSkillStatsRepository = $playerSkillStatsRepository;
-        $this->eventScheduleRepository = $eventScheduleRepository;
-        $this->datatablesService = $datatablesService;
+        $this->matchRepository = $matchRepository;
+        $this->trainingRepository = $trainingRepository;
+        $this->datatablesHelper = $datatablesHelper;
     }
 
     // retrieve player data based on coach managed teams
@@ -42,121 +52,108 @@ class SkillAssessmentService extends Service
 
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                return '
-                      <div class="dropdown">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons">
-                                more_vert
-                            </span>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="' . route('skill-assessments.skill-stats', $item->hash) . '"><span class="material-icons">visibility</span> View Skill Player</a>
-                            <button type="button" class="dropdown-item addSkills" id="' . $item->id . '">
-                                <span class="material-icons">edit</span>
-                                Update Player Skill
-                            </button>
-                            <button type="button" class="dropdown-item addPerformanceReview" id="' . $item->id . '">
-                                <span class="material-icons">add</span>
-                                Add Performance Review
-                            </button>
-                          </div>
-                        </div>';
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.skill-stats', $item->hash), icon: 'visibility', btnText: 'View Player Skill Stats');
+                if (isCoach()) {
+                    $dropdownItem .= '<a class="dropdown-item addSkills" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.null.'"><span class="material-icons">edit</span> Evaluate Player Skills Stats</a>';
+                    $dropdownItem .= '<a class="dropdown-item addPerformanceReview" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.null.'"><span class="material-icons">edit</span> Evaluate Player Performance Review</a>';
+               }
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
             ->editColumn('teams.name', function ($item) {
-                $playerTeam = '';
-                if (count($item->teams) === 0) {
-                    $playerTeam = 'No Team';
-                } else {
-                    foreach ($item->teams as $team) {
-                        $playerTeam .= '<span class="badge badge-pill badge-danger">' . $team->teamName . '</span>';
-                    }
-                }
-                return $playerTeam;
+                return $this->datatablesHelper->usersTeams($item);
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('skill-assessments.skill-stats', $item->hash));
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('skill-assessments.skill-stats', $item->hash));
             })
             ->editColumn('age', function ($item) {
                 return $this->getAge($item->user->dob);
             })
             ->editColumn('lastUpdated', function ($item) {
                 $data = $item->playerSkillStats()->latest()->first();
-                if ($data){
-                    $date = $this->convertToDatetime($data->created_at);
-                } else{
-                    $date = "Haven't assessed yet";
-                }
-                return $date;
+                return ($data) ? $this->convertToDatetime($data->created_at) : "Haven't assessed yet";
             })
-            ->rawColumns(['action', 'name', 'lastUpdated', 'age', 'teams.name'])
+            ->rawColumns(['action', 'name', 'teams.name'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function indexAllPlayerInEvent(MatchModel $schedule, $teamId = null)
+    public function indexAllPlayerInMatch(MatchModel $match, $teamId = null)
     {
-        if ($teamId) {
-            $data = $schedule->players()->where('teamId', $teamId)->get();
-        } else {
-            $data = $schedule->players;
-        }
+        $data = ($teamId) ? $match->players()->where('teamId', $teamId)->get() : $match->players;
 
         return Datatables::of($data)
-            ->addColumn('action', function ($item) use ($schedule){
-                $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
-                if (isAllAdmin()){
-                    $button = $this->datatablesService->buttonTooltips(route('player-managements.skill-stats', ['player'=>$item->hash]), 'View Player Skill Stats Detail', 'visibility');
-                } elseif(isCoach()){
-                    if (!$stats){
-                        $statsBtn = '<a class="dropdown-item addSkills" id="'.$item->id.'" data-eventId="'.$schedule->id.'"><span class="material-icons">edit</span> Evaluate Player Skills Stats</a>';
-                    } else {
-                        $statsBtn = '<a class="dropdown-item editSkills" id="'.$item->id.'" data-eventId="'.$schedule->id.'" data-statsId="'.$stats->id.'"><span class="material-icons">edit</span> Edit Player Skills Stats</a>';
-                    }
-                    $button = '<div class="dropdown">
-                                      <button class="btn btn-sm btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="material-icons">
-                                            more_vert
-                                        </span>
-                                      </button>
-                                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="' . route('player-managements.skill-stats', ['player'=>$item->hash]) . '"><span class="material-icons">visibility</span> View Player Skill Stats</a>
-                                            '.$statsBtn.'
-                                      </div>
-                                </div>';
+            ->addColumn('action', function ($item) use ($match){
+                $stats = $this->getPlayerSkillStatsMatch($item, $match);
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.skill-stats', $item->hash), icon: 'visibility', btnText: 'View Player Skill Stats');
+                if (isCoach() && $match->status == 'Ongoing' || $match->status == 'Completed') {
+                    (!$stats)
+                        ? $dropdownItem .= '<a class="dropdown-item addSkills" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.$match->id.'"><span class="material-icons">edit</span> Evaluate Player Skills Stats</a>'
+                        : $dropdownItem .= '<a class="dropdown-item editSkills" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.$match->id.'" data-statsId="'.$stats->id.'"><span class="material-icons">edit</span> Edit Player Skills Stats</a>';
                 }
-                return $button;
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
-            ->editColumn('stats_status', function ($item) use ($schedule){
-                $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
-                if ($stats){
-                    $date = 'Skill stats have been added';
-                } else{
-                    $date = 'Skill stats still not added yet';
+            ->editColumn('stats_status', function ($item) use ($match){
+                $stats = $this->getPlayerSkillStatsMatch($item, $match);
+                return ($stats) ? 'Skill stats have been added' : 'Skill stats still not added yet';
+            })
+            ->editColumn('stats_created', function ($item) use ($match){
+                $stats = $this->getPlayerSkillStatsMatch($item, $match);
+                return ($stats) ? $this->convertToDatetime($item->created_at): '-';
+            })
+            ->editColumn('stats_updated', function ($item) use ($match){
+                $stats = $this->getPlayerSkillStatsMatch($item, $match);
+                return ($stats) ? $this->convertToDatetime($item->updated_at): '-';
+            })
+            ->rawColumns(['action','name'])
+            ->addIndexColumn()
+            ->make();
+    }
+    private function getPlayerSkillStatsMatch(Player $player, MatchModel $match)
+    {
+        return $this->playerSkillStatsRepository->getByPlayer($player, match:  $match)->first();
+    }
+    private function getPlayerSkillStatsTraining(Player $player, Training $training)
+    {
+        return $this->playerSkillStatsRepository->getByPlayer($player, training:  $training)->first();
+    }
+    public function indexAllPlayerInTraining(Training $training)
+    {
+        return Datatables::of($training->players)
+            ->addColumn('action', function ($item) use ($training){
+                $stats = $this->getPlayerSkillStatsTraining($item, $training);
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.skill-stats', $item->hash), icon: 'visibility', btnText: 'View Player Skill Stats');
+                if (isCoach() && $training->status == 'Ongoing' || $training->status == 'Completed') {
+                    (!$stats)
+                        ? $dropdownItem .= '<a class="dropdown-item addSkills" id="'.$item->hash.'" data-trainingId="'.$training->id.'" data-matchId="'.null.'"><span class="material-icons">edit</span> Evaluate Player Skills Stats</a>'
+                        : $dropdownItem .= '<a class="dropdown-item editSkills" id="'.$item->hash.'" data-trainingId="'.$training->id.'" data-matchId="'.null.'" data-statsId="'.$stats->id.'"><span class="material-icons">edit</span> Edit Player Skills Stats</a>';
                 }
-                return $date;
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
-            ->editColumn('stats_created', function ($item) use ($schedule){
-                $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
-                if ($stats){
-                    $date = date('M d, Y h:i A', strtotime($stats->created_at));
-                } else{
-                    $date = '-';
-                }
-                return $date;
+            ->editColumn('name', function ($item) {
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
-            ->editColumn('stats_updated', function ($item) use ($schedule){
-                $stats = $this->playerSkillStatsRepository->getByPlayer($item, $schedule)->first();
-                if ($stats){
-                    $date = date('M d, Y h:i A', strtotime($stats->updated_at));
-                } else{
-                    $date = '-';
-                }
-                return $date;
+            ->editColumn('stats_status', function ($item) use ($training){
+                $stats = $this->getPlayerSkillStatsTraining($item, $training);
+                return ($stats) ? 'Skill stats have been added' : 'Skill stats still not added yet';
             })
-            ->rawColumns(['action','name', 'stats_status', 'stats_created', 'stats_updated'])
+            ->editColumn('stats_created', function ($item) use ($training){
+                $stats = $this->getPlayerSkillStatsTraining($item, $training);
+                return ($stats) ? $this->convertToDatetime($item->created_at): '-';
+            })
+            ->editColumn('stats_updated', function ($item) use ($training){
+                $stats = $this->getPlayerSkillStatsTraining($item, $training);
+                return ($stats) ? $this->convertToDatetime($item->updated_at): '-';
+            })
+            ->rawColumns(['action','name'])
             ->addIndexColumn()
             ->make();
     }
@@ -190,29 +187,31 @@ class SkillAssessmentService extends Service
         $data['playerId'] = $player->id;
         $data['coachId'] = $coach->id;
 
-        if ($data['eventId'] != null) {
-            $event = $this->eventScheduleRepository->find($data['eventId']);
-            $player->user->notify(new \App\Notifications\PlayerSkillStats($coach, 'assessed', $event));
+        if ($data['trainingId'] != null) {
+            $event = $this->trainingRepository->find($data['trainingId']);
+            $player->user->notify(new PlayerAssessedInTrainingNotification($coach, $event));
+        } elseif ($data['matchId'] != null) {
+            $event = $this->matchRepository->find($data['matchId']);
+            $player->user->notify(new PlayerAssessedInMatchNotification($coach, $event));
         } else {
-            $player->user->notify(new \App\Notifications\PlayerSkillStats($coach, 'assessed', null));
+            $player->user->notify(new PlayerAssessedNotification($coach));
         }
         return PlayerSkillStats::create($data);
     }
 
-    public function update(array $data, PlayerSkillStats $playerSkillStats, $coachId)
+    public function update(array $data, PlayerSkillStats $playerSkillStats, Coach $coach)
     {
         $data = $this->convertInputData($data);
-        $data['coachId'] = $coachId->id;
+        $data['coachId'] = $coach->id;
 
-        $playerSkillStats->update($data);
-        $playerSkillStats->player->user->notify(new \App\Notifications\PlayerSkillStats($coachId, 'updated', $playerSkillStats->event));
+        $playerSkillStats->player->user->notify(new SkillStatsUpdatedNotification($coach));
 
-        return $playerSkillStats;
+        return $playerSkillStats->update($data);
     }
 
-    public function destroy(PlayerSkillStats $playerSkillStats)
+    public function destroy(PlayerSkillStats $playerSkillStats, Coach $coach)
     {
-        $playerSkillStats->player->user->notify(new \App\Notifications\PlayerSkillStats($playerSkillStats->coach, 'deleted', $playerSkillStats->event));
+        $playerSkillStats->player->user->notify(new SkillStatsDeletedNotification($coach));
         return $playerSkillStats->delete();
     }
 }

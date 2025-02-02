@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Notifications\SkillAssessment;
+
+use App\Models\Coach;
+use App\Models\Training;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+
+class PlayerAssessedNotification extends Notification
+{
+    use Queueable;
+    protected Coach $coach;
+
+    /**
+     * Create a new notification instance.
+     *
+     * @param $coach
+     * @param $trainingSession
+     * @param string $action
+     */
+    public function __construct(Coach $coach)
+    {
+        $this->coach = $coach;
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['database'];
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'title' => "Skill Stats Assessed",
+            'data' => 'Your skills have been assessd by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.'.',
+            'redirectRoute' => route('player.skill-stats')
+        ];
+    }
+}

@@ -2,6 +2,7 @@
 
 namespace App\Notifications\TrainingSchedules;
 
+use App\Models\Training;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -10,12 +11,12 @@ use Illuminate\Notifications\Notification;
 class TrainingScheduleAttendance extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $scheduleDetails;
-    protected $status;
+    protected Training $training;
+    protected string $status;
 
-    public function __construct($scheduleDetails, $status)
+    public function __construct(Training $training, string $status)
     {
-        $this->scheduleDetails = $scheduleDetails;
+        $this->training = $training;
         $this->status = $status;
     }
 
@@ -26,8 +27,9 @@ class TrainingScheduleAttendance extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
-//        return ['database'];
+        return [
+            'database'
+        ];
     }
 
     /**
@@ -38,15 +40,15 @@ class TrainingScheduleAttendance extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject("Training Session Attendance Notification")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("This is a notification about your attendance for the training session for your team {$this->scheduleDetails->teams[0]->teamName} at ".convertToDatetime($this->scheduleDetails->startDatetime).".")
-            ->line("Training Topic: {$this->scheduleDetails->eventName}")
-            ->line("Team: {$this->scheduleDetails->teams[0]->teamName}")
-            ->line("Location: {$this->scheduleDetails->place}")
-            ->line("Date: ".convertToDate($this->scheduleDetails->date))
-            ->line("Start Time: ".convertToTime($this->scheduleDetails->startTime))
-            ->line("End Time: ".convertToTime($this->scheduleDetails->endTime))
+            ->line("This is a notification about your attendance for the training session for your team {$this->training->team->teamName} at ".convertToDatetime($this->training->startDatetime).".")
+            ->line("Training Topic: {$this->training->topic}")
+            ->line("Team: {$this->training->team->teamName}")
+            ->line("Location: {$this->training->location}")
+            ->line("Date: ".convertToDate($this->training->date))
+            ->line("Start Time: ".convertToTime($this->training->startTime))
+            ->line("End Time: ".convertToTime($this->training->endTime))
             ->line("Attendance Status: {$this->status}.")
-            ->action('View training session detail', route('training-schedules.show', $this->scheduleDetails->id))
+            ->action('View training session detail', route('training-schedules.show', $this->training->hash))
             ->line("Please ensure your attendance is marked accordingly.")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
@@ -59,8 +61,9 @@ class TrainingScheduleAttendance extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Your attendance for the training session '.$this->scheduleDetails->eventName.' for your team '.$this->scheduleDetails->teams[0]->teamName.' at '.convertToDatetime($this->scheduleDetails->startDatetime).' is marked as: '.$this->status,
-            'redirectRoute' => route('training-schedules.show', $this->scheduleDetails->id)
+            'title' => "Training Session Attendance Status",
+            'data' =>'Your attendance for the '.$this->training->topic.' training session for your team '.$this->training->team->teamName.' at '.convertToDatetime($this->training->startDatetime).' is marked as: '.$this->status,
+            'redirectRoute' => route('training-schedules.show', $this->training->hash)
         ];
     }
 }

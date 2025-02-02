@@ -7,13 +7,13 @@ use App\Console\Commands\Competitions\StartCompetitionStatus;
 use App\Console\Commands\Invoices\InvoiceDueSoonNotification;
 use App\Console\Commands\Invoices\SetPastDueInvoiceStatus;
 use App\Console\Commands\Matches\CompletedMatchStatus;
-use App\Console\Commands\Matches\MatchReminderNotification;
+use App\Console\Commands\Matches\MatchReminder;
 use App\Console\Commands\Matches\StartMatchStatus;
 use App\Console\Commands\Subscriptions\SetRenewSubscription;
 use App\Console\Commands\Subscriptions\SubscriptionDueSoonNotification;
 use App\Console\Commands\Trainings\CompletedTrainingStatus;
 use App\Console\Commands\Trainings\StartTrainingStatus;
-use App\Console\Commands\Trainings\TrainingReminderNotification;
+use App\Console\Commands\Trainings\TrainingReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Spatie\ScheduleMonitor\Models\MonitoredScheduledTaskLogItem;
@@ -25,13 +25,13 @@ class Kernel extends ConsoleKernel
         CompletedTrainingStatus::class,
         CompletedMatchStatus::class,
         InvoiceDueSoonNotification::class,
-        MatchReminderNotification::class,
+        MatchReminder::class,
         SetPastDueInvoiceStatus::class,
         StartCompetitionStatus::class,
         StartMatchStatus::class,
         StartTrainingStatus::class,
         SubscriptionDueSoonNotification::class,
-        TrainingReminderNotification::class,
+        TrainingReminder::class,
         SetRenewSubscription::class,
     ];
 

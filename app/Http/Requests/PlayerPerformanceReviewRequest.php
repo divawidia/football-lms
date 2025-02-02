@@ -24,7 +24,8 @@ class PlayerPerformanceReviewRequest extends FormRequest
     {
         return [
             'performanceReview' => ['required', 'string'],
-            'eventId' => ['nullable', 'numeric', Rule::exists('event_schedules', 'id')]
+            'matchId' => ['nullable', 'numeric', Rule::exists('matches', 'id')],
+            'trainingId' => ['nullable', 'numeric', Rule::exists('trainings', 'id')]
         ];
     }
 }

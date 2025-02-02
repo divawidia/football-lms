@@ -9,6 +9,7 @@ use App\Models\MatchModel;
 use App\Models\Player;
 use App\Models\PlayerPerformanceReview;
 use App\Models\PlayerSkillStats;
+use App\Models\Training;
 use App\Services\Coach\SkillAssessmentService;
 use App\Services\PlayerPerformanceReviewService;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +26,6 @@ class PlayerPerformanceReviewController extends Controller
 
     public function index()
     {
-        $player = $this->getLoggedPLayerUser();
         return view('pages.academies.skill-assessments.index');
     }
 
@@ -38,26 +38,29 @@ class PlayerPerformanceReviewController extends Controller
         return $this->performanceReviewService->index($player);
     }
 
-    public function indexAllPlayerInEvent(Request $request, MatchModel $schedule)
+    public function indexAllPlayerInMatch(Request $request, MatchModel $match)
     {
         $teamId  =$request->input('teamId');
-        return $this->performanceReviewService->indexAllPlayerInEvent($schedule, $teamId);
+        return $this->performanceReviewService->indexAllPlayerInMatch($match, $teamId);
+    }
+    public function indexAllPlayerInTraining(Training $training): JsonResponse
+    {
+        return $this->performanceReviewService->indexAllPlayerInTraining($training);
     }
 
     public function edit(PlayerPerformanceReview $review): JsonResponse
     {
-        return response()->json([
-            'status' => '200',
-            'data' => $review,
-            'message' => 'Success'
-        ]);
+        $data = [
+            'review' => $review,
+            'player' => $review->player->user,
+        ];
+        return ApiResponse::success($data);
     }
 
     public function store(PlayerPerformanceReviewRequest $request, Player $player)
     {
         $data = $request->validated();
-        $coach = $this->getLoggedCoachUser();
-        $response = $this->performanceReviewService->store($data, $player, $coach);
+        $response = $this->performanceReviewService->store($data, $player, $this->getLoggedCoachUser());
         $message = $this->getUserFullName($player->user)."'s performance review successfully created.";
         return ApiResponse::success($response, $message);
     }
@@ -65,14 +68,14 @@ class PlayerPerformanceReviewController extends Controller
     public function update(PlayerPerformanceReviewRequest $request, PlayerPerformanceReview $review)
     {
         $data = $request->validated();
-        $response = $this->performanceReviewService->update($data, $review);
+        $response = $this->performanceReviewService->update($data, $review, $this->getLoggedCoachUser());
         $message = $this->getUserFullName($review->player->user)."'s performance review successfully updated.";
         return ApiResponse::success($response, $message);
     }
 
     public function destroy(PlayerPerformanceReview $review)
     {
-        $response = $this->performanceReviewService->destroy($review);
+        $response = $this->performanceReviewService->destroy($review, $this->getLoggedCoachUser());
         $message = $this->getUserFullName($review->player->user)."'s performance review successfully deleted.";
         return ApiResponse::success($response, $message);
     }

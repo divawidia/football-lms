@@ -24,8 +24,8 @@ class TrainingScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'eventName' => ['required', 'string'],
-            'place' => ['required', 'string'],
+            'topic' => ['required', 'string'],
+            'location' => ['required', 'string'],
             'date' => ['required', 'date'],
             'startTime' => ['required', 'date_format:H:i'],
             'endTime' => ['required', 'date_format:H:i', 'after:startTime'],

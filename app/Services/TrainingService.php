@@ -4,27 +4,32 @@ namespace App\Services;
 
 use App\Helpers\DatatablesHelper;
 use App\Models\Coach;
-use App\Models\MatchScore;
 use App\Models\Player;
 use App\Models\TrainingNote;
 use App\Models\Team;
 use App\Models\Training;
-use App\Notifications\MatchSchedules\MatchNote as MatchNoteNotification;
-use App\Notifications\MatchSchedules\MatchSchedule;
-use App\Notifications\MatchSchedules\MatchStatsPlayer;
-use App\Notifications\TrainingSchedules\TrainingNote as TrainingNoteNotification;
+use App\Notifications\TrainingSchedules\AdminCoach\TrainingCanceledForAdminCoachNotification;
+use App\Notifications\TrainingSchedules\AdminCoach\TrainingCreatedForAdminCoachNotification;
+use App\Notifications\TrainingSchedules\AdminCoach\TrainingDeletedForAdminCoachNotification;
+use App\Notifications\TrainingSchedules\AdminCoach\TrainingUpdatedForAdminCoachNotification;
+use App\Notifications\TrainingSchedules\Player\TrainingCanceledForPlayerNotification;
+use App\Notifications\TrainingSchedules\Player\TrainingCreatedForPlayerNotification;
+use App\Notifications\TrainingSchedules\Player\TrainingDeletedForPlayerNotification;
+use App\Notifications\TrainingSchedules\Player\TrainingUpdatedForPlayerNotification;
+use App\Notifications\TrainingSchedules\TrainingCompletedNotification;
+use App\Notifications\TrainingSchedules\TrainingNoteCreatedNotification;
+use App\Notifications\TrainingSchedules\TrainingNoteDeletedNotification;
+use App\Notifications\TrainingSchedules\TrainingNoteUpdatedNotification;
+use App\Notifications\TrainingSchedules\TrainingOngoingNotification;
 use App\Notifications\TrainingSchedules\TrainingScheduleAttendance;
-use App\Notifications\TrainingSchedules\TrainingSchedule;
 use App\Repository\Interface\TeamRepositoryInterface;
 use App\Repository\Interface\TrainingRepositoryInterface;
 use App\Repository\Interface\UserRepositoryInterface;
 use App\Repository\PlayerPerformanceReviewRepository;
 use App\Repository\PlayerSkillStatsRepository;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -128,6 +133,7 @@ class TrainingService extends Service
                 return $this->datatablesHelper->eventStatus($item->status);
             })
             ->rawColumns(['action','team','status'])
+            ->addIndexColumn()
             ->make();
     }
 
@@ -205,12 +211,12 @@ class TrainingService extends Service
 
     public function allSkills(Training $training, Player $player = null)
     {
-        return ($player) ? $this->playerSkillStatsRepository->getByPlayer($player, training:  $training) : null;
+        return ($player) ? $this->playerSkillStatsRepository->getByPlayer($player, training:  $training, retrievalMethod: 'single') : null;
     }
 
     public function playerPerformanceReviews(Training $training, Player $player = null)
     {
-        return ($player) ? $this->playerPerformanceReviewRepository->getByPlayer($player, training:  $training) : null;
+        return ($player) ? $this->playerPerformanceReviewRepository->getByPlayer($player, training:  $training, retrievalMethod: 'single') : null;
     }
 
     public function totalParticipant(Training $training, Team $team = null): int
@@ -280,6 +286,11 @@ class TrainingService extends Service
         return $this->playerAttended($training) + $this->coachAttended($training);
     }
 
+    public function totalDidntAttend(Training $training)
+    {
+        return $this->playerDidntAttend($training) + $this->coachDidntAttend($training);
+    }
+
     public function totalIllness(Training $training)
     {
         return $this->playerIllness($training) + $this->coachIllness($training);
@@ -300,43 +311,60 @@ class TrainingService extends Service
         return ($coach) ? $coach->teams : $this->teamRepository->getAll();
     }
 
-    public function storeTraining(array $data, $userId){
-        $data['userId'] = $userId;
+    public function storeTraining(array $data, $loggedUser){
+        $data['userId'] = $loggedUser->id;
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
-        $training =  $this->trainingRepository->create($data);
+        $training = $this->trainingRepository->create($data);
 
-        $teamsParticipant = $this->userRepository->allTeamsParticipant($training->team);
-
-        Notification::send($teamsParticipant, new TrainingSchedule($training, $training->team, 'create'));
-
-        $training->players()->attach($training->team->players);
-        $training->coaches()->attach($training->team->coaches);
+        Notification::send($this->teamCoachesAdmins($training), new TrainingCreatedForAdminCoachNotification($loggedUser, $training, $training->team, $this->getUserRoleName($loggedUser)));
+        Notification::send($this->teamPlayers($training), new TrainingCreatedForPlayerNotification($loggedUser, $training, $training->team));
 
         return $training;
     }
 
-    public function updateTraining(array $data, Training $training){
+    public function updateTraining(array $data, Training $training, $loggedUser){
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
         $data['endDatetime'] = $this->convertToTimestamp($data['date'], $data['endTime']);
         $training->update($data);
 
         if (array_key_exists('teamId', $data)){
-            $teamsParticipant = $this->userRepository->allTeamsParticipant($training->team);
-            Notification::send($teamsParticipant, new TrainingSchedule($training, $training->team, 'update'));
-
             $training->players()->sync($training->team->players);
             $training->coaches()->sync($training->team->coaches);
+
+            Notification::send($this->teamCoachesAdmins($training), new TrainingUpdatedForAdminCoachNotification($loggedUser, $training, $training->team, $this->getUserRoleName($loggedUser)));
+            Notification::send($this->teamPlayers($training), new TrainingUpdatedForPlayerNotification($loggedUser, $training, $training->team));
         }
         return $training;
     }
 
-    public function setStatus(Training $training, $status): bool
+    public function setStatus(Training $training, $status, $loggedUser = null): bool
     {
-        $teamParticipants = $this->userRepository->allTeamsParticipant($training->team);
-        Notification::send($teamParticipants, new TrainingSchedule($training, $training->team, $status));
-
+        if ($status == 'Ongoing') {
+            Notification::send($this->allTeamParticipants($training), new TrainingOngoingNotification($training, $training->team));
+        } elseif ($status == 'Completed') {
+            Notification::send($this->allTeamParticipants($training), new TrainingCompletedNotification($training, $training->team));
+        } elseif ($status == 'Cancelled') {
+            Notification::send($this->teamCoachesAdmins($training), new TrainingCanceledForAdminCoachNotification($loggedUser, $training, $training->team, $this->getUserRoleName($loggedUser)));
+            Notification::send($this->teamPlayers($training), new TrainingCanceledForPlayerNotification($training, $training->team));
+        } elseif ($status == 'Scheduled') {
+            Notification::send($this->teamCoachesAdmins($training), new TrainingCanceledForAdminCoachNotification($loggedUser, $training, $training->team, $this->getUserRoleName($loggedUser)));
+            Notification::send($this->teamPlayers($training), new TrainingCanceledForPlayerNotification($training, $training->team));
+        }
         return $training->update(['status' => $status]);
+    }
+
+    private function allTeamParticipants(Training $training)
+    {
+        return $this->userRepository->allTeamsParticipant($training->team);
+    }
+    private function teamCoachesAdmins(Training $training)
+    {
+        return $this->userRepository->allTeamsParticipant($training->team, players: false);
+    }
+    private function teamPlayers(Training $training)
+    {
+        return $this->userRepository->allTeamsParticipant($training->team, admins: false, coaches: false);
     }
 
     public function getPlayerAttendance(Training $training, Player $player)
@@ -358,36 +386,30 @@ class TrainingService extends Service
     {
         $coach->user->notify(new TrainingScheduleAttendance($training, $data['attendanceStatus']));
 
-        return $training->coaches()->updateExistingPivot($coach->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);;
+        return $training->coaches()->updateExistingPivot($coach->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
     }
 
-    public function createNote($data, Training $training, $loggedUser): Model
+    public function createNote($data, Training $training)
     {
-        $teamParticipants = $this->userRepository->allTeamsParticipant($training->team);
-        Notification::send($teamParticipants, new TrainingNoteNotification($loggedUser, $training, 'created'));
-        return $training->notes()->create($data);
+        Notification::send($this->allTeamParticipants($training), new TrainingNoteCreatedNotification($training, $training->team));
+        $training->notes()->create($data);
+        return $training;
     }
-    public function updateNote($data, Training $training, TrainingNote $note, $loggedUser): bool
+    public function updateNote($data, Training $training, TrainingNote $note): bool
     {
-        $teamParticipants = $this->userRepository->allTeamsParticipant($training->team);
-        Notification::send($teamParticipants, new TrainingNoteNotification($loggedUser, $training, 'updated'));
+        Notification::send($this->allTeamParticipants($training), new TrainingNoteUpdatedNotification($training, $training->team));
         return $note->update($data);
     }
-    public function destroyNote(Training $training, TrainingNote $note, $loggedUser): ?bool
+    public function destroyNote(Training $training, TrainingNote $note): ?bool
     {
-        $teamParticipants = $this->userRepository->allTeamsParticipant($training->team);
-        Notification::send($teamParticipants, new TrainingNoteNotification($loggedUser, $training, 'deleted'));
+        Notification::send($this->allTeamParticipants($training), new TrainingNoteDeletedNotification($training, $training->team));
         return $note->delete();
     }
 
-    public function destroy(Training $training): ?bool
+    public function destroy(Training $training, $loggedUser)
     {
-        try {
-            $teamParticipants = $this->userRepository->allTeamsParticipant($training->team);
-            Notification::send($teamParticipants, new TrainingSchedule($training, $training->team, 'delete'));
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-        }
+        Notification::send($this->teamCoachesAdmins($training), new TrainingDeletedForAdminCoachNotification($loggedUser, $training, $training->team, $this->getUserRoleName($loggedUser)));
+        Notification::send($this->teamPlayers($training), new TrainingDeletedForPlayerNotification($training, $training->team));
         return $training->delete();
     }
 }

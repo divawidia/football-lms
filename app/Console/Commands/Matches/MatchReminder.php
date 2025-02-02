@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
 
-class MatchReminderNotification extends Command
+class MatchReminder extends Command
 {
     /**
      * The name and signature of the console command.

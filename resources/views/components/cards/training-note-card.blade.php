@@ -1,8 +1,8 @@
 <div class="card">
     <div class="card-header d-flex align-items-center">
         <div class="flex">
-            <h4 class="card-title">{{ date('D, M d Y h:i A', strtotime($note->created_at)) }}</h4>
-            <div class="card-subtitle text-50">Last updated at {{ date('D, M d Y h:i A', strtotime($note->updated_at)) }}</div>
+            <h4 class="card-title">{{ convertToDatetime($note->created_at) }}</h4>
+            <div class="card-subtitle text-50">Last updated at {{ convertToDatetime($note->updated_at) }}</div>
         </div>
         @if(isAllAdmin() || isCoach())
             <x-buttons.dropdown :title="null" icon="more_vert" btnColor="outline-secondary" iconMargin="">
@@ -21,12 +21,8 @@
         $(document).ready(function () {
             processWithConfirmation(
                 '.delete-note',
-                "{{ route('match-schedules.destroy-note', ['schedule' => $schedule->hash, 'note'=>':id']) }}",
-                @if($schedule->eventType == 'Training')
-                    "{{ route('training-schedules.show', ['schedule' => $schedule->hash]) }}",
-                @else
-                    "{{ route('match-schedules.show', ['schedule' => $schedule->hash]) }}",
-                @endif
+                "{{ route('training-schedules.destroy-note', ['training' => $training->hash, 'note'=>':id']) }}",
+                "{{ route('training-schedules.show', ['training' => $training->hash]) }}",
                 'DELETE',
                 "Are you sure to delete this note?",
                 "Something went wrong when deleting this note!",

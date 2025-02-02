@@ -16,6 +16,16 @@ import './youtube'
         $(e.target).removeClass('active')
     })
 
+    $(".skills-range-slider").ionRangeSlider({
+        min: 0,
+        max: 100,
+        step: 25,
+        grid: true,
+        values: [
+            "Poor", "Needs Work", "Average Fair", "Good", "Excellent"
+        ]
+    });
+
     function imagePreview(input, preview) {
         $(input).on('change', function (e) {
             e.preventDefault();
@@ -41,4 +51,5 @@ import './youtube'
 
     window.clearModalFormValidation = clearModalFormValidation;
     window.showModal = showModal;
+
 })()

@@ -1,4 +1,4 @@
-<x-modal.form id="addSkillStatsModal" formId="formAddSkillStatsModal" title="Update Player Skill Stats">
+<x-modal.form id="addSkillStatsModal" formId="formAddSkillStatsModal" title="Update Player Skill Stats" size="modal-lg">
     <x-forms.basic-input type="hidden" name="matchId" :modal="true"/>
     <x-forms.basic-input type="hidden" name="trainingId" :modal="true"/>
     <x-forms.basic-input type="hidden" name="playerId" :modal="true"/>
@@ -17,15 +17,9 @@
 </x-modal.form>
 
 @push('addon-script')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+
     <script>
         $(document).ready(function (){
-            $(".skills-range-slider").ionRangeSlider({
-                grid: true,
-                values: [
-                    "Poor", "Needs Work", "Average Fair", "Good", "Excellent"
-                ]
-            });
             const formId = '#formAddSkillStatsModal';
             const modalId = '#addSkillStatsModal';
 
@@ -46,7 +40,7 @@
             processModalForm(
                 formId,
                 "{{ route('skill-assessments.store', ['player' => ':id']) }}",
-                '#formAddSkillStatsModal #playerId',
+                '#playerId',
                 modalId
             );
         });

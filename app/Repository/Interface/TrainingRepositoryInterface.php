@@ -60,4 +60,6 @@ interface TrainingRepositoryInterface
     public function getRelationData(Training $training, $relation, $with = null, $attendanceStatus = null, $teamId = null, $playerId = null, $exceptPlayerId= null, $retrieveType = 'single');
 
     public function create(array $data);
+
+    public function find($id);
 }

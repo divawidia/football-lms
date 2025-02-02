@@ -27,14 +27,8 @@
     <div class="container page-section">
         @if(isAllAdmin() || isCoach())
             <x-buttons.basic-button icon="add" text="Add New" additionalClass="add-training-btn" margin="mb-3"/>
-{{--            <a href="{{  route('training-schedules.create') }}" class="btn btn-primary mb-3" id="add-new">--}}
-{{--                    <span class="material-icons mr-2">--}}
-{{--                        add--}}
-{{--                    </span>--}}
-{{--                Add New--}}
-{{--            </a>--}}
         @endif
-        <x-training-tables :route="$tableRoute" tableId="tables"/>
+        <x-tables.training-tables :route="$tableRoute" tableId="tables"/>
 
         <div class="card">
             <div class="card-header">
@@ -51,18 +45,8 @@
     <script>
         $(document).ready(function () {
             processWithConfirmation(
-                '.delete',
-                "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}",
-                "{{ route('training-schedules.index') }}",
-                'DELETE',
-                "Are you sure to delete this training?",
-                "Something went wrong when deleting this training!",
-                "{{ csrf_token() }}"
-            );
-
-            processWithConfirmation(
                 '.cancelBtn',
-                "{{ route('training-schedules.cancel', ['schedule' =>':id']) }}",
+                "{{ route('training-schedules.cancel', ['training' =>':id']) }}",
                 "{{ route('training-schedules.index') }}",
                 'PATCH',
                 "Are you sure to cancel this training?",
@@ -72,7 +56,7 @@
 
             processWithConfirmation(
                 '.scheduled-btn',
-                "{{ route('training-schedules.scheduled', ['schedule' =>':id']) }}",
+                "{{ route('training-schedules.scheduled', ['training' =>':id']) }}",
                 "{{ route('training-schedules.index') }}",
                 'PATCH',
                 "Are you sure to set this training to scheduled?",

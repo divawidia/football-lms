@@ -4,24 +4,24 @@ namespace App\Notifications\TrainingSchedules;
 
 use App\Models\Coach;
 use App\Models\MatchModel;
+use App\Models\Team;
+use App\Models\Training;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingNote extends Notification implements ShouldQueue
+class TrainingNoteCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected User $user;
-    protected Match $trainingSession;
-    protected string $action; // Either 'created', 'updated' or 'deleted'
+    protected Training $training;
+    protected Team $team;
 
-    public function __construct($user, $trainingSession, $action)
+    public function __construct(Training $training, Team $team)
     {
-        $this->user = $user;
-        $this->trainingSession = $trainingSession;
-        $this->action = $action;
+        $this->training = $training;
+        $this->team = $team;
     }
 
     /**
@@ -42,8 +42,9 @@ class TrainingNote extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' => 'A note for '.$this->trainingSession->teams[0]->teamName.' training session '.$this->trainingSession->eventName.' has been '.$this->action.'. Please check the note if needed!',
-            'redirectRoute' => route('training-schedules.show', $this->trainingSession->id)
+            'title' => "Training Note Created",
+            'data' => 'A note for '.$this->team->teamName.' training session '.$this->training->topic.' has been created. Please check the note if needed!',
+            'redirectRoute' => route('training-schedules.show', $this->training->hash)
         ];
     }
 }

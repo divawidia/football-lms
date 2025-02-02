@@ -84,7 +84,6 @@
                         $(formId+' #homeTeamId').val(res.data.schedule.homeTeamId)
                         // getAwayTeams(res.data.schedule.homeTeamId)
                         @if($competition->isInternal == 1)
-
                             $(formId+' #awayTeamId').val(res.data.schedule.awayTeamId);
                         @else
                             $(formId+' #externalTeamName').val(res.data.opposingTeam);

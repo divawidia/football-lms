@@ -1,13 +1,14 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Cards;
 
+use App\Models\MatchModel;
 use App\Models\MatchNote;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class EventNoteCard extends Component
+class MatchNoteCard extends Component
 {
     public MatchNote $note;
     public MatchModel $match;
@@ -26,6 +27,6 @@ class EventNoteCard extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.cards.event-note');
+        return view('components.cards.match-note-card');
     }
 }

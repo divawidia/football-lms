@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\modal\Matches;
+namespace App\View\Components\modal\PlayersCoaches;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class EditPerformanceReviewModal extends Component
+class AddPerformanceReview extends Component
 {
     /**
      * Create a new component instance.
@@ -20,6 +20,6 @@ class EditPerformanceReviewModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.matches.edit-performance-review');
+        return view('components.modal.players-coaches.add-performance-review');
     }
 }

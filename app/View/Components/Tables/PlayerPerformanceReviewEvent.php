@@ -10,16 +10,16 @@ use Illuminate\View\Component;
 class PlayerPerformanceReviewEvent extends Component
 {
     public $tableId;
-    public MatchModel $match;
+    public $route;
     public $teamId;
 
     /**
      * Create a new component instance.
      */
-    public function __construct($tableId, MatchModel $match, $teamId = null)
+    public function __construct($route, $tableId = 'player-performance-review-table', $teamId = null)
     {
         $this->tableId = $tableId;
-        $this->match = $match;
+        $this->route = $route;
         $this->teamId = $teamId;
     }
 

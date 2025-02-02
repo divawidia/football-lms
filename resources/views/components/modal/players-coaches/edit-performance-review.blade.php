@@ -17,7 +17,8 @@
             $('body').on('click', '.editPerformanceReview',function(e) {
                 e.preventDefault();
                 const reviewId = $(this).attr('data-reviewId');
-                const eventId = $(this).attr('data-eventId');
+                const matchId = $(this).attr('data-matchId');
+                const trainingId = $(this).attr('data-trainingId');
 
                 $.ajax({
                     url: "{!! url()->route('player-managements.performance-reviews.edit', ['review' => ':id']) !!}".replace(':id', reviewId),
@@ -26,10 +27,13 @@
                         $(modalId).modal('show');
                         clearModalFormValidation(formId)
 
-                        $(formId+' #eventId').val(eventId);
+                        $(formId+' #matchId').val(matchId);
+                        $(formId+' #trainingId').val(trainingId);
                         $(formId+' #reviewId').val(reviewId);
-                        $(formId+' .modal-title').text(res.data.performanceReview);
+                        $(formId+' .modal-title').text("Edit "+res.data.player.firstName+" "+res.data.player.lastName+"'s performance review");
+                        $(formId+' #performanceReview').text(res.data.review.performanceReview);
                     },
+
                     error: function (jqXHR, textStatus, errorThrown) {
                         Swal.fire({
                             icon: "error",

@@ -27,21 +27,17 @@ class TrainingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function indexTraining()
+    public function index()
     {
         if ($this->isAllAdmin()){
             $events = $this->trainingService->trainingCalendar();
-            $tableRoute = route('admin.training-schedules.index');
-
+            $tableRoute = route('training-schedules.admin-index');
         } elseif ($this->isCoach()){
-            $coach = $this->getLoggedCoachUser();
-            $events = $this->trainingService->coachTeamsTrainingCalendar($coach);
-            $tableRoute = route('coach.training-schedules.index');
-
+            $events = $this->trainingService->coachTeamsTrainingCalendar($this->getLoggedCoachUser());
+            $tableRoute = route('training-schedules.coach-index');
         } else {
-            $player = $this->getLoggedPLayerUser();
-            $events = $this->trainingService->playerTeamsTrainingCalendar($player);
-            $tableRoute = route('player.training-schedules.index');
+            $events = $this->trainingService->playerTeamsTrainingCalendar($this->getLoggedPLayerUser());
+            $tableRoute = route('training-schedules.player-index');
         }
 
         return view('pages.academies.schedules.trainings.index', [
@@ -50,17 +46,17 @@ class TrainingController extends Controller
         ]);
     }
 
-    public function adminIndexTraining()
+    public function adminIndexTraining(): JsonResponse
     {
         return $this->trainingService->dataTablesTraining();
     }
 
-    public function coachIndexTraining()
+    public function coachIndexTraining(): JsonResponse
     {
         $coach = $this->getLoggedCoachUser();
         return $this->trainingService->coachTeamsDataTablesTraining($coach);
     }
-    public function playerIndexTraining()
+    public function playerIndexTraining(): JsonResponse
     {
         $player = $this->getLoggedPLayerUser();
         return $this->trainingService->playerTeamsDataTablesTraining($player);
@@ -79,11 +75,9 @@ class TrainingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(TrainingScheduleRequest $request)
+    public function store(TrainingScheduleRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $userId = $this->getLoggedUserId();
-        $this->trainingService->storeTraining($data, $userId);
+        $this->trainingService->storeTraining($request->validated(), $this->getLoggedUser());
         return ApiResponse::success(message: 'Training schedule successfully added!');
     }
 
@@ -96,8 +90,11 @@ class TrainingController extends Controller
             'schedule' => $training,
             'players' => $training->players,
             'coaches' => $training->coaches,
+            'allSkills' => $this->trainingService->allSkills($training, $this->getLoggedPLayerUser()),
+            'playerPerformanceReview' => $this->trainingService->playerPerformanceReviews($training, $this->getLoggedPLayerUser()),
             'totalParticipant' => $this->trainingService->totalParticipant($training),
             'totalAttend' => $this->trainingService->totalAttend($training),
+            'totalDidntAttend' => $this->trainingService->totalDidntAttend($training),
             'totalIllness' => $this->trainingService->totalIllness($training),
             'totalInjured' => $this->trainingService->totalInjured($training),
             'totalOther' => $this->trainingService->totalOther($training),
@@ -109,19 +106,15 @@ class TrainingController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Training $training)
+    public function edit(Training $training): JsonResponse
     {
-        $data = [
-            'schedule' => $training,
-            'teamId' => $training->teamId
-        ];
-        return ApiResponse::success($data);
+        return ApiResponse::success($training);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(TrainingScheduleRequest $request, Training $training)
+    public function update(TrainingScheduleRequest $request, Training $training): JsonResponse
     {
         $data = $request->validated();
         $loggedUser = $this->getLoggedUser();
@@ -129,41 +122,42 @@ class TrainingController extends Controller
         return ApiResponse::success(message: 'Training session successfully updated!');
     }
 
-    public function status(Training $training, $status)
+    public function status(Training $training, $status): JsonResponse
     {
         try {
-            $this->trainingService->setStatus($training, $status);
-            return ApiResponse::success(message: $training->eventType.' session status successfully mark to '.$status.'!');
+            $this->trainingService->setStatus($training, $status, $this->getLoggedUser());
+            return ApiResponse::success(message: $training->topic.' training session status successfully set to '.$status.'!');
 
         } catch (Exception $e) {
-            Log::error('Error marking '.$training->eventType.' session as '.$status.': ' . $e->getMessage());
+            Log::error('Error marking '.$training->topic.' session as '.$status.': ' . $e->getMessage());
             return ApiResponse::error('An error occurred while marking the competition '.$training->eventType.' session as '.$status.'.');
         }
     }
 
-    public function scheduled(Training $training)
+    public function scheduled(Training $training): JsonResponse
     {
         if ($training->startDatetime < Carbon::now()) {
             return ApiResponse::error("You cannot set the match session to scheduled because the match date has passed, please change the match start date to a future date.");
         } else {
-            return $this->status($training, 'scheduled');
+            return $this->status($training, 'Scheduled');
         }
     }
 
-    public function ongoing(Training $training)
+    public function ongoing(Training $training): JsonResponse
     {
-        return $this->status($training, 'ongoing');
+        return $this->status($training, 'Ongoing');
     }
-    public function completed(Training $training)
+    public function completed(Training $training): JsonResponse
     {
-        return $this->status($training, 'completed');
+        return $this->status($training, 'Completed');
     }
-    public function cancelled(Training $training)
+    public function cancelled(Training $training): JsonResponse
     {
-        return $this->status($training, 'cancelled');
+        return $this->status($training, 'Cancelled');
     }
 
-    public function getPlayerAttendance(Training $training, Player $player){
+    public function getPlayerAttendance(Training $training, Player $player): JsonResponse
+    {
         try {
             $data = $this->trainingService->getPlayerAttendance($training, $player);
             $data = [
@@ -179,7 +173,8 @@ class TrainingController extends Controller
         }
     }
 
-    public function getCoachAttendance(Training $training, Coach $coach){
+    public function getCoachAttendance(Training $training, Coach $coach): JsonResponse
+    {
         try {
             $data = $this->trainingService->getCoachAttendance($training, $coach);
             $data = [
@@ -210,7 +205,7 @@ class TrainingController extends Controller
         }
     }
 
-    public function updateCoachAttendance(AttendanceStatusRequest $request, Training $training, Coach $coach)
+    public function updateCoachAttendance(AttendanceStatusRequest $request, Training $training, Coach $coach): JsonResponse
     {
         $data = $request->validated();
         try {
@@ -224,11 +219,11 @@ class TrainingController extends Controller
         }
     }
 
-    public function createNote(ScheduleNoteRequest $request, Training $training){
+    public function createNote(ScheduleNoteRequest $request, Training $training): JsonResponse
+    {
         $data = $request->validated();
-        $loggedUser = $this->getLoggedUser();
         try {
-            $this->trainingService->createNote($data, $training, $loggedUser);
+            $this->trainingService->createNote($data, $training);
             $message = "Note for this ".$training->eventType." session successfully created.";
             return ApiResponse::success(message:  $message);
 
@@ -239,7 +234,7 @@ class TrainingController extends Controller
         }
     }
 
-    public function editNote(Training $training, TrainingNote $note)
+    public function editNote(Training $training, TrainingNote $note): JsonResponse
     {
         try {
             $message = "Note data successfully retrieved.";
@@ -252,10 +247,11 @@ class TrainingController extends Controller
         }
     }
 
-    public function updateNote(ScheduleNoteRequest $request, Training $training, TrainingNote $note){
+    public function updateNote(ScheduleNoteRequest $request, Training $training, TrainingNote $note): JsonResponse
+    {
         $data = $request->validated();
         try {
-            $this->trainingService->updateNote($data, $training, $note, $this->getLoggedUser());
+            $this->trainingService->updateNote($data, $training, $note);
             $message = "Note successfully updated.";
             return ApiResponse::success(message:  $message);
 
@@ -265,10 +261,10 @@ class TrainingController extends Controller
             return ApiResponse::error($message, null, $e->getCode());
         }
     }
-    public function destroyNote(Training $training, TrainingNote $note)
+    public function destroyNote(Training $training, TrainingNote $note): JsonResponse
     {
         try {
-            $this->trainingService->destroyNote($training, $note, $this->getLoggedUser());
+            $this->trainingService->destroyNote($training, $note);
             $message = "Note for this session successfully deleted.";
             return ApiResponse::success(message:  $message);
         } catch (Exception $e){
@@ -281,7 +277,7 @@ class TrainingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Training $training)
+    public function destroy(Training $training): JsonResponse
     {
         try {
             $message = "Training session ".$training->eventName." successfully deleted.";

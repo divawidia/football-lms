@@ -35,7 +35,8 @@ class SkillAssessmentRequest extends FormRequest
             'goalKeeping' => ['string', 'required'],
             'offensivePlay' => ['string', 'required'],
             'defensivePlay' => ['string', 'required'],
-            'eventId' => ['nullable', 'numeric', Rule::exists('event_schedules', 'id')]
+            'trainingId' => ['nullable', 'numeric', Rule::exists('trainings', 'id')],
+            'matchId' => ['nullable', 'numeric', Rule::exists('matches', 'id')]
         ];
     }
 }

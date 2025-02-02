@@ -15,10 +15,15 @@
         <div class="container page__container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    @if(isAllAdmin() || isCoach())
-                        <a href="{{ route('skill-assessments.index') }}" class="nav-link text-70">
+                    @if(isAllAdmin())
+                        <a href="{{ route('player-managements.show', $data->hash) }}" class="nav-link text-70">
                             <i class="material-icons icon--left">keyboard_backspace</i>
                             Back to Player Profile
+                        </a>
+                    @elseif(isCoach())
+                        <a href="{{ route('skill-assessments.index') }}" class="nav-link text-70">
+                            <i class="material-icons icon--left">keyboard_backspace</i>
+                            Back to Player Skill Assessments
                         </a>
                     @elseif(isPlayer())
                         <a href="{{ route('player.dashboard') }}" class="nav-link text-70">

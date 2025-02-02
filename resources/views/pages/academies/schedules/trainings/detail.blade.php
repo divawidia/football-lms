@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Training {{ $schedule->eventName  }}
+    Training {{ $schedule->topic  }}
 @endsection
 @section('page-title')
     @yield('title')
@@ -8,19 +8,19 @@
 
 @section('modal')
     @if(isAllAdmin() || isCoach())
-        <x-modal.matches.edit-player-attendance :match="$schedule"/>
+        <x-modal.trainings.edit-player-attendance :training="$schedule"/>
 
-        <x-modal.matches.edit-coach-attendance :match="$schedule"/>
+        <x-modal.trainings.edit-coach-attendance :training="$schedule"/>
 
-        <x-modal.matches.create-schedule-note :match="$schedule"/>
-        <x-modal.matches.edit-schedule-note :eventSchedule="$schedule"/>
+        <x-modal.trainings.create-training-note :training="$schedule"/>
+        <x-modal.trainings.edit-training-note :training="$schedule"/>
 
 
-        <x-skill-assessments-modal/>
-        <x-edit-skill-assessments-modal/>
+        <x-modal.players-coaches.skill-assessments-modal/>
+        <x-modal.players-coaches.edit-skill-assessments-modal/>
 
-        <x-modal.matches.add-performance-review/>
-        <x-modal.matches.edit-performance-review/>
+        <x-modal.players-coaches.add-performance-review/>
+        <x-modal.players-coaches.edit-performance-review/>
 
         <x-modal.trainings.edit-training/>
     @endif
@@ -44,9 +44,9 @@
         <div
             class="container page__container d-flex flex-column flex-md-row align-items-center text-center text-md-left">
             <div class="flex">
-                <h2 class="text-white mb-0">{{ $schedule->eventName  }}</h2>
+                <h2 class="text-white mb-0">{{ $schedule->topic  }}</h2>
                 <p class="lead text-white-50 d-flex align-items-center">
-                    {{ $schedule->eventType }} ~ {{ $schedule->teams[0]->teamName }}
+                    Training Session ~ {{ $schedule->team->teamName }}
                 </p>
             </div>
             @if(isAllAdmin() || isCoach())
@@ -91,12 +91,12 @@
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">schedule</i>
-                    {{ convertToDate($schedule->startTime) }}
-                    - {{ convertToDate($schedule->endTime) }}
+                    {{ convertToTime($schedule->startTime) }}
+                    - {{ convertToTime($schedule->endTime) }}
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                    {{ $schedule->place }}
+                    {{ $schedule->location }}
                 </li>
                 @if(isAllAdmin())
                     <li class="nav-item navbar-list__item">
@@ -134,12 +134,12 @@
                     <div class="page-separator__text">Overview</div>
                 </div>
                 <div class="row card-group-row">
-                    @include('components.cards.stats-card', ['title' => 'Total Participants', 'data'=>$attendance['totalParticipant'], 'dataThisMonth'=>null])
-                    @include('components.cards.stats-card', ['title' => 'Attended', 'data'=>$attendance['totalAttend'], 'dataThisMonth'=>null])
-                    @include('components.cards.stats-card', ['title' => "Didn't Attended", 'data'=>$attendance['totalDidntAttend'], 'dataThisMonth'=>null])
-                    @include('components.cards.stats-card', ['title' => "Illness", 'data'=>$attendance['totalIllness'], 'dataThisMonth'=>null])
-                    @include('components.cards.stats-card', ['title' => "Injured", 'data'=>$attendance['totalInjured'], 'dataThisMonth'=>null])
-                    @include('components.cards.stats-card', ['title' => "Others", 'data'=>$attendance['totalOthers'], 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => 'Total Participants', 'data'=>$totalParticipant, 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => 'Attended', 'data'=>$totalAttend, 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => "Didn't Attended", 'data'=>$totalDidntAttend, 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => "Illness", 'data'=>$totalIllness, 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => "Injured", 'data'=>$totalInjured, 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => "Others", 'data'=>$totalOther, 'dataThisMonth'=>null])
                 </div>
 
                 {{--    Player Attendance    --}}
@@ -165,14 +165,14 @@
                     <div class="page-separator__text">Training Note</div>
                     @if(isAllAdmin() || isCoach() and $schedule->status == 'Ongoing' || $schedule->status == 'Completed')
                         <x-buttons.basic-button icon="add" text="add new note" size="sm" margin="ml-auto"
-                                                :id="$schedule->teams[0]->id" additionalClass="add-new-note-btn"/>
+                                                :id="$schedule->teamId" additionalClass="add-new-note-btn"/>
                     @endif
                 </div>
                 @if(count($schedule->notes)==0)
                     <x-warning-alert text="Training session note haven't created yet by coach"/>
                 @endif
                 @foreach($schedule->notes as $note)
-                    <x-event-note-card :note="$note" :match="$schedule"/>
+                    <x-cards.training-note-card :note="$note" :training="$schedule"/>
                 @endforeach
             </div>
 
@@ -182,9 +182,9 @@
                     <div class="page-separator__text">player skills evaluation</div>
                 </div>
                 @if(isAllAdmin() || isCoach())
-                    <x-tables.player-skill-event :eventSchedule="$schedule" tableId="playerSkillsTable"/>
+                    <x-tables.player-skill-event :route="route('training-schedules.player-skills', $schedule->hash)"/>
                 @elseif(isPlayer())
-                    <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
+                    <x-cards.player-skill-stats-card :allSkills="$allSkills"/>
                 @endif
             </div>
 
@@ -194,16 +194,12 @@
                     <div class="page-separator__text">player performance review</div>
                 </div>
                 @if(isAllAdmin() || isCoach())
-                    <x-tables.player-performance-review-event :eventSchedule="$schedule"
-                                                              tableId="playerPerformanceReviewTable"/>
+                    <x-tables.player-performance-review-event :route="route('training-schedules.player-performance-review', $schedule->hash)"/>
                 @elseif(isPlayer())
-                    @if(count($data['playerPerformanceReviews'])==0)
-                        <x-warning-alert
-                            text="You haven't get any performance review from your coach for this training session"/>
+                    @if(!$playerPerformanceReview)
+                        <x-warning-alert text="You haven't get any performance review from your coach for this training session"/>
                     @else
-                        @foreach($data['playerPerformanceReviews'] as $review)
-                            <x-player-event-performance-review :review="$review"/>
-                        @endforeach
+                        <x-player-event-performance-review :review="$playerPerformanceReview"/>
                     @endif
                 @endif
             </div>
@@ -217,7 +213,7 @@
         $(document).ready(function () {
             processWithConfirmation(
                 '.delete',
-                "{{ route('training-schedules.destroy', ['schedule' => ':id']) }}",
+                "{{ route('training-schedules.destroy', ['training' => ':id']) }}",
                 "{{ route('training-schedules.index') }}",
                 'DELETE',
                 "Are you sure to delete this training?",
@@ -227,8 +223,8 @@
 
             processWithConfirmation(
                 '.cancelBtn',
-                "{{ route('training-schedules.cancel', ['schedule' => $schedule->hash]) }}",
-                "{{ route('training-schedules.show', ['schedule' => $schedule->hash]) }}",
+                "{{ route('training-schedules.cancel', $schedule->hash) }}",
+                "{{ route('training-schedules.show', $schedule->hash) }}",
                 'PATCH',
                 "Are you sure to cancel this training?",
                 "Something went wrong when cancelling this training!",
@@ -237,8 +233,8 @@
 
             processWithConfirmation(
                 '.scheduled-btn',
-                "{{ route('training-schedules.scheduled', ['schedule' => $schedule->hash]) }}",
-                "{{ route('training-schedules.show', ['schedule' => $schedule->hash]) }}",
+                "{{ route('training-schedules.scheduled', $schedule->hash) }}",
+                "{{ route('training-schedules.show', $schedule->hash) }}",
                 'PATCH',
                 "Are you sure to set this training to scheduled?",
                 "Something went wrong when set this training to scheduled!",

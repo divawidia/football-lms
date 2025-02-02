@@ -138,4 +138,9 @@ class Service
         }
         return $message;
     }
+
+    public function getUserRoleName(User $user)
+    {
+        return $user->roles()->first()->name;
+    }
 }
