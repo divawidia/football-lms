@@ -340,6 +340,12 @@ class TrainingService extends Service
 
     public function setStatus(Training $training, $status, $loggedUser = null): bool
     {
+        $this->sendNotificationByStatus($training, $status, $loggedUser);
+        return $training->update(['status' => $status]);
+    }
+
+    public function sendNotificationByStatus(Training $training, $status, $loggedUser = null)
+    {
         if ($status == 'Ongoing') {
             Notification::send($this->allTeamParticipants($training), new TrainingOngoingNotification($training, $training->team));
         } elseif ($status == 'Completed') {
@@ -351,7 +357,6 @@ class TrainingService extends Service
             Notification::send($this->teamCoachesAdmins($training), new TrainingCanceledForAdminCoachNotification($loggedUser, $training, $training->team, $this->getUserRoleName($loggedUser)));
             Notification::send($this->teamPlayers($training), new TrainingCanceledForPlayerNotification($training, $training->team));
         }
-        return $training->update(['status' => $status]);
     }
 
     private function allTeamParticipants(Training $training)
