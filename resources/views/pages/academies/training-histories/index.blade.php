@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    Training Schedules
+    Training Histories
 @endsection
 @section('page-title')
     @yield('title')
@@ -17,9 +17,7 @@
             <h2 class="mb-0">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ checkRoleDashboardRoute() }}">Home</a></li>
-                <li class="breadcrumb-item active">
-                    @yield('title')
-                </li>
+                <li class="breadcrumb-item active">@yield('title')</li>
             </ol>
         </div>
     </div>
@@ -40,29 +38,3 @@
         </div>
     </div>
 @endsection
-
-@push('addon-script')
-    <script>
-        $(document).ready(function () {
-            processWithConfirmation(
-                '.cancelBtn',
-                "{{ route('training-schedules.cancel', ['training' =>':id']) }}",
-                "{{ route('training-schedules.index') }}",
-                'PATCH',
-                "Are you sure to cancel this training?",
-                "Something went wrong when cancelling this training!",
-                "{{ csrf_token() }}"
-            );
-
-            processWithConfirmation(
-                '.scheduled-btn',
-                "{{ route('training-schedules.scheduled', ['training' =>':id']) }}",
-                "{{ route('training-schedules.index') }}",
-                'PATCH',
-                "Are you sure to set this training to scheduled?",
-                "Something went wrong when set this training to scheduled!",
-                "{{ csrf_token() }}"
-            );
-        });
-    </script>
-@endpush
