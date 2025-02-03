@@ -105,11 +105,13 @@
                     </li>
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button" href="{{ route('training-histories.index') }}">
+                            <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">class</span>
                             <span class="sidebar-menu-text">Training Histories</span>
                         </a>
                     </li>
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button" href="{{ route('match-histories.index') }}">
+                            <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">class</span>
                             <span class="sidebar-menu-text">Match Histories</span>
                         </a>
                     </li>
