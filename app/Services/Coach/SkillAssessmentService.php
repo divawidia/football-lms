@@ -87,7 +87,7 @@ class SkillAssessmentService extends Service
             ->addColumn('action', function ($item) use ($match){
                 $stats = $this->getPlayerSkillStatsMatch($item, $match);
                 $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.skill-stats', $item->hash), icon: 'visibility', btnText: 'View Player Skill Stats');
-                if (isCoach() && $match->status == 'Ongoing' || $match->status == 'Completed') {
+                if (isCoach() && $match->status == 'Ongoing' || isCoach() && $match->status == 'Completed') {
                     (!$stats)
                         ? $dropdownItem .= '<a class="dropdown-item addSkills" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.$match->id.'"><span class="material-icons">edit</span> Evaluate Player Skills Stats</a>'
                         : $dropdownItem .= '<a class="dropdown-item editSkills" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.$match->id.'" data-statsId="'.$stats->id.'"><span class="material-icons">edit</span> Edit Player Skills Stats</a>';
@@ -129,7 +129,7 @@ class SkillAssessmentService extends Service
             ->addColumn('action', function ($item) use ($training){
                 $stats = $this->getPlayerSkillStatsTraining($item, $training);
                 $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.skill-stats', $item->hash), icon: 'visibility', btnText: 'View Player Skill Stats');
-                if (isCoach() && $training->status == 'Ongoing' || $training->status == 'Completed') {
+                if (isCoach() && $training->status == 'Ongoing' || isCoach() && $training->status == 'Completed') {
                     (!$stats)
                         ? $dropdownItem .= '<a class="dropdown-item addSkills" id="'.$item->hash.'" data-trainingId="'.$training->id.'" data-matchId="'.null.'"><span class="material-icons">edit</span> Evaluate Player Skills Stats</a>'
                         : $dropdownItem .= '<a class="dropdown-item editSkills" id="'.$item->hash.'" data-trainingId="'.$training->id.'" data-matchId="'.null.'" data-statsId="'.$stats->id.'"><span class="material-icons">edit</span> Edit Player Skills Stats</a>';

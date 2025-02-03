@@ -227,7 +227,7 @@
                 <div class="card">
                     <div class="card-body">
                         <x-table
-                            :headers="['#', 'Training/Practice', 'Training Date', 'Location', 'Training Status', 'Note', 'Last Updated', 'Action']"
+                            :headers="['#', 'Training/Practice', 'Training Date', 'Location', 'Training Status', 'Last Updated', 'Action']"
                             tableId="trainingHistoryTable"
                         />
                     </div>
@@ -307,11 +307,10 @@
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'eventName', name: 'eventName'},
+                    {data: 'topic', name: 'topic'},
                     {data: 'date', name: 'date'},
-                    {data: 'place', name: 'place'},
+                    {data: 'location', name: 'location'},
                     {data: 'status', name: 'status'},
-                    {data: 'note', name: 'note'},
                     {data: 'last_updated', name: 'last_updated'},
                     {data: 'action', name: 'action', orderable: false, searchable: false,},
                 ],

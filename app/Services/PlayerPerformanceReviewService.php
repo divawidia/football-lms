@@ -93,7 +93,7 @@ class PlayerPerformanceReviewService extends Service
             ->addColumn('action', function ($item) use ($match){
                 $review = $this->getPlayerPerformanceMatch($item, $match);
                 $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.performance-reviews.index', $item->hash), icon: 'visibility', btnText: 'View All Player Performance Review');
-                if (isCoach() && $match->status == 'Ongoing' || $match->status == 'Completed') {
+                if (isCoach() && $match->status == 'Ongoing' || isCoach() && $match->status == 'Completed') {
                     ($review)
                         ? $dropdownItem .= '<a class="dropdown-item editPerformanceReview" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.$match->id.'" data-statsId="'.$review->id.'"><span class="material-icons">edit</span> Edit Player Performance Review</a>'
                         : $dropdownItem .= '<a class="dropdown-item addPerformanceReview" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.$match->id.'"><span class="material-icons">add</span> Add Player Performance Review</a>';
@@ -135,7 +135,7 @@ class PlayerPerformanceReviewService extends Service
             ->addColumn('action', function ($item) use ($training){
                 $review = $this->getPlayerPerformanceTraining($item, $training);
                 $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.performance-reviews.index', $item->hash), icon: 'visibility', btnText: 'View All Player Performance Review');
-                if (isCoach() && $training->status == 'Ongoing' || $training->status == 'Completed') {
+                if (isCoach() && $training->status == 'Ongoing' || isCoach() && $training->status == 'Completed') {
                     ($review)
                         ? $dropdownItem .= '<a class="dropdown-item editPerformanceReview" id="'.$item->hash.'" data-trainingId="'.$training->id.'" data-matchId="'.null.'" data-reviewId="'.$review->id.'"><span class="material-icons">edit</span> Edit Player Performance Review</a>'
                         : $dropdownItem .= '<a class="dropdown-item addPerformanceReview" id="'.$item->hash.'" data-trainingId="'.$training->id.'" data-matchId="'.null.'"><span class="material-icons">add</span> Add Player Performance Review</a>';

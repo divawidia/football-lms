@@ -290,11 +290,8 @@ class TeamService extends Service
             ->editColumn('status', function ($item) {
                 return $this->datatablesHelper->eventStatus($item->status);
             })
-            ->editColumn('note', function ($item) {
-                return ($item->pivot->note == null) ? 'No note added' : $item->pivot->note;
-            })
             ->editColumn('last_updated', function ($item) {
-                return $this->datatablesHelper->convertToDatetime($item->pivot->updated_at);
+                return $this->datatablesHelper->convertToDatetime($item->updated_at);
             })
             ->rawColumns(['action','status'])
             ->addIndexColumn()
