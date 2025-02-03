@@ -3,13 +3,6 @@
         <div class="sidebar sidebar-dark-pickled-bluewood sidebar-left">
             <!-- Sidebar Content -->
 
-{{--            <div class="d-flex align-items-center navbar-height">--}}
-{{--                <form action="" class="search-form search-form--black mx-16pt pr-0 pl-16pt">--}}
-{{--                    <input type="text" class="form-control pl-0" placeholder="Search">--}}
-{{--                    <button class="btn" type="submit"><i class="material-icons">search</i></button>--}}
-{{--                </form>--}}
-{{--            </div>--}}
-
             <!-- LOGO -->
             <div class="navbar-brand-box">
                 <a href="{{ route('coach.dashboard') }}" class="logo logo-dark sidebar-brand my-3">
@@ -81,6 +74,18 @@
                                 </a>
                             </li>
                         </ul>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a class="sidebar-menu-button" href="{{ route('training-histories.index') }}">
+                            <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">class</span>
+                            <span class="sidebar-menu-text">Training Histories</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a class="sidebar-menu-button" href="{{ route('match-histories.index') }}">
+                            <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">class</span>
+                            <span class="sidebar-menu-text">Match Histories</span>
+                        </a>
                     </li>
                     <li class="sidebar-menu-item">
                         <a class="sidebar-menu-button" data-toggle="collapse" href="#reportsMenu">
