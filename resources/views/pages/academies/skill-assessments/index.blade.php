@@ -2,13 +2,14 @@
 @section('title')
     Player Skill Assessments
 @endsection
+
 @section('page-title')
     @yield('title')
 @endsection
 
 @section('modal')
-    <x-add-performance-review-modal :routeCreate="route('coach.performance-reviews.store', ['player'=> ':id'])"/>
-    <x-skill-assessments-modal/>
+    <x-modal.players-coaches.add-performance-review/>
+    <x-modal.players-coaches.skill-assessments-modal/>
 @endsection
 
     @section('content')
@@ -17,9 +18,7 @@
                 <h2 class="mb-0">@yield('title')</h2>
                 <ol class="breadcrumb p-0 m-0">
                     <li class="breadcrumb-item"><a href="{{ route('coach.dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">
-                        @yield('title')
-                    </li>
+                    <li class="breadcrumb-item active">@yield('title')</li>
                 </ol>
             </div>
         </div>
@@ -27,24 +26,10 @@
         <div class="container page-section">
             <div class="card">
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover" id="table">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Team</th>
-                                <th>Strong Foot</th>
-                                <th>Age</th>
-                                <th>Gender</th>
-                                <th>Last Updated</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
+                    <x-table
+                        :headers="['#', 'Name', 'Team', 'Strong Foot', 'Age', 'Gender', 'Last Updated', 'Action']"
+                        tableId="table"
+                    />
                 </div>
             </div>
         </div>
@@ -67,12 +52,7 @@
                         { data: 'age', name: 'age' },
                         { data: 'user.gender', name: 'user.gender' },
                         { data: 'lastUpdated', name: 'lastUpdated' },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        },
+                        {data: 'action', name: 'action', orderable: false, searchable: false},
                     ]
                 });
             });
