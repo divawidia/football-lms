@@ -65,20 +65,53 @@ class MatchController extends Controller
         ]);
     }
 
+    public function indexMatchHistories()
+    {
+        if ($this->isAllAdmin()){
+            $events = $this->matchService->matchCalendarHistories();
+            $tableRoute = route('match-histories.admin-index');
+        } elseif ($this->isCoach()){
+            $events = $this->matchService->coachTeamsMatchCalendarHistories($this->getLoggedCoachUser());
+            $tableRoute = route('match-histories.coach-index');
+        } else {
+            $events = $this->matchService->playerTeamsMatchCalendarHistories($this->getLoggedPLayerUser());
+            $tableRoute = route('match-histories.player-index');
+        }
+
+        return view('pages.academies.matches-histories.index', [
+            'events' => $events,
+            'tableRoute' => $tableRoute,
+        ]);
+    }
+
     public function adminIndexMatch(): JsonResponse
     {
-        return $this->matchService->dataTablesMatch();
+        return $this->matchService->adminDataTablesMatch();
     }
     public function coachIndexMatch(): JsonResponse
     {
-        $coach = $this->getLoggedCoachUser();
-            return $this->matchService->coachTeamsDataTablesMatch($coach);
+            return $this->matchService->coachTeamsDataTablesMatch($this->getLoggedCoachUser());
     }
     public function playerIndexMatch(): JsonResponse
     {
-        $player = $this->getLoggedPLayerUser();
-        return $this->matchService->playerTeamsDataTablesMatch($player);
+        return $this->matchService->playerTeamsDataTablesMatch($this->getLoggedPLayerUser());
     }
+
+
+    public function adminIndexMatchHistories(): JsonResponse
+    {
+        return $this->matchService->adminDataTablesMatchHistories();
+    }
+    public function coachIndexMatchHistories(): JsonResponse
+    {
+        return $this->matchService->coachTeamsDataTablesMatchHistories($this->getLoggedCoachUser());
+    }
+    public function playerIndexMatchHistories(): JsonResponse
+    {
+        return $this->matchService->playerTeamsDataTablesMatchHistories($this->getLoggedPLayerUser());
+    }
+
+
 
     public function createMatch()
     {

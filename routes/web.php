@@ -373,10 +373,10 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     });
 
     Route::prefix('match-histories')->name('match-histories.')->group(function () {
-        Route::get('', [TrainingController::class, 'index'])->middleware('role:player|coach|admin|Super-Admin')->name('index');
-        Route::get('admins-trainings', [TrainingController::class, 'adminIndexTraining'])->middleware('role:admin|Super-Admin')->name('admin-index');
-        Route::get('coaches-trainings', [TrainingController::class, 'coachIndexTraining'])->middleware('role:coach')->name('coach-index');
-        Route::get('players-trainings', [TrainingController::class, 'playerIndexTraining'])->middleware('role:player')->name('player-index');
+        Route::get('', [MatchController::class, 'indexMatchHistories'])->middleware('role:player|coach|admin|Super-Admin')->name('index');
+        Route::get('admins-trainings', [MatchController::class, 'adminIndexMatchHistories'])->middleware('role:admin|Super-Admin')->name('admin-index');
+        Route::get('coaches-trainings', [MatchController::class, 'coachIndexMatchHistories'])->middleware('role:coach')->name('coach-index');
+        Route::get('players-trainings', [MatchController::class, 'playerIndexMatchHistories'])->middleware('role:player')->name('player-index');
     });
 
     Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
