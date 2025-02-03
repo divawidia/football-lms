@@ -60,7 +60,6 @@ class TrainingService extends Service
     {
         return $this->trainingRepository->getAll(['team'], team: $team, status: ['Scheduled', 'Ongoing'], startDate: $startDate, endDate: $endDate);
     }
-
     public function coachTeamsIndexTraining(Coach $coach, $startDate = null, $endDate = null): Collection
     {
         return $this->trainingRepository->getByRelation($coach, ['team'], ['Scheduled', 'Ongoing'], startDate: $startDate, endDate: $endDate);
@@ -69,6 +68,21 @@ class TrainingService extends Service
     {
         return $this->trainingRepository->getByRelation($player, ['team'],  ['Scheduled', 'Ongoing'], startDate: $startDate, endDate: $endDate);
     }
+
+
+    public function indexTrainingHistories(Team $team = null, $startDate = null, $endDate = null): Collection
+    {
+        return $this->trainingRepository->getAll(['team'], team: $team,  startDate: $startDate, endDate: $endDate);
+    }
+    public function coachTeamsIndexTrainingHistories(Coach $coach, $startDate = null, $endDate = null): Collection
+    {
+        return $this->trainingRepository->getByRelation($coach, ['team'], startDate: $startDate, endDate: $endDate);
+    }
+    public function playerTeamsIndexTrainingHistories(Player $player, $startDate = null, $endDate = null): Collection
+    {
+        return $this->trainingRepository->getByRelation($player, ['team'], startDate: $startDate, endDate: $endDate);
+    }
+
 
     public function makeTrainingCalendar($trainingsData): array
     {
@@ -90,18 +104,36 @@ class TrainingService extends Service
         $trainings = $this->indexTraining();
         return $this->makeTrainingCalendar($trainings);
     }
-
     public function coachTeamsTrainingCalendar(Coach $coach): array
     {
         $trainings = $this->coachTeamsIndexTraining($coach);
         return $this->makeTrainingCalendar($trainings);
     }
-
     public function playerTeamsTrainingCalendar(Player $player): array
     {
         $trainings = $this->playerTeamsIndexTraining($player);
         return $this->makeTrainingCalendar($trainings);
     }
+
+
+    public function trainingHistoriesCalendar(): array
+    {
+        $trainings = $this->indexTrainingHistories();
+        return $this->makeTrainingCalendar($trainings);
+    }
+
+    public function coachTeamsTrainingHistoriesCalendar(Coach $coach): array
+    {
+        $trainings = $this->coachTeamsIndexTrainingHistories($coach);
+        return $this->makeTrainingCalendar($trainings);
+    }
+
+    public function playerTeamsTrainingHistoriesCalendar(Player $player): array
+    {
+        $trainings = $this->playerTeamsIndexTrainingHistories($player);
+        return $this->makeTrainingCalendar($trainings);
+    }
+
 
     public function makeDataTablesTraining($trainingData): JsonResponse
     {
@@ -136,23 +168,40 @@ class TrainingService extends Service
             ->make();
     }
 
-    public function dataTablesTraining(): JsonResponse
+    public function adminDataTablesTraining(): JsonResponse
     {
         $data = $this->indexTraining();
         return $this->makeDataTablesTraining($data);
     }
-
     public function coachTeamsDataTablesTraining(Coach $coach): JsonResponse
     {
         $data = $this->coachTeamsIndexTraining($coach);
         return $this->makeDataTablesTraining($data);
     }
-
     public function playerTeamsDataTablesTraining(Player $player): JsonResponse
     {
         $data = $this->playerTeamsIndexTraining($player);
         return $this->makeDataTablesTraining($data);
     }
+
+
+    public function adminTrainingHistories(): JsonResponse
+    {
+        $data = $this->indexTrainingHistories();
+        return $this->makeDataTablesTraining($data);
+    }
+    public function coachTeamsDataTablesTrainingHistories(Coach $coach): JsonResponse
+    {
+        $data = $this->coachTeamsIndexTrainingHistories($coach);
+        return $this->makeDataTablesTraining($data);
+    }
+    public function playerTeamsDataTablesTrainingHistories(Player $player): JsonResponse
+    {
+        $data = $this->playerTeamsIndexTrainingHistories($player);
+        return $this->makeDataTablesTraining($data);
+    }
+
+
 
     public function dataTablesPlayerSkills(Training $training): JsonResponse
     {
