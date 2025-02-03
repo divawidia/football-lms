@@ -277,6 +277,23 @@ class TeamService extends Service
         return $this->coachRepository->getCoachNotJoinSpecificTeam($team);
     }
 
+    public function teamsAllParticipants(Team $team)
+    {
+        return $this->userRepository->allTeamsParticipant($team->team);
+    }
+    public function teamsCoachesAdmins(Team $team)
+    {
+        return $this->userRepository->allTeamsParticipant($team->team, players: false);
+    }
+    public function teamsPlayers(Team $team)
+    {
+        return $this->userRepository->allTeamsParticipant($team->team, admins: false, coaches: false);
+    }
+    public function teamsCoaches(Team $team)
+    {
+        return $this->userRepository->allTeamsParticipant($team->team, admins: false, players: false);
+    }
+
     public function teamTrainingHistories(Team $team){
         $data = $this->trainingRepository->getByRelation($team, status:['Completed'], orderDirection: 'desc');
 
@@ -313,7 +330,7 @@ class TeamService extends Service
                 if ($item->matchType == 'Internal Match' && $item->awayTeam) {
                     return $this->datatablesHelper->name($item->awayTeam->logo, $item->awayTeam->teamName, $item->awayTeam->ageGroup, route('team-managements.show', $item->awayTeam->hash));
                 }
-                elseif ($item->externalTeam) {
+                else {
                     return $item->externalTeam->teamName;
                 }
             })
@@ -375,17 +392,6 @@ class TeamService extends Service
         Notification::send($this->userRepository->getAllAdminUsers(),new TeamUpdatedNotification($loggedUser, $team));
 
         return $team->update($teamData);
-    }
-
-    public function teamsCoaches(Team $team)
-    {
-        $coachesIds = collect($team->coaches)->pluck('id')->all();
-        return $this->userRepository->getInArray('coach', $coachesIds);
-    }
-    public function teamsPlayers(Team $team)
-    {
-        $playersIds = collect($team->players)->pluck('id')->all();
-        return $this->userRepository->getInArray('player', $playersIds);
     }
 
     public function updatePlayerTeam(array $teamData, Team $team, $loggedUser): Team
