@@ -1,12 +1,14 @@
 @extends('layouts.master')
-@section('title')
-    @if($schedule->matchType == 'External Match')
-        Match {{ $homeTeam->teamName }} Vs {{ $schedule->externalTeam->teamName }}
-    @else
-        Match {{ $homeTeam->teamName }} Vs {{ $awayTeam->teamName }}
-    @endif
 
+@section('title')
+    Match {{ $homeTeam->teamName }} Vs
+    @if($schedule->matchType == 'External Match')
+         {{ $schedule->externalTeam->teamName }}
+    @else
+        {{ $awayTeam->teamName }}
+    @endif
 @endsection
+
 @section('page-title')
     @yield('title')
 @endsection
@@ -19,11 +21,11 @@
     <x-modal.matches.create-match-note :match="$schedule"/>
     <x-modal.matches.edit-match-note :match="$schedule"/>
 
-    <x-skill-assessments-modal/>
-    <x-edit-skill-assessments-modal/>
+    <x-modal.players-coaches.skill-assessments-modal/>
+    <x-modal.players-coaches.edit-skill-assessments-modal/>
 
-    <x-modal.matches.add-performance-review/>
-    <x-modal.matches.edit-performance-review/>
+    <x-modal.players-coaches.add-performance-review/>
+    <x-modal.players-coaches.edit-performance-review/>
 
     <!-- Modal add team scorer -->
     <x-modal.matches.add-team-scorer :match="$schedule"/>
@@ -621,12 +623,12 @@
                     <div class="page-separator__text">Attendance Overview</div>
                 </div>
                 <div class="row card-group-row">
-                    @include('components.cards.stats-card', ['title' => 'Total Participants', 'data'=>$homeTeamAttendance['totalParticipant'], 'dataThisMonth'=>null])
-                    @include('components.cards.stats-card', ['title' => 'Attended', 'data'=>$homeTeamAttendance['totalAttend'], 'dataThisMonth'=>null])
-                    @include('components.cards.stats-card', ['title' => "Didn't Attended", 'data'=>$homeTeamAttendance['totalDidntAttend'], 'dataThisMonth'=>null])
-                    @include('components.cards.stats-card', ['title' => "Illness", 'data'=>$homeTeamAttendance['totalIllness'], 'dataThisMonth'=>null])
-                    @include('components.cards.stats-card', ['title' => "Injured", 'data'=>$homeTeamAttendance['totalInjured'], 'dataThisMonth'=>null])
-                    @include('components.cards.stats-card', ['title' => "Others", 'data'=>$homeTeamAttendance['totalOthers'], 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => 'Total Participants', 'data'=>$homeTeamTotalParticipant, 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => 'Attended', 'data'=>$homeTeamTotalAttended, 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => "Didn't Attended", 'data'=>$homeTeamTotalDidntAttend, 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => "Illness", 'data'=>$homeTeamTotalIllness, 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => "Injured", 'data'=>$homeTeamTotalInjured, 'dataThisMonth'=>null])
+                    @include('components.cards.stats-card', ['title' => "Others", 'data'=>$homeTeamTotalOthers, 'dataThisMonth'=>null])
                 </div>
 
                 {{--    Player Attendance    --}}
@@ -662,7 +664,7 @@
                 @endif
 
                 @foreach($schedule->notes as $note)
-                    <x-cards.event-note :note="$note" :match="$schedule"/>
+                    <x-cards.match-note-card :note="$note" :match="$schedule"/>
                 @endforeach
 
             </div>
@@ -673,8 +675,7 @@
                     <div class="page-separator__text">player skills evaluation</div>
                 </div>
                 @if(isAllAdmin() || isCoach())
-                    <x-tables.player-skill-event :match="$schedule" :teamId="$homeTeam->id"
-                                                 tableId="playerSkillsTable"/>
+                    <x-tables.player-skill-event :route="route('match-schedules.player-skills', $schedule->hash)" :teamId="$homeTeam->id"/>
                 @elseif(isPlayer())
                     <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
                 @endif
@@ -686,12 +687,10 @@
                     <div class="page-separator__text">player performance review</div>
                 </div>
                 @if(isAllAdmin() || isCoach())
-                    <x-tables.player-performance-review-event :match="$schedule" :teamId="$homeTeam->id"
-                                                              tableId="playerPerformanceReviewTable"/>
+                    <x-tables.player-performance-review-event :route="route('match-schedules.player-performance-review', $schedule->hash)" :teamId="$homeTeam->id"/>
                 @elseif(isPlayer())
                     @if(count($data['playerPerformanceReviews'])==0)
-                        <x-warning-alert
-                            text="You haven't get any performance review from your coach for this match session"/>
+                        <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
                     @endif
                     @foreach($data['playerPerformanceReviews'] as $review)
                         <x-player-event-performance-review :review="$review"/>
@@ -721,12 +720,12 @@
                         <div class="page-separator__text">Attendance Overview</div>
                     </div>
                     <div class="row card-group-row">
-                        @include('components.cards.stats-card', ['title' => 'Total Participants', 'data'=>$awayTeamAttendance['totalParticipant'], 'dataThisMonth'=>null])
-                        @include('components.cards.stats-card', ['title' => 'Attended', 'data'=>$awayTeamAttendance['totalAttend'], 'dataThisMonth'=>null])
-                        @include('components.cards.stats-card', ['title' => "Didn't Attended", 'data'=>$awayTeamAttendance['totalDidntAttend'], 'dataThisMonth'=>null])
-                        @include('components.cards.stats-card', ['title' => "Illness", 'data'=>$awayTeamAttendance['totalIllness'], 'dataThisMonth'=>null])
-                        @include('components.cards.stats-card', ['title' => "Injured", 'data'=>$awayTeamAttendance['totalInjured'], 'dataThisMonth'=>null])
-                        @include('components.cards.stats-card', ['title' => "Others", 'data'=>$awayTeamAttendance['totalOthers'], 'dataThisMonth'=>null])
+                        @include('components.cards.stats-card', ['title' => 'Total Participants', 'data'=>$awayTeamTotalParticipant, 'dataThisMonth'=>null])
+                        @include('components.cards.stats-card', ['title' => 'Attended', 'data'=>$awayTeamTotalAttended, 'dataThisMonth'=>null])
+                        @include('components.cards.stats-card', ['title' => "Didn't Attended", 'data'=>$awayTeamTotalDidntAttend, 'dataThisMonth'=>null])
+                        @include('components.cards.stats-card', ['title' => "Illness", 'data'=>$awayTeamTotalIllness, 'dataThisMonth'=>null])
+                        @include('components.cards.stats-card', ['title' => "Injured", 'data'=>$awayTeamTotalInjured, 'dataThisMonth'=>null])
+                        @include('components.cards.stats-card', ['title' => "Others", 'data'=>$awayTeamTotalOthers, 'dataThisMonth'=>null])
                     </div>
 
                     {{--    Player Attendance    --}}
@@ -759,7 +758,7 @@
                         <x-warning-alert text="Match session note haven't created yet by coach"/>
                     @endif
                     @foreach($awayTeamNotes as $note)
-                        <x-cards.event-note :note="$note" :match="$schedule"/>
+                        <x-cards.match-note-card :note="$note" :match="$schedule"/>
                     @endforeach
                 </div>
 
@@ -770,9 +769,7 @@
                         </div>
                     </div>
                     @if(isAllAdmin() || isCoach())
-                        <x-tables.player-skill-event :match="$schedule"
-                                                     tableId="team{{ $awayTeam->id }}PlayerSkillsTable"
-                                                     :teamId="$awayTeam->id"/>
+                        <x-tables.player-skill-event :route="route('match-schedules.player-skills', $schedule->hash)" tableId="team{{ $awayTeam->id }}PlayerSkillsTable" :teamId="$awayTeam->id"/>
                     @elseif(isPlayer())
                         <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
                     @endif
@@ -784,9 +781,7 @@
                         <div class="page-separator__text">player performance review</div>
                     </div>
                     @if(isAllAdmin() || isCoach())
-                        <x-tables.player-performance-review-event :match="$schedule"
-                                                                  tableId="team{{ $awayTeam->id }}PlayerPerformanceReviewTable"
-                                                                  :teamId="$awayTeam->id"/>
+                        <x-tables.player-performance-review-event :route="route('match-schedules.player-performance-review', $schedule->hash)" tableId="team{{ $awayTeam->id }}PlayerPerformanceReviewTable" :teamId="$awayTeam->id"/>
                     @elseif(isPlayer())
                         @if(count($data['playerPerformanceReviews'])==0)
                             <x-warning-alert

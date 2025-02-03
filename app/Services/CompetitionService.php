@@ -106,8 +106,7 @@ class CompetitionService extends Service
 
     public function competitionMatches(Competition $competition)
     {
-        $data = $competition->matches()->with('teams', 'externalTeam')->get();
-        return Datatables::of($data)
+        return Datatables::of($competition->matches)
             ->addColumn('action', function ($item) {
                 $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('match-schedules.show', $item->hash), icon: 'visibility', btnText: 'View match session');
                 if (isAllAdmin()){

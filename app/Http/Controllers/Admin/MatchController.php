@@ -104,12 +104,13 @@ class MatchController extends Controller
         return redirect()->route('match-schedules.index');
     }
 
-    public function showMatch(MatchModel $schedule)
+    public function showMatch(MatchModel $match)
     {
         $playerSkills = null;
         $playerPerformanceReviews = null;
 
-        $awayTeam = $this->matchService->awayTeamMatch($schedule);
+        $awayTeam = $this->matchService->awayTeamMatch($match);
+        $homeTeam = $this->matchService->homeTeamMatch($match);
         $awayPlayers = null;
         $awayCoaches = null;
         $awayTeamMatchScorers = null;
@@ -122,17 +123,17 @@ class MatchController extends Controller
         $awayTeamNotes = null;
         $userTeams = null;
 
-        if ($schedule->matchType == 'Internal Match'){
-            $awayPlayers = $this->matchService->awayTeamPlayers($schedule);
-            $awayCoaches = $this->matchService->awayTeamCoaches($schedule);
-            $awayTeamMatchScorers = $this->matchService->awayTeamMatchScorers($schedule);
-            $awayTeamTotalParticipant =$this->matchService->totalParticipant($schedule, $schedule->awayTeam);
-            $awayTeamTotalIllness = $this->matchService->totalIllness($schedule, $schedule->awayTeam);
-            $awayTeamTotalOthers = $this->matchService->totalOther($schedule, $schedule->awayTeam);
-            $awayTeamTotalInjured = $this->matchService->totalInjured($schedule, $schedule->awayTeam);
-            $awayTeamTotalDidntAttend = $this->matchService->totalDidntAttend($schedule, $schedule->awayTeam);
-            $awayTeamTotalAttended = $this->matchService->totalAttended($schedule, $schedule->awayTeam);
-            $awayTeamNotes = $this->matchService->awayTeamNotes($schedule);
+        if ($match->matchType == 'Internal Match'){
+            $awayPlayers = $this->matchService->awayTeamPlayers($match);
+            $awayCoaches = $this->matchService->awayTeamCoaches($match);
+            $awayTeamMatchScorers = $this->matchService->awayTeamMatchScorers($match);
+            $awayTeamTotalParticipant =$this->matchService->totalParticipant($match, $awayTeam);
+            $awayTeamTotalIllness = $this->matchService->totalIllness($match, $awayTeam);
+            $awayTeamTotalOthers = $this->matchService->totalOther($match, $awayTeam);
+            $awayTeamTotalInjured = $this->matchService->totalInjured($match, $awayTeam);
+            $awayTeamTotalDidntAttend = $this->matchService->totalDidntAttend($match, $awayTeam);
+            $awayTeamTotalAttended = $this->matchService->totalAttended($match, $awayTeam);
+            $awayTeamNotes = $this->matchService->awayTeamNotes($match);
 
             if ($this->isCoach()) {
                 $userTeams = collect($this->getLoggedCoachUser()->teams)->pluck('id')->all();
@@ -144,24 +145,25 @@ class MatchController extends Controller
         }
 
         if ($this->isPlayer()){
-            $playerSkills = $this->matchService->playerSkills($schedule, $this->getLoggedPLayerUser());
-            $playerPerformanceReviews = $this->matchService->playerPerformanceReviews($schedule, $this->getLoggedPLayerUser());
+            $playerSkills = $this->matchService->playerSkills($match, $this->getLoggedPLayerUser());
+            $playerPerformanceReviews = $this->matchService->playerPerformanceReviews($match, $this->getLoggedPLayerUser());
         }
 
         return view('pages.academies.schedules.matches.detail', [
+            'schedule' => $match,
             'playerSkills' => $playerSkills,
             'playerPerformanceReviews' => $playerPerformanceReviews,
-            'homeTeam' => $this->matchService->homeTeamMatch($schedule),
-            'homePlayers' => $this->matchService->homeTeamPlayers($schedule),
-            'homeCoaches' => $this->matchService->homeTeamCoaches($schedule),
-            'homeTeamMatchScorers' => $this->matchService->homeTeamMatchScorers($schedule),
-            'homeTeamTotalParticipant'=> $this->matchService->totalParticipant($schedule),
-            'homeTeamTotalIllness' => $this->matchService->totalIllness($schedule),
-            'homeTeamTotalOthers' => $this->matchService->totalOther($schedule),
-            'homeTeamTotalInjured' => $this->matchService->totalInjured($schedule),
-            'homeTeamTotalDidntAttend' => $this->matchService->totalDidntAttend($schedule),
-            'homeTeamTotalAttended' => $this->matchService->totalAttended($schedule),
-            'homeTeamNotes' => $this->matchService->homeTeamNotes($schedule),
+            'homeTeam' => $this->matchService->homeTeamMatch($match),
+            'homePlayers' => $this->matchService->homeTeamPlayers($match),
+            'homeCoaches' => $this->matchService->homeTeamCoaches($match),
+            'homeTeamMatchScorers' => $this->matchService->homeTeamMatchScorers($match),
+            'homeTeamTotalParticipant'=> $this->matchService->totalParticipant($match),
+            'homeTeamTotalIllness' => $this->matchService->totalIllness($match, $homeTeam),
+            'homeTeamTotalOthers' => $this->matchService->totalOther($match, $homeTeam),
+            'homeTeamTotalInjured' => $this->matchService->totalInjured($match, $homeTeam),
+            'homeTeamTotalDidntAttend' => $this->matchService->totalDidntAttend($match, $homeTeam),
+            'homeTeamTotalAttended' => $this->matchService->totalAttended($match, $homeTeam),
+            'homeTeamNotes' => $this->matchService->homeTeamNotes($match),
             'awayTeam' => $awayTeam,
             'awayCoaches' => $awayCoaches,
             'awayPlayers' => $awayPlayers,
@@ -177,81 +179,81 @@ class MatchController extends Controller
         ]);
     }
 
-    public function getMatchDetail(MatchModel $schedule): JsonResponse
+    public function getMatchDetail(MatchModel $match): JsonResponse
     {
-        $data = $this->matchService->getMatchDetail($schedule);
+        $data = $this->matchService->getMatchDetail($match);
         return ApiResponse::success($data);
     }
 
-    public function getTeamMatchStats(Request $request, MatchModel $schedule): JsonResponse
+    public function getTeamMatchStats(Request $request, MatchModel $match): JsonResponse
     {
         $team = $request->input('team');
-        $data = $this->matchService->getTeamMatchStats($schedule, $team);
+        $data = $this->matchService->getTeamMatchStats($match, $team);
         return ApiResponse::success($data);
     }
 
-    public function editMatch(MatchModel $schedule)
+    public function editMatch(MatchModel $match)
     {
         return view('pages.academies.schedules.matches.edit', [
             'competitions' => $this->competitionService->getActiveCompetition(),
-            'data' => $schedule
+            'data' => $match
         ]);
     }
 
-    public function updateMatch(CompetitionMatchRequest $request, MatchModel $schedule): JsonResponse
+    public function updateMatch(CompetitionMatchRequest $request, MatchModel $match): JsonResponse
     {
         $data = $request->validated();
-        $this->matchService->updateMatch($data, $schedule);
+        $this->matchService->updateMatch($data, $match);
         return ApiResponse::success(message: 'Match session successfully updated!');
     }
 
-    public function status(MatchModel $schedule, $status): JsonResponse
+    public function status(MatchModel $match, $status): JsonResponse
     {
         try {
-            $this->matchService->setStatus($schedule, $status);
-            return ApiResponse::success(message: $schedule->eventType.' session status successfully mark to '.$status.'!');
+            $this->matchService->setStatus($match, $status);
+            return ApiResponse::success(message: $match->eventType.' session status successfully mark to '.$status.'!');
 
         } catch (Exception $e) {
-            Log::error('Error marking '.$schedule->eventType.' session as '.$status.': ' . $e->getMessage());
-            return ApiResponse::error('An error occurred while marking the competition '.$schedule->eventType.' session as '.$status.'.');
+            Log::error('Error marking '.$match->eventType.' session as '.$status.': ' . $e->getMessage());
+            return ApiResponse::error('An error occurred while marking the competition '.$match->eventType.' session as '.$status.'.');
         }
     }
 
-    public function scheduled(MatchModel $schedule): JsonResponse
+    public function scheduled(MatchModel $match): JsonResponse
     {
-        if ($schedule->startDatetime < Carbon::now()) {
+        if ($match->startDatetime < Carbon::now()) {
             return ApiResponse::error("You cannot set the match session to scheduled because the match date has passed, please change the match start date to a future date.");
         } else {
-            return $this->status($schedule, 'scheduled');
+            return $this->status($match, 'scheduled');
         }
     }
 
-    public function ongoing(MatchModel $schedule): JsonResponse
+    public function ongoing(MatchModel $match): JsonResponse
     {
-        return $this->status($schedule, 'ongoing');
+        return $this->status($match, 'ongoing');
     }
-    public function completed(MatchModel $schedule): JsonResponse
+    public function completed(MatchModel $match): JsonResponse
     {
-        return $this->status($schedule, 'completed');
+        return $this->status($match, 'completed');
     }
-    public function cancelled(MatchModel $schedule): JsonResponse
+    public function cancelled(MatchModel $match): JsonResponse
     {
-        return $this->status($schedule, 'cancelled');
+        return $this->status($match, 'cancelled');
     }
 
-    public function endMatch(MatchModel $schedule)
+    public function endMatch(MatchModel $match)
     {
-        $this->matchService->endMatch($schedule);
+        $this->matchService->endMatch($match);
 
         $text = 'Match status successfully ended!';
         Alert::success($text);
-        return redirect()->route('match-schedules.show', $schedule->id);
+        return redirect()->route('match-schedules.show', $match->id);
     }
 
-    public function getPlayerAttendance(MatchModel $schedule, Player $player): JsonResponse
+    public function getPlayerAttendance(MatchModel $match, Player $player): JsonResponse
     {
         try {
-            $data = $this->matchService->getPlayerAttendance($schedule, $player);
+            $data = $this->matchService->getPlayerAttendance($match, $player);
             $data = [
                 'user' => $data->user,
                 'playerAttendance'=>$data->pivot
@@ -265,10 +267,10 @@ class MatchController extends Controller
         }
     }
 
-    public function getCoachAttendance(MatchModel $schedule, Coach $coach): JsonResponse
+    public function getCoachAttendance(MatchModel $match, Coach $coach): JsonResponse
     {
         try {
-            $data = $this->matchService->getCoachAttendance($schedule, $coach);
+            $data = $this->matchService->getCoachAttendance($match, $coach);
             $data = [
                 'user' => $data->user,
                 'coachAttendance'=>$data->pivot
@@ -282,11 +284,11 @@ class MatchController extends Controller
         }
     }
 
-    public function updatePlayerAttendance(AttendanceStatusRequest $request, MatchModel $schedule, Player $player): JsonResponse
+    public function updatePlayerAttendance(AttendanceStatusRequest $request, MatchModel $match, Player $player): JsonResponse
     {
         $data = $request->validated();
         try {
-            $this->matchService->updatePlayerAttendanceStatus($data, $schedule, $player);
+            $this->matchService->updatePlayerAttendanceStatus($data, $match, $player);
             $message = "Player ".$this->getUserFullName($player->user)."'s attendance successfully set to ".$data['attendanceStatus'].".";
             return ApiResponse::success(message:  $message);
 
@@ -297,11 +299,11 @@ class MatchController extends Controller
         }
     }
 
-    public function updateCoachAttendance(AttendanceStatusRequest $request, MatchModel $schedule, Coach $coach): JsonResponse
+    public function updateCoachAttendance(AttendanceStatusRequest $request, MatchModel $match, Coach $coach): JsonResponse
     {
         $data = $request->validated();
         try {
-            $this->matchService->updateCoachAttendanceStatus($data, $schedule, $coach);
+            $this->matchService->updateCoachAttendanceStatus($data, $match, $coach);
             $message = "Coach ".$this->getUserFullName($coach->user)."'s attendance successfully set to ".$data['attendanceStatus'].".";
             return ApiResponse::success(message:  $message);
         } catch (Exception $e){
@@ -311,13 +313,13 @@ class MatchController extends Controller
         }
     }
 
-    public function createNote(ScheduleNoteRequest $request, MatchModel $schedule): JsonResponse
+    public function createNote(ScheduleNoteRequest $request, MatchModel $match): JsonResponse
     {
         $data = $request->validated();
         $loggedUser = $this->getLoggedUser();
         try {
-            $this->matchService->createNote($data, $schedule, $loggedUser);
-            $message = "Note for this ".$schedule->eventType." session successfully created.";
+            $this->matchService->createNote($data, $match, $loggedUser);
+            $message = "Note for this ".$match->eventType." session successfully created.";
             return ApiResponse::success(message:  $message);
 
         } catch (Exception $e){
@@ -327,7 +329,7 @@ class MatchController extends Controller
         }
     }
 
-    public function editNote(MatchModel $schedule, MatchNote $note): JsonResponse
+    public function editNote(MatchModel $match, MatchNote $note): JsonResponse
     {
         try {
             $message = "Note data successfully retrieved.";
@@ -340,11 +342,11 @@ class MatchController extends Controller
         }
     }
 
-    public function updateNote(ScheduleNoteRequest $request, MatchModel $schedule, MatchNote $note): JsonResponse
+    public function updateNote(ScheduleNoteRequest $request, MatchModel $match, MatchNote $note): JsonResponse
     {
         $data = $request->validated();
         try {
-            $this->matchService->updateNote($data, $schedule, $note, $this->getLoggedUser());
+            $this->matchService->updateNote($data, $match, $note, $this->getLoggedUser());
             $message = "Note successfully updated.";
             return ApiResponse::success(message:  $message);
 
@@ -354,10 +356,10 @@ class MatchController extends Controller
             return ApiResponse::error($message, null, $e->getCode());
         }
     }
-    public function destroyNote(MatchModel $schedule, MatchNote $note): JsonResponse
+    public function destroyNote(MatchModel $match, MatchNote $note): JsonResponse
     {
         try {
-            $this->matchService->destroyNote($schedule, $note, $this->getLoggedUser());
+            $this->matchService->destroyNote($match, $note, $this->getLoggedUser());
             $message = "Note for this session successfully deleted.";
             return ApiResponse::success(message:  $message);
         } catch (Exception $e){
@@ -391,24 +393,24 @@ class MatchController extends Controller
         return ApiResponse::success($data, message:  "Successfully retrieved friendly match team data");
     }
 
-    public function getEventPLayers(Request $request, MatchModel $schedule): JsonResponse
+    public function getEventPLayers(Request $request, MatchModel $match): JsonResponse
     {
         $team = $request->input('team');
         $exceptPlayerId = $request->input('exceptPlayerId');
 
-        $data = $this->matchService->getMatchPLayers($schedule, $team, $exceptPlayerId);
+        $data = $this->matchService->getMatchPLayers($match, $team, $exceptPlayerId);
 
         return ApiResponse::success($data, message:  "Successfully retrieved player data");
     }
 
-    public function storeMatchScorer(MatchScoreRequest $request, MatchModel $schedule): JsonResponse
+    public function storeMatchScorer(MatchScoreRequest $request, MatchModel $match): JsonResponse
     {
         $data = $request->validated();
         try {
             if ($data['dataTeam'] == 'awayTeam') {
-                $scorer = $this->matchService->storeMatchScorer($data, $schedule, true);
+                $scorer = $this->matchService->storeMatchScorer($data, $match, true);
             } else {
-                $scorer = $this->matchService->storeMatchScorer($data, $schedule);
+                $scorer = $this->matchService->storeMatchScorer($data, $match);
             }
 
             $message = $this->getUserFullName($scorer->player->user)."'s score successfully added.";
@@ -421,13 +423,13 @@ class MatchController extends Controller
         }
     }
 
-    public function destroyMatchScorer(MatchModel $schedule, MatchScore $scorer): JsonResponse
+    public function destroyMatchScorer(MatchModel $match, MatchScore $scorer): JsonResponse
     {
         try {
-            if ($scorer->teamId == $schedule->awayTeamId) {
-                $this->matchService->destroyMatchScorer($schedule, $scorer, true);
+            if ($scorer->teamId == $match->awayTeamId) {
+                $this->matchService->destroyMatchScorer($match, $scorer, true);
             } else {
-                $this->matchService->destroyMatchScorer($schedule, $scorer);
+                $this->matchService->destroyMatchScorer($match, $scorer);
             }
 
             $message = $this->getUserFullName($scorer->player->user)."'s score successfully deleted.";
@@ -440,28 +442,28 @@ class MatchController extends Controller
         }
     }
 
-    public function updateMatchStats(MatchStatsRequest $request, MatchModel $schedule): JsonResponse
+    public function updateMatchStats(MatchStatsRequest $request, MatchModel $match): JsonResponse
     {
         $data = $request->validated();
-        $this->matchService->updateMatchStats($data, $schedule);
+        $this->matchService->updateMatchStats($data, $match);
         return ApiResponse::success(message:  "Team match stats successfully updated.");
     }
 
-    public function updateExternalTeamScore(ExternalTeamScoreRequest $request, MatchModel $schedule): JsonResponse
+    public function updateExternalTeamScore(ExternalTeamScoreRequest $request, MatchModel $match): JsonResponse
     {
         $data = $request->validated();
-        $this->matchService->updateExternalTeamScore($data, $schedule);
-        return ApiResponse::success(message:  "Team ".$schedule->externalTeam->teamName." score successfully updated.");
+        $this->matchService->updateExternalTeamScore($data, $match);
+        return ApiResponse::success(message:  "Team ".$match->externalTeam->teamName." score successfully updated.");
     }
 
-    public function storeOwnGoal(MatchScoreRequest $request, MatchModel $schedule): JsonResponse
+    public function storeOwnGoal(MatchScoreRequest $request, MatchModel $match): JsonResponse
     {
         $data = $request->validated();
         try {
             if ($data['dataTeam'] == 'awayTeam') {
-                $ownGoal = $this->matchService->storeOwnGoal($data, $schedule, true);
+                $ownGoal = $this->matchService->storeOwnGoal($data, $match, true);
             } else {
-                $ownGoal = $this->matchService->storeOwnGoal($data, $schedule);
+                $ownGoal = $this->matchService->storeOwnGoal($data, $match);
             }
             $message = $this->getUserFullName($ownGoal->player->user)."'s own goal successfully added.";
             return ApiResponse::success(message:  $message);
@@ -473,13 +475,13 @@ class MatchController extends Controller
         }
     }
 
-    public function destroyOwnGoal(MatchModel $schedule, MatchScore $scorer): JsonResponse
+    public function destroyOwnGoal(MatchModel $match, MatchScore $scorer): JsonResponse
     {
         try {
-            if ($scorer->teamId == $schedule->awayTeamId) {
-                $this->matchService->destroyOwnGoal($schedule, $scorer, true);
+            if ($scorer->teamId == $match->awayTeamId) {
+                $this->matchService->destroyOwnGoal($match, $scorer, true);
             } else {
-                $this->matchService->destroyOwnGoal($schedule, $scorer);
+                $this->matchService->destroyOwnGoal($match, $scorer);
             }
             $message = $this->getUserFullName($scorer->player->user)."'s own goal successfully deleted.";
             return ApiResponse::success(message:  $message);
@@ -491,23 +493,23 @@ class MatchController extends Controller
         }
     }
 
-    public function indexPlayerMatchStats(Request $request, MatchModel $schedule): JsonResponse
+    public function indexPlayerMatchStats(Request $request, MatchModel $match): JsonResponse
     {
         $teamId = $request->input('teamId');
-        return $this->matchService->dataTablesPlayerStats($schedule, $teamId);
+        return $this->matchService->dataTablesPlayerStats($match, $teamId);
     }
 
-    public function getPlayerStats(MatchModel $schedule, Player $player): JsonResponse
+    public function getPlayerStats(MatchModel $match, Player $player): JsonResponse
     {
-        $player = $this->matchService->getPlayerStats($schedule, $player);
+        $player = $this->matchService->getPlayerStats($match, $player);
         return ApiResponse::success($player, message:  "Successfully retrieved player stats");
     }
 
-    public function updatePlayerStats(PlayerMatchStatsRequest $request, MatchModel $schedule, Player $player): JsonResponse
+    public function updatePlayerStats(PlayerMatchStatsRequest $request, MatchModel $match, Player $player): JsonResponse
     {
         $data = $request->validated();
         try {
-            $this->matchService->updatePlayerStats($data, $schedule, $player);
+            $this->matchService->updatePlayerStats($data, $match, $player);
             $message = "Player ".$this->getUserFullName($player->user)." stats successfully updated.";
             return ApiResponse::success(message:  $message);
 
@@ -521,23 +523,23 @@ class MatchController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MatchModel $schedule): JsonResponse
+    public function destroy(MatchModel $match): JsonResponse
     {
         try {
-            $message = "Match ".$schedule->homeTeam->teamName." Vs. ".$this->getAwayTeamName($schedule)." successfully deleted.";
-            $data = $this->matchService->destroy($schedule, $this->getLoggedUser());
+            $message = "Match ".$match->homeTeam->teamName." Vs. ".$this->getAwayTeamName($match)." successfully deleted.";
+            $data = $this->matchService->destroy($match, $this->getLoggedUser());
             return ApiResponse::success($data, message:  $message);
 
         } catch (Exception $e){
-            $message = "Error while deleting match ".$schedule->teams[0]->teamName." Vs. ".$schedule->teams[1]->teamName." : " . $e->getMessage();
+            $message = "Error while deleting match ".$match->teams[0]->teamName." Vs. ".$match->teams[1]->teamName." : " . $e->getMessage();
             Log::error($message);
             return ApiResponse::error($message, null, $e->getCode());
         }
     }
 
-    private function getAwayTeamName(MatchModel $schedule): string
+    private function getAwayTeamName(MatchModel $match): string
     {
-        ($schedule->matchType == 'Internal Match') ? $away = $schedule->awayTeam->teamName : $away = $schedule->externalTeam->teamName;
+        ($match->matchType == 'Internal Match') ? $away = $match->awayTeam->teamName : $away = $match->externalTeam->teamName;
         return $away;
     }
 }
