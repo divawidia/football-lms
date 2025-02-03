@@ -19,8 +19,8 @@ class CoachFactory extends Factory
     {
         return [
             'userId' => User::factory(),
-            'certificationLevel' => 1,
-            'specialization' => 1,
+            'certificationId' => 1,
+            'specializationId' => 1,
             'height' => fake()->numberBetween(160,180),
             'weight' => fake()->numberBetween(40,70),
             'hireDate' => fake()->date,
