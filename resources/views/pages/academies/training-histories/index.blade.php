@@ -39,9 +39,19 @@
     <script>
         $(document).ready(function () {
             processWithConfirmation(
+                '.delete',
+                "{{ route('training-schedules.destroy', ['training' => ':id']) }}",
+                "{{ route('training-histories.index') }}",
+                'DELETE',
+                "Are you sure to delete this training?",
+                "Something went wrong when deleting this training!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
                 '.cancelBtn',
                 "{{ route('training-schedules.cancel', ['training' =>':id']) }}",
-                "{{ route('training-schedules.index') }}",
+                "{{ route('training-histories.index') }}",
                 'PATCH',
                 "Are you sure to cancel this training?",
                 "Something went wrong when cancelling this training!",
@@ -51,7 +61,7 @@
             processWithConfirmation(
                 '.scheduled-btn',
                 "{{ route('training-schedules.scheduled', ['training' =>':id']) }}",
-                "{{ route('training-schedules.index') }}",
+                "{{ route('training-histories.index') }}",
                 'PATCH',
                 "Are you sure to set this training to scheduled?",
                 "Something went wrong when set this training to scheduled!",

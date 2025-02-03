@@ -45,6 +45,16 @@
     <script>
         $(document).ready(function () {
             processWithConfirmation(
+                '.delete',
+                "{{ route('training-schedules.destroy', ['training' => ':id']) }}",
+                "{{ route('training-schedules.index') }}",
+                'DELETE',
+                "Are you sure to delete this training?",
+                "Something went wrong when deleting this training!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
                 '.cancelBtn',
                 "{{ route('training-schedules.cancel', ['training' =>':id']) }}",
                 "{{ route('training-schedules.index') }}",

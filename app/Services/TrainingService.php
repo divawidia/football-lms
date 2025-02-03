@@ -72,7 +72,7 @@ class TrainingService extends Service
 
     public function indexTrainingHistories(Team $team = null, $startDate = null, $endDate = null): Collection
     {
-        return $this->trainingRepository->getAll(['team'], team: $team,  startDate: $startDate, endDate: $endDate);
+        return $this->trainingRepository->getAll(['team'], team: $team, startDate: $startDate, endDate: $endDate);
     }
     public function coachTeamsIndexTrainingHistories(Coach $coach, $startDate = null, $endDate = null): Collection
     {
