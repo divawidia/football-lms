@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Admin;
 use App\Models\Coach;
 use App\Models\Competition;
 use App\Models\MatchModel;
@@ -85,12 +84,10 @@ class DashboardService extends Service
     }
 
     public function upcomingTrainings(){
-        return Training::with('teams')
+        return Training::with('team')
             ->where('status', 'Scheduled')
             ->orderBy('date')
             ->take(4)
             ->get();
     }
-
-
 }
