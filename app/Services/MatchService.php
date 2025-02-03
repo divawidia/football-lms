@@ -14,7 +14,6 @@ use App\Notifications\MatchSchedules\AdminCoach\MatchCreatedForAdminCoachNotific
 use App\Notifications\MatchSchedules\AdminCoach\MatchScheduledForAdminCoachNotification;
 use App\Notifications\MatchSchedules\AdminCoach\MatchUpdatedForAdminCoachNotification;
 use App\Notifications\MatchSchedules\MatchCompletedNotification;
-use App\Notifications\MatchSchedules\MatchNote as MatchNoteNotification;
 use App\Notifications\MatchSchedules\MatchNoteCreatedNotification;
 use App\Notifications\MatchSchedules\MatchNoteDeletedNotification;
 use App\Notifications\MatchSchedules\MatchNoteUpdatedNotification;
@@ -72,16 +71,30 @@ class MatchService extends Service
     {
         return $this->matchRepository->getAll(relations: ['teams', 'competition'], status: ['Scheduled', 'Ongoing']);
     }
-
     public function coachTeamsIndexMatch(Coach $coach): Collection
     {
         return $this->matchRepository->getByRelation($coach, withRelation: ['team', 'competition'], status: ['Scheduled', 'Ongoing']);
     }
-
     public function playerTeamsIndexMatch(Player $player): Collection
     {
         return $this->matchRepository->getByRelation($player,  withRelation: ['team', 'competition'], status: ['Scheduled', 'Ongoing']);
     }
+
+
+    public function indexMatchHistories(): Collection
+    {
+        return $this->matchRepository->getAll(relations: ['teams', 'competition']);
+    }
+    public function coachTeamsIndexMatchHistories(Coach $coach): Collection
+    {
+        return $this->matchRepository->getByRelation($coach, withRelation: ['team', 'competition']);
+    }
+    public function playerTeamsIndexMatchHistories(Player $player): Collection
+    {
+        return $this->matchRepository->getByRelation($player,  withRelation: ['team', 'competition']);
+    }
+
+
 
     public function makeMatchCalendar($matchesData): array
     {
@@ -107,11 +120,26 @@ class MatchService extends Service
         $data = $this->coachTeamsIndexMatch($coach);
         return $this->makeMatchCalendar($data);
     }
-
     public function playerTeamsMatchCalendar(Player $player){
         $data = $this->playerTeamsIndexMatch($player);
         return $this->makeMatchCalendar($data);
     }
+
+
+    public function matchCalendarHistories(){
+        $matches = $this->indexMatchHistories();
+        return $this->makeMatchCalendar($matches);
+    }
+    public function coachTeamsMatchCalendarHistories(Coach $coach){
+        $data = $this->coachTeamsIndexMatchHistories($coach);
+        return $this->makeMatchCalendar($data);
+    }
+    public function playerTeamsMatchCalendarHistories(Player $player){
+        $data = $this->playerTeamsIndexMatchHistories($player);
+        return $this->makeMatchCalendar($data);
+    }
+
+
 
     public function makeDataTablesMatch($matchData)
     {
@@ -155,20 +183,35 @@ class MatchService extends Service
             ->make();
     }
 
-    public function dataTablesMatch(){
+    public function adminDataTablesMatch(){
         $data = $this->indexMatch();
         return $this->makeDataTablesMatch($data);
     }
-
     public function coachTeamsDataTablesMatch(Coach $coach){
         $data = $this->coachTeamsIndexMatch($coach);
         return $this->makeDataTablesMatch($data);
     }
-
     public function playerTeamsDataTablesMatch(Player $player){
         $data = $this->playerTeamsIndexMatch($player);
         return $this->makeDataTablesMatch($data);
     }
+
+
+
+    public function adminDataTablesMatchHistories(){
+        $data = $this->indexMatchHistories();
+        return $this->makeDataTablesMatch($data);
+    }
+    public function coachTeamsDataTablesMatchHistories(Coach $coach){
+        $data = $this->coachTeamsIndexMatchHistories($coach);
+        return $this->makeDataTablesMatch($data);
+    }
+    public function playerTeamsDataTablesMatchHistories(Player $player){
+        $data = $this->playerTeamsIndexMatchHistories($player);
+        return $this->makeDataTablesMatch($data);
+    }
+
+
 
     public function dataTablesPlayerStats(MatchModel $match, $teamId = null){
         $data = $this->matchRepository->getRelationData($match, 'playerMatchStats', teamId: $teamId, retrieveType: 'multiple');
