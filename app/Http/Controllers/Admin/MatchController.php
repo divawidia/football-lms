@@ -21,6 +21,7 @@ use App\Models\MatchNote;
 use App\Models\Team;
 use App\Services\CompetitionService;
 use App\Services\MatchService;
+use App\Services\TeamService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -32,13 +33,16 @@ use RealRashid\SweetAlert\Facades\Alert;
 class MatchController extends Controller
 {
     private MatchService $matchService;
+    private TeamService $teamService;
     private CompetitionService $competitionService;
     public function __construct(
         MatchService $matchService,
+        TeamService $teamService,
         CompetitionService $competitionService
     )
     {
         $this->matchService = $matchService;
+        $this->teamService = $teamService;
         $this->competitionService = $competitionService;
     }
 
@@ -102,20 +106,19 @@ class MatchController extends Controller
 
     public function showMatch(MatchModel $schedule)
     {
-        $data = $this->matchService->show($schedule);
-
-        $homeTeam = $this->matchService->homeTeamMatch($schedule);
-        $homePlayers = $this->matchService->homeTeamPlayers($schedule);
-        $homeCoaches = $this->matchService->homeTeamCoaches($schedule);
-        $homeTeamMatchScorers = $this->matchService->homeTeamMatchScorers($schedule);
-        $homeTeamAttendance = $this->matchService->eventAttendance($schedule, $schedule->homeTeam);
-        $homeTeamNotes = $this->matchService->homeTeamNotes($schedule);
+        $playerSkills = null;
+        $playerPerformanceReviews = null;
 
         $awayTeam = $this->matchService->awayTeamMatch($schedule);
         $awayPlayers = null;
         $awayCoaches = null;
         $awayTeamMatchScorers = null;
-        $awayTeamAttendance = null;
+        $awayTeamTotalParticipant = null;
+        $awayTeamTotalIllness = null;
+        $awayTeamTotalOthers = null;
+        $awayTeamTotalInjured = null;
+        $awayTeamTotalDidntAttend = null;
+        $awayTeamTotalAttended = null;
         $awayTeamNotes = null;
         $userTeams = null;
 
@@ -123,40 +126,52 @@ class MatchController extends Controller
             $awayPlayers = $this->matchService->awayTeamPlayers($schedule);
             $awayCoaches = $this->matchService->awayTeamCoaches($schedule);
             $awayTeamMatchScorers = $this->matchService->awayTeamMatchScorers($schedule);
-            $awayTeamAttendance = $this->matchService->eventAttendance($schedule, $schedule->awayTeam);
+            $awayTeamTotalParticipant =$this->matchService->totalParticipant($schedule, $schedule->awayTeam);
+            $awayTeamTotalIllness = $this->matchService->totalIllness($schedule, $schedule->awayTeam);
+            $awayTeamTotalOthers = $this->matchService->totalOther($schedule, $schedule->awayTeam);
+            $awayTeamTotalInjured = $this->matchService->totalInjured($schedule, $schedule->awayTeam);
+            $awayTeamTotalDidntAttend = $this->matchService->totalDidntAttend($schedule, $schedule->awayTeam);
+            $awayTeamTotalAttended = $this->matchService->totalAttended($schedule, $schedule->awayTeam);
             $awayTeamNotes = $this->matchService->awayTeamNotes($schedule);
 
             if ($this->isCoach()) {
-                $coach = $this->getLoggedCoachUser();
-                $userTeams = collect($coach->teams)->pluck('id')->all();
-
+                $userTeams = collect($this->getLoggedCoachUser()->teams)->pluck('id')->all();
             } elseif ($this->isPlayer()) {
-                $player = $this->getLoggedPLayerUser();
-                $userTeams = collect($player->teams)->pluck('id')->all();
+                $userTeams = collect($this->getLoggedPLayerUser()->teams)->pluck('id')->all();
             } else {
-                $userTeams = collect(Team::all())->pluck('id')->all();
+                $userTeams = collect($this->teamService->allTeams())->pluck('id')->all();
             }
         }
 
         if ($this->isPlayer()){
-            $player = $this->getLoggedPLayerUser();
-            $data = $this->matchService->show($schedule, $player);
+            $playerSkills = $this->matchService->playerSkills($schedule, $this->getLoggedPLayerUser());
+            $playerPerformanceReviews = $this->matchService->playerPerformanceReviews($schedule, $this->getLoggedPLayerUser());
         }
 
         return view('pages.academies.schedules.matches.detail', [
-            'data' => $data,
-            'schedule' => $schedule,
-            'homeTeam' => $homeTeam,
-            'homePlayers' => $homePlayers,
-            'homeCoaches' => $homeCoaches,
-            'homeTeamMatchScorers' => $homeTeamMatchScorers,
-            'homeTeamAttendance' => $homeTeamAttendance,
-            'homeTeamNotes' => $homeTeamNotes,
+            'playerSkills' => $playerSkills,
+            'playerPerformanceReviews' => $playerPerformanceReviews,
+            'homeTeam' => $this->matchService->homeTeamMatch($schedule),
+            'homePlayers' => $this->matchService->homeTeamPlayers($schedule),
+            'homeCoaches' => $this->matchService->homeTeamCoaches($schedule),
+            'homeTeamMatchScorers' => $this->matchService->homeTeamMatchScorers($schedule),
+            'homeTeamTotalParticipant'=> $this->matchService->totalParticipant($schedule),
+            'homeTeamTotalIllness' => $this->matchService->totalIllness($schedule),
+            'homeTeamTotalOthers' => $this->matchService->totalOther($schedule),
+            'homeTeamTotalInjured' => $this->matchService->totalInjured($schedule),
+            'homeTeamTotalDidntAttend' => $this->matchService->totalDidntAttend($schedule),
+            'homeTeamTotalAttended' => $this->matchService->totalAttended($schedule),
+            'homeTeamNotes' => $this->matchService->homeTeamNotes($schedule),
             'awayTeam' => $awayTeam,
             'awayCoaches' => $awayCoaches,
             'awayPlayers' => $awayPlayers,
             'awayTeamMatchScorers' => $awayTeamMatchScorers,
-            'awayTeamAttendance' => $awayTeamAttendance,
+            'awayTeamTotalParticipant' => $awayTeamTotalParticipant,
+            'awayTeamTotalIllness' => $awayTeamTotalIllness,
+            'awayTeamTotalOthers' => $awayTeamTotalOthers,
+            'awayTeamTotalInjured' => $awayTeamTotalInjured,
+            'awayTeamTotalDidntAttend' => $awayTeamTotalDidntAttend,
+            'awayTeamTotalAttended' => $awayTeamTotalAttended,
             'awayTeamNotes' => $awayTeamNotes,
             'userTeams' => $userTeams,
         ]);

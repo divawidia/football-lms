@@ -277,16 +277,14 @@ class MatchService extends Service
 //            ->make();
 //    }
 
-    public function show(MatchModel $match, Player $player = null){
-        $allSkills = null;
-        $playerPerformanceReviews = null;
+    public function playerSkills(MatchModel $match, Player $player = null)
+    {
+        return $this->playerSkillStatsRepository->getByPlayer($player, $match)->first();
+    }
 
-        if ($player){
-            $allSkills = $this->playerSkillStatsRepository->getByPlayer($player, $match)->first();
-            $playerPerformanceReviews = $this->playerPerformanceReviewRepository->getByPlayer($player, $match);
-        }
-
-        return compact('allSkills', 'playerPerformanceReviews');
+    public function playerPerformanceReviews(MatchModel $match, Player $player = null)
+    {
+        return $this->playerPerformanceReviewRepository->getByPlayer($player, $match);
     }
 
     public function getTeamMatchStats(MatchModel $match, $teamSide = 'homeTeam')
@@ -361,7 +359,8 @@ class MatchService extends Service
         }
     }
 
-    public function eventAttendance(MatchModel $match, Team $team = null, $homeTeam = true) {
+    public function totalParticipant(MatchModel $match, $homeTeam = true)
+    {
         if ($homeTeam) {
             $players = $this->homeTeamPlayers($match);
             $coaches = $this->homeTeamCoaches($match);
@@ -369,26 +368,40 @@ class MatchService extends Service
             $players = $this->awayTeamPlayers($match);
             $coaches = $this->awayTeamCoaches($match);
         }
-        $totalParticipant = count($players) + count($coaches);
+        return count($players) + count($coaches);
+    }
 
-        $playerAttended = $this->matchRepository->getRelationData($match, 'players', attendanceStatus: 'Attended', teamId: $team->id, retrieveType: 'count');
+    public function totalIllness(MatchModel $match, Team $team = null)
+    {
         $playerIllness = $this->matchRepository->getRelationData($match, 'players', attendanceStatus: 'Illness', teamId: $team->id, retrieveType: 'count');
-        $playerInjured = $this->matchRepository->getRelationData($match, 'players', attendanceStatus: 'Injured', teamId: $team->id, retrieveType: 'count');
-        $playerOther = $this->matchRepository->getRelationData($match, 'players', attendanceStatus: 'Other', teamId: $team->id, retrieveType: 'count');
-        $playerDidntAttend = $playerIllness + $playerInjured + $playerOther;
-
-        $coachAttended = $this->matchRepository->getRelationData($match, 'coaches', attendanceStatus: 'Attended', teamId: $team->id, retrieveType: 'count');
         $coachIllness = $this->matchRepository->getRelationData($match, 'coaches', attendanceStatus: 'Illness', teamId: $team->id, retrieveType: 'count');
-        $coachInjured = $this->matchRepository->getRelationData($match, 'coaches', attendanceStatus: 'Injured', teamId: $team->id, retrieveType: 'count');
-        $coachOther = $this->matchRepository->getRelationData($match, 'coaches', attendanceStatus: 'Other', teamId: $team->id, retrieveType: 'count');
-        $coachDidntAttend = $coachIllness + $coachInjured + $coachOther;
+        return $playerIllness + $coachIllness;
+    }
 
-        $totalAttend = $playerAttended + $coachAttended;
-        $totalDidntAttend = $playerDidntAttend + $coachDidntAttend;
-        $totalIllness = $playerIllness + $coachIllness;
-        $totalInjured = $playerInjured + $coachInjured;
-        $totalOthers = $playerOther + $coachOther;
-        return compact('totalParticipant', 'totalAttend', 'totalDidntAttend', 'totalIllness', 'totalInjured', 'totalOthers');
+    public function totalOther(MatchModel $match, Team $team = null)
+    {
+        $playerOther = $this->matchRepository->getRelationData($match, 'players', attendanceStatus: 'Other', teamId: $team->id, retrieveType: 'count');
+        $coachOther = $this->matchRepository->getRelationData($match, 'coaches', attendanceStatus: 'Other', teamId: $team->id, retrieveType: 'count');
+        return $playerOther + $coachOther;
+    }
+
+    public function totalInjured(MatchModel $match, Team $team = null)
+    {
+        $playerInjured = $this->matchRepository->getRelationData($match, 'players', attendanceStatus: 'Injured', teamId: $team->id, retrieveType: 'count');
+        $coachInjured = $this->matchRepository->getRelationData($match, 'coaches', attendanceStatus: 'Injured', teamId: $team->id, retrieveType: 'count');
+        return $playerInjured + $coachInjured;
+    }
+
+    public function totalDidntAttend(MatchModel $match, Team $team = null)
+    {
+        return $this->totalInjured($match, $team) + $this->totalIllness($match, $team) + $this->totalOther($match, $team);
+    }
+
+    public function totalAttended(MatchModel $match, Team $team = null)
+    {
+        $playerAttended = $this->matchRepository->getRelationData($match, 'players', attendanceStatus: 'Attended', teamId: $team->id, retrieveType: 'count');
+        $coachAttended = $this->matchRepository->getRelationData($match, 'coaches', attendanceStatus: 'Attended', teamId: $team->id, retrieveType: 'count');
+        return $playerAttended + $coachAttended;
     }
 
     public function playerTotalMatch(Player $player, $startDate = null, $endDate = null, $matchStatus = null)
