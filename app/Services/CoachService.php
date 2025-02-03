@@ -250,14 +250,15 @@ class CoachService extends Service
         return $goalScored - $goalConceded;
     }
 
-    public function update(array $data, Coach $coach, $loggedUser): bool
+    public function update(array $data, Coach $coach, $loggedUser)
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'user-profile', $coach->user->foto);
+        $this->userRepository->update($coach, $data);
 
         Notification::send($this->userRepository->getAllAdminUsers(),new CoachUpdatedForAdminNotification($loggedUser, $coach));
         $coach->user->notify(new CoachUpdatedForCoachNotification());
 
-        return $coach->update($data);
+        return $coach;
     }
 
     public function setStatus(Coach $coach, $status, $loggedUser)

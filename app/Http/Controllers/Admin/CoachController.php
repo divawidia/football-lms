@@ -147,7 +147,7 @@ class CoachController extends Controller
         $data = $request->validated();
         $this->coachService->update($data, $coach, $this->getLoggedUser());
         $this->successAlertAddUser($data, 'updated');
-        return redirect()->route('coach-managements.show', $coach->id);
+        return redirect()->route('coach-managements.show', $coach->hash);
     }
 
     public function deactivate(Coach $coach): JsonResponse
