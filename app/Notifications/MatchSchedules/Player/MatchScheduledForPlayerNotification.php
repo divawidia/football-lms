@@ -10,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class MatchCreatedForPlayerNotification extends Notification implements ShouldQueue
+class MatchScheduledForPlayerNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     protected MatchModel $match;
@@ -50,16 +50,16 @@ class MatchCreatedForPlayerNotification extends Notification implements ShouldQu
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Match Session Updated")
+            ->subject("Match Session Scheduled")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("A match schedule for {$this->matchTeams()} has been updated by admin." )
+            ->line("match session for {$this->matchTeams()} has been set to scheduled." )
             ->line("Team Match: {$this->matchTeams()}")
             ->line("Venue: {$this->match->place}")
             ->line("Date: ".convertToDate($this->match->date))
             ->line("Start Time: ".convertToTime($this->match->startTime))
             ->line("End Time: ".convertToTime($this->match->endTime))
             ->action('View match schedule detail', route('match-schedules.show', $this->match->hash))
-            ->line("Please check the match schedule for more information and prepare accordingly!")
+            ->line("Please check the match schedule for more and prepare accordingly!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
 
@@ -71,8 +71,8 @@ class MatchCreatedForPlayerNotification extends Notification implements ShouldQu
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => "New match Schedule updated",
-            'data' => "Match schedule for {$this->matchTeams()} scheduled at ".convertToDatetime($this->match->startDatetime)." has been updated by admin. Please review the schedule and prepare accordingly!",
+            'title' => "Match session Scheduled",
+            'data' => "Match session for {$this->matchTeams()} scheduled at ".convertToDatetime($this->match->startDatetime)." has been set to scheduled. Please review the schedule and prepare accordingly!",
             'redirectRoute' => route('match-schedules.show', $this->match->hash)
         ];
     }

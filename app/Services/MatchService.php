@@ -9,21 +9,27 @@ use App\Models\MatchScore;
 use App\Models\Player;
 use App\Models\MatchNote;
 use App\Models\Team;
+use App\Notifications\MatchSchedules\AdminCoach\MatchCanceledForAdminCoachNotification;
 use App\Notifications\MatchSchedules\AdminCoach\MatchCreatedForAdminCoachNotification;
+use App\Notifications\MatchSchedules\AdminCoach\MatchScheduledForAdminCoachNotification;
 use App\Notifications\MatchSchedules\AdminCoach\MatchUpdatedForAdminCoachNotification;
+use App\Notifications\MatchSchedules\MatchCompletedNotification;
 use App\Notifications\MatchSchedules\MatchNote as MatchNoteNotification;
-use App\Notifications\MatchSchedules\MatchScheduleAttendance;
+use App\Notifications\MatchSchedules\MatchScheduleAttendanceNotification;
 use App\Notifications\MatchSchedules\MatchSchedule;
+use App\Notifications\MatchSchedules\MatchStartedNotification;
 use App\Notifications\MatchSchedules\MatchStatsPlayer;
+use App\Notifications\MatchSchedules\Player\MatchCanceledForPlayerNotification;
 use App\Notifications\MatchSchedules\Player\MatchCreatedForPlayerNotification;
+use App\Notifications\MatchSchedules\Player\MatchScheduledForPlayerNotification;
 use App\Notifications\MatchSchedules\Player\MatchUpdatedForPlayerNotification;
 use App\Repository\Interface\PlayerRepositoryInterface;
+use App\Repository\Interface\TeamRepositoryInterface;
+use App\Repository\Interface\UserRepositoryInterface;
 use App\Repository\MatchRepository;
 use App\Repository\Interface\LeagueStandingRepositoryInterface;
 use App\Repository\PlayerPerformanceReviewRepository;
 use App\Repository\PlayerSkillStatsRepository;
-use App\Repository\TeamRepository;
-use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Notification;
 use Yajra\DataTables\Facades\DataTables;
@@ -31,8 +37,8 @@ use Yajra\DataTables\Facades\DataTables;
 class MatchService extends Service
 {
     private MatchRepository $matchRepository;
-    private TeamRepository $teamRepository;
-    private UserRepository $userRepository;
+    private TeamRepositoryInterface $teamRepository;
+    private UserRepositoryInterface $userRepository;
     private PlayerRepositoryInterface $playerRepository;
     private PlayerSkillStatsRepository $playerSkillStatsRepository;
     private PlayerPerformanceReviewRepository $playerPerformanceReviewRepository;
@@ -40,13 +46,14 @@ class MatchService extends Service
     private DatatablesHelper $datatablesHelper;
     public function __construct(
         MatchRepository                   $matchRepository,
-        TeamRepository                    $teamRepository,
-        UserRepository                    $userRepository,
+        TeamRepositoryInterface                    $teamRepository,
+        UserRepositoryInterface                    $userRepository,
         PlayerRepositoryInterface $playerRepository,
         PlayerSkillStatsRepository        $playerSkillStatsRepository,
         PlayerPerformanceReviewRepository $playerPerformanceReviewRepository,
         LeagueStandingRepositoryInterface $leagueStandingRepository,
-        DatatablesHelper                  $datatablesHelper)
+        DatatablesHelper                  $datatablesHelper
+    )
     {
         $this->matchRepository = $matchRepository;
         $this->teamRepository = $teamRepository;
@@ -326,6 +333,26 @@ class MatchService extends Service
         return $this->teamRepository->getByTeamside('Academy Team', $exceptTeamId);
     }
 
+
+    public function teamsAllParticipants(Team $team)
+    {
+        return $this->userRepository->allTeamsParticipant($team);
+    }
+    public function teamsCoachesAdmins(Team $team)
+    {
+        return $this->userRepository->allTeamsParticipant($team, players: false);
+    }
+    public function teamsPlayers(Team $team)
+    {
+        return $this->userRepository->allTeamsParticipant($team, admins: false, coaches: false);
+    }
+    public function teamsCoaches(Team $team)
+    {
+        return $this->userRepository->allTeamsParticipant($team, admins: false, players: false);
+    }
+
+
+
     public function storeMatch(array $data, $loggedUser){
         $data['userId'] = $loggedUser->id;
         $data['startDatetime'] = $this->convertToTimestamp($data['date'], $data['startTime']);
@@ -341,8 +368,8 @@ class MatchService extends Service
         $match->coaches()->attach($team->coaches, ['teamId' => $team->id]);
         $match->coachMatchStats()->attach($team->coaches, ['teamId' => $team->id]);
 
-//        Notification::send($this->teamService->teamsCoachesAdmins($match->homeTeam), new MatchCreatedForAdminCoachNotification($loggedUser, $match));
-//        Notification::send($this->teamService->teamsPlayers($match->homeTeam), new MatchCreatedForPlayerNotification($match));
+        Notification::send($this->teamsCoachesAdmins($match->homeTeam), new MatchCreatedForAdminCoachNotification($loggedUser, $match));
+        Notification::send($this->teamsPlayers($match->homeTeam), new MatchCreatedForPlayerNotification($match));
 
         if ($data['matchType'] == 'Internal Match'){
             $match->teams()->attach($data['awayTeamId']);
@@ -354,8 +381,8 @@ class MatchService extends Service
             $match->coaches()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
             $match->coachMatchStats()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
 
-//            Notification::send($this->teamService->teamsCoaches($match->awayTeam), new MatchCreatedForAdminCoachNotification($loggedUser, $match));
-//            Notification::send($this->teamService->teamsPlayers($match->awayTeam), new MatchCreatedForPlayerNotification($match));
+            Notification::send($this->teamsCoaches($match->awayTeam), new MatchCreatedForAdminCoachNotification($loggedUser, $match));
+            Notification::send($this->teamsPlayers($match->awayTeam), new MatchCreatedForPlayerNotification($match));
         } else {
             $match->externalTeam()->create([
                 'teamName' => $data['externalTeamName'],
@@ -376,8 +403,8 @@ class MatchService extends Service
         $match->coaches()->syncWithPivotValues($homeTeam->coaches, ['teamId' => $homeTeam->id]);
         $match->coachMatchStats()->syncWithPivotValues($homeTeam->coaches, ['teamId' => $homeTeam->id]);
 
-//        Notification::send($this->teamService->teamsCoachesAdmins($match->homeTeam), new MatchUpdatedForAdminCoachNotification($loggedUser, $match));
-//        Notification::send($this->teamService->teamsPlayers($match->homeTeam), new MatchUpdatedForPlayerNotification($match));
+        Notification::send($this->teamsCoachesAdmins($match->homeTeam), new MatchUpdatedForAdminCoachNotification($loggedUser, $match));
+        Notification::send($this->teamsPlayers($match->homeTeam), new MatchUpdatedForPlayerNotification($match));
 
         if ($match->matchType == 'Internal Match') {
             $match->teams()->sync([
@@ -392,8 +419,8 @@ class MatchService extends Service
             $match->coaches()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
             $match->coachMatchStats()->attach($awayTeam->coaches, ['teamId' => $awayTeam->id]);
 
-//            Notification::send($this->teamService->teamsCoaches($match->awayTeam), new MatchCreatedForAdminCoachNotification($loggedUser, $match));
-//            Notification::send($this->teamService->teamsPlayers($match->awayTeam), new MatchCreatedForPlayerNotification($match));
+            Notification::send($this->teamsCoaches($match->awayTeam), new MatchCreatedForAdminCoachNotification($loggedUser, $match));
+            Notification::send($this->teamsPlayers($match->awayTeam), new MatchCreatedForPlayerNotification($match));
         } else {
             $match->teams()->sync([
                 $data['homeTeamId'],
@@ -405,19 +432,44 @@ class MatchService extends Service
         return $match;
     }
 
-    public function setStatus(MatchModel $match, $status): MatchModel
-    {
-        $this->matchRepository->updateStatus($match, $status);
-            $homeTeam = $match->homeTeam;
-            $homeTeamParticipants = $this->userRepository->allTeamsParticipant($homeTeam);
-            Notification::send($homeTeamParticipants, new  MatchSchedule($match, $status));
 
-            if ($match->matchType == 'Internal Match') {
-                $awayTeam = $match->awayTeam;
-                $awayTeamParticipants = $this->userRepository->allTeamsParticipant($awayTeam, admins: false);
-                Notification::send($awayTeamParticipants, new  MatchSchedule($match, $status));
-            }
-        return $match;
+    public function setScheduled(MatchModel $match, $loggedUser)
+    {
+        Notification::send($this->teamsCoachesAdmins($match->homeTeam), new MatchScheduledForAdminCoachNotification($loggedUser, $match));
+        Notification::send($this->teamsPlayers($match->homeTeam), new MatchScheduledForPlayerNotification($match));
+        if ($match->matchType == 'Internal Match') {
+            Notification::send($this->teamsCoaches($match->awayTeam), new MatchScheduledForAdminCoachNotification($loggedUser, $match));
+            Notification::send($this->teamsPlayers($match->awayTeam), new MatchScheduledForPlayerNotification($match));
+        }
+        return $this->matchRepository->updateStatus($match, 'Scheduled');
+    }
+    public function setCanceled(MatchModel $match, $loggedUser)
+    {
+        Notification::send($this->teamsCoachesAdmins($match->homeTeam), new MatchCanceledForAdminCoachNotification($loggedUser, $match));
+        Notification::send($this->teamsPlayers($match->homeTeam), new MatchCanceledForPlayerNotification($match));
+        if ($match->matchType == 'Internal Match') {
+            Notification::send($this->teamsCoaches($match->awayTeam), new MatchCanceledForAdminCoachNotification($loggedUser, $match));
+            Notification::send($this->teamsPlayers($match->awayTeam), new MatchCanceledForPlayerNotification($match));
+        }
+        return $this->matchRepository->updateStatus($match, 'Cancelled');
+    }
+    public function setOngoing(MatchModel $match)
+    {
+        Notification::send($this->teamsAllParticipants($match->homeTeam), new MatchStartedNotification($match));
+        if ($match->matchType == 'Internal Match') {
+            Notification::send($this->teamsCoaches($match->awayTeam), new MatchStartedNotification($match));
+            Notification::send($this->teamsPlayers($match->awayTeam), new MatchStartedNotification($match));
+        }
+        return $this->matchRepository->updateStatus($match, 'Ongoing');
+    }
+    public function setCompleted(MatchModel $match)
+    {
+        Notification::send($this->teamsAllParticipants($match->homeTeam), new MatchCompletedNotification($match));
+        if ($match->matchType == 'Internal Match') {
+            Notification::send($this->teamsCoaches($match->awayTeam), new MatchCompletedNotification($match));
+            Notification::send($this->teamsPlayers($match->awayTeam), new MatchCompletedNotification($match));
+        }
+        return $this->matchRepository->updateStatus($match, 'Completed');
     }
 
 
@@ -563,7 +615,7 @@ class MatchService extends Service
                 ]);
             }
         }
-        return $this->setStatus($match, 'completed');
+        return $this->setCompleted($match);
     }
 
 
@@ -578,12 +630,12 @@ class MatchService extends Service
 
     public function updatePlayerAttendanceStatus($data, MatchModel $match, Player $player){
         $match->players()->updateExistingPivot($player->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
-        $player->user->notify(new MatchScheduleAttendance($match, $data['attendanceStatus']));
+        $player->user->notify(new MatchScheduleAttendanceNotification($match, $data['attendanceStatus']));
         return $match;
     }
     public function updateCoachAttendanceStatus($data, MatchModel $match, Coach $coach){
         $match->coaches()->updateExistingPivot($coach->id, ['attendanceStatus'=> $data['attendanceStatus'], 'note' => $data['note']]);
-        $coach->user->notify(new MatchScheduleAttendance($match, $data['attendanceStatus']));
+        $coach->user->notify(new MatchScheduleAttendanceNotification($match, $data['attendanceStatus']));
         return $match;
     }
 

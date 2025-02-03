@@ -279,19 +279,19 @@ class TeamService extends Service
 
     public function teamsAllParticipants(Team $team)
     {
-        return $this->userRepository->allTeamsParticipant($team->team);
+        return $this->userRepository->allTeamsParticipant($team);
     }
     public function teamsCoachesAdmins(Team $team)
     {
-        return $this->userRepository->allTeamsParticipant($team->team, players: false);
+        return $this->userRepository->allTeamsParticipant($team, players: false);
     }
     public function teamsPlayers(Team $team)
     {
-        return $this->userRepository->allTeamsParticipant($team->team, admins: false, coaches: false);
+        return $this->userRepository->allTeamsParticipant($team, admins: false, coaches: false);
     }
     public function teamsCoaches(Team $team)
     {
-        return $this->userRepository->allTeamsParticipant($team->team, admins: false, players: false);
+        return $this->userRepository->allTeamsParticipant($team, admins: false, players: false);
     }
 
     public function teamTrainingHistories(Team $team){

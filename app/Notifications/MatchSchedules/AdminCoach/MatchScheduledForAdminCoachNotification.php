@@ -56,14 +56,14 @@ class MatchScheduledForAdminCoachNotification extends Notification implements Sh
         return (new MailMessage)
             ->subject("Match Session Scheduled")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("A match sessioon for {$this->matchTeams()} has been updated by admin {$this->loggedUser->firstName} {$this->loggedUser->lastName}.")
+            ->line("A match session for {$this->matchTeams()} has been updated by admin {$this->loggedUser->firstName} {$this->loggedUser->lastName}.")
             ->line("Team Match: {$this->matchTeams()}")
             ->line("Venue: {$this->match->place}")
             ->line("Date: ".convertToDate($this->match->date))
             ->line("Start Time: ".convertToTime($this->match->startTime))
             ->line("End Time: ".convertToTime($this->match->endTime))
             ->action('View match session detail', route('match-schedules.show', $this->match->hash))
-            ->line("Please check the match schedule for more information!")
+            ->line("Please check the match schedule for more information and prepare accordingly!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
 
@@ -76,7 +76,7 @@ class MatchScheduledForAdminCoachNotification extends Notification implements Sh
     {
         return [
             'title' => "match Schedule Updated",
-            'data' => "Admin {$this->loggedUser->firstName} {$this->loggedUser->lastName} has updated a match schedule for {$this->matchTeams()} scheduled at ".convertToDatetime($this->match->startDatetime).". Please review the schedule and prepare accordingly!",
+            'data' => "Admin {$this->loggedUser->firstName} {$this->loggedUser->lastName} has set the match schedule for {$this->matchTeams()} to scheduled. Please review the schedule and prepare accordingly!",
             'redirectRoute' => route('match-schedules.show', $this->match->hash)
         ];
     }

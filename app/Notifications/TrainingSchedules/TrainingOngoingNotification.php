@@ -44,7 +44,7 @@ class TrainingOngoingNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Training Session Starting Now!")
+            ->subject("Training Session is Starting Now!")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("Training session for {$this->team->teamName} is now on going." )
             ->line("Training Topic: {$this->training->eventName}")

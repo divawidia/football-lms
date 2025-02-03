@@ -1,24 +1,28 @@
 <?php
 
-namespace App\Notifications\MatchSchedules\Player;
+namespace App\Notifications\MatchSchedules\AdminCoach;
 
 use App\Models\MatchModel;
 use App\Models\Team;
+use App\Models\Training;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class MatchCreatedForPlayerNotification extends Notification implements ShouldQueue
+class MatchCanceledForAdminCoachNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+    protected User $loggedUser;
     protected MatchModel $match;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct(MatchModel $match)
+    public function __construct(User $loggedUser, MatchModel $match)
     {
+        $this->loggedUser = $loggedUser;
         $this->match = $match;
     }
 
@@ -50,16 +54,16 @@ class MatchCreatedForPlayerNotification extends Notification implements ShouldQu
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Match Session Updated")
+            ->subject("Match Session Canceled")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("A match schedule for {$this->matchTeams()} has been updated by admin." )
+            ->line("A match session for {$this->matchTeams()} has been canceled by admin {$this->loggedUser->firstName} {$this->loggedUser->lastName}.")
             ->line("Team Match: {$this->matchTeams()}")
             ->line("Venue: {$this->match->place}")
             ->line("Date: ".convertToDate($this->match->date))
             ->line("Start Time: ".convertToTime($this->match->startTime))
             ->line("End Time: ".convertToTime($this->match->endTime))
-            ->action('View match schedule detail', route('match-schedules.show', $this->match->hash))
-            ->line("Please check the match schedule for more information and prepare accordingly!")
+            ->action('View match session detail', route('match-schedules.show', $this->match->hash))
+            ->line("Please check the match schedule for more information!")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
 
@@ -71,8 +75,8 @@ class MatchCreatedForPlayerNotification extends Notification implements ShouldQu
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => "New match Schedule updated",
-            'data' => "Match schedule for {$this->matchTeams()} scheduled at ".convertToDatetime($this->match->startDatetime)." has been updated by admin. Please review the schedule and prepare accordingly!",
+            'title' => "match Schedule canceled",
+            'data' => "Admin {$this->loggedUser->firstName} {$this->loggedUser->lastName} has set the match schedule for {$this->matchTeams()} scheduled at ".convertToDatetime($this->match->startDatetime)." to canceled. Please review the schedule for more information!",
             'redirectRoute' => route('match-schedules.show', $this->match->hash)
         ];
     }

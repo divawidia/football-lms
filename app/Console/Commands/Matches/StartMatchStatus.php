@@ -39,7 +39,7 @@ class StartMatchStatus extends Command
     {
         $matches = $this->eventScheduleRepository->getAll(relations: [], status: ['Scheduled'], beforeStartDate: true);
         foreach ($matches as $data) {
-            $this->eventScheduleService->setStatus($data, 'Ongoing');
+            $this->eventScheduleService->setOngoing($data);
         }
 
         $this->info('Scheduled match schedule successfully set to ongoing.');

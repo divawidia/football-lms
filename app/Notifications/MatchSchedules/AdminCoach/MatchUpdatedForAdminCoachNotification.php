@@ -57,7 +57,7 @@ class MatchUpdatedForAdminCoachNotification extends Notification implements Shou
         return (new MailMessage)
             ->subject("Match Session Updated")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("A match sessioon for {$this->matchTeams()} has been updated by admin {$this->loggedUser->firstName} {$this->loggedUser->lastName}.")
+            ->line("A match session for {$this->matchTeams()} has been updated by admin {$this->loggedUser->firstName} {$this->loggedUser->lastName}.")
             ->line("Team Match: {$this->matchTeams()}")
             ->line("Venue: {$this->match->place}")
             ->line("Date: ".convertToDate($this->match->date))

@@ -45,7 +45,7 @@ class TrainingReminderNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject("Training Session Reminder")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("Training session {$this->team->teamName} scheduled at ".convertToDatetime($this->training->startDatetime)." start tomorrow.")
+            ->line("Training session {$this->team->teamName} scheduled at ".convertToDatetime($this->training->startDatetime)." start soon/tomorrow.")
             ->line("Training Topic: {$this->training->topic}")
             ->line("Team: {$this->team->teamName}")
             ->line("Location: {$this->training->location}")
@@ -66,7 +66,7 @@ class TrainingReminderNotification extends Notification implements ShouldQueue
     {
         return [
             'title' => "Training Session Reminder",
-            'data' => "Training session {$this->team->teamName} scheduled at ".convertToDatetime($this->training->startDatetime)." start tomorrow. Please check the training schedule for more information and arrive on time!",
+            'data' => "Training session {$this->team->teamName} scheduled at ".convertToDatetime($this->training->startDatetime)." start soon/tomorrow. Please check the training schedule for more information and arrive on time!",
             'redirectRoute' => route('training-schedules.show', $this->training->hash)
         ];
     }

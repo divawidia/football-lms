@@ -96,11 +96,9 @@ class MatchController extends Controller
     public function storeMatch(MatchScheduleRequest $request): RedirectResponse
     {
         $data = $request->validated();
-        $userId = $this->getLoggedUserId();
-        $this->matchService->storeMatch($data, $userId);
+        $this->matchService->storeMatch($data, $this->getLoggedUser());
 
-        $text = 'Match schedule successfully added!';
-        Alert::success($text);
+        Alert::success('Match schedule successfully added!');
         return redirect()->route('match-schedules.index');
     }
 
@@ -203,20 +201,8 @@ class MatchController extends Controller
     public function updateMatch(CompetitionMatchRequest $request, MatchModel $match): JsonResponse
     {
         $data = $request->validated();
-        $this->matchService->updateMatch($data, $match);
+        $this->matchService->updateMatch($data, $match, $this->getLoggedUser());
         return ApiResponse::success(message: 'Match session successfully updated!');
-    }
-
-    public function status(MatchModel $match, $status): JsonResponse
-    {
-        try {
-            $this->matchService->setStatus($match, $status);
-            return ApiResponse::success(message: $match->eventType.' session status successfully mark to '.$status.'!');
-
-        } catch (Exception $e) {
-            Log::error('Error marking '.$match->eventType.' session as '.$status.': ' . $e->getMessage());
-            return ApiResponse::error('An error occurred while marking the competition '.$match->eventType.' session as '.$status.'.');
-        }
     }
 
     public function scheduled(MatchModel $match): JsonResponse
@@ -224,30 +210,25 @@ class MatchController extends Controller
         if ($match->startDatetime < Carbon::now()) {
             return ApiResponse::error("You cannot set the match session to scheduled because the match date has passed, please change the match start date to a future date.");
         } else {
-            return $this->status($match, 'scheduled');
+            $this->matchService->setScheduled($match, $this->getLoggedUser());
+            return ApiResponse::success(message: 'Match session status successfully set to scheduled!');
         }
     }
 
     public function ongoing(MatchModel $match): JsonResponse
     {
-        return $this->status($match, 'ongoing');
+        $this->matchService->setOngoing($match);
+        return ApiResponse::success(message: 'Match session status successfully set to ongoing!');
     }
     public function completed(MatchModel $match): JsonResponse
     {
-        return $this->status($match, 'completed');
+        $this->matchService->setCompleted($match);
+        return ApiResponse::success(message: 'Match session status successfully set to completed!');
     }
     public function cancelled(MatchModel $match): JsonResponse
     {
-        return $this->status($match, 'cancelled');
-    }
-
-    public function endMatch(MatchModel $match)
-    {
-        $this->matchService->endMatch($match);
-
-        $text = 'Match status successfully ended!';
-        Alert::success($text);
-        return redirect()->route('match-schedules.show', $match->id);
+        $this->matchService->setCanceled($match, $this->getLoggedUser());
+        return ApiResponse::success(message: 'Match session status successfully set to canceled!');
     }
 
     public function getPlayerAttendance(MatchModel $match, Player $player): JsonResponse
