@@ -46,21 +46,52 @@ class TrainingController extends Controller
         ]);
     }
 
-    public function adminIndexTraining(): JsonResponse
+    public function historiesIndex()
     {
-        return $this->trainingService->dataTablesTraining();
+        if ($this->isAllAdmin()){
+            $events = $this->trainingService->trainingHistoriesCalendar();
+            $tableRoute = route('training-histories.admin-index');
+        } elseif ($this->isCoach()){
+            $events = $this->trainingService->coachTeamsTrainingHistoriesCalendar($this->getLoggedCoachUser());
+            $tableRoute = route('training-histories.coach-index');
+        } else {
+            $events = $this->trainingService->playerTeamsTrainingHistoriesCalendar($this->getLoggedPLayerUser());
+            $tableRoute = route('training-histories.player-index');
+        }
+
+        return view('pages.academies.training-histories.index', [
+            'events' => $events,
+            'tableRoute' => $tableRoute,
+        ]);
     }
 
+    public function adminIndexTraining(): JsonResponse
+    {
+        return $this->trainingService->adminDataTablesTraining();
+    }
     public function coachIndexTraining(): JsonResponse
     {
-        $coach = $this->getLoggedCoachUser();
-        return $this->trainingService->coachTeamsDataTablesTraining($coach);
+        return $this->trainingService->coachTeamsDataTablesTraining($this->getLoggedCoachUser());
     }
     public function playerIndexTraining(): JsonResponse
     {
-        $player = $this->getLoggedPLayerUser();
-        return $this->trainingService->playerTeamsDataTablesTraining($player);
+        return $this->trainingService->playerTeamsDataTablesTraining($this->getLoggedPLayerUser());
     }
+
+
+    public function adminIndexTrainingHistories(): JsonResponse
+    {
+        return $this->trainingService->adminTrainingHistories();
+    }
+    public function coachIndexTrainingHistories(): JsonResponse
+    {
+        return $this->trainingService->coachTeamsDataTablesTrainingHistories($this->getLoggedCoachUser());
+    }
+    public function playerIndexTrainingHistories(): JsonResponse
+    {
+        return $this->trainingService->playerTeamsDataTablesTrainingHistories($this->getLoggedPLayerUser());
+    }
+
 
     /**
      * Show the form for creating a new resource.

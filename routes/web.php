@@ -363,7 +363,20 @@ Route::group(['middleware' => ['auth', 'web']], function () {
                 Route::delete('delete-note/{note}', [TrainingController::class, 'destroyNote'])->name('destroy-note');
             });
         });
+    });
 
+    Route::prefix('training-histories')->name('training-histories.')->group(function () {
+        Route::get('', [TrainingController::class, 'historiesIndex'])->middleware('role:player|coach|admin|Super-Admin')->name('index');
+        Route::get('admins-trainings', [TrainingController::class, 'adminIndexTrainingHistories'])->middleware('role:admin|Super-Admin')->name('admin-index');
+        Route::get('coaches-trainings', [TrainingController::class, 'coachIndexTrainingHistories'])->middleware('role:coach')->name('coach-index');
+        Route::get('players-trainings', [TrainingController::class, 'playerIndexTrainingHistories'])->middleware('role:player')->name('player-index');
+    });
+
+    Route::prefix('match-histories')->name('match-histories.')->group(function () {
+        Route::get('', [TrainingController::class, 'index'])->middleware('role:player|coach|admin|Super-Admin')->name('index');
+        Route::get('admins-trainings', [TrainingController::class, 'adminIndexTraining'])->middleware('role:admin|Super-Admin')->name('admin-index');
+        Route::get('coaches-trainings', [TrainingController::class, 'coachIndexTraining'])->middleware('role:coach')->name('coach-index');
+        Route::get('players-trainings', [TrainingController::class, 'playerIndexTraining'])->middleware('role:player')->name('player-index');
     });
 
     Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
