@@ -87,11 +87,11 @@ class MatchService extends Service
     }
     public function coachTeamsIndexMatchHistories(Coach $coach): Collection
     {
-        return $this->matchRepository->getByRelation($coach, withRelation: ['team', 'competition']);
+        return $this->matchRepository->getByRelation($coach, withRelation: ['teams', 'competition']);
     }
     public function playerTeamsIndexMatchHistories(Player $player): Collection
     {
-        return $this->matchRepository->getByRelation($player,  withRelation: ['team', 'competition']);
+        return $this->matchRepository->getByRelation($player,  withRelation: ['teams', 'competition']);
     }
 
 

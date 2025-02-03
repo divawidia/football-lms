@@ -78,7 +78,7 @@ class MatchController extends Controller
             $tableRoute = route('match-histories.player-index');
         }
 
-        return view('pages.academies.matches-histories.index', [
+        return view('pages.academies.match-histories.index', [
             'events' => $events,
             'tableRoute' => $tableRoute,
         ]);
