@@ -1,4 +1,4 @@
-<x-modal.form id="addSkillStatsModal" formId="formAddSkillStatsModal" title="Update Player Skill Stats" size="modal-lg">
+<x-modal.form id="addSkillStatsModal" formId="formAddSkillStatsModal" title="Update Player Skill Stats" size="modal-lg" :editForm="false">
     <x-forms.basic-input type="hidden" name="matchId" :modal="true"/>
     <x-forms.basic-input type="hidden" name="trainingId" :modal="true"/>
     <x-forms.basic-input type="hidden" name="playerId" :modal="true"/>

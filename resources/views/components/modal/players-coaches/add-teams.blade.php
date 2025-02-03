@@ -1,4 +1,4 @@
-<x-modal.form id="addTeamModal" formId="formAddTeam" :editForm="true" title="Add to Team">
+<x-modal.form id="addTeamModal" formId="formAddTeam" :editForm="true" size=""  title="Add to Team">
     @if(count($teams) < 1)
         <x-warning-alert text="Currently there is no team available in your academy, please create your team" :createRoute="route('team-managements.create')"/>
     @else
