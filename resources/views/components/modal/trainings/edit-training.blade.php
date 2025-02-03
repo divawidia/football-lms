@@ -1,4 +1,4 @@
-<x-modal.form id="editMatchModal" formId="formEditMatch" title="Edit Team Training Session" :editForm="true">
+<x-modal.form id="editMatchModal" formId="formEditMatch" title="Edit Team Training Session" :editForm="true" size="">
     <x-forms.basic-input type="hidden" name="trainingId" :modal="true"/>
 
     <x-forms.basic-input type="text" name="topic" label="Training Session Topic" placeholder="Input training topic, E.g. : Physical conditioning training ..." :modal="true"/>

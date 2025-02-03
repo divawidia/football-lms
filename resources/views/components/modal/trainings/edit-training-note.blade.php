@@ -1,4 +1,4 @@
-<x-modal.form id="editNoteModal" formId="formUpdateNoteModal" title="Edit Training Session Note" :editForm="true">
+<x-modal.form id="editNoteModal" formId="formUpdateNoteModal" title="Edit Training Session Note" :editForm="true" size="">
 
     <x-forms.basic-input type="hidden" name="noteId" :modal="true"/>
 

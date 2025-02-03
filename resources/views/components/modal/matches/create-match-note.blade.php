@@ -1,4 +1,4 @@
-<x-modal.form id="createNoteModal" formId="formCreateNoteModal" title="Create Session Note">
+<x-modal.form id="createNoteModal" formId="formCreateNoteModal" title="Create Session Note" :editForm="false" size="">
     <x-forms.basic-input type="hidden" name="teamId" :modal="true"/>
 
     <x-forms.textarea name="note" label="Session Note" placeholder="Input the session note ..." :modal="true"/>

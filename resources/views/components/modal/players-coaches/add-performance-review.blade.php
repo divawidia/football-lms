@@ -1,4 +1,4 @@
-<x-modal.form id="createPerformanceReviewModal" formId="formCreatePerformanceReviewModal" title="Add performance review to player">
+<x-modal.form id="createPerformanceReviewModal" formId="formCreatePerformanceReviewModal" title="Add performance review to player" :editForm="false" size="">
     <x-forms.basic-input type="hidden" name="playerId" :modal="true"/>
     <x-forms.basic-input type="hidden" name="matchId" :modal="true"/>
     <x-forms.basic-input type="hidden" name="trainingId" :modal="true"/>

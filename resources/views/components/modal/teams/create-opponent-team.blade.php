@@ -1,4 +1,4 @@
-<x-modal.form id="createNewOpponentTeamModal" formId="formCreateNewOpponentTeam" title="Create new opponent team">
+<x-modal.form id="createNewOpponentTeamModal" formId="formCreateNewOpponentTeam" title="Create new opponent team" :editForm="true" size="">
     <x-forms.image-input name="logo" label="Team Logo" :modal="true"/>
 
     <div class="row">

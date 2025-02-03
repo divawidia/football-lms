@@ -1,4 +1,4 @@
-<x-modal.form id="createTeamOwnGoalModal" formId="formAddOwnGoal">
+<x-modal.form id="createTeamOwnGoalModal" formId="formAddOwnGoal" :editForm="false" size="">
     <x-forms.basic-input type="hidden" name="teamId" :modal="true"/>
     <x-forms.basic-input type="hidden" name="dataTeam" :modal="true"/>
 

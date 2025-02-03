@@ -1,5 +1,5 @@
 
-<x-modal.form id="editMatchModal" formId="formEditMatch" title="Edit Team Match Session" :editForm="true">
+<x-modal.form id="editMatchModal" formId="formEditMatch" title="Edit Team Match Session" :editForm="true" size="">
     <x-forms.basic-input type="hidden" name="matchId" :modal="true"/>
 
     @if ($competition->isInternal == 1)
