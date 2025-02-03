@@ -16,12 +16,10 @@ class MatchNoteCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     protected MatchModel $match;
-    protected Team $team;
 
-    public function __construct(MatchModel $match, Team $team)
+    public function __construct(MatchModel $match)
     {
         $this->match = $match;
-        $this->team = $team;
     }
 
     /**

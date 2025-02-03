@@ -15,6 +15,9 @@ use App\Notifications\MatchSchedules\AdminCoach\MatchScheduledForAdminCoachNotif
 use App\Notifications\MatchSchedules\AdminCoach\MatchUpdatedForAdminCoachNotification;
 use App\Notifications\MatchSchedules\MatchCompletedNotification;
 use App\Notifications\MatchSchedules\MatchNote as MatchNoteNotification;
+use App\Notifications\MatchSchedules\MatchNoteCreatedNotification;
+use App\Notifications\MatchSchedules\MatchNoteDeletedNotification;
+use App\Notifications\MatchSchedules\MatchNoteUpdatedNotification;
 use App\Notifications\MatchSchedules\MatchScheduleAttendanceNotification;
 use App\Notifications\MatchSchedules\MatchSchedule;
 use App\Notifications\MatchSchedules\MatchStartedNotification;
@@ -639,32 +642,33 @@ class MatchService extends Service
         return $match;
     }
 
-    private function sendNoteNotification(MatchModel $match, string $status)
-    {
-        $homeTeamParticipants = $this->userRepository->allTeamsParticipant($match->homeTeam);
-        Notification::send($homeTeamParticipants, new MatchNoteNotification($match, $status));
 
-        if ($match->matchtType == 'Internal Match') {
-            $awayTeamParticipants = $this->userRepository->allTeamsParticipant($match->awayTeam, admins: false);
-            Notification::send($awayTeamParticipants, new MatchNoteNotification($match, $status));
-        }
-    }
     public function createNote($data, MatchModel $match){
-        $note = $this->matchRepository->createRelation($match, $data, 'notes');
-        $this->sendNoteNotification($match, 'created');
-        return $note;
+        Notification::send($this->teamsAllParticipants($match->homeTeam), new MatchNoteCreatedNotification($match));
+        if ($match->matchType == 'Internal Match') {
+            Notification::send($this->teamsCoaches($match->homeTeam), new MatchNoteCreatedNotification($match));
+            Notification::send($this->teamsPlayers($match->homeTeam), new MatchNoteCreatedNotification($match));
+        }
+        return $this->matchRepository->createRelation($match, $data, 'notes');
     }
     public function updateNote($data, MatchModel $match, MatchNote $note){
-        $note->update($data);
-        $this->sendNoteNotification($match, 'updated');
-        return $note;
+        Notification::send($this->teamsAllParticipants($match->homeTeam), new MatchNoteUpdatedNotification($match));
+        if ($match->matchType == 'Internal Match') {
+            Notification::send($this->teamsCoaches($match->homeTeam), new MatchNoteUpdatedNotification($match));
+            Notification::send($this->teamsPlayers($match->homeTeam), new MatchNoteUpdatedNotification($match));
+        }
+        return $note->update($data);
     }
     public function destroyNote(MatchModel $match, MatchNote $note)
     {
-        $note->delete();
-        $this->sendNoteNotification($match, 'deleted');
-        return $note;
+        Notification::send($this->teamsAllParticipants($match->homeTeam), new MatchNoteDeletedNotification($match));
+        if ($match->matchType == 'Internal Match') {
+            Notification::send($this->teamsCoaches($match->homeTeam), new MatchNoteDeletedNotification($match));
+            Notification::send($this->teamsPlayers($match->homeTeam), new MatchNoteDeletedNotification($match));
+        }
+        return $note->delete();
     }
+
 
     public function storeMatchScorer($data, MatchModel $match, $awayTeam = false)
     {
