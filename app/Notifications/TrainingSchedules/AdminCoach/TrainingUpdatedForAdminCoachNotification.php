@@ -51,7 +51,7 @@ class TrainingUpdatedForAdminCoachNotification extends Notification implements S
             ->subject("Training schedule Updated")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("Training schedule for {$this->team->teamName} has been updated by {$this->loggedUserRole} {$this->loggedUser->firstName} {$this->loggedUser->lastName}." )
-            ->line("Training Topic: {$this->training->eventName}")
+            ->line("Training Topic: {$this->training->topic}")
             ->line("Team: {$this->team->teamName}")
             ->line("Location: {$this->training->location}")
             ->line("Date: ".convertToDate($this->training->date))

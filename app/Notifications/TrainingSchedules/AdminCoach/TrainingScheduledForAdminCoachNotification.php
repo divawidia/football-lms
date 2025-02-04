@@ -51,7 +51,7 @@ class TrainingScheduledForAdminCoachNotification extends Notification implements
             ->subject("Training Session Scheduled")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("Training session for {$this->team->teamName} has been set to scheduled by {$this->loggedUserRole} {$this->loggedUser->firstName} {$this->loggedUser->lastName}." )
-            ->line("Training Topic: {$this->training->eventName}")
+            ->line("Training Topic: {$this->training->topic}")
             ->line("Team: {$this->team->teamName}")
             ->line("Location: {$this->training->location}")
             ->line("Date: ".convertToDate($this->training->date))

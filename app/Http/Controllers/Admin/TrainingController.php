@@ -311,12 +311,12 @@ class TrainingController extends Controller
     public function destroy(Training $training): JsonResponse
     {
         try {
-            $message = "Training session ".$training->eventName." successfully deleted.";
+            $message = "Training session ".$training->topic." successfully deleted.";
             $data = $this->trainingService->destroy($training, $this->getLoggedUser());
             return ApiResponse::success($data, message:  $message);
 
         } catch (Exception $e){
-            $message = "Error while deleting training session ".$training->eventName."." . $e->getMessage();
+            $message = "Error while deleting training session ".$training->topic."." . $e->getMessage();
             Log::error($message);
             return ApiResponse::error($message, null, $e->getCode());
         }

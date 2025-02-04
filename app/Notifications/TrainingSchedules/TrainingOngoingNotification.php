@@ -47,7 +47,7 @@ class TrainingOngoingNotification extends Notification implements ShouldQueue
             ->subject("Training Session is Starting Now!")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("Training session for {$this->team->teamName} is now on going." )
-            ->line("Training Topic: {$this->training->eventName}")
+            ->line("Training Topic: {$this->training->topic}")
             ->line("Team: {$this->team->teamName}")
             ->line("Location: {$this->training->location}")
             ->line("Date: ".convertToDate($this->training->date))

@@ -47,7 +47,7 @@ class TrainingCompletedNotification extends Notification implements ShouldQueue
             ->subject("Training Session Completed!")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("Training session for {$this->team->teamName} has been successfully completed." )
-            ->line("Training Topic: {$this->training->eventName}")
+            ->line("Training Topic: {$this->training->topic}")
             ->line("Team: {$this->team->teamName}")
             ->line("Location: {$this->training->location}")
             ->line("Date: ".convertToDate($this->training->date))

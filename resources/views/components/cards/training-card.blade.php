@@ -24,7 +24,7 @@
                 </div>
                 <div>
                     <i class="material-icons text-danger icon--left icon-16pt">location_on</i>
-                    {{ $training->place }}
+                    {{ $training->location }}
                 </div>
             </div>
         </div>
