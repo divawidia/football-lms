@@ -8,6 +8,7 @@ use App\Models\Player;
 use App\Models\Team;
 use App\Repository\TeamRepository;
 use App\Services\AttendanceReportService;
+use App\Services\TeamService;
 use Exception;
 use Hamcrest\Core\IsNot;
 use Illuminate\Http\JsonResponse;
@@ -16,116 +17,179 @@ use Illuminate\Http\Request;
 class AttendanceReportController extends Controller
 {
     private AttendanceReportService $attendanceReportService;
+    private TeamService $teamService;
     private TeamRepository $teamRepository;
 
     public function __construct(
         AttendanceReportService $attendanceReportService,
+        TeamService $teamService,
         TeamRepository $teamRepository
     )
     {
         $this->attendanceReportService = $attendanceReportService;
+        $this->teamService = $teamService;
         $this->teamRepository = $teamRepository;
     }
-    public function index(){
-        if (isAllAdmin()){
-            $data = null;
-            $teams = $this->teamRepository->getByTeamside('Academy Team');
-            $playerAttendanceDatatablesRoute = url()->route('admin.attendance-report.index');
-        }
-        elseif (isCoach()){
-            $coach = $this->getLoggedCoachUser();
-            $data = null;
-            $teams = $coach->teams;
-            $playerAttendanceDatatablesRoute = url()->route('coach.attendance-report.index');
-        }
-        else {
-            $player = $this->getLoggedPLayerUser();
-            $teams = $player->teams;
-            $data = $this->attendanceReportService->show($player);
-            return view('pages.academies.reports.attendances.player-detail', [
-                'data' => $data,
-                'player' => $player
-            ]);
-        }
 
-        if (\request()->ajax()) {
-            $startDate = \request()->input('startDate');
-            $endDate = \request()->input('endDate');
-            $team = \request()->input('team');
-            $eventType = \request()->input('eventType');
-            if ($team == null and $this->getLoggedUser()->getRoleNames() == isCoach()) {
-                $coach = $this->getLoggedCoachUser();
-                $team = $coach->teams;
-            } elseif ($team != null) {
-                $team = $this->teamRepository->whereId($team);
-            }
-            $lineChart = $this->attendanceReportService->attendanceLineChart($startDate, $endDate, $team, $eventType);
-            $doughnutChart = $this->attendanceReportService->attendanceDoughnutChart($startDate, $endDate, $team, $eventType);
-            $mostAttendedPlayer = $this->attendanceReportService->mostAttendedPlayer($startDate, $endDate, $team, $eventType);
-            $mostDidntAttendPlayer = $this->attendanceReportService->mostDidntAttendPlayer($startDate, $endDate, $team, $eventType);
-            $events = $this->attendanceReportService->eventIndex($startDate, $endDate, $team, $eventType);
-
-            $data = compact('lineChart', 'doughnutChart', 'mostAttendedPlayer', 'mostDidntAttendPlayer', 'events');
-
-            return ApiResponse::success($data);
-        }
-
-        return view('pages.academies.reports.attendances.index', [
-            'data' => $data,
+    public function adminCoachIndex()
+    {
+        ($this->isAllAdmin()) ? $teams = $this->teamService->allTeams() : $teams = $this->getLoggedCoachUser()->teams;
+        return view('pages.academies.reports.attendances.admin-coach-index', [
             'teams' => $teams,
-            'playerAttendanceDatatablesRoute' => $playerAttendanceDatatablesRoute,
+            'playerAttendanceDatatablesRoute' => route('attendance-report.admin-coach-index'),
+        ]);
+    }
+    public function playerIndex()
+    {
+        return view('pages.academies.reports.attendances.player-detail', [
+            'player' => $this->getLoggedPLayerUser(),
         ]);
     }
 
-    public function eventsIndex(Request $request)
-    {
-        $startDate = $request->input('startDate');
-        $endDate = $request->input('endDate');
-        $team = $request->input('team');
-        $eventType = $request->input('eventType');
-        return $this->attendanceReportService->eventIndex($startDate, $endDate, $team, $eventType);
-    }
-
-    public function adminIndex(Request $request)
+    public function attendanceData(Request $request): JsonResponse
     {
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
         $team = $request->input('team');
 
-        return $this->attendanceReportService->matchAttendanceDatatables($team, $startDate, $endDate);
+        if ($team == null and isCoach()) {
+            $team = $this->getLoggedCoachUser()->teams;
+        }
+        elseif ($team != null) {
+            $team = $this->teamRepository->find($team);
+        }
+
+        $data = [
+            'matchAttendanceHistoryChart' => $this->attendanceReportService->matchAttendanceHistoryChart($startDate, $endDate, $team),
+            'matchAttendanceStatusChart' => $this->attendanceReportService->matchAttendanceStatusChart($startDate, $endDate, $team),
+            'trainingAttendanceHistoryChart' => $this->attendanceReportService->trainingAttendanceHistoryChart($startDate, $endDate, $team),
+            'trainingAttendanceStatusChart' => $this->attendanceReportService->trainingAttendanceStatusChart($startDate, $endDate, $team),
+            'matchMostAttendedPlayer' => $this->attendanceReportService->mostAttendedPlayer($startDate, $endDate, $team, 'matches'),
+            'matchMostDidntAttendPlayer' => $this->attendanceReportService->mostDidntAttendPlayer($startDate, $endDate, $team, 'matches'),
+            'trainingMostAttendedPlayer' => $this->attendanceReportService->mostAttendedPlayer($startDate, $endDate, $team, 'trainings'),
+            'trainingMostDidntAttendPlayer' => $this->attendanceReportService->mostDidntAttendPlayer($startDate, $endDate, $team, 'trainings'),
+        ];
+
+        return ApiResponse::success($data);
     }
 
-    public function coachIndex(Request $request){
-        $coach = $this->getLoggedCoachUser();
+
+    public function matchPlayersAttendanceIndex(Request $request): JsonResponse
+    {
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
         $team = $request->input('team');
 
-        return $this->attendanceReportService->matchAttendanceDatatables($team ?? $coach->teams, $startDate, $endDate);
+        if ($team == null and isCoach()) {
+            $team = $this->getLoggedCoachUser()->teams;
+        }
+        elseif ($team != null) {
+            $team = $this->teamRepository->find($team);
+        }
+
+        return $this->attendanceReportService->matchPlayersAttendanceDatatables($startDate, $endDate, $team);
     }
+
+    public function trainingPlayersAttendanceIndex(Request $request): JsonResponse
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $team = $request->input('team');
+
+        if ($team == null and isCoach()) {
+            $team = $this->getLoggedCoachUser()->teams;
+        }
+        elseif ($team != null) {
+            $team = $this->teamRepository->find($team);
+        }
+
+        return $this->attendanceReportService->trainingPlayersAttendanceDatatables($startDate, $endDate, $team);
+    }
+
+
+    public function matchesAttendanceIndex(Request $request): JsonResponse
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $team = $request->input('team');
+
+        if ($team == null and isCoach()) {
+            $team = $this->getLoggedCoachUser()->teams;
+        }
+        elseif ($team != null) {
+            $team = $this->teamRepository->find($team);
+        }
+
+        return $this->attendanceReportService->matchIndex($startDate, $endDate, $team);
+    }
+    public function trainingAttendanceIndex(Request $request): JsonResponse
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $team = $request->input('team');
+
+        if ($team == null and isCoach()) {
+            $team = $this->getLoggedCoachUser()->teams;
+        }
+        elseif ($team != null) {
+            $team = $this->teamRepository->find($team);
+        }
+
+        return $this->attendanceReportService->trainingIndex($startDate, $endDate, $team);
+    }
+
 
     public function show(Player $player){
-        $data = $this->attendanceReportService->show($player);
         return view('pages.academies.reports.attendances.player-detail', [
-            'data' => $data,
             'player' => $player
         ]);
     }
 
-    public function matchDatatable(Player $player){
-            return $this->attendanceReportService->playerMatch($player);
+    public function playerMatchIndex(Request $request, Player $player): JsonResponse
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        return $this->attendanceReportService->playerMatch($player, $startDate, $endDate);
     }
 
-    public function trainingTable(Player $player){
-            return $this->attendanceReportService->playerTrainings($player);
+    public function playerTrainingIndex(Request $request, Player $player): JsonResponse
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        return $this->attendanceReportService->playerTrainings($player, $startDate, $endDate);
     }
 
-    public function playerMatchHistories(){
-        $player = $this->getLoggedPLayerUser();
-        return $this->attendanceReportService->playerMatch($player);
+    public function playerAttendanceData(Request $request, Player $player): JsonResponse
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        $data = [
+            'playerMatchIllness' => $this->attendanceReportService->playerMatchIllness($player, $startDate, $endDate),
+            'playerMatchOthers' => $this->attendanceReportService->playerMatchOthers($player, $startDate, $endDate),
+            'playerMatchRequiredAction' => $this->attendanceReportService->playerMatchRequiredAction($player, $startDate, $endDate),
+            'playerMatchInjured' => $this->attendanceReportService->playerMatchInjured($player, $startDate, $endDate),
+            'playerMatchAttended' => $this->attendanceReportService->playerMatchAttended($player, $startDate, $endDate),
+            'playerMatchTotalAbsent' => $this->attendanceReportService->playerMatchTotalAbsent($player, $startDate, $endDate),
+            'playerTrainingIllness' => $this->attendanceReportService->playerTrainingIllness($player, $startDate, $endDate),
+            'playerTrainingOthers' => $this->attendanceReportService->playerTrainingOthers($player, $startDate, $endDate),
+            'playerTrainingRequiredAction' => $this->attendanceReportService->playerTrainingRequiredAction($player, $startDate, $endDate),
+            'playerTrainingInjured' => $this->attendanceReportService->playerTrainingInjured($player, $startDate, $endDate),
+            'playerTrainingAttended' => $this->attendanceReportService->playerTrainingAttended($player, $startDate, $endDate),
+            'playerTrainingTotalAbsent' => $this->attendanceReportService->playerTrainingTotalAbsent($player, $startDate, $endDate),
+        ];
+
+        return ApiResponse::success($data);
     }
-    public function playerTrainingHistories(){
-        $player = $this->getLoggedPLayerUser();
-        return $this->attendanceReportService->playerTrainings($player);
+
+    public function playerMatchHistories()
+    {
+        return $this->attendanceReportService->playerMatch($this->getLoggedPLayerUser());
+    }
+    public function playerTrainingHistories()
+    {
+        return $this->attendanceReportService->playerTrainings($this->getLoggedPLayerUser());
     }
 }

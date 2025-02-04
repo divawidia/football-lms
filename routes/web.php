@@ -380,17 +380,22 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     });
 
     Route::prefix('attendance-reports')->name('attendance-report.')->group(function () {
-        Route::get('', [AttendanceReportController::class, 'index'])->middleware('role:player|coach|admin|Super-Admin')->name('index');
-        Route::get('admin', [AttendanceReportController::class, 'adminIndex'])->middleware('role:admin|Super-Admin')->name('admin-index');
-        Route::get('coach', [AttendanceReportController::class, 'coachIndex'])->middleware('role:coach')->name('coach-index');
-        Route::get('events', [AttendanceReportController::class, 'eventsIndex'])->middleware('role:coach|admin|Super-Admin')->name('events-index');
+        Route::get('', [AttendanceReportController::class, 'adminCoachIndex'])->middleware('role:coach|admin|Super-Admin')->name('admin-coach-index');
+        Route::get('match-players', [AttendanceReportController::class, 'matchPlayersAttendanceIndex'])->middleware('role:coach|admin|Super-Admin')->name('match-players');
+        Route::get('training-players', [AttendanceReportController::class, 'trainingPlayersAttendanceIndex'])->middleware('role:coach|admin|Super-Admin')->name('training-players');
+        Route::get('matches-attendance', [AttendanceReportController::class, 'matchesAttendanceIndex'])->middleware('role:coach|admin|Super-Admin')->name('matches');
+        Route::get('trainings-attendance', [AttendanceReportController::class, 'trainingAttendanceIndex'])->middleware('role:coach|admin|Super-Admin')->name('trainings');
+        Route::get('attendance', [AttendanceReportController::class, 'attendanceData'])->middleware('role:coach|admin|Super-Admin')->name('attendance');
+
+        Route::get('player', [AttendanceReportController::class, 'playerIndex'])->middleware('role:player')->name('player-index');
 
         Route::prefix('{player}')->group(function () {
             Route::get('', [AttendanceReportController::class, 'show'])->middleware('role:coach|admin|Super-Admin')->name('show');
 
             Route::middleware('role:player|coach|admin|Super-Admin')->group(function () {
-                Route::get('training-history', [AttendanceReportController::class, 'trainingTable'])->name('trainingTable');
-                Route::get('match-history', [AttendanceReportController::class, 'matchDatatable'])->name('matchDatatable');
+                Route::get('attendance-data', [AttendanceReportController::class, 'playerAttendanceData'])->name('player-attendance-data');
+                Route::get('training-history', [AttendanceReportController::class, 'playerTrainingIndex'])->name('player-training-index');
+                Route::get('match-history', [AttendanceReportController::class, 'playerMatchIndex'])->name('player-match-index');
             });
         });
     });

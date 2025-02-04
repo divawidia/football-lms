@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 interface TrainingRepositoryInterface
 {
     public function getAll(
-        array $relations = ['teams'],
+        array $relations = ['team'],
         ?Team $team = null,
         Player $player = null,
               $status = null,

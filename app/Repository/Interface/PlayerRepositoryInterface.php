@@ -57,7 +57,7 @@ interface PlayerRepositoryInterface
      * @param string|null $endDate
      * @return int
      */
-    public function playerAttendanceCount(Player $player, $status = 'Attended', $startDate = null, $endDate = null);
+    public function playerAttendanceCount(Player $player,$training = true,$status = 'Attended', $startDate = null, $endDate = null): int;
 
     /**
      * Sum player match statistics

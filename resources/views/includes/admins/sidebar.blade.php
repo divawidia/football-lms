@@ -124,7 +124,7 @@
                         <ul class="collapse sm-indent"
                             id="reportsMenu">
                             <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="{{ route('attendance-report.index') }}">
+                                <a class="sidebar-menu-button" href="{{ route('attendance-report.admin-coach-index') }}">
                                     <span class="sidebar-menu-text">Attendance</span>
                                 </a>
                             </li>

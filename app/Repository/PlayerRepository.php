@@ -107,16 +107,17 @@ class PlayerRepository implements PlayerRepositoryInterface
         return $this->player->findOrFail($id);
     }
 
-    public function playerAttendanceCount(Player $player, $status = 'Attended', $startDate = null, $endDate = null)
+    public function playerAttendanceCount(Player $player, $training = true, $status = 'Attended', $startDate = null, $endDate = null): int
     {
-        $query = $player->schedules()->where('attendanceStatus', $status);
+        ($training) ? $query = $player->trainings() : $query = $player->matches();
 
-        // If date range is provided, add a whereBetween clause
+        $query->where('attendanceStatus', $status);
+
         if ($startDate && $endDate) {
-            $query->whereBetween('player_attendance.updated_at', [$startDate, $endDate]);
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
         }
-        $query->where('status', 'Completed');
-        return $query->count();
+
+        return $query->where('status', 'Completed')->count();
     }
 
     public function playerMatchStatsSum(Player $player, $stats, $startDate = null, $endDate = null, Team $team = null)

@@ -19,7 +19,7 @@ class TrainingRepository implements TrainingRepositoryInterface
         $this->training = $training;
     }
 
-    public function getAll($relations = ['teams'], Team $team = null, Player $player = null, $status = null, $take = null, $startDate = null, $endDate = null, $beforeStartDate = false, $beforeEndDate = false, $reminderNotified = null, $orderBy = 'date', $orderDirection = 'desc', $columns = ['*'], $retrievalMethod = 'all')
+    public function getAll($relations = ['team'], Team $team = null, Player $player = null, $status = null, $take = null, $startDate = null, $endDate = null, $beforeStartDate = false, $beforeEndDate = false, $reminderNotified = null, $orderBy = 'date', $orderDirection = 'desc', $columns = ['*'], $retrievalMethod = 'all')
     {
         $query = $this->training->with($relations);
         if ($status != null) {
