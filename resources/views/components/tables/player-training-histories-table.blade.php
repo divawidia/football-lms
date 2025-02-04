@@ -36,21 +36,15 @@
                 pageLength: 5,
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    { data: 'eventName', name: 'eventName' },
+                    { data: 'topic', name: 'topic' },
                     { data: 'team', name: 'team' },
                     { data: 'date', name: 'date' },
-                    { data: 'place', name: 'place'},
+                    { data: 'location', name: 'location'},
                     { data: 'status', name: 'status' },
                     { data: 'attendanceStatus', name: 'attendanceStatus' },
                     { data: 'note', name: 'note' },
                     { data: 'last_updated', name: 'last_updated' },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],
                 // order: [[2, 'desc']],
             });
