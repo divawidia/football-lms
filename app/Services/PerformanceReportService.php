@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Coach;
 use App\Models\MatchModel;
+use App\Models\Team;
 use App\Models\TeamMatch;
 use App\Repository\CoachMatchStatsRepository;
 use App\Repository\MatchRepository;
@@ -12,229 +13,106 @@ use Carbon\Carbon;
 
 class PerformanceReportService extends Service
 {
-    private CoachMatchStatsRepository $coachMatchStatsRepository;
     private MatchRepository $matchRepository;
     private TeamMatchRepository $teamMatchRepository;
-    private MatchService $eventScheduleService;
     public function __construct(
-        CoachMatchStatsRepository $coachMatchStatsRepository,
         MatchRepository           $matchRepository,
         TeamMatchRepository       $teamMatchRepository,
-        MatchService $eventScheduleService
     ){
-        $this->coachMatchStatsRepository = $coachMatchStatsRepository;
         $this->matchRepository = $matchRepository;
         $this->teamMatchRepository = $teamMatchRepository;
-        $this->eventScheduleService = $eventScheduleService;
-    }
-    public function overviewStats(){
-        $stats = [
-            'teamScore',
-            'cleanSheets',
-            'teamOwnGoal',
-        ];
-        $results = ['Win', 'Lose', 'Draw'];
-        $startDate = Carbon::now()->startOfMonth();
-        $endDate = Carbon::now();
-
-        foreach ($results as $result){
-            $statsData[$result] = $this->teamMatchRepository->getTeamsStats(results: $result);
-            $statsData[$result.'ThisMonth'] = $this->teamMatchRepository->getTeamsStats(startDate: $startDate, endDate: $endDate, results: $result);
-        }
-
-        $totalWins = TeamMatch::where('resultStatus', 'Win')
-            ->whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })->count();
-//        $prevMonthWins = TeamMatch::where('resultStatus', 'Win')
-//            ->whereHas('team', function($q) {
-//                $q->where('teamSide', 'Academy Team');
-//            })
-//            ->whereHas('match', function($q) {
-//                $q->whereBetween('date',[Carbon::now()->startOfMonth()->subMonth(1),Carbon::now()->startOfMonth()]);
-//            })->count();
-        $thisMonthTotalWins = TeamMatch::where('resultStatus', 'Win')
-            ->whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->whereHas('match', function($q) {
-                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
-            })->count();
-//        $winsDiff = $thisMonthWins - $prevMonthWins;
-
-        $totalLosses = TeamMatch::where('resultStatus', 'Lose')
-            ->whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })->count();
-        $thisMonthTotalLosses = TeamMatch::where('resultStatus', 'Lose')
-            ->whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->whereHas('match', function($q) {
-                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
-            })->count();
-
-        $totalDraws = TeamMatch::where('resultStatus', 'Draw')
-            ->whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })->count();
-        $thisMonthTotalDraws = TeamMatch::where('resultStatus', 'Draw')
-            ->whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->whereHas('match', function($q) {
-                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
-            })->count();
-
-        $totalMatchPlayed = MatchModel::whereHas('teams', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->where('status', 'Completed')
-            ->where('eventType', 'Match')
-            ->count();
-        $thisMonthTotalMatchPlayed = MatchModel::whereHas('teams', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()])
-            ->where('status', 'Completed')
-            ->where('eventType', 'Match')
-            ->count();
-
-        $totalGoals = TeamMatch::whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })->sum('teamScore');
-        $thisMonthTotalGoals = TeamMatch::whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->whereHas('match', function($q) {
-                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
-            })
-            ->sum('teamScore');
-
-        $totalGoalsConceded = TeamMatch::whereHas('team', function($q) {
-                $q->where('teamSide', 'Opponent Team');
-            })
-            ->sum('teamScore');
-        $thisMonthTotalGoalsConceded = TeamMatch::whereHas('team', function($q) {
-                $q->where('teamSide', 'Opponent Team');
-            })
-            ->whereHas('match', function($q) {
-                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
-            })
-            ->sum('teamScore');
-
-        $goalsDifference = $totalGoals - $totalGoalsConceded;
-        $thisMonthGoalsDifference = $thisMonthTotalGoals - $thisMonthTotalGoalsConceded;
-
-        $totalCleanSheets = TeamMatch::whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->sum('cleanSheets');
-        $thisMonthTotalCleanSheets = TeamMatch::whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->whereHas('match', function($q) {
-                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
-            })
-            ->sum('cleanSheets');
-
-        $totalOwnGoals = TeamMatch::whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->sum('teamOwnGoal');
-        $thisMonthTotalOwnGoals = TeamMatch::whereHas('team', function($q) {
-                $q->where('teamSide', 'Academy Team');
-            })
-            ->whereHas('match', function($q) {
-                $q->whereBetween('date',[Carbon::now()->startOfMonth(),Carbon::now()]);
-            })
-            ->sum('teamOwnGoal');
-
-        return compact(
-            'totalMatchPlayed',
-            'totalGoals',
-            'totalGoalsConceded',
-            'goalsDifference',
-            'totalCleanSheets',
-            'totalOwnGoals',
-            'totalWins',
-            'totalLosses',
-            'totalDraws',
-            'thisMonthTotalMatchPlayed',
-            'thisMonthTotalGoals',
-            'thisMonthTotalGoalsConceded',
-            'thisMonthGoalsDifference',
-            'thisMonthTotalCleanSheets',
-            'thisMonthTotalOwnGoals',
-            'thisMonthTotalWins',
-            'thisMonthTotalLosses',
-            'thisMonthTotalDraws',
-        );
     }
 
-    public function coachOverviewStats($coach){
-        $totalMatchPlayed = $this->coachMatchStatsRepository->totalMatchPlayed($coach);
-        $thisMonthTotalMatchPlayed = $this->coachMatchStatsRepository->thisMonthTotalMatchPlayed($coach);
-
-        $totalGoals =  $this->coachMatchStatsRepository->totalGoals($coach);
-        $thisMonthTotalGoals = $this->coachMatchStatsRepository->thisMonthTotalGoals($coach);
-
-        $totalGoalsConceded = $this->coachMatchStatsRepository->totalGoalsConceded($coach);
-        $thisMonthTotalGoalsConceded = $this->coachMatchStatsRepository->thisMonthTotalGoalsConceded($coach);
-
-        $totalCleanSheets = $this->coachMatchStatsRepository->totalCleanSheets($coach);
-        $thisMonthTotalCleanSheets = $this->coachMatchStatsRepository->thisMonthTotalCleanSheets($coach);
-
-        $totalOwnGoals = $this->coachMatchStatsRepository->totalOwnGoals($coach);
-        $thisMonthTotalOwnGoals = $this->coachMatchStatsRepository->thisMonthTotalOwnGoals($coach);
-
-        $totalWins = $this->coachMatchStatsRepository->totalWins($coach);
-        $thisMonthTotalWins = $this->coachMatchStatsRepository->thisMonthTotalWins($coach);
-
-        $totalLosses = $this->coachMatchStatsRepository->totalLosses($coach);
-        $thisMonthTotalLosses = $this->coachMatchStatsRepository->thisMonthTotalLosses($coach);
-
-        $totalDraws = $this->coachMatchStatsRepository->totalDraws($coach);
-        $thisMonthTotalDraws = $this->coachMatchStatsRepository->thisMonthTotalDraws($coach);
-
-        $goalsDifference = $totalGoals - $totalGoalsConceded;
-        $thisMonthGoalsDifference = $thisMonthTotalGoals - $thisMonthTotalGoalsConceded;
-
-        return compact(
-            'totalMatchPlayed',
-            'totalGoals',
-            'totalGoalsConceded',
-            'goalsDifference',
-            'totalCleanSheets',
-            'totalOwnGoals',
-            'totalWins',
-            'totalLosses',
-            'totalDraws',
-            'thisMonthTotalMatchPlayed',
-            'thisMonthTotalGoals',
-            'thisMonthTotalGoalsConceded',
-            'thisMonthGoalsDifference',
-            'thisMonthTotalCleanSheets',
-            'thisMonthTotalOwnGoals',
-            'thisMonthTotalWins',
-            'thisMonthTotalLosses',
-            'thisMonthTotalDraws',
-        );
+    public function goalScored(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'goalScored');
     }
-    public function latestMatch(){
-        return $this->matchRepository->getAll(relations: ['teams', 'competition'], status: ['Completed'],take: 2);
+    public function cleanSheets(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'cleanSheets');
+    }
+    public function teamOwnGoal(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamOwnGoal');
+    }
+    public function goalConceded(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'goalConceded');
+    }
+    public function goalDifference(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->goalScored($team, $startDate, $endDate) - $this->goalConceded($team, $startDate, $endDate);
     }
 
-    public function coachLatestMatch(Coach $coach){
-        return $this->matchRepository->getByRelation($coach, ['teams', 'competition'],['Completed', 'Ongoing'], 2);
+
+    public function teamShotOnTarget(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamShotOnTarget');
+    }
+    public function teamShots(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamShots');
+    }
+    public function teamTouches(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamTouches');
+    }
+    public function teamTackles(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamTackles');
+    }
+    public function teamClearances(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamClearances');
+    }
+    public function teamCorners(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamCorners');
+    }
+    public function teamOffsides(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamOffsides');
+    }
+    public function teamYellowCards(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamYellowCards');
+    }
+    public function teamRedCards(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamRedCards');
+    }
+    public function teamFoulsConceded(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamFoulsConceded');
+    }
+    public function teamPasses(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, stats: 'teamPasses');
     }
 
-    public function matchHistory(){
-        $data = $this->matchRepository->getAll(relations: ['teams', 'competition'], status: ['Completed']);
-        return $this->eventScheduleService->makeDataTablesMatch($data);
+
+    public function teamWins(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, results: 'Win');
     }
-    public function modelMatchHistory($model){
-        $data = $this->matchRepository->getByRelation($model, ['teams', 'competition'],['Completed', 'Ongoing']);
-        return $this->eventScheduleService->makeDataTablesMatch($data);
+    public function teamLosses(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, results: 'Lose');
     }
+    public function teamDraws(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->teamMatchRepository->getTeamsStats($team, $startDate, $endDate, results: 'Draw');
+    }
+    public function totalMatchPlayed(Team $team = null, $startDate = null, $endDate = null)
+    {
+        return $this->matchRepository->getAll(relations: [], teams: $team, status: ['Completed'], startDate: $startDate, endDate: $endDate)->count();
+    }
+    public function winRate(Team $team = null, $startDate = null, $endDate = null)
+    {
+        $totalMatch = $this->totalMatchPlayed($team, $startDate, $endDate);
+        $wins = $this->teamWins($team, $startDate, $endDate);
+        ($totalMatch > 0) ? $winRate = ( $wins /$totalMatch) * 100 : $winRate = 0; // check if totalMatch is 0 then set win rate to 0
+        return round($winRate, 2);
+    }
+
 }
