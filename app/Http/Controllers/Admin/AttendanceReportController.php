@@ -9,6 +9,7 @@ use App\Models\Team;
 use App\Repository\TeamRepository;
 use App\Services\AttendanceReportService;
 use App\Services\TeamService;
+use Carbon\Carbon;
 use Exception;
 use Hamcrest\Core\IsNot;
 use Illuminate\Http\JsonResponse;
@@ -140,8 +141,34 @@ class AttendanceReportController extends Controller
 
 
     public function show(Player $player){
+        $startDate = Carbon::now()->startOfMonth();
+        $endDate = Carbon::now();
         return view('pages.academies.reports.attendances.player-detail', [
-            'player' => $player
+            'player' => $player,
+            'playerMatchIllness' => $this->attendanceReportService->playerMatchIllness($player),
+            'playerMatchOthers' => $this->attendanceReportService->playerMatchOthers($player),
+            'playerMatchRequiredAction' => $this->attendanceReportService->playerMatchRequiredAction($player),
+            'playerMatchInjured' => $this->attendanceReportService->playerMatchInjured($player),
+            'playerMatchAttended' => $this->attendanceReportService->playerMatchAttended($player),
+            'playerMatchTotalAbsent' => $this->attendanceReportService->playerMatchTotalAbsent($player),
+            'playerTrainingIllness' => $this->attendanceReportService->playerTrainingIllness($player),
+            'playerTrainingOthers' => $this->attendanceReportService->playerTrainingOthers($player),
+            'playerTrainingRequiredAction' => $this->attendanceReportService->playerTrainingRequiredAction($player),
+            'playerTrainingInjured' => $this->attendanceReportService->playerTrainingInjured($player),
+            'playerTrainingAttended' => $this->attendanceReportService->playerTrainingAttended($player),
+            'playerTrainingTotalAbsent' => $this->attendanceReportService->playerTrainingTotalAbsent($player),
+            'playerMatchIllnessThisMonth' => $this->attendanceReportService->playerMatchIllness($player, $startDate, $endDate),
+            'playerMatchOthersThisMonth' => $this->attendanceReportService->playerMatchOthers($player, $startDate, $endDate),
+            'playerMatchRequiredActionThisMonth' => $this->attendanceReportService->playerMatchRequiredAction($player, $startDate, $endDate),
+            'playerMatchInjuredThisMonth' => $this->attendanceReportService->playerMatchInjured($player, $startDate, $endDate),
+            'playerMatchAttendedThisMonth' => $this->attendanceReportService->playerMatchAttended($player, $startDate, $endDate),
+            'playerMatchTotalAbsentThisMonth' => $this->attendanceReportService->playerMatchTotalAbsent($player, $startDate, $endDate),
+            'playerTrainingIllnessThisMonth' => $this->attendanceReportService->playerTrainingIllness($player, $startDate, $endDate),
+            'playerTrainingOthersThisMonth' => $this->attendanceReportService->playerTrainingOthers($player, $startDate, $endDate),
+            'playerTrainingRequiredActionThisMonth' => $this->attendanceReportService->playerTrainingRequiredAction($player, $startDate, $endDate),
+            'playerTrainingInjuredThisMonth' => $this->attendanceReportService->playerTrainingInjured($player, $startDate, $endDate),
+            'playerTrainingAttendedThisMonth' => $this->attendanceReportService->playerTrainingAttended($player, $startDate, $endDate),
+            'playerTrainingTotalAbsentThisMonth' => $this->attendanceReportService->playerTrainingTotalAbsent($player, $startDate, $endDate),
         ]);
     }
 
