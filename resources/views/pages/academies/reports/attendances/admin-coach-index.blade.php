@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        <div class="tab-content mt-3">\
+        <div class="tab-content mt-3">
             <div class="tab-pane fade show active" id="training-attendance-tab" role="tabpanel">
                 {{--   Training Overview    --}}
                 <div class="page-separator">
