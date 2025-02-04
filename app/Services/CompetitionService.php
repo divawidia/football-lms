@@ -106,7 +106,7 @@ class CompetitionService extends Service
 
     public function competitionMatches(Competition $competition)
     {
-        return Datatables::of($competition->matches)
+        return Datatables::of($competition->matches()->latest())
             ->addColumn('action', function ($item) {
                 $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('match-schedules.show', $item->hash), icon: 'visibility', btnText: 'View match session');
                 if (isAllAdmin()){
@@ -171,7 +171,7 @@ class CompetitionService extends Service
         ($competition->isInternal == 1) ? $competitionData['matchType'] = 'Internal Match' : $competitionData['matchType'] = 'External Match';
 
         $competitionData['competitionId'] = $competition->id;
-        $this->matchService->storeMatch($competitionData, $loggedUser->id);
+        $this->matchService->storeMatch($competitionData, $loggedUser);
         return $competition;
     }
 

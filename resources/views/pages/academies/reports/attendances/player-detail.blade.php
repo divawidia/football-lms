@@ -72,7 +72,7 @@
 
             <div class="tab-pane fade show" id="match-attendance-tab" role="tabpanel">
                 <div class="page-separator">
-                    <div class="page-separator__text">Training Attendance Overview</div>
+                    <div class="page-separator__text">Match Attendance Overview</div>
                 </div>
                 <div class="row card-group-row mb-4">
                     @include('components.cards.stats-card', ['title' => 'Total Attended','data' => $data['totalAttended'], 'dataThisMonth' => $data['thisMonthTotalAttended']])
@@ -82,10 +82,10 @@
                 </div>
 
                 <div class="page-separator">
-                    <div class="page-separator__text">Training History</div>
+                    <div class="page-separator__text">Match History</div>
                 </div>
-                <x-player-training-histories-table tableId="trainingHistoriesTable"
-                                                   :tableRoute="route('attendance-report.trainingTable', $player->id)"/>
+                <x-player-match-histories-table tableId="matchHistoriesTable"
+                                                   :tableRoute="route('attendance-report.matchTable', $player->id)"/>
 
                 <div class="page-separator">
                     <div class="page-separator__text">Match History</div>
