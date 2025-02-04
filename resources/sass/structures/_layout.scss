@@ -1,4 +1,6 @@
-@media (min-width: $breakpoint-xl) {
+@use '../variables';
+
+@media (min-width: variables.$breakpoint-xl) {
         .layout-app{
             .container-fluid, .container-lg, .container-md, .container-sm, .container-xl{
                 padding-left: 2rem;

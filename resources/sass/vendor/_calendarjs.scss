@@ -1,10 +1,12 @@
+@use '../variables';
+
 .fc{
     .fc-button-primary{
-        background-color: $accent-1;
-        border-color: $accent-1;
+        background-color: variables.$accent-1;
+        border-color: variables.$accent-1;
         &:disabled{
-            background-color: $accent-1;
-            border-color: $accent-1;
+            background-color: variables.$accent-1;
+            border-color: variables.$accent-1;
         }
     }
 }

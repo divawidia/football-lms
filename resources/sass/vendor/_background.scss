@@ -1,7 +1,9 @@
+@use '../variables';
+
 .bg-primary {
-    background-color: $accent-1 !important
+    background-color: variables.$accent-1 !important
 }
 
 .bg-accent-2 {
-    background-color:$accent-5 !important
+    background-color: variables.$accent-5 !important
 }
