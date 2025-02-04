@@ -1384,7 +1384,7 @@ select.form-control:focus::-ms-value {
 .preloader {
   height: 100%;
   width: 100%;
-  top: 0px;
+  top: 0;
   position: fixed;
   z-index: 99999;
   background: #5567ff;

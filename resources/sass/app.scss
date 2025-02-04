@@ -1,49 +1,49 @@
-@import 'variables';
-//@import 'bootstrap/scss/bootstrap';
+@use 'variables';
+//@use 'bootstrap/scss/bootstrap';
 
 /////////////
 // PLUGINS //
 /////////////
 
-//@import 'bootstrap-custom-checkbox-toggle/bootstrap-custom-checkbox-toggle';
-//@import 'fm-plugin-flatpickr/scss/flatpickr';
-//@import 'fm-plugin-chartjs/scss/chartjs';
-//@import 'fm-avatar/avatar';
-//@import 'fm-loader/loader';
-//@import 'sass-math/math';
-//@import 'corner-ribbon/sass/corner-ribbon';
+//@use 'bootstrap-custom-checkbox-toggle/bootstrap-custom-checkbox-toggle';
+//@use 'fm-plugin-flatpickr/scss/flatpickr';
+//@use 'fm-plugin-chartjs/scss/chartjs';
+//@use 'fm-avatar/avatar';
+//@use 'fm-loader/loader';
+//@use 'sass-math/math';
+//@use 'corner-ribbon/sass/corner-ribbon';
 
 /////////
 // MDK //
 /////////
 
-//@import 'material-design-kit/src/style';
+//@use 'material-design-kit/src/style';
 
 ////////////
 // CUSTOM //
 ////////////
 
-@import 'components/avatar';
-@import 'components/checkbox';
-@import 'components/sidebar';
-@import 'components/topbar';
-@import 'components/form';
-@import 'components/notification';
-@import 'components/tabs';
-@import 'structures/layout';
-@import 'vendor/background';
-@import 'vendor/badge';
-@import 'vendor/bootstrap';
-@import 'vendor/calendarjs';
-@import 'vendor/breadcrumb';
-@import 'vendor/card';
-@import 'vendor/flex';
-@import 'vendor/margin';
-@import 'vendor/padding';
-@import 'vendor/page';
-@import 'vendor/ckeditor';
-@import 'vendor/perfect-scrolbar';
-@import 'preloader';
+@use 'components/avatar';
+@use 'components/checkbox';
+@use 'components/sidebar';
+@use 'components/topbar';
+@use 'components/form';
+@use 'components/notification';
+@use 'components/tabs';
+@use 'structures/layout';
+@use 'vendor/background';
+@use 'vendor/badge';
+@use 'vendor/bootstrap';
+@use 'vendor/calendarjs';
+@use 'vendor/breadcrumb';
+@use 'vendor/card';
+@use 'vendor/flex';
+@use 'vendor/margin';
+@use 'vendor/padding';
+@use 'vendor/page';
+@use 'vendor/ckeditor';
+@use 'vendor/perfect-scrolbar';
+@use 'preloader';
 
 .ui .page__container {
   max-width: 944px;

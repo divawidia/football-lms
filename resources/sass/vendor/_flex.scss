@@ -1,3 +1,4 @@
+@use '../variables';
 
 .flex {
     flex: 1 1 0% !important
@@ -15,7 +16,7 @@
     flex-shrink: 0 !important
 }
 
-@media (min-width: $breakpoint-sm) {
+@media (min-width: variables.$breakpoint-sm) {
     .flex-sm {
         flex: 1 1 0% !important
     }
@@ -33,7 +34,7 @@
     }
 }
 
-@media (min-width: $breakpoint-md) {
+@media (min-width: variables.$breakpoint-md) {
     .flex-md {
         flex: 1 1 0% !important
     }
@@ -51,7 +52,7 @@
     }
 }
 
-@media (min-width: $breakpoint-lg) {
+@media (min-width: variables.$breakpoint-lg) {
     .flex-lg {
         flex: 1 1 0% !important
     }
@@ -69,7 +70,7 @@
     }
 }
 
-@media (min-width: $breakpoint-xl) {
+@media (min-width: variables.$breakpoint-xl) {
     .flex-xl {
         flex: 1 1 0% !important
     }
@@ -87,7 +88,7 @@
     }
 }
 
-@media (min-width: $breakpoint-xxl) {
+@media (min-width: variables.$breakpoint-xxl) {
     .flex-xxl {
         flex: 1 1 0% !important
     }

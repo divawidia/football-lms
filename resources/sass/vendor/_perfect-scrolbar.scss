@@ -1,4 +1,6 @@
+@use '../variables';
+
 .ps__thumb-x, .ps__thumb-y {
-    background-color: $accent-1; /* Blue color for the scrollbar thumb */
+    background-color: variables.$accent-1; /* Blue color for the scrollbar thumb */
     border-radius: 6px; /* Rounded edges for the thumb */
 }
