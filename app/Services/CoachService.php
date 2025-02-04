@@ -199,21 +199,45 @@ class CoachService extends Service
         return $this->trainingRepository->getByRelation($coach, status: ['Completed'], take: 4, orderDirection: 'desc');
     }
 
-    public function totalMatchPlayed(Coach $coach, $startDate = null, $endDate = null)
-    {
-        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, matchPlayed: true);
-    }
+
 
     public function totalGoals(Coach $coach, $startDate = null, $endDate = null)
     {
         return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'goalScored');
     }
-
     public function goalConceded(Coach $coach, $startDate = null, $endDate = null)
     {
         return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'goalConceded');
     }
+    public function goalsDifference(Coach $coach, $startDate = null, $endDate = null)
+    {
+        $goalScored = $this->totalGoals($coach, $startDate, $endDate);
+        $goalConceded = $this->goalConceded($coach, $startDate, $endDate);
+        return $goalScored - $goalConceded;
+    }
+    public function cleanSheets(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'cleanSheets');
+    }
 
+
+
+    public function totalMatchPlayed(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, matchPlayed: true);
+    }
+    public function wins(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, 'Win');
+    }
+    public function lose(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, 'Lose');
+    }
+    public function draw(Coach $coach, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, 'Draw');
+    }
     public function winRate(Coach $coach, $startDate = null, $endDate = null)
     {
         $totalMatch = $this->totalMatchPlayed($coach, $startDate, $endDate);
@@ -223,32 +247,52 @@ class CoachService extends Service
         return round($winRate, 2);
     }
 
-    public function cleanSheets(Coach $coach, $startDate = null, $endDate = null)
+
+    public function teamShotOnTarget(Coach $coach = null, $startDate = null, $endDate = null)
     {
-        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'cleanSheets');
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamShotOnTarget');
+    }
+    public function teamShots(Coach $coach = null, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamShots');
+    }
+    public function teamTouches(Coach $coach = null, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamTouches');
+    }
+    public function teamTackles(Coach $coach = null, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamTackles');
+    }
+    public function teamClearances(Coach $coach = null, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamClearances');
+    }
+    public function teamCorners(Coach $coach = null, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamCorners');
+    }
+    public function teamOffsides(Coach $coach = null, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamOffsides');
+    }
+    public function teamYellowCards(Coach $coach = null, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamYellowCards');
+    }
+    public function teamRedCards(Coach $coach = null, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamRedCards');
+    }
+    public function teamFoulsConceded(Coach $coach = null, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamFoulsConceded');
+    }
+    public function teamPasses(Coach $coach = null, $startDate = null, $endDate = null)
+    {
+        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, retrievalMethod: 'sum', column: 'teamPasses');
     }
 
-    public function wins(Coach $coach, $startDate = null, $endDate = null)
-    {
-        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, 'Win');
-    }
-
-    public function lose(Coach $coach, $startDate = null, $endDate = null)
-    {
-        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, 'Lose');
-    }
-
-    public function draw(Coach $coach, $startDate = null, $endDate = null)
-    {
-        return $this->coachMatchStatsRepository->getAll($coach, $startDate, $endDate, 'Draw');
-    }
-
-    public function goalsDifference(Coach $coach, $startDate = null, $endDate = null)
-    {
-        $goalScored = $this->totalGoals($coach, $startDate, $endDate);
-        $goalConceded = $this->goalConceded($coach, $startDate, $endDate);
-        return $goalScored - $goalConceded;
-    }
 
     public function update(array $data, Coach $coach, $loggedUser)
     {

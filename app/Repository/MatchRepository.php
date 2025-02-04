@@ -74,48 +74,6 @@ class MatchRepository
         return $query->orderBy($orderBy, $orderDirection)->get($column);
     }
 
-    public function playerLatestEvent(Player $player, $eventType, $take = 2)
-    {
-        return $player->schedules()
-            ->where('eventType', $eventType)
-            ->where('status', 'Completed')
-            ->take($take)
-            ->orderBy('date', 'desc')
-            ->get();
-    }
-
-    public function getTeamsMatchPlayed(Team $team = null, $teamSide = 'Academy Team', $startDate = null, $endDate = null)
-    {
-        $query = $this->match->whereHas('teams', function($q) use ($team, $teamSide) {
-                $q->where('teamSide', $teamSide);
-                if ($team != null){
-                    $q->where('teamId', $team->id);
-                }
-            })
-            ->where('status', 'Completed');
-
-        if ($startDate != null && $endDate != null){
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        }
-
-        return $query->count();
-    }
-
-    public function getTeamsEvents(Team $team, $eventType, $status, $latest = false, $take = null)
-    {
-        $query = $team->schedules()->with('teams', 'competition')
-            ->where('eventType', $eventType)
-            ->where('status', $status);
-        if ($latest){
-            $query->latest('date');
-        }
-        if ($take != null){
-            $query->take(2);
-        }
-
-        return $query->get();
-    }
-
     public function getAttendanceTrend($startDate, $endDate,  $teams = null, $eventType = null)
     {
         $query = $this->match->from('event_schedules AS es')
