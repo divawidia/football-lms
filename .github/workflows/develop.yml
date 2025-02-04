@@ -100,4 +100,4 @@ jobs:
           username: ${{ secrets.SSH_USERNAME_TEST }}
           key: ${{ secrets.SSH_KEY_TEST }}
           port: ${{ secrets.SSH_PORT }}
-          script: cd htdocs/football-lms/ && chmod -R 775 ./scripts/.script.sh && chmod -R 775 .github/workflows/develop.yml && ./scripts/.script.sh
+          script: cd htdocs/football-lms/ && chmod -R 775 ./scripts/.develop-script.sh && chmod -R 775 .github/workflows/develop.yml && ./scripts/.develop-script.sh
