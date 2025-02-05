@@ -3,12 +3,10 @@
 namespace App\Repository;
 
 use App\Models\Player;
-use App\Models\Team;
 use App\Models\Training;
 use App\Repository\Interface\TrainingRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 class TrainingRepository implements TrainingRepositoryInterface
@@ -19,14 +17,15 @@ class TrainingRepository implements TrainingRepositoryInterface
         $this->training = $training;
     }
 
-    public function getAll($relations = ['team'], Team $team = null, Player $player = null, $status = null, $take = null, $startDate = null, $endDate = null, $beforeStartDate = false, $beforeEndDate = false, $reminderNotified = null, $orderBy = 'date', $orderDirection = 'desc', $columns = ['*'], $retrievalMethod = 'all')
+    public function getAll($relations = ['team'], Collection $teams = null, Player $player = null, $status = null, $take = null, $startDate = null, $endDate = null, $beforeStartDate = false, $beforeEndDate = false, $reminderNotified = null, $orderBy = 'date', $orderDirection = 'desc', $columns = ['*'], $retrievalMethod = 'all')
     {
         $query = $this->training->with($relations);
         if ($status != null) {
             $query->whereIn('status', $status);
         }
-        if ($team) {
-            $query->where('teamId', $team->id);
+        if ($teams != null) {
+            $teamIds = collect($teams)->pluck('id')->all();
+            $query->whereIn('teamId', $teamIds);
         }
         if ($player) {
             $query->whereRelation('players', 'playerId', $player->id);
@@ -74,57 +73,41 @@ class TrainingRepository implements TrainingRepositoryInterface
         return $query->orderBy($orderBy, $orderDirection)->get($column);
     }
 
-    public function getAttendanceTrend($startDate = null, $endDate = null,  $teams = null)
+    public function getAttendanceTrend(string $startDate = null, string $endDate = null, Collection $teams = null)
     {
-        $query = $this->training
-            ->join('player_training_attendance', 'trainings.id', '=', 'player_training_attendance.trainingId')
-            ->join('players', 'player_training_attendance.playerId', '=', 'players.id');
+        $query = $this->training->join('player_training_attendance', 'trainings.id', '=', 'player_training_attendance.trainingId');
 
         if ($teams) {
             $teamIds = collect($teams)->pluck('id')->all();
-            $query->join('player_teams', function (JoinClause $join) use ($teamIds) {
-                $join->on('players.id', '=', 'player_teams.playerId')
-                    ->whereIn('player_teams.teamId', $teamIds);
-            });
+            $query->whereIn('player_training_attendance.teamId', $teamIds);
         }
+
         $query->select(
             DB::raw('trainings.date as date'),
             DB::raw("COUNT(CASE WHEN player_training_attendance.attendanceStatus = 'Attended' THEN 1 END) AS total_attended_players"),
             DB::raw("COUNT(CASE WHEN player_training_attendance.attendanceStatus = 'Illness' THEN 1 END) AS total_of_ill_players"),
             DB::raw("COUNT(CASE WHEN player_training_attendance.attendanceStatus = 'Injured' THEN 1 END) AS total_of_injured_players"),
-            DB::raw("COUNT(CASE WHEN player_training_attendance.attendanceStatus = 'Other' THEN 1 END) AS total_of_other_attendance_status_players")
-        );
-
-        $query->where('trainings.status', 'Completed');
+            DB::raw("COUNT(CASE WHEN player_training_attendance.attendanceStatus = 'Other' THEN 1 END) AS total_of_other_status_players"),
+            DB::raw("COUNT(CASE WHEN player_training_attendance.attendanceStatus = 'Required Action' THEN 1 END) AS total_of_required_action_status_players")
+        )->where('trainings.status', 'Completed');
 
         if ($startDate != null && $endDate != null){
             $query->whereBetween('date', [$startDate, $endDate]);
         }
 
-        return $query->groupBy(DB::raw('date'))
-            ->orderBy('date')
-            ->get();
+        return $query->groupBy(DB::raw('date'))->orderBy('date')->get();
     }
 
-    public function countAttendanceByStatus($startDate = null, $endDate = null, $teams = null)
+    public function countAttendanceByStatus(string $startDate = null, string $endDate = null, Collection $teams = null)
     {
-        $query = $this->training
-            ->join('player_training_attendance', 'trainings.id', '=', 'player_training_attendance.trainingId')
-            ->join('players', 'player_training_attendance.playerId', '=', 'players.id');
+        $query = $this->training->join('player_training_attendance', 'trainings.id', '=', 'player_training_attendance.trainingId');
 
         if ($teams) {
             $teamIds = collect($teams)->pluck('id')->all();
-            $query->join('player_teams', function (JoinClause $join) use ($teamIds) {
-                $join->on('players.id', '=', 'player_teams.playerId')
-                    ->whereIn('player_teams.teamId', $teamIds);
-            });
+            $query->whereIn('player_training_attendance.teamId', $teamIds);
         }
 
-        $query->select(
-                DB::raw('player_training_attendance.attendanceStatus as status'),
-                DB::raw('COUNT(player_training_attendance.playerId) AS total_players')
-            )
-            ->where('player_training_attendance.attendanceStatus', '!=', 'Required Action')
+        $query->select(DB::raw('player_training_attendance.attendanceStatus as status'), DB::raw('COUNT(player_training_attendance.playerId) AS total_players'))
             ->where('trainings.status', 'Completed');
 
         if ($startDate != null && $endDate != null){
@@ -178,8 +161,8 @@ class TrainingRepository implements TrainingRepositoryInterface
     public function create(array $data)
     {
         $training = $this->training->create($data);
-        $training->players()->attach($training->team->players);
-        $training->coaches()->attach($training->team->coaches);
+        $training->players()->attach($training->team->players, ['teamId' => $training->teamId]);
+        $training->coaches()->attach($training->team->coaches, ['teamId' => $training->teamId]);
         return $training;
     }
 
