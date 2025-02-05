@@ -58,8 +58,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Training History</div>
                 </div>
-                <x-player-training-histories-table tableId="trainingHistoriesTable"
-                                                   :tableRoute="route('attendance-report.player-training-index', $player->id)"/>
+                <x-tables.player-training-histories-table :player="$player"/>
             </div>
 
             <div class="tab-pane fade show" id="match-attendance-tab" role="tabpanel">
@@ -78,8 +77,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Match History</div>
                 </div>
-                <x-player-match-histories-table tableId="matchHistoriesTable"
-                                                :tableRoute="route('attendance-report.player-match-index', $player->id)"/>
+                <x-tables.player-match-histories-table :player="$player"/>
             </div>
         </div>
     </div>
