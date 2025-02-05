@@ -15,7 +15,7 @@
             <ol class="breadcrumb p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('player-managements.index') }}">Players Management</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('player-managements.show', $player->id) }}">{{ getUserFullName($player->user) }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('player-managements.show', $player->hash) }}">{{ getUserFullName($player->user) }}</a></li>
                 <li class="breadcrumb-item active">@yield('title')</li>
             </ol>
         </div>

@@ -170,7 +170,7 @@ class PlayerController extends Controller
 
         $text = "Player ".$this->getUserFullName($player->user)."'s account successfully updated!";
         Alert::success($text);
-        return redirect()->route('player-managements.show', $player->id);
+        return redirect()->route('player-managements.show', $player->hash);
     }
 
     public function updateTeams(PlayerTeamRequest $request, Player $player): JsonResponse
