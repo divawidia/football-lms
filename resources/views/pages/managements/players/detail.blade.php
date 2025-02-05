@@ -301,7 +301,7 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <x-table :headers="['#', 'Training/Practice', 'Team', 'Training Date', 'Location', 'Training Status', 'Attendance Status', 'Attendance Note', 'Last Updated Attendance', 'Action']" tableId="trainingHistoryTable"/>
+                        <x-tables.player-training-histories-table :player="$data"/>
                     </div>
                 </div>
             </div>
@@ -313,7 +313,7 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <x-table :headers="['#', 'Team', 'Opposing Team', 'Match Date', 'Location', 'Competition', 'Match Type', 'Match Status', 'Attendance Status', 'Attendance Note', 'Last Updated Attendance', 'Action']" tableId="matchHistoryTable"/>
+                        <x-tables.player-match-histories-table :player="$data"/>
                     </div>
                 </div>
             </div>
@@ -334,8 +334,6 @@
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            const body = $('body');
-
             $('#teamsTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -351,52 +349,6 @@
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                     @endif
                 ],
-            });
-
-            $('#trainingHistoryTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{{ route('attendance-report.trainingTable', $data->hash) }}',
-                },
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'topic', name: 'topic'},
-                    {data: 'team', name: 'team'},
-                    {data: 'date', name: 'date'},
-                    {data: 'location', name: 'location'},
-                    {data: 'status', name: 'status'},
-                    {data: 'attendanceStatus', name: 'attendanceStatus'},
-                    {data: 'note', name: 'note'},
-                    {data: 'last_updated', name: 'last_updated'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false},
-                ],
-                order: [[2, 'asc']],
-            });
-
-            $('#matchHistoryTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: true,
-                ajax: {
-                    url: '{!! route('attendance-report.matchDatatable', $data->hash) !!}',
-                },
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'team', name: 'team'},
-                    {data: 'opponentTeam', name: 'opponentTeam'},
-                    {data: 'date', name: 'date'},
-                    {data: 'place', name: 'place'},
-                    {data: 'competition', name: 'competition'},
-                    {data: 'matchType', name: 'matchType'},
-                    {data: 'status', name: 'status'},
-                    {data: 'attendanceStatus', name: 'attendanceStatus'},
-                    {data: 'note', name: 'note'},
-                    {data: 'last_updated', name: 'last_updated'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false},
-                ],
-                order: [[2, 'asc']],
             });
 
             @if(isAllAdmin())
