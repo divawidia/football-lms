@@ -44,8 +44,8 @@
             @if(isAllAdmin())
                 processWithConfirmation(
                     ".delete-parent",
-                    "{{ route('player-managements.player-parents.destroy', ['player' => $player->id, 'parent' => ':id']) }}",
-                    "{{ route('player-managements.show', $player->id) }}",
+                    "{{ route('player-managements.player-parents.destroy', ['player' => $player->hash, 'parent' => ':id']) }}",
+                    "{{ route('player-managements.show', $player->hash) }}",
                     "DELETE",
                     "Are you sure to delete player {{ getUserFullName($player->user) }}'s parent/guardian?",
                     "Something went wrong when removing player {{ getUserFullName($player->user) }}'s parent/guardian!",

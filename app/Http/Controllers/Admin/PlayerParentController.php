@@ -41,7 +41,7 @@ class PlayerParentController extends Controller
 
         $text = "Player ".$this->getUserFullName($player->user)."'s parent/guardian successfully added!";
         Alert::success($text);
-        return redirect()->route('player-managements.show', $player->id);
+        return redirect()->route('player-managements.show', $player->hash);
     }
 
     public function edit(Player $player, PlayerParrent $parent)
@@ -62,7 +62,7 @@ class PlayerParentController extends Controller
         $this->playerParentService->update($data, $parent, $this->getLoggedUser());
         $text = "Player ".$this->getUserFullName($player->user)."'s parent/guardian successfully updated!";
         Alert::success($text);
-        return redirect()->route('player-managements.show', $player->id);
+        return redirect()->route('player-managements.show', $player->hash);
     }
 
     public function destroy(Player $player, PlayerParrent $parent)
