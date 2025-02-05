@@ -51,6 +51,8 @@
                     @include('components.cards.stats-card', ['title' => 'Total Illness','data' => $playerTrainingIllness, 'dataThisMonth' => $playerTrainingIllnessThisMonth])
                     @include('components.cards.stats-card', ['title' => 'Total Injured','data' => $playerTrainingInjured, 'dataThisMonth' => $playerTrainingInjuredThisMonth])
                     @include('components.cards.stats-card', ['title' => 'Total Other','data' => $playerTrainingOthers, 'dataThisMonth' => $playerTrainingOthersThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Total Required Action','data' => $playerTrainingRequiredAction, 'dataThisMonth' => $playerTrainingRequiredActionThisMonth])
+                    @include('components.cards.stats-card', ['title' => "Total Absent", 'data' => $playerTrainingTotalAbsent, 'dataThisMonth' => $playerTrainingTotalAbsentThisMonth])
                 </div>
 
                 <div class="page-separator">
@@ -69,6 +71,8 @@
                     @include('components.cards.stats-card', ['title' => 'Total Illness','data' => $playerMatchIllness, 'dataThisMonth' => $playerMatchIllnessThisMonth])
                     @include('components.cards.stats-card', ['title' => 'Total Injured','data' => $playerMatchInjured, 'dataThisMonth' => $playerMatchInjuredThisMonth])
                     @include('components.cards.stats-card', ['title' => 'Total Other','data' => $playerMatchOthers, 'dataThisMonth' => $playerMatchOthersThisMonth])
+                    @include('components.cards.stats-card', ['title' => 'Total Required Action','data' => $playerMatchRequiredAction, 'dataThisMonth' => $playerMatchRequiredActionThisMonth])
+                    @include('components.cards.stats-card', ['title' => "Total Absent", 'data' => $playerMatchTotalAbsent, 'dataThisMonth' => $playerMatchTotalAbsentThisMonth])
                 </div>
 
                 <div class="page-separator">
