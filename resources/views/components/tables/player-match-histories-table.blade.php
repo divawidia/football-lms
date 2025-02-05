@@ -1,39 +1,18 @@
 <div class="card">
     <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0" id="{{ $tableId }}">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Team</th>
-                    <th>Opponent</th>
-                    <th>Match Date</th>
-                    <th>Location</th>
-                    <th>Competition</th>
-                    <th>Match Type</th>
-                    <th>Match Status</th>
-                    <th>Attendance Status</th>
-                    <th>Note</th>
-                    <th>Last Updated Attendance</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+        <x-table :headers="['#', 'Team', 'Opposing Team', 'Match Date', 'Venue', 'Competition', 'Match Type', 'Match Status', 'Attendance Status', 'Attendance Note', 'Last Updated Attendance', 'Action']" tableId="matchHistoryTable"/>
     </div>
 </div>
 
 @push('addon-script')
     <script>
         $(document).ready(function() {
-            $('#{{ $tableId }}').DataTable({
+            $('#matchHistoryTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ordering: true,
                 ajax: {
-                    url: '{!! $tableRoute !!}',
+                    url: "{{ route('attendance-report.player-match-index', $player->hash) }}",
                 },
                 pageLength: 5,
                 columns: [
@@ -48,15 +27,9 @@
                     { data: 'attendanceStatus', name: 'attendanceStatus' },
                     { data: 'note', name: 'note' },
                     { data: 'last_updated', name: 'last_updated' },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],
-                // order: [[2, 'desc']],
+                order: [[3, 'desc']],
             });
         });
     </script>
