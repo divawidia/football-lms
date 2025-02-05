@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Helpers\DatatablesHelper;
+use App\Models\Coach;
 use App\Models\Player;
+use App\Models\Team;
 use App\Repository\Interface\PlayerRepositoryInterface;
 use App\Repository\Interface\TeamRepositoryInterface;
 use App\Repository\Interface\TrainingRepositoryInterface;
@@ -43,372 +45,210 @@ class AttendanceReportService extends Service
         $this->trainingService = $trainingService;
     }
 
-    public function playerMatchIllness(Player $player, $startDate = null, $endDate = null): int
+    private function getTeam(?string $teamId, ?Coach $loggedCoach)
     {
-        return  $this->matchRepository->playerAttendance($player, 'Illness', $startDate, $endDate);
-    }
-    public function playerMatchOthers(Player $player, $startDate = null, $endDate = null): int
-    {
-        return  $this->matchRepository->playerAttendance($player, 'Others', $startDate, $endDate);
-    }
-    public function playerMatchRequiredAction(Player $player, $startDate = null, $endDate = null): int
-    {
-        return  $this->matchRepository->playerAttendance($player, 'Required Action', $startDate, $endDate);
-    }
-    public function playerMatchInjured(Player $player, $startDate = null, $endDate = null): int
-    {
-        return  $this->matchRepository->playerAttendance($player, 'Injured', $startDate, $endDate);
-    }
-    public function playerMatchAttended(Player $player, $startDate = null, $endDate = null): int
-    {
-        return  $this->matchRepository->playerAttendance($player, 'Attended', $startDate, $endDate);
-    }
-    public function playerMatchTotalAbsent(Player $player, $startDate = null, $endDate = null): string
-    {
-        $illness = $this->playerMatchIllness($player, $startDate, $endDate);
-        $injured = $this->playerMatchInjured($player, $startDate, $endDate);
-        $others = $this->playerMatchOthers($player, $startDate, $endDate);
-
-        $totalDidntAttended = $illness + $injured + $others;
-        $totalEvent = $this->matchService->playerTotalMatch($player, $startDate, $endDate);
-        if ($totalEvent < 1){
-            return 'No event yet';
-        }else{
-            $percentage = $totalDidntAttended/$totalEvent*100;
-            return $totalDidntAttended . ' ('.round($percentage, 1).'%)';
-        }
+        return $teamId ? $this->teamRepository->whereId($teamId) : ($loggedCoach ? $loggedCoach->teams : null);
     }
 
-
-    public function playerTrainingIllness(Player $player, $startDate = null, $endDate = null): int
+    public function getPlayerAttendance(Player $player, string $status, $startDate = null, $endDate = null, bool $isMatch = true): int
     {
-        return  $this->trainingRepository->playerAttendance($player, 'Illness', $startDate, $endDate);
-    }
-    public function playerTrainingOthers(Player $player, $startDate = null, $endDate = null): int
-    {
-        return  $this->trainingRepository->playerAttendance($player, 'Others', $startDate, $endDate);
-    }
-    public function playerTrainingRequiredAction(Player $player, $startDate = null, $endDate = null): int
-    {
-        return  $this->trainingRepository->playerAttendance($player, 'Required Action', $startDate, $endDate);
-    }
-    public function playerTrainingInjured(Player $player, $startDate = null, $endDate = null): int
-    {
-        return  $this->trainingRepository->playerAttendance($player, 'Injured', $startDate, $endDate);
-    }
-    public function playerTrainingAttended(Player $player, $startDate = null, $endDate = null): int
-    {
-        return  $this->trainingRepository->playerAttendance($player, 'Attended', $startDate, $endDate);
-    }
-    public function playerTrainingTotalAbsent(Player $player, $startDate = null, $endDate = null): string
-    {
-        $illness = $this->playerTrainingIllness($player, $startDate, $endDate);
-        $injured = $this->playerTrainingInjured($player, $startDate, $endDate);
-        $others = $this->playerTrainingOthers($player, $startDate, $endDate);
-
-        $totalDidntAttended = $illness + $injured + $others;
-        $totalEvent = $this->trainingService->playerTotalTraining($player, $startDate, $endDate, ['Completed']);
-        if ($totalEvent < 1){
-            return 'No event yet';
-        }else{
-            $percentage = $totalDidntAttended / $totalEvent * 100;
-            return $totalDidntAttended . ' ('.round($percentage, 1).'%)';
-        }
+        return $isMatch
+            ? $this->matchRepository->playerAttendance($player, $status, $startDate, $endDate)
+            : $this->trainingRepository->playerAttendance($player, $status, $startDate, $endDate);
     }
 
-
-
-    public function matchPlayersAttendanceDatatables($teams = null, $startDate = null, $endDate = null): JsonResponse
+    public function getTotalAbsent(Player $player, $startDate = null, $endDate = null, bool $isMatch = true): string
     {
-        $query = $this->playerRepository->getAll($teams);
+        $illness = $this->getPlayerAttendance($player, 'Illness', $startDate, $endDate, $isMatch);
+        $injured = $this->getPlayerAttendance($player, 'Injured', $startDate, $endDate, $isMatch);
+        $others = $this->getPlayerAttendance($player, 'Others', $startDate, $endDate, $isMatch);
+        $requiredAction = $this->getPlayerAttendance($player, 'Required Action', $startDate, $endDate, $isMatch);
+
+        $totalDidntAttended = $illness + $injured + $others + $requiredAction;
+        $totalEvent = $isMatch
+            ? $this->matchRepository->getAll(player: $player, status: ['Completed'], startDate: $startDate, endDate: $endDate)->count()
+            : $this->trainingService->playerTotalTraining($player, $startDate, $endDate, ['Completed']);
+
+        return $totalEvent < 1
+            ? 'No event yet'
+            : "$totalDidntAttended (" . round(($totalDidntAttended / $totalEvent) * 100, 1) . '%)';
+    }
+
+    private function generatePlayerAttendanceDatatables($query, $startDate, $endDate, $isMatch = true)
+    {
         return Datatables::of($query)
-            ->addColumn('action', function ($item) {
-                return $this->datatablesHelper->buttonTooltips(route('attendance-report.show', $item->hash), 'View player attendance detail', 'visibility');
-            })
-            ->editColumn('teams', function ($item) {
-                return $this->datatablesHelper->usersTeams($item);
-            })
-            ->editColumn('name', function ($item) {
-                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
-            })
-            ->addColumn('totalMatch', function ($item) use ($startDate, $endDate){
-                return $this->matchService->playerTotalMatch($item);
-            })
-            ->addColumn('attended', function ($item) use ($startDate, $endDate) {
-                return $this->playerMatchAttended($item, $startDate, $endDate);
-            })
-            ->addColumn('absent', function ($item) use ($startDate, $endDate) {
-                return $this->playerMatchTotalAbsent($item, $startDate, $endDate);
-            })
-            ->addColumn('illness', function ($item) use ($startDate, $endDate) {
-                return $this->playerMatchIllness($item, $startDate, $endDate);
-            })
-            ->addColumn('injured', function ($item) use ($startDate, $endDate) {
-                return $this->playerMatchInjured($item, $startDate, $endDate);
-            })
-            ->addColumn('others', function ($item) use ($startDate, $endDate) {
-                return $this->playerMatchOthers($item, $startDate, $endDate);
-            })
-            ->addColumn('requiredAction', function ($item) use ($startDate, $endDate) {
-                return $this->playerMatchRequiredAction($item, $startDate, $endDate);
-            })
-            ->rawColumns(['action','teams', 'name'])
-            ->addIndexColumn()
-            ->make();
-    }
-    public function trainingPlayersAttendanceDatatables($teams = null, $startDate = null, $endDate = null): JsonResponse
-    {
-        $query = $this->playerRepository->getAll($teams);
-        return Datatables::of($query)
-            ->addColumn('action', function ($item) {
-                return $this->datatablesHelper->buttonTooltips(route('attendance-report.show', $item->hash), 'View player attendance detail', 'visibility');
-            })
-            ->editColumn('teams', function ($item) {
-                return $this->datatablesHelper->usersTeams($item);
-            })
-            ->editColumn('name', function ($item) {
-                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
-            })
-            ->addColumn('totalTraining', function ($item) use ($startDate, $endDate){
-                return $this->trainingService->playerTotalTraining($item, $startDate, $endDate, ['Completed']);
-            })
-            ->addColumn('attended', function ($item) use ($startDate, $endDate) {
-                return $this->playerTrainingAttended($item, $startDate, $endDate);
-            })
-            ->addColumn('absent', function ($item) use ($startDate, $endDate) {
-                return $this->playerTrainingTotalAbsent($item, $startDate, $endDate);
-            })
-            ->addColumn('illness', function ($item) use ($startDate, $endDate) {
-                return $this->playerTrainingIllness($item, $startDate, $endDate);
-            })
-            ->addColumn('injured', function ($item) use ($startDate, $endDate) {
-                return $this->playerTrainingInjured($item, $startDate, $endDate);
-            })
-            ->addColumn('others', function ($item) use ($startDate, $endDate) {
-                return $this->playerTrainingOthers($item, $startDate, $endDate);
-            })
-            ->addColumn('requiredAction', function ($item) use ($startDate, $endDate) {
-                return $this->playerTrainingRequiredAction($item, $startDate, $endDate);
-            })
-            ->rawColumns(['action','teams', 'name'])
+            ->addColumn('action', fn($item) => $this->datatablesHelper->buttonTooltips(route('attendance-report.show', $item->hash), 'View player attendance detail', 'visibility'))
+            ->editColumn('teams', fn($item) => $this->datatablesHelper->usersTeams($item))
+            ->editColumn('name', fn($item) => $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash)))
+            ->addColumn($isMatch ? 'totalMatch' : 'totalTraining', fn($item) => $isMatch ? $this->matchRepository->getAll(player: $item, status: ['Completed'], startDate: $startDate, endDate: $endDate)->count() : $this->trainingService->playerTotalTraining($item, $startDate, $endDate, ['Completed']))
+            ->addColumn('attended', fn($item) => $this->getPlayerAttendance($item, 'Attended', $startDate, $endDate, $isMatch))
+            ->addColumn('absent', fn($item) => $this->getTotalAbsent($item, $startDate, $endDate, $isMatch))
+            ->addColumn('illness', fn($item) => $this->getPlayerAttendance($item, 'Illness', $startDate, $endDate, $isMatch))
+            ->addColumn('injured', fn($item) => $this->getPlayerAttendance($item, 'Injured', $startDate, $endDate, $isMatch))
+            ->addColumn('others', fn($item) => $this->getPlayerAttendance($item, 'Others', $startDate, $endDate, $isMatch))
+            ->addColumn('requiredAction', fn($item) => $this->getPlayerAttendance($item, 'Required Action', $startDate, $endDate, $isMatch))
+            ->rawColumns(['action', 'teams', 'name'])
             ->addIndexColumn()
             ->make();
     }
 
 
 
-    public function matchIndex($startDate = null, $endDate = null, $teams = null): JsonResponse
+    public function matchPlayersAttendanceDatatables(string $teamId = null, $startDate = null, $endDate = null, Coach $loggedCoach = null): JsonResponse
     {
-        if ($teams != null) {
-            $teams = $this->teamRepository->find($teams);
-        }
+        $team = $this->getTeam($teamId, $loggedCoach);
+        $query = $this->playerRepository->getAll($team);
+        return $this->generatePlayerAttendanceDatatables($query, $startDate, $endDate, true);
+    }
 
-        $data = $this->matchRepository->getAll(teams: $teams, status: ['Completed'], startDate: $startDate, endDate:  $endDate);
+    public function trainingPlayersAttendanceDatatables(string $teamId = null, $startDate = null, $endDate = null, Coach $loggedCoach = null): JsonResponse
+    {
+        $team = $this->getTeam($teamId, $loggedCoach);
+        $query = $this->playerRepository->getAll($team);
+        return $this->generatePlayerAttendanceDatatables($query, $startDate, $endDate, false);
+    }
 
+
+
+    private function generateEventDatatables($data, $isMatch = true)
+    {
         return Datatables::of($data)
-            ->addColumn('action', function ($item) {
-                return $this->datatablesHelper->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
-            })
-            ->editColumn('eventName', function ($item) {
-                return match (true) {
-                    $item->matchType === 'Internal Match' => $item->homeTeam->teamName . ' Vs. ' . $item->awayTeam->teamName,
-                    default => $item->homeTeam->teamName . ' Vs. ' . $item->externalTeam->teamName,
-                };
-            })
-            ->addColumn('totalPlayers', function ($item) {
-                return $item->players()->count();
-            })
-            ->addColumn('playerAttended', function ($item) {
-                return $this->matchRepository->getRelationData($item, 'players', attendanceStatus: 'Attended', retrieveType: 'count');
-            })
-            ->addColumn('playerIllness', function ($item) {
-                return $this->matchRepository->getRelationData($item, 'players', attendanceStatus: 'Illness', retrieveType: 'count');
-            })
-            ->addColumn('playerInjured', function ($item) {
-                return $this->matchRepository->getRelationData($item, 'players', attendanceStatus: 'Injured', retrieveType: 'count');
-            })
-            ->addColumn('playerOther', function ($item) {
-                return $this->matchRepository->getRelationData($item, 'players', attendanceStatus: 'Other', retrieveType: 'count');
-            })
-            ->addColumn('playerRequiredAction', function ($item) {
-                return $this->matchRepository->getRelationData($item, 'players', attendanceStatus: 'Required Action', retrieveType: 'count');
-            })
-            ->editColumn('status', function ($item) {
-                return $this->datatablesHelper->eventStatus($item->status);
-            })
-            ->rawColumns(['action', 'team', 'status'])
+            ->addColumn('action', fn($item) => $this->datatablesHelper->buttonTooltips(route($isMatch ? 'match-schedules.show' : 'training-schedules.show', $item->hash), $isMatch ? 'View match session' : 'View training session', 'visibility'))
+            ->editColumn('eventName', fn($item) => $isMatch ? ($item->matchType === 'Internal Match' ? $item->homeTeam->teamName . ' Vs. ' . $item->awayTeam->teamName : $item->homeTeam->teamName . ' Vs. ' . $item->externalTeam->teamName) : $item->topic)
+            ->addColumn('totalPlayers', fn($item) => $item->players()->count())
+            ->addColumn('playerAttended', fn($item) => $isMatch ? $this->matchRepository->getRelationData($item, 'players', attendanceStatus: 'Attended', retrieveType: 'count') : $this->trainingService->playerAttended($item))
+            ->addColumn('playerIllness', fn($item) => $isMatch ? $this->matchRepository->getRelationData($item, 'players', attendanceStatus: 'Illness', retrieveType: 'count') : $this->trainingService->playerIllness($item))
+            ->addColumn('playerInjured', fn($item) => $isMatch ? $this->matchRepository->getRelationData($item, 'players', attendanceStatus: 'Injured', retrieveType: 'count') : $this->trainingService->playerInjured($item))
+            ->addColumn('playerOther', fn($item) => $isMatch ? $this->matchRepository->getRelationData($item, 'players', attendanceStatus: 'Other', retrieveType: 'count') : $this->trainingService->playerOther($item))
+            ->addColumn('playerRequiredAction', fn($item) => $isMatch ? $this->matchRepository->getRelationData($item, 'players', attendanceStatus: 'Required Action', retrieveType: 'count') : $this->trainingService->playerRequiredAction($item))
+            ->editColumn('status', fn($item) => $this->datatablesHelper->eventStatus($item->status))
+            ->rawColumns(['action', 'status'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function trainingIndex($startDate = null, $endDate = null, $teams = null): JsonResponse
+    public function matchIndex($startDate = null, $endDate = null, string $teamId = null, Coach $loggedCoach = null): JsonResponse
     {
-        if ($teams != null) {
-            $teams = $this->teamRepository->find($teams);
-        }
+        $team = $this->getTeam($teamId, $loggedCoach);
+        $data = $this->matchRepository->getAll(teams: $team, status: ['Completed'], startDate: $startDate, endDate: $endDate);
+        return $this->generateEventDatatables($data, true);
+    }
 
-        $data = $this->trainingRepository->getAll(team: $teams, status: ['Completed'], startDate: $startDate, endDate:  $endDate);
-
-        return Datatables::of($data)
-            ->addColumn('action', function ($item) {
-                return $this->datatablesHelper->buttonTooltips(route('training-schedules.show', $item->hash), 'View training session', 'visibility');
-            })
-            ->editColumn('team', function ($item) {
-                return $this->datatablesHelper->name($item->team->logo, $item->team->teamName, $item->team->ageGroup, route('team-managements.show', $item->hash));
-            })
-            ->editColumn('eventName', function ($item) {
-                return $item->topic;
-            })
-            ->addColumn('totalPlayers', function ($item) {
-                return $item->players()->count();
-            })
-            ->addColumn('playerAttended', function ($item) {
-                return $this->trainingService->playerAttended($item);
-            })
-            ->addColumn('playerIllness', function ($item) {
-                return $this->trainingService->playerIllness($item);
-            })
-            ->addColumn('playerInjured', function ($item) {
-                return $this->trainingService->playerInjured($item);
-            })
-            ->addColumn('playerOther', function ($item) {
-                return $this->trainingService->playerOther($item);
-            })
-            ->addColumn('playerRequiredAction', function ($item) {
-                return $this->trainingRepository->getRelationData($item, 'players', attendanceStatus: 'Required Action', retrieveType: 'count');
-            })
-            ->editColumn('status', function ($item) {
-                return $this->datatablesHelper->eventStatus($item->status);
-            })
-            ->rawColumns(['action', 'team', 'status'])
-            ->addIndexColumn()
-            ->make();
+    public function trainingIndex($startDate = null, $endDate = null, string $teamId = null, Coach $loggedCoach = null): JsonResponse
+    {
+        $team = $this->getTeam($teamId, $loggedCoach);
+        $data = $this->trainingRepository->getAll(teams: $team, status: ['Completed'], startDate: $startDate, endDate: $endDate);
+        return $this->generateEventDatatables($data, false);
     }
 
 
 
-    public function mostAttendedPlayer($startDate = null, $endDate = null, $teams = null, $eventType = 'training'): array
+    private function calculateAttendancePercentage($results, $attendedKey): ?float
     {
-        $results = $this->playerRepository->getMostAttended(startDate: $startDate, endDate:  $endDate, teams: $teams, relation:  $eventType);
-        if ($results != null and $results->schedules_count > 0) {
-            $attended_count = $results->attended_count;
-            $schedules_count = $results->schedules_count;
-            $mostAttendedPercentage = round($attended_count / $schedules_count * 100, 1);
-        } else {
-            $mostAttendedPercentage = null;
-        }
-
-        return compact('results', 'mostAttendedPercentage');
-    }
-    public function mostDidntAttendPlayer($startDate = null, $endDate = null, $teams = null, $eventType = 'training'): array
-    {
-        $results = $this->playerRepository->getMostDidntAttended(startDate: $startDate, endDate:  $endDate, teams: $teams, relation:  $eventType);
-        if ($results != null and $results->schedules_count > 0) {
-            $didnt_attended_count = $results->didnt_attended_count;
-            $schedules_count = $results->schedules_count;
-            $mostDidntAttendPercentage = round($didnt_attended_count / $schedules_count * 100, 1);
-        } else {
-            $mostDidntAttendPercentage = null;
-        }
-        return compact('results', 'mostDidntAttendPercentage');
+        return ($results && $results->schedules_count > 0)
+            ? round(($results->$attendedKey / $results->schedules_count) * 100, 1)
+            : null;
     }
 
-
-
-    public function matchAttendanceHistoryChart($startDate = null, $endDate = null,  $teams = null)
+    public function mostAttendedPlayer($startDate = null, $endDate = null, $eventType = 'training', string $teamId = null, Coach $loggedCoach = null): array
     {
-        $attendanceData = $this->matchRepository->getAttendanceTrend($startDate, $endDate, $teams);
+        $team = $this->getTeam($teamId, $loggedCoach);
+        $results = $this->playerRepository->getMostAttended($startDate, $endDate, $team, $eventType);
         return [
-            'labels' => $attendanceData->pluck('date'),
+            'results' => $results,
+            'mostAttendedPercentage' => $this->calculateAttendancePercentage($results, 'attended_count')
+        ];
+    }
+
+    public function mostDidntAttendPlayer($startDate = null, $endDate = null, $eventType = 'training', string $teamId = null, Coach $loggedCoach = null): array
+    {
+        $team = $this->getTeam($teamId, $loggedCoach);
+        $results = $this->playerRepository->getMostDidntAttended($startDate, $endDate, $team, $eventType);
+        return [
+            'results' => $results,
+            'mostDidntAttendPercentage' => $this->calculateAttendancePercentage($results, 'didnt_attended_count')
+        ];
+    }
+
+
+    private function generateAttendanceHistoryChart($data): array
+    {
+        return [
+            'labels' => $data->pluck('date'),
             'datasets' => [
                 [
                     'label' => 'Total number of attended players',
-                    'data' => $attendanceData->pluck('total_attended_players'),
+                    'data' => $data->pluck('total_attended_players'),
                     'borderColor' => '#20F4CB',
                     'tension' => 0.4,
                 ],[
                     'label' => 'Total number of ill players',
-                    'data' => $attendanceData->pluck('total_of_ill_players'),
+                    'data' => $data->pluck('total_of_ill_players'),
                     'borderColor' => '#E52534',
                     'tension' => 0.4,
                 ],[
                     'label' => 'Total number of injured players',
-                    'data' => $attendanceData->pluck('total_of_injured_players'),
+                    'data' => $data->pluck('total_of_injured_players'),
                     'borderColor' => '#F9B300',
                     'tension' => 0.4,
                 ],
                 [
                     'label' => 'Total number of other status players',
-                    'data' => $attendanceData->pluck('total_of_other_attendance_status_players'),
+                    'data' => $data->pluck('total_of_other_attendance_status_players'),
                     'borderColor' => '#00122A',
+                    'tension' => 0.4,
+                ],
+                [
+                    'label' => 'Total number of required action status players',
+                    'data' => $data->pluck('total_of_required_action_status_players'),
+                    'borderColor' => '#690d0d',
                     'tension' => 0.4,
                 ],
             ],
         ];
     }
-    public function matchAttendanceStatusChart($startDate = null, $endDate = null, $teams = null): array
-    {
-        $result = $this->matchRepository->countAttendanceByStatus($startDate, $endDate, $teams);
 
+    private function generateAttendanceStatusChart($data): array
+    {
         return [
-            'labels' => $result->pluck('status'),
+            'labels' => $data->pluck('status'),
             'datasets' => [
                 [
                     'label' => 'Total number of players',
-                    'data' => $result->pluck('total_players'),
-                    'backgroundColor' => ['#20F4CB', '#E52534', '#F9B300', '#00122A'],
+                    'data' => $data->pluck('total_players'),
+                    'backgroundColor' => ['#20F4CB', '#E52534', '#F9B300', '#00122A', '#690d0d'],
                     'tension' => 0.4,
                 ]
             ],
         ];
     }
 
-
-    public function trainingAttendanceHistoryChart($startDate = null, $endDate = null,  $teams = null)
+    public function matchAttendanceHistoryChart($startDate = null, $endDate = null, string $teamId = null, Coach $loggedCoach = null): array
     {
-        $attendanceData = $this->trainingRepository->getAttendanceTrend($startDate, $endDate, $teams);
-        return [
-            'labels' => $attendanceData->pluck('date'),
-            'datasets' => [
-                [
-                    'label' => 'Total number of attended players',
-                    'data' => $attendanceData->pluck('total_attended_players'),
-                    'borderColor' => '#20F4CB',
-                    'tension' => 0.4,
-                ],[
-                    'label' => 'Total number of ill players',
-                    'data' => $attendanceData->pluck('total_of_ill_players'),
-                    'borderColor' => '#E52534',
-                    'tension' => 0.4,
-                ],[
-                    'label' => 'Total number of injured players',
-                    'data' => $attendanceData->pluck('total_of_injured_players'),
-                    'borderColor' => '#F9B300',
-                    'tension' => 0.4,
-                ],
-                [
-                    'label' => 'Total number of other status players',
-                    'data' => $attendanceData->pluck('total_of_other_attendance_status_players'),
-                    'borderColor' => '#00122A',
-                    'tension' => 0.4,
-                ],
-            ],
-        ];
+        $team = $this->getTeam($teamId, $loggedCoach);
+        $attendanceData = $this->matchRepository->getAttendanceTrend($startDate, $endDate, $team);
+        return $this->generateAttendanceHistoryChart($attendanceData);
     }
-    public function trainingAttendanceStatusChart($startDate = null, $endDate = null, $teams = null): array
+
+    public function matchAttendanceStatusChart($startDate = null, $endDate = null, string $teamId = null, Coach $loggedCoach = null): array
     {
-        $result = $this->trainingRepository->countAttendanceByStatus($startDate, $endDate, $teams);
-        return [
-            'labels' => $result->pluck('status'),
-            'datasets' => [
-                [
-                    'label' => 'Total number of players',
-                    'data' => $result->pluck('total_players'),
-                    'backgroundColor' => ['#20F4CB', '#E52534', '#F9B300', '#00122A'],
-                    'tension' => 0.4,
-                ]
-            ],
-        ];
+        $team = $this->getTeam($teamId, $loggedCoach);
+        $result = $this->matchRepository->countAttendanceByStatus($startDate, $endDate, $team);
+        return $this->generateAttendanceStatusChart($result);
+    }
+
+    public function trainingAttendanceHistoryChart($startDate = null, $endDate = null, string $teamId = null, Coach $loggedCoach = null): array
+    {
+        $team = $this->getTeam($teamId, $loggedCoach);
+        $attendanceData = $this->trainingRepository->getAttendanceTrend($startDate, $endDate, $team);
+        return $this->generateAttendanceHistoryChart($attendanceData);
+    }
+
+    public function trainingAttendanceStatusChart($startDate = null, $endDate = null, string $teamId = null, Coach $loggedCoach = null): array
+    {
+        $team = $this->getTeam($teamId, $loggedCoach);
+        $result = $this->trainingRepository->countAttendanceByStatus($startDate, $endDate, $team);
+        return $this->generateAttendanceStatusChart($result);
     }
 
 
