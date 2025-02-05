@@ -58,7 +58,7 @@ class TrainingService extends Service
 
     public function indexTraining(Team $team = null, $startDate = null, $endDate = null): Collection
     {
-        return $this->trainingRepository->getAll(['team'], team: $team, status: ['Scheduled', 'Ongoing'], startDate: $startDate, endDate: $endDate);
+        return $this->trainingRepository->getAll(['team'], teams: $team, status: ['Scheduled', 'Ongoing'], startDate: $startDate, endDate: $endDate);
     }
     public function coachTeamsIndexTraining(Coach $coach, $startDate = null, $endDate = null): Collection
     {
@@ -72,7 +72,7 @@ class TrainingService extends Service
 
     public function indexTrainingHistories(Team $team = null, $startDate = null, $endDate = null): Collection
     {
-        return $this->trainingRepository->getAll(['team'], team: $team, startDate: $startDate, endDate: $endDate);
+        return $this->trainingRepository->getAll(['team'], teams: $team, startDate: $startDate, endDate: $endDate);
     }
     public function coachTeamsIndexTrainingHistories(Coach $coach, $startDate = null, $endDate = null): Collection
     {
@@ -297,6 +297,10 @@ class TrainingService extends Service
     public function playerOther(Training $training)
     {
         return $this->trainingRepository->getRelationData($training, 'players', attendanceStatus: 'Other', retrieveType: 'count');
+    }
+    public function playerRequiredAction(Training $training)
+    {
+        return $this->trainingRepository->getRelationData($training, 'players', attendanceStatus: 'Required Action', retrieveType: 'count');
     }
 
     public function playerDidntAttend(Training $training)
