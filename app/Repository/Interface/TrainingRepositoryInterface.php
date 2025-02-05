@@ -3,25 +3,24 @@
 namespace App\Repository\Interface;
 
 use App\Models\Player;
-use App\Models\Team;
 use App\Models\Training;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 interface TrainingRepositoryInterface
 {
     public function getAll(
-        array $relations = ['team'],
-        ?Team $team = null,
-        Player $player = null,
-              $status = null,
-              $take = null,
-              $startDate = null,
-              $endDate = null,
-        bool $beforeStartDate = false,
-        bool $beforeEndDate = false,
-              $reminderNotified = null,
-        string $orderBy = 'date',
-        string $orderDirection = 'desc',
+        array                                    $relations = ['team'],
+        Collection $teams = null,
+        Player                                   $player = null,
+                                                 $status = null,
+                                                 $take = null,
+                                                 $startDate = null,
+                                                 $endDate = null,
+        bool                                     $beforeStartDate = false,
+        bool                                     $beforeEndDate = false,
+                                                 $reminderNotified = null,
+        string                                   $orderBy = 'date',
+        string                                   $orderDirection = 'desc',
         array $columns = ['*'],
         $retrievalMethod = 'all'
     );
@@ -39,15 +38,15 @@ interface TrainingRepositoryInterface
     );
 
     public function getAttendanceTrend(
-        $startDate = null,
-        $endDate = null,
-        $teams = null
+        string $startDate = null,
+        string $endDate = null,
+        Collection $teams = null
     );
 
     public function countAttendanceByStatus(
-        $startDate = null,
-        $endDate = null,
-        $teams = null
+        string $startDate = null,
+        string $endDate = null,
+        Collection $teams = null
     );
 
     public function playerAttendance(
