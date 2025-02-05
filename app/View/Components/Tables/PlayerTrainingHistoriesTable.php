@@ -1,22 +1,21 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Tables;
 
+use App\Models\Player;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class PlayerTrainingHistoriesTable extends Component
 {
-    public $tableId;
-    public $tableRoute;
+    public Player $player;
     /**
      * Create a new component instance.
      */
-    public function __construct($tableId, $tableRoute)
+    public function __construct(Player $player)
     {
-        $this->tableId = $tableId;
-        $this->tableRoute = $tableRoute;
+        $this->player = $player;
     }
 
     /**
