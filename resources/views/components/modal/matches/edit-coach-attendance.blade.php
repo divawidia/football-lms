@@ -15,50 +15,52 @@
             const formId = '#formEditCoachAttendanceModal';
             const modalId = '#editCoachAttendanceModal';
 
-            $('.coachAttendance').on('click', function(e) {
-                e.preventDefault();
-                const id = $(this).attr('id');
+            @if(isAllAdmin() or isCoach())
+                $('.coachAttendance').on('click', function(e) {
+                    e.preventDefault();
+                    const id = $(this).attr('id');
 
-                @if($match->status != 'Ongoing')
-                    Swal.fire({
-                        icon: "error",
-                        title: "You cannot update coach attendance because the session has not started or has finished or been cancelled!",
-                        text: "You can only update attendance while a session is in ongoing."
-                    });
-                @else
-                $.ajax({
-                    url: "{{ route('match-schedules.coach', ['match' => $match->hash, 'coach' => ':id']) }}".replace(':id', id),
-                    type: 'get',
-                    success: function(res) {
-                        $(modalId).modal('show');
-                        clearModalFormValidation(formId)
-
-                        $(formId+' .modal-title').text('Update Coach '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance');
-                        if (res.data.coachAttendance.attendanceStatus === 'Required Action'){
-                            $(formId+' #attendanceStatus').val('null');
-                        } else {
-                            $(formId+' #attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
-                        }
-                        $(formId+' #note').val(res.data.coachAttendance.note);
-                        $(formId+' #coachId').val(res.data.coachAttendance.coachId);
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
+                    @if($match->status != 'Ongoing')
                         Swal.fire({
                             icon: "error",
-                            title: "Something went wrong when deleting data!",
-                            text: errorThrown,
+                            title: "You cannot update coach attendance because the session has not started or has finished or been cancelled!",
+                            text: "You can only update attendance while a session is in ongoing."
                         });
-                    }
-                });
-                @endif
-            });
+                    @else
+                    $.ajax({
+                        url: "{{ route('match-schedules.coach', ['match' => $match->hash, 'coach' => ':id']) }}".replace(':id', id),
+                        type: 'get',
+                        success: function(res) {
+                            $(modalId).modal('show');
+                            clearModalFormValidation(formId)
 
-            processModalForm(
-                formId,
-                "{{ route('match-schedules.update-coach', ['match' => $match->hash, 'coach' => ':id']) }}",
-                "#coachId",
-                modalId
-            );
+                            $(formId+' .modal-title').text('Update Coach '+res.data.user.firstName+' '+res.data.user.lastName+' Attendance');
+                            if (res.data.coachAttendance.attendanceStatus === 'Required Action'){
+                                $(formId+' #attendanceStatus').val('null');
+                            } else {
+                                $(formId+' #attendanceStatus').val(res.data.coachAttendance.attendanceStatus);
+                            }
+                            $(formId+' #note').val(res.data.coachAttendance.note);
+                            $(formId+' #coachId').val(res.data.coachAttendance.coachId);
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Something went wrong when deleting data!",
+                                text: errorThrown,
+                            });
+                        }
+                    });
+                    @endif
+                });
+
+                processModalForm(
+                    formId,
+                    "{{ route('match-schedules.update-coach', ['match' => $match->hash, 'coach' => ':id']) }}",
+                    "#coachId",
+                    modalId
+                );
+            @endif
         });
     </script>
 @endpush

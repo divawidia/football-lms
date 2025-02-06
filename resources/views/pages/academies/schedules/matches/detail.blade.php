@@ -174,7 +174,7 @@
             <div class="tab-pane fade show active" id="overview-tab" role="tabpanel">
                 <div class="page-separator">
                     <div class="page-separator__text">Team Score</div>
-                    @if(isAllAdmin() and $schedule->status == 'Ongoing' and $schedule->matchType == 'External Match')
+                    @if(isAllAdmin() and ($schedule->status == 'Ongoing' and $schedule->matchType == 'External Match'))
                         <x-buttons.basic-button icon="add" text="edit {{ $schedule->externalTeam->teamName }} score"
                                                 size="sm" margin="ml-auto" additionalClass="edit-team-score-btn"/>
                     @endif
@@ -345,7 +345,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Match Stats</div>
 
-                    @if((isAllAdmin() and isCoach()) and ($schedule->status == 'Ongoing' or $schedule->status == 'Completed'))
+                    @if(isAllAdmin() and ($schedule->status == 'Ongoing' or $schedule->status == 'Completed'))
                         <x-buttons.basic-button icon="add" text="Update {{ $homeTeam->teamName }} match stats"
                                                 id="homeTeam" size="sm" margin="ml-auto"
                                                 additionalClass="update-team-match-stats-btn"/>

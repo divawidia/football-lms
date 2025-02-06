@@ -18,16 +18,17 @@
             const formId = '#formEditPlayerAttendanceModal';
             const modalId = '#editPlayerAttendanceModal';
 
-            $('.playerAttendance').on('click', function(e) {
-                e.preventDefault();
+            @if(isAllAdmin() or isCoach())
+                $('.playerAttendance').on('click', function(e) {
+                    e.preventDefault();
 
-                @if($match->status != 'Ongoing')
+                    @if($match->status != 'Ongoing')
                     Swal.fire({
                         icon: "error",
                         title: "You cannot update player attendance because the session has not started or has finished or been cancelled!",
                         text: "You can only update attendance while a session is in ongoing."
                     });
-                @else
+                    @else
                     const id = $(this).attr('id');
 
                     $.ajax({
@@ -54,15 +55,16 @@
                             });
                         }
                     });
-                @endif
-            });
+                    @endif
+                });
 
-            processModalForm(
-                formId,
-                "{{ route('match-schedules.update-player', ['match' => $match->hash, 'player' => ':id']) }}",
-                "#playerId",
-                modalId
-            );
+                processModalForm(
+                    formId,
+                    "{{ route('match-schedules.update-player', ['match' => $match->hash, 'player' => ':id']) }}",
+                    "#playerId",
+                    modalId
+                );
+            @endif
         });
     </script>
 @endpush
