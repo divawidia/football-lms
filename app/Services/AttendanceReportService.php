@@ -255,7 +255,7 @@ class AttendanceReportService extends Service
 
     public function playerTrainings(Player $player, $startDate = null, $endDate = null): JsonResponse
     {
-        $data = $this->trainingRepository->getByRelation($player, ['team'], ['Completed'], $startDate, $endDate);
+        $data = $this->trainingRepository->getByRelation($player, ['team'], ['Completed'], $startDate, $endDate, orderDirection: 'desc');
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return $this->datatablesHelper->buttonTooltips(route('training-schedules.show', $item->hash), 'View training session', 'visibility');
@@ -284,7 +284,7 @@ class AttendanceReportService extends Service
     }
     public function playerMatch(Player $player, $startDate = null, $endDate = null): JsonResponse
     {
-        $data = $this->matchRepository->getByRelation($player, ['homeTeam', 'awayTeam', 'externalTeam','competition'], status: ['Completed'], startDate:  $startDate, endDate: $endDate);
+        $data = $this->matchRepository->getByRelation($player, ['homeTeam', 'awayTeam', 'externalTeam','competition'], status: ['Completed'], startDate:  $startDate, endDate: $endDate, orderDirection: 'desc');
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
                 return $this->datatablesHelper->buttonTooltips(route('match-schedules.show', $item->hash), 'View match session', 'visibility');
@@ -292,15 +292,11 @@ class AttendanceReportService extends Service
             ->editColumn('team', function ($item) {
                 return ($item->homeTeam) ? $this->datatablesHelper->name($item->homeTeam->logo, $item->homeTeam->teamName, $item->homeTeam->ageGroup, route('team-managements.show', $item->homeTeam->hash)) : 'No team';
             })
+            ->editColumn('score', function ($item) {
+                return $this->matchService->matchScores($item);
+            })
             ->editColumn('opponentTeam', function ($item) {
-                ($item->matchType == 'Internal Match')
-                    ? $team = ($item->awayTeam)
-                        ? $this->datatablesHelper->name($item->awayTeam->logo, $item->awayTeam->teamName, $item->awayTeam->ageGroup, route('team-managements.show', $item->awayTeam->hash))
-                        : 'No team'
-                    : $team = ($item->externalTeam)
-                        ? $item->externalTeam->teamName
-                        : 'No team';
-                return $team;
+                return $this->matchService->awayTeamDatatables($item);
             })
             ->editColumn('competition', function ($item) {
                 ($item->competition) ? $competition = $this->datatablesHelper->name($item->competition->logo, $item->competition->name, $item->competition->type) : $competition = 'No Competition';
@@ -322,7 +318,7 @@ class AttendanceReportService extends Service
             ->editColumn('last_updated', function ($item) {
                 return $this->convertToDatetime($item->pivot->updated_at);
             })
-            ->rawColumns(['action','team', 'competition','opponentTeam','status', 'attendanceStatus'])
+            ->rawColumns(['action','team', 'score','competition','opponentTeam','status', 'attendanceStatus'])
             ->addIndexColumn()
             ->make();
     }

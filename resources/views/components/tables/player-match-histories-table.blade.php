@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-body">
-        <x-table :headers="['#', 'Team', 'Opposing Team', 'Match Date', 'Venue', 'Competition', 'Match Type', 'Match Status', 'Attendance Status', 'Attendance Note', 'Last Updated Attendance', 'Action']" tableId="matchHistoryTable"/>
+        <x-table :headers="['#', 'Team', 'Score','Opposing Team', 'Match Date', 'Venue', 'Competition', 'Match Type', 'Match Status', 'Attendance Status', 'Attendance Note', 'Last Updated Attendance', 'Action']" tableId="matchHistoryTable"/>
     </div>
 </div>
 
@@ -18,6 +18,7 @@
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     { data: 'team', name: 'team' },
+                    { data: 'score', name: 'score' },
                     { data: 'opponentTeam', name: 'opponentTeam' },
                     { data: 'date', name: 'date' },
                     { data: 'place', name: 'place'},

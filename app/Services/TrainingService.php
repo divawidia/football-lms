@@ -62,25 +62,25 @@ class TrainingService extends Service
     }
     public function coachTeamsIndexTraining(Coach $coach, $startDate = null, $endDate = null): Collection
     {
-        return $this->trainingRepository->getByRelation($coach, ['team'], ['Scheduled', 'Ongoing'], startDate: $startDate, endDate: $endDate);
+        return $this->trainingRepository->getByRelation($coach, ['team'], ['Scheduled', 'Ongoing'], startDate: $startDate, endDate: $endDate, orderDirection: 'desc');
     }
     public function playerTeamsIndexTraining(Player $player, $startDate = null, $endDate = null): Collection
     {
-        return $this->trainingRepository->getByRelation($player, ['team'],  ['Scheduled', 'Ongoing'], startDate: $startDate, endDate: $endDate);
+        return $this->trainingRepository->getByRelation($player, ['team'],  ['Scheduled', 'Ongoing'], startDate: $startDate, endDate: $endDate, orderDirection: 'desc');
     }
 
 
     public function indexTrainingHistories(Team $team = null, $startDate = null, $endDate = null): Collection
     {
-        return $this->trainingRepository->getAll(['team'], teams: $team, startDate: $startDate, endDate: $endDate);
+        return $this->trainingRepository->getAll(['team'], teams: $team, status: ['Cancelled', 'Completed'], startDate: $startDate, endDate: $endDate);
     }
     public function coachTeamsIndexTrainingHistories(Coach $coach, $startDate = null, $endDate = null): Collection
     {
-        return $this->trainingRepository->getByRelation($coach, ['team'], startDate: $startDate, endDate: $endDate);
+        return $this->trainingRepository->getByRelation($coach, ['team'], status: ['Cancelled', 'Completed'], startDate: $startDate, endDate: $endDate, orderDirection: 'desc');
     }
     public function playerTeamsIndexTrainingHistories(Player $player, $startDate = null, $endDate = null): Collection
     {
-        return $this->trainingRepository->getByRelation($player, ['team'], startDate: $startDate, endDate: $endDate);
+        return $this->trainingRepository->getByRelation($player, ['team'], status: ['Cancelled', 'Completed'], startDate: $startDate, endDate: $endDate, orderDirection: 'desc');
     }
 
 

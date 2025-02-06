@@ -73,25 +73,25 @@ class MatchService extends Service
     }
     public function coachTeamsIndexMatch(Coach $coach): Collection
     {
-        return $this->matchRepository->getByRelation($coach, withRelation: ['team', 'competition'], status: ['Scheduled', 'Ongoing']);
+        return $this->matchRepository->getByRelation($coach, withRelation: ['team', 'competition'], status: ['Scheduled', 'Ongoing'], orderDirection: 'desc');
     }
     public function playerTeamsIndexMatch(Player $player): Collection
     {
-        return $this->matchRepository->getByRelation($player,  withRelation: ['team', 'competition'], status: ['Scheduled', 'Ongoing']);
+        return $this->matchRepository->getByRelation($player,  withRelation: ['team', 'competition'], status: ['Scheduled', 'Ongoing'], orderDirection: 'desc');
     }
 
 
     public function indexMatchHistories(): Collection
     {
-        return $this->matchRepository->getAll(relations: ['teams', 'competition']);
+        return $this->matchRepository->getAll(relations: ['teams', 'competition'], status: ['Cancelled', 'Completed']);
     }
     public function coachTeamsIndexMatchHistories(Coach $coach): Collection
     {
-        return $this->matchRepository->getByRelation($coach, withRelation: ['teams', 'competition']);
+        return $this->matchRepository->getByRelation($coach, withRelation: ['teams', 'competition'], status: ['Cancelled', 'Completed'], orderDirection: 'desc');
     }
     public function playerTeamsIndexMatchHistories(Player $player): Collection
     {
-        return $this->matchRepository->getByRelation($player,  withRelation: ['teams', 'competition']);
+        return $this->matchRepository->getByRelation($player,  withRelation: ['teams', 'competition'], status: ['Cancelled', 'Completed'], orderDirection: 'desc');
     }
 
 
@@ -163,11 +163,10 @@ class MatchService extends Service
                 return $this->datatablesHelper->name($item->homeTeam->logo, $item->homeTeam->teamName, $item->homeTeam->ageGroup, route('team-managements.show', $item->homeTeam->hash));
             })
             ->editColumn('awayTeam', function ($item) {
-                return ($item->matchType == 'Internal Match') ? $this->datatablesHelper->name($item->awayTeam->logo, $item->awayTeam->teamName, $item->awayTeam->ageGroup, route('team-managements.show', $item->awayTeam->hash)) : $item->externalTeam->teamName;
+                return $this->awayTeamDatatables($item);
             })
             ->editColumn('score', function ($item) {
-                $awayTeamScore = ($item->matchType == 'Internal Match') ? $this->awayTeamMatch($item)->pivot->teamScore : $item->externalTeam->teamScore;
-                return '<p class="mb-0"><strong class="js-lists-values-lead">' .$this->homeTeamMatch($item)->pivot->teamScore . ' - ' . $awayTeamScore.'</strong></p>';
+                return $this->matchScores($item);
             })
             ->editColumn('competition', function ($item) {
                 return ($item->competition) ?  $this->datatablesHelper->name($item->competition->logo, $item->competition->name, $item->competition->type) : 'No Competition';
@@ -181,6 +180,15 @@ class MatchService extends Service
             ->rawColumns(['action','homeTeam', 'awayTeam', 'score','competition','status'])
             ->addIndexColumn()
             ->make();
+    }
+    public function matchScores(MatchModel $match)
+    {
+        $awayTeamScore = ($match->matchType == 'Internal Match') ? $this->awayTeamMatch($match)->pivot->teamScore : $match->externalTeam->teamScore;
+        return '<h5>' .$this->homeTeamMatch($match)->pivot->teamScore . ' - ' . $awayTeamScore.'</h5>';
+    }
+    public function awayTeamDatatables(MatchModel $match)
+    {
+        return ($match->matchType == 'Internal Match') ? $this->datatablesHelper->name($match->awayTeam->logo, $match->awayTeam->teamName, $match->awayTeam->ageGroup, route('team-managements.show', $match->awayTeam->hash)) : $match->externalTeam->teamName;
     }
 
     public function adminDataTablesMatch(){
