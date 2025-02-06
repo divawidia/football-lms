@@ -98,7 +98,7 @@ class TeamService extends Service
 
     public function index(): JsonResponse
     {
-        $query = $this->teamRepository->getAll(['players', 'coaches']);
+        $query = $this->teamRepository->getAll(['players', 'coaches'], status: null);
         return $this->indexDatatables($query);
     }
 
