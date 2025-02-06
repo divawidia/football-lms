@@ -345,7 +345,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Match Stats</div>
 
-                    @if(isAllAdmin() and $schedule->status == 'Ongoing' or $schedule->status == 'Completed' )
+                    @if((isAllAdmin() and isCoach()) and ($schedule->status == 'Ongoing' or $schedule->status == 'Completed'))
                         <x-buttons.basic-button icon="add" text="Update {{ $homeTeam->teamName }} match stats"
                                                 id="homeTeam" size="sm" margin="ml-auto"
                                                 additionalClass="update-team-match-stats-btn"/>
@@ -677,7 +677,7 @@
                 @if(isAllAdmin() || isCoach())
                     <x-tables.player-skill-event :route="route('match-schedules.player-skills', $schedule->hash)" :teamId="$homeTeam->id"/>
                 @elseif(isPlayer())
-                    <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
+                    <x-cards.player-skill-stats-card :allSkills="$playerSkills"/>
                 @endif
             </div>
 
@@ -689,10 +689,10 @@
                 @if(isAllAdmin() || isCoach())
                     <x-tables.player-performance-review-event :route="route('match-schedules.player-performance-review', $schedule->hash)" :teamId="$homeTeam->id"/>
                 @elseif(isPlayer())
-                    @if(count($data['playerPerformanceReviews'])==0)
+                    @if(count($playerPerformanceReviews)==0)
                         <x-warning-alert text="You haven't get any performance review from your coach for this match session"/>
                     @endif
-                    @foreach($data['playerPerformanceReviews'] as $review)
+                    @foreach($playerPerformanceReviews as $review)
                         <x-player-event-performance-review :review="$review"/>
                     @endforeach
                 @endif
@@ -771,7 +771,7 @@
                     @if(isAllAdmin() || isCoach())
                         <x-tables.player-skill-event :route="route('match-schedules.player-skills', $schedule->hash)" tableId="team{{ $awayTeam->id }}PlayerSkillsTable" :teamId="$awayTeam->id"/>
                     @elseif(isPlayer())
-                        <x-cards.player-skill-stats-card :allSkills="$data['allSkills']"/>
+                        <x-cards.player-skill-stats-card :allSkills="$playerSkills"/>
                     @endif
                 </div>
 
@@ -783,11 +783,11 @@
                     @if(isAllAdmin() || isCoach())
                         <x-tables.player-performance-review-event :route="route('match-schedules.player-performance-review', $schedule->hash)" tableId="team{{ $awayTeam->id }}PlayerPerformanceReviewTable" :teamId="$awayTeam->id"/>
                     @elseif(isPlayer())
-                        @if(count($data['playerPerformanceReviews'])==0)
+                        @if(count($playerPerformanceReviews)==0)
                             <x-warning-alert
                                 text="You haven't get any performance review from your coach for this match session"/>
                         @endif
-                        @foreach($data['playerPerformanceReviews'] as $review)
+                        @foreach($playerPerformanceReviews as $review)
                             <x-player-event-performance-review :review="$review"/>
                         @endforeach
                     @endif
