@@ -122,14 +122,16 @@ class TeamService extends Service
 
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.show', $item->hash), icon: 'visibility', btnText: 'View player');
-                if (isAllAdmin()) {
-                    $dropdownItem .= $this->datatablesHelper->linkDropdownItem(route: route('player-managements.edit', $item->hash), icon: 'edit', btnText: 'edit player');
-                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('remove-player', $item->hash, iconColor: 'danger', icon: 'delete', btnText: 'Remove Player From Team');
+                if (!isPlayer()) {
+                    $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.show', $item->hash), icon: 'visibility', btnText: 'View player');
+                    if (isAllAdmin()) {
+                        $dropdownItem .= $this->datatablesHelper->linkDropdownItem(route: route('player-managements.edit', $item->hash), icon: 'edit', btnText: 'edit player');
+                        $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('remove-player', $item->hash, iconColor: 'danger', icon: 'delete', btnText: 'Remove Player From Team');
+                    }
+                    return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                        return $dropdownItem;
+                    });
                 }
-                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
-                    return $dropdownItem;
-                });
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
@@ -182,20 +184,24 @@ class TeamService extends Service
         $query = $team->coaches;
         return Datatables::of($query)
             ->addColumn('action', function ($item) {
-                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('coach-managements.show', $item->hash), icon: 'visibility', btnText: 'View coach');
-                if (isAllAdmin()) {
-                    $dropdownItem .= $this->datatablesHelper->linkDropdownItem(route: route('coach-managements.edit', $item->hash), icon: 'edit', btnText: 'edit coach');
-                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('remove-coach', $item->hash, iconColor: 'danger', icon: 'delete', btnText: 'Remove coach From Team');
+                if (!isPlayer()) {
+                    $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('coach-managements.show', $item->hash), icon: 'visibility', btnText: 'View coach');
+                    if (isAllAdmin()) {
+                        $dropdownItem .= $this->datatablesHelper->linkDropdownItem(route: route('coach-managements.edit', $item->hash), icon: 'edit', btnText: 'edit coach');
+                        $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('remove-coach', $item->hash, iconColor: 'danger', icon: 'delete', btnText: 'Remove coach From Team');
+                    }
+                    return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                        return $dropdownItem;
+                    });
                 }
-                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
-                    return $dropdownItem;
-                });
             })
             ->editColumn('age', function ($item){
                 return $this->getAge($item->user->dob);
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->specialization->name. ' - '.$item->certification->name, route('coach-managements.show', $item->hash));
+                return (isAllAdmin() || isCoach())
+                    ? $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->specialization->name. ' - '.$item->certification->name, route('coach-managements.show', $item->hash))
+                    : $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->specialization->name. ' - '.$item->certification->name);
             })
             ->editColumn('joinedDate', function ($item) {
                 return $this->datatablesHelper->convertToDatetime($item->pivot->created_at);
