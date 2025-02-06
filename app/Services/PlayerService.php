@@ -405,10 +405,9 @@ class PlayerService extends Service
     {
         return $this->matchService->makeDataTablesMatch($this->playerUpcomingMatches($player));
     }
-    public function playerUpcomingTraining(Player $player)
+    public function playerUpcomingTrainingDatatables(Player $player)
     {
-        $data = $this->matchRepository->getEventByModel($player, 'Training', ['Scheduled', 'Ongoing']);
-        return $this->trainingService->makeDataTablesTraining($data);
+        return $this->trainingService->makeDataTablesTraining($this->playerUpcomingTrainings($player));
     }
 
     public function playerMatchCalendar(Player $player)
@@ -418,7 +417,7 @@ class PlayerService extends Service
     }
     public function playerTrainingCalendar(Player $player)
     {
-        $data = $this->matchRepository->getEventByModel($player, 'Training', ['Scheduled', 'Ongoing']);
+        $data = $this->trainingRepository->getByRelation($player, ['team'], ['Scheduled', 'Ongoing']);
         return $this->trainingService->makeTrainingCalendar($data);
     }
 

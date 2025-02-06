@@ -11,7 +11,7 @@
         <div class="container">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a href="{{ route('player-managements.show', $data->id) }}" class="nav-link text-70">
+                    <a href="{{ route('player-managements.show', $data->hash) }}" class="nav-link text-70">
                         <i class="material-icons icon--left">keyboard_backspace</i>
                         Back to Player Profile
                     </a>

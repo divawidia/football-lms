@@ -207,7 +207,7 @@ class PlayerController extends Controller
 
     public function upcomingTrainings(Player $player){
         if (\request()->ajax()){
-            return $this->playerService->playerUpcomingTraining($player);
+            return $this->playerService->playerUpcomingTrainingDatatables($player);
         }
 
         return view('pages.managements.players.upcoming-trainings', [
