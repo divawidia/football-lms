@@ -31,7 +31,7 @@ class CoachRequest extends FormRequest
             'team' => [Rule::exists('teams', 'id'), 'nullable'],
             'email' => ['required', 'email', Rule::unique('users', 'email')],
             'password' => ['string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols(), 'nullable'],
-            'gender' => ['required', 'string', Rule::in('male', 'female')],
+            'gender' => ['required', 'string', Rule::in('male', 'female', 'others')],
             'hireDate' => ['required', 'date'],
             'address' => ['required', 'string'],
             'phoneNumber' => ['required', 'string'],

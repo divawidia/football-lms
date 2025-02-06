@@ -74,11 +74,11 @@ class MatchService extends Service
     }
     public function coachTeamsIndexMatch(Coach $coach): Collection
     {
-        return $this->matchRepository->getByRelation($coach, withRelation: ['team', 'competition'], status: ['Scheduled', 'Ongoing'], orderDirection: 'desc');
+        return $this->matchRepository->getByRelation($coach, withRelation: ['teams', 'competition'], status: ['Scheduled', 'Ongoing'], orderDirection: 'desc');
     }
     public function playerTeamsIndexMatch(Player $player): Collection
     {
-        return $this->matchRepository->getByRelation($player,  withRelation: ['team', 'competition'], status: ['Scheduled', 'Ongoing'], orderDirection: 'desc');
+        return $this->matchRepository->getByRelation($player,  withRelation: ['teams', 'competition'], status: ['Scheduled', 'Ongoing'], orderDirection: 'desc');
     }
 
 

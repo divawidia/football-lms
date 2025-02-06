@@ -28,7 +28,7 @@ class UserRequest extends FormRequest
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore(Auth::user()->id)],
-            'gender' => ['required', 'string', Rule::in('male', 'female')],
+            'gender' => ['required', 'string', Rule::in('male', 'female', 'others')],
             'dob' => ['required', 'date', 'before:today'],
             'address' => ['required', 'string'],
             'phoneNumber' => ['required', 'string'],
