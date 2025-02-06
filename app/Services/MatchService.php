@@ -33,6 +33,7 @@ use App\Repository\Interface\LeagueStandingRepositoryInterface;
 use App\Repository\PlayerPerformanceReviewRepository;
 use App\Repository\PlayerSkillStatsRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -221,7 +222,8 @@ class MatchService extends Service
 
 
 
-    public function dataTablesPlayerStats(MatchModel $match, $teamId = null){
+    public function dataTablesPlayerStats(MatchModel $match, $teamId = null): JsonResponse
+    {
         $data = $this->matchRepository->getRelationData($match, 'playerMatchStats', teamId: $teamId, retrieveType: 'multiple');
 
         return Datatables::of($data)
