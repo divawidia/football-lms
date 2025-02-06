@@ -299,11 +299,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Training Histories</div>
                 </div>
-                <div class="card">
-                    <div class="card-body">
-                        <x-tables.player-training-histories-table :player="$data"/>
-                    </div>
-                </div>
+                <x-tables.player-training-histories-table :player="$data"/>
             </div>
 
             {{-- Match Histories --}}
@@ -311,11 +307,7 @@
                 <div class="page-separator">
                     <div class="page-separator__text">Match Histories</div>
                 </div>
-                <div class="card">
-                    <div class="card-body">
-                        <x-tables.player-match-histories-table :player="$data"/>
-                    </div>
-                </div>
+                <x-tables.player-match-histories-table :player="$data"/>
             </div>
 
             {{-- player performance review --}}

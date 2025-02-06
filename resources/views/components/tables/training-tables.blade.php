@@ -26,7 +26,6 @@
                     { data: 'status', name: 'status' },
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],
-                order: [[2, 'asc']]
             });
 
             processWithConfirmation(
@@ -36,6 +35,26 @@
                 'DELETE',
                 "Are you sure to delete this training session?",
                 "Something went wrong when deleting this training session!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.cancelBtn',
+                "{{ route('training-schedules.cancel', ['training' =>':id']) }}",
+                "{{ route('training-histories.index') }}",
+                'PATCH',
+                "Are you sure to cancel this training?",
+                "Something went wrong when cancelling this training!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.scheduled-btn',
+                "{{ route('training-schedules.scheduled', ['training' =>':id']) }}",
+                "{{ route('training-histories.index') }}",
+                'PATCH',
+                "Are you sure to set this training to scheduled?",
+                "Something went wrong when set this training to scheduled!",
                 "{{ csrf_token() }}"
             );
         });

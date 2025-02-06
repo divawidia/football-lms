@@ -26,7 +26,6 @@
                     { data: 'status', name: 'status' },
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],
-                order: [[5, 'asc']]
             });
 
             @if(isAllAdmin())
@@ -39,6 +38,25 @@
                     "Something went wrong when deleting this match!",
                     "{{ csrf_token() }}"
                  );
+            processWithConfirmation(
+                '.cancelBtn',
+                "{{ route('match-schedules.cancel', ['match' =>':id']) }}",
+                "{{ route('match-histories.index') }}",
+                'PATCH',
+                "Are you sure to cancel this match?",
+                "Something went wrong when cancelling this match!",
+                "{{ csrf_token() }}"
+            );
+
+            processWithConfirmation(
+                '.scheduled-btn',
+                "{{ route('match-schedules.scheduled', ['match' =>':id']) }}",
+                "{{ route('match-histories.index') }}",
+                'PATCH',
+                "Are you sure to set this match to scheduled?",
+                "Something went wrong when set this match to scheduled!",
+                "{{ csrf_token() }}"
+            );
             @endif
         });
     </script>
