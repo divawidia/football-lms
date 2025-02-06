@@ -29,7 +29,7 @@ class AdminRequest extends FormRequest
             'lastName' => ['required', 'string'],
             'email' => ['required', 'email', Rule::unique('users', 'email')],
             'password' => ['string', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols(), 'nullable'],
-            'gender' => ['required', 'string', Rule::in('male', 'female')],
+            'gender' => ['required', 'string', Rule::in('male', 'female', 'others')],
             'dob' => ['required', 'date', 'before:today'],
             'address' => ['required', 'string'],
             'phoneNumber' => ['required', 'string'],
