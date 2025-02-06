@@ -1,4 +1,4 @@
-<x-modal.form id="editPlayerAttendanceModal" formId="formEditPlayerAttendanceModal" :editForm="true" size="">
+<x-modal.form id="editPlayerAttendanceModal" formId="formEditPlayerAttendanceModal" title="" :editForm="true" size="">
     <x-forms.basic-input type="hidden" name="playerId" :modal="true"/>
 
     <x-forms.select name="attendanceStatus" label="Attendance Status" :modal="true" :select2="false">

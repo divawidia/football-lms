@@ -1,4 +1,4 @@
-<x-modal.form id="teamMatchStatsModal" formId="formTeamMatchStats" :editForm="true" size="">
+<x-modal.form id="teamMatchStatsModal" formId="formTeamMatchStats" title="" :editForm="true" size="">
     <x-forms.basic-input type="hidden" name="teamId" :modal="true" :required="false"/>
     <x-forms.basic-input type="hidden" name="teamSide" :modal="true"/>
     <div class="row">

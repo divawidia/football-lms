@@ -1,4 +1,4 @@
-<x-modal.form id="editPerformanceReviewModal" formId="formEditPerformanceReviewModal" :editForm="true" size="">
+<x-modal.form id="editPerformanceReviewModal" formId="formEditPerformanceReviewModal" title="" :editForm="true" size="">
 
     <x-forms.basic-input type="hidden" name="eventId" :modal="true"/>
 

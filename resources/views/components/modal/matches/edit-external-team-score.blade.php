@@ -1,4 +1,4 @@
-<x-modal.form id="editExternalTeamScoreModal" formId="formEditExternalTeamScore" :editForm="true" size="">
+<x-modal.form id="editExternalTeamScoreModal" formId="formEditExternalTeamScore" title="" :editForm="true" size="">
     <x-forms.basic-input type="hidden" name="teamSide" :modal="true"/>
     <div class="row">
         <div class="col-6">
