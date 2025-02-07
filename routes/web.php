@@ -138,7 +138,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
             Route::get('skill-stats-history', [PlayerController::class, 'skillStatsHistory'])->middleware('role:Super-Admin|admin|coach|player')->name('skill-stats-history');
 
             Route::prefix('performance-reviews')->name('performance-reviews.')->group(function () {
-                Route::get('table', [PlayerPerformanceReviewController::class, 'indexPlayer'])->middleware('role:Super-Admin|admin|coach|player')->name('index');
+                Route::get('table', [PlayerPerformanceReviewController::class, 'indexPlayer'])->middleware('role:Super-Admin|admin|coach|player')->name('index-tables');
                 Route::get('match-training', [PlayerPerformanceReviewController::class, 'indexPlayer'])->middleware('role:Super-Admin|admin|coach')->name('match-training');
                 Route::get('', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->middleware('role:Super-Admin|admin|coach')->name('index-page');
                 Route::post('store', [PlayerPerformanceReviewController::class, 'store'])->middleware('role:coach')->name('store');

@@ -18,8 +18,9 @@ class PlayerPerformanceReviewRepository
         if ($training){
             $query->where('trainingId', $training->id);
         }
+
         if ($retrievalMethod == 'all'){
-            return $query->get();
+            return $query->latest()->get();
         } else {
             return $query->first();
         }
