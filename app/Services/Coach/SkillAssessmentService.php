@@ -105,11 +105,11 @@ class SkillAssessmentService extends Service
             })
             ->editColumn('stats_created', function ($item) use ($match){
                 $stats = $this->getPlayerSkillStatsMatch($item, $match);
-                return ($stats) ? $this->convertToDatetime($item->created_at): '-';
+                return ($stats) ? $this->convertToDatetime($stats->created_at): '-';
             })
             ->editColumn('stats_updated', function ($item) use ($match){
                 $stats = $this->getPlayerSkillStatsMatch($item, $match);
-                return ($stats) ? $this->convertToDatetime($item->updated_at): '-';
+                return ($stats) ? $this->convertToDatetime($stats->updated_at): '-';
             })
             ->rawColumns(['action','name'])
             ->addIndexColumn()
@@ -147,11 +147,11 @@ class SkillAssessmentService extends Service
             })
             ->editColumn('stats_created', function ($item) use ($training){
                 $stats = $this->getPlayerSkillStatsTraining($item, $training);
-                return ($stats) ? $this->convertToDatetime($item->created_at): '-';
+                return ($stats) ? $this->convertToDatetime($stats->created_at): '-';
             })
             ->editColumn('stats_updated', function ($item) use ($training){
                 $stats = $this->getPlayerSkillStatsTraining($item, $training);
-                return ($stats) ? $this->convertToDatetime($item->updated_at): '-';
+                return ($stats) ? $this->convertToDatetime($stats->updated_at): '-';
             })
             ->rawColumns(['action','name'])
             ->addIndexColumn()

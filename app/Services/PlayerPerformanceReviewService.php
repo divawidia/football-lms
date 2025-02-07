@@ -111,11 +111,11 @@ class PlayerPerformanceReviewService extends Service
             })
             ->editColumn('performance_review_created', function ($item) use ($match){
                 $review = $this->getPlayerPerformanceMatch($item, $match);
-                return ($review) ? $this->convertToDatetime($item->created_at) : '-';
+                return ($review) ? $this->convertToDatetime($review->created_at) : '-';
             })
             ->editColumn('performance_review_last_updated', function ($item) use ($match){
                 $review = $this->getPlayerPerformanceMatch($item, $match);
-                return ($review) ? $this->convertToDatetime($item->updated_at) : '-';
+                return ($review) ? $this->convertToDatetime($review->updated_at) : '-';
             })
             ->rawColumns(['action','name'])
             ->addIndexColumn()
@@ -153,11 +153,11 @@ class PlayerPerformanceReviewService extends Service
             })
             ->editColumn('performance_review_created', function ($item) use ($training){
                 $review = $this->getPlayerPerformanceTraining($item, $training);
-                return ($review) ? $this->convertToDatetime($item->created_at) : '-';
+                return ($review) ? $this->convertToDatetime($review->created_at) : '-';
             })
             ->editColumn('performance_review_last_updated', function ($item) use ($training){
                 $review = $this->getPlayerPerformanceTraining($item, $training);
-                return ($review) ? $this->convertToDatetime($item->updated_at) : '-';
+                return ($review) ? $this->convertToDatetime($review->updated_at) : '-';
             })
             ->rawColumns(['action','name'])
             ->addIndexColumn()
