@@ -11,10 +11,12 @@ use App\Models\Training;
 use App\Notifications\TrainingSchedules\AdminCoach\TrainingCanceledForAdminCoachNotification;
 use App\Notifications\TrainingSchedules\AdminCoach\TrainingCreatedForAdminCoachNotification;
 use App\Notifications\TrainingSchedules\AdminCoach\TrainingDeletedForAdminCoachNotification;
+use App\Notifications\TrainingSchedules\AdminCoach\TrainingScheduledForAdminCoachNotification;
 use App\Notifications\TrainingSchedules\AdminCoach\TrainingUpdatedForAdminCoachNotification;
 use App\Notifications\TrainingSchedules\Player\TrainingCanceledForPlayerNotification;
 use App\Notifications\TrainingSchedules\Player\TrainingCreatedForPlayerNotification;
 use App\Notifications\TrainingSchedules\Player\TrainingDeletedForPlayerNotification;
+use App\Notifications\TrainingSchedules\Player\TrainingsScheduledForPlayerNotification;
 use App\Notifications\TrainingSchedules\Player\TrainingUpdatedForPlayerNotification;
 use App\Notifications\TrainingSchedules\TrainingCompletedNotification;
 use App\Notifications\TrainingSchedules\TrainingNoteCreatedNotification;
@@ -406,8 +408,8 @@ class TrainingService extends Service
             Notification::send($this->teamService->teamsCoachesAdmins($training->team), new TrainingCanceledForAdminCoachNotification($loggedUser, $training, $training->team, $this->getUserRoleName($loggedUser)));
             Notification::send($this->teamService->teamsPlayers($training->team), new TrainingCanceledForPlayerNotification($training, $training->team));
         } elseif ($status == 'Scheduled') {
-            Notification::send($this->teamService->teamsCoachesAdmins($training->team), new TrainingCanceledForAdminCoachNotification($loggedUser, $training, $training->team, $this->getUserRoleName($loggedUser)));
-            Notification::send($this->teamService->teamsPlayers($training->team), new TrainingCanceledForPlayerNotification($training, $training->team));
+            Notification::send($this->teamService->teamsCoachesAdmins($training->team), new TrainingScheduledForAdminCoachNotification($loggedUser, $training, $training->team, $this->getUserRoleName($loggedUser)));
+            Notification::send($this->teamService->teamsPlayers($training->team), new TrainingsScheduledForPlayerNotification($training, $training->team));
         }
     }
 
