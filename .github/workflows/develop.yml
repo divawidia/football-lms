@@ -1,4 +1,4 @@
-name: Deploy to VM Instance
+name: Deploy to Staging
 on:
   pull_request:
     branches:

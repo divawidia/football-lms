@@ -47,7 +47,7 @@
             <div class="page-separator__text">player performance review</div>
         </div>
         <x-player-performance-review-table
-            :route="route('player-managements.performance-reviews', ['player' => $data->id])"
+            :route="route('player-managements.performance-reviews.index-tables', ['player' => $data->id])"
             tableId="performanceReviewTable"/>
     </div>
 

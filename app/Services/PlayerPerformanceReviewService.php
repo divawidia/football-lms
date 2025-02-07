@@ -57,12 +57,12 @@ class PlayerPerformanceReviewService extends Service
                 return $actionBtn;
             })
             ->editColumn('event', function ($item) {
-                $event = "-";
+                $event = "Not in event";
                 if ($item->training != null) {
-                    $event = $item->training->topic;
+                    $event = "{$item->training->topic} Training";
                 } elseif ($item->match != null) {
                     $awayTeamName = ($item->match->matchType == 'Internal Match') ? $item->match->awayTeam->teamName : $item->match->externalTeam->teamName;
-                    $event = "Match {$item->match->homeTeam->teamName} Vs. $awayTeamName";
+                    $event = "{$item->match->homeTeam->teamName} Vs. {$awayTeamName} Match";
                 }
                 return $event;
             })
@@ -92,7 +92,7 @@ class PlayerPerformanceReviewService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($match){
                 $review = $this->getPlayerPerformanceMatch($item, $match);
-                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.performance-reviews.index', $item->hash), icon: 'visibility', btnText: 'View All Player Performance Review');
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.performance-reviews.index-page', $item->hash), icon: 'visibility', btnText: 'View All Player Performance Review');
                 if (isCoach() && $match->status == 'Ongoing' || isCoach() && $match->status == 'Completed') {
                     ($review)
                         ? $dropdownItem .= '<a class="dropdown-item editPerformanceReview" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.$match->id.'" data-statsId="'.$review->id.'"><span class="material-icons">edit</span> Edit Player Performance Review</a>'
@@ -134,7 +134,7 @@ class PlayerPerformanceReviewService extends Service
         return Datatables::of($training->players)
             ->addColumn('action', function ($item) use ($training){
                 $review = $this->getPlayerPerformanceTraining($item, $training);
-                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.performance-reviews.index', $item->hash), icon: 'visibility', btnText: 'View All Player Performance Review');
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.performance-reviews.index-page', $item->hash), icon: 'visibility', btnText: 'View All Player Performance Review');
                 if (isCoach() && $training->status == 'Ongoing' || isCoach() && $training->status == 'Completed') {
                     ($review)
                         ? $dropdownItem .= '<a class="dropdown-item editPerformanceReview" id="'.$item->hash.'" data-trainingId="'.$training->id.'" data-matchId="'.null.'" data-reviewId="'.$review->id.'"><span class="material-icons">edit</span> Edit Player Performance Review</a>'
