@@ -140,7 +140,7 @@ class TrainingService extends Service
         return Datatables::of($trainingData)
             ->addColumn('action', function ($item) {
                 $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('training-schedules.show', $item->hash), icon: 'visibility', btnText: 'View training session');
-                if (isAllAdmin()) {
+                if (isAllAdmin() or isCoach()) {
                     if ($item->status == 'Scheduled'){
                         $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('cancelBtn', $item->id, 'danger', icon: 'block', btnText: 'Cancel training');
                         $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('edit-training-btn', $item->id,  icon: 'edit', btnText: 'Edit Training');
