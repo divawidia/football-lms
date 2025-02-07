@@ -73,26 +73,27 @@
                 $(modalId).modal('show');
                 clearModalFormValidation(formId)
                 getHomeTeams()
-                getAwayTeams()
+                // getAwayTeams()
 
                 $.ajax({
                     url: "{{ route('match-schedules.match-detail', ':id') }}".replace(':id', matchId),
                     type: 'GET',
                     success: function(res) {
-                        $(formId+' #matchId').val(res.data.schedule.id)
+                        $(formId+' #matchId').val(res.data.match.id)
 
-                        $(formId+' #homeTeamId').val(res.data.schedule.homeTeamId)
+                        $(formId+' #homeTeamId').val(res.data.match.homeTeamId)
                         // getAwayTeams(res.data.schedule.homeTeamId)
                         @if($competition->isInternal == 1)
-                            $(formId+' #awayTeamId').val(res.data.schedule.awayTeamId);
+                            getAwayTeams(res.data.match.homeTeamId)
+                            $(formId+' #awayTeamId').val(res.data.match.awayTeamId);
                         @else
                             $(formId+' #externalTeamName').val(res.data.opposingTeam);
                         @endif
 
-                        $(formId+' #date').val(res.data.schedule.date);
-                        $(formId+' #startTime').val(res.data.schedule.startTime.substring(0, 5));
-                        $(formId+' #endTime').val(res.data.schedule.endTime.substring(0, 5));
-                        $(formId+' #place').val(res.data.schedule.place);
+                        $(formId+' #date').val(res.data.match.date);
+                        $(formId+' #startTime').val(res.data.match.startTime.substring(0, 5));
+                        $(formId+' #endTime').val(res.data.match.endTime.substring(0, 5));
+                        $(formId+' #place').val(res.data.match.place);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         Swal.fire({
