@@ -95,7 +95,7 @@ class PlayerPerformanceReviewService extends Service
                 $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('player-managements.performance-reviews.index-page', $item->hash), icon: 'visibility', btnText: 'View All Player Performance Review');
                 if (isCoach() && $match->status == 'Ongoing' || isCoach() && $match->status == 'Completed') {
                     ($review)
-                        ? $dropdownItem .= '<a class="dropdown-item editPerformanceReview" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.$match->id.'" data-statsId="'.$review->id.'"><span class="material-icons">edit</span> Edit Player Performance Review</a>'
+                        ? $dropdownItem .= '<a class="dropdown-item editPerformanceReview" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.$match->id.'" data-reviewId="'.$review->id.'"><span class="material-icons">edit</span> Edit Player Performance Review</a>'
                         : $dropdownItem .= '<a class="dropdown-item addPerformanceReview" id="'.$item->hash.'" data-trainingId="'.null.'" data-matchId="'.$match->id.'"><span class="material-icons">add</span> Add Player Performance Review</a>';
                 }
                 return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
