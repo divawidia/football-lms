@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\modal\Matches;
 
 use App\Models\MatchModel;
 use Closure;
@@ -23,6 +23,6 @@ class EditPlayerMatchStatsModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.edit-player-match-stats-modal');
+        return view('components.modal.matches.edit-player-match-stats-modal');
     }
 }
