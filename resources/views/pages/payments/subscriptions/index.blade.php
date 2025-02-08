@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    <x-edit-subscription-tax-modal/>
+    <x-modal.subscriptions.edit-subscription-tax-modal/>
 @endsection
 
 @section('content')
@@ -26,45 +26,15 @@
     <div class="container page-section">
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="subscriptionsTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Product</th>
-                            <th>Cycle</th>
-                            <th>Status</th>
-                            <th>Start Date</th>
-                            <th>Next Due Date</th>
-                            <th>Amount Due</th>
-                            <th>Created At</th>
-                            <th>Last Updated</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                <x-table :headers="['#', 'Name', 'Email', 'Product', 'Cycle', 'Status', 'Start Date', 'Next Due Date', 'Amount Due', 'Created At', 'Last Updated', 'Action']" tableId="subscriptionsTable"/>
             </div>
         </div>
     </div>
-    <x-process-data-confirmation btnClass=".deleteSubscription"
-                                :processRoute="route('subscriptions.destroy', ':id')"
-                                :routeAfterProcess="route('subscriptions.index')"
-                                 method="DELETE"
-                                confirmationText="Are you sure to delete this player's subscription?"
-                                successText="Successfully deleted player's subscription!"
-                                errorText="Something went wrong when deleting player's subscription!"/>
 @endsection
 
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            const body = $('body');
-
             $('#subscriptionsTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -84,15 +54,18 @@
                     {data: 'amountDue', name: 'amountDue'},
                     {data: 'createdAt', name: 'createdAt'},
                     {data: 'updatedAt', name: 'updatedAt'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
+            processWithConfirmation(
+                ".deleteSubscription",
+                "{{ route('subscriptions.destroy', ':id') }}",
+                "DELETE",
+                "{{ route('subscriptions.index') }}",
+                "Are you sure to delete this player's subscription?",
+                "Successfully deleted player's subscription!",
+                "Something went wrong when deleting player's subscription!"
+            );
         });
     </script>
 @endpush
