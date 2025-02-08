@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\modal\Subscriptions;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -21,6 +21,6 @@ class EditSubscriptionTaxModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.edit-subscription-tax-modal');
+        return view('components.modal.subscriptions.edit-subscription-tax-modal');
     }
 }
