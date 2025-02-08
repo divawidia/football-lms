@@ -7,9 +7,9 @@
 @endsection
 
 @section('modal')
-    <x-modal.add-players-to-team :route="route('team-managements.update-player', ['team' => $team->hash])"
+    <x-modal.teams.add-players-to-team :route="route('team-managements.update-player', ['team' => $team->hash])"
                                  :players="$players"/>
-    <x-modal.add-coaches-to-team :route="route('team-managements.update-coach', ['team' => $team->hash])"
+    <x-modal.teams.add-coaches-to-team :route="route('team-managements.update-coach', ['team' => $team->hash])"
                                  :coaches="$coaches"/>
 @endsection
 
