@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\modal;
+namespace App\View\Components\modal\Teams;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -25,6 +25,6 @@ class AddPlayersToTeam extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.add-players-to-team');
+        return view('components.modal.teams.add-players-to-team');
     }
 }
