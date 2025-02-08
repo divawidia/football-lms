@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\modal;
+namespace App\View\Components\modal\TrainingCourses;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -24,6 +24,6 @@ class EditTrainingCourseModal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.modal.edit-training-course-modal');
+        return view('components.modal.training-courses.edit-training-course-modal');
     }
 }
