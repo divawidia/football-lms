@@ -543,7 +543,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::prefix('training-courses')->name('training-videos.')->group(function () {
         Route::get('', [TrainingVideoController::class, 'index'])->middleware('role:player|coach|admin|Super-Admin')->name('index');
 
-        Route::middleware('role:coach|admin|Super-Admin')->group(function () {
+        Route::middleware('role:admin|Super-Admin')->group(function () {
             Route::get('create', [TrainingVideoController::class, 'create'])->name('create');
             Route::post('store', [TrainingVideoController::class, 'store'])->name('store');
         });
@@ -569,23 +569,31 @@ Route::group(['middleware' => ['auth', 'web']], function () {
                 Route::get('assigned-player', [TrainingVideoController::class, 'assignPlayer'])->name('assign-player');
                 Route::put('update-player', [TrainingVideoController::class, 'updatePlayers'])->name('update-player');
                 Route::delete('delete', [TrainingVideoController::class, 'destroy'])->name('destroy');
+            });
 
-                Route::prefix('players')->group(function () {
-                    Route::get('', [TrainingVideoController::class, 'players'])->name('players');
-                    Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->name('assign-players');
-                    Route::prefix('{player}')->group(function () {
-                        Route::get('', [TrainingVideoController::class, 'showPlayer'])->name('show-player');
-                        Route::delete('remove', [TrainingVideoController::class, 'removePlayer'])->name('remove-player');
+            Route::prefix('players')->group(function () {
+                Route::get('', [TrainingVideoController::class, 'players'])->middleware('role:coach|admin|Super-Admin')->name('players');
+                Route::put('assign-players', [TrainingVideoController::class, 'assignPlayers'])->middleware('role:admin|Super-Admin')->name('assign-players');
+                Route::prefix('{player}')->group(function () {
+                    Route::middleware('role:coach|admin|Super-Admin')->group(function () {
+                        Route::get('', [TrainingVideoController::class, 'showPlayer'])->middleware('role:coach|admin|Super-Admin')->name('show-player');
                         Route::get('lessons', [TrainingVideoController::class, 'playerLessons'])->name('player-lessons');
                     });
+                    Route::middleware('role:admin|Super-Admin')->group(function () {
+                        Route::delete('remove', [TrainingVideoController::class, 'removePlayer'])->name('remove-player');
+                    });
                 });
+            });
 
-                Route::prefix('lessons')->group(function () {
-                    Route::get('', [TrainingVideoLessonController::class, 'index'])->name('lessons-index');
-                    Route::post('store', [TrainingVideoLessonController::class, 'store'])->name('lessons-store');
-                    Route::prefix('{lesson}')->group(function () {
+            Route::prefix('lessons')->group(function () {
+                Route::get('', [TrainingVideoLessonController::class, 'index'])->middleware('role:coach|admin|Super-Admin')->name('lessons-index');
+                Route::post('store', [TrainingVideoLessonController::class, 'store'])->middleware('role:admin|Super-Admin')->name('lessons-store');
+                Route::prefix('{lesson}')->group(function () {
+                    Route::middleware('role:coach|admin|Super-Admin')->group(function () {
                         Route::get('', [TrainingVideoLessonController::class, 'show'])->name('lessons-show');
                         Route::get('players', [TrainingVideoLessonController::class, 'players'])->name('lessons-players');
+                    });
+                    Route::middleware('role:admin|Super-Admin')->group(function () {
                         Route::get('edit', [TrainingVideoLessonController::class, 'edit'])->name('lessons-edit');
                         Route::put('update', [TrainingVideoLessonController::class, 'update'])->name('lessons-update');
                         Route::delete('destroy', [TrainingVideoLessonController::class, 'destroy'])->name('lessons-destroy');
