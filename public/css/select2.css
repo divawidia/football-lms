@@ -177,7 +177,9 @@
 }
 
 [dir=ltr] .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove {
-    margin-left: .5rem
+    margin-left: .5rem;
+    border: 0;
+    background-color: #f5f7fa;
 }
 
 [dir=rtl] .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove {
