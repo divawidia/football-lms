@@ -40,7 +40,7 @@
     <x-modal.matches.edit-team-match-stats :match="$schedule"/>
 
     <!-- Modal update player match stats -->
-    <x-edit-player-match-stats-modal :match="$schedule"/>
+    <x-modal.matches.edit-player-match-stats-modal :match="$schedule"/>
 
     <x-modal.matches.edit-match :competition="$schedule->competition"/>
 @endsection
