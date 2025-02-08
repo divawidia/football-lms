@@ -8,7 +8,7 @@
 
 
 @section('modal')
-    <x-modal.edit-training-course-lesson-modal :trainingVideo="$data->trainingVideo"/>
+    <x-modal.training-courses.edit-training-course-lesson-modal :trainingVideo="$data->trainingVideo"/>
 @endsection
 
 @section('content')
@@ -44,25 +44,22 @@
             <p class="hero__lead measure-hero-lead text-white-50 mb-24pt">{!! $data->description !!}</p>
 
             <div class="btn-toolbar" role="toolbar">
-                <button type="button" class="btn btn-sm btn-white editLesson" id="{{ $data->id }}">
-                    <span class="material-icons mr-2">edit</span>
-                    Edit Lesson
-                </button>
-                @if($data->status == "1")
-                    <button type="button" class="btn btn-sm btn-white mx-2 unpublish-lesson">
-                        <span class="material-icons mr-2 text-danger">block</span>
-                        Unpublish Lesson
-                    </button>
-                @else
-                    <button type="button" class="btn btn-sm btn-white mx-2 publish-lesson">
-                        <span class="material-icons mr-2 text-success">check_circle</span>
-                        Publish Lesson
-                    </button>
+                @if(isAllAdmin())
+                    <x-buttons.basic-button icon="edit" text="Edit Training Video Lesson" additionalClass="editLesson" :id="$data->id"
+                                            color="white" iconColor=""/>
+                    @if($data->status == "1")
+                        <x-buttons.basic-button icon="block" text="Unpublish Training video lesson"
+                                                additionalClass="unpublish-lesson" color="white"
+                                                iconColor="danger" margin="mx-3"/>
+                    @else
+                        <x-buttons.basic-button icon="check_circle" text="publish Training video lesson"
+                                                additionalClass="publish-lesson" color="white"
+                                                iconColor="success" margin="mx-3"/>
+                    @endif
+                    <x-buttons.basic-button icon="delete" text="Delete Training video lesson"
+                                            additionalClass="deleteLesson" :id="$data->id" color="white"
+                                            iconColor="danger"/>
                 @endif
-                <button type="button" class="btn btn-sm btn-white deleteLesson" id="{{ $data->id }}">
-                    <span class="material-icons mr-2">delete</span>
-                    Delete Lesson
-                </button>
             </div>
         </div>
     </div>
@@ -71,11 +68,7 @@
             <ul class="nav navbar-nav flex align-items-sm-center">
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">visibility</i>
-                    @if($data->status == '1')
-                        Status : <span class="badge badge-pill badge-success ml-1">Published</span>
-                    @else
-                        Status : <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
-                    @endif
+                    Status : <span class="badge badge-pill @if($data->status == '1') badge-success @else badge-danger @endif ml-1 text-capitalize">@if($data->status == '1') published @else unpublished @endif</span>
                 </li>
                 <li class="nav-item navbar-list__item">
                     <i class="material-icons text-muted icon--left">schedule</i>
@@ -94,7 +87,7 @@
     </div>
 
     @if(isAllAdmin() || isCoach())
-        <div class="container page__container page-section">
+        <div class="container">
             <div class="page-separator">
                 <div class="page-separator__text">Overview</div>
             </div>
@@ -109,24 +102,9 @@
             <div class="page-separator">
                 <div class="page-separator__text">Assigned Player(s)</div>
             </div>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card">
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="playersTable">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Completion Status</th>
-                                <th>Assigned At</th>
-                                <th>Completed At</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
+                    <x-table :headers="['#', 'Name', 'Completion Status', 'Assigned At', 'Completed At', 'Action']" tableId="playersTable"/>
                 </div>
             </div>
         </div>
@@ -150,48 +128,43 @@
                     {data: 'status', name: 'status'},
                     {data: 'assignedAt', name: 'assignedAt'},
                     {data: 'completedAt', name: 'completedAt'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
+            @if(isAllAdmin())
+                // delete training course
+                processWithConfirmation(
+                    '.deleteLesson',
+                    "{{ route('training-videos.lessons-destroy', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson' => ':id']) }}",
+                    "{{ route('training-videos.show', $data->trainingVideo->hash) }}",
+                    'DELETE',
+                    "Are you sure to delete this lesson?",
+                    "Something went wrong when deleting lesson!",
+                    "{{ csrf_token() }}"
+                );
 
-            // delete training course
-            processWithConfirmation(
-                '.deleteLesson',
-                "{{ route('training-videos.lessons-destroy', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson' => ':id']) }}",
-                "{{ route('training-videos.show', $data->trainingVideo->hash) }}",
-                'DELETE',
-                "Are you sure to delete this lesson?",
-                "Something went wrong when deleting lesson!",
-                "{{ csrf_token() }}"
-            );
+                // unpublish lesson
+                processWithConfirmation(
+                    '.unpublish-lesson',
+                    "{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson'=>$data->hash]) }}",
+                    null,
+                    'PATCH',
+                    "Are you sure to unpublish this lesson?",
+                    "Something went wrong when unpublishing lesson!",
+                    "{{ csrf_token() }}"
+                );
 
-            // unpublish lesson
-            processWithConfirmation(
-                '.unpublish-lesson',
-                "{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson'=>$data->hash]) }}",
-                null,
-                'PATCH',
-                "Are you sure to unpublish this lesson?",
-                "Something went wrong when unpublishing lesson!",
-                "{{ csrf_token() }}"
-            );
-
-            // publish lesson
-            processWithConfirmation(
-                '.publish-lesson',
-                "{{ route('training-videos.lessons-publish', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson'=>$data->hash]) }}",
-                null,
-                'PATCH',
-                "Are you sure to publish this lesson?",
-                "Something went wrong when publishing lesson!",
-                "{{ csrf_token() }}"
-            );
+                // publish lesson
+                processWithConfirmation(
+                    '.publish-lesson',
+                    "{{ route('training-videos.lessons-publish', ['trainingVideo'=>$data->trainingVideo->hash, 'lesson'=>$data->hash]) }}",
+                    null,
+                    'PATCH',
+                    "Are you sure to publish this lesson?",
+                    "Something went wrong when publishing lesson!",
+                    "{{ csrf_token() }}"
+                );
+            @endif
         });
     </script>
 @endpush
