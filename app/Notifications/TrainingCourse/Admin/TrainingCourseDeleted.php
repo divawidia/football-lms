@@ -1,22 +1,25 @@
 <?php
 
-namespace App\Notifications\TrainingCourse;
+namespace App\Notifications\TrainingCourse\AdminCoach;
 
+use App\Models\TrainingVideo;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrainingCourseUpdated extends Notification
+class TrainingCourseDeleted extends Notification
 {
     use Queueable;
-    protected $trainingCourse;
+    protected TrainingVideo $trainingCourse;
+    protected User $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($trainingCourse)
+    public function __construct(TrainingVideo $trainingCourse, User $user)
     {
         $this->trainingCourse = $trainingCourse;
+        $this->user = $user;
     }
 
     /**
@@ -37,8 +40,9 @@ class TrainingCourseUpdated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>"The training course titled '{$this->trainingCourse->trainingTitle}' has been updated. Please review the updated course details in the system!",
-            'redirectRoute' => route('training-videos.show', $this->trainingCourse->id),
+            'title' => "Training course have been deleted",
+            'data' =>"The training course {$this->trainingCourse->trainingTitle} has been deleted by admin ".getUserFullName($this->user).". Please review the change if necessary",
+            'redirectRoute' => route('training-videos.index')
         ];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\TrainingCourse;
+namespace App\Notifications\TrainingCourse\Player;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -53,7 +53,7 @@ class PlayersCompleteTrainingCourse extends Notification
             ->subject($subject)
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("$openingMessage")
-            ->action('View training course', route('training-videos.show', $this->trainingCourse->id))
+            ->action('View training course', route('training-videos.show', $this->trainingCourse->hash))
             ->line($closingMessage);
     }
 
@@ -71,7 +71,7 @@ class PlayersCompleteTrainingCourse extends Notification
         }
         return [
             'data' =>$subject,
-            'redirectRoute' => route('training-videos.show', $this->trainingCourse->id),
+            'redirectRoute' => route('training-videos.show', $this->trainingCourse->hash),
         ];
     }
 }

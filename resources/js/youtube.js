@@ -8,14 +8,11 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 let player;
 
 // Load the YouTube Iframe API and create a player
-export function onYouTubeIframeAPIReady(videoId, playerId) {
+export function onYouTubeIframeAPIReadyForAdmin(videoId, playerId) {
     player = new YT.Player(playerId, {
         height: '250',
         width: '100%',
         videoId: videoId,
-        // playerVars: {
-        //     'playsinline': 1
-        // },
         events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
@@ -26,7 +23,6 @@ export function onYouTubeIframeAPIReady(videoId, playerId) {
 // When the player is ready, get the video duration and show video
 function onPlayerReady() {
     const duration = player.getDuration(); // Get the duration in seconds
-    // event.target.playVideo();
     $('.totalDuration').val(duration);
 }
 
@@ -52,13 +48,13 @@ function extractVideoID(url) {
 
 // Handle form submission
 function showYoutubePreview(inputId, formId, playerId) {
-    $(inputId).on('change', function (e) {
+    $(formId + ' ' + inputId).on('change', function (e) {
         e.preventDefault(); // Prevent form submission
 
         let preview = $(formId + ' #preview-container');
-        let player = $(playerId);
-        let errorSpan = $(formId + ' span.lessonVideoURL');
-        let inputUrl = $(inputId);
+        let player = $(formId + ' ' + playerId);
+        let errorSpan = $(formId + ' span.lessonVideoURL_error');
+        let inputUrl = $(formId + ' ' + inputId);
 
         errorSpan.text('');
         inputUrl.removeClass('is-invalid');
@@ -76,7 +72,7 @@ function showYoutubePreview(inputId, formId, playerId) {
         $(formId + ' #videoId').val(videoID);
 
         if (videoID) {
-            onYouTubeIframeAPIReady(videoID, playerId.replace(/^#/, ''));
+            onYouTubeIframeAPIReadyForAdmin(videoID, playerId.replace(/^#/, ''));
         } else {
             errorSpan.text('Invalid youtube URL');
             inputUrl.addClass('is-invalid');
@@ -85,4 +81,4 @@ function showYoutubePreview(inputId, formId, playerId) {
 }
 
 showYoutubePreview('#lessonVideoURL', '#formAddLessonModal', '#create-player');
-showYoutubePreview('#edit-lessonVideoURL', '#formEditLessonModal', '#edit-player');
+showYoutubePreview('#lessonVideoURL', '#formEditLessonModal', '#edit-player');
