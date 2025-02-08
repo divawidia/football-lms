@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    <x-edit-subscription-tax-modal/>
+    <x-modal.subscriptions.edit-subscription-tax-modal/>
 @endsection
 
 @section('content')
