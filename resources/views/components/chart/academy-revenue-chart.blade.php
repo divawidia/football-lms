@@ -74,7 +74,7 @@
 
             function fetchChartData(filter, filterText) {
                 $.ajax({
-                    url: '{{ route('admin.financial-report.revenue-chart-data') }}',
+                    url: '{{ route('financial-report.revenue-chart-data') }}',
                     type: 'GET',
                     data: {
                         filter: filter,
