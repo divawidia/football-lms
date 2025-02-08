@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    <x-modal.create-training-course-modal/>
+    <x-modal.training-courses.create-training-course-modal/>
 @endsection
 
 @section('content')
@@ -24,13 +24,8 @@
     </div>
 
     <div class="container page-section">
-        @if(isAllAdmin() || isCoach())
-            <a href="" class="btn btn-primary mb-3" id="addTrainingVideo">
-                <span class="material-icons mr-2">
-                    add
-                </span>
-                Add New
-            </a>
+        @if(isAllAdmin())
+            <x-buttons.basic-button icon="add" text="Add New Training Course" id="addTrainingVideo" color="primary" iconColor="" margin="mb-3"/>
         @elseif(isPlayer())
             <div class="page-separator">
                 <div class="page-separator__text">Assigned Training Videos</div>
@@ -57,8 +52,6 @@
                                         <a class="card-title mb-4pt"
                                            href="{{ route('training-videos.show', $training->hash) }}">{{$training->trainingTitle}}</a>
                                     </div>
-{{--                                    <a href="{{ route('training-videos.edit', $training->hash) }}"--}}
-{{--                                       class="ml-4pt material-icons text-20 card-course__icon-favorite">edit</a>--}}
                                 </div>
                                 <div class="d-flex">
                                     <div class="d-flex align-items-center mr-2">
@@ -79,7 +72,6 @@
                                             <div class="d-flex align-items-center">
                                                 <span class="badge badge-pill badge-success ml-1">Published</span>
                                             </div>
-
                                         @else
                                             <div class="d-flex align-items-center">
                                                 <span class="badge badge-pill badge-danger ml-1">Unpublished</span>
