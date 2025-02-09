@@ -2,26 +2,24 @@
 
 namespace App\Notifications\TrainingCourse\Player;
 
+use App\Models\TrainingVideo;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PlayersCompleteTrainingCourse extends Notification
+class PlayersCompleteTrainingCourseForPlayer extends Notification
 {
     use Queueable;
-    protected $trainingCourse;
-    protected $completedDate;
-    protected $role;
-    protected $playerName;
+    protected TrainingVideo $trainingCourse;
+    protected string $completedDate;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($trainingCourse, $role, $playerName = null, $completedDate)
+    public function __construct(TrainingVideo $trainingCourse, string $completedDate)
     {
         $this->trainingCourse = $trainingCourse;
-        $this->role = $role;
-        $this->playerName = $playerName;
         $this->completedDate = $completedDate;
     }
 
@@ -40,21 +38,12 @@ class PlayersCompleteTrainingCourse extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        if ($this->role == 'player') {
-            $subject = "Congratulations on Completing Your Training Course";
-            $openingMessage = "Congratulations on successfully completing the training course: {$this->trainingCourse->trainingTitle}";
-            $closingMessage = "We’re proud of your hard work and dedication. Keep striving for excellence!";
-        } else {
-            $subject = "Player Training Course Completion";
-            $openingMessage = "We’re excited to inform you that {$this->playerName} has successfully completed the training course: {$this->trainingCourse->trainingTitle}";
-            $closingMessage = "Thank you for guiding and supporting their development.";
-        }
         return (new MailMessage)
-            ->subject($subject)
+            ->subject("Congratulations on Completing Your Training Course")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("$openingMessage")
+            ->line("Congratulations on successfully completing the training course: {$this->trainingCourse->trainingTitle}")
             ->action('View training course', route('training-videos.show', $this->trainingCourse->hash))
-            ->line($closingMessage);
+            ->line("We’re proud of your hard work and dedication. Keep striving for excellence!");
     }
 
     /**
@@ -64,13 +53,9 @@ class PlayersCompleteTrainingCourse extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        if ($this->role == 'player') {
-            $subject = "Congratulations! You have successfully completed the training course {$this->trainingCourse->trainingTitle} on {$this->completedDate}. Keep up the great work!";
-        } else {
-            $subject = "{$this->playerName} has successfully completed the training course {$this->trainingCourse->trainingTitle} on {$this->completedDate}. Great progress!";
-        }
         return [
-            'data' =>$subject,
+            'title' => "Training course completed",
+            'data' => "Congratulations! You have successfully completed the {$this->trainingCourse->trainingTitle} training course. Keep up the great work!",
             'redirectRoute' => route('training-videos.show', $this->trainingCourse->hash),
         ];
     }
