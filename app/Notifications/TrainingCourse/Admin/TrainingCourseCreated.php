@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\TrainingCourse\AdminCoach;
+namespace App\Notifications\TrainingCourse\Admin;
 
 use App\Models\TrainingVideo;
 use App\Models\User;
