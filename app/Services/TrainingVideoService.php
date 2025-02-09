@@ -232,7 +232,7 @@ class TrainingVideoService extends Service
         $trainingVideo->players()->detach();
         $this->deleteImage($trainingVideo->previewPhoto);
 
-        $playersId = collect($trainingVideo->players)->pluck('playerId')->all();
+        $playersId = collect($trainingVideo->players)->pluck('id')->all();
         $assignedPlayers = $this->userRepository->getInArray('player', $playersId);
 
         Notification::send($assignedPlayers, new RemovePlayersFromTrainingCourseForPlayers($trainingVideo));
