@@ -43,7 +43,7 @@ class TrainingLessonCreatedForPlayer extends Notification implements ShouldQueue
         return [
             'title' => "New Training video Lesson Assigned to you",
             'data' => "A new training video lesson : '{$this->lesson->lessonTitle}' in {$this->trainingCourse->trainingTitle} training course has been added and assigned to you. Please check the training video lesson and complete as soon as possible!",
-            'redirectRoute' => route('training-videos.lessons-show', ['trainingVideo' => $this->trainingCourse->hash, 'lesson' => $this->lesson->hash]),
+            'redirectRoute' => route('training-videos.show-player-lesson', ['trainingVideo' => $this->trainingCourse->hash, 'lesson' => $this->lesson->hash]),
         ];
     }
 }
