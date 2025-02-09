@@ -55,7 +55,7 @@ class TrainingVideoService extends Service
         return Datatables::of($data)
             ->addColumn('action', function ($item) use ($trainingVideo) {
                 $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('training-videos.show-player', ['trainingVideo' => $trainingVideo->hash, 'player' => $item->hash]), icon: 'visibility', btnText: 'View player');
-                (isAllAdmin()) ? $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('delete', $item->id, iconColor: 'danger', icon: 'delete', btnText: 'Remove Player') : $dropdownItem.= "";
+                (isAllAdmin()) ? $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('deletePlayer', $item->id, iconColor: 'danger', icon: 'delete', btnText: 'Remove Player') : $dropdownItem.= "";
                 return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
                     return $dropdownItem;
                 });
