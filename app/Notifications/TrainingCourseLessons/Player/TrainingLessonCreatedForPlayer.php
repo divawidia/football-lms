@@ -1,28 +1,26 @@
 <?php
 
-namespace App\Notifications\TrainingCourseLessons;
+namespace App\Notifications\TrainingCourseLessons\Player;
 
+use App\Models\TrainingVideo;
+use App\Models\TrainingVideoLesson;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class TrainingLessonCreated extends Notification
+class TrainingLessonCreatedForPlayer extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $trainingCourse;
-    protected $lesson;
-    protected $createdByName;
-    protected $role;
+    protected TrainingVideo $trainingCourse;
+    protected TrainingVideoLesson $lesson;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($trainingCourse, $lesson, $createdByName, $role)
+    public function __construct(TrainingVideo $trainingCourse, TrainingVideoLesson $lesson)
     {
         $this->trainingCourse = $trainingCourse;
         $this->lesson = $lesson;
-        $this->createdByName = $createdByName;
-        $this->role = $role;
     }
 
     /**
@@ -42,14 +40,10 @@ class TrainingLessonCreated extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        if ($this->role == 'player') {
-            $message = "A new lesson titled '{$this->lesson->lessonTitle}' in training course {$this->trainingCourse->trainingTitle} has been added and assigned to you. Please check the lesson details in the system and complete as soos as possible!";
-        } else {
-            $message = "A new lesson titled '{$this->lesson->lessonTitle}' in training course {$this->trainingCourse->trainingTitle} has been successfully created by {$this->createdByName}. Please review the lesson details in the system!";
-        }
         return [
-            'data' => $message,
-            'redirectRoute' => route('training-videos.lessons-show', ['trainingVideo' => $this->trainingCourse->id, 'lessons' => $this->lesson->id]),
+            'title' => "New Training video Lesson Assigned to you",
+            'data' => "A new training video lesson : '{$this->lesson->lessonTitle}' in {$this->trainingCourse->trainingTitle} training course has been added and assigned to you. Please check the training video lesson and complete as soon as possible!",
+            'redirectRoute' => route('training-videos.lessons-show', ['trainingVideo' => $this->trainingCourse->hash, 'lesson' => $this->lesson->hash]),
         ];
     }
 }
