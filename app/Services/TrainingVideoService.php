@@ -173,6 +173,7 @@ class TrainingVideoService extends Service
     public function store(array $data, $loggedUser){
         $data['previewPhoto'] = $this->storeImage($data, 'previewPhoto', 'assets/training-videos', 'images/video-preview.png');
         $data['userId'] = $loggedUser->id;
+        $data['status'] = 1;
         $training = $this->trainingVideoRepository->create($data);
         Notification::send($this->userRepository->getAllAdminUsers(), new TrainingCourseCreated($training, $loggedUser));
         return $training;
