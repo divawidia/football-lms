@@ -100,21 +100,17 @@ class TrainingVideoLessonService extends Service
 
     public function lessonUserPlayers(TrainingVideoLesson $lesson)
     {
-        $playersId = collect($lesson->players)->pluck('playerId')->all();
+        $playersId = collect($lesson->players)->pluck('id')->all();
         return $this->userRepository->getInArray('player', $playersId);
     }
 
     public function store(array $data, TrainingVideo $trainingVideo, $loggedUser){
         $lesson = $trainingVideo->lessons()->create($data);
-        $playersId =  collect($trainingVideo->players)->pluck('playerId')->all();
+        $playersId =  collect($trainingVideo->players)->pluck('id')->all();
         $lesson->players()->attach($playersId);
 
-        try {
-            Notification::send($this->lessonUserPlayers($lesson), new TrainingLessonCreatedForPlayer($trainingVideo, $lesson));
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreatedForAdmin($trainingVideo, $lesson, $loggedUser));
-        } catch (Exception $exception) {
-            Log::error('Error while sending create lesson '.$lesson->lessonTitle.' notification: ' . $exception->getMessage());
-        }
+        Notification::send($this->lessonUserPlayers($lesson), new TrainingLessonCreatedForPlayer($trainingVideo, $lesson));
+        Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreatedForAdmin($trainingVideo, $lesson, $loggedUser));
 
         return $lesson;
     }
