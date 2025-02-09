@@ -152,6 +152,8 @@
                     console.log(response.message);
                     @if($nextId != null)
                         window.location.href = '{{ route('training-videos.show-player-lesson', ['trainingVideo' => $trainingVideo->hash, 'lesson' => $nextId->hash]) }}'
+                    @elseif($nextId == null and $playerCompletionProgress < 100)
+                        window.location.href = '{{ route('training-videos.show-player-lesson', ['trainingVideo' => $trainingVideo->hash, 'lesson' => $data->hash]) }}'
                     @else
                         window.location.href = '{{ route('training-videos.completed', ['trainingVideo' => $trainingVideo->hash]) }}'
                     @endif
