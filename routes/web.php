@@ -502,28 +502,22 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         });
     });
 
-    Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
+    Route::prefix('subscriptions')->middleware('role:admin|Super-Admin')->name('subscriptions.')->group(function () {
+        Route::get('', [SubscriptionController::class, 'index'])->name('index');
+        Route::get('create', [SubscriptionController::class, 'create'])->name('create');
+        Route::post('store', [SubscriptionController::class, 'store'])->name('store');
+        Route::get('available-product', [SubscriptionController::class, 'getAvailablePlayerSubscriptionProduct'])->name('available-product');
 
-
-
-            Route::prefix('subscriptions')->group(function () {
-                Route::get('', [SubscriptionController::class, 'index'])->name('subscriptions.index');
-                Route::get('create', [SubscriptionController::class, 'create'])->name('subscriptions.create');
-                Route::post('store', [SubscriptionController::class, 'store'])->name('subscriptions.store');
-                Route::get('available-product', [SubscriptionController::class, 'getAvailablePlayerSubscriptionProduct'])->name('subscriptions.available-product');
-
-                Route::prefix('{subscription}')->group(function () {
-                    Route::get('', [SubscriptionController::class, 'show'])->name('subscriptions.show');
-                    Route::put('', [SubscriptionController::class, 'update'])->name('subscriptions.update-tax');
-                    Route::delete('', [SubscriptionController::class, 'destroy'])->name('subscriptions.destroy');
-                    Route::post('create-new-invoice', [SubscriptionController::class, 'createNewInvoice'])->name('subscriptions.create-new-invoice');
-                    Route::get('invoices', [SubscriptionController::class, 'invoices'])->name('subscriptions.invoices');
-                    Route::patch('set-scheduled', [SubscriptionController::class, 'setScheduled'])->name('subscriptions.set-scheduled');
-                    Route::patch('set-unsubscribed', [SubscriptionController::class, 'setUnsubscribed'])->name('subscriptions.set-unsubscribed');
-                    Route::patch('renew-subscription', [SubscriptionController::class, 'renewSubscription'])->name('subscriptions.renew-subscription');
-                });
-
-            });
+        Route::prefix('{subscription}')->group(function () {
+            Route::get('', [SubscriptionController::class, 'show'])->name('show');
+            Route::put('', [SubscriptionController::class, 'update'])->name('update-tax');
+            Route::delete('', [SubscriptionController::class, 'destroy'])->name('destroy');
+            Route::post('create-new-invoice', [SubscriptionController::class, 'createNewInvoice'])->name('create-new-invoice');
+            Route::get('invoices', [SubscriptionController::class, 'invoices'])->name('invoices');
+            Route::patch('set-scheduled', [SubscriptionController::class, 'setScheduled'])->name('set-scheduled');
+            Route::patch('set-unsubscribed', [SubscriptionController::class, 'setUnsubscribed'])->name('set-unsubscribed');
+            Route::patch('renew-subscription', [SubscriptionController::class, 'renewSubscription'])->name('renew-subscription');
+        });
     });
 
     Route::group(['middleware' => ['role:coach,web']], function () {
@@ -542,10 +536,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
                     Route::put('update', [SkillAssessmentController::class, 'update'])->name('skill-assessments.update');
                     Route::delete('destroy', [SkillAssessmentController::class, 'destroy'])->name('skill-assessments.destroy');
                 });
-            });
-
-            Route::prefix('attendance-reports')->group(function () {
-
             });
 
 //        });
