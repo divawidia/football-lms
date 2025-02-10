@@ -241,14 +241,14 @@
                     @endif
                 </div>
                 <div class="card card-body">
-                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
+                    <x-charts.player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
                                                       :datas="$playerSkillStats['data']" chartId="skillStatsChart"/>
                 </div>
                 {{--All Skill Stats Section--}}
                 <x-cards.player-skill-stats-card :allSkills="$allSkills"/>
 
                 {{--Skill Stats History Section--}}
-                <x-chart.player-skill-history-chart :player="$data"/>
+                <x-charts.player-skill-history-chart :player="$data"/>
             </div>
 
             {{-- Parents/Guardians Histories --}}

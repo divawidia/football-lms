@@ -82,7 +82,7 @@
 
         <div class="row">
             <div class="col-lg-7">
-                <x-academy-revenue-chart :revenueGrowth="$revenueGrowth"/>
+                <x-charts.academy-revenue-chart :revenueGrowth="$revenueGrowth"/>
             </div>
             <div class="col-lg-5 d-flex">
                 <div class="card">

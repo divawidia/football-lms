@@ -61,7 +61,7 @@
         </div>
         <div class="card align-items-center">
             <div class="card-body">
-                <x-player-skill-stats-radar-chart :labels="$skillStats['label']" :datas="$skillStats['data']"
+                <x-charts.player-skill-stats-radar-chart :labels="$skillStats['label']" :datas="$skillStats['data']"
                                                   chartId="skillStatsChart"/>
             </div>
         </div>
@@ -70,7 +70,7 @@
         <x-cards.player-skill-stats-card :allSkills="$allSkills"/>
 
         {{--Skill Stats History Section--}}
-        <x-player-skill-history-chart :player="$data"/>
+        <x-charts.player-skill-history-chart :player="$data"/>
 
     </div>
 @endsection

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Charts;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -29,6 +29,6 @@ class PlayerSkillStatsRadarChart extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.chart.player-skill-stats-radar-chart');
+        return view('components.charts.player-skill-stats-radar-chart');
     }
 }

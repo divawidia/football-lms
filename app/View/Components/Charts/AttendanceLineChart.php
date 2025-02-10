@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Charts;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -24,6 +24,6 @@ class AttendanceLineChart extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.chart.attendance-line-chart');
+        return view('components.charts.attendance-line-chart');
     }
 }

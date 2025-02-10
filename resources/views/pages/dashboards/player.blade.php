@@ -111,7 +111,7 @@
                     <x-buttons.link-button :href="route('skill-stats')" icon="chevron_right" color="white" text="View More" margin="ml-auto"/>
                 </div>
                 <div class="card">
-                    <x-player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
+                    <x-charts.player-skill-stats-radar-chart :labels="$playerSkillStats['label']"
                                                       :datas="$playerSkillStats['data']" chartId="uniqueChartId"/>
                 </div>
             </div>

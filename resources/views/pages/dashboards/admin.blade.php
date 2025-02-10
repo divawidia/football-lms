@@ -49,7 +49,7 @@
 
                 <div class="row card-group-row">
                     <div class="col-md-7">
-                        <x-academy-revenue-chart :revenueGrowth="$dataOverview['revenueGrowth']"/>
+                        <x-charts.academy-revenue-chart :revenueGrowth="$dataOverview['revenueGrowth']"/>
                     </div>
                     <div class="col-md-5 d-flex">
                         <div class="card">

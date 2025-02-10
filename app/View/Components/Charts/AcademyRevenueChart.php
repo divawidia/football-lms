@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Charts;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -22,6 +22,6 @@ class AcademyRevenueChart extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.chart.academy-revenue-chart');
+        return view('components.charts.academy-revenue-chart');
     }
 }

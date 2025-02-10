@@ -447,7 +447,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         });
     });
 
-    Route::prefix('products')->middleware('role:admin|Super-Admin')->name('products')->group(function () {
+    Route::prefix('products')->middleware('role:admin|Super-Admin')->name('products.')->group(function () {
         Route::get('', [ProductController::class, 'index'])->name('index');
         Route::post('store', [ProductController::class, 'store'])->name('store');
 
