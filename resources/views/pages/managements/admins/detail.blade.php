@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    <x-change-password-modal :route="route('admin-managements.change-password', ['admin' => ':id'])"/>
+    <x-modal.change-password-modal :route="route('admin-managements.change-password', ['admin' => ':id'])"/>
 @endsection
 
 @section('content')
