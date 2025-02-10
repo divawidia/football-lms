@@ -16,11 +16,11 @@ class LeaderboardController extends Controller
             $teamsLeaderboardRoute = route('leaderboards.teams');
             $playersLeaderboardRoute = route('leaderboards.players');
         } elseif (isCoach()){
-            $teamsLeaderboardRoute = route('coach.leaderboards.teams');
-            $playersLeaderboardRoute = route('coach.leaderboards.players');
-        } elseif (isPlayer()){
-            $teamsLeaderboardRoute = route('player.leaderboards.teams');
-            $playersLeaderboardRoute = route('player.leaderboards.teammate');
+            $teamsLeaderboardRoute = route('leaderboards.coach-teams');
+            $playersLeaderboardRoute = route('leaderboards.coach-players');
+        } else {
+            $teamsLeaderboardRoute = route('leaderboards.player-teams');
+            $playersLeaderboardRoute = route('leaderboards.player-teammate');
         }
         return view('pages.academies.leaderboards.index', [
             'teamsLeaderboardRoute' => $teamsLeaderboardRoute,

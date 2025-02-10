@@ -410,13 +410,28 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         });
     });
 
+    Route::prefix('leaderboards')->name('leaderboards.')->group(function () {
+        Route::get('', [LeaderboardController::class, 'index'])->middleware('role:player|coach|admin|Super-Admin')->name('index');
+
+        Route::middleware('role:admin|Super-Admin')->group(function () {
+            Route::get('admin-teams', [LeaderboardController::class, 'teamLeaderboard'])->name('teams');
+            Route::get('admin-players', [LeaderboardController::class, 'playerLeaderboard'])->name('players');
+        });
+
+        Route::middleware('role:coach')->group(function () {
+            Route::get('coach-teams', [LeaderboardController::class, 'coachTeamLeaderboard'])->name('coach-teams');
+            Route::get('coach-players', [LeaderboardController::class, 'coachPlayerLeaderboard'])->name('coach-players');
+        });
+
+        Route::middleware('role:player')->group(function () {
+            Route::get('player-teams', [LeaderboardController::class, 'playerTeamLeaderboard'])->name('player-teams');
+            Route::get('players-teammate', [LeaderboardController::class, 'playersTeammateLeaderboard'])->name('player-teammate');
+        });
+    });
 
     Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
 
-            Route::prefix('leaderboards')->group(function () {
-                Route::get('admin-teams', [LeaderboardController::class, 'teamLeaderboard'])->name('leaderboards.teams');
-                Route::get('admin-players', [LeaderboardController::class, 'playerLeaderboard'])->name('leaderboards.players');
-            });
+
 
             Route::prefix('product-categories')->group(function () {
                 Route::get('', [ProductCategoryController::class, 'index'])->name('product-categories.index');
@@ -527,11 +542,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
             });
 
-
-            Route::prefix('leaderboards')->group(function () {
-                Route::get('coach-teams', [LeaderboardController::class, 'coachTeamLeaderboard'])->name('coach.leaderboards.teams');
-                Route::get('coach-players', [LeaderboardController::class, 'coachPlayerLeaderboard'])->name('coach.leaderboards.players');
-            });
 //        });
     });
 
@@ -541,11 +551,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         Route::get('skill-stats', [PlayerController::class, 'skillStatsDetailPlayer'])->name('player.skill-stats');
 
         Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player.performance-reviews');
-
-        Route::prefix('leaderboards')->group(function () {
-            Route::get('player-teams', [LeaderboardController::class, 'playerTeamLeaderboard'])->name('player.leaderboards.teams');
-            Route::get('players-teammate', [LeaderboardController::class, 'playersTeammateLeaderboard'])->name('player.leaderboards.teammate');
-        });
 
         Route::prefix('billing-and-payments')->group(function () {
             Route::get('', [BillingPaymentsController::class, 'index'])->name('billing-and-payments.index');
@@ -601,10 +606,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     });
 
     Route::group(['middleware' => ['role:player|coach|admin|Super-Admin,web']], function () {
-
-        Route::prefix('leaderboards')->group(function () {
-            Route::get('', [LeaderboardController::class, 'index'])->name('leaderboards.index');
-        });
 
         Route::prefix('training-courses')->group(function () {
             Route::get('', [TrainingVideoController::class, 'index'])->name('training-videos.index');
