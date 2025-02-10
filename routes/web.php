@@ -532,7 +532,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         });
     });
 
-    Route::get('skill-stats', [PlayerController::class, 'skillStatsDetailPlayer'])->middleware('role:player')->name('player.skill-stats');
+    Route::get('skill-stats', [PlayerController::class, 'skillStatsDetailPlayer'])->middleware('role:player')->name('skill-stats');
 
     Route::group(['middleware' => ['role:player,web']], function () {
 
