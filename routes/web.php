@@ -468,35 +468,43 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         });
     });
 
-    Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
+    Route::prefix('invoices')->name('invoices.')->group(function () {
+        Route::middleware('role:admin|Super-Admin')->group(function () {
+            Route::get('', [InvoiceController::class, 'index'])->name('index');
+            Route::get('calculate-product-amount', [InvoiceController::class, 'calculateProductAmount'])->name('calculate-product-amount');
+            Route::post('calculate-invoice-total', [InvoiceController::class, 'calculateInvoiceTotal'])->name('calculate-invoice-total');
+            Route::get('create', [InvoiceController::class, 'create'])->name('create');
+            Route::post('store', [InvoiceController::class, 'store'])->name('store');
 
-            Route::prefix('invoices')->group(function () {
-                Route::get('', [InvoiceController::class, 'index'])->name('invoices.index');
-                Route::get('calculate-product-amount', [InvoiceController::class, 'calculateProductAmount'])->name('invoices.calculate-product-amount');
-                Route::post('calculate-invoice-total', [InvoiceController::class, 'calculateInvoiceTotal'])->name('invoices.calculate-invoice-total');
-                Route::get('create', [InvoiceController::class, 'create'])->name('invoices.create');
-                Route::post('store', [InvoiceController::class, 'store'])->name('invoices.store');
-
-                Route::prefix('archived')->group(function () {
-                    Route::get('', [InvoiceController::class, 'deletedData'])->name('invoices.archived');
-                    Route::prefix('{invoice}')->group(function () {
-                        Route::get('', [InvoiceController::class, 'showArchived'])->name('invoices.show-archived');
-                        Route::post('restore', [InvoiceController::class, 'restoreData'])->name('invoices.restore');
-                        Route::delete('permanent-delete', [InvoiceController::class, 'permanentDeleteData'])->name('invoices.permanent-delete');
-                    });
-                });
-
+            Route::prefix('archived')->group(function () {
+                Route::get('', [InvoiceController::class, 'deletedData'])->name('archived');
                 Route::prefix('{invoice}')->group(function () {
-                    Route::get('', [InvoiceController::class, 'show'])->name('invoices.show');
-                    Route::get('edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
-                    Route::put('update', [InvoiceController::class, 'update'])->name('invoices.update');
-                    Route::patch('set-paid', [InvoiceController::class, 'setPaid'])->name('invoices.set-paid');
-                    Route::patch('set-uncollectible', [InvoiceController::class, 'setUncollectible'])->name('invoices.set-uncollectible');
-                    Route::patch('set-open', [InvoiceController::class, 'setOpen'])->name('invoices.set-open');
-                    Route::patch('set-past-due', [InvoiceController::class, 'setPastDue'])->name('invoices.set-past-due');
-                    Route::delete('delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+                    Route::get('', [InvoiceController::class, 'showArchived'])->name('show-archived');
+                    Route::post('restore', [InvoiceController::class, 'restoreData'])->name('restore');
+                    Route::delete('permanent-delete', [InvoiceController::class, 'permanentDeleteData'])->name('permanent-delete');
                 });
             });
+        });
+
+        Route::prefix('{invoice}')->group(function () {
+            Route::middleware('role:admin|Super-Admin')->group(function () {
+                Route::get('', [InvoiceController::class, 'show'])->name('show');
+                Route::get('edit', [InvoiceController::class, 'edit'])->name('edit');
+                Route::put('update', [InvoiceController::class, 'update'])->name('update');
+                Route::patch('set-open', [InvoiceController::class, 'setOpen'])->name('set-open');
+                Route::patch('set-past-due', [InvoiceController::class, 'setPastDue'])->name('set-past-due');
+                Route::delete('delete', [InvoiceController::class, 'destroy'])->name('destroy');
+            });
+            Route::middleware('role:player|coach|admin|Super-Admin')->group(function () {
+                Route::patch('set-paid', [InvoiceController::class, 'setPaid'])->name('set-paid');
+                Route::patch('set-uncollectible', [InvoiceController::class, 'setUncollectible'])->name('set-uncollectible');
+            });
+        });
+    });
+
+    Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
+
+
 
             Route::prefix('subscriptions')->group(function () {
                 Route::get('', [SubscriptionController::class, 'index'])->name('subscriptions.index');
@@ -618,13 +626,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
                         Route::post('mark-as-complete', [TrainingVideoLessonController::class, 'markAsComplete'])->name('training-videos.mark-as-complete');
                     });
                 });
-            });
-        });
-        Route::prefix('invoices')->group(function () {
-
-            Route::prefix('{invoice}')->group(function () {
-                Route::patch('set-paid', [InvoiceController::class, 'setPaid'])->name('invoices.set-paid');
-                Route::patch('set-uncollectible', [InvoiceController::class, 'setUncollectible'])->name('invoices.set-uncollectible');
             });
         });
     });
