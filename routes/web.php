@@ -442,37 +442,33 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         });
     });
 
+    Route::prefix('taxes')->middleware('role:admin|Super-Admin')->name('taxes.')->group(function () {
+        Route::get('', [TaxController::class, 'index'])->name('index');
+        Route::post('store', [TaxController::class, 'store'])->name('store');
+
+        Route::prefix('{tax}')->group(function () {
+            Route::get('edit', [TaxController::class, 'edit'])->name('edit');
+            Route::put('update', [TaxController::class, 'update'])->name('update');
+            Route::patch('deactivate', [TaxController::class, 'deactivate'])->name('deactivate');
+            Route::patch('activate', [TaxController::class, 'activate'])->name('activate');
+            Route::delete('delete', [TaxController::class, 'destroy'])->name('destroy');
+        });
+    });
+
+    Route::prefix('products')->middleware('role:admin|Super-Admin')->name('products')->group(function () {
+        Route::get('', [ProductController::class, 'index'])->name('index');
+        Route::post('store', [ProductController::class, 'store'])->name('store');
+
+        Route::prefix('{product}')->group(function () {
+            Route::get('edit', [ProductController::class, 'edit'])->name('edit');
+            Route::put('update', [ProductController::class, 'update'])->name('update');
+            Route::patch('deactivate', [ProductController::class, 'deactivate'])->name('deactivate');
+            Route::patch('activate', [ProductController::class, 'activate'])->name('activate');
+            Route::delete('delete', [ProductController::class, 'destroy'])->name('destroy');
+        });
+    });
+
     Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
-
-
-
-
-
-            Route::prefix('taxes')->group(function () {
-                Route::get('', [TaxController::class, 'index'])->name('taxes.index');
-                Route::post('store', [TaxController::class, 'store'])->name('taxes.store');
-
-                Route::prefix('{tax}')->group(function () {
-                    Route::get('edit', [TaxController::class, 'edit'])->name('taxes.edit');
-                    Route::put('update', [TaxController::class, 'update'])->name('taxes.update');
-                    Route::patch('deactivate', [TaxController::class, 'deactivate'])->name('taxes.deactivate');
-                    Route::patch('activate', [TaxController::class, 'activate'])->name('taxes.activate');
-                    Route::delete('delete', [TaxController::class, 'destroy'])->name('taxes.destroy');
-                });
-            });
-
-            Route::prefix('products')->group(function () {
-                Route::get('', [ProductController::class, 'index'])->name('products.index');
-                Route::post('store', [ProductController::class, 'store'])->name('products.store');
-
-                Route::prefix('{product}')->group(function () {
-                    Route::get('edit', [ProductController::class, 'edit'])->name('products.edit');
-                    Route::put('update', [ProductController::class, 'update'])->name('products.update');
-                    Route::patch('deactivate', [ProductController::class, 'deactivate'])->name('products.deactivate');
-                    Route::patch('activate', [ProductController::class, 'activate'])->name('products.activate');
-                    Route::delete('delete', [ProductController::class, 'destroy'])->name('products.destroy');
-                });
-            });
 
             Route::prefix('invoices')->group(function () {
                 Route::get('', [InvoiceController::class, 'index'])->name('invoices.index');
