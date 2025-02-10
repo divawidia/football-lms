@@ -69,9 +69,9 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::patch('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::get('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
-    Route::prefix('admin-dashboard')->middleware('role:Super-Admin|admin')->group(function () {
-        Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
-    });
+    Route::get('admin-dashboard', [DashboardController::class, 'index'])->middleware('role:Super-Admin|admin')->name('admin.dashboard');
+    Route::get('coach-dashboard', [CoachDashboardController::class, 'index'])->middleware('role:coach')->name('coach.dashboard');
+    Route::get('player-dashboard', [PlayerDashboardController::class, 'index'])->middleware('role:player')->name('player.dashboard');
 
     Route::prefix('edit-academy')->middleware('role:Super-Admin|admin')->group(function () {
         Route::get('', [AcademyController::class, 'edit'])->name('edit-academy.edit');
@@ -267,9 +267,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         Route::middleware('role:Super-Admin|admin')->group(function () {
             Route::get('admins-matches', [MatchController::class, 'adminIndexMatch'])->name('admin-index');
             Route::get('create', [MatchController::class, 'createMatch'])->name('create');
-//        Route::get('competition-teams/{competition}', [EventScheduleController::class, 'getCompetitionTeam'])->name('get-competition-team');
-//        Route::get('friendly-match-teams', [EventScheduleController::class, 'getFriendlyMatchTeam'])->name('get-friendlymatch-team');
-//        Route::get('internal-match-teams', [EventScheduleController::class, 'getInternalMatchTeams'])->name('internal-match-teams');
             Route::post('store', [MatchController::class, 'storeMatch'])->name('store');
         });
         Route::get('coaches-matches', [MatchController::class, 'coachIndexMatch'])->middleware('role:coach')->name('coach-index');
@@ -520,31 +517,27 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         });
     });
 
-    Route::group(['middleware' => ['role:coach,web']], function () {
-            Route::get('coach-dashboard', [CoachDashboardController::class, 'index'])->name('coach.dashboard');
+    Route::prefix('skill-assessments')->middleware('role:coach')->name('skill-assessments.')->group(function () {
+        Route::get('', [SkillAssessmentController::class, 'index'])->name('index');
+        Route::prefix('{player}')->group(function () {
+            Route::get('', [PlayerController::class, 'skillStatsDetail'])->name('skill-stats');
+            Route::get('create', [SkillAssessmentController::class, 'create'])->name('create');
+            Route::post('store', [SkillAssessmentController::class, 'store'])->name('store');
+        });
 
-            Route::prefix('skill-assessments')->group(function () {
-                Route::get('', [SkillAssessmentController::class, 'index'])->name('skill-assessments.index');
-                Route::prefix('{player}')->group(function () {
-                    Route::get('', [PlayerController::class, 'skillStatsDetail'])->name('skill-assessments.skill-stats');
-                    Route::get('create', [SkillAssessmentController::class, 'create'])->name('skill-assessments.create');
-                    Route::post('store', [SkillAssessmentController::class, 'store'])->name('skill-assessments.store');
-                });
-
-                Route::prefix('skill-stats/{skillStats}')->group(function () {
-                    Route::get('', [SkillAssessmentController::class, 'edit'])->name('skill-assessments.edit');
-                    Route::put('update', [SkillAssessmentController::class, 'update'])->name('skill-assessments.update');
-                    Route::delete('destroy', [SkillAssessmentController::class, 'destroy'])->name('skill-assessments.destroy');
-                });
-            });
-
-//        });
+        Route::prefix('skill-stats/{skillStats}')->group(function () {
+            Route::get('', [SkillAssessmentController::class, 'edit'])->name('edit');
+            Route::put('update', [SkillAssessmentController::class, 'update'])->name('update');
+            Route::delete('destroy', [SkillAssessmentController::class, 'destroy'])->name('destroy');
+        });
     });
 
-    Route::group(['middleware' => ['role:player,web']], function () {
-        Route::get('player-dashboard', [PlayerDashboardController::class, 'index'])->name('player.dashboard');
+    Route::get('skill-stats', [PlayerController::class, 'skillStatsDetailPlayer'])->middleware('role:player')->name('player.skill-stats');
 
-        Route::get('skill-stats', [PlayerController::class, 'skillStatsDetailPlayer'])->name('player.skill-stats');
+    Route::group(['middleware' => ['role:player,web']], function () {
+
+
+
 
         Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player.performance-reviews');
 
