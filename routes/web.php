@@ -534,22 +534,17 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
     Route::get('skill-stats', [PlayerController::class, 'skillStatsDetailPlayer'])->middleware('role:player')->name('skill-stats');
 
-    Route::group(['middleware' => ['role:player,web']], function () {
+    Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('performance-reviews');
 
+    Route::prefix('billing-and-payments')->middleware('role:player')->name('billing-and-payments.')->group(function () {
+        Route::get('', [BillingPaymentsController::class, 'index'])->name('index');
+        Route::get('subscriptions', [SubscriptionController::class, 'playerIndex'])->name('subscriptions');
 
-
-
-        Route::get('performance-reviews', [PlayerPerformanceReviewController::class, 'playerPerformancePage'])->name('player.performance-reviews');
-
-        Route::prefix('billing-and-payments')->group(function () {
-            Route::get('', [BillingPaymentsController::class, 'index'])->name('billing-and-payments.index');
-            Route::get('subscriptions', [SubscriptionController::class, 'playerIndex'])->name('billing-and-payments.subscriptions');
-
-            Route::prefix('{invoice}')->group(function () {
-                Route::get('', [BillingPaymentsController::class, 'show'])->name('billing-and-payments.show');
-            });
+        Route::prefix('{invoice}')->group(function () {
+            Route::get('', [BillingPaymentsController::class, 'show'])->name('show');
         });
     });
+
 
     Route::group(['middleware' => ['role:coach|admin|Super-Admin,web']], function () {
 
