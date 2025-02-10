@@ -429,22 +429,24 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         });
     });
 
+    Route::prefix('product-categories')->middleware('role:admin|Super-Admin')->name('product-categories.')->group(function () {
+        Route::get('', [ProductCategoryController::class, 'index'])->name('index');
+        Route::post('store', [ProductCategoryController::class, 'store'])->name('store');
+
+        Route::prefix('{productCategory}')->group(function () {
+            Route::get('edit', [ProductCategoryController::class, 'edit'])->name('edit');
+            Route::put('update', [ProductCategoryController::class, 'update'])->name('update');
+            Route::patch('deactivate', [ProductCategoryController::class, 'deactivate'])->name('deactivate');
+            Route::patch('activate', [ProductCategoryController::class, 'activate'])->name('activate');
+            Route::delete('delete', [ProductCategoryController::class, 'destroy'])->name('destroy');
+        });
+    });
+
     Route::group(['middleware' => ['role:admin|Super-Admin,web']], function () {
 
 
 
-            Route::prefix('product-categories')->group(function () {
-                Route::get('', [ProductCategoryController::class, 'index'])->name('product-categories.index');
-                Route::post('store', [ProductCategoryController::class, 'store'])->name('product-categories.store');
 
-                Route::prefix('{productCategory}')->group(function () {
-                    Route::get('edit', [ProductCategoryController::class, 'edit'])->name('product-categories.edit');
-                    Route::put('update', [ProductCategoryController::class, 'update'])->name('product-categories.update');
-                    Route::patch('deactivate', [ProductCategoryController::class, 'deactivate'])->name('product-categories.deactivate');
-                    Route::patch('activate', [ProductCategoryController::class, 'activate'])->name('product-categories.activate');
-                    Route::delete('delete', [ProductCategoryController::class, 'destroy'])->name('product-categories.destroy');
-                });
-            });
 
             Route::prefix('taxes')->group(function () {
                 Route::get('', [TaxController::class, 'index'])->name('taxes.index');
