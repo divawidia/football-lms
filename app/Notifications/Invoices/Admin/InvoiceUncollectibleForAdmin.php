@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Notifications\Invoices;
+namespace App\Notifications\Invoices\Admin;
 
+use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvoiceUncollectibleAdmin extends Notification implements ShouldQueue
+class InvoiceUncollectibleForAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $invoice;
-    protected $playerName;
+    protected Invoice $invoice;
     /**
      * Create a new notification instance.
      */
-    public function __construct($invoice, $playerName)
+    public function __construct(Invoice $invoice)
     {
         $this->invoice = $invoice;
-        $this->playerName = $playerName;
     }
 
     /**
@@ -40,15 +39,15 @@ class InvoiceUncollectibleAdmin extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Invoice #{$this->invoice->invoiceNumber} Marked as Uncollectible for {$this->playerName}")
-            ->greeting("Hello {$notifiable->name},")
+            ->subject("Invoice Has Been Marked as Uncollectible")
+            ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName},")
             ->line("The following player’s invoice has been marked as uncollectible.")
-            ->line("Player : {$this->playerName}")
+            ->line("Player Name: ". getUserFullName($this->invoice->receiverUser))
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
             ->line("Original Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Status: Uncollectible")
+            ->action('View Invoice Details', url()->route('invoices.show', $this->invoice->hash))
             ->line('You can review the invoice details and take any necessary actions in the invoices page.')
-            ->action('View Invoice Details', url()->route('invoices.show', $this->invoice->id))
             ->line('Thank you!');
 
     }
@@ -61,8 +60,9 @@ class InvoiceUncollectibleAdmin extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'The invoice #'.$this->invoice->invoiceNumber.' for player '.$this->playerName.' has been marked as uncollectible. Click here to see the invoice!',
-            'redirectRoute' => route('invoices.show', ['invoice' => $this->invoice->id])
+            'title' => "Invoice has been marked as uncollectible.",
+            'data' =>'The invoice #'.$this->invoice->invoiceNumber.' for player '.getUserFullName($this->invoice->receiverUser).' has been marked as uncollectible. Click here to see the invoice!',
+            'redirectRoute' => route('invoices.show', ['invoice' => $this->invoice->hash])
         ];
     }
 }
