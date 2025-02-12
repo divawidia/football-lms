@@ -33,7 +33,7 @@
                         <div class="flex" style="min-width: 180px">
                             <small class="text-100">
                                 Please pay your amount due of <strong>{{ priceFormat($invoice->ammountDue) }}</strong> for invoice
-                                <a href="{{ route('billing-and-payments.show', $invoice->id) }}" class="text-underline">{{ $invoice->invoiceNumber }}</a>
+                                <a href="{{ route('billing-and-payments.show', $invoice->hash) }}" class="text-underline">{{ $invoice->invoiceNumber }}</a>
                             </small>
                         </div>
                         <x-pay-invoice-button btnClass="btn btn-sm btn-primary" btnText="Pay Now!" :invoiceId="$invoice->id" :snapToken="$invoice->snapToken"/>
@@ -50,24 +50,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="invoicesTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Inovice Number</th>
-                            <th>Amount Due</th>
-                            <th>Due Date</th>
-                            <th>Status</th>
-                            <th>Created At</th>
-                            <th>Last Updated</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                <x-table tableId="invoicesTable" :headers="['#', 'Invoice Number', 'Amount Due', 'Due Date', 'Status', 'Created At', 'Last Updated', 'Action']"/>
             </div>
         </div>
 
@@ -76,25 +59,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="subscriptionsTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Product</th>
-                            <th>Cycle</th>
-                            <th>Status</th>
-                            <th>Start Date</th>
-                            <th>Next Due Date</th>
-                            <th>Amount Due</th>
-                            <th>Created At</th>
-                            <th>Last Updated</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                <x-table tableId="subscriptionsTable" :headers="['#', 'Product', 'Cycle', 'Status', 'Start Date', 'Next Due Date', 'Amount Due', 'Created At', 'Last Updated']" />
             </div>
         </div>
     </div>
@@ -117,13 +82,7 @@
                     {data: 'status', name: 'status'},
                     {data: 'createdAt', name: 'createdAt'},
                     {data: 'updatedAt', name: 'updatedAt'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '20%'
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
 
