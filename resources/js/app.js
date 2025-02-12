@@ -8,6 +8,7 @@ import './preloader'
 import './select2'
 import './sidebar'
 import { onYouTubeIframeAPIReadyForAdmin } from './youtube'
+import {subscriptionCycleDisplay} from './product-form-modal'
 
 (function() {
     'use strict';
@@ -54,4 +55,6 @@ import { onYouTubeIframeAPIReadyForAdmin } from './youtube'
     window.showModal = showModal;
 
     window.onYouTubeIframeAPIReadyForAdmin = onYouTubeIframeAPIReadyForAdmin;
+
+    window.subscriptionCycleDisplay = subscriptionCycleDisplay;
 })()

@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Notifications\Invoices;
+namespace App\Notifications\Invoices\Admin;
 
+use App\Models\Invoice;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -10,15 +12,15 @@ use Illuminate\Notifications\Notification;
 class InvoiceArchivedAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $invoice;
-    protected $playerName;
+    protected Invoice $invoice;
+    protected User $playerUser;
     /**
      * Create a new notification instance.
      */
-    public function __construct($invoice, $playerName)
+    public function __construct(Invoice $invoice, User $playerUser)
     {
         $this->invoice = $invoice;
-        $this->playerName = $playerName;
+        $this->playerUser = $playerUser;
     }
 
     /**
@@ -40,14 +42,14 @@ class InvoiceArchivedAdmin extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Invoice #{$this->invoice->invoiceNumber} Archived for player {$this->playerName}")
-            ->greeting("Hello Teams,")
-            ->line("An invoice #{$this->invoice->invoiceNumber} for player {$this->playerName} has been archived.")
+            ->subject("Invoice #{$this->invoice->invoiceNumber} Archived for player ".getUserFullName($this->playerUser))
+            ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
+            ->line("An invoice #{$this->invoice->invoiceNumber} for player ".getUserFullName($this->playerUser)." has been archived.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
             ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
             ->line('This invoice is now stored for reference and will no longer appear in the active invoice list.')
-            ->action('View Archived Invoice', url()->route('invoices.show-archived', $this->invoice->id))
+            ->action('View Archived Invoice', route('invoices.show-archived', $this->invoice->hash))
             ->line('Thank you!');
     }
 
@@ -59,8 +61,9 @@ class InvoiceArchivedAdmin extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Invoice #'.$this->invoice->invoiceNumber.' for player '.$this->playerName.' has been archived.',
-            'redirectRoute' => route('invoices.show-archived', ['invoice' => $this->invoice->id])
+            'title' => "Invoice has been archived",
+            'data' =>'Invoice #'.$this->invoice->invoiceNumber.' for player '.getUserFullName($this->playerUser).' has been archived.',
+            'redirectRoute' => route('invoices.show-archived', ['invoice' => $this->invoice->hash])
         ];
     }
 }
