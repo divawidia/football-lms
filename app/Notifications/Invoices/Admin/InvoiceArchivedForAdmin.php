@@ -3,24 +3,21 @@
 namespace App\Notifications\Invoices\Admin;
 
 use App\Models\Invoice;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvoiceArchivedAdmin extends Notification implements ShouldQueue
+class InvoiceArchivedForAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
     protected Invoice $invoice;
-    protected User $playerUser;
     /**
      * Create a new notification instance.
      */
-    public function __construct(Invoice $invoice, User $playerUser)
+    public function __construct(Invoice $invoice)
     {
         $this->invoice = $invoice;
-        $this->playerUser = $playerUser;
     }
 
     /**
@@ -42,9 +39,9 @@ class InvoiceArchivedAdmin extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Invoice #{$this->invoice->invoiceNumber} Archived for player ".getUserFullName($this->playerUser))
+            ->subject("Invoice #{$this->invoice->invoiceNumber} Archived for player ".getUserFullName($this->invoice->receiverUser))
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("An invoice #{$this->invoice->invoiceNumber} for player ".getUserFullName($this->playerUser)." has been archived.")
+            ->line("An invoice #{$this->invoice->invoiceNumber} for player : ".getUserFullName($this->invoice->recieverUser)." has been archived.")
             ->line("Invoice Number: {$this->invoice->invoiceNumber}")
             ->line("Amount Due: ".priceFormat($this->invoice->ammountDue))
             ->line("Due Date: ".convertToDatetime($this->invoice->dueDate))
@@ -62,7 +59,7 @@ class InvoiceArchivedAdmin extends Notification implements ShouldQueue
     {
         return [
             'title' => "Invoice has been archived",
-            'data' =>'Invoice #'.$this->invoice->invoiceNumber.' for player '.getUserFullName($this->playerUser).' has been archived.',
+            'data' =>'Invoice #'.$this->invoice->invoiceNumber.' for player '.getUserFullName($this->invoice->recieverUser).' has been archived.',
             'redirectRoute' => route('invoices.show-archived', ['invoice' => $this->invoice->hash])
         ];
     }
