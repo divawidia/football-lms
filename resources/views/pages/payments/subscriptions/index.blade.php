@@ -7,7 +7,7 @@
 @endsection
 
 @section('modal')
-    <x-modal.subscriptions.edit-subscription-tax-modal/>
+    <x-modal.subscriptions.edit-subscription-tax-modal :taxes="$taxes"/>
 @endsection
 
 @section('content')
@@ -16,9 +16,7 @@
             <h2 class="mb-0 text-left">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active">
-                    @yield('title')
-                </li>
+                <li class="breadcrumb-item active">@yield('title')</li>
             </ol>
         </div>
     </div>
@@ -60,11 +58,11 @@
             processWithConfirmation(
                 ".deleteSubscription",
                 "{{ route('subscriptions.destroy', ':id') }}",
-                "DELETE",
                 "{{ route('subscriptions.index') }}",
+                "DELETE",
                 "Are you sure to delete this player's subscription?",
-                "Successfully deleted player's subscription!",
-                "Something went wrong when deleting player's subscription!"
+                "Something went wrong when deleting player's subscription!",
+                "{{ csrf_token() }}"
             );
         });
     </script>
