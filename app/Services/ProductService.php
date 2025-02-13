@@ -2,65 +2,44 @@
 
 namespace App\Services;
 
+use App\Helpers\DatatablesHelper;
 use App\Models\Product;
-use Illuminate\Support\Facades\Storage;
+use App\Repository\ProductRepository;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductService extends Service
 {
-    private Product $product;
+    public ProductRepository $productRepository;
+    private DatatablesHelper $datatablesHelper;
 
-    public function __construct(Product $product){
-        $this->product = $product;
+    public function __construct(ProductRepository $productRepository, DatatablesHelper $datatablesHelper){
+        $this->productRepository = $productRepository;
+        $this->datatablesHelper = $datatablesHelper;
     }
 
-    public function index()
+    public function getAllProducts($withRelations = [], $priceOption = null, $status = null): Collection
     {
-        $data = $this->product->getAllProducts();
+        return $this->productRepository->getAll($withRelations, $priceOption, $status);
+    }
+
+    public function index(): JsonResponse
+    {
+        $data = $this->getAllProducts(['user', 'category']);
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('products.deactivate', $item->id) . '" method="POST">
-                                        ' . method_field("PATCH") . '
-                                        ' . csrf_field() . '
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary mr-1" data-toggle="tooltip" data-placement="bottom" title="Deactivate Product">
-                                            <span class="material-icons">block</span>
-                                        </button>
-                                    </form>';
-                } else {
-                    $statusButton = '<form action="' . route('products.activate', $item->id) . '" method="POST">
-                                        ' . method_field("PATCH") . '
-                                        ' . csrf_field() . '
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary mr-1" data-toggle="tooltip" data-placement="bottom" title="Activate Product">
-                                            <span class="material-icons">check_circle</span>
-                                        </button>
-                                    </form>';
-                }
-                return '<div class="btn-toolbar" role="toolbar">
-                            <button class="btn btn-sm btn-outline-secondary mr-1 edit-product" id="' . $item->id . '" type="button" data-toggle="tooltip" data-placement="bottom" title="Edit Product">
-                                <span class="material-icons">edit</span>
-                             </button>
-                             ' . $statusButton . '
-                            <button type="button" class="btn btn-sm btn-outline-secondary delete-product" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Delete Product">
-                                <span class="material-icons">delete</span>
-                            </button>
-                        </div>';
+                $dropdownItem = $this->datatablesHelper->buttonDropdownItem('editProduct', $item->hash, icon: 'edit', btnText: 'Edit Product');
+                ($item->status == '1')
+                    ? $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('setDeactivateProduct', $item->hash, 'danger', icon: 'check_circle', btnText: 'Deactivate product')
+                    : $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('setActivateProduct', $item->hash, 'success', icon: 'check_circle', btnText: 'Activate product');
+                $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('deleteProduct', $item->hash, 'danger', icon: 'delete', btnText: 'Delete Product');
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
             ->editColumn('createdBy', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position, route('admin-managements.show',  $item->user->admin->hash));
             })
             ->editColumn('description', function ($item) {
                 return $this->description($item->description);
@@ -75,49 +54,39 @@ class ProductService extends Service
                 return $this->priceFormat($item->price);
             })
             ->editColumn('status', function ($item) {
-                if ($item->status == '1') {
-                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
-                } elseif ($item->status == '0') {
-                    $badge = '<span class="badge badge-pill badge-danger">Non Active</span>';
-                }
-                return $badge;
+                return $this->datatablesHelper->activeNonactiveStatus($item->status);
             })
             ->editColumn('subscriptionCycle', function ($item) {
-                if ($item->priceOption == 'subscription') {
-                    $badge = '<p class="text-capitalize">'.$item->subscriptionCycle.'</p>';
-                } elseif ($item->priceOption == 'one time payment') {
-                    $badge = 'Not Subscription';
-                }
-                return $badge;
+                return ($item->priceOption == 'subscription') ? '<p class="text-capitalize">'.$item->subscriptionCycle.'</p>' : 'Not Subscription';
             })
-            ->rawColumns(['action', 'createdBy', 'description', 'updatedAt', 'createdAt', 'price', 'status', 'subscriptionCycle'])
+            ->rawColumns(['action', 'createdBy', 'description', 'status', 'subscriptionCycle'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function store(array $data, $adminId)
+    public function store(array $data, $loggedUser): JsonResponse
     {
-        $data['userId'] = $adminId;
-        return Product::create($data);
+        $data['userId'] = $loggedUser->id;
+        return $this->productRepository->create($data);
     }
 
-    public function update(array $data, Product $product)
+    public function update(array $data, Product $product): bool
     {
-        return $product->update($data);
+        return $this->productRepository->update($data, $product);
     }
 
-    public function activate(Product $product)
+    public function activate(Product $product): bool
     {
         return $product->update(['status' => '1']);
     }
 
-    public function deactivate(Product $product)
+    public function deactivate(Product $product): bool
     {
         return $product->update(['status' => '0']);
     }
 
-    public function destroy(Product $product)
+    public function destroy(Product $product): ?bool
     {
-        return $product->delete();
+        return $this->productRepository->delete($product);
     }
 }
