@@ -1,25 +1,24 @@
 <?php
 
-namespace App\Notifications\Subscriptions;
+namespace App\Notifications\Subscriptions\Admin;
 
+use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionUnsubscribeAdmin extends Notification implements ShouldQueue
+class SubscriptionUnsubscribeForAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $subscription;
-    protected $playerName;
+    protected Subscription $subscription;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($subscription, $playerName)
+    public function __construct(Subscription $subscription)
     {
         $this->subscription = $subscription;
-        $this->playerName = $playerName;
     }
 
     /**
@@ -29,7 +28,10 @@ class SubscriptionUnsubscribeAdmin extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     /**
@@ -38,9 +40,9 @@ class SubscriptionUnsubscribeAdmin extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Player Subscription Lapsed: {$this->playerName}")
-            ->greeting("Dear Admins,")
-            ->line("The subscription for {$this->subscription->product->productName} has ended.")
+            ->subject("Player Subscription Lapsed")
+            ->greeting("Hello, {$notifiable->firstName} {$notifiable->lastName}!")
+            ->line("The player : ".getUserFullName($this->subscription->user)." subscription for {$this->subscription->product->productName} has ended.")
             ->line("The player no longer has access to our resources and sessions")
             ->action('View Subscription at', route('subscriptions.show', $this->subscription->hash))
             ->line('Please follow up if necessary to assist with a renewal if the player wishes to continue.');
@@ -54,7 +56,8 @@ class SubscriptionUnsubscribeAdmin extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' => '⚠️ Alert: The player'.$this->playerName.' subscriptions for '.$this->subscription->product->productName.' has ended. They no longer have access to training resources and sessions. Consider following up if they may be interested in renewing.',
+            'title' => "Player Subscription Lapsed",
+            'data' => 'The player : '.getUserFullName($this->subscription->user).' subscriptions for '.$this->subscription->product->productName.' has ended. They no longer have access to training resources and sessions. Consider following up if they may be interested in renewing.',
             'redirectRoute' => route('subscriptions.show', $this->subscription->hash)
         ];
     }
