@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Notifications\Subscriptions;
+namespace App\Notifications\Subscriptions\Player;
 
+use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionDueDateReminderPlayer extends Notification implements ShouldQueue
+class SubscriptionDueDateReminderForPlayer extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $subscription;
-    protected $playerName;
+    protected Subscription $subscription;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct($subscription, $playerName)
+    public function __construct(Subscription $subscription)
     {
         $this->subscription = $subscription;
-        $this->playerName = $playerName;
     }
 
     /**
@@ -28,7 +28,10 @@ class SubscriptionDueDateReminderPlayer extends Notification implements ShouldQu
      */
     public function via(object $notifiable): array
     {
-        return ['mail','database'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     /**
@@ -37,8 +40,8 @@ class SubscriptionDueDateReminderPlayer extends Notification implements ShouldQu
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Academy Subscription for {$this->subscription->product->productName} Due Date Reminder")
-            ->greeting("Hello, {$this->playerName}")
+            ->subject("Subscription Due Date Reminder")
+            ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName},")
             ->line("This is a reminder that your academy subscription for {$this->subscription->product->productName} is due on ".convertToDatetime($this->subscription->nextDueDate))
             ->line('Please ensure to pay your subscription fee after the invoice sent to you.')
             ->action('View Subscription', route('billing-and-payments.index'))
@@ -53,6 +56,7 @@ class SubscriptionDueDateReminderPlayer extends Notification implements ShouldQu
     public function toArray(object $notifiable): array
     {
         return [
+            'title' => "Academy Subscription Due Date Reminder",
             'data' => 'Your academy subscription is due on ' . convertToDatetime($this->subscription->nextDueDate) . '. Please ensure to pay your subscription fee after the invoice sent to you.',
             'redirectRoute' => route('billing-and-payments.index')
         ];
