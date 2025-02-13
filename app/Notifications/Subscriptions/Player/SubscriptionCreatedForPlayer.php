@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Notifications\Subscriptions;
+namespace App\Notifications\Subscriptions\Player;
 
+use App\Models\Invoice;
+use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionCreatedPlayer extends Notification implements ShouldQueue
+class SubscriptionCreatedForPlayer extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $invoice;
-    protected $subscription;
-    protected $playerName;
+    protected Invoice $invoice;
+    protected Subscription $subscription;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($invoice, $subscription, $playerName)
+    public function __construct(Invoice $invoice, Subscription $subscription)
     {
         $this->invoice = $invoice;
         $this->subscription = $subscription;
-        $this->playerName = $playerName;
     }
 
     /**
@@ -31,7 +31,10 @@ class SubscriptionCreatedPlayer extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     /**
@@ -40,8 +43,8 @@ class SubscriptionCreatedPlayer extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Your {$this->subscription->product->productName} subscription created")
-            ->greeting("Hello, {$this->playerName}!")
+            ->subject("Your subscription has been created")
+            ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
             ->line("Your subscription for {$this->subscription->product->productName} has been successfully created.")
             ->action('View Subscription at', route('billing-and-payments.index'))
             ->line("Please pay your invoice #{$this->invoice->invoiceNumber} as soon as possible to activate your subscription")
@@ -56,6 +59,7 @@ class SubscriptionCreatedPlayer extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
+            'title' => "A New subscription has been created",
             'data' =>'Your Subscription of '.$this->subscription->product->productName.' has been created. Please pay your invoice #'.$this->invoice->invoiceNumber.' as soon as possible to activate your subscription status!',
             'redirectRoute' => route('billing-and-payments.index')
         ];
