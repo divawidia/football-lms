@@ -1,29 +1,27 @@
 <?php
 
-namespace App\Notifications\Subscriptions;
+namespace App\Notifications\Subscriptions\Admin;
 
+use App\Models\Invoice;
+use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionRenewedAdmin extends Notification implements ShouldQueue
+class SubscriptionRenewedForAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $productName;
-    protected $playerName;
-    protected $invoiceNumber;
-    protected $subscriptionId;
+    protected Invoice $invoice;
+    protected Subscription $subscription;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($productName, $playerName, $invoiceNumber, $subscriptionId)
+    public function __construct(Invoice $invoice, Subscription $subscription)
     {
-        $this->productName = $productName;
-        $this->playerName = $playerName;
-        $this->invoiceNumber = $invoiceNumber;
-        $this->subscriptionId = $subscriptionId;
+        $this->invoice = $invoice;
+        $this->subscription = $subscription;
     }
 
     /**
@@ -33,7 +31,10 @@ class SubscriptionRenewedAdmin extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     /**
@@ -42,13 +43,11 @@ class SubscriptionRenewedAdmin extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("{$this->productName} subscription renewed")
-            ->greeting("Hello, {$this->playerName}!")
-            ->line('Your subscription has been successfully created.')
-            ->line("Subscription : {$this->productName}")
-            ->action('View Subscription at', route('billing-and-payments.index'))
-            ->line('Please pay your invoice #'.$this->invoiceNumber.' to activate your subscription')
-            ->line('Keep up the great work in the academy!');
+            ->subject("Player subscription renewed")
+            ->greeting("Hello, {$notifiable->firstName} {$notifiable->lastName}!")
+            ->line("{$this->subscription->product->productName} subscription for player : ".getUserFullName($this->subscription->user)." has been successfully renewed.")
+            ->action('View Subscription detail at', route('subscriptions.show', $this->subscription->hash))
+            ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
 
     /**
@@ -59,8 +58,9 @@ class SubscriptionRenewedAdmin extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' => 'Subscription of '.$this->productName.' for player '.$this->playerName.' has been renewed.',
-            'redirectRoute' => route('billing-and-payments.show', $this->subscriptionId)
+            'title' =>"Player subscription renewed",
+            'data' => 'Subscription of '.$this->subscription->product->productName.' for player : '.getUserFullName($this->subscription->user).' has been renewed.',
+            'redirectRoute' => route('subscriptions.show', $this->subscription->hash)
         ];
     }
 }
