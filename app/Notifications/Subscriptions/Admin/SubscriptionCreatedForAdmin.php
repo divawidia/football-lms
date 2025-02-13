@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Notifications\Subscriptions;
+namespace App\Notifications\Subscriptions\Admin;
 
+use App\Models\Invoice;
+use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionCreatedAdmin extends Notification implements ShouldQueue
+class SubscriptionCreatedForAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $invoice;
-    protected $subscription;
-    protected $playerName;
+    protected Invoice $invoice;
+    protected Subscription $subscription;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($invoice, $subscription, $playerName)
+    public function __construct(Invoice $invoice, Subscription $subscription)
     {
         $this->invoice = $invoice;
         $this->subscription = $subscription;
-        $this->playerName = $playerName;
     }
 
     /**
@@ -31,7 +31,10 @@ class SubscriptionCreatedAdmin extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     /**
@@ -40,11 +43,11 @@ class SubscriptionCreatedAdmin extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("{$this->subscription->product->productName} subscription for player {$this->playerName} has been created")
-            ->greeting("Dear, admins!")
-            ->line("Subscription of {$this->subscription->product->productName} for player {$this->playerName} has been successfully created.")
-            ->action('View Subscription detail at', url()->route('subscriptions.show', $this->subscription->id))
-            ->line("Please follow up the player {$this->playerName} to complete the payment of invoice #{$this->invoice->invoiceNumber} as soon as possible to activate the subscription")
+            ->subject("A New subscription has been created")
+            ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
+            ->line("{$this->subscription->product->productName} subscription for player ".getUserFullName($this->subscription->user)." has been successfully created.")
+            ->action('View Subscription detail at', route('subscriptions.show', $this->subscription->hash))
+            ->line("Please follow up the player ".getUserFullName($this->subscription->user)." to complete the payment of invoice #{$this->invoice->invoiceNumber} as soon as possible to activate the subscription")
             ->line("If you have any questions or require further information, please don't hesitate to reach out.!");
     }
 
@@ -56,8 +59,9 @@ class SubscriptionCreatedAdmin extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Subscription of '.$this->subscription->product->productName.' has been created. Please follow up the player '.$this->playerName.' to pay the invoice #'.$this->invoice->invoiceNumber.' as soon as possible to activate your subscription status!',
-            'redirectRoute' => route('subscriptions.show', $this->subscription->id)
+            'title' => "A New subscription has been created",
+            'data' =>'Subscription of '.$this->subscription->product->productName.' has been created. Please follow up the player '.getUserFullName($this->invoice->recieverUser).' to pay the invoice #'.$this->invoice->invoiceNumber.' as soon as possible to activate your subscription status!',
+            'redirectRoute' => route('subscriptions.show', $this->subscription->hash)
         ];
     }
 }
