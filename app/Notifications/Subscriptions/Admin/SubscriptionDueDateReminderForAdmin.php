@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Notifications\Subscriptions;
+namespace App\Notifications\Subscriptions\Admin;
 
+use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionDueDateReminderAdmin extends Notification implements ShouldQueue
+class SubscriptionDueDateReminderForAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $subscription;
-    protected $playerName;
+    protected Subscription $subscription;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct($subscription, $playerName)
+    public function __construct(Subscription $subscription)
     {
         $this->subscription = $subscription;
-        $this->playerName = $playerName;
     }
 
     /**
@@ -28,7 +28,10 @@ class SubscriptionDueDateReminderAdmin extends Notification implements ShouldQue
      */
     public function via(object $notifiable): array
     {
-        return ['mail','database'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     /**
@@ -37,12 +40,12 @@ class SubscriptionDueDateReminderAdmin extends Notification implements ShouldQue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Player {$this->playerName} Academy Subscription {$this->subscription->product->productName} Due Date Reminder")
-            ->greeting("Hello Admins,")
-            ->line("This is a reminder that a player academy subscription is due soon at.")
-            ->line('Player: ' . $this->playerName)
+            ->subject("Player Subscription Due Date Reminder")
+            ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName},")
+            ->line("This is a reminder that a player academy subscription is due soon.")
+            ->line('Player: ' .getUserFullName($this->subscription->user))
             ->line('Due Date: ' . convertToDatetime($this->subscription->nextDueDate))
-            ->action('View Subscription', route('subscriptions.show', ['subscription' => $this->subscription->id]))
+            ->action('View Subscription', route('subscriptions.show', ['subscription' => $this->subscription->hash]))
             ->line('Please follow up with the player if needed.');
     }
 
@@ -54,8 +57,9 @@ class SubscriptionDueDateReminderAdmin extends Notification implements ShouldQue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' => 'A player '.$this->playerName.' academy subscription for '.$this->subscription->product->productName.' is due soon at ' . convertToDatetime($this->subscription->nextDueDate) . '. Please review.',
-            'redirectRoute' => route('subscriptions.show', ['subscription' => $this->subscription->id])
+            'title' => "Player Subscription Due Date Reminder",
+            'data' => 'A player '.getUserFullName($this->subscription->user).' academy subscription for '.$this->subscription->product->productName.' is due soon at ' . convertToDatetime($this->subscription->nextDueDate) . '. Please review.',
+            'redirectRoute' => route('subscriptions.show', ['subscription' => $this->subscription->hash])
         ];
     }
 }
