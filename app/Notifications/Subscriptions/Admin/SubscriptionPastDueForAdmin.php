@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Notifications\Subscriptions;
+namespace App\Notifications\Subscriptions\Admin;
 
+use App\Models\Invoice;
+use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionPastDueAdmin extends Notification implements ShouldQueue
+class SubscriptionPastDueForAdmin extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $subscription;
-    protected $invoice;
-    protected $playerName;
+    protected Invoice $invoice;
+    protected Subscription $subscription;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($subscription, $invoice, $playerName)
+    public function __construct(Invoice $invoice, Subscription $subscription)
     {
-        $this->subscription = $subscription;
         $this->invoice = $invoice;
-        $this->playerName = $playerName;
+        $this->subscription = $subscription;
     }
 
     /**
@@ -31,7 +31,10 @@ class SubscriptionPastDueAdmin extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail','database'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     /**
@@ -40,10 +43,10 @@ class SubscriptionPastDueAdmin extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Player {$this->playerName} Subscription Past Due")
+            ->subject("Player Subscription Past Due")
             ->greeting("Hello, {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("The subscription payment of {$this->subscription->product->productName} for player {$this->playerName} is past due on ".convertToDatetime($this->invoice->dueDate)."!")
-            ->action('View Subscription at', route('subscriptions.show', $this->subscription->id))
+            ->line("The subscription payment of {$this->subscription->product->productName} for player : ".getUserFullName($this->subscription->user)." is past due on ".convertToDatetime($this->invoice->dueDate)."!")
+            ->action('View Subscription at', route('subscriptions.show', $this->subscription->hash))
             ->line('Please review and follow up if necessary to assist the player in completing their subscription of '.$this->subscription->product->productName.' renewal');
 
     }
@@ -56,8 +59,9 @@ class SubscriptionPastDueAdmin extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
      {
         return [
-            'data' => '📅 Reminder: The subscription of '.$this->subscription->product->productName.' for player '.$this->playerName.' is past due on '.convertToDatetime($this->invoice->dueDate).'. Ensure the player completes the renewal to maintain active status!',
-            'redirectRoute' => route('subscriptions.show', $this->subscription->id)
+            'title' => "Player Subscription Past Due",
+            'data' => '📅 Reminder: The subscription of '.$this->subscription->product->productName.' for player : '.getUserFullName($this->subscription->user).' is past due on '.convertToDatetime($this->invoice->dueDate).'. Ensure the player completes the renewal to maintain active status!',
+            'redirectRoute' => route('subscriptions.show', $this->subscription->hash)
         ];
     }
 }
