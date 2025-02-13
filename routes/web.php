@@ -481,8 +481,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         Route::prefix('{invoice}')->group(function () {
             Route::middleware('role:admin|Super-Admin')->group(function () {
                 Route::get('', [InvoiceController::class, 'show'])->name('show');
-                Route::get('edit', [InvoiceController::class, 'edit'])->name('edit');
-                Route::put('update', [InvoiceController::class, 'update'])->name('update');
                 Route::patch('set-open', [InvoiceController::class, 'setOpen'])->name('set-open');
                 Route::patch('set-past-due', [InvoiceController::class, 'setPastDue'])->name('set-past-due');
                 Route::delete('delete', [InvoiceController::class, 'destroy'])->name('destroy');
@@ -496,12 +494,11 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
     Route::prefix('subscriptions')->middleware('role:admin|Super-Admin')->name('subscriptions.')->group(function () {
         Route::get('', [SubscriptionController::class, 'index'])->name('index');
-        Route::get('create', [SubscriptionController::class, 'create'])->name('create');
-        Route::post('store', [SubscriptionController::class, 'store'])->name('store');
         Route::get('available-product', [SubscriptionController::class, 'getAvailablePlayerSubscriptionProduct'])->name('available-product');
 
         Route::prefix('{subscription}')->group(function () {
             Route::get('', [SubscriptionController::class, 'show'])->name('show');
+            Route::get('edit', [SubscriptionController::class, 'edit'])->name('edit');
             Route::put('', [SubscriptionController::class, 'update'])->name('update-tax');
             Route::delete('', [SubscriptionController::class, 'destroy'])->name('destroy');
             Route::post('create-new-invoice', [SubscriptionController::class, 'createNewInvoice'])->name('create-new-invoice');
