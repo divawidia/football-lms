@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class Product extends Model
@@ -22,29 +23,16 @@ class Product extends Model
         'status',
     ];
 
-    public function getAllProducts(){
-        return $this->with('category')->get();
-    }
-
-    public function findProductById($productId){
-        return $this->findOrFail($productId);
-    }
-
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'userId');
     }
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(ProductCategory::class, 'categoryId');
     }
-    public function subscritions()
+    public function subscritions(): HasMany
     {
         return $this->hasMany(Subscription::class, 'productId');
-    }
-    public function invoices()
-    {
-        return $this->belongsToMany(Invoice::class, 'productId', 'invoiceId')
-            ->withPivot('qty','ammount')->withTimestamps();
     }
 }
