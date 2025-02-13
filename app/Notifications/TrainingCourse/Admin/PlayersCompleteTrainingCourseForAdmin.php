@@ -13,15 +13,15 @@ class PlayersCompleteTrainingCourseForAdmin extends Notification
     use Queueable;
     protected TrainingVideo $trainingCourse;
     protected string $completedDate;
-    protected User $playerName;
+    protected User $playerUser;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(TrainingVideo $trainingCourse, string $completedDate, User $playerName)
+    public function __construct(TrainingVideo $trainingCourse, string $completedDate, User $playerUser)
     {
         $this->trainingCourse = $trainingCourse;
-        $this->playerName = $playerName;
+        $this->playerUser = $playerUser;
         $this->completedDate = $completedDate;
     }
 
@@ -43,7 +43,7 @@ class PlayersCompleteTrainingCourseForAdmin extends Notification
         return (new MailMessage)
             ->subject("Player Have been completed Training Course")
             ->greeting("Hello {$notifiable->firstName} {$notifiable->lastName}!")
-            ->line("We’re excited to inform you that {$this->playerName} has successfully completed the {$this->trainingCourse->trainingTitle} training course at {$this->completedDate}.")
+            ->line("We’re excited to inform you that ".getUserFullName($this->playerUser)." has successfully completed the {$this->trainingCourse->trainingTitle} training course at {$this->completedDate}.")
             ->action('View training course', route('training-videos.show', $this->trainingCourse->hash))
             ->line("Thank you for guiding and supporting their development.");
     }
@@ -57,7 +57,7 @@ class PlayersCompleteTrainingCourseForAdmin extends Notification
     {
         return [
             'title' => "Player Have been completed Training Course",
-            'data' => "Player {$this->playerName} has been successfully completed the {$this->trainingCourse->trainingTitle} training course at {$this->completedDate}. Please review the player progress if necessary!!",
+            'data' => "Player ".getUserFullName($this->playerUser)." has been successfully completed the {$this->trainingCourse->trainingTitle} training course at {$this->completedDate}. Please review the player progress if necessary!!",
             'redirectRoute' => route('training-videos.show', $this->trainingCourse->hash),
         ];
     }
