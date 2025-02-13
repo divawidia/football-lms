@@ -1,24 +1,27 @@
 <?php
 
-namespace App\Notifications\Subscriptions;
+namespace App\Notifications\Subscriptions\Player;
 
+use App\Models\Invoice;
+use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionPastDuePlayer extends Notification implements ShouldQueue
+class SubscriptionPastDueForPlayer extends Notification implements ShouldQueue
 {
     use Queueable;
-    protected $subscription;
-    protected $invoice;
+    protected Invoice $invoice;
+    protected Subscription $subscription;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct($subscription, $invoice)
+    public function __construct(Invoice $invoice, Subscription $subscription)
     {
-        $this->subscription = $subscription;
         $this->invoice = $invoice;
+        $this->subscription = $subscription;
     }
 
     /**
@@ -28,7 +31,10 @@ class SubscriptionPastDuePlayer extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail','database'];
+        return [
+            'mail',
+            'database'
+        ];
     }
 
     /**
@@ -37,7 +43,7 @@ class SubscriptionPastDuePlayer extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Upcoming Subscription Renewal for {$this->subscription->product->productName}")
+            ->subject("Academy Subscription Is Past Due")
             ->greeting("Hello, {$notifiable->firstName} {$notifiable->lastName}!")
             ->line('Your subscription payment of '.$this->subscription->product->productName.' is past due on '.convertToDatetime($this->invoice->dueDate).'.')
             ->action('View Subscription at', route('billing-and-payments.index'))
@@ -53,7 +59,8 @@ class SubscriptionPastDuePlayer extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'data' => '⚠️ Reminder: Your subscription payment of '.$this->subscription->product->productName.' is past due on '.convertToDatetime($this->invoice->dueDate).'. Please contact our admin to continue your subscription in academys!',
+            'title' => "Academy Subscription Is Past Due",
+            'data' => '⚠️ Reminder: Your subscription payment of '.$this->subscription->product->productName.' is past due on '.convertToDatetime($this->invoice->dueDate).'. Please contact our admin to continue your subscription in academy!',
             'redirectRoute' => route('billing-and-payments.index')
         ];
     }
