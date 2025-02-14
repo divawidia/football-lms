@@ -2,66 +2,45 @@
 
 namespace App\Services;
 
-use App\Models\ProductCategory;
+use App\Helpers\DatatablesHelper;
 use App\Models\Tax;
 use App\Repository\TaxRepository;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
 
 class TaxService extends Service
 {
     private TaxRepository $taxRepository;
+    private DatatablesHelper $datatablesHelper;
 
-    public function __construct(TaxRepository $taxRepository){
-        $this->taxRepository = $taxRepository;
-    }
-    public function index()
+    public function __construct(TaxRepository $taxRepository, DatatablesHelper $datatablesHelper)
     {
-        $data = $this->taxRepository->getAll();
+        $this->taxRepository = $taxRepository;
+        $this->datatablesHelper = $datatablesHelper;
+    }
+
+    public function getAllTaxes($withRelations = [], $status = null): Collection
+    {
+        return $this->taxRepository->getAll($withRelations, $status);
+    }
+
+    public function index(): JsonResponse
+    {
+        $data = $this->getAllTaxes(['user']);
         return Datatables::of($data)
             ->addColumn('action', function ($item) {
-                if ($item->status == '1') {
-                    $statusButton = '<form action="' . route('taxes.deactivate', $item->id) . '" method="POST">
-                                        ' . method_field("PATCH") . '
-                                        ' . csrf_field() . '
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary mr-1" data-toggle="tooltip" data-placement="bottom" title="Deactivate Tax">
-                                            <span class="material-icons">block</span>
-                                        </button>
-                                    </form>';
-                } else {
-                    $statusButton = '<form action="' . route('taxes.activate', $item->id) . '" method="POST">
-                                        ' . method_field("PATCH") . '
-                                        ' . csrf_field() . '
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary mr-1" data-toggle="tooltip" data-placement="bottom" title="Activate Tax">
-                                            <span class="material-icons">check_circle</span>
-                                        </button>
-                                    </form>';
-                }
-                return '<div class="btn-toolbar" role="toolbar">
-                            <button class="btn btn-sm btn-outline-secondary mr-1 editTax" id="' . $item->id . '" type="button" data-toggle="tooltip" data-placement="bottom" title="Edit Tax">
-                                <span class="material-icons">edit</span>
-                             </button>
-                             ' . $statusButton . '
-                            <button type="button" class="btn btn-sm btn-outline-secondary deleteTax" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Edit Tax">
-                                <span class="material-icons">delete</span>
-                            </button>
-                        </div>';
+                $dropdownItem = $this->datatablesHelper->buttonDropdownItem('editTax', $item->hash, icon: 'edit', btnText: 'Edit Tax');
+                ($item->status == '1')
+                    ? $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('setDeactivateTax', $item->hash, 'danger', icon: 'check_circle', btnText: 'Deactivate Tax')
+                    : $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('setActivateTax', $item->hash, 'success', icon: 'check_circle', btnText: 'Activate Tax');
+                $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('deleteTax', $item->hash, 'danger', icon: 'delete', btnText: 'Delete Tax');
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
             ->editColumn('createdBy', function ($item) {
-                return '
-                            <div class="media flex-nowrap align-items-center"
-                                 style="white-space: nowrap;">
-                                <div class="avatar avatar-sm mr-8pt">
-                                    <img class="rounded-circle header-profile-user img-object-fit-cover" width="40" height="40" src="' . Storage::url($item->user->foto) . '" alt="profile-pic"/>
-                                </div>
-                                <div class="media-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex d-flex flex-column">
-                                            <p class="mb-0"><strong class="js-lists-values-lead">' . $item->user->firstName . ' ' . $item->user->lastName . '</strong></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position, route('admin-managements.show', $item->user->admin->hash));
             })
             ->editColumn('description', function ($item) {
                 return $this->description($item->description);
@@ -73,40 +52,35 @@ class TaxService extends Service
                 return $this->convertToDatetime($item->updated_at);
             })
             ->editColumn('status', function ($item) {
-                if ($item->status == '1') {
-                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
-                } elseif ($item->status == '0') {
-                    $badge = '<span class="badge badge-pill badge-danger">Non Active</span>';
-                }
-                return $badge;
+                return $this->datatablesHelper->activeNonactiveStatus($item->status);
             })
-            ->rawColumns(['action', 'createdBy', 'updatedAt', 'createdAt', 'status'])
+            ->rawColumns(['action', 'createdBy', 'status'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function store(array $data, $userId)
+    public function store(array $data, $loggedUser)
     {
-        $data['userId'] = $userId;
-        return Tax::create($data);
+        $data['userId'] = $loggedUser->id;
+        return $this->taxRepository->create($data);
     }
 
-    public function update(array $data, Tax $tax)
+    public function update(array $data, Tax $tax): bool
     {
         return $tax->update($data);
     }
 
-    public function activate(Tax $tax)
+    public function activate(Tax $tax): bool
     {
         return $tax->update(['status' => '1']);
     }
 
-    public function deactivate(Tax $tax)
+    public function deactivate(Tax $tax): bool
     {
         return $tax->update(['status' => '0']);
     }
 
-    public function destroy(Tax $tax)
+    public function destroy(Tax $tax): ?bool
     {
         return $tax->delete();
     }
