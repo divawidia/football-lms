@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Models\Tax;
 use Illuminate\Database\Eloquent\Collection;
 
 class TaxRepository
