@@ -310,7 +310,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
             Route::prefix('player-match-stats')->name('player-match-stats.')->group(function () {
                 Route::get('', [MatchController::class, 'indexPlayerMatchStats'])->middleware('role:Super-Admin|admin|coach|player')->name('index');
 
-                Route::middleware('role:coach')->group(function () {
+                Route::middleware('role:Super-Admin|admin|coach')->group(function () {
                     Route::get('{player}', [MatchController::class, 'getPlayerStats'])->name('show');
                     Route::put('{player}/update', [MatchController::class, 'updatePlayerStats'])->name('update');
                 });
