@@ -11,7 +11,7 @@
         @if(count($categories) == 0)
             <x-warning-alert text="Currently you haven't created any product categories, please create your product categories"/>
         @else
-            <select class="form-control form-select" id="categoryId" name="categoryId" required data-toggle="select">
+            <select class="form-control form-select" id="categoryId" name="categoryId" required>
                 <option disabled>Select product's category</option>
                 @foreach($categories AS $category)
                     <option value="{{ $category->id }}">{{ $category->categoryName }}</option>
