@@ -350,6 +350,21 @@ class InvoiceService extends Service
         return Transaction::status($invoiceNumber);
     }
 
+    public function checkMidtransInvoiceStatus(Invoice $invoice)
+    {
+        try {
+            $status = $this->getPaymentDetail($invoice->invoiceNumber)->transaction_status;
+
+            return match ($status) {
+                'settlement' => $this->paid($invoice),
+                'deny', 'cancel' => $this->uncollectible($invoice),
+                'expire' => $this->pastDue($invoice),
+                default => null,
+            };
+        } catch (Exception $e){
+        }
+    }
+
     public function open(Invoice $invoice): bool
     {
         $data['invoiceNumber'] = $this->generateInvoiceNumber();
