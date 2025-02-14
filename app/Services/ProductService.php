@@ -64,7 +64,7 @@ class ProductService extends Service
             ->make();
     }
 
-    public function store(array $data, $loggedUser): JsonResponse
+    public function store(array $data, $loggedUser)
     {
         $data['userId'] = $loggedUser->id;
         return $this->productRepository->create($data);
