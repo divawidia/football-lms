@@ -108,7 +108,7 @@ class Service
 
     public function generateInvoiceNumber(){
         $numbers = mt_rand(00000, 999999);
-        return 'INV-'.$numbers.'-'.$numbers;
+        return 'INV-'.$numbers;
     }
 
     public function getNextDayTimestamp()
