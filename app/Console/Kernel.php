@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Console\Commands\Competitions\CompletedCompetitionStatus;
 use App\Console\Commands\Competitions\StartCompetitionStatus;
 use App\Console\Commands\Invoices\InvoiceDueSoonNotification;
+use App\Console\Commands\Invoices\SetInvoiceStatusByMidtrans;
 use App\Console\Commands\Invoices\SetPastDueInvoiceStatus;
 use App\Console\Commands\Matches\CompletedMatchStatus;
 use App\Console\Commands\Matches\MatchReminder;
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
         InvoiceDueSoonNotification::class,
         MatchReminder::class,
         SetPastDueInvoiceStatus::class,
+        SetInvoiceStatusByMidtrans::class,
         StartCompetitionStatus::class,
         StartMatchStatus::class,
         StartTrainingStatus::class,
@@ -44,6 +46,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:complete-competition-status')->everyMinute();
         $schedule->command('update:set-past-due-invoice-status')->everyMinute();
         $schedule->command('update:invoice-due-soon-notification')->everyMinute();
+        $schedule->command('update:set-invoice-status-by-midtrans')->everyMinute();
         $schedule->command('update:subscription-due-soon-notification')->everyMinute();
         $schedule->command('update:training-reminder-notification')->everyMinute();
         $schedule->command('update:match-reminder-notification')->everyMinute();
