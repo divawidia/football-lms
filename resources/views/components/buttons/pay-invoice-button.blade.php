@@ -17,14 +17,7 @@
 
                 snap.pay(snapToken, {
                     onSuccess: function(){
-                        ajaxProcessing(
-                            invoiceId,
-                            '{{ route('invoices.set-paid', ':id') }}',
-                            'PATCH',
-                            '{{ csrf_token() }}',
-                            null,
-                            "Something went wrong when processing payment!"
-                        )
+                        ajaxProcessing(invoiceId, '{{ route('invoices.set-paid', ':id') }}', 'PATCH', '{{ csrf_token() }}', null, "Something went wrong when processing payment!")
                     },
                     onPending: function(){
                         Swal.fire({
@@ -41,14 +34,7 @@
                         });
                     },
                     onError: function(){
-                        ajaxProcessing(
-                            invoiceId,
-                            '{{ route('invoices.set-uncollectible', ':id') }}',
-                            'PATCH',
-                            '{{ csrf_token() }}',
-                            null,
-                            "Something went wrong when processing payment!"
-                        )
+                        ajaxProcessing(invoiceId, '{{ route('invoices.set-uncollectible', ':id') }}', 'PATCH', '{{ csrf_token() }}', null, "Something went wrong when processing payment!")
                     }
                 });
             });
