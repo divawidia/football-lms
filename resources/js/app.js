@@ -7,7 +7,7 @@ import './player'
 import './preloader'
 import './select2'
 import './sidebar'
-import './youtube'
+import { onYouTubeIframeAPIReadyForAdmin } from './youtube'
 
 (function() {
     'use strict';
@@ -44,6 +44,7 @@ import './youtube'
     imagePreview('#logo', '#preview');
     imagePreview('add_logo', 'opponentTeamPreview');
     imagePreview('add_logoTeam', 'teamPreview');
+    imagePreview('#previewPhoto', '#preview');
 
     window.ajaxProcessing = ajaxProcessing;
     window.processWithConfirmation = processWithConfirmation;
@@ -52,4 +53,5 @@ import './youtube'
     window.clearModalFormValidation = clearModalFormValidation;
     window.showModal = showModal;
 
+    window.onYouTubeIframeAPIReadyForAdmin = onYouTubeIframeAPIReadyForAdmin;
 })()

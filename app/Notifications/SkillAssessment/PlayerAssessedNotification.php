@@ -44,7 +44,7 @@ class PlayerAssessedNotification extends Notification
         return [
             'title' => "Skill Stats Assessed",
             'data' => 'Your skills have been assessd by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.'.',
-            'redirectRoute' => route('player.skill-stats')
+            'redirectRoute' => route('skill-stats')
         ];
     }
 }

@@ -45,6 +45,11 @@ function checkRoleDashboardRoute(): string
     return $route;
 }
 
+function getUserRoleName(User $user): string
+{
+    return $user->roles()->first()->name;
+}
+
 function secondToMinute($seconds): string
 {
     $minutes = floor($seconds / 60);  // Get the number of whole minutes

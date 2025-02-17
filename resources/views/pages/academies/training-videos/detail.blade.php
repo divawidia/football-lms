@@ -9,12 +9,14 @@
 
 @section('modal')
     @if(isAllAdmin()||isCoach())
-        <x-modal.add-training-course-lesson-modal :routeStore="route('training-videos.lessons-store', $data->hash)"/>
-        <x-modal.edit-training-course-lesson-modal :trainingVideo="$data"/>
-        <x-modal.edit-training-course-modal :routeEdit="route('training-videos.edit', $data->id)"
-                                            :routeUpdate="route('training-videos.update', $data->hash)"/>
-        <x-modal.add-players-to-team :route="route('training-videos.update-player', ['trainingVideo' => $data->hash])"
-                                     :players="$player"/>
+        <x-modal.training-courses.add-training-course-lesson-modal
+            :routeStore="route('training-videos.lessons-store', $data->hash)"/>
+        <x-modal.training-courses.edit-training-course-lesson-modal :trainingVideo="$data"/>
+        <x-modal.training-courses.edit-training-course-modal :routeEdit="route('training-videos.edit', $data->id)"
+                                                             :routeUpdate="route('training-videos.update', $data->hash)"/>
+        <x-modal.teams.add-players-to-team
+            :route="route('training-videos.update-player', ['trainingVideo' => $data->hash])"
+            :players="$player"/>
     @endif
 
 @endsection
@@ -27,18 +29,19 @@
                     background-position: center center;">
         <div class="mdk-box__content">
             <nav class="navbar navbar-light border-bottom border-top px-0">
-                <div class="container page__container">
+                <div class="container">
                     <ul class="nav navbar-nav">
                         <li class="nav-item">
-                            <a href="{{ route('training-videos.index') }}" class="nav-link text-70"><i
-                                        class="material-icons icon--left">keyboard_backspace</i> Back to Training Course
-                                Lists</a>
+                            <a href="{{ route('training-videos.index') }}" class="nav-link text-70">
+                                <i class="material-icons icon--left">keyboard_backspace</i>
+                                Back to Training Course Lists
+                            </a>
                         </li>
                     </ul>
                 </div>
             </nav>
             <div class="hero py-64pt text-center text-sm-left" style="background-color: rgba(239, 37, 52, 0.8)">
-                <div class="container page__container">
+                <div class="container">
                     <h1 class="text-white mt-3">{{ $data->trainingTitle }}</h1>
                     <div class="lead text-white-50 measure-hero-lead mb-24pt">
                         {!! $data->description !!}
@@ -64,35 +67,29 @@
                             </a>
                         @endif
                     @endif
-                    @if(isAllAdmin() || isCoach())
+                    @if(isAllAdmin())
                         <div class="btn-toolbar" role="toolbar">
-                            <a href="" id="editTrainingVideo" class="btn btn-sm btn-white">
-                                <span class="material-icons mr-2">edit</span>
-                                Edit Training Course
-                            </a>
+                            <x-buttons.basic-button icon="edit" text="Edit Training Course" id="editTrainingVideo"
+                                                    color="white" iconColor=""/>
                             @if($data->status == "1")
-                                <button type="button" class="btn btn-sm btn-white mx-2 unpublishTraining">
-                                    <span class="material-icons mr-2 text-danger">block</span>
-                                    Unpublish Training Course
-                                </button>
+                                <x-buttons.basic-button icon="block" text="Unpublish Training Course"
+                                                        additionalClass="unpublishTraining" color="white"
+                                                        iconColor="danger" margin="mx-3"/>
                             @else
-                                <button type="button" class="btn btn-sm btn-white mx-2 publishTraining">
-                                    <span class="material-icons mr-2 text-success">check_circle</span>
-                                    Publish Training Course
-                                </button>
+                                <x-buttons.basic-button icon="check_circle" text="Publish Training Course"
+                                                        additionalClass="publishTraining" color="white"
+                                                        iconColor="success" margin="mx-3"/>
                             @endif
-
-                            <button type="button" class="btn btn-sm btn-white delete-training" id="{{ $data->id }}">
-                                <span class="material-icons mr-2 text-danger">delete</span>
-                                Delete Training Course
-                            </button>
+                            <x-buttons.basic-button icon="delete" text="Delete Training Course"
+                                                    additionalClass="delete-training" :id="$data->id" color="white"
+                                                    iconColor="danger"/>
                         </div>
                     @endif
                 </div>
             </div>
             <div
-                    class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">
-                <div class="container page__container">
+                class="navbar navbar-expand-sm navbar-light bg-white border-bottom-2 navbar-list p-0 m-0 align-items-center">
+                <div class="container">
                     <ul class="nav navbar-nav flex align-items-sm-center">
                         @if(isAllAdmin() || isCoach())
                             <li class="nav-item navbar-list__item">
@@ -149,7 +146,6 @@
         @if(isAllAdmin() || isCoach())
             <div class="page-separator">
                 <div class="page-separator__text">Overview</div>
-                {{--            <a href="" id="addTeamScorer" class="btn btn-primary btn-sm ml-auto"><span class="material-icons mr-2">add</span> Filter</a>--}}
             </div>
 
             <div class="row mb-3">
@@ -161,58 +157,30 @@
             {{--    Lessons    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Lesson(s)</div>
-                <a href="" id="addLesson" class="btn btn-primary btn-sm ml-auto"><span
-                            class="material-icons mr-2">add</span> Add lesson</a>
+                @if(isAllAdmin())
+                    <x-buttons.basic-button icon="add" text="Add Training Video lesson" id="addLesson" color="primary"
+                                            iconColor="" margin="ml-auto"/>
+                @endif
             </div>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card">
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="lessonsTable">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Title</th>
-                                <th>Lesson Length</th>
-                                <th>Description</th>
-                                <th>Publish Status</th>
-                                <th>Created At</th>
-                                <th>Last Updated</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
+                    <x-table :headers="['#', 'Title', 'Lesson Length', 'Description', 'Publish Status', 'Created At', 'Last Updated', 'Action']" tableId="lessonsTable"/>
                 </div>
             </div>
 
             {{--    Assigned Player    --}}
             <div class="page-separator">
                 <div class="page-separator__text">Assigned Player(s)</div>
-                <a href="" class="btn btn-primary btn-sm ml-auto" id="add-players">
-                    <span class="material-icons mr-2">add</span>Add Player
-                </a>
+                @if(isAllAdmin())
+                    <x-buttons.basic-button icon="add" text="Assign Player into training course" id="add-players"
+                                            color="primary" iconColor="" margin="ml-auto"/>
+                @endif
             </div>
-            <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
+            <div class="card">
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="playersTable">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Progress</th>
-                                <th>Completion Status</th>
-                                <th>Assigned At</th>
-                                <th>Completed At</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
+                    <x-table
+                        :headers="['#', 'Name', 'Progress', 'Completion Status', 'Assigned At', 'Completed At', 'Action']"
+                        tableId="playersTable"/>
                 </div>
             </div>
 
@@ -266,13 +234,7 @@
                     {data: 'status', name: 'status'},
                     {data: 'created_date', name: 'created_date'},
                     {data: 'last_updated', name: 'last_updated'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '20%'
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
 
@@ -290,92 +252,88 @@
                     {data: 'status', name: 'status'},
                     {data: 'assignedAt', name: 'assignedAt'},
                     {data: 'completedAt', name: 'completedAt'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
 
-            // unpublish training course
-            processWithConfirmation(
-                '.unpublishTraining',
-                "{{ route('training-videos.unpublish', $data->hash) }}",
-                "{{ route('training-videos.show', $data->hash) }}",
-                'PATCH',
-                "Are you sure to unpublish this training course?",
-                "Something went wrong when unpublishing training course!",
-                "{{ csrf_token() }}"
-            );
+            @if(isAllAdmin())
+                // unpublish training course
+                processWithConfirmation(
+                    '.unpublishTraining',
+                    "{{ route('training-videos.unpublish', $data->hash) }}",
+                    "{{ route('training-videos.show', $data->hash) }}",
+                    'PATCH',
+                    "Are you sure to unpublish this training course?",
+                    "Something went wrong when unpublishing training course!",
+                    "{{ csrf_token() }}"
+                );
 
-            // delete training course
-            processWithConfirmation(
-                '.delete-training',
-                "{{ route('training-videos.destroy', $data->hash) }}",
-                "{{ route('training-videos.index') }}",
-                'DELETE',
-                "Are you sure to delete this training course?",
-                "Something went wrong when deleting training course!",
-                "{{ csrf_token() }}"
-            );
+                // delete training course
+                processWithConfirmation(
+                    '.delete-training',
+                    "{{ route('training-videos.destroy', $data->hash) }}",
+                    "{{ route('training-videos.index') }}",
+                    'DELETE',
+                    "Are you sure to delete this training course?",
+                    "Something went wrong when deleting training course!",
+                    "{{ csrf_token() }}"
+                );
 
-            // publish training course
-            processWithConfirmation(
-                '.publishTraining',
-                "{{ route('training-videos.publish', $data->hash) }}",
-                "{{ route('training-videos.show', $data->hash) }}",
-                'PATCH',
-                "Are you sure to publish this training course?",
-                "Something went wrong when publishing training course!",
-                "{{ csrf_token() }}"
-            );
+                // publish training course
+                processWithConfirmation(
+                    '.publishTraining',
+                    "{{ route('training-videos.publish', $data->hash) }}",
+                    "{{ route('training-videos.show', $data->hash) }}",
+                    'PATCH',
+                    "Are you sure to publish this training course?",
+                    "Something went wrong when publishing training course!",
+                    "{{ csrf_token() }}"
+                );
 
-            // delete lesson
-            processWithConfirmation(
-                '.deleteLesson',
-                "{{ route('training-videos.lessons-destroy', ['trainingVideo'=>$data->hash, 'lesson' => ':id']) }}",
-                "{{ route('training-videos.show', $data->hash) }}",
-                'DELETE',
-                "Are you sure to delete this lesson?",
-                "Something went wrong when deleting lesson!",
-                "{{ csrf_token() }}"
-            );
+                // delete lesson
+                processWithConfirmation(
+                    '.deleteLesson',
+                    "{{ route('training-videos.lessons-destroy', ['trainingVideo'=>$data->hash, 'lesson' => ':id']) }}",
+                    "{{ route('training-videos.show', $data->hash) }}",
+                    'DELETE',
+                    "Are you sure to delete this lesson?",
+                    "Something went wrong when deleting lesson!",
+                    "{{ csrf_token() }}"
+                );
 
-            // remove player
-            processWithConfirmation(
-                '.deletePlayer',
-                "{{ route('training-videos.remove-player', ['trainingVideo'=>$data->hash, 'player' => ':id']) }}",
-                "{{ route('training-videos.show', $data->hash) }}",
-                'DELETE',
-                "Are you sure to remove this player from training course?",
-                "Something went wrong when removing the player from training course!",
-                "{{ csrf_token() }}"
-            );
+                // remove player
+                processWithConfirmation(
+                    '.deletePlayer',
+                    "{{ route('training-videos.remove-player', ['trainingVideo'=>$data->hash, 'player' => ':id']) }}",
+                    "{{ route('training-videos.show', $data->hash) }}",
+                    'DELETE',
+                    "Are you sure to remove this player from training course?",
+                    "Something went wrong when removing the player from training course!",
+                    "{{ csrf_token() }}"
+                );
 
-            // unpublish lesson
-            processWithConfirmation(
-                '.unpublish-lesson',
-                "{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->hash, 'lesson'=>':id']) }}",
-                null,
-                'PATCH',
-                "Are you sure to unpublish this lesson?",
-                "Something went wrong when unpublishing lesson!",
-                "{{ csrf_token() }}"
-            );
+                // unpublish lesson
+                processWithConfirmation(
+                    '.unpublish-lesson',
+                    "{{ route('training-videos.lessons-unpublish', ['trainingVideo'=>$data->hash, 'lesson'=>':id']) }}",
+                    null,
+                    'PATCH',
+                    "Are you sure to unpublish this lesson?",
+                    "Something went wrong when unpublishing lesson!",
+                    "{{ csrf_token() }}"
+                );
 
-            // publish lesson
-            processWithConfirmation(
-                '.publish-lesson',
-                "{{ route('training-videos.lessons-publish', ['trainingVideo'=>$data->hash, 'lesson'=>':id']) }}",
-                null,
-                'PATCH',
-                "Are you sure to publish this lesson?",
-                "Something went wrong when publishing lesson!",
-                "{{ csrf_token() }}"
-            );
+                // publish lesson
+                processWithConfirmation(
+                    '.publish-lesson',
+                    "{{ route('training-videos.lessons-publish', ['trainingVideo'=>$data->hash, 'lesson'=>':id']) }}",
+                    null,
+                    'PATCH',
+                    "Are you sure to publish this lesson?",
+                    "Something went wrong when publishing lesson!",
+                    "{{ csrf_token() }}"
+                );
+            @endif
         });
     </script>
 @endpush

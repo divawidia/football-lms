@@ -11,9 +11,7 @@ use App\Services\TrainingVideoService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use RealRashid\SweetAlert\Facades\Alert;
 
 class TrainingVideoController extends Controller
 {
@@ -49,12 +47,11 @@ class TrainingVideoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(TrainingVideoRequest $request)
+    public function store(TrainingVideoRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $trainingVideos = $this->trainingVideoService->store($data, $this->getLoggedUserId());
-        $message = 'Training course: '. $data['trainingTitle'] .' successfully created!';
-        return ApiResponse::success($trainingVideos, $message);
+        $trainingVideos = $this->trainingVideoService->store($data, $this->getLoggedUser());
+        return ApiResponse::success($trainingVideos, 'Training course: '. $data['trainingTitle'] .' successfully created!');
     }
 
     /**
@@ -84,7 +81,8 @@ class TrainingVideoController extends Controller
         ]);
     }
 
-    public function players(TrainingVideo $trainingVideo){
+    public function players(TrainingVideo $trainingVideo): JsonResponse
+    {
         return $this->trainingVideoService->players($trainingVideo);
     }
 
@@ -100,7 +98,8 @@ class TrainingVideoController extends Controller
         ]);
     }
 
-    public function playerLessons(TrainingVideo $trainingVideo, Player $player){
+    public function playerLessons(TrainingVideo $trainingVideo, Player $player): JsonResponse
+    {
         return $this->trainingVideoService->playerLessons($trainingVideo, $player);
     }
 
@@ -115,25 +114,22 @@ class TrainingVideoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(TrainingVideoRequest $request, TrainingVideo $trainingVideo)
+    public function update(TrainingVideoRequest $request, TrainingVideo $trainingVideo): JsonResponse
     {
         $data = $request->validated();
-
-        $trainingVideos = $this->trainingVideoService->update($data, $trainingVideo);
-        $message = "Training course: ".$trainingVideo->trainingTitle." successfully updated.";
-        return ApiResponse::success($trainingVideos, $message);
+        $trainingVideos = $this->trainingVideoService->update($data, $trainingVideo, $this->getLoggedUser());
+        return ApiResponse::success($trainingVideos, "Training course: ".$trainingVideo->trainingTitle." successfully updated.");
     }
 
-    public function unpublish(TrainingVideo $trainingVideo){
-        $this->trainingVideoService->setStatus($trainingVideo, '0');
-        $message = "Training course: ".$trainingVideo->trainingTitle."'s status successfully unpublished!.";
-        return ApiResponse::success(message: $message);
+    public function unpublish(TrainingVideo $trainingVideo): JsonResponse
+    {
+        $this->trainingVideoService->setStatus($trainingVideo, '0', $this->getLoggedUser());
+        return ApiResponse::success(message: "Training course: ".$trainingVideo->trainingTitle."'s status successfully unpublished!.");
     }
 
     public function publish(TrainingVideo $trainingVideo){
-        $this->trainingVideoService->setStatus($trainingVideo, '1');
-        $message = "Training course: ".$trainingVideo->trainingTitle."'s status successfully published!.";
-        return ApiResponse::success(message: $message);
+        $this->trainingVideoService->setStatus($trainingVideo, '1', $this->getLoggedUser());
+        return ApiResponse::success(message: "Training course: ".$trainingVideo->trainingTitle."'s status successfully published!.");
     }
 
     public function assignPlayer(TrainingVideo $trainingVideo)
@@ -148,22 +144,20 @@ class TrainingVideoController extends Controller
         ]);
     }
 
-    public function updatePlayers(Request $request, TrainingVideo $trainingVideo)
+    public function updatePlayers(Request $request, TrainingVideo $trainingVideo): JsonResponse
     {
         $data = $request->validate([
             'players' => ['required', Rule::exists('players', 'id')],
         ]);
 
-        $this->trainingVideoService->updatePlayer($data, $trainingVideo);
-        $text = 'Players successfully added to training course: '.$trainingVideo->trainingTitle.'!';
-        return ApiResponse::success(message: $text);
+        $this->trainingVideoService->updatePlayer($data, $trainingVideo, $this->getLoggedUser());
+        return ApiResponse::success(message: 'Players successfully added to training course: '.$trainingVideo->trainingTitle.'!');
     }
 
     public function removePLayer(TrainingVideo $trainingVideo, Player $player): JsonResponse
     {
-        $result = $this->trainingVideoService->removePlayer($trainingVideo, $player);
-        $message = "Player ".$this->getUserFullName($player->user)." successfully removed from training course.";
-        return ApiResponse::success($result, $message);
+        $this->trainingVideoService->removePlayer($trainingVideo, $player, $this->getLoggedUser());
+        return ApiResponse::success(message: "Player {$this->getUserFullName($player->user)} successfully removed from training course.");
     }
 
     /**
@@ -171,8 +165,7 @@ class TrainingVideoController extends Controller
      */
     public function destroy(TrainingVideo $trainingVideo): JsonResponse
     {
-        $result = $this->trainingVideoService->destroy($trainingVideo);
-        $message = "Training course ".$trainingVideo->trainingTitle." successfully deleted.";
-        return ApiResponse::success($result, $message);
+        $this->trainingVideoService->destroy($trainingVideo, $this->getLoggedUser());
+        return ApiResponse::success(message:  "Training course {$trainingVideo->trainingTitle} successfully deleted.");
     }
 }

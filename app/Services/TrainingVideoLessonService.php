@@ -5,14 +5,17 @@ namespace App\Services;
 use App\Helpers\DatatablesHelper;
 use App\Models\TrainingVideo;
 use App\Models\TrainingVideoLesson;
-use App\Notifications\TrainingCourseLessons\TrainingLessonCreated;
-use App\Notifications\TrainingCourseLessons\TrainingLessonDeleted;
-use App\Notifications\TrainingCourseLessons\TrainingLessonStatus;
-use App\Notifications\TrainingCourseLessons\TrainingLessonUpdated;
+use App\Notifications\TrainingCourseLessons\Admin\TrainingLessonCreatedForAdmin;
+use App\Notifications\TrainingCourseLessons\Admin\TrainingLessonDeletedForAdmin;
+use App\Notifications\TrainingCourseLessons\Admin\TrainingLessonPublishedForAdmin;
+use App\Notifications\TrainingCourseLessons\Admin\TrainingLessonUnpublishedForAdmin;
+use App\Notifications\TrainingCourseLessons\Admin\TrainingLessonUpdatedForAdmin;
+use App\Notifications\TrainingCourseLessons\Player\TrainingLessonCreatedForPlayer;
 use App\Repository\PlayerRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Yajra\DataTables\Facades\DataTables;
@@ -22,47 +25,35 @@ class TrainingVideoLessonService extends Service
     private PlayerRepository $playerRepository;
     private TrainingVideoService $trainingVideoService;
     private UserRepository $userRepository;
-    private DatatablesHelper $datatablesService;
-    public function __construct(PlayerRepository $playerRepository, TrainingVideoService $trainingVideoService, UserRepository $userRepository, DatatablesHelper $datatablesService)
+    private DatatablesHelper $datatablesHelper;
+    public function __construct(PlayerRepository $playerRepository, TrainingVideoService $trainingVideoService, UserRepository $userRepository, DatatablesHelper $datatablesHelper)
     {
         $this->playerRepository = $playerRepository;
         $this->trainingVideoService = $trainingVideoService;
         $this->userRepository = $userRepository;
-        $this->datatablesService = $datatablesService;
+        $this->datatablesHelper = $datatablesHelper;
     }
 
     public function getTotalDuration(TrainingVideoLesson $trainingVideoLesson): string
     {
         return $this->secondToMinute($trainingVideoLesson->totalDuration);
     }
-    public function index(TrainingVideo $trainingVideo){
-        $data = $trainingVideo->lessons;
-        return Datatables::of($data)
+    public function index(TrainingVideo $trainingVideo): JsonResponse
+    {
+        return Datatables::of($trainingVideo->lessons)
             ->addColumn('action', function ($item) use ($trainingVideo) {
-                if ($item->status == '1') {
-                    $statusButton = '<button type="submit" class="btn btn-sm btn-outline-secondary mr-1 unpublish-lesson" id="'.$item->id.'" data-toggle="tooltip" data-placement="bottom" title="Unpublish lesson">
-                                        <span class="material-icons text-danger">block</span>
-                                    </button>';
-                } else {
-                    $statusButton = '<button type="submit" class="btn btn-sm btn-outline-secondary mr-1 publish-lesson" id="'.$item->id.'" data-toggle="tooltip" data-placement="bottom" title="Publish lesson">
-                                        <span class="material-icons text-success">check_circle</span>
-                                    </button>';
+                $dropdownItem = $this->datatablesHelper->linkDropdownItem(route: route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->hash,'lesson'=>$item->hash]), icon: 'visibility', btnText: 'View video lesson');
+                if (isAllAdmin()) {
+                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('editLesson', $item->id, icon: 'edit', btnText: 'Edit video lesson');
+                    ($item->status == '1') ? $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('unpublish-lesson', $item->id, icon: 'block', iconColor: 'danger', btnText: 'Unpublish video lesson') : $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('publish-lesson', $item->id, icon: 'check_circle', iconColor: 'success', btnText: 'Publish video lesson');
+                    $dropdownItem .= $this->datatablesHelper->buttonDropdownItem('deleteLesson', $item->id, iconColor: 'danger', icon: 'delete', btnText: 'Remove video lesson');
                 }
-                return '<div class="btn-toolbar" role="toolbar">
-                            <button class="btn btn-sm btn-outline-secondary mr-1 editLesson" id="'.$item->id.'" type="button" data-toggle="tooltip" data-placement="bottom" title="Edit lesson">
-                                <span class="material-icons">edit</span>
-                             </button>
-                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.lessons-show', ['trainingVideo'=>$trainingVideo->hash,'lesson'=>$item->hash]).'" data-toggle="tooltip" data-placement="bottom" title="View lesson">
-                                <span class="material-icons">visibility</span>
-                             </a>
-                             '.$statusButton.'
-                            <button type="button" class="btn btn-sm btn-outline-secondary deleteLesson" id="' . $item->id . '" data-toggle="tooltip" data-placement="bottom" title="Edit lesson">
-                                <span class="material-icons text-danger">delete</span>
-                            </button>
-                        </div>';
+                return $this->datatablesHelper->dropdown(function () use ($dropdownItem) {
+                    return $dropdownItem;
+                });
             })
             ->editColumn('title', function ($item) {
-                return '<p class="mb-0"><strong class="js-lists-values-lead">' . $item->lessonTitle . '</strong></p>';
+                return '<h6>' . $item->lessonTitle . '</h6>';
             })
             ->editColumn('totalDuration', function ($item) {
                 return $this->getTotalDuration($item);
@@ -77,97 +68,60 @@ class TrainingVideoLessonService extends Service
                 return $this->convertToDatetime($item->updated_at);
             })
             ->editColumn('status', function ($item) {
-                if ($item->status == '1') {
-                    $badge = '<span class="badge badge-pill badge-success">Active</span>';
-                } elseif ($item->status == '0') {
-                    $badge = '<span class="badge badge-pill badge-danger">Non-Active</span>';
-                }
-                return $badge;
+                return ($item->status == '1') ? '<span class="badge badge-pill badge-success">Active</span>' : '<span class="badge badge-pill badge-danger">Non-Active</span>';
             })
-            ->rawColumns(['action','title','totalMinutes','description', 'created_date', 'last_updated', 'status'])
+            ->rawColumns(['action','title','description', 'status'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function players(TrainingVideoLesson $trainingVideoLesson){
-        $data = $trainingVideoLesson->players()->get();
-        return Datatables::of($data)
+    public function players(TrainingVideoLesson $trainingVideoLesson): JsonResponse
+    {
+        return Datatables::of($trainingVideoLesson->players)
             ->addColumn('action', function ($item) use ($trainingVideoLesson) {
-                return '<div class="btn-toolbar" role="toolbar">
-                             <a class="btn btn-sm btn-outline-secondary mr-1" id="'.$item->id.'" href="'.route('training-videos.show-player', ['trainingVideo' => $trainingVideoLesson->trainingVideo->hash, 'player' => $item->hash]).'" data-toggle="tooltip" data-placement="bottom" title="View Player">
-                                <span class="material-icons">visibility</span>
-                             </a>
-                        </div>';
+                return $this->datatablesHelper->buttonTooltips(route('training-videos.show-player', ['trainingVideo' => $trainingVideoLesson->trainingVideo->hash, 'player' => $item->hash]), 'View Player', 'visibility');
             })
             ->editColumn('name', function ($item) {
-                return $this->datatablesService->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
+                return $this->datatablesHelper->name($item->user->foto, $this->getUserFullName($item->user), $item->position->name, route('player-managements.show', $item->hash));
             })
             ->editColumn('assignedAt', function ($item) {
                 return $this->convertToDatetime($item->pivot->created_at);
             })
             ->editColumn('completedAt', function ($item) {
-                if ($item->pivot->completed_at == null){
-                    $data = 'Not completed yet';
-                }else{
-                    $data = $this->convertToDatetime($item->pivot->completed_at);
-                }
-                return $data;
+                return ($item->pivot->completed_at == null) ? 'Not completed yet' : $this->convertToDatetime($item->pivot->completed_at);
             })
             ->editColumn('status', function ($item) {
-                if ($item->pivot->completionStatus == '1') {
-                    $badge = '<span class="badge badge-pill badge-success">Completed</span>';
-                } elseif ($item->pivot->completionStatus == '0') {
-                    $badge = '<span class="badge badge-pill badge-warning">On Progress</span>';
-                }
-                return $badge;
+                return ($item->pivot->completionStatus == '1') ? '<span class="badge badge-pill badge-success">Completed</span>' : '<span class="badge badge-pill badge-warning">On Progress</span>';
             })
-            ->rawColumns(['action','name','assignedAt', 'completedAt','status'])
+            ->rawColumns(['action','name','status'])
             ->addIndexColumn()
             ->make();
     }
 
     public function lessonUserPlayers(TrainingVideoLesson $lesson)
     {
-        $playersId = collect($lesson->players)->pluck('playerId')->all();
+        $playersId = collect($lesson->players)->pluck('id')->all();
         return $this->userRepository->getInArray('player', $playersId);
     }
 
     public function store(array $data, TrainingVideo $trainingVideo, $loggedUser){
-        $data['trainingVideoId'] = $trainingVideo->id;
-        $players = $trainingVideo->players()->select('playerId')->get();
-        $playersId = $players->pluck('playerId');
-        $lesson = TrainingVideoLesson::create($data);
+        $lesson = $trainingVideo->lessons()->create($data);
+        $playersId =  collect($trainingVideo->players)->pluck('id')->all();
         $lesson->players()->attach($playersId);
 
-        $createdUserName = $this->getUserFullName($loggedUser);
-
-        try {
-            Notification::send($this->lessonUserPlayers($lesson), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, role: 'player'));
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'admin'));
-            Notification::send($this->userRepository->getAll(role: 'coach'), new TrainingLessonCreated($trainingVideo, $lesson, $createdUserName, 'coach'));
-        } catch (Exception $exception) {
-            Log::error('Error while sending create lesson '.$lesson->lessonTitle.' notification: ' . $exception->getMessage());
-        }
+        Notification::send($this->lessonUserPlayers($lesson), new TrainingLessonCreatedForPlayer($trainingVideo, $lesson));
+        Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonCreatedForAdmin($trainingVideo, $lesson, $loggedUser));
 
         return $lesson;
     }
 
-    public function update(array $data, TrainingVideoLesson $trainingVideoLesson, $loggedUser){
-        $trainingVideoLesson->update($data);
-
-        $createdUserName = $this->getUserFullName($loggedUser);
-        $trainingVideo =$trainingVideoLesson->trainingVideo;
-
-        try {
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonUpdated($trainingVideo, $trainingVideoLesson, $createdUserName));
-            Notification::send($this->userRepository->getAll(role: 'coach'), new TrainingLessonUpdated($trainingVideo, $trainingVideoLesson, $createdUserName));
-        } catch (Exception $exception) {
-            Log::error('Error while sending update lesson '.$trainingVideoLesson->lessonTitle.' notification: ' . $exception->getMessage());
-        }
-        return $trainingVideoLesson;
+    public function update(array $data, TrainingVideoLesson $trainingVideoLesson, $loggedUser): bool
+    {
+        Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonUpdatedForAdmin($trainingVideoLesson->trainingVideo, $trainingVideoLesson, $loggedUser));
+        return $trainingVideoLesson->update($data);
     }
 
-    public function markAsComplete($playerId, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson)
+    public function markAsComplete($playerId, TrainingVideo $trainingVideo, TrainingVideoLesson $lesson): TrainingVideoLesson
     {
         $player = $this->playerRepository->find($playerId);
         $lesson->players()->updateExistingPivot($playerId, ['completionStatus' => '1', 'completed_at' => Carbon::now()]);
@@ -177,39 +131,27 @@ class TrainingVideoLessonService extends Service
         if ($completionProgress == 100){
             $this->trainingVideoService->setPlayerProgressToComplete($player, $trainingVideo);
         }
-        return response()->json(['message' => 'Video marked as complete']);
+        return $lesson;
     }
 
-    public function setStatus(TrainingVideoLesson $lesson, $status)
-    {
-        $lesson->update(['status' => $status]);
-        $trainingVideo =$lesson->trainingVideo;
-
-        if ($status == '1') {
-            $statusMessage = 'published';
-        } else {
-            $statusMessage = 'unpublished';
-        }
-
-        try {
-            Notification::send($this->lessonUserPlayers($lesson), new TrainingLessonStatus($trainingVideo, $lesson,$statusMessage));
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonStatus($trainingVideo, $lesson,$statusMessage));
-            Notification::send($this->userRepository->getAll(role: 'coach'), new TrainingLessonStatus($trainingVideo, $lesson, $statusMessage));
-        } catch (\Exception $exception) {
-            Log::error('Error while sending '.$statusMessage.' lesson '.$lesson->lessonTitle.' notification: ' . $exception->getMessage());
-        }
-    }
-
-    public function destroy(TrainingVideoLesson $trainingVideoLesson)
+    public function setStatus(TrainingVideoLesson $trainingVideoLesson, $loggedUser, $status): bool
     {
         $trainingVideo =$trainingVideoLesson->trainingVideo;
-        try {
-            Notification::send($this->lessonUserPlayers($trainingVideoLesson), new TrainingLessonDeleted($trainingVideo, $trainingVideoLesson));
-            Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonDeleted($trainingVideo, $trainingVideoLesson));
-            Notification::send($this->userRepository->getAll(role:'coach'), new TrainingLessonDeleted($trainingVideo, $trainingVideoLesson));
-        } catch (\Exception $exception) {
-            Log::error('Error while sending deleted lesson '.$trainingVideoLesson->lessonTitle.' notification: ' . $exception->getMessage());
-        }
+        ($status == '1') ? $this->sendPublishedNotification($trainingVideo, $trainingVideoLesson, $loggedUser) : $this->sendUnpublishedNotification($trainingVideo, $trainingVideoLesson, $loggedUser);
+        return $trainingVideoLesson->update(['status' => $status]);
+    }
+    private function sendPublishedNotification(TrainingVideo $trainingVideo, TrainingVideoLesson $trainingVideoLesson, $loggedUser): void
+    {
+        Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonPublishedForAdmin($trainingVideo, $trainingVideoLesson, $loggedUser));
+    }
+    private function sendUnpublishedNotification(TrainingVideo $trainingVideo, TrainingVideoLesson $trainingVideoLesson, $loggedUser): void
+    {
+        Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonUnpublishedForAdmin($trainingVideo, $trainingVideoLesson, $loggedUser));
+    }
+
+    public function destroy(TrainingVideoLesson $trainingVideoLesson, $loggedUser): bool
+    {
+        Notification::send($this->userRepository->getAllAdminUsers(), new TrainingLessonDeletedForAdmin($trainingVideoLesson->trainingVideo, $trainingVideoLesson, $loggedUser));
         return $trainingVideoLesson->delete();
     }
 }

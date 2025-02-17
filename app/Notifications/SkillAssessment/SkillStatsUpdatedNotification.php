@@ -38,7 +38,7 @@ class SkillStatsUpdatedNotification extends Notification
         return [
             'title' => "Skill Stats Updated",
             'data' => 'Your skills have been updated by coach '.$this->coach->user->firstName.' '.$this->coach->user->lastName.'.',
-            'redirectRoute' => route('player.skill-stats')
+            'redirectRoute' => route('skill-stats')
         ];
     }
 }

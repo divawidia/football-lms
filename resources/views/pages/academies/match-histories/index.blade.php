@@ -16,7 +16,7 @@
     </div>
 
     <div class="container page-section">
-        <x-match-tables :route="$tableRoute" tableId="tables"/>
+        <x-tables.match-tables :route="$tableRoute" tableId="tables"/>
 
         <div class="card">
             <div class="card-header">

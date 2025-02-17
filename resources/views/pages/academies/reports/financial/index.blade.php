@@ -2,6 +2,7 @@
 @section('title')
     Financial Report
 @endsection
+
 @section('page-title')
     @yield('title')
 @endsection
@@ -12,9 +13,7 @@
             <h2 class="mb-0">@yield('title')</h2>
             <ol class="breadcrumb p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ checkRoleDashboardRoute() }}">Home</a></li>
-                <li class="breadcrumb-item active">
-                    @yield('title')
-                </li>
+                <li class="breadcrumb-item active">@yield('title')</li>
             </ol>
         </div>
     </div>
@@ -83,7 +82,7 @@
 
         <div class="row">
             <div class="col-lg-7">
-                <x-academy-revenue-chart :revenueGrowth="$revenueGrowth"/>
+                <x-charts.academy-revenue-chart :revenueGrowth="$revenueGrowth"/>
             </div>
             <div class="col-lg-5 d-flex">
                 <div class="card">
@@ -165,29 +164,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="invoicesTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Inovice Number</th>
-                            <th>Contact</th>
-                            <th>Email</th>
-                            <th>Due Date</th>
-                            <th>Created At</th>
-                            <th>Last Updated</th>
-                            <th>Subtotal</th>
-                            <th>Total Tax</th>
-                            <th>Total Amount</th>
-                            <th>Status</th>
-                            <th>Payment Method</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                <x-table :headers="['#', 'Invoice Number', 'Contact', 'Email', 'Due Date', 'Created At', 'Last Updated', 'Subtotal', 'Total Tax', 'Total Amount', 'Status', 'Payment Method', 'Action']" tableId="invoicesTable"/>
             </div>
         </div>
     </div>
@@ -254,7 +231,7 @@
 
             function fetchSubscriptionChartData(filter, filterText) {
                 $.ajax({
-                    url: '{{ route('admin.financial-report.subscription-chart-data') }}',
+                    url: '{{ route('financial-report.subscription-chart-data') }}',
                     type: 'GET',
                     data: {
                         filter: filter,
