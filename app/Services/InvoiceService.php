@@ -446,7 +446,7 @@ class InvoiceService extends Service
     }
 
     public function permanentDeleteData(string $invoiceId){
-        $invoice = $this->invoice->findDeletedData($invoiceId);
+        $invoice = $this->invoiceRepository->findDeletedData($invoiceId);
         return $invoice->forceDelete();
     }
 }
