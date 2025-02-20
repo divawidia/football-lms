@@ -60,9 +60,14 @@ class InvoiceRepository
         return $this->invoice->with('receiverUser', 'creatorUser')->latest();
     }
 
-    public function find($id)
+    public function find(string $id)
     {
         return $this->invoice->findOrFail($id);
+    }
+
+    public function findDeletedData(string $invoiceId)
+    {
+        return $this->invoice->withTrashed()->findOrFail($invoiceId);
     }
 
     public function create(array $data)
@@ -70,12 +75,12 @@ class InvoiceRepository
         return $this->invoice->create($data);
     }
 
-    public function update(array $data)
+    public function update(array $data): bool
     {
         return $this->invoice->update($data);
     }
 
-    public function delete()
+    public function delete(): ?bool
     {
         return $this->invoice->delete();
     }

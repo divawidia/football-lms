@@ -27,11 +27,6 @@ class Invoice extends Model
         'isReminderNotified',
     ];
 
-    public function findDeletedData($invoiceId)
-    {
-        return $this->withTrashed()->findOrFail($invoiceId);
-    }
-
     public function creatorUser()
     {
         return $this->belongsTo(User::class, 'creatorUserId');

@@ -5,11 +5,11 @@ namespace App\Console;
 use App\Console\Commands\Competitions\CompletedCompetitionStatus;
 use App\Console\Commands\Competitions\StartCompetitionStatus;
 use App\Console\Commands\Invoices\InvoiceDueSoonNotification;
+use App\Console\Commands\Invoices\SetInvoiceStatusByMidtrans;
 use App\Console\Commands\Invoices\SetPastDueInvoiceStatus;
 use App\Console\Commands\Matches\CompletedMatchStatus;
 use App\Console\Commands\Matches\MatchReminder;
 use App\Console\Commands\Matches\StartMatchStatus;
-use App\Console\Commands\Subscriptions\SetRenewSubscription;
 use App\Console\Commands\Subscriptions\SubscriptionDueSoonNotification;
 use App\Console\Commands\Trainings\CompletedTrainingStatus;
 use App\Console\Commands\Trainings\StartTrainingStatus;
@@ -27,12 +27,12 @@ class Kernel extends ConsoleKernel
         InvoiceDueSoonNotification::class,
         MatchReminder::class,
         SetPastDueInvoiceStatus::class,
+        SetInvoiceStatusByMidtrans::class,
         StartCompetitionStatus::class,
         StartMatchStatus::class,
         StartTrainingStatus::class,
         SubscriptionDueSoonNotification::class,
         TrainingReminder::class,
-        SetRenewSubscription::class,
     ];
 
     /**
@@ -46,6 +46,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:complete-competition-status')->everyMinute();
         $schedule->command('update:set-past-due-invoice-status')->everyMinute();
         $schedule->command('update:invoice-due-soon-notification')->everyMinute();
+        $schedule->command('update:set-invoice-status-by-midtrans')->everyMinute();
         $schedule->command('update:subscription-due-soon-notification')->everyMinute();
         $schedule->command('update:training-reminder-notification')->everyMinute();
         $schedule->command('update:match-reminder-notification')->everyMinute();
@@ -53,7 +54,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:start-match-data')->everyMinute();
         $schedule->command('update:completed-training-status')->everyMinute();
         $schedule->command('update:completed-match-status')->everyMinute();
-        $schedule->command('update:subscription-renew')->everyMinute();
         $schedule->command('model:prune', ['--model' => MonitoredScheduledTaskLogItem::class])->daily();
     }
 

@@ -6,11 +6,12 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceRequest;
 use App\Models\Invoice;
-use App\Repository\ProductRepository;
-use App\Repository\TaxRepository;
-use App\Repository\UserRepository;
 use App\Services\InvoiceService;
+use App\Services\ProductService;
+use App\Services\TaxService;
+use App\Services\UserService;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -18,19 +19,19 @@ use RealRashid\SweetAlert\Facades\Alert;
 class InvoiceController extends Controller
 {
     private InvoiceService $invoiceService;
-    private ProductRepository $productRepository;
-    private TaxRepository $taxRepository;
-    private UserRepository $userRepository;
+    private ProductService $productService;
+    private TaxService $taxService;
+    private UserService $userService;
     public function __construct(
         InvoiceService $invoiceService,
-        ProductRepository $productRepository,
-        TaxRepository $taxRepository,
-        UserRepository $userRepository,
+        ProductService $productService,
+        TaxService $taxService,
+        UserService $userService,
     )
     {
-        $this->productRepository = $productRepository;
-        $this->taxRepository = $taxRepository;
-        $this->userRepository = $userRepository;
+        $this->productService = $productService;
+        $this->taxService = $taxService;
+        $this->userService = $userService;
         $this->invoiceService = $invoiceService;
     }
 
@@ -52,9 +53,9 @@ class InvoiceController extends Controller
     public function create()
     {
         return view('pages.payments.invoices.create', [
-            'contacts' => $this->userRepository->getAll(role: 'player'),
-            'taxes' => $this->taxRepository->getAll(),
-            'products' => $this->productRepository->getAll(),
+            'contacts' => $this->userService->getAllUsers(role: 'player'),
+            'taxes' => $this->taxService->getAllTaxes(status: '1'),
+            'products' => $this->productService->getAllProducts(status: '1'),
         ]);
     }
 
@@ -64,43 +65,30 @@ class InvoiceController extends Controller
     public function store(InvoiceRequest $request)
     {
         $data = $request->validated();
-        $loggedUserId = $this->getLoggedUserId();
-        $academyId = $this->getAcademyId();
 
         if ($this->invoiceService->checkPlayerAlreadySubscribed($data)){
-            return back()->with('error', 'Subscription product have been added to player, select another product except selected subscription product.');
+            return back()->with('error', 'Subscription product has been added to player, select another product except selected subscription product.');
         } else {
-            $result = $this->invoiceService->store($data, $loggedUserId, $academyId);
-
-            $text = 'Invoice ' . $result->invoiceNumber . ' successfully created';
-            Alert::success($text);
-            return redirect()->route('invoices.show', $result->id);
+            $result = $this->invoiceService->store($data, $this->getLoggedUserId(), $this->getAcademyId());
+            Alert::success("Invoice {$result->invoiceNumber} successfully created");
+            return redirect()->route('invoices.show', $result->hash);
         }
     }
 
-    public function calculateProductAmount(Request $request){
+    public function calculateProductAmount(Request $request): JsonResponse
+    {
         $qty = $request->query('qty');
         $productId = $request->query('productId');
 
         $data = $this->invoiceService->calculateProductAmount($qty, $productId);
-
-        return response()->json([
-            'status' => 200,
-            'data' => $data,
-            'message' => 'Success'
-        ]);
+        return ApiResponse::success($data);
     }
 
-    public function calculateInvoiceTotal(Request $request){
+    public function calculateInvoiceTotal(Request $request): JsonResponse
+    {
         $data = $request->all();
-
         $result = $this->invoiceService->calculateInvoiceTotal($data);
-
-        return response()->json([
-            'status' => 200,
-            'data' => $data,
-            'message' => 'Success'
-        ]);
+        return ApiResponse::success($result);
     }
 
     /**
@@ -109,49 +97,22 @@ class InvoiceController extends Controller
     public function show(Invoice $invoice)
     {
         return view('pages.payments.invoices.detail', [
-            'data' => $this->invoiceService->show($invoice)
+            'data' => $invoice
         ]);
     }
 
     public function showArchived(string $id)
     {
-        $data = $this->invoiceService->showArchived($id);
         return view('pages.payments.invoices.detail-archived', [
-            'data' => $data
+            'data' => $this->invoiceService->showArchived($id)
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Invoice $invoice)
+    public function setPaid(Invoice $invoice): JsonResponse
     {
-        $data = $this->invoiceService->invoiceForms();
-        return view('pages.payments.invoices.edit', [
-            'data' => $invoice,
-            'products' => $data['products'],
-            'taxes' => $data['taxes'],
-            'contacts' => $data['players'],
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(InvoiceRequest $request, Invoice $invoice)
-    {
-        $data = $request->validated();
-        $this->invoiceService->update($data, $invoice);
-
-        $text = 'Invoice '.$invoice->invoiceNumber.' successfully updated';
-        Alert::success($text);
-        return redirect()->route('invoices.show', ['invoice'=>$invoice->id]);
-    }
-
-    public function setPaid(Invoice $invoice){
         try {
             $this->invoiceService->paid($invoice);
-            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status successfully mark as paid!');
+            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status has been successfully paid!');
 
         } catch (Exception $e) {
             Log::error('Error marking invoice as paid: ' . $e->getMessage());
@@ -159,10 +120,11 @@ class InvoiceController extends Controller
         }
     }
 
-    public function setUncollectible(Invoice $invoice){
+    public function setUncollectible(Invoice $invoice): JsonResponse
+    {
         try {
             $this->invoiceService->uncollectible($invoice);
-            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status have been mark as uncollectible!');
+            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status has been marked as uncollectible!');
 
         } catch (Exception $e) {
             Log::error('Error marking invoice as uncollectible: ' . $e->getMessage());
@@ -170,11 +132,11 @@ class InvoiceController extends Controller
         }
     }
 
-    public function setOpen(Invoice $invoice){
-        $loggedUser = auth()->user()->getAuthIdentifier();
+    public function setOpen(Invoice $invoice): JsonResponse
+    {
         try {
-            $this->invoiceService->open($invoice, $loggedUser);
-            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status successfully mark as open to pay!');
+            $this->invoiceService->open($invoice);
+            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status has been successfully marked as open to pay!');
 
         } catch (Exception $e) {
             Log::error('Error marking invoice as open: ' . $e->getMessage());
@@ -182,10 +144,11 @@ class InvoiceController extends Controller
         }
     }
 
-    public function setPastDue(Invoice $invoice){
+    public function setPastDue(Invoice $invoice): JsonResponse
+    {
         try {
             $this->invoiceService->pastDue($invoice);
-            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status successfully mark as past due!');
+            return ApiResponse::success(message:  'Invoice '.$invoice->invoiceNumber.' status has been successfully marked as past due!');
 
         } catch (Exception $e) {
             Log::error('Error marking invoice as open: ' . $e->getMessage());
@@ -196,11 +159,10 @@ class InvoiceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Invoice $invoice)
+    public function destroy(Invoice $invoice): JsonResponse
     {
-        $result = $this->invoiceService->destroy($invoice);
-        $message = "Invoice successfully archived.";
-        return ApiResponse::success($result, $message);
+        $this->invoiceService->destroy($invoice);
+        return ApiResponse::success(message: "Invoice has been successfully archived.");
     }
 
     public function deletedData()
@@ -208,23 +170,18 @@ class InvoiceController extends Controller
         if (\request()->ajax()){
             return $this->invoiceService->deletedDataIndex();
         }
-
         return view('pages.payments.invoices.archived');
     }
 
-    public function restoreData(string $id)
+    public function restoreData(string $id): JsonResponse
     {
-        $result = $this->invoiceService->restoreData($id);
-
-        $message = "Invoice successfully restored.";
-        return ApiResponse::success($result, $message);
+        $this->invoiceService->restoreData($id);
+        return ApiResponse::success(message: "Invoice has been successfully restored.");
     }
 
-    public function permanentDeleteData(string $id)
+    public function permanentDeleteData(string $id): JsonResponse
     {
-        $result = $this->invoiceService->permanentDeleteData($id);
-
-        $message = "Invoice successfully permanently deleted.";
-        return ApiResponse::success($result, $message);
+        $this->invoiceService->permanentDeleteData($id);
+        return ApiResponse::success(message: "Invoice has been successfully permanently deleted.");
     }
 }

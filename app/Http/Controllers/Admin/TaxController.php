@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProductCategoryRequest;
 use App\Http\Requests\TaxRequest;
-use App\Models\ProductCategory;
 use App\Models\Tax;
 use App\Services\TaxService;
-use Illuminate\Support\Facades\Auth;
-use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Http\JsonResponse;
 
 class TaxController extends Controller
 {
@@ -23,7 +21,7 @@ class TaxController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         return $this->taxService->index();
     }
@@ -31,55 +29,49 @@ class TaxController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(TaxRequest $request)
+    public function store(TaxRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $admin = Auth::user()->id;
-
-        return response()->json($this->taxService->store($data, $admin));
+        $this->taxService->store($data, $this->getLoggedUser());
+        return ApiResponse::success(message: "Tax successfully added!");
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Tax $tax)
+    public function edit(Tax $tax): JsonResponse
     {
-        return response()->json([
-            'status' => '200',
-            'data' => $tax,
-            'message' => 'Success'
-        ]);
+        return ApiResponse::success($tax);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(TaxRequest $request, Tax $tax)
+    public function update(TaxRequest $request, Tax $tax): JsonResponse
     {
         $data = $request->validated();
-
-        return response()->json($this->taxService->update($data, $tax));
+        $this->taxService->update($data, $tax);
+        return ApiResponse::success(message: "Tax : {$tax->taxName} successfully updated!");
     }
 
-    public function activate(Tax $tax){
+    public function activate(Tax $tax): JsonResponse
+    {
         $this->taxService->activate($tax);
-        $text = 'Tax '. $tax->taxName . ' status successfully activated!';
-        Alert::success($text);
-        return redirect()->route('products.index');
+        return ApiResponse::success(message: "Tax : {$tax->taxName} successfully activated!");
     }
 
-    public function deactivate(Tax $tax){
-        $this->taxService->activate($tax);
-        $text = 'Tax '. $tax->taxName . ' status successfully activated!';
-        Alert::success($text);
-        return redirect()->route('products.index');
+    public function deactivate(Tax $tax): JsonResponse
+    {
+        $this->taxService->deactivate($tax);
+        return ApiResponse::success(message: "Tax : {$tax->taxName} successfully deactivated!");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tax $tax)
+    public function destroy(Tax $tax): JsonResponse
     {
-        return response()->json($this->taxService->destroy($tax));
+        $this->taxService->destroy($tax);
+        return ApiResponse::success(message: "Tax : {$tax->taxName} successfully deleted!");
     }
 }

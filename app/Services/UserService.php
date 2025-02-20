@@ -2,17 +2,22 @@
 
 namespace App\Services;
 
-use App\Models\Admin;
-use App\Models\CoachCertification;
-use App\Models\CoachSpecialization;
-use App\Models\User;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
-use Nnjeim\World\World;
-use Yajra\DataTables\Facades\DataTables;
+use App\Repository\UserRepository;
 
 class UserService extends Service
 {
+    public UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
+    public function getAllUsers(string|int $withoutUserid = null, $role = ['Super-Admin', 'admin', 'coach', 'player'], string|array $column = ['*'])
+    {
+        return $this->userRepository->getAll($withoutUserid, $role, $column);
+    }
+
     public function update(array $data, $user)
     {
         $data['foto'] = $this->updateImage($data, 'foto', 'assets/user-profile', $user->foto);

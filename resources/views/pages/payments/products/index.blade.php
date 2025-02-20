@@ -1,18 +1,18 @@
 @extends('layouts.master')
 @section('title')
-    Products
+    Football Academy Products
 @endsection
 @section('page-title')
     @yield('title')
 @endsection
 
 @section('modal')
-    @include('pages.payments.products.form-modal.products.create')
-    @include('pages.payments.products.form-modal.products.edit')
-    @include('pages.payments.products.form-modal.product-categories.create')
-    @include('pages.payments.products.form-modal.product-categories.edit')
-    @include('pages.payments.products.form-modal.taxes.create')
-    @include('pages.payments.products.form-modal.taxes.edit')
+    <x-modal.products.create-product :categories="$categories"/>
+    <x-modal.products.edit-product :categories="$categories"/>
+    <x-modal.product-categories.create-product-category/>
+    <x-modal.product-categories.edit-product-category/>
+    <x-modal.taxes.create-tax/>
+    <x-modal.taxes.edit-tax/>
 @endsection
 
 @section('content')
@@ -28,104 +28,49 @@
         </div>
     </div>
 
-    <div class="container page__container page-section">
-        <div class="page-separator">
-            <div class="page-separator__text">Products</div>
-            <button type="button" class="btn btn-sm btn-primary ml-auto " id="addProducts">
-                    <span class="material-icons mr-2">
-                        add
-                    </span>
-                Add New
-            </button>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="productsTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>description</th>
-                            <th>Price</th>
-                            <th>Payment Option</th>
-                            <th>Subscription Cycle</th>
-                            <th>Status</th>
-                            <th>Created By</th>
-                            <th>Created At</th>
-                            <th>Last Updated</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="container page-section">
+        <div class="card">
+            <div class="nav-tabs-container">
+                <ul class="nav nav-pills text-capitalize">
+                    <x-tabs.item title="Products" link="products" :active="true"/>
+                    <x-tabs.item title="Product Categories" link="products-categories"/>
+                    <x-tabs.item title="taxes" link="taxes"/>
+                </ul>
             </div>
         </div>
 
-        <div class="page-separator">
-            <div class="page-separator__text">Product Categories</div>
-            <button type="button" class="btn btn-sm btn-primary ml-auto addProductCategory">
-                    <span class="material-icons mr-2">
-                        add
-                    </span>
-                Add New
-            </button>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="productCategoriesTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>description</th>
-                            <th>Status</th>
-                            <th>Created By</th>
-                            <th>Created At</th>
-                            <th>Last Updated</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="products-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Products</div>
+                    <x-buttons.basic-button icon="add" text="Add New Product" additionalClass="addProducts" color="primary" iconColor="" margin="ml-auto"/>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <x-table :headers="['#', 'Name', 'Category', 'Description', 'Price', 'Payment Option', 'Subscription Cycle', 'Status', 'Created By', 'Created At', 'Last Updated', 'Action']" tableId="productsTable"/>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="page-separator">
-            <div class="page-separator__text">Taxes</div>
-            <button type="button" class="btn btn-sm btn-primary ml-auto " id="addTax">
-                    <span class="material-icons mr-2">
-                        add
-                    </span>
-                Add New
-            </button>
-        </div>
-        <div class="card dashboard-area-tabs p-relative o-hidden mb-lg-32pt">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="taxTable">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>description</th>
-                            <th>percentage</th>
-                            <th>Status</th>
-                            <th>Created By</th>
-                            <th>Created At</th>
-                            <th>Last Updated</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+            <div class="tab-pane fade show" id="products-categories-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Product Categories</div>
+                    <x-buttons.basic-button icon="add" text="Add New Product Category" additionalClass="addProductCategory" color="primary" iconColor="" margin="ml-auto"/>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <x-table :headers="['#', 'Name', 'Description', 'Status', 'Created By', 'Created At', 'Last Updated', 'Action']" tableId="productCategoriesTable"/>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade show" id="taxes-tab" role="tabpanel">
+                <div class="page-separator">
+                    <div class="page-separator__text">Taxes</div>
+                    <x-buttons.basic-button icon="add" text="Add New Tax" additionalClass="addTax" color="primary" iconColor="" margin="ml-auto"/>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <x-table :headers="['#', 'Name', 'Description', 'Percentage', 'Status', 'Created By', 'Created At', 'Last Updated', 'Action']" tableId="taxTable"/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -134,8 +79,6 @@
 @push('addon-script')
     <script>
         $(document).ready(function () {
-            const body = $('body');
-
             $('#productsTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -155,13 +98,7 @@
                     {data: 'createdBy', name: 'createdBy'},
                     {data: 'createdAt', name: 'createdAt'},
                     {data: 'updatedAt', name: 'updatedAt'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
 
@@ -180,7 +117,7 @@
                     {data: 'createdBy', name: 'createdBy'},
                     {data: 'createdAt', name: 'createdAt'},
                     {data: 'updatedAt', name: 'updatedAt'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false, width: '50%'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
 
@@ -200,520 +137,97 @@
                     {data: 'createdBy', name: 'createdBy'},
                     {data: 'createdAt', name: 'createdAt'},
                     {data: 'updatedAt', name: 'updatedAt'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                        width: '15%'
-                    },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             })
 
-            let subscriptionCycleForm = $('.subscriptionCycleForm');
-            let subscriptionCycleSelect = $('.subscriptionCycle');
-
-            // show add product form modal when add new product button clicked
-            $('#addProducts').on('click', function (e) {
-                e.preventDefault();
-                $('#addProductModal').modal('show');
-                subscriptionCycleForm.hide();
-            });
-
-            function subscriptionCycleDisplay(formId) {
-                const priceOption = $(formId + ' .priceOption');
-                if (priceOption.val() === 'subscription') {
-                    subscriptionCycleForm.show()
-                    subscriptionCycleSelect.attr('required');
-                } else if (priceOption.val() === 'one time payment') {
-                    subscriptionCycleForm.hide();
-                    subscriptionCycleSelect.val("(NULL)").removeAttr('required');
-                }
-            }
-
-            function priceOptionFormOnChange(formId) {
-                const priceOption = $(formId + ' .priceOption');
-                priceOption.on('change', function (e) {
-                    e.preventDefault();
-                    subscriptionCycleDisplay(formId);
-                });
-            }
-
-            priceOptionFormOnChange('#formAddProductModal');
-            priceOptionFormOnChange('#formEditProductModal');
-
-            // store product data when form submitted
-            $('#formAddProductModal').on('submit', function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: "{{ route('products.store') }}",
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#addProductModal').modal('hide');
-                        Swal.fire({
-                            title: 'Product successfully created!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        $.each(response.errors, function (key, val) {
-                            $('#formAddProductModal span.' + key).text(val[0]);
-                            $("#formAddProductModal #" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when creating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            // show edit product form modal when edit product button clicked
-            body.on('click', '.edit-product', function () {
-                const id = $(this).attr('id');
-                $.ajax({
-                    url: "{{ route('products.edit', ':id') }}".replace(':id', id),
-                    type: 'GET',
-                    success: function (res) {
-                        $('#editProductModal').modal('show');
-
-                        document.getElementById('product-title').textContent = 'Edit product ' + res.data.productName;
-                        $('#productId').val(res.data.id);
-                        $('#formEditProductModal #productName').val(res.data.productName);
-                        $('#formEditProductModal #price').val(res.data.price);
-                        $('#formEditProductModal #categoryId').val(res.data.categoryId);
-                        $('#formEditProductModal #description').val(res.data.description);
-                        $('#formEditProductModal #priceOption').val(res.data.priceOption);
-                        $('#formEditProductModal #subscriptionCycle').val(res.data.subscriptionCycle);
-                        subscriptionCycleDisplay('#formEditProductModal');
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            // update product data when form submitted
-            $('#formEditProductModal').on('submit', function (e) {
-                e.preventDefault();
-                const id = $('#productId').val()
-                $.ajax({
-                    url: "{{ route('products.update', ':id') }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#editTrainingVideoModal').modal('hide');
-                        Swal.fire({
-                            title: 'Product successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        console.log(response)
-                        $.each(response.errors, function (key, val) {
-                            $('#formEditProductModal span.' + key).text(val[0]);
-                            $("#formEditProductModal #" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
             // delete product data
-            body.on('click', '.delete-product', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to delete this product?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('products.destroy', ['product' => ':id']) }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function (response) {
-                                Swal.fire({
-                                    title: 'Product successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            $('.addProductCategory').on('click', function () {
-                // e.preventDefault();
-                $('#addProductModal').modal('hide');
-                $('#addProductCategoryModal').modal('show');
-            });
-
-            $('#formAddProductCategoryModal').on('submit', function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: "{{ route('product-categories.store') }}",
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $('#addProductModal').modal('hide');
-                        Swal.fire({
-                            title: 'Product category successfully created!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        $.each(response.errors, function (key, val) {
-                            $('#formAddProductCategoryModal span.' + key).text(val[0]);
-                            $("#formAddProductCategoryModal #" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when creating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            const formEditProductCategory = '#formEditProductCategoryModal';
-            const editProductCategoryModalId = '#editProductCategoryModal';
-
-            // show edit product category form modal when edit product button clicked
-            body.on('click', '.editProductCategory', function () {
-                const id = $(this).attr('id');
-                $.ajax({
-                    url: "{{ route('product-categories.edit', ':id') }}".replace(':id', id),
-                    type: 'GET',
-                    success: function (res) {
-                        $(editProductCategoryModalId).modal('show');
-
-                        document.getElementById('product-category-title').textContent = 'Edit product category ' + res.data.productName;
-                        $('#productCategoryId').val(res.data.id);
-                        $(formEditProductCategory + ' #categoryName').val(res.data.categoryName);
-                        $(formEditProductCategory + ' #description').val(res.data.description);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            // update product category data when form submitted
-            $(formEditProductCategory).on('submit', function (e) {
-                e.preventDefault();
-                const id = $('#productCategoryId').val()
-                $.ajax({
-                    url: "{{ route('product-categories.update', ':id') }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $(editProductCategoryModalId).modal('hide');
-                        Swal.fire({
-                            title: 'Product category successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        console.log(response)
-                        $.each(response.errors, function (key, val) {
-                            $(formEditProductCategory + ' span.' + key).text(val[0]);
-                            $(formEditProductCategory + " #" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
+            processWithConfirmation(
+                '.deleteProduct',
+                "{{ route('products.destroy', ':id') }}",
+                null,
+                'DELETE',
+                "Are you sure to delete this product?",
+                "Something went wrong when deleting product!",
+                "{{ csrf_token() }}"
+            );
+            processWithConfirmation(
+                '.setDeactivateProduct',
+                "{{ route('products.deactivate', ':id') }}",
+                null,
+                'PATCH',
+                "Are you sure to deactivate this product?",
+                "Something went wrong when deactivating product!",
+                "{{ csrf_token() }}"
+            );
+            processWithConfirmation(
+                '.setActivateProduct',
+                "{{ route('products.activate', ':id') }}",
+                null,
+                'PATCH',
+                "Are you sure to activate this product?",
+                "Something went wrong when activating product!",
+                "{{ csrf_token() }}"
+            );
 
             // delete product category data
-            body.on('click', '.deleteProductCategory', function () {
-                let id = $(this).attr('id');
+            processWithConfirmation(
+                '.deleteProductCategory',
+                "{{ route('product-categories.destroy', ':id') }}",
+                null,
+                'DELETE',
+                "Are you sure to delete this product category?",
+                "Something went wrong when deleting product category!",
+                "{{ csrf_token() }}"
+            );
+            processWithConfirmation(
+                '.setDeactivateProductCategory',
+                "{{ route('product-categories.deactivate', ':id') }}",
+                null,
+                'PATCH',
+                "Are you sure to deactivate this product category?",
+                "Something went wrong when deactivating product category!",
+                "{{ csrf_token() }}"
+            );
+            processWithConfirmation(
+                '.setActivateProductCategory',
+                "{{ route('product-categories.activate', ':id') }}",
+                null,
+                'PATCH',
+                "Are you sure to activate this product category?",
+                "Something went wrong when activating product category!",
+                "{{ csrf_token() }}"
+            );
 
-                Swal.fire({
-                    title: "Are you sure to delete this product category?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('product-categories.destroy', ':id') }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Product category successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            const formAddTax = '#formAddTaxModal';
-            const addTaxModal = '#addTaxModal';
-
-            $('#addTax').on('click', function () {
-                $(addTaxModal).modal('show');
-            });
-
-            $(formAddTax).on('submit', function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: "{{ route('taxes.store') }}",
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $(addTaxModal).modal('hide');
-                        Swal.fire({
-                            title: 'Tax successfully created!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        $.each(response.errors, function (key, val) {
-                            $(formAddTax + ' span.' + key).text(val[0]);
-                            $(formAddTax + " #" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when creating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            const formEditTax = '#formEditTaxModal';
-            const editTaxModalId = '#editTaxModal';
-
-            // show edit product form modal when edit product button clicked
-            body.on('click', '.editTax', function () {
-                const id = $(this).attr('id');
-                $.ajax({
-                    url: "{{ route('taxes.edit', ':id') }}".replace(':id', id),
-                    type: 'GET',
-                    success: function (res) {
-                        $(editTaxModalId).modal('show');
-
-                        document.getElementById('tax-title').textContent = 'Edit tax ' + res.data.taxName;
-                        $('#taxId').val(res.data.id);
-                        $(formEditTax + ' #taxName').val(res.data.taxName);
-                        $(formEditTax + ' #percentage').val(res.data.percentage);
-                        $(formEditTax + ' #description').val(res.data.description);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
-
-            // update product data when form submitted
-            $(formEditTax).on('submit', function (e) {
-                e.preventDefault();
-                const id = $('#taxId').val()
-                $.ajax({
-                    url: "{{ route('taxes.update', ':id') }}".replace(':id', id),
-                    type: $(this).attr('method'),
-                    data: new FormData(this),
-                    contentType: false,
-                    processData: false,
-                    success: function () {
-                        $(editTaxModalId).modal('hide');
-                        Swal.fire({
-                            title: 'Tax successfully updated!',
-                            icon: 'success',
-                            showCancelButton: false,
-                            confirmButtonColor: "#1ac2a1",
-                            confirmButtonText:
-                                'Ok!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.reload();
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        const response = JSON.parse(jqXHR.responseText);
-                        console.log(response)
-                        $.each(response.errors, function (key, val) {
-                            $(formEditTax + ' span.' + key).text(val[0]);
-                            $(formEditTax + " #" + key).addClass('is-invalid');
-                        });
-                        Swal.fire({
-                            icon: "error",
-                            title: "Something went wrong when updating data!",
-                            text: errorThrown,
-                        });
-                    }
-                });
-            });
 
             // delete product category data
-            body.on('click', '.deleteTax', function () {
-                let id = $(this).attr('id');
-
-                Swal.fire({
-                    title: "Are you sure to delete this tax?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#1ac2a1",
-                    cancelButtonColor: "#E52534",
-                    confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('taxes.destroy', ':id') }}".replace(':id', id),
-                            type: 'DELETE',
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Tax successfully deleted!',
-                                    icon: 'success',
-                                    showCancelButton: false,
-                                    confirmButtonColor: "#1ac2a1",
-                                    confirmButtonText:
-                                        'Ok!'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Something went wrong when deleting data!",
-                                    text: errorThrown
-                                });
-                            }
-                        });
-                    }
-                });
-            });
+            processWithConfirmation(
+                '.deleteTax',
+                "{{ route('taxes.destroy', ':id') }}",
+                null,
+                'DELETE',
+                "Are you sure to delete this tax?",
+                "Something went wrong when deleting tax!",
+                "{{ csrf_token() }}"
+            );
+            processWithConfirmation(
+                '.setDeactivateTax',
+                "{{ route('taxes.deactivate', ':id') }}",
+                null,
+                'PATCH',
+                "Are you sure to deactivate this tax?",
+                "Something went wrong when deactivating tax!",
+                "{{ csrf_token() }}"
+            );
+            processWithConfirmation(
+                '.setActivateTax',
+                "{{ route('taxes.activate', ':id') }}",
+                null,
+                'PATCH',
+                "Are you sure to activate this tax?",
+                "Something went wrong when activating tax!",
+                "{{ csrf_token() }}"
+            );
         });
     </script>
 @endpush

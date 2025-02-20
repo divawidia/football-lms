@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class Tax extends Model
 {
-    use HasFactory;
+    use HasFactory, HashableId;
 
     protected $fillable = [
         'taxName',
@@ -18,17 +20,17 @@ class Tax extends Model
         'userId'
     ];
 
-    public function invoice()
+    public function invoice(): HasMany
     {
         return $this->hasMany(Invoice::class, 'taxId');
     }
 
-    public function subscriptions()
+    public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class, 'taxId');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'userId');
     }

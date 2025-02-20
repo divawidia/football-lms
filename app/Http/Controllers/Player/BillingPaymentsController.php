@@ -27,8 +27,9 @@ class BillingPaymentsController extends Controller
         if (\request()->ajax()){
             return $this->billingPaymentsService->index();
         }
-        $openInvoices = $this->billingPaymentsService->openInvoices();
-        return view('pages.payments.billing-payments.index', ['openInvoices' => $openInvoices]);
+        return view('pages.payments.billing-payments.index', [
+            'openInvoices' => $this->billingPaymentsService->openInvoices()
+        ]);
     }
 
     /**
@@ -37,7 +38,7 @@ class BillingPaymentsController extends Controller
     public function show(Invoice $invoice)
     {
         return view('pages.payments.billing-payments.detail', [
-            'data' => $this->billingPaymentsService->show($invoice)
+            'data' => $invoice
         ]);
     }
 }

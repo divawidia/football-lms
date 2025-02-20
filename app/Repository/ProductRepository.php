@@ -2,13 +2,9 @@
 
 namespace App\Repository;
 
-use App\Models\Coach;
-use App\Models\CoachCertification;
-use App\Models\CoachSpecialization;
 use App\Models\Product;
-use App\Models\Tax;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductRepository
 {
@@ -18,19 +14,18 @@ class ProductRepository
         $this->product = $product;
     }
 
-    public function getAll()
+    public function getAll($withRelations = [], $priceOption = null, $status = null): Collection
     {
-        return $this->product->all();
+        return $this->product->with($withRelations)
+            ->when($priceOption, fn($query) => $query->where('priceOption', $priceOption))
+            ->when($status, fn($query) => $query->where('status', $status))
+            ->get();
     }
 
-    public function getByPriceOption($priceOption)
+    public function getAvailablePlayerSubscriptionProduct($userId): Collection|array
     {
-        return $this->product->where('priceOption', $priceOption)->get();
-    }
-
-    public function getAvailablePlayerSubscriptionProduct($userId)
-    {
-        return Product::with('subscritions')->where('priceOption', '=', 'subscription')
+        return $this->product->with('subscritions')
+            ->where('priceOption', 'subscription')
             ->whereDoesntHave('subscritions', function (Builder $query) use ($userId) {
                 $query->where('userId', $userId);
             })->get();
@@ -46,12 +41,12 @@ class ProductRepository
         return $this->product->create($data);
     }
 
-    public function update(array $data, Product $product)
+    public function update(array $data, Product $product): bool
     {
         return $product->update($data);
     }
 
-    public function delete(Product $product)
+    public function delete(Product $product): ?bool
     {
         return $product->delete();
     }

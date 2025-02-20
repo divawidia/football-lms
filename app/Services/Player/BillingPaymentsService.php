@@ -3,31 +3,26 @@
 namespace App\Services\Player;
 
 use App\Helpers\DatatablesHelper;
-use App\Models\Invoice;
 use App\Models\User;
 use App\Services\Service;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
 
 class BillingPaymentsService extends Service
 {
     private User $user;
-    private DatatablesHelper $datatablesService;
-    public function __construct(User $user, DatatablesHelper $datatablesService)
+    private DatatablesHelper $datatablesHelper;
+    public function __construct(User $user, DatatablesHelper $datatablesHelper)
     {
         $this->user = $user;
-        $this->datatablesService = $datatablesService;
+        $this->datatablesHelper = $datatablesHelper;
     }
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = $this->user->invoices()->latest();
-        return Datatables::of($data)
+        return Datatables::of($this->user->invoices()->latest())
             ->addColumn('action', function ($item) {
-                return'<a class="btn btn-sm btn-outline-secondary" href="' . route('billing-and-payments.show', $item->hash) . '">
-                            <span class="material-icons mr-2">
-                                visibility
-                            </span>
-                            view invoice
-                        </a>';
+                return $this->datatablesHelper->buttonTooltips(route('billing-and-payments.show', $item->hash), "View Invoice", "visibility");
             })
             ->editColumn('ammount', function ($item) {
                 return $this->priceFormat($item->ammountDue);
@@ -39,28 +34,18 @@ class BillingPaymentsService extends Service
                 return $this->convertToDatetime($item->created_at);
             })
             ->editColumn('updatedAt', function ($item) {
-                return $this->convertToDatetime($item->updatedAt);
+                return $this->convertToDatetime($item->updated_at);
             })
             ->editColumn('status', function ($item) {
-                return $this->datatablesService->invoiceStatus($item->status);
+                return $this->datatablesHelper->invoiceStatus($item->status);
             })
-            ->rawColumns(['action', 'ammount','dueDate', 'status', 'createdAt','updatedAt'])
+            ->rawColumns(['action', 'status'])
             ->addIndexColumn()
             ->make();
     }
 
-    public function openInvoices()
+    public function openInvoices(): Collection
     {
         return $this->user->invoices()->where('status', 'Open')->get();
-    }
-
-    public function show(Invoice $invoice)
-    {
-        $createdAt = $this->convertToDatetime($invoice->created_at);
-        $dueDate = $this->convertToDatetime($invoice->dueDate);
-        $updatedAt = $this->convertToDatetime($invoice->updated_at);
-        $createdDate = $this->convertToDate($invoice->created_at);
-
-        return compact('invoice', 'createdAt', 'dueDate', 'updatedAt', 'createdDate');
     }
 }

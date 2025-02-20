@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProductCategoryRequest;
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
-use App\Models\ProductCategory;
 use App\Services\ProductCategoryService;
 use App\Services\ProductService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
@@ -34,60 +31,55 @@ class ProductController extends Controller
         }
 
         return view('pages.payments.products.index', [
-            'categories' => $this->productCategoryService->getAllData()
+            'categories' => $this->productCategoryService->getAllData('1')
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProductRequest $request)
+    public function store(ProductRequest $request): JsonResponse
     {
         $data = $request->validated();
-        return response()->json($this->productService->store($data, Auth::user()->id));
+        return ApiResponse::success($this->productService->store($data, $this->getLoggedUser()), "Product successfully added!");
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(Product $product): JsonResponse
     {
-        return response()->json([
-            'status' => '200',
-            'data' => $product,
-            'message' => 'Success'
-        ]);
+        return ApiResponse::success($product);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductRequest $request, Product $product)
+    public function update(ProductRequest $request, Product $product): JsonResponse
     {
         $data = $request->validated();
-
-        return response()->json($this->productService->update($data, $product));
+        $this->productService->update($data, $product);
+        return ApiResponse::success(message: "Product : {$product->productName} successfully updated!");
     }
 
-    public function activate(Product $product){
+    public function activate(Product $product): JsonResponse
+    {
         $this->productService->activate($product);
-        $text = 'Product '. $product->productName . ' status successfully activated!';
-        Alert::success($text);
-        return redirect()->route('products.index');
+        return ApiResponse::success(message: "Product : {$product->productName} successfully activated!");
     }
 
-    public function deactivate(Product $product){
+    public function deactivate(Product $product): JsonResponse
+    {
         $this->productService->deactivate($product);
-        $text = 'Product '. $product->productName . ' status successfully deactivated!';
-        Alert::success($text);
-        return redirect()->route('products.index');
+        return ApiResponse::success(message: "Product : {$product->productName} successfully deactivated!");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): JsonResponse
     {
-        return response()->json($this->productService->destroy($product));
+        $this->productService->destroy($product);
+        return ApiResponse::success(message: "Product : {$product->productName} successfully deleted!");
     }
 }

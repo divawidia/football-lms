@@ -2,11 +2,8 @@
 
 namespace App\Repository;
 
-use App\Models\Coach;
-use App\Models\CoachCertification;
-use App\Models\CoachSpecialization;
 use App\Models\Tax;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class TaxRepository
 {
@@ -16,9 +13,11 @@ class TaxRepository
         $this->tax = $tax;
     }
 
-    public function getAll()
+    public function getAll($withRelations = [], $status = null): Collection|array
     {
-        return $this->tax->all();
+        return $this->tax->with($withRelations)
+            ->when($status, fn($query) => $query->where('status', $status))
+            ->get();
     }
 
     public function find($id)
@@ -31,12 +30,12 @@ class TaxRepository
         return $this->tax->create($data);
     }
 
-    public function update(array $data)
+    public function update(array $data): bool
     {
         return $this->tax->update($data);
     }
 
-    public function delete()
+    public function delete(): ?bool
     {
         return $this->tax->delete();
     }

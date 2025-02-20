@@ -8,12 +8,13 @@ use Illuminate\View\Component;
 
 class EditSubscriptionTaxModal extends Component
 {
+    public $taxes;
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($taxes)
     {
-        //
+        $this->taxes = $taxes;
     }
 
     /**
