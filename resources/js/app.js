@@ -1,9 +1,13 @@
+import './ajax-processing-data'
 import './bootstrap'
+import './image'
+import './modal'
 import './perfect-scrollbar'
+import './player'
 import './preloader'
+import './select2'
 import './sidebar'
 import './youtube'
-import './select2'
 
 (function() {
     'use strict';
